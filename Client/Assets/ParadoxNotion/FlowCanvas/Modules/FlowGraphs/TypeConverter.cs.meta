@@ -1,0 +1,25 @@
+fileFormatVersion: 2
+guid: 151a9152453197946a68504e1be2d12b
+labels:
+- Graph
+- Node
+- flow
+- visual
+- scripting
+timeCreated: 1427183286
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 33903
+  packageName: FlowCanvas
+  packageVersion: 3.3.0
+  assetPath: Assets/ParadoxNotion/FlowCanvas/Modules/FlowGraphs/TypeConverter.cs
+  uploadId: 650782

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d29a8f8f212adff40b85993706fb141e
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 33903
+  packageName: FlowCanvas
+  packageVersion: 3.3.0
+  assetPath: Assets/ParadoxNotion/FlowCanvas/Modules/FlowGraphs/Nodes/FlowControllers/Iterators/ForEach.cs
+  uploadId: 650782

@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 31a49be078a5aa444bb1def82aa1ae8c
+timeCreated: 1425957688
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 24256
+  packageName: LINQ to GameObject
+  packageVersion: 2.3.1
+  assetPath: Assets/ototot.dev/LINQtoGameObject/Examples/SampleSceneScript.cs
+  uploadId: 222355

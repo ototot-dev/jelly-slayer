@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: faf3f069dfb2c4847ab26c7928f3299b
+timeCreated: 1509197918
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 33903
+  packageName: FlowCanvas
+  packageVersion: 3.3.0
+  assetPath: Assets/ParadoxNotion/FlowCanvas/Modules/FlowGraphs/Nodes/Functions/Reflected/Internal/Extractor/PureReflectedExtractorNode.cs
+  uploadId: 650782

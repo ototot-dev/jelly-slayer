@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: a4392122e26a4973afd868edae32dd22
+timeCreated: 1494410494
+AssetOrigin:
+  serializedVersion: 1
+  productId: 33903
+  packageName: FlowCanvas
+  packageVersion: 3.3.0
+  assetPath: Assets/ParadoxNotion/FlowCanvas/Modules/FlowGraphs/Nodes/Functions/Reflected/Internal/Field/JitFieldNode.cs
+  uploadId: 650782

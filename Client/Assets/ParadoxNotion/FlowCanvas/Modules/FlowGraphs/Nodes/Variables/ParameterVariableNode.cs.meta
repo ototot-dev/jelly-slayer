@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 2cf52f604bef3cb4ab18923436bae799
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 33903
+  packageName: FlowCanvas
+  packageVersion: 3.3.0
+  assetPath: Assets/ParadoxNotion/FlowCanvas/Modules/FlowGraphs/Nodes/Variables/ParameterVariableNode.cs
+  uploadId: 650782

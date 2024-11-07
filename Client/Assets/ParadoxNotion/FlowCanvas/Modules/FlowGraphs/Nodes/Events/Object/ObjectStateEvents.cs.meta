@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 6ede6240f525a814aa8e789c87060e45
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 33903
+  packageName: FlowCanvas
+  packageVersion: 3.3.0
+  assetPath: Assets/ParadoxNotion/FlowCanvas/Modules/FlowGraphs/Nodes/Events/Object/ObjectStateEvents.cs
+  uploadId: 650782

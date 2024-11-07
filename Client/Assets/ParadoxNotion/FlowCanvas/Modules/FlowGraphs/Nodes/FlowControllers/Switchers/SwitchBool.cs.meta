@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: afe2ffd40adfd3e4186e6ae5af748331
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 33903
+  packageName: FlowCanvas
+  packageVersion: 3.3.0
+  assetPath: Assets/ParadoxNotion/FlowCanvas/Modules/FlowGraphs/Nodes/FlowControllers/Switchers/SwitchBool.cs
+  uploadId: 650782

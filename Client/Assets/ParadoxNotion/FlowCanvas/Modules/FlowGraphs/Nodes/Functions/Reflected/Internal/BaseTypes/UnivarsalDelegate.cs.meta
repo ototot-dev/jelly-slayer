@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: ce3f73697e754bb8bf7edd3f45bf8a22
+timeCreated: 1493319264
+AssetOrigin:
+  serializedVersion: 1
+  productId: 33903
+  packageName: FlowCanvas
+  packageVersion: 3.3.0
+  assetPath: Assets/ParadoxNotion/FlowCanvas/Modules/FlowGraphs/Nodes/Functions/Reflected/Internal/BaseTypes/UnivarsalDelegate.cs
+  uploadId: 650782

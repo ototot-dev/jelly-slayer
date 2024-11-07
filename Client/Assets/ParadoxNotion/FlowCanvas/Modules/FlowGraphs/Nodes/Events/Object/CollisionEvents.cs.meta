@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f451676b78edc0c4da6ff77bed8661c7
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 33903
+  packageName: FlowCanvas
+  packageVersion: 3.3.0
+  assetPath: Assets/ParadoxNotion/FlowCanvas/Modules/FlowGraphs/Nodes/Events/Object/CollisionEvents.cs
+  uploadId: 650782

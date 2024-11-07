@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: fd9e70ff16a4508429395cc2c35e3e81
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 33903
+  packageName: FlowCanvas
+  packageVersion: 3.3.0
+  assetPath: Assets/ParadoxNotion/FlowCanvas/Modules/FlowGraphs/Nodes/Functions/Implemented/Implemented
+    Nodes/Utility.cs
+  uploadId: 650782

@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: db5cc38c27fd2334893c198a7a8d1a6f
+timeCreated: 1452791182
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 33903
+  packageName: FlowCanvas
+  packageVersion: 3.3.0
+  assetPath: Assets/ParadoxNotion/FlowCanvas/Modules/FlowGraphs/Nodes/Events/Object/CharacterControllerEvents.cs
+  uploadId: 650782

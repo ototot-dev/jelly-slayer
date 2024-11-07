@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 932ba4ff9d2ca7a4c9c038c36d5ba3b9
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 33903
+  packageName: FlowCanvas
+  packageVersion: 3.3.0
+  assetPath: Assets/ParadoxNotion/FlowCanvas/Modules/FlowGraphs/Nodes/FlowControllers/Repeaters/While.cs
+  uploadId: 650782

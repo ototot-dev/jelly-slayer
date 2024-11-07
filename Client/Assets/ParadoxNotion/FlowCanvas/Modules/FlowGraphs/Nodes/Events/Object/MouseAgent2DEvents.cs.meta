@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 5636149f63ba3324390c542e19be9a48
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 33903
+  packageName: FlowCanvas
+  packageVersion: 3.3.0
+  assetPath: Assets/ParadoxNotion/FlowCanvas/Modules/FlowGraphs/Nodes/Events/Object/MouseAgent2DEvents.cs
+  uploadId: 650782

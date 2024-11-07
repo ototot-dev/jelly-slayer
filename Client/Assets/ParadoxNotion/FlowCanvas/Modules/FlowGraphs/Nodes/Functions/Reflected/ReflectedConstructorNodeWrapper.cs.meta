@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: 2b4fdbf89f82432abd57cfbbc153d36c
+timeCreated: 1494398714
+AssetOrigin:
+  serializedVersion: 1
+  productId: 33903
+  packageName: FlowCanvas
+  packageVersion: 3.3.0
+  assetPath: Assets/ParadoxNotion/FlowCanvas/Modules/FlowGraphs/Nodes/Functions/Reflected/ReflectedConstructorNodeWrapper.cs
+  uploadId: 650782

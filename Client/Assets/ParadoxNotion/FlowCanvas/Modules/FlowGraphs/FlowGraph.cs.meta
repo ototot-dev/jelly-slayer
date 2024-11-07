@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 8c624f55aa95df64d824eb2e9172da53
+labels:
+- Graph
+- Node
+- flow
+- visual
+- scripting
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 33903
+  packageName: FlowCanvas
+  packageVersion: 3.3.0
+  assetPath: Assets/ParadoxNotion/FlowCanvas/Modules/FlowGraphs/FlowGraph.cs
+  uploadId: 650782

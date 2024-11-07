@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 5dd7406894f360d49a7f8874aa79be38
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 33903
+  packageName: FlowCanvas
+  packageVersion: 3.3.0
+  assetPath: Assets/ParadoxNotion/FlowCanvas/Modules/FlowGraphs/Nodes/FlowControllers/Switchers/SwitchIntCustom.cs
+  uploadId: 650782
