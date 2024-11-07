@@ -225,6 +225,8 @@ namespace Game
 
         public void OnFire()
         {
+            Debug.Log("<color=cyan>OnFire</color>");
+
             if (MyHeroBrain == null)
                 return;
 
@@ -371,6 +373,10 @@ namespace Game
                 //MyHeroBrain.ChainRolling(false);
                 MyHeroBrain.ActionCtrler.SetPendingAction("ChainShot");
             }
+        }
+        public void OnLongFire()
+        {
+            Debug.Log("<color=red>OnLongFire</color>");
         }
     }
 }

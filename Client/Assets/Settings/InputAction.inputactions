@@ -27,7 +27,7 @@
                     "name": "Fire",
                     "type": "Button",
                     "id": "a156257a-fc80-44ee-92b0-793ab800d248",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -94,6 +94,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "LongFire",
+                    "type": "Button",
+                    "id": "be56a742-d191-4d91-a511-57f6bf204b62",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -277,7 +286,7 @@
                     "name": "",
                     "id": "fe545be2-4e8f-4bbe-ba55-078fac5a4948",
                     "path": "<Keyboard>/j",
-                    "interactions": "",
+                    "interactions": "Tap",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Fire",
@@ -402,6 +411,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "97543956-b38c-4980-919d-fef4faa3faf1",
+                    "path": "<Keyboard>/j",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "LongFire",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
