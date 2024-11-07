@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3524309485612456748
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2161248242018231628}
+  - component: {fileID: 4474209855582510077}
+  m_Layer: 0
+  m_Name: Background
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2161248242018231628
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3524309485612456748}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4474209855582510077
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3524309485612456748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9c148dec54b18848bfe18dcd0fa893f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _trRoot: {fileID: 2161248242018231628}
+  _width: 7
+  _height: 7
+  _scale: 1.5
+  _prefBaseList:
+  - {fileID: 130232, guid: 9b368b3a4ca946b2ac28fa43e8b02548, type: 3}
+  - {fileID: 128368, guid: c1be12d107fe40609b629d9652f4f610, type: 3}
+  - {fileID: 144004, guid: b89b2bb843094d8a95d44316af93ec75, type: 3}
+  - {fileID: 183400, guid: af29e6331554495db5d9af38d3302391, type: 3}
+  _prefWallList:
+  - {fileID: 145972, guid: b250adf46c504f858061fd325bae3e9c, type: 3}
+  - {fileID: 150502, guid: 35af2a83b5884982b2c610fd2eb61e83, type: 3}
+  - {fileID: 185012, guid: 92efd3e2b1854ffdb586dafec506a858, type: 3}
+  - {fileID: 182418, guid: a878f88fa3884beea0deba28cfdfcc39, type: 3}
+  _prefGrassList:
+  - {fileID: 8058054501184237822, guid: 3227e65a226e63d4bacdc41a7cfb1f9c, type: 3}
+  _prefPilarList:
+  - {fileID: 138844, guid: 8d9d74f905cb48b78fde29a25ac54098, type: 3}
+  - {fileID: 125552, guid: 8a110a4d50864dd7acaefd6f5e98dacc, type: 3}
+  - {fileID: 131042, guid: 5ae04f520f47435fac500a79a5f1d93a, type: 3}
