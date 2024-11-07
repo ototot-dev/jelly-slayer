@@ -1,0 +1,110 @@
+using UniRx;
+using UniRx.Triggers;
+using Unity.Burst.Intrinsics;
+using UnityEditor;
+using UnityEngine;
+
+namespace Game
+{
+    public class HeroAnimController : PawnAnimController
+    {
+        public Transform shieldSocket;
+        public Transform HeadLookAt;
+        public float animLayerBlendSpeed = 1;
+        public float legAnimGlueBlendSpeed = 1;
+        public AnimationClip[] blockAdditiveAnimClips;
+        public RuntimeAnimatorController[] _animControllers;
+
+        void Awake()
+        {
+            __brain = GetComponent<HeroBrain>();
+
+            //* Block 애님의 Additive Ref-Pose를 셋팅
+            foreach (var c in blockAdditiveAnimClips)
+                AnimationUtility.SetAdditiveReferencePose(c, blockAdditiveAnimClips[0], 0);
+        }
+
+        HeroBrain __brain;
+
+        void Start()
+        {
+            __brain.BB.action.isGuarding.Subscribe(v =>
+            {
+                mainAnimator.SetBool("IsGuarding", v);
+            }).AddTo(this);
+
+            __brain.onUpdate += () =>
+            {
+                if (__brain.ActionCtrler.CheckActionRunning())
+                {
+                    if (__brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
+                        __brain.Movement.AddRootMotion(__brain.ActionCtrler.currActionContext.rootMotionMultiplier * mainAnimator.deltaPosition, mainAnimator.deltaRotation);
+
+                    if (__brain.ActionCtrler.currActionContext.rootMotionCurve != null)
+                    {
+                        var rootMotionVec = __brain.ActionCtrler.EvaluateRootMotion(Time.deltaTime) * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                        if (__brain.ActionCtrler.CanRootMotion(rootMotionVec))
+                            __brain.Movement.AddRootMotion(__brain.ActionCtrler.EvaluateRootMotion(Time.deltaTime) * __brain.coreColliderHelper.transform.forward.Vector2D().normalized, Quaternion.identity);
+                    }
+                }
+
+                mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
+                // mainAnimator.SetLayerWeight(1, Mathf.Clamp01(mainAnimator.GetLayerWeight(1) + (__brain.BB.IsGuarding ? animLayerBlendSpeed : -animLayerBlendSpeed) * Time.deltaTime));
+                mainAnimator.SetLayerWeight(1, 1);
+                mainAnimator.SetLayerWeight(2, Mathf.Clamp01(mainAnimator.GetLayerWeight(2) + (__brain.BB.IsRolling || (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CurrActionName != "!OnHit" && __brain.ActionCtrler.CurrActionName != "ActiveParry") ? animLayerBlendSpeed : -animLayerBlendSpeed) * Time.deltaTime));
+
+                mainAnimator.SetFloat("MoveSpeed", __brain.Movement.freezeRotation ? -1 : __brain.Movement.CurrVelocity.Vector2D().magnitude / __brain.BB.body.moveSpeed);
+                mainAnimator.SetFloat("MoveAnimSpeed", __brain.Movement.freezeRotation ? (__brain.BB.IsGuarding ? 0.8f : 1.2f) : 1);
+                mainAnimator.SetBool("IsMoving", __brain.Movement.CurrVelocity.sqrMagnitude > 0);
+                // mainAnimator.SetBool("IsGrounded", __brain.Movement.IsOnGround);
+
+                var animMoveVec = __brain.coreColliderHelper.transform.InverseTransformDirection(__brain.Movement.CurrVelocity).Vector2D();
+                mainAnimator.SetFloat("MoveX", animMoveVec.x / __brain.Movement.moveSpeed);
+                mainAnimator.SetFloat("MoveY", animMoveVec.z / __brain.Movement.moveSpeed);
+
+                legAnimator.User_SetIsMoving(__brain.Movement.CurrVelocity.sqrMagnitude > 0);
+                legAnimator.User_SetIsGrounded( __brain.Movement.IsOnGround && !__brain.BB.IsRolling && !__brain.BB.IsDown && !__brain.BB.IsDead);
+                legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude > 0 ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.5f : 0.4f, 1);
+            };
+
+            __brain.onLateUpdate += () =>
+            {
+                if (__brain.BB.TargetBrain != null)
+                    HeadLookAt.transform.position = __brain.BB.TargetBrain.coreColliderHelper.GetCenter();
+                else
+                    HeadLookAt.transform.localPosition = new Vector3(0f, 1.2f, 1f);
+            };
+        }
+
+        public bool Jump() 
+        {
+            mainAnimator.SetTrigger("Jump");
+            mainAnimator.SetBool("IsJumping", true);
+
+            return true;
+        }
+
+        public void Dash()
+        {
+            mainAnimator.SetTrigger("Rolling");
+        }
+
+        public void OnEventLand() 
+        {
+            mainAnimator.SetBool("IsJumping", false);
+        }
+
+        public void ChangeWeapon(WEAPONSLOT weaponSlot)
+        {
+            switch (weaponSlot) {
+                case WEAPONSLOT.MAINSLOT:
+                    mainAnimator.runtimeAnimatorController = _animControllers[0];
+                    break;
+                case WEAPONSLOT.SUBSLOT:
+                    mainAnimator.runtimeAnimatorController = _animControllers[1];
+                    break;
+            }
+        }
+    }
+
+}

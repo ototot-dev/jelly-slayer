@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f945e777233a59f4aba40aeca29093a6, type: 3}
+  m_Name: Pawn_FSM
+  m_EditorClassIdentifier: 
+  _serializedGraph: '{"type":"NodeCanvas.StateMachines.FSM","nodes":[{"_actionList":{"executionMode":1,"actions":[]},"_name":"Spawning","_position":{"x":750.0,"y":150.0},"$type":"NodeCanvas.StateMachines.ActionState","$id":"0"},{"_nestedBT":{"_value":1},"_name":"Idle","_position":{"x":930.0,"y":270.0},"$type":"NodeCanvas.StateMachines.NestedBTState","$id":"1"},{"_nestedBT":{"_value":2},"_name":"Alerted","_position":{"x":690.0,"y":405.0},"$type":"NodeCanvas.StateMachines.NestedBTState","$id":"2"},{"_position":{"x":720.0,"y":720.0},"$type":"NodeCanvas.StateMachines.AnyState","$id":"3"},{"_actionList":{"executionMode":1,"actions":[]},"_name":"Dead","_position":{"x":525.0,"y":585.0},"$type":"NodeCanvas.StateMachines.ActionState","$id":"4"},{"_actionList":{"executionMode":1,"actions":[]},"_name":"Stunned","_position":{"x":911.0,"y":538.0},"$type":"NodeCanvas.StateMachines.ActionState","$id":"5"}],"connections":[{"_condition":{"valueA":{"_name":"IsSpawnFinished","_targetVariableID":"5478d7e9-07d0-46a7-bf25-56b77220a3f5"},"valueB":{"_value":true},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsBeingAlerted","_targetVariableID":"2c72e0e8-6459-494c-a910-e8d5a479914e"},"valueB":{"_value":true},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsBeingAlerted","_targetVariableID":"2c72e0e8-6459-494c-a910-e8d5a479914e"},"valueB":{},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"2"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsDead","_targetVariableID":"e3cf8b91-a019-461b-b802-a946a9028c31"},"valueB":{"_value":true},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"3"},"_targetNode":{"$ref":"4"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsStunned","_targetVariableID":"375f4114-270c-4836-83f4-a5efca3b949a"},"valueB":{"_value":true},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"3"},"_targetNode":{"$ref":"5"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsDead","_targetVariableID":"e3cf8b91-a019-461b-b802-a946a9028c31"},"valueB":{},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"4"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsStunned","_targetVariableID":"375f4114-270c-4836-83f4-a5efca3b949a"},"valueB":{},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"5"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.StateMachines.FSMConnection"}],"canvasGroups":[],"localBlackboard":{"_variables":{"IsSpawnFinished":{"_propertyPath":"Game.PawnBlackboard.IsSpawnFinished","_name":"IsSpawnFinished","_id":"5478d7e9-07d0-46a7-bf25-56b77220a3f5","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},"IsBeingAlerted":{"_propertyPath":"Game.PawnBlackboard.IsBeingAlerted","_name":"IsBeingAlerted","_id":"2c72e0e8-6459-494c-a910-e8d5a479914e","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},"IsStunned":{"_propertyPath":"Game.PawnBlackboard.IsStunned","_name":"IsStunned","_id":"375f4114-270c-4836-83f4-a5efca3b949a","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},"IsDead":{"_propertyPath":"Game.PawnBlackboard.IsDead","_name":"IsDead","_id":"e3cf8b91-a019-461b-b802-a946a9028c31","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"}}}}'
+  _objectReferences:
+  - {fileID: 0}
+  - {fileID: 11400000, guid: b562b37fa43253f42afb734d6f5d43b7, type: 2}
+  - {fileID: 11400000, guid: f6574659e89e72c41bafcc7a7bd467d4, type: 2}
+  _graphSource:
+    _version: 3.29
+    _category: 
+    _comments: 
+    _translation: {x: -49, y: 30}
+    _zoomFactor: 1
+  _haltSerialization: 0
+  _externalSerializationFile: {fileID: 0}

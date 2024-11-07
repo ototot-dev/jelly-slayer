@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a686a47eee2fa44cb0a34b5d86e4d5e, type: 3}
+  m_Name: Alerted_BT
+  m_EditorClassIdentifier: 
+  _serializedGraph: '{"type":"NodeCanvas.BehaviourTrees.BehaviourTree","nodes":[{"dynamic":true,"selectionMode":1,"intCase":{},"enumCase":{"_type":"System.Enum","_name":"Decision","_targetVariableID":"2a33f733-1561-40fc-9c2c-ebfc2c4a320b"},"_position":{"x":690.0,"y":345.0},"$type":"NodeCanvas.BehaviourTrees.Switch","$id":"0"},{"_action":{"duration":{"_value":9999.0},"$type":"Game.NodeCanvasExtension.HoldPosition"},"_position":{"x":480.0,"y":510.0},"$type":"NodeCanvas.BehaviourTrees.ActionNode","$id":"1"},{"_action":{"duration":{"_value":9999.0},"$type":"Game.NodeCanvasExtension.HoldPosition"},"_position":{"x":480.0,"y":585.0},"$type":"NodeCanvas.BehaviourTrees.ActionNode","$id":"2"},{"_action":{"duration":{"_value":9999.0},"$type":"Game.NodeCanvasExtension.HoldPosition"},"_position":{"x":480.0,"y":660.0},"$type":"NodeCanvas.BehaviourTrees.ActionNode","$id":"3"},{"_action":{"duration":{"_value":9999.0},"$type":"Game.NodeCanvasExtension.HoldPosition"},"_position":{"x":480.0,"y":735.0},"$type":"NodeCanvas.BehaviourTrees.ActionNode","$id":"4"},{"_action":{"duration":{"_value":9999.0},"$type":"Game.NodeCanvasExtension.HoldPosition"},"_position":{"x":480.0,"y":810.0},"$type":"NodeCanvas.BehaviourTrees.ActionNode","$id":"5"},{"_action":{"actions":[{"targetObj":{"_name":"WatchingPawn","_targetVariableID":"1de71363-bedc-456b-9976-230aa102f159"},"duration":{"_value":4.0},"approachDistance":{"_value":2.0},"adjustMoveSpeed":{"_value":true},"$type":"Game.NodeCanvasExtension.Follow"},{"duration":{"_value":0.1},"notifyDecisionFinished":true,"$type":"Game.NodeCanvasExtension.HoldPosition"}],"$type":"NodeCanvas.Framework.ActionList"},"_position":{"x":735.0,"y":525.0},"$type":"NodeCanvas.BehaviourTrees.ActionNode","$id":"6"},{"_action":{"targetObj":{"_name":"WatchingPawn","_targetVariableID":"1de71363-bedc-456b-9976-230aa102f159"},"adjustMoveSpeed":{"_value":true},"adjustMinApproachDistance":{"_name":"AdjustMinApproachDistance","_targetVariableID":"6033195a-ac07-4aeb-a7c1-f91de560bb37"},"$type":"Game.NodeCanvasExtension.Approach"},"_position":{"x":870.0,"y":525.0},"$type":"NodeCanvas.BehaviourTrees.ActionNode","$id":"7"},{"_action":{"actions":[{"$type":"Game.NodeCanvasExtension.MoveToTarget"},{"duration":{"_value":0.1},"notifyDecisionFinished":true,"$type":"Game.NodeCanvasExtension.HoldPosition"}],"$type":"NodeCanvas.Framework.ActionList"},"_position":{"x":1005.0,"y":525.0},"$type":"NodeCanvas.BehaviourTrees.ActionNode","$id":"8"}],"connections":[{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.BehaviourTrees.BTConnection"},{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.BehaviourTrees.BTConnection"},{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"3"},"$type":"NodeCanvas.BehaviourTrees.BTConnection"},{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"4"},"$type":"NodeCanvas.BehaviourTrees.BTConnection"},{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"5"},"$type":"NodeCanvas.BehaviourTrees.BTConnection"},{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"6"},"$type":"NodeCanvas.BehaviourTrees.BTConnection"},{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"7"},"$type":"NodeCanvas.BehaviourTrees.BTConnection"},{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"8"},"$type":"NodeCanvas.BehaviourTrees.BTConnection"}],"canvasGroups":[],"localBlackboard":{"_variables":{"WatchingPawn":{"_propertyPath":"Game.PawnBlackboard.WatchingPawn","_name":"WatchingPawn","_id":"1de71363-bedc-456b-9976-230aa102f159","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"AdjustMinApproachDistance":{"_propertyPath":"Game.PawnBlackboard.AdjustMinApproachDistance","_name":"AdjustMinApproachDistance","_id":"6033195a-ac07-4aeb-a7c1-f91de560bb37","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"}}},"derivedData":{"repeat":true,"$type":"NodeCanvas.BehaviourTrees.BehaviourTree+DerivedSerializationData"}}'
+  _objectReferences: []
+  _graphSource:
+    _version: 3.22
+    _category: 
+    _comments: 
+    _translation: {x: -136, y: -339}
+    _zoomFactor: 1
+  _haltSerialization: 0
