@@ -134,6 +134,12 @@ namespace Game
                 __pawnMovement.moveSpeed = v == Decisions.Spacing ? __jellyManBB.body.walkSpeed : __jellyManBB.body.moveSpeed;
             }).AddTo(this);
 
+            SensorCtrler.onListenSomething += (s) =>
+            {
+                if (__jellyManBB.IsSpawnFinished && !__jellyManBB.IsDead && __jellyManBB.TargetPawn == null && ValidateTargetCollider(s.collider))
+                    OnWatchSomethingOrDamagedHandler(s.collider.GetComponent<PawnColliderHelper>().pawnBrain, 0.5f);
+            };
+
             SensorCtrler.onWatchSomething += (s) =>
             {
                 if (__jellyManBB.IsSpawnFinished && !__jellyManBB.IsDead && __jellyManBB.TargetPawn == null && ValidateTargetCollider(s))

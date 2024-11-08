@@ -5,58 +5,20 @@ using UnityEngine;
 
 namespace Game
 {
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public class PawnSoundSource : MonoBehaviour
-    {      
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public PawnBrainController PawnBrain { get; private set; }
-
-        void Awake()
+    public class PawnSoundSourceGenerator : MonoBehaviour
+    {   
+        public struct SoundSource
         {
-            PawnBrain  = GetComponent<PawnBrainController>();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public struct SoundEvent
-        {
-            /// <summary>
-            /// 발생 위치
-            /// </summary>
+            public Collider collider;
             public Vector3 position;
-
-            /// <summary>
-            /// 발생 시간
-            /// </summary>
             public float timeStamp;
-
-            /// <summary>
-            /// 사운드 강도
-            /// </summary>
             public float intensity;
-
-            /// <summary>
-            /// 사운드 지속 시간
-            /// </summary>
             public float duration;
-
-            /// <summary>
-            /// 추가 정보
-            /// </summary>
             public string desc;
 
-            /// <summary>
-            /// Ctor.
-            /// </summary>
-            public SoundEvent(Vector3 position, float timeStamp, float intensity, float duration, string desc)
+            public SoundSource(Collider collider, Vector3 position, float timeStamp, float intensity, float duration, string desc)
             {
+                this.collider = collider;
                 this.position = position;
                 this.timeStamp = timeStamp;
                 this.intensity = intensity;
@@ -64,54 +26,37 @@ namespace Game
                 this.desc = desc;
             }
         }
-        
-        /// <summary>
-        /// Item1 => 사운드 발생 위치, Item2 => 사운드 강도
-        /// Item3 => 사운드 지속 시간, Item4 => 사운드 발생 시간 (Time.time)
-        /// </summary>
-        /// <returns></returns>
-        List<SoundEvent> __soundEvents  = new List<SoundEvent>();
+
+        readonly List<SoundSource> __soundSources  = new();
 
         /// <summary>
-        /// 
+        /// 가장 최근 SoundSource가 발생한 시간 기록
         /// </summary>
-        /// <param name="intensity"></param>
-        /// <param name="duration"></param>
-        /// <param name="desc"></param>
-        public void GenerateSoundEvent(float intensity, float duration, string desc = "")
+        public float LastGenerateTimeStamp { get; private set; }
+
+        public void GenerateSoundSource(Collider collider, float intensity, float duration, string desc = "")
         {
-            var timeStamp = Time.time;
+            LastGenerateTimeStamp = Time.time;
 
-            // duration이 경과된 사운드 삭제
-            __soundEvents.RemoveAll(e => (timeStamp - e.timeStamp) > e.duration);
-            __soundEvents.Add(new SoundEvent(transform.position, timeStamp, intensity, duration, desc));
+            //* duration이 경과된 사운드 삭제
+            __soundSources.RemoveAll(e => (LastGenerateTimeStamp - e.timeStamp) > e.duration);
+            __soundSources.Add(new SoundSource(collider, transform.position, LastGenerateTimeStamp, intensity, duration, desc));
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool QuerySoundEvent(float compareIntensity, float compareTimeStamp, out SoundEvent result)
+        public bool QuerySoundSource(float compareIntensity, float compareTimeStamp, out SoundSource result)
         {
-            // duration이 경과된 사운드 삭제
-            __soundEvents.RemoveAll(e => (Time.time - e.timeStamp) > e.duration);
-
-            result = __soundEvents.FirstOrDefault(s => s.intensity >= compareIntensity && (s.timeStamp + s.duration) > compareTimeStamp);
-
+            //* duration이 경과된 사운드 삭제
+            __soundSources.RemoveAll(e => (Time.time - e.timeStamp) > e.duration);
+            
+            result = __soundSources.FirstOrDefault(s => s.intensity >= compareIntensity && (s.timeStamp + s.duration) > compareTimeStamp);
             return result.timeStamp > 0;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="compareIntensity"></param>
-        /// <param name="compareTimeStamp"></param>
-        /// <returns></returns>
-        public SoundEvent[] QuerySoundEvent(float compareIntensity, float compareTimeStamp)
+        public SoundSource[] QuerySoundSource(float compareIntensity, float compareTimeStamp)
         {
-            // duration이 경과된 사운드 삭제
-            __soundEvents.RemoveAll(e => (Time.time - e.timeStamp) > e.duration);
-
-            return __soundEvents.Where(s => s.intensity >= compareIntensity && s.timeStamp > compareTimeStamp).ToArray();
+            //* duration이 경과된 사운드 삭제
+            __soundSources.RemoveAll(e => (Time.time - e.timeStamp) > e.duration);
+            return __soundSources.Where(s => s.intensity >= compareIntensity && s.timeStamp > compareTimeStamp).ToArray();
         }
     }
 }

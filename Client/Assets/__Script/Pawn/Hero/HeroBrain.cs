@@ -106,6 +106,13 @@ namespace Game
 
             onTick += (_) =>
             {
+                if (!BB.IsSpawnFinished || BB.IsDead)
+                    return;
+
+                //* 1초마다 SoundSource를 발생시켜 주변의 어그로를 끔
+                if (Time.time - PawnSoundSourceGen.LastGenerateTimeStamp > 1f)
+                    PawnSoundSourceGen.GenerateSoundSource(coreColliderHelper.pawnCollider, 1f, 1f);
+
                 if (GameContext.Instance.playerTargetManager != null)
                     GameContext.Instance.playerTargetManager.UpdateTarget();
             };
