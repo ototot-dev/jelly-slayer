@@ -21,8 +21,8 @@ public class ChainController : MonoBehaviour
 
     [Header("Chain")]
     public Transform _trRightHand;
-    public Transform _trHandle; // ������
-    public Transform _trDagger; // ������
+    public Transform _trHandle; // Handle
+    public Transform _trDagger; // Dagger
 
     readonly float _cableLength = 80.0f;
 
@@ -63,7 +63,7 @@ public class ChainController : MonoBehaviour
     public void Rolling(bool isRolling) 
     {
         _status = ChainStatus.Rolling;
-        _rollSpeed = 300;
+        _rollSpeed = 900;
 
         _cableObj.SetActive(isRolling);
         _trDagger.gameObject.SetActive(isRolling);
