@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a686a47eee2fa44cb0a34b5d86e4d5e, type: 3}
+  m_Name: DroneBot_Combat_BT
+  m_EditorClassIdentifier: 
+  _serializedGraph: '{"type":"NodeCanvas.BehaviourTrees.BehaviourTree","nodes":[{"dynamic":true,"selectionMode":1,"intCase":{},"enumCase":{"_type":"System.Enum","_name":"CurrDecision","_targetVariableID":"a5770fcd-c4b3-424c-a8b8-bbf31288b8b6"},"_position":{"x":1028.0,"y":338.0},"$type":"NodeCanvas.BehaviourTrees.Switch","$id":"0"},{"_action":{"lookAt":{"_name":"TargetCore","_targetVariableID":"f3d20f5c-5f60-4fcb-8d45-b614cefdb56b"},"duration":{"_value":9999.0},"$type":"Game.NodeCanvasExtension.HoldPosition"},"_position":{"x":975.1783,"y":491.984},"$type":"NodeCanvas.BehaviourTrees.ActionNode","$id":"1"},{"_action":{"target":{"_name":"TargetPawn","_targetVariableID":"2d473708-2316-4cf3-9509-c1a87e548108"},"approachDistance":{"_name":"ApproachDistance","_targetVariableID":"11999944-fc2f-4d8b-a5ed-a8a6d4a30f66"},"duration":{"_value":-1.0},"stopOnReachToDestination":true,"$type":"Game.NodeCanvasExtension.Approach"},"_position":{"x":1090.79,"y":491.9813},"$type":"NodeCanvas.BehaviourTrees.ActionNode","$id":"2"}],"connections":[{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.BehaviourTrees.BTConnection"},{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.BehaviourTrees.BTConnection"}],"canvasGroups":[],"localBlackboard":{"_variables":{"CurrDecision":{"_propertyPath":"Game.SlimeBossBlackboard.CurrDecision","_name":"CurrDecision","_id":"a5770fcd-c4b3-424c-a8b8-bbf31288b8b6","$type":"NodeCanvas.Framework.Variable`1[[Game.SlimeBossBrain+Decisions,
+    Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"TargetPawn":{"_propertyPath":"Game.SlimeBossBlackboard.TargetPawn","_name":"TargetPawn","_id":"2d473708-2316-4cf3-9509-c1a87e548108","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"TargetCore":{"_propertyPath":"Game.SlimeBossBlackboard.TargetCore","_name":"TargetCore","_id":"f3d20f5c-5f60-4fcb-8d45-b614cefdb56b","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Transform,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"ApproachDistance":{"_propertyPath":"Game.SlimeBossBlackboard.ApproachDistance","_name":"ApproachDistance","_id":"11999944-fc2f-4d8b-a5ed-a8a6d4a30f66","$type":"NodeCanvas.Framework.Variable`1[[System.Single,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"}}},"derivedData":{"repeat":true,"$type":"NodeCanvas.BehaviourTrees.BehaviourTree+DerivedSerializationData"}}'
+  _objectReferences: []
+  _graphSource:
+    _version: 3.29
+    _category: 
+    _comments: 
+    _translation: {x: -703.56055, y: -211.8037}
+    _zoomFactor: 0.99735427
+  _haltSerialization: 0
+  _externalSerializationFile: {fileID: 0}

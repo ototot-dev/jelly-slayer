@@ -7,6 +7,7 @@ namespace Game
     {
         None,
         Hero,
+        DroneBot,
         Zombie,
         Footman,
         Warrior,
