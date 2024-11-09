@@ -15,7 +15,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5891697494063280953
 Transform:
   m_ObjectHideFlags: 0
@@ -42,6 +42,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3758835991799220657}
   - component: {fileID: 2413320803077063668}
+  - component: {fileID: 1853797499062314162}
   - component: {fileID: 629930389286374974}
   - component: {fileID: 3540552371793380332}
   - component: {fileID: 8791414763947496166}
@@ -90,6 +91,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   heartPoint:
     value: 0
+--- !u!114 &1853797499062314162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 859846127300755753}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c04c3c357e03410087b890344e2b06d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &629930389286374974
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -229,8 +242,8 @@ MonoBehaviour:
     walkSpeed: 1
     sprintSpeed: 0.1
     guardSpeed: 0.2
-    rollingDistance: 4
-    rollingDuration: 0.8
+    rollingDistance: 2
+    rollingDuration: 0.5
     jumpHeight: 2
     smashingHeight: 1
   action:
@@ -332,11 +345,11 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 11400000, guid: 31e804ec6c67b442fad1c9502b3d6aa3, type: 2}
   _boundGraphSource:
-    _version: 3.3
+    _version: 3.31
     _category: 
     _comments: 
-    _translation: {x: -67, y: -264}
-    _zoomFactor: 0.82365334
+    _translation: {x: -158, y: -305}
+    _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 0
   _disableAction: 0
