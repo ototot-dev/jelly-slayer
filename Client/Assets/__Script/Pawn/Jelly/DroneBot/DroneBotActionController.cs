@@ -8,7 +8,7 @@ namespace Game
     {
         [Header("Component")]
         public CapsuleCollider hitBox;
-        public Transform emitPoint;
+        public Transform[] emitPoint;
 
         public override bool CanRootMotion(Vector3 rootMotionVec)
         {
@@ -108,15 +108,6 @@ namespace Game
 
         public override void EmitProjectile(GameObject emitSource, int emitNum)
         {
-            // if (emitSource.TryGetComponent<DroneBomb>(out var sourceBomb))
-            // {
-            //     Observable.Interval(TimeSpan.FromSeconds(0.1f)).Take(emitNum).Subscribe(_ =>
-            //     {
-            //             if (Instantiate(emitSource, emitPoint.position, Quaternion.Euler(sourceBomb.impulsePitch, emitPoint.rotation.eulerAngles.y + UnityEngine.Random.Range(0f, 360f), 0f)).TryGetComponent<DroneBomb>(out var bomb))
-            //                 bomb.Pop(gameObject, sourceBomb.impulse);
-            //     }).AddTo(this);
-            // }
-
             //* onEmitProjectile 호출은 제일 나중에 함
             base.EmitProjectile(emitSource, emitNum);
         }

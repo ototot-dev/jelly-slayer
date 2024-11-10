@@ -15,9 +15,6 @@ public class PawnAnimEvent : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// ���� �ÿ� ȣ��
-    /// </summary>
     public void OnEventStartLand() 
     {
         Debug.Log("OnEventStartLand");
@@ -35,8 +32,9 @@ public class PawnAnimEvent : MonoBehaviour
             _controller.RollingGround();
         }
     }
+
     public void Hit() { }
     public void FootR() { }
     public void FootL() { }
-
+    public void f_start() {}
 }
