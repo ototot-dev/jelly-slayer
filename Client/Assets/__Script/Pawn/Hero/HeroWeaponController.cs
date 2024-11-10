@@ -147,7 +147,7 @@ namespace Game
             var projectile = objProj.GetComponent<HeroSwordProjectile>();
 
             projectile.executeBurst = executeBurst;
-            projectile.Go(gameObject, 5, 1);
+            projectile.Go(__brain, 5, 1);
 
             return projectile;
         }
@@ -163,7 +163,7 @@ namespace Game
             var projectile = objProj.GetComponent<HeroHammerProjectile>();
 
             projectile.executeBurst = executeBurst;
-            projectile.Go(gameObject, 5, 1);
+            projectile.Go(__brain, 5, 1);
 
             return projectile;
         }
@@ -180,7 +180,7 @@ namespace Game
             var projectile = objProj.GetComponent<HeroSpikeProjectile>();
 
             projectile.executeBurst = executeBurst;
-            projectile.Go(gameObject, 0, 0.6f);
+            projectile.Go(__brain, 0, 0.6f);
 
             return projectile;
         }
@@ -202,7 +202,7 @@ namespace Game
             projectile.targetPoint = targetPoint;
             projectile.splitCount = splitCount;
             projectile.executeBurst = executeBurst;
-            projectile.Go(gameObject, projectile.forwardSpeed, 0.5f);
+            projectile.Go(__brain, projectile.forwardSpeed, 0.5f);
 
             return projectile;
         }
@@ -218,7 +218,7 @@ namespace Game
             var projectile = Instantiate(objRes, transform.position, Quaternion.LookRotation(transform.forward)).GetComponent<HeroBombProjectile>();
 
             projectile.transform.rotation *= Quaternion.Euler(projectile.impulsePitch, 0, 0);
-            projectile.Pop(gameObject, projectile.impulse, 1.6f);
+            projectile.Pop(__brain, projectile.impulse, 1.6f);
 
             return projectile;
         }

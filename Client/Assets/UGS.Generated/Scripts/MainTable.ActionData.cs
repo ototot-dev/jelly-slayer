@@ -77,6 +77,8 @@ namespace MainTable
 		public System.Single knockDownAccum;
 		public System.Single knockBackDistance;
 		public System.Single guardBreak;
+		public System.Single guardStaminaDamage;
+		public System.Single guardStaminaCostMultiplier;
 		public System.Single guardDamage;
 		public System.Single guardStaminaCost;
 		public System.Int32 staminaCost;

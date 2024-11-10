@@ -853,6 +853,7 @@ namespace Game.NodeCanvasExtension
     {
         protected override string info => emitSource.isNoneOrNull ? base.info : $"Emit '{emitSource.name}' x <b>{emitNum.value}</b>";
         public BBParameter<GameObject> emitSource;
+        public BBParameter<Transform> emitPoint;
         public BBParameter<int> emitNum = 1;
 
         protected override void OnExecute()
@@ -860,7 +861,7 @@ namespace Game.NodeCanvasExtension
             var actionCtrler = agent.GetComponent<PawnActionController>();
             Debug.Assert(actionCtrler != null);
 
-            actionCtrler.EmitProjectile(emitSource.value, emitNum.value);
+            actionCtrler.EmitProjectile(emitSource.value, emitPoint.value, emitNum.value);
             EndAction(true);
         }
     }

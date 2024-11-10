@@ -9702,7 +9702,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   common:
-    pawnId: 4
+    pawnId: 5
     pawnName: Warrior
     spawnWaitingTime: 1
     despawnWaitingTime: 1

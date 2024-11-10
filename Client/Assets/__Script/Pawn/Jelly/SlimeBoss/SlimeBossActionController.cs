@@ -106,7 +106,7 @@ namespace Game
             };
         }
 
-        public override void EmitProjectile(GameObject emitSource, int emitNum)
+        public override void EmitProjectile(GameObject emitSource, Transform emitPoint, int emitNum)
         {
             // if (emitSource.TryGetComponent<SlimeBossBomb>(out var sourceBomb))
             // {
@@ -118,7 +118,7 @@ namespace Game
             // }
 
             //* onEmitProjectile 호출은 제일 나중에 함
-            base.EmitProjectile(emitSource, emitNum);
+            base.EmitProjectile(emitSource, emitPoint, emitNum);
         }
     }
 }

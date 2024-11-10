@@ -85,19 +85,19 @@ namespace Game
             };
         }
 
-        public override void EmitProjectile(GameObject emitSource, int emitNum)
+        public override void EmitProjectile(GameObject emitSource, Transform emitPoint, int emitNum)
         {
             if (emitSource.TryGetComponent<SlimeBossBomb>(out var sourceBomb))
             {
                 Observable.Interval(TimeSpan.FromSeconds(0.1f)).Take(emitNum).Subscribe(_ =>
                 {
                     if (Instantiate(emitSource, emitPoint.position, Quaternion.Euler(-emitPitch, emitPoint.rotation.eulerAngles.y, 0f)).TryGetComponent<SlimeBossBomb>(out var bomb))
-                        bomb.Pop(gameObject, emitSpeed);
+                        bomb.Pop(__brain, emitSpeed);
                 }).AddTo(this);
             }
 
             //* onEmitProjectile 호출은 제일 나중에 함
-            base.EmitProjectile(emitSource, emitNum);
+            base.EmitProjectile(emitSource, emitPoint, emitNum);
         }
     }
 }

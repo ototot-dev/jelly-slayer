@@ -53,7 +53,7 @@ namespace Game
                     continue;
 
                 if (c.TryGetComponent<PawnColliderHelper>(out var hitColliderHelper) && hitColliderHelper.pawnBrain != null && hitColliderHelper.pawnBrain != emitterBrain && hitColliderHelper.pawnBrain.PawnBB.common.pawnName == "Hero")
-                    emitterBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, hitColliderHelper.pawnBrain, actionData, hitColliderHelper.pawnCollider, false));
+                    emitterBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, emitter.Value, hitColliderHelper.pawnBrain, actionData, hitColliderHelper.pawnCollider, false));
             }
 
             EffectManager.Instance.Show("CFXR Explosion 2", rigidBodyCollider.transform.position + Vector3.up * 0.2f, Quaternion.identity, 0.5f * Vector3.one);

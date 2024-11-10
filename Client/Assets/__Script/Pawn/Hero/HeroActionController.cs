@@ -240,7 +240,8 @@ namespace Game
 
             onEmitProjectile += OnEmitProjectile;
         }
-        void OnEmitProjectile(ActionContext context, ProjectileMovement proj, int num) 
+
+        void OnEmitProjectile(ActionContext context, ProjectileMovement proj, Transform point, int num) 
         {
             var obj = GameObject.Instantiate(proj);
 

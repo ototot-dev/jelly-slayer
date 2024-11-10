@@ -42,7 +42,7 @@ namespace Game
                     return;
                     
                 ActionDataSelector.UpdateSelection(deltaTick);
-                return;
+
                 //* 공격
                 if (!ActionCtrler.CheckActionRunning() && string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && !BuffCtrler.CheckBuff(BuffTypes.Staggered) && CheckTargetVisibility())
                 {

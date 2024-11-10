@@ -38,4 +38,6 @@ public class PawnAnimEvent : MonoBehaviour
     public void FootL() { }
     public void f_start() {}
     public void f_hit() {}
+    public void f_fire() {}
+    public void f_afterFire() {}
 }

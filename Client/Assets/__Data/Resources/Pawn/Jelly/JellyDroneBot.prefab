@@ -701,7 +701,7 @@ GameObject:
   - component: {fileID: 699982949722121089}
   - component: {fileID: 681538142487681436}
   - component: {fileID: 8187655925995728377}
-  - component: {fileID: 1691952221841607600}
+  - component: {fileID: 712989377735933593}
   m_Layer: 0
   m_Name: DroneBot
   m_TagString: Untagged
@@ -844,7 +844,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
---- !u!114 &1691952221841607600
+--- !u!114 &712989377735933593
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -856,7 +856,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 776bd98dc9dedb44da093fe4799879c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _controller: {fileID: 908418010212902216}
+  _controller: {fileID: 0}
 --- !u!1 &705105474549175907
 GameObject:
   m_ObjectHideFlags: 0
@@ -26128,6 +26128,37 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &1275407703180976374
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1710675146248331780}
+  m_Layer: 0
+  m_Name: EmitPointR
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1710675146248331780
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1275407703180976374}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.5, y: 0.5, z: 0.5, w: 0.5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8139778466557948806}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 90}
 --- !u!1 &1291513680791677313
 GameObject:
   m_ObjectHideFlags: 0
@@ -45316,6 +45347,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6777313220912253973}
   m_LocalEulerAnglesHint: {x: -0.0000042798424, y: 0.00000052504316, z: 0.043945435}
+--- !u!1 &4822952986480780769
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 449322475394318657}
+  m_Layer: 0
+  m_Name: EmitPointL
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &449322475394318657
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4822952986480780769}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.5, y: 0.5, z: 0.5, w: 0.5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1714440692155697523}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 90}
 --- !u!1 &4823512563231235019
 GameObject:
   m_ObjectHideFlags: 0
@@ -46804,6 +46866,7 @@ Transform:
   m_Children:
   - {fileID: 7350842208284422834}
   - {fileID: 3542208265980866813}
+  - {fileID: 1710675146248331780}
   m_Father: {fileID: 8596555292196562249}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
 --- !u!1 &5660320808080085671
@@ -46837,6 +46900,7 @@ Transform:
   m_Children:
   - {fileID: 4744115618285050862}
   - {fileID: 6440880010603040371}
+  - {fileID: 449322475394318657}
   m_Father: {fileID: 2195640134131525722}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
 --- !u!1 &5746619367918995214
@@ -73100,8 +73164,11 @@ MonoBehaviour:
   bodyHitColliderHelper: {fileID: 666158820448204795}
   parryHitColliderHelper: {fileID: 0}
   hitBox: {fileID: 8107319224808135257}
-  emitPoint:
-  - {fileID: 0}
+  emitPointL: {fileID: 449322475394318657}
+  emitPointR: {fileID: 1710675146248331780}
+  plasmaExplosionFx: {fileID: 1062159407247627481}
+  smallExplisionFx: {fileID: 8793297471356860281}
+  smokeFx: {fileID: 6626332068254995823}
 --- !u!114 &908418010212902216
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73273,17 +73340,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _parentBlackboard: {fileID: 0}
-  _serializedBlackboard: '{"_variables":{"bulletProjectile":{"_value":1,"_name":"bulletProjectile","_id":"0d4c4728-c551-48bc-8f6b-5c4bf7180b49","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+  _serializedBlackboard: '{"_variables":{"bullet":{"_value":1,"_name":"bullet","_id":"0d4c4728-c551-48bc-8f6b-5c4bf7180b49","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}}}'
   _objectReferences:
   - {fileID: 0}
-  - {fileID: 3083626412401777055, guid: 752886715126d4741accce78d84c6797, type: 3}
+  - {fileID: 5195597221496436211, guid: 1cb37cbb2de5447a9b0965bcb5913526, type: 3}
   _serializedVariables:
-  - _json: '{"_value":1,"_name":"bulletProjectile","_id":"0d4c4728-c551-48bc-8f6b-5c4bf7180b49","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+  - _json: '{"_value":1,"_name":"bullet","_id":"0d4c4728-c551-48bc-8f6b-5c4bf7180b49","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
       UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
     _references:
     - {fileID: 0}
-    - {fileID: 3083626412401777055, guid: 752886715126d4741accce78d84c6797, type: 3}
+    - {fileID: 5195597221496436211, guid: 1cb37cbb2de5447a9b0965bcb5913526, type: 3}
 --- !u!1 &7514970868611279530
 GameObject:
   m_ObjectHideFlags: 0

@@ -25,12 +25,12 @@ namespace Game
         public Collider sensorCollider;
 
         [Header("Emitter")]
-        public ReactiveProperty<GameObject> emitter = new();
+        public ReactiveProperty<PawnBrainController> emitter = new();
 
         [Header("Life-Time")]
         public bool isLifeTimeOut;
         public Action onLifeTimeOut;
-        public Action<GameObject> onHitSomething;
+        public Action<Collider> onHitSomething;
         public bool IsPendingDestroy { get; private set; }
 
         void Awake()
@@ -63,17 +63,19 @@ namespace Game
 
         protected virtual void OnUpdateHandler()
         {
+            if (Time.time > __moveStartTimeStamp && (rigidBody == null || rigidBody.isKinematic))
+                transform.position += Time.deltaTime * velocity.Vector2D();
+
             if (Time.time - __moveStartTimeStamp > sensorEnabledTime && sensorCollider != null && !sensorCollider.enabled)
             {
                 sensorCollider.enabled = true;
-                __sensorDisposable = sensorCollider.OnTriggerEnterAsObservable().Subscribe(c => onHitSomething?.Invoke(c.gameObject)).AddTo(this);
+                __sensorDisposable = sensorCollider.OnTriggerEnterAsObservable().Subscribe(c => onHitSomething?.Invoke(c)).AddTo(this);
             }
 
             if (!isLifeTimeOut && lifeTime > 0 && lifeTime < Time.time - __moveStartTimeStamp)
             {
                 isLifeTimeOut = true;
                 onLifeTimeOut?.Invoke();
-
                 Stop(destroyWhenLifeTimeOut);
             }
         }
@@ -85,7 +87,7 @@ namespace Game
         protected IDisposable __sensorDisposable;
         protected float __moveStartTimeStamp;
 
-        public void Pop(GameObject emitter, Vector3 position, Vector3 impulse, Vector3 scale)
+        public void Pop(PawnBrainController emitter, Vector3 position, Vector3 impulse, Vector3 scale)
         {
             __moveStartTimeStamp = Time.time;
 
@@ -102,12 +104,12 @@ namespace Game
             }).AddTo(this);
         }
 
-        public void Pop(GameObject emitter, float impulse, float scale = 1)
+        public void Pop(PawnBrainController emitter, float impulse, float scale = 1)
         {
             Pop(emitter, transform.position, transform.forward * impulse, Vector3.one * scale);
         }
 
-        public void Go(GameObject emitter, Vector3 position, Vector3 velocity, Vector3 scale)
+        public void Go(PawnBrainController emitter, Vector3 position, Vector3 velocity, Vector3 scale)
         {
             //! Physics 시뮬레이션 상태면 안됨
             Debug.Assert(rigidBody == null || rigidBody.isKinematic);
@@ -123,7 +125,7 @@ namespace Game
             this.velocity = velocity;
         }
 
-        public void Go(GameObject emitter, float speed, float scale = 1)
+        public void Go(PawnBrainController emitter, float speed, float scale = 1)
         {
             Go(emitter, transform.position, transform.forward * speed, Vector3.one * scale);
         }

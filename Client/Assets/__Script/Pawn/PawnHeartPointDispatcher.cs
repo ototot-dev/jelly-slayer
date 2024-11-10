@@ -11,7 +11,6 @@ namespace Game
         public FloatReactiveProperty heartPoint = new();
         public PawnBrainController PawnBrain { get; private set; }
         public float LastDamageTimeStamp { get; private set; }
-        //public float LastDamageTimeStamp = 0;
 
         void Awake()
         {
@@ -67,7 +66,7 @@ namespace Game
             public MainTable.ActionData receiverActionData;
             public PawnBrainController senderBrain;
             public PawnBrainController receiverBrain;
-            public ProjectileMovement senderProjectile;
+            public ProjectileMovement projectile;
             public readonly FloatReactiveProperty SenderCurrHeartPoint => senderBrain.PawnHP.heartPoint;
             public readonly FloatReactiveProperty ReceiverCurrHeartPoint => receiverBrain.PawnHP.heartPoint;
             public ActionResults actionResult;
@@ -85,7 +84,7 @@ namespace Game
                 receiverActionData = null;
                 this.senderBrain = senderBrain;
                 this.receiverBrain = receiverBrain;
-                senderProjectile = null;
+                projectile = null;
                 actionResult = ActionResults.None;
                 senderPenalty = new(BuffTypes.None, -1);
                 receiverPenalty = new(BuffTypes.None, -1);
@@ -102,7 +101,7 @@ namespace Game
                 receiverActionData = null;
                 this.senderBrain = senderBrain;
                 this.receiverBrain = receiverBrain;
-                senderProjectile = null;
+                projectile = null;
                 actionResult = ActionResults.None;
                 senderPenalty = new(BuffTypes.None, -1);
                 receiverPenalty = new(BuffTypes.None, -1);
@@ -119,24 +118,24 @@ namespace Game
                 receiverActionData = null;
                 this.senderBrain = senderBrain;
                 this.receiverBrain = null;
-                senderProjectile = null;
+                projectile = null;
                 actionResult = ActionResults.None;
                 senderPenalty = new(BuffTypes.None, -1);
                 receiverPenalty = new(BuffTypes.None, -1);
                 this.finalDamage = finalDamage;
             }
 
-            public DamageContext(ProjectileMovement projectile, PawnBrainController receiverBrain, MainTable.ActionData actionData, Collider hitCollider, bool insufficientStamina)
+            public DamageContext(ProjectileMovement projectile, PawnBrainController senderBrain, PawnBrainController receiverBrain, MainTable.ActionData senderActionData, Collider hitCollider, bool insufficientStamina)
             {
                 timeStamp = Time.time;
                 hitPoint = projectile.transform.position;
                 this.hitCollider = hitCollider;
                 this.insufficientStamina = insufficientStamina;
-                this.senderActionData = actionData;
+                this.senderActionData = senderActionData;
                 receiverActionData = null;
-                senderBrain = projectile.emitter.Value.GetComponent<PawnBrainController>();
+                this.senderBrain = senderBrain;
                 this.receiverBrain = receiverBrain.GetComponent<PawnBrainController>();
-                this.senderProjectile = projectile;
+                this.projectile = projectile;
                 actionResult = ActionResults.None;
                 senderPenalty = new(BuffTypes.None, -1);
                 receiverPenalty = new(BuffTypes.None, -1);
@@ -231,7 +230,7 @@ namespace Game
             {
                 __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.Blocked", "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
 
-                var staminaCost = (damageContext.receiverBrain.PawnBB.stat.guardStaminaCost + damageContext.senderActionData.guardDamage) * Mathf.Clamp01(1f - damageContext.receiverBrain.PawnBB.stat.guardEfficiency);
+                var staminaCost = (damageContext.receiverBrain.PawnBB.stat.guardStaminaCost * damageContext.senderActionData.guardStaminaCostMultiplier + damageContext.senderActionData.guardStaminaDamage) * Mathf.Clamp01(1f - damageContext.receiverBrain.PawnBB.stat.guardEfficiency);
                 damageContext.receiverBrain.PawnBB.stat.stamina.Value -= staminaCost;
 
                 if (damageContext.receiverBrain.PawnBB.stat.guardStrength < damageContext.senderActionData.guardBreak)
@@ -244,12 +243,15 @@ namespace Game
                 }
                 else
                 {
-                    //* Receiver가 'Block' ActionData가 있는지 검증
-                    Debug.Assert(damageContext.receiverActionData != null);
+                    if (damageContext.projectile == null)
+                    {
+                        //* Receiver가 'Block' ActionData가 있는지 검증
+                        Debug.Assert(damageContext.receiverActionData != null);
 
-                    //* 'Block' 판정인 경우엔 Sender는 역경직을 받게 되고, Receiver도 짧은 자체 경직 시간을 갖게됨
-                    damageContext.senderPenalty = new(BuffTypes.Staggered, damageContext.receiverActionData.staggerDuration);
-                    damageContext.receiverPenalty = new(BuffTypes.Staggered, damageContext.receiverActionData.actionDuration);
+                        //* 'Block' 판정인 경우엔 Sender는 역경직을 받게 되고, Receiver도 짧은 자체 경직 시간을 갖게됨
+                        damageContext.senderPenalty = new(BuffTypes.Staggered, damageContext.receiverActionData.staggerDuration);
+                        damageContext.receiverPenalty = new(BuffTypes.Staggered, damageContext.receiverActionData.actionDuration);
+                    }
                 }
             }
             else if (damageContext.finalDamage > 0 || CalcFinalDamage(ref damageContext) > 0)

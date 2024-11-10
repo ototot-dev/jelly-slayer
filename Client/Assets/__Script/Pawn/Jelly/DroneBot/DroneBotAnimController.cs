@@ -28,16 +28,23 @@ namespace Game
         void Start()
         {
             __brain.onUpdate += () =>
-            {
+            {   
                 if (__brain.ActionCtrler.CheckActionRunning())
                 {
+                    if (__brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
+                        __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation);
+
                     if (__brain.ActionCtrler.currActionContext.rootMotionCurve != null)
                     {
-                        var rootMotionVec = Mathf.Max(0f, __brain.ActionCtrler.EvaluateRootMotion(Time.deltaTime)) * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                        var rootMotionVec = __brain.ActionCtrler.EvaluateRootMotion(Time.deltaTime) * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
                         if (__brain.ActionCtrler.CanRootMotion(rootMotionVec))
-                            __brain.Movement.AddRootMotion(Mathf.Max(0f, __brain.ActionCtrler.EvaluateRootMotion(Time.deltaTime)) * __brain.coreColliderHelper.transform.forward.Vector2D().normalized, Quaternion.identity);
+                            __brain.Movement.AddRootMotion(__brain.ActionCtrler.EvaluateRootMotion(Time.deltaTime) * __brain.coreColliderHelper.transform.forward.Vector2D().normalized, Quaternion.identity);
                     }
                 }
+                
+                mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
+                mainAnimator.SetLayerWeight(1, Mathf.Clamp01(mainAnimator.GetLayerWeight(1) + ((__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CurrActionName != "!OnHit") ? 10f : -10f) * Time.deltaTime));
+                mainAnimator.SetLayerWeight(2, 1f);
 
                 var animMoveVec = __brain.coreColliderHelper.transform.InverseTransformDirection(__brain.Movement.CurrVelocity).Vector2D();
                 mainAnimator.SetFloat("MoveX", animMoveVec.x / __brain.Movement.moveSpeed);

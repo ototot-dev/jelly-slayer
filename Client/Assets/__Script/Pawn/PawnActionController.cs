@@ -131,7 +131,7 @@ namespace Game
         public Action<ActionContext, float> onActionCanceled;
 
         //* 프로젝타일 방출
-        public Action<ActionContext, ProjectileMovement, int> onEmitProjectile;
+        public Action<ActionContext, ProjectileMovement, Transform, int> onEmitProjectile;
 
 #if UNITY_EDITOR
         Vector3 __actionStartPosition;
@@ -815,14 +815,15 @@ namespace Game
             __tracePawnNames.Clear();
         }
 
-        public virtual void EmitProjectile(GameObject emitSource, int emitNum)
+        public virtual void EmitProjectile(GameObject emitSource, Transform emitPoint, int emitNum)
         {
             if (emitSource == null) 
             {
                 Debug.Log("EmitProjectile is Null");
                 return;
             }
-            onEmitProjectile?.Invoke(currActionContext, emitSource.GetComponent<ProjectileMovement>(), emitNum);
+
+            onEmitProjectile?.Invoke(currActionContext, emitSource.GetComponent<ProjectileMovement>(), emitPoint, emitNum);
         }
     }
 }

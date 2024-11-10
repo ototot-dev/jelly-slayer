@@ -168,6 +168,9 @@ namespace Game
             {
                 if ((actionContext.actionData?.staminaCost ?? 0) > 0)
                     __jellyManBB.stat.stamina.Value = Mathf.Max(0f, __jellyManBB.stat.stamina.Value - actionContext.actionData.staminaCost);
+
+                //* 액션 수행 중에 현재 이동 제어를 끔
+                InvalidateDecision(0.2f);
             };
 
             __pawnActionCtrler.onActionFinished += (_) =>
@@ -296,7 +299,8 @@ namespace Game
                     }
                     else
                     {
-                        if (__decisionCoolTime <= 0f)
+                        //* 액션 수행 중에는 Decision 갱신은 하지 않음
+                        if (__decisionCoolTime <= 0f && !__pawnActionCtrler.CheckActionRunning())
                             __jellyManBB.decision.currDecision.Value = MakeDecision();
                     }
                 }
