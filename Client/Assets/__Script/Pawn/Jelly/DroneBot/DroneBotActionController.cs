@@ -29,17 +29,35 @@ namespace Game
             }
         }
         
+        
         public override IDisposable StartOnHitAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
         {
             Debug.Assert(damageContext.receiverBrain == __brain);
 
-            SoundManager.Instance.Play(SoundID.HIT_FLESH);
-            EffectManager.Instance.Show("@Hit 23 cube", damageContext.hitPoint, Quaternion.identity, Vector3.one, 1);
-            EffectManager.Instance.Show("@BloodFX_impact_col", damageContext.hitPoint, Quaternion.identity, 1.5f * Vector3.one, 3);
-
-            __brain.AnimCtrler.springMass.AddImpulseRandom(8f);
-            
             var knockBackVec = damageContext.senderActionData.knockBackDistance / 0.2f * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+
+            if (damageContext.actionResult == ActionResults.Damaged)
+            {
+                var hitVec = damageContext.senderBrain.coreColliderHelper.transform.position - damageContext.receiverBrain.coreColliderHelper.transform.position;
+                hitVec = damageContext.receiverBrain.coreColliderHelper.transform.InverseTransformDirection(hitVec).Vector2D().normalized;
+
+                __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
+
+                if (hitVec.x < 0f)
+                {
+                    __brain.AnimCtrler.mainAnimator.SetFloat("HitX", hitVec.x);
+                }
+                else
+                {
+                    var hitX = UnityEngine.Random.Range(0, 3);
+                    __brain.AnimCtrler.mainAnimator.SetFloat("HitX", hitX);
+                }
+
+                SoundManager.Instance.Play(SoundID.HIT_FLESH);
+                EffectManager.Instance.Show("@Hit 23 cube", damageContext.hitPoint, Quaternion.identity, Vector3.one, 1);
+                EffectManager.Instance.Show("@BloodFX_impact_col", damageContext.hitPoint, Quaternion.identity, 1.5f * Vector3.one, 3);
+            }
+
             var knockBackDisposable = Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.2f)))
                 .Subscribe(_ => __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity))
                 .AddTo(this);
