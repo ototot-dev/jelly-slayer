@@ -3,6 +3,9 @@ using XftWeapon;
 
 public class WeaponController : MonoBehaviour
 {
+    [SerializeField] Transform _trHandle;
+
+    [Header("Trail")]
     //[SerializeField] MeleeWeaponTrail _trail;
     [SerializeField] TrailRenderer _trailRender;
     [SerializeField] XWeaponTrail _trailXWeapon;
@@ -25,6 +28,16 @@ public class WeaponController : MonoBehaviour
             Invoke("XWeaponDeactivate", 0.3f);
         }
     }
+
+    public void EquipToBone(Transform trBone) 
+    {
+        transform.SetParent(trBone);
+        var pos = -_trHandle.localPosition;
+        var scale = transform.localScale;
+        transform.localPosition = new Vector3(scale.x * pos.x, scale.y * pos.y, scale.z * pos.z);
+        transform.localRotation = _trHandle.localRotation;
+    }
+
     void XWeaponDeactivate() 
     {
         if (_trailXWeapon != null)

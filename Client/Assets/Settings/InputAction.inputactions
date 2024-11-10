@@ -45,7 +45,7 @@
                     "name": "Roll",
                     "type": "Button",
                     "id": "2a069f32-24e7-4619-a20a-09f000b1f702",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -54,7 +54,7 @@
                     "name": "Jump",
                     "type": "Button",
                     "id": "369c7b1d-2966-4894-b680-70363d8802e6",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -81,7 +81,7 @@
                     "name": "Parry",
                     "type": "Button",
                     "id": "d629aeec-d76f-45e8-b1f4-e3628a03963c",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -97,12 +97,12 @@
                 },
                 {
                     "name": "LongFire",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "be56a742-d191-4d91-a511-57f6bf204b62",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [

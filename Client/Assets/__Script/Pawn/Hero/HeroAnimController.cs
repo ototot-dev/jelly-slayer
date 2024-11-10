@@ -93,7 +93,7 @@ namespace Game
         {
             mainAnimator.SetBool("IsJumping", false);
         }
-
+        /*
         public void ChangeWeapon(WEAPONSLOT weaponSlot)
         {
             switch (weaponSlot) {
@@ -105,6 +105,7 @@ namespace Game
                     break;
             }
         }
+        */
     }
 
 }
