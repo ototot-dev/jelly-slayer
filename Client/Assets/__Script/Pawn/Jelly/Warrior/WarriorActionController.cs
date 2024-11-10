@@ -59,7 +59,7 @@ namespace Game
                 EffectManager.Instance.Show("@BloodFX_impact_col", damageContext.hitPoint, Quaternion.identity, 1.5f * Vector3.one, 3);
             }
             else if (damageContext.actionResult == ActionResults.Blocked)
-            {   
+            {
                 knockBackVec *= 0.1f;
 
                 __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
@@ -68,6 +68,14 @@ namespace Game
                 Observable.Timer(TimeSpan.FromSeconds(0.5f)).Subscribe(_ => __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", false)).AddTo(this);
 
                 SoundManager.Instance.Play(SoundID.HIT_BLOCK);
+                EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.AnimCtrler.shieldSocket.position, Quaternion.identity, Vector3.one, 1f);
+            }
+            else if (damageContext.actionResult == ActionResults.GuardBreak) 
+            {
+                __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
+                __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 1);
+
+                SoundManager.Instance.Play(SoundID.GUARD_BREAK);
                 EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.AnimCtrler.shieldSocket.position, Quaternion.identity, Vector3.one, 1f);
             }
 

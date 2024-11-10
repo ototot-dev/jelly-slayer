@@ -234,7 +234,7 @@ namespace Game
                 var staminaCost = (damageContext.receiverBrain.PawnBB.stat.guardStaminaCost + damageContext.senderActionData.guardDamage) * Mathf.Clamp01(1f - damageContext.receiverBrain.PawnBB.stat.guardEfficiency);
                 damageContext.receiverBrain.PawnBB.stat.stamina.Value -= staminaCost;
 
-                if (damageContext.receiverBrain.PawnBB.stat.guardStrength < damageContext.senderActionData.guardBreak)
+                if (damageContext.receiverBrain.PawnBB.stat.guardStrength <= damageContext.senderActionData.guardBreak)
                 {
                     __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.GuardBreak", "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
                     damageContext.actionResult = ActionResults.GuardBreak;

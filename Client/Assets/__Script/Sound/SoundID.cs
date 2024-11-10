@@ -21,4 +21,6 @@ public enum SoundID
     EMPTY_STAMINA,
     KICK,
     SLASH_PARRY,
+    GUARD_BREAK,
+    CHARGING_ON,
 }

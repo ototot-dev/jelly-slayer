@@ -397,6 +397,11 @@ namespace Game
 
             if (isPress == true) 
             {
+                if (MyHeroBrain.ActionCtrler.CheckActionRunning() &&
+                   MyHeroBrain.ActionCtrler.CurrActionName.Contains("SlashHeavy")) 
+                {
+                    return;
+                }
                 _fireKeyPressed = true;
                 _fireKeyTime = Time.fixedTime;
                 MyHeroBrain.ActionCtrler.SetPendingAction("ChargeHeavy#1");
