@@ -7,18 +7,31 @@ using static FIMSpace.FProceduralAnimation.LegsAnimator;
 
 namespace Game
 {
-    public enum WEAPONTYPE 
+    public enum WeaponSetType 
     {
-        ONEHAND_SWORD_SHIELD,
-        TWOHAND_SWORD, 
+        ONEHAND_WEAPONSHIELD,
+        TWOHAND_WEAPON, 
     }
+    public enum WeaponBone
+    {
+        RIGHTHAND = 0,
+        LEFTHAND,
+        BACK,
+    }
+    public enum WeaponType 
+    {
+        SWORD = 0,
+        SHIELD,
+        KATANA,
+    }
+    /*
     public enum WEAPONSLOT 
     {
         NONE = 0,
         MAINSLOT,
         SUBSLOT,
     }
-
+    */
     public class HeroBrain : PawnBrainController, ISpawnable, IMovable
     {
 
@@ -48,12 +61,16 @@ namespace Game
         void IMovable.MoveTo(Vector3 destination) { Movement.MoveTo(destination); }
         void IMovable.FaceTo(Vector3 lookAt) { Movement.FaceTo(lookAt); }
         void IMovable.Stop() {}
-#endregion
+        #endregion
 
         [Header("Weapon")]
-        public WeaponController _weaponCtrlRIght;
-        public GameObject[] _weaponObj;
-        public WEAPONSLOT _weaponSlot = WEAPONSLOT.NONE;
+        public WeaponController _weaponCtrlRightHand;
+
+        public WeaponSetType _weaponSetType;
+        public Transform[] _trWeaponBone;
+        public WeaponController[] _weaponController;
+
+        [Header("Chain")]
         public ChainController _chainCtrl;
 
         public HeroBlackboard BB { get; private set; }
@@ -83,7 +100,7 @@ namespace Game
         {
             base.StartInternal();
 
-            ChangeWeapon(WEAPONSLOT.MAINSLOT);
+            ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
 
             Observable.Timer(TimeSpan.FromSeconds(0.2f)).Subscribe(_ => GameContext.Instance.playerCtrler.Possess(this));
 
@@ -116,11 +133,6 @@ namespace Game
                 if (GameContext.Instance.playerTargetManager != null)
                     GameContext.Instance.playerTargetManager.UpdateTarget();
             };
-
-            if (_weaponCtrlRIght == null) 
-            {
-                _weaponCtrlRIght = gameObject.GetComponentInChildren<WeaponController>();
-            }
         }
 
         void DamageReceiverHandler(ref PawnHeartPointDispatcher.DamageContext damageContext)
@@ -201,9 +213,9 @@ namespace Game
 
         public override void ShowTrail(bool isActive, int trailIndex) 
         {
-            if (_weaponCtrlRIght != null)
+            if (_weaponCtrlRightHand != null)
             {
-                _weaponCtrlRIght.ShowTrail(isActive);
+                _weaponCtrlRightHand.ShowTrail(isActive);
             }
         }
 
@@ -236,6 +248,54 @@ namespace Game
             _chainCtrl.Shoot(TargetPawn);
         }
 
+        void ResetToMainWeapon() 
+        {
+            ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
+        }
+
+        WeaponController GetWeaponController(WeaponType weaponType)
+        {
+            return _weaponController[(int)weaponType];
+        }
+        Transform GetWeaponBone(WeaponBone weaponBone)
+        {
+            return _trWeaponBone[(int)weaponBone];
+        }
+
+        void EquipWeaponToBone(WeaponType weaponType, WeaponBone weaponBone) 
+        {
+            return;
+            var controller = GetWeaponController(weaponType);
+            var bone = GetWeaponBone(weaponBone);
+            controller.EquipToBone(bone);
+
+            if (weaponBone == WeaponBone.RIGHTHAND) 
+            {
+                _weaponCtrlRightHand = controller;
+            }
+        }
+
+        public void ChangeWeapon(WeaponSetType weaponType) 
+        {
+            switch(weaponType)
+            {
+                case WeaponSetType.ONEHAND_WEAPONSHIELD:
+                    {
+                        EquipWeaponToBone(WeaponType.SWORD, WeaponBone.RIGHTHAND);
+                        EquipWeaponToBone(WeaponType.SHIELD, WeaponBone.LEFTHAND);
+                        EquipWeaponToBone(WeaponType.KATANA, WeaponBone.BACK);
+                    }
+                    break;
+                case WeaponSetType.TWOHAND_WEAPON:
+                    {
+                        EquipWeaponToBone(WeaponType.SWORD, WeaponBone.BACK);
+                        EquipWeaponToBone(WeaponType.SHIELD, WeaponBone.BACK);
+                        EquipWeaponToBone(WeaponType.KATANA, WeaponBone.RIGHTHAND);
+                    }
+                    break;
+            }
+        }
+        /*
         public void ChangeWeapon(WEAPONSLOT weaponSlot) 
         {
             if (_weaponSlot == weaponSlot)
@@ -270,6 +330,7 @@ namespace Game
             { 
             }
         }
+        */
     }
 
 }

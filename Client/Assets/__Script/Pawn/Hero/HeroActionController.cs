@@ -67,6 +67,13 @@ namespace Game
                 EffectManager.Instance.Show("@Hit 23 cube", damageContext.hitPoint, Quaternion.identity, Vector3.one, 1f);
                 EffectManager.Instance.Show("@BloodFX_impact_col", damageContext.hitPoint, Quaternion.identity, 1.5f * Vector3.one, 3f);
             }
+            else if (damageContext.actionResult == ActionResults.GuardBreak)
+            {
+                // __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", true);
+
+                SoundManager.Instance.Play(SoundID.HIT_BLOCK);
+                EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.AnimCtrler.shieldSocket.position, Quaternion.identity, Vector3.one, 1f);
+            }
             else //* Sender의 액션을 파훼된 경우
             {
                 if (damageContext.actionResult == ActionResults.ActiveParried)
@@ -90,13 +97,6 @@ namespace Game
                 {
                     __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 1);
                     __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
-
-                    SoundManager.Instance.Play(SoundID.HIT_BLOCK);
-                    EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.AnimCtrler.shieldSocket.position, Quaternion.identity, Vector3.one, 1f);
-                }
-                else if (damageContext.actionResult == ActionResults.GuardBreak)
-                {
-                    __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", true);
 
                     SoundManager.Instance.Play(SoundID.HIT_BLOCK);
                     EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.AnimCtrler.shieldSocket.position, Quaternion.identity, Vector3.one, 1f);

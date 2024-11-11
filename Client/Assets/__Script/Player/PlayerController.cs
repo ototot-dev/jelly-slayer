@@ -24,6 +24,9 @@ namespace Game
         public GameObject MyHero => MyHeroBrain != null ? MyHeroBrain.gameObject : null;
         public HeroBrain MyHeroBrain { get; private set; }
 
+        private bool _fireKeyPressed = false;
+        private float _fireKeyTime = 0;
+
         public GameObject SpawnHero(GameObject heroPrefab, bool possessImmediately = false)
         {
             var spawnPosition = MyHero != null ? MyHero.transform.position : transform.position;
@@ -181,10 +184,13 @@ namespace Game
                 }
                 else
                 {
+                    newActionName = "Slash#1";
+                    /*
                     if(MyHeroBrain._weaponSlot == WEAPONSLOT.MAINSLOT)
                         newActionName = (isCtrlDown) ? "SlashHeavy#1" : "Slash#1";
                     else
                         newActionName = (isCtrlDown) ? "THSlashHeavy#1" : "THSlash#1";
+                    */
                 }
             }
             else if (actionCtrler.CurrActionName.Contains("Slash") && actionCtrler.CanInterruptAction())  //* CanInterruptAction()가 true면, 현재 액션을 취소하고 다음 액션을 수행할 수 있다.
@@ -310,7 +316,7 @@ namespace Game
                 MyHeroBrain.BB.stat.stamina.Value -= jumpStaminaCost;
             }
         }
-
+        /*
         public void OnSwap() 
         {
             Debug.Log("OnSwap");
@@ -325,7 +331,7 @@ namespace Game
             }
             MyHeroBrain.ChangeWeapon(weaponSlot);
         }
-
+        */
         public void OnRoll()
         {
             var actionData = DatasheetManager.Instance.GetActionData(MyHeroBrain.PawnBB.common.pawnId, "Rolling");
@@ -374,9 +380,53 @@ namespace Game
                 MyHeroBrain.ActionCtrler.SetPendingAction("ChainShot");
             }
         }
-        public void OnLongFire()
+        void ChargeEnd() 
         {
-            Debug.Log("<color=red>OnLongFire</color>");
+            if (_fireKeyPressed == false) return;
+
+            _fireKeyPressed = false;
+            MyHeroBrain.ActionCtrler.CancelAction(false);
+            MyHeroBrain.ActionCtrler.SetPendingAction("SlashHeavy#1");
+        }
+
+        public void OnLongFire(InputValue value)
+        {
+            float inputValue = value.Get<float>();
+            bool isPress = value.Get<float>() > 0;
+            Debug.Log("<color=red>OnLongFire</color> : " + inputValue);
+
+            if (isPress == true) 
+            {
+                if (MyHeroBrain.ActionCtrler.CheckActionRunning() &&
+                   MyHeroBrain.ActionCtrler.CurrActionName.Contains("SlashHeavy")) 
+                {
+                    return;
+                }
+                _fireKeyPressed = true;
+                _fireKeyTime = Time.fixedTime;
+                MyHeroBrain.ActionCtrler.SetPendingAction("ChargeHeavy#1");
+
+                MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
+
+                //Invoke("ChargeEnd", 3);
+            }
+            else if (isPress == false && _fireKeyPressed == true) 
+            {
+                _fireKeyPressed = false;
+                MyHeroBrain.ActionCtrler.CancelAction(false);
+
+                // 일정 시간 이상 모으면 모으기 공격
+                var timeDelta = Time.fixedTime - _fireKeyTime;
+                Debug.Log("Slash Heavy : " + timeDelta);
+                if (timeDelta >= 0.5f)
+                {
+                    MyHeroBrain.ActionCtrler.SetPendingAction("SlashHeavy#1");
+                }
+                else 
+                {
+                    MyHeroBrain.ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
+                }
+            }
         }
     }
 }

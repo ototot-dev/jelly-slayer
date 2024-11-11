@@ -56,10 +56,16 @@ namespace Game
 #if UNITY_EDITOR
             DatasheetManager.Instance.Load();
 #endif
-
-            foreach (var d in DatasheetManager.Instance.GetActionData(GetComponent<PawnBlackboard>().common.pawnId))
-                SourceActionStates.Add(d, new ActionState(d));
-
+            var board = GetComponent<PawnBlackboard>();
+            if (board != null)
+            {
+                var data = DatasheetManager.Instance.GetActionData(board.common.pawnId);
+                if (data != null)
+                {
+                    foreach (var d in data)
+                        SourceActionStates.Add(d, new ActionState(d));
+                }
+            }
             __pawnBrain = GetComponent<PawnBrainController>();
         }
 

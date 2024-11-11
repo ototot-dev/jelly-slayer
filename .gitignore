@@ -9,6 +9,7 @@
 /Client/[Bb]uilds/
 /Client/[Ll]ogs/
 /Client/[Uu]ser[Ss]ettings/
+/Client/[Aa]ssets/__Ignore/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data

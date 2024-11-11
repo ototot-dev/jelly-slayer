@@ -49,25 +49,33 @@ namespace Game
                 var hitVec = damageContext.senderBrain.coreColliderHelper.transform.position - damageContext.receiverBrain.coreColliderHelper.transform.position;
                 hitVec = damageContext.receiverBrain.coreColliderHelper.transform.InverseTransformDirection(hitVec).Vector2D().normalized;
 
-                __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
-                __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0);
                 __brain.AnimCtrler.mainAnimator.SetFloat("HitX", hitVec.x);
                 __brain.AnimCtrler.mainAnimator.SetFloat("HitY", hitVec.z);
+                __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0);
+                __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
 
                 SoundManager.Instance.Play(SoundID.HIT_FLESH);
                 EffectManager.Instance.Show("@Hit 23 cube", damageContext.hitPoint, Quaternion.identity, Vector3.one, 1);
                 EffectManager.Instance.Show("@BloodFX_impact_col", damageContext.hitPoint, Quaternion.identity, 1.5f * Vector3.one, 3);
             }
             else if (damageContext.actionResult == ActionResults.Blocked)
-            {   
+            {
                 knockBackVec *= 0.1f;
 
-                __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
-                __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 1);
                 __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", true);
+                __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 1);
+                __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
                 Observable.Timer(TimeSpan.FromSeconds(0.5f)).Subscribe(_ => __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", false)).AddTo(this);
 
                 SoundManager.Instance.Play(SoundID.HIT_BLOCK);
+                EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.AnimCtrler.shieldSocket.position, Quaternion.identity, Vector3.one, 1f);
+            }
+            else if (damageContext.actionResult == ActionResults.GuardBreak) 
+            {
+                __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 2);
+                __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
+
+                SoundManager.Instance.Play(SoundID.GUARD_BREAK);
                 EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.AnimCtrler.shieldSocket.position, Quaternion.identity, Vector3.one, 1f);
             }
 
