@@ -167,7 +167,7 @@ namespace Game
             __pawnActionCtrler.onActionStart += (actionContext, _) =>
             {
                 if ((actionContext.actionData?.staminaCost ?? 0) > 0)
-                    __jellyManBB.stat.stamina.Value = Mathf.Max(0f, __jellyManBB.stat.stamina.Value - actionContext.actionData.staminaCost);
+                    __jellyManBB.stat.ReduceStamina(actionContext.actionData.staminaCost);
 
                 //* 액션 수행 중에 현재 이동 제어를 끔
                 InvalidateDecision(0.2f);

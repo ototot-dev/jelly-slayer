@@ -4,7 +4,11 @@ namespace Game
 {
     public static class PawnBlackboardHelper
     {
-        // 스테미나 회복
+        public static void ReduceStamina(this PawnBlackboard.Stat stat, float delta)
+        {   
+            stat.stamina.Value = Mathf.Max(0f, stat.stamina.Value -delta);
+        }
+
         public static void RecoverStamina(this PawnBlackboard.Stat stat, float conditionTimeStamp, float deltaTime)
         {   
             if (Time.time - conditionTimeStamp > stat.staminaRecoverTimeThreshold)

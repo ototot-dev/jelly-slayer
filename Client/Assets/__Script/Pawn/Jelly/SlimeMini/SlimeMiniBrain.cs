@@ -180,7 +180,7 @@ namespace Game
             ActionCtrler.onActionStart += (actionContext, _) =>
             {
                 if ((actionContext.actionData?.staminaCost ?? 0) > 0)
-                    BB.stat.stamina.Value = Mathf.Max(0, BB.stat.stamina.Value - actionContext.actionData.staminaCost);
+                    BB.stat.ReduceStamina(actionContext.actionData.staminaCost);
             };
 
             ActionCtrler.onActionFinished += (actionContext) =>

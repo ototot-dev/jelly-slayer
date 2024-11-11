@@ -313,7 +313,7 @@ namespace Game
 
                 MyHeroBrain.Movement.StartJumping();
                 MyHeroBrain.BB.action.isJumping.Value = true;
-                MyHeroBrain.BB.stat.stamina.Value -= jumpStaminaCost;
+                MyHeroBrain.BB.stat.ReduceStamina(jumpStaminaCost);
             }
         }
         /*

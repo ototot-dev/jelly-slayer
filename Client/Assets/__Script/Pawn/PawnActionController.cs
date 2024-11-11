@@ -415,7 +415,7 @@ namespace Game
                     }
                     else
                     {
-                        __pawnBrain.PawnBB.stat.stamina.Value =  __pawnBrain.PawnBB.stat.stamina.Value - actionData.staminaCost;
+                        __pawnBrain.PawnBB.stat.ReduceStamina(actionData.staminaCost);
                     }
                 }
 
