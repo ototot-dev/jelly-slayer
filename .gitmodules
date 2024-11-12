@@ -1,3 +1,3 @@
-[submodule "Client/Assets/__Download"]
-	path = Client/Assets/__Download
+[submodule "Client/Assets/__Submodule"]
+	path = Client/Assets/__Submodule
 	url = https://github.com/ototot-dev/jelly-slayer-res
