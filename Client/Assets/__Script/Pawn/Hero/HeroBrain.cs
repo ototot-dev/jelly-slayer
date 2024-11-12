@@ -82,7 +82,6 @@ namespace Game
 
         public bool _isBind = false;
         public List<PawnBrainController> _bindLIst = new ();
-        public HeroChainShotProjectile _chainShotProj = null;
 
         protected override void AwakeInternal()
         {
@@ -264,7 +263,6 @@ namespace Game
 
         void EquipWeaponToBone(WeaponType weaponType, WeaponBone weaponBone) 
         {
-            return;
             var controller = GetWeaponController(weaponType);
             var bone = GetWeaponBone(weaponBone);
             controller.EquipToBone(bone);
@@ -295,42 +293,5 @@ namespace Game
                     break;
             }
         }
-        /*
-        public void ChangeWeapon(WEAPONSLOT weaponSlot) 
-        {
-            if (_weaponSlot == weaponSlot)
-                return;
-
-            _weaponSlot = weaponSlot;
-            return;
-            
-            AnimCtrler.ChangeWeapon(weaponSlot);
-
-            foreach (var obj in _weaponObj) 
-            {
-                if(obj != null)
-                    obj.SetActive(false);
-            }
-            switch(_weaponSlot) 
-            {
-                case WEAPONSLOT.MAINSLOT:
-                    _weaponObj[0].SetActive(true);
-                    _weaponObj[1].SetActive(true);
-
-                    _weaponCtrlRIght = _weaponObj[0].GetComponent<WeaponController>();
-                    break;
-                case WEAPONSLOT.SUBSLOT:
-                    _weaponObj[2].SetActive(true);
-
-                    _weaponCtrlRIght = _weaponObj[2].GetComponent<WeaponController>();
-                    break;
-            }
-            //var fsm = GetComponent<FSMOwner>();
-            //if (fsm != null) 
-            { 
-            }
-        }
-        */
     }
-
 }
