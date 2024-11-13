@@ -77,7 +77,7 @@ namespace Game
                 {
                     if (ShieldMesh.transform.localScale == Vector3.one)
                     {
-                        if (__brain.BB.action.isGuarding.Value && !__brain.ActionCtrler.CheckActionRunning())
+                        if (__brain.BB.IsGuarding && !__brain.ActionCtrler.CheckActionRunning())
                         {
                             __brain.AnimCtrler.mainAnimator.SetBool("bGuarding", true);
                             __brain.AnimCtrler.mainAnimator.SetTrigger("toGuard");
@@ -87,7 +87,7 @@ namespace Game
                     }
                     else
                     {
-                        if (!__brain.BB.action.isGuarding.Value || __brain.ActionCtrler.CheckActionRunning())
+                        if (!__brain.BB.IsGuarding || __brain.ActionCtrler.CheckActionRunning())
                         {
                             __brain.AnimCtrler.mainAnimator.SetBool("bGuarding", false);
                             ShieldMesh.transform.localScale = Vector3.one;

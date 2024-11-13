@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 729086315131753124}
   serializedVersion: 2
   m_LocalRotation: {x: -0.5080694, y: 0.2555985, z: -0.020570457, w: 0.8222602}
-  m_LocalPosition: {x: 0.26, y: 0.487, z: 0.083}
+  m_LocalPosition: {x: 0.26, y: 0.498, z: 0.028}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -257,6 +257,8 @@ MonoBehaviour:
       value: 0
     isGuarding:
       value: 0
+    isCharging:
+      value: 0
     isAutoGuardEnabled:
       value: 1
 --- !u!114 &2118029493424771570
@@ -350,8 +352,8 @@ MonoBehaviour:
     _version: 3.31
     _category: 
     _comments: 
-    _translation: {x: -158, y: -305}
-    _zoomFactor: 1
+    _translation: {x: 14, y: -291}
+    _zoomFactor: 0.66755205
   _firstActivation: 0
   _enableAction: 0
   _disableAction: 0

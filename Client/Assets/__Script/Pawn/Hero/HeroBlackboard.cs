@@ -13,6 +13,7 @@ namespace Game
         public bool IsJumping => action.isJumping.Value;
         public bool IsRolling => action.isRolling.Value;
         public bool IsGuarding => action.isGuarding.Value;
+        public bool IsCharging => action.isCharging.Value;
         public bool IsAutoGuardEnabled => action.isAutoGuardEnabled.Value;
 
         [Serializable]
@@ -37,7 +38,9 @@ namespace Game
             public BoolReactiveProperty isJumping = new();
             public BoolReactiveProperty isRolling = new();
             public BoolReactiveProperty isGuarding = new();
+            public BoolReactiveProperty isCharging = new();
             public BoolReactiveProperty isAutoGuardEnabled = new(true);
+
         }
 
         public Action action = new();

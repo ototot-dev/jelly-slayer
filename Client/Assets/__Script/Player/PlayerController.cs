@@ -93,7 +93,7 @@ namespace Game
                         })
                         .Subscribe(__ =>
                         {
-                            MyHeroBrain.Movement.moveSpeed = MyHeroBrain.BB.action.isGuarding.Value ? MyHeroBrain.BB.body.guardSpeed : MyHeroBrain.BB.body.moveSpeed;
+                            MyHeroBrain.Movement.moveSpeed = MyHeroBrain.BB.IsGuarding ? MyHeroBrain.BB.body.guardSpeed : MyHeroBrain.BB.body.moveSpeed;
                             MyHeroBrain.Movement.faceVec = MyHeroBrain.Movement.moveVec = Quaternion.AngleAxis(45, Vector3.up) * new Vector3(moveVec.Value.x, 0, moveVec.Value.y);
                         });
                 }).AddTo(this);
@@ -404,7 +404,9 @@ namespace Game
                 }
                 _fireKeyPressed = true;
                 _fireKeyTime = Time.fixedTime;
-                MyHeroBrain.ActionCtrler.SetPendingAction("ChargeHeavy#1");
+
+                MyHeroBrain.BB.action.isCharging.Value = true;
+                //MyHeroBrain.ActionCtrler.SetPendingAction("ChargeHeavy#1");
 
                 MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
 
@@ -413,7 +415,8 @@ namespace Game
             else if (isPress == false && _fireKeyPressed == true) 
             {
                 _fireKeyPressed = false;
-                MyHeroBrain.ActionCtrler.CancelAction(false);
+                //MyHeroBrain.ActionCtrler.CancelAction(false);
+                MyHeroBrain.BB.action.isCharging.Value = false;
 
                 // 일정 시간 이상 모으면 모으기 공격
                 var timeDelta = Time.fixedTime - _fireKeyTime;

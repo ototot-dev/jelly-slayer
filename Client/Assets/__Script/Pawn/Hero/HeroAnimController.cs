@@ -28,9 +28,12 @@ namespace Game
 
         void Start()
         {
-            __brain.BB.action.isGuarding.Subscribe(v =>
-            {
+            __brain.BB.action.isGuarding.Subscribe(v => {
                 mainAnimator.SetBool("IsGuarding", v);
+            }).AddTo(this);
+
+            __brain.BB.action.isCharging.Subscribe(v => {
+                mainAnimator.SetBool("IsCharging", v);
             }).AddTo(this);
 
             __brain.onUpdate += () =>
