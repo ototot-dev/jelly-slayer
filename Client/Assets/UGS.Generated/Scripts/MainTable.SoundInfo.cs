@@ -23,8 +23,8 @@ namespace MainTable
         public delegate void OnLoadedFromGoogleSheets(List<SoundInfo> loadedList, Dictionary<int, SoundInfo> loadedDictionary);
 
         static bool isLoaded = false;
-        static string spreadSheetID = "19oz9FuD0eLqBOgKr9hycuWc0LfzEbMXmKqJc-HrEWWI"; // it is file id
-        static string sheetID = "512325066"; // it is sheet id
+        static string spreadSheetID = "12IRicExSLyaship2L_h0pHkqSr_Ele8UOwydydRDAjw"; // it is file id
+        static string sheetID = "492985087"; // it is sheet id
         static UnityFileReader reader = new UnityFileReader();
 
 /* Your Loaded Data Storage. */
