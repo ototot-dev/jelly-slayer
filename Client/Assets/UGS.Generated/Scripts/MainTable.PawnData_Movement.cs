@@ -24,8 +24,8 @@ namespace MainTable
         public delegate void OnLoadedFromGoogleSheets(List<PawnData_Movement> loadedList, Dictionary<int, PawnData_Movement> loadedDictionary);
 
         static bool isLoaded = false;
-        static string spreadSheetID = "12IRicExSLyaship2L_h0pHkqSr_Ele8UOwydydRDAjw"; // it is file id
-        static string sheetID = "686352488"; // it is sheet id
+        static string spreadSheetID = "19oz9FuD0eLqBOgKr9hycuWc0LfzEbMXmKqJc-HrEWWI"; // it is file id
+        static string sheetID = "995463509"; // it is sheet id
         static UnityFileReader reader = new UnityFileReader();
 
 /* Your Loaded Data Storage. */

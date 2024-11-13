@@ -25,8 +25,8 @@ namespace MainTable
         public delegate void OnLoadedFromGoogleSheets(List<BuffData> loadedList, Dictionary<int, BuffData> loadedDictionary);
 
         static bool isLoaded = false;
-        static string spreadSheetID = "12IRicExSLyaship2L_h0pHkqSr_Ele8UOwydydRDAjw"; // it is file id
-        static string sheetID = "996147972"; // it is sheet id
+        static string spreadSheetID = "19oz9FuD0eLqBOgKr9hycuWc0LfzEbMXmKqJc-HrEWWI"; // it is file id
+        static string sheetID = "701939391"; // it is sheet id
         static UnityFileReader reader = new UnityFileReader();
 
 /* Your Loaded Data Storage. */

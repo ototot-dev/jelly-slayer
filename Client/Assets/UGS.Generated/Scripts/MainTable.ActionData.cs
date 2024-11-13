@@ -24,8 +24,8 @@ namespace MainTable
         public delegate void OnLoadedFromGoogleSheets(List<ActionData> loadedList, Dictionary<int, ActionData> loadedDictionary);
 
         static bool isLoaded = false;
-        static string spreadSheetID = "12IRicExSLyaship2L_h0pHkqSr_Ele8UOwydydRDAjw"; // it is file id
-        static string sheetID = "1786594390"; // it is sheet id
+        static string spreadSheetID = "19oz9FuD0eLqBOgKr9hycuWc0LfzEbMXmKqJc-HrEWWI"; // it is file id
+        static string sheetID = "1199490746"; // it is sheet id
         static UnityFileReader reader = new UnityFileReader();
 
 /* Your Loaded Data Storage. */
@@ -77,6 +77,8 @@ namespace MainTable
 		public System.Single knockDownAccum;
 		public System.Single knockBackDistance;
 		public System.Single guardBreak;
+		public System.Single guardStaminaDamage;
+		public System.Single guardStaminaCostMultiplier;
 		public System.Single guardDamage;
 		public System.Single guardStaminaCost;
 		public System.Int32 staminaCost;
