@@ -51,15 +51,15 @@ namespace Game
                 {
                     if (ActionCtrler.currActionContext.actionData != null && ActionCtrler.CanInterruptAction())
                     {
-                        var nextActionData = DatasheetManager.Instance.GetActionData(BB.common.pawnId, ActionCtrler.currActionContext.actionData.nextActionName);
-                        Debug.Assert(nextActionData != null);
+                        // var nextActionData = DatasheetManager.Instance.GetActionData(BB.common.pawnId, ActionCtrler.currActionContext.actionData.nextActionName);
+                        // Debug.Assert(nextActionData != null);
                         
-                        //* 콥보 (NextAction) 공격
-                        if (nextActionData.staminaCost <= BB.stat.stamina.Value && __jellyManBB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position) <= nextActionData.actionRange && CheckTargetVisibility())
-                        {
-                            ActionCtrler.CancelAction(false);
-                            ActionCtrler.SetPendingAction(nextActionData.actionName);
-                        }
+                        // //* 콥보 (NextAction) 공격
+                        // if (nextActionData.staminaCost <= BB.stat.stamina.Value && __jellyManBB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position) <= nextActionData.actionRange && CheckTargetVisibility())
+                        // {
+                        //     ActionCtrler.CancelAction(false);
+                        //     ActionCtrler.SetPendingAction(nextActionData.actionName);
+                        // }
                     }
                 }
                 else

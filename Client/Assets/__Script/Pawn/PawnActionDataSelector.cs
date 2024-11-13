@@ -11,24 +11,25 @@ namespace Game
         public class ActionState
         {
             public MainTable.ActionData source;
-            public float currSelectWeight;
+            public float currRate;
             public float currCoolTime;
 
             public ActionState(MainTable.ActionData actionData)
             {
                 source = actionData;
-                currSelectWeight = source.selectWeight;
-                currCoolTime = 0;
+
+                ResetRate();
+                ResetCoolTime();
             }
 
-            public void BoostSelectWeight(float deltaWeight)
+            public void IncreaseRate(float deltaRate)
             {
-                currSelectWeight += deltaWeight;
+                currRate += deltaRate;
             }
 
-            public void ResetCoolTime()
+            public void ResetRate()
             {
-                currCoolTime = source.coolTime;
+                currRate = source.selectionRate;
             }
 
             public float DecreaseCoolTime(float deltaCoolTime)
@@ -37,10 +38,9 @@ namespace Game
                 return currCoolTime = Mathf.Max(0, currCoolTime - deltaCoolTime);
             }
 
-            public float IncreaseWeight(float deltaWeight)
+            public void ResetCoolTime()
             {
-                Debug.Assert(deltaWeight > 0);
-                return currSelectWeight += deltaWeight;
+                currCoolTime = source.coolTime;
             }
         };
 
@@ -73,7 +73,7 @@ namespace Game
         {            
             foreach (var s in SourceActionStates)
             {
-                if (s.Key.selectWeight > 0 && (s.Key.coolTime < 0f || (s.Key.coolTime > 0 && s.Value.DecreaseCoolTime(deltaTime) <= 0)))
+                if (s.Key.selectionRate > 0 && (s.Key.coolTime < 0f || (s.Key.coolTime > 0 && s.Value.DecreaseCoolTime(deltaTime) <= 0)))
                     __executableActionData.Add(s.Key);
             }
         }
@@ -85,7 +85,7 @@ namespace Game
             if (boostSelectWeight && __executableActionData.Count > 0)
             {
                 foreach (var e in __executableActionData)
-                    SourceActionStates[e].BoostSelectWeight(1f);
+                    SourceActionStates[e].IncreaseRate(1f);
             }
 
             return ret != null;
@@ -93,24 +93,37 @@ namespace Game
 
         public MainTable.ActionData PickSelection(float distanceConstraint, float staminaConstraint)
         {
-            var selector = UnityEngine.Random.Range(0, __executableActionData.Where(d => d.actionRange >= distanceConstraint && d.staminaCost <= staminaConstraint).Sum(d => SourceActionStates[d].currSelectWeight));
+            var selector = UnityEngine.Random.Range(0, __executableActionData.Where(d => d.actionRange >= distanceConstraint && d.staminaCost <= staminaConstraint).Sum(d => SourceActionStates[d].currRate));
             var curr = 0f;
             foreach (var d in __executableActionData)
             {
                 if (distanceConstraint > d.actionRange || staminaConstraint < d.staminaCost)
                     continue;
 
-                if (selector >= curr && selector < curr + SourceActionStates[d].currSelectWeight)
+                if (selector >= curr && selector < curr + SourceActionStates[d].currRate)
                 {
-                    SourceActionStates[d].currSelectWeight = d.selectWeight;
+                    SourceActionStates[d].currRate = d.selectionRate;
                     __executableActionData.Remove(d);
                     return d;
                 }
 
-                curr += SourceActionStates[d].currSelectWeight;
+                curr += SourceActionStates[d].currRate;
             }
 
             return null;
+        }
+
+        public MainTable.ActionData EvaluateSelection(string actionName, float distanceConstraint, float staminaConstraint)
+        {
+            return null;
+            // var actionData = __executableActionData.FirstOrDefault(d => d.actionName == actionName);
+            // if (actionData == null)
+            //     return null;
+
+            // if (actionData.actionRange )
+
+            
+
         }
     }
 }

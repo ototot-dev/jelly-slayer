@@ -63,7 +63,9 @@ namespace MainTable
 		public System.Single actionSpeed;
 		public System.Single actionRange;
 		public System.Single actionDuration;
-		public System.String nextActionName;
+		public System.Int32 staminaCost;
+		public System.Single selectionRate;
+		public System.Single coolTime;
 		public System.Single damageMultiplier;
 		public System.Int32 cannotHitOnJump;
 		public System.Int32 cannotAvoidOnRolling;
@@ -79,11 +81,6 @@ namespace MainTable
 		public System.Single guardBreak;
 		public System.Single guardStaminaDamage;
 		public System.Single guardStaminaCostMultiplier;
-		public System.Single guardDamage;
-		public System.Single guardStaminaCost;
-		public System.Int32 staminaCost;
-		public System.Single coolTime;
-		public System.Single selectWeight;
   
 
 #region fuctions
