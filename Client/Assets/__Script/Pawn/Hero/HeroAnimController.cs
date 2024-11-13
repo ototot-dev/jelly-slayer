@@ -28,10 +28,9 @@ namespace Game
 
         void Start()
         {
-            __brain.BB.action.isGuarding.Subscribe(v =>
-            {
-                mainAnimator.SetBool("IsGuarding", v);
-            }).AddTo(this);
+            //* Charging 예비 모션은 IsGuarding 애님을 공용으로 쓴다.
+            __brain.BB.action.isCharging.Subscribe(v => mainAnimator.SetBool("IsGuarding", v)).AddTo(this);
+            __brain.BB.action.isGuarding.Subscribe(v => mainAnimator.SetBool("IsGuarding", v)).AddTo(this);
 
             __brain.onUpdate += () =>
             {

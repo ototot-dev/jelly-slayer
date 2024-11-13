@@ -11,15 +11,12 @@ namespace Game.NodeCanvasExtension
 {
     public class CheckActionRunning : ConditionTask
     {
-
         [BlackboardOnly]
         public BBParameter<PawnActionController> actionCtrler;
+        protected override string info =>"CheckActionRunning() == " + (invert ? "False" : "True");
 
-        protected override string info {
-            get { return "CheckActionRunning() == " + (invert ? "False" : "True"); }
-        }
-
-        protected override bool OnCheck() {
+        protected override bool OnCheck() 
+        {
             return actionCtrler.value.CheckActionRunning();
         }
     }
@@ -357,9 +354,9 @@ namespace Game.NodeCanvasExtension
     {
         public BBParameter<string> actionName;
         public BBParameter<bool> manualAdvanceEnabled;
+        public BBParameter<float> animSpeedMultiplier = 1;
         public BBParameter<float> animClipLength = -1;
         public BBParameter<int> animClipFps = -1;
-        public BBParameter<float> actionSpeedMultiplier = 1;
         public BBParameter<float> rootMotionMultiplier = 1;
         public BBParameter<AnimationCurve> rootMotionCurve;
         protected override string info => $"Start Action <b>{actionName.value}</b>";
@@ -371,7 +368,7 @@ namespace Game.NodeCanvasExtension
 
             if (actionCtrler.PendingActionData.Item1 == actionName.value)
             {
-                EndAction(actionCtrler.StartAction(actionName.value, actionSpeedMultiplier.value, rootMotionMultiplier.value, rootMotionCurve.value, manualAdvanceEnabled.value));
+                EndAction(actionCtrler.StartAction(actionName.value, animSpeedMultiplier.value, rootMotionMultiplier.value, rootMotionCurve.value, manualAdvanceEnabled.value));
                 actionCtrler.ClearPendingAction();
 
                 if (animClipLength.value > 0)
@@ -1251,9 +1248,8 @@ namespace Game.NodeCanvasExtension
         protected override void OnExecute()
         {
             if (funcName.value != "")
-            {
                 agent.SendMessage(funcName.value, SendMessageOptions.DontRequireReceiver);
-            }
+
             EndAction(true);
         }
     }

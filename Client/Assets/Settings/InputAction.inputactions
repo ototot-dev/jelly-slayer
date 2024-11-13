@@ -24,19 +24,10 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Fire",
-                    "type": "Button",
-                    "id": "a156257a-fc80-44ee-92b0-793ab800d248",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Target",
                     "type": "Button",
                     "id": "fca42100-0082-468e-8c72-3707eecad51f",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -63,7 +54,7 @@
                     "name": "Guard",
                     "type": "Value",
                     "id": "0f242311-a1e7-4ff5-b927-e8151ab93a93",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
@@ -72,7 +63,7 @@
                     "name": "Swap",
                     "type": "Button",
                     "id": "a046bbf7-2925-411f-b331-72488583a048",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -87,18 +78,18 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Action",
+                    "name": "Attack",
                     "type": "Value",
-                    "id": "9fc87428-2503-4cab-ab0f-67593a4afd19",
+                    "id": "a156257a-fc80-44ee-92b0-793ab800d248",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
                 },
                 {
-                    "name": "LongFire",
+                    "name": "SpecialAttack",
                     "type": "Value",
-                    "id": "be56a742-d191-4d91-a511-57f6bf204b62",
+                    "id": "9fc87428-2503-4cab-ab0f-67593a4afd19",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -278,7 +269,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "Fire",
+                    "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -286,10 +277,10 @@
                     "name": "",
                     "id": "fe545be2-4e8f-4bbe-ba55-078fac5a4948",
                     "path": "<Keyboard>/j",
-                    "interactions": "Tap",
+                    "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "Fire",
+                    "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -300,7 +291,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "Fire",
+                    "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -311,7 +302,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Touch",
-                    "action": "Fire",
+                    "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -322,7 +313,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Joystick",
-                    "action": "Fire",
+                    "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -333,7 +324,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "XR",
-                    "action": "Fire",
+                    "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -410,18 +401,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "Action",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "97543956-b38c-4980-919d-fef4faa3faf1",
-                    "path": "<Keyboard>/j",
-                    "interactions": "Hold",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "LongFire",
+                    "action": "SpecialAttack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

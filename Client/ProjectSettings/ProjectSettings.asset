@@ -817,19 +817,23 @@ PlayerSettings:
   webGLCloseOnQuit: 0
   webWasm2023: 0
   scriptingDefineSymbols:
-    Android: ENVIRO_LW
-    EmbeddedLinux: ENVIRO_LW
-    GameCoreXboxOne: ENVIRO_LW
-    Nintendo Switch: ENVIRO_LW
-    PS4: ENVIRO_LW
-    PS5: ENVIRO_LW
-    QNX: ENVIRO_LW
-    ReservedCFE: ENVIRO_LW
-    Standalone: ENVIRO_LW;NODECANVAS;FLOWCANVAS
-    VisionOS: ENVIRO_LW
-    WebGL: ENVIRO_LW
-    XboxOne: ENVIRO_LW
-    tvOS: ENVIRO_LW
+    Android: ENVIRO_LW;DOTWEEN
+    EmbeddedLinux: ENVIRO_LW;DOTWEEN
+    GameCoreScarlett: DOTWEEN
+    GameCoreXboxOne: ENVIRO_LW;DOTWEEN
+    LinuxHeadlessSimulation: DOTWEEN
+    Nintendo Switch: ENVIRO_LW;DOTWEEN
+    PS4: ENVIRO_LW;DOTWEEN
+    PS5: ENVIRO_LW;DOTWEEN
+    QNX: ENVIRO_LW;DOTWEEN
+    ReservedCFE: ENVIRO_LW;DOTWEEN
+    Standalone: ENVIRO_LW;NODECANVAS;FLOWCANVAS;DOTWEEN
+    VisionOS: ENVIRO_LW;DOTWEEN
+    WebGL: ENVIRO_LW;DOTWEEN
+    Windows Store Apps: DOTWEEN
+    XboxOne: ENVIRO_LW;DOTWEEN
+    iPhone: DOTWEEN
+    tvOS: ENVIRO_LW;DOTWEEN
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:

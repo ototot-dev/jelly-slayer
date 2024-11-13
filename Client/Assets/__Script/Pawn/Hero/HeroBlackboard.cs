@@ -14,6 +14,7 @@ namespace Game
         public bool IsRolling => action.isRolling.Value;
         public bool IsGuarding => action.isGuarding.Value;
         public bool IsAutoGuardEnabled => action.isAutoGuardEnabled.Value;
+        public bool IsCharging => action.isCharging.Value;
 
         [Serializable]
         public class Body
@@ -38,6 +39,8 @@ namespace Game
             public BoolReactiveProperty isRolling = new();
             public BoolReactiveProperty isGuarding = new();
             public BoolReactiveProperty isAutoGuardEnabled = new(true);
+            public BoolReactiveProperty isCharging = new();
+            public IntReactiveProperty chargingLevel = new();
         }
 
         public Action action = new();

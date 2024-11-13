@@ -16,16 +16,12 @@ namespace Game
         [Header("Property")]
         public StringReactiveProperty playerName = new();
         public ReactiveProperty<Vector2> moveVec = new();
-        public BoolReactiveProperty firePressed = new();
 
         public Action<PawnBrainController> onPossessed;
         public Action<PawnBrainController> onUnpossessed;
 
         public GameObject MyHero => MyHeroBrain != null ? MyHeroBrain.gameObject : null;
         public HeroBrain MyHeroBrain { get; private set; }
-
-        private bool _fireKeyPressed = false;
-        private float _fireKeyTime = 0;
 
         public GameObject SpawnHero(GameObject heroPrefab, bool possessImmediately = false)
         {
@@ -76,27 +72,24 @@ namespace Game
         {
             if (__moveDisposable == null)
             {
-                var moveCommand = moveVec.Select(m => m.sqrMagnitude > 0)
-                    .DistinctUntilChanged()
-                    .StartWith(false);
-
-                __moveDisposable = moveCommand.Where(m => m).Subscribe(_ =>
-                {
-                    Observable.EveryUpdate().TakeWhile(__ => moveVec.Value.sqrMagnitude > 0)
-                        .DoOnCompleted(() =>
-                        {
-                            if (MyHeroBrain != null)
+                __moveDisposable = moveVec.Select(m => m.sqrMagnitude > 0).DistinctUntilChanged().StartWith(false).Where(m => m)
+                    .Subscribe(_ =>
+                    {
+                        Observable.EveryUpdate().TakeWhile(__ => moveVec.Value.sqrMagnitude > 0)
+                            .DoOnCompleted(() =>
                             {
-                                MyHeroBrain.Movement.moveVec = Vector3.zero;
-                                MyHeroBrain.Movement.moveSpeed = 0;
-                            }
-                        })
-                        .Subscribe(__ =>
-                        {
-                            MyHeroBrain.Movement.moveSpeed = MyHeroBrain.BB.action.isGuarding.Value ? MyHeroBrain.BB.body.guardSpeed : MyHeroBrain.BB.body.moveSpeed;
-                            MyHeroBrain.Movement.faceVec = MyHeroBrain.Movement.moveVec = Quaternion.AngleAxis(45, Vector3.up) * new Vector3(moveVec.Value.x, 0, moveVec.Value.y);
-                        });
-                }).AddTo(this);
+                                if (MyHeroBrain != null)
+                                {
+                                    MyHeroBrain.Movement.moveVec = Vector3.zero;
+                                    MyHeroBrain.Movement.moveSpeed = 0;
+                                }
+                            })
+                            .Subscribe(__ =>
+                            {
+                                MyHeroBrain.Movement.moveSpeed = MyHeroBrain.BB.action.isGuarding.Value ? MyHeroBrain.BB.body.guardSpeed : MyHeroBrain.BB.body.moveSpeed;
+                                MyHeroBrain.Movement.faceVec = MyHeroBrain.Movement.moveVec = Quaternion.AngleAxis(45, Vector3.up) * new Vector3(moveVec.Value.x, 0, moveVec.Value.y);
+                            });
+                    }).AddTo(this);
             }
 
             moveVec.Value = value.Get<Vector2>();
@@ -229,59 +222,6 @@ namespace Game
             return newActionName;
         }
 
-        public void OnFire()
-        {
-            Debug.Log("<color=cyan>OnFire</color>");
-
-            if (MyHeroBrain == null)
-                return;
-
-            // 경직 되었는가?
-            if (MyHeroBrain.BuffCtrler.CheckBuff(BuffTypes.Staggered))
-                Debug.Log("onFire, stagger");
-                
-            // 잡거나 잡혔는가?
-            if (MyHeroBrain.PawnBB.IsThrowing || MyHeroBrain.PawnBB.IsGrabbed == true) 
-            {
-                Debug.Log("onFire, isThrow");
-                return;
-            }
-
-            // 대쉬 가능 체크
-            var canAction1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && 
-                !MyHeroBrain.BB.IsStunned && !MyHeroBrain.BB.IsRolling;
-            var canAction2 = canAction1 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.BuffCtrler.CheckBuff(BuffTypes.Staggered);
-            // 마우스 커서 외치로 회전
-            // if (MyHeroBrain.BB.TargetBrain == null)
-            //     cursorCtrler.cursor.position = GameContext.Instance.cameraCtrler.GetPickingResult(Input.mousePosition, "Terrain").point;
-
-            if (!canAction2)
-                return;
-
-            var newActionName = GetNewActionName();            
-            if (string.IsNullOrEmpty(newActionName) == false)
-            {
-                // // 스테미나 체크
-                // var actionData = DatasheetManager.Instance.GetActionData(PawnId.Hero, newActionName);
-                // float staminaCost = (actionData != null) ? actionData.staminaCost : 30;
-                // if (MyHeroBrain.PawnBB.stat.stamina.Value < staminaCost)
-                // {
-                //     Debug.Log("onFire, stamina empty");
-                //     SoundManager.Instance.Play(SoundID.EMPTY_STAMINA); // 스테미너 Empty 사운드
-                //     return;
-                // }
-                if (MyHeroBrain.ActionCtrler.CheckActionRunning())
-                    MyHeroBrain.ActionCtrler.CancelAction(false);
-
-                MyHeroBrain.Movement.FaceAt(cursorCtrler.CurrPosition);
-                MyHeroBrain.ActionCtrler.SetPendingAction(newActionName);
-            }
-            else 
-            {
-                Debug.Log("onFire, action name empty");
-            }
-        }
-
         public void OnGuard(InputValue value)
         {
             if (MyHeroBrain == null)
@@ -357,7 +297,8 @@ namespace Game
 
             MyHeroBrain.ActionCtrler.SetPendingAction("ActiveParry");
         }
-        public void OnAction(InputValue value) 
+
+        public void OnSpecialAttack(InputValue value) 
         {
             if (MyHeroBrain._chainCtrl == null)
                 return;
@@ -380,52 +321,88 @@ namespace Game
                 MyHeroBrain.ActionCtrler.SetPendingAction("ChainShot");
             }
         }
-        void ChargeEnd() 
+
+        IDisposable __chargingAttackDisposable;
+        float __attackPresssedTimeStamp = -1f;
+        float __attackReleasedTimeStamp = -1f;
+
+        public void OnAttack(InputValue value)
         {
-            if (_fireKeyPressed == false) return;
-
-            _fireKeyPressed = false;
-            MyHeroBrain.ActionCtrler.CancelAction(false);
-            MyHeroBrain.ActionCtrler.SetPendingAction("SlashHeavy#1");
-        }
-
-        public void OnLongFire(InputValue value)
-        {
-            float inputValue = value.Get<float>();
-            bool isPress = value.Get<float>() > 0;
-            Debug.Log("<color=red>OnLongFire</color> : " + inputValue);
-
-            if (isPress == true) 
+            __chargingAttackDisposable ??= Observable.EveryUpdate().Where(_ => __attackPresssedTimeStamp > __attackReleasedTimeStamp).Subscribe(_ => 
             {
-                if (MyHeroBrain.ActionCtrler.CheckActionRunning() &&
-                   MyHeroBrain.ActionCtrler.CurrActionName.Contains("SlashHeavy")) 
+                if (MyHeroBrain.ActionCtrler.CheckActionRunning())
                 {
-                    return;
+                    __attackReleasedTimeStamp = Time.time;
+                    MyHeroBrain.BB.action.isCharging.Value = false;
+                    MyHeroBrain.BB.action.chargingLevel.Value = 0;
+
+                    __Logger.LogF(gameObject, nameof(OnAttack), "Charging canceled.", "CurrActionName", MyHeroBrain.ActionCtrler.CurrActionName);
                 }
-                _fireKeyPressed = true;
-                _fireKeyTime = Time.fixedTime;
-                MyHeroBrain.ActionCtrler.SetPendingAction("ChargeHeavy#1");
+                else
+                {
+                    var chargingTime = Time.time - __attackPresssedTimeStamp;
 
-                MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
+                    //* 챠징 판정 시간은 0.2초
+                    if (chargingTime > 0.2f)
+                    {
+                        MyHeroBrain.BB.action.isCharging.Value = true;
+                        MyHeroBrain.BB.action.chargingLevel.Value = Mathf.FloorToInt(Time.time - __attackPresssedTimeStamp) + 1;
+                    }
+                    else
+                    {
+                        MyHeroBrain.BB.action.isCharging.Value = false;
+                        MyHeroBrain.BB.action.chargingLevel.Value = 0;
+                    }
+                }
+            }).AddTo(this);
 
-                //Invoke("ChargeEnd", 3);
+            if (value.isPressed)
+            {
+                __attackPresssedTimeStamp = Time.time;
             }
-            else if (isPress == false && _fireKeyPressed == true) 
+            else
             {
-                _fireKeyPressed = false;
-                MyHeroBrain.ActionCtrler.CancelAction(false);
+                __attackReleasedTimeStamp = Time.time;
 
-                // 일정 시간 이상 모으면 모으기 공격
-                var timeDelta = Time.fixedTime - _fireKeyTime;
-                Debug.Log("Slash Heavy : " + timeDelta);
-                if (timeDelta >= 0.5f)
+                if (MyHeroBrain != null)
                 {
-                    MyHeroBrain.ActionCtrler.SetPendingAction("SlashHeavy#1");
+                    var canAction1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsStunned && !MyHeroBrain.BB.IsRolling;
+                    var canAction2 = canAction1 && !MyHeroBrain.PawnBB.IsThrowing && !MyHeroBrain.PawnBB.IsGrabbed;
+                    var canAction3 = canAction2 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.BuffCtrler.CheckBuff(BuffTypes.Staggered);
+
+                    if (canAction3)
+                    {
+                        if (MyHeroBrain.ActionCtrler.CheckActionRunning())
+                        {
+                            switch (MyHeroBrain.ActionCtrler.CurrActionName)
+                            {
+                                case "Slash#1":
+                                    MyHeroBrain.ActionCtrler.CancelAction(false);
+                                    MyHeroBrain.ActionCtrler.SetPendingAction("Slash#2");
+                                    break;
+                                case "Slash#2": 
+                                    MyHeroBrain.ActionCtrler.CancelAction(false); 
+                                    MyHeroBrain.ActionCtrler.SetPendingAction("Slash#3"); 
+                                    break;
+                                case "HeavySlash#1":
+                                    MyHeroBrain.ActionCtrler.CancelAction(false);
+                                    MyHeroBrain.ActionCtrler.SetPendingAction("HeavySlash#2"); 
+                                    break;
+                                case "HeavySlash#2":
+                                    MyHeroBrain.ActionCtrler.CancelAction(false);
+                                    MyHeroBrain.ActionCtrler.SetPendingAction("HeavySlash#3"); 
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            MyHeroBrain.ActionCtrler.SetPendingAction(MyHeroBrain.BB.IsCharging ? "HeavySlash#1": "Slash#1");
+                        }
+                    }
                 }
-                else 
-                {
-                    MyHeroBrain.ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
-                }
+
+                //* 챠징 어택 판별을 위해서 'isCharging' 값은 제일 마지막에 리셋
+                MyHeroBrain.BB.action.isCharging.Value = false;
             }
         }
     }
