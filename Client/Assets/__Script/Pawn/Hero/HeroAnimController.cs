@@ -10,6 +10,8 @@ namespace Game
     {
         public Transform shieldSocket;
         public Transform HeadLookAt;
+        public Transform hipBone;
+        public float hipBoneOffset;
         public float animLayerBlendSpeed = 1;
         public float legAnimGlueBlendSpeed = 1;
         public AnimationClip[] blockAdditiveAnimClips;
@@ -50,7 +52,8 @@ namespace Game
                 mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
                 // mainAnimator.SetLayerWeight(1, Mathf.Clamp01(mainAnimator.GetLayerWeight(1) + (__brain.BB.IsGuarding ? animLayerBlendSpeed : -animLayerBlendSpeed) * Time.deltaTime));
                 mainAnimator.SetLayerWeight(1, 1);
-                mainAnimator.SetLayerWeight(2, Mathf.Clamp01(mainAnimator.GetLayerWeight(2) + (__brain.BB.IsRolling || (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CurrActionName != "!OnHit" && __brain.ActionCtrler.CurrActionName != "ActiveParry") ? animLayerBlendSpeed : -animLayerBlendSpeed) * Time.deltaTime));
+                mainAnimator.SetLayerWeight(2, 1);
+                mainAnimator.SetLayerWeight(3, Mathf.Clamp01(mainAnimator.GetLayerWeight(3) + (__brain.BB.IsRolling || (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CurrActionName != "!OnHit" && __brain.ActionCtrler.CurrActionName != "ActiveParry") ? animLayerBlendSpeed : -animLayerBlendSpeed) * Time.deltaTime));
 
                 mainAnimator.SetFloat("MoveSpeed", __brain.Movement.freezeRotation ? -1 : __brain.Movement.CurrVelocity.Vector2D().magnitude / __brain.BB.body.moveSpeed);
                 mainAnimator.SetFloat("MoveAnimSpeed", __brain.Movement.freezeRotation ? (__brain.BB.IsGuarding ? 0.8f : 1.2f) : 1);
@@ -68,6 +71,9 @@ namespace Game
 
             __brain.onLateUpdate += () =>
             {
+                if (hipBone != null)
+                    hipBone.position -= hipBoneOffset * Vector3.down;
+
                 if (__brain.BB.TargetBrain != null)
                     HeadLookAt.transform.position = __brain.BB.TargetBrain.coreColliderHelper.GetCenter();
                 else
