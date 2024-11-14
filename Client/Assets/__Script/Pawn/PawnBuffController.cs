@@ -273,13 +273,13 @@ namespace Game
             {
                 for (int i = p.Value.Count - 1; i >= 0; i--)
                 {
-                    var pair = __uniqueBuffTable.ElementAt(i);
+                    var pair = p.Value.ElementAt(i);
                     var prevBuffActive = CheckBuff(pair.Key);
 
                     //* 시간이 경관된 buff 삭제
                     if (pair.Value.Item2 > 0 && pair.Value.Item2 < Time.time)
                     {
-                        __uniqueBuffTable.Remove(pair.Key);
+                        p.Value.Remove(pair.Key);
                         __Logger.LogF(gameObject, nameof(OnTickHandler), "Extern-Buff is time-out.", "buff", pair.Key);
 
                         if (prevBuffActive && !CheckBuff(pair.Key))

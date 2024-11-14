@@ -286,8 +286,36 @@ namespace Game
                 if (MyHeroBrain.ActionCtrler.CheckActionRunning())
                     MyHeroBrain.ActionCtrler.CancelAction(false);
 
-                MyHeroBrain.BuffCtrler.AddBuff(BuffTypes.InvincibleDodge, 1f, 0.2f);
-                MyHeroBrain.Movement.StartRolling(MyHeroBrain.BB.body.rollingDuration);
+                var rollingXZ = Vector3.zero;
+                var rollingVec = Vector3.zero;
+                if (MyHeroBrain.Movement.moveVec == Vector3.zero)
+                {
+                    rollingXZ = Vector3.back;
+                    rollingVec = -MyHeroBrain.Movement.capsule.forward.Vector2D().normalized;
+                }
+                else
+                {
+                    rollingXZ = MyHeroBrain.Movement.capsule.InverseTransformDirection(MyHeroBrain.Movement.moveVec);
+                    rollingVec = MyHeroBrain.Movement.moveVec.Vector2D().normalized;
+                }
+
+                if (Mathf.Abs(rollingXZ.x) > Mathf.Abs(rollingXZ.z))
+                {
+                    MyHeroBrain.AnimCtrler.mainAnimator.SetInteger("RollingX", rollingXZ.x > 0f ? 1 : -1);
+                    MyHeroBrain.AnimCtrler.mainAnimator.SetInteger("RollingZ", 0);
+                    MyHeroBrain.Movement.FaceTo(Quaternion.Euler(0f, rollingXZ.x > 0f ? -90f : 90f, 0f) * rollingVec);
+                }
+                else
+                {
+                    MyHeroBrain.AnimCtrler.mainAnimator.SetInteger("RollingX", 0);
+                    MyHeroBrain.AnimCtrler.mainAnimator.SetInteger("RollingZ", rollingXZ.z > 0f ? 1 : -1);
+                    MyHeroBrain.Movement.FaceTo(rollingXZ.z > 0f ? rollingVec : -rollingVec);
+                }
+
+                MyHeroBrain.ActionCtrler.SetPendingAction("Rolling");
+
+                // MyHeroBrain.BuffCtrler.AddBuff(BuffTypes.InvincibleDodge, 1f, 0.2f);
+                // MyHeroBrain.Movement.StartRolling(MyHeroBrain.BB.body.rollingDuration);
             }
         }
         public void OnParry() 
