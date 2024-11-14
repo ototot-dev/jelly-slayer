@@ -394,7 +394,7 @@ namespace Game
                     return false;
                 }
 
-                if (actionData.coolTime > 0 && __pawnActionSelector != null && __pawnActionSelector.SourceActionStates.TryGetValue(actionData, out var actionState))
+                if (actionData.coolTime > 0 && __pawnActionSelector != null && __pawnActionSelector.SelectionStates.TryGetValue(actionData, out var actionState))
                 {
                     if (actionState.currCoolTime > 0)
                     {                    
@@ -476,7 +476,7 @@ namespace Game
 
         public bool CheckActionCoolTime(MainTable.ActionData actionData)
         {
-            if (__pawnActionSelector != null && __pawnActionSelector.SourceActionStates.TryGetValue(actionData, out var actionState))
+            if (__pawnActionSelector != null && __pawnActionSelector.SelectionStates.TryGetValue(actionData, out var actionState))
                 return actionState.currCoolTime <= 0;
             else
                 return true;

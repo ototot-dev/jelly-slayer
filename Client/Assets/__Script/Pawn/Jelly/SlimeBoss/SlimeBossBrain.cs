@@ -237,7 +237,7 @@ namespace Game
                     //* 공격 시작
                     if (canAction3)
                     {
-                        var selection = ActionDataSelector.PickSelection(BB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position), BB.stat.stamina.Value);
+                        var selection = ActionDataSelector.RandomSelection(BB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position), BB.stat.stamina.Value, true);
                         if (selection != null)
                             ActionCtrler.SetPendingAction(selection.actionName);
                     }

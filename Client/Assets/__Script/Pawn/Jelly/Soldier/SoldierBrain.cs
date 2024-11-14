@@ -57,7 +57,7 @@ namespace Game
                 //* 반격
                 if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && CheckTargetVisibility())
                 {
-                    var selection = ActionDataSelector.PickSelection(0, 100);
+                    var selection = ActionDataSelector.RandomSelection(0, 100, true);
                     if (selection != null)
                         ActionCtrler.SetPendingAction(selection.actionName);
                 }

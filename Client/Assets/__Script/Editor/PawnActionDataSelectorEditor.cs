@@ -21,7 +21,7 @@ namespace Game
 
             GUILayout.BeginHorizontal();
             {
-                var options = (target as PawnActionDataSelector).SourceActionStates.Keys.Select(k => k.actionName).ToArray();
+                var options = (target as PawnActionDataSelector).SelectionStates.Keys.Select(k => k.actionName).ToArray();
                 __selectIndex = EditorGUILayout.Popup(__selectIndex, options);
 
                 if (GUILayout.Button("Execute Action", GUILayout.MaxWidth(120)))

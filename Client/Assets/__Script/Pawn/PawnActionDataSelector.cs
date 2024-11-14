@@ -1,22 +1,21 @@
 using System.Collections.Generic;
 using System.Linq;
+using FIMSpace.Generating;
 using UnityEngine;
 
 namespace Game
 {
     public class PawnActionDataSelector : MonoBehaviour
     {
-        public bool boostSelectWeight;
-
-        public class ActionState
+        public class SelectionState
         {
-            public MainTable.ActionData source;
+            public MainTable.ActionData actionData;
             public float currRate;
             public float currCoolTime;
 
-            public ActionState(MainTable.ActionData actionData)
+            public SelectionState(MainTable.ActionData actionData)
             {
-                source = actionData;
+                this.actionData = actionData;
 
                 ResetRate();
                 ResetCoolTime();
@@ -29,7 +28,7 @@ namespace Game
 
             public void ResetRate()
             {
-                currRate = source.selectionRate;
+                currRate = actionData.selectionRate;
             }
 
             public float DecreaseCoolTime(float deltaCoolTime)
@@ -40,15 +39,15 @@ namespace Game
 
             public void ResetCoolTime()
             {
-                currCoolTime = source.coolTime;
+                currCoolTime = actionData.coolTime;
             }
         };
 
         /// <summary>
         /// Item1: Weight, Item2: CoolTime
         /// </summary>
-        public Dictionary<MainTable.ActionData, ActionState> SourceActionStates { get; private set; } = new();
-        HashSet<MainTable.ActionData> __executableActionData = new();
+        public Dictionary<MainTable.ActionData, SelectionState> SelectionStates { get; private set; } = new();
+        HashSet<MainTable.ActionData> __executables = new();
         PawnBrainController __pawnBrain;
 
         void Awake()
@@ -56,74 +55,144 @@ namespace Game
 #if UNITY_EDITOR
             DatasheetManager.Instance.Load();
 #endif
-            var board = GetComponent<PawnBlackboard>();
-            if (board != null)
+            var pawnBB = GetComponent<PawnBlackboard>();
+            if (pawnBB != null)
             {
-                var data = DatasheetManager.Instance.GetActionData(board.common.pawnId);
+                var data = DatasheetManager.Instance.GetActionData(pawnBB.common.pawnId);
                 if (data != null)
                 {
                     foreach (var d in data)
-                        SourceActionStates.Add(d, new ActionState(d));
+                        SelectionStates.Add(d, new SelectionState(d));
                 }
             }
+
             __pawnBrain = GetComponent<PawnBrainController>();
         }
 
         public void UpdateSelection(float deltaTime)
         {            
-            foreach (var s in SourceActionStates)
+            foreach (var s in SelectionStates)
             {
                 if (s.Key.selectionRate > 0 && (s.Key.coolTime < 0f || (s.Key.coolTime > 0 && s.Value.DecreaseCoolTime(deltaTime) <= 0)))
-                    __executableActionData.Add(s.Key);
+                    __executables.Add(s.Key);
             }
         }
 
-        public bool TryPickSelection(float distanceConstraint, float staminaConstraint, out MainTable.ActionData ret)
+        public void BoostSelection(string actionName, float deltaRate)
         {
-            ret = PickSelection(distanceConstraint, staminaConstraint);
-
-            if (boostSelectWeight && __executableActionData.Count > 0)
+            var actionData = DatasheetManager.Instance.GetActionData(__pawnBrain.PawnBB.common.pawnId, actionName);
+            if (actionData == null)
             {
-                foreach (var e in __executableActionData)
-                    SourceActionStates[e].IncreaseRate(1f);
+                __Logger.WarningF(gameObject, nameof(BoostSelection), "DatasheetManager.Instance.GetActionData() return false", "pawnId", __pawnBrain.PawnBB.common.pawnId, "actionName", actionData.actionName);
+                return;
             }
 
-            return ret != null;
+            BoostSelection(actionData, deltaRate);
         }
 
-        public MainTable.ActionData PickSelection(float distanceConstraint, float staminaConstraint)
+        public void BoostSelection(MainTable.ActionData actionData, float deltaRate)
+        {   
+            Debug.Assert(actionData != null);
+
+            if (SelectionStates.TryGetValue(actionData, out var state))
+                state.currRate += deltaRate;
+            else
+                __Logger.WarningF(gameObject, nameof(BoostSelection), "SourceActionStates.TryGetValue() return false", "actionName", actionData.actionName);
+        }
+        
+        public void ResetSelection(string actionName)
         {
-            var selector = UnityEngine.Random.Range(0, __executableActionData.Where(d => d.actionRange >= distanceConstraint && d.staminaCost <= staminaConstraint).Sum(d => SourceActionStates[d].currRate));
+            var actionData = DatasheetManager.Instance.GetActionData(__pawnBrain.PawnBB.common.pawnId, actionName);
+            if (actionData == null)
+            {
+                __Logger.WarningF(gameObject, nameof(ResetSelection), "DatasheetManager.Instance.GetActionData() return false", "pawnId", __pawnBrain.PawnBB.common.pawnId, "actionName", actionData.actionName);
+                return;
+            }
+
+            ResetSelection(actionData);
+        }
+
+        public void ResetSelection(MainTable.ActionData actionData)
+        {   
+            Debug.Assert(actionData != null);
+
+            if (SelectionStates.TryGetValue(actionData, out var state))
+            {
+                state.ResetRate();
+                state.ResetCoolTime();
+            }
+            else
+            {
+                __Logger.WarningF(gameObject, nameof(ResetSelection), "SourceActionStates.TryGetValue() return false", "actionName", actionData.actionName);
+            }
+        }
+
+        public bool EvaluateSelection(string actionName, float distanceConstraint, float staminaConstraint)
+        {
+            var actionData = DatasheetManager.Instance.GetActionData(__pawnBrain.PawnBB.common.pawnId, actionName);
+            if (actionData == null)
+            {
+                __Logger.WarningF(gameObject, nameof(EvaluateSelection), "DatasheetManager.Instance.GetActionData() return false", "pawnId", __pawnBrain.PawnBB.common.pawnId, "actionName", actionData.actionName);
+                return false;
+            }
+
+            return EvaluateSelection(actionData, distanceConstraint, staminaConstraint);
+        }
+
+        public bool EvaluateSelection(MainTable.ActionData actionData, float distanceConstraint, float staminaConstraint)
+        {
+            Debug.Assert(actionData != null);
+
+            if (!__executables.Contains(actionData))
+                return false;
+
+            if (SelectionStates.TryGetValue(actionData, out var actionState))
+            {
+                if (actionData.actionRange < distanceConstraint)
+                    return false;
+                else if (actionData.staminaCost > staminaConstraint)
+                    return false;
+                else
+                    return actionState.currRate > UnityEngine.Random.Range(0f, 1f);
+            }
+            else
+            {
+                __Logger.WarningF(gameObject, nameof(EvaluateSelection), "SourceActionStates.TryGetValue() return false", "actionName", actionData.actionName);
+                return false;
+            }
+        }
+        
+        public bool TryRandomSelection(float distanceConstraint, float staminaConstraint, bool resetRate, out MainTable.ActionData result)
+        {
+            result = RandomSelection(distanceConstraint, staminaConstraint, resetRate);
+            return result != null;
+        }
+
+        public MainTable.ActionData RandomSelection(float distanceConstraint, float staminaConstraint, bool resetSelection)
+        {
+            var selector = UnityEngine.Random.Range(0, __executables.Where(d => d.actionRange >= distanceConstraint && d.staminaCost <= staminaConstraint).Sum(d => SelectionStates[d].currRate));
             var curr = 0f;
-            foreach (var d in __executableActionData)
+            foreach (var d in __executables)
             {
                 if (distanceConstraint > d.actionRange || staminaConstraint < d.staminaCost)
                     continue;
 
-                if (selector >= curr && selector < curr + SourceActionStates[d].currRate)
+                if (selector >= curr && selector < curr + SelectionStates[d].currRate)
                 {
-                    SourceActionStates[d].currRate = d.selectionRate;
-                    __executableActionData.Remove(d);
+                    if (resetSelection)
+                    {
+                        SelectionStates[d].ResetRate();
+                        SelectionStates[d].ResetCoolTime();
+                    }
+                 
+                    __executables.Remove(d);       
                     return d;
                 }
 
-                curr += SourceActionStates[d].currRate;
+                curr += SelectionStates[d].currRate;
             }
 
             return null;
-        }
-
-        public MainTable.ActionData EvaluateSelection(string actionName, float distanceConstraint, float staminaConstraint)
-        {
-            return null;
-            // var actionData = __executableActionData.FirstOrDefault(d => d.actionName == actionName);
-            // if (actionData == null)
-            //     return null;
-
-            // if (actionData.actionRange )
-
-            
-
         }
     }
 }

@@ -46,7 +46,7 @@ namespace Game
                 //* 공격
                 if (!ActionCtrler.CheckActionRunning() && string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && !BuffCtrler.CheckBuff(BuffTypes.Staggered) && CheckTargetVisibility())
                 {
-                    var selection = ActionDataSelector.PickSelection(BB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position), BB.stat.stamina.Value);
+                    var selection = ActionDataSelector.RandomSelection(BB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position), BB.stat.stamina.Value, true);
                     if (selection != null)
                         ActionCtrler.SetPendingAction(selection.actionName);
                 }
@@ -62,7 +62,7 @@ namespace Game
                 //* 반격
                 if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && CheckTargetVisibility())
                 {
-                    var selection = ActionDataSelector.PickSelection(0, 100);
+                    var selection = ActionDataSelector.RandomSelection(0, 100, true);
                     if (selection != null)
                         ActionCtrler.SetPendingAction(selection.actionName);
                 }

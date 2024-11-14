@@ -25,7 +25,8 @@
 /Client/[Aa]ssets/Plugins/Editor/JetBrains*
 
 # jelly-slayer-res
-# /Client/[Aa]ssets/__[Dd]ownload
+/Client/[Aa]ssets/__[Dd]ownload
+/Client/[Aa]ssets/__[Dd]ownload.meta
 
 # Visual Studio cache directory
 /Client/.vs/
