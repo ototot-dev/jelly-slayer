@@ -62,7 +62,6 @@ namespace MainTable
 		public System.String actionName;
 		public System.Single actionSpeed;
 		public System.Single actionRange;
-		public System.Single actionDuration;
 		public System.Int32 staminaCost;
 		public System.Single selectionRate;
 		public System.Single coolTime;

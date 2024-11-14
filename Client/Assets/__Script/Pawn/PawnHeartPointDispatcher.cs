@@ -250,7 +250,8 @@ namespace Game
 
                         //* 'Block' 판정인 경우엔 Sender는 역경직을 받게 되고, Receiver도 짧은 자체 경직 시간을 갖게됨
                         damageContext.senderPenalty = new(BuffTypes.Staggered, damageContext.receiverActionData.staggerDuration);
-                        damageContext.receiverPenalty = new(BuffTypes.Staggered, damageContext.receiverActionData.actionDuration);
+                        // damageContext.receiverPenalty = new(BuffTypes.Staggered, damageContext.receiverActionData.actionDuration);
+                        damageContext.receiverPenalty = new(BuffTypes.Staggered, 0.1f);
                     }
                 }
             }
