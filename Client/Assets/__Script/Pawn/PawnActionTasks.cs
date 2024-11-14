@@ -198,7 +198,10 @@ namespace Game.NodeCanvasExtension
         PawnBrainController __pawnBrain;
         IMovable __pawnMovable;
         IDisposable __moveStrafeDisposable;
+        Vector3 __strafeMoveVec;
+        float __strafeDuration;
         float __targetCapsuleRadius;
+        float __minApproachDistance;
         float __executeTimeStamp;
 
         protected override void OnExecute()
@@ -207,7 +210,9 @@ namespace Game.NodeCanvasExtension
             __targetCapsuleRadius = __targetBrain.coreColliderHelper.GetCapsuleCollider() != null ? __targetBrain.coreColliderHelper.GetCapsuleCollider().radius : 0f;
             __pawnBrain = agent.GetComponent<PawnBrainController>();
             __pawnMovable = __pawnBrain as IMovable;
-            __pawnMovable.SetMinApproachDistance(Mathf.Max(0.1f, __targetCapsuleRadius));
+            __strafeMoveVec = Vector3.zero;
+            __minApproachDistance = Mathf.Max(0.1f, __pawnBrain.coreColliderHelper.GetRadius() + __targetCapsuleRadius);
+            __pawnMovable.SetMinApproachDistance(__minApproachDistance);
             __pawnMovable.FreezeRotation(true);
             __executeTimeStamp = Time.time;
         }
@@ -227,12 +232,19 @@ namespace Game.NodeCanvasExtension
         IDisposable MoveStrafe()
         {
             var spacingDistance = UnityEngine.Random.Range(minDistance.value, maxDistance.value);
-            var strafeDuration = duration.value > 0 ? UnityEngine.Random.Range(duration.value * 0.5f, duration.value) : UnityEngine.Random.Range(3f, 4f);
-            var strafeDirection = new Vector3(UnityEngine.Random.Range(-1, 2), 0f, 0f);
-            if (strafeDirection == Vector3.zero)
+            
+            __strafeMoveVec = __strafeMoveVec == Vector3.zero ? new Vector3(UnityEngine.Random.Range(-1, 2), 0f, 0f) : Vector3.zero;
+            if (__strafeMoveVec == Vector3.zero)
+            {
+                __strafeDuration = UnityEngine.Random.Range(1f, 2f);
                 __pawnMovable.Stop();
+            }
+            else
+            {
+                __strafeDuration = duration.value > 0 ? UnityEngine.Random.Range(duration.value * 0.5f, duration.value) : UnityEngine.Random.Range(3f, 4f);
+            }
 
-            return Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(strafeDuration)))
+            return Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(__strafeDuration)))
                 .DoOnCompleted(() =>
                 {
                     if (__moveStrafeDisposable != null)
@@ -243,14 +255,10 @@ namespace Game.NodeCanvasExtension
                 })
                 .Subscribe(_ =>
                 {
-                    if (strafeDirection != Vector3.zero)
+                    if (__strafeMoveVec != Vector3.zero)
                     {
-                        var newDestination = __pawnBrain.coreColliderHelper.transform.position + (__pawnBrain.coreColliderHelper.transform.rotation * strafeDirection).Vector2D().normalized;
-                        if (__targetBrain.coreColliderHelper.GetApproachDistance(newDestination) < spacingDistance)
-                            newDestination = __targetBrain.coreColliderHelper.transform.position + (spacingDistance + __targetBrain.coreColliderHelper.GetRadius()) * (newDestination - __targetBrain.coreColliderHelper.transform.position).Vector2D().normalized;
-                        else
-                            newDestination = __targetBrain.coreColliderHelper.transform.position - (spacingDistance + __targetBrain.coreColliderHelper.GetRadius()) * (newDestination - __targetBrain.coreColliderHelper.transform.position).Vector2D().normalized;
-
+                        var newDestination = __pawnBrain.coreColliderHelper.transform.position + __minApproachDistance * 2f * (__pawnBrain.coreColliderHelper.transform.rotation * __strafeMoveVec).Vector2D().normalized;
+                        newDestination = __targetBrain.coreColliderHelper.transform.position + (spacingDistance + __targetBrain.coreColliderHelper.GetRadius()) * (newDestination - __targetBrain.coreColliderHelper.transform.position).Vector2D().normalized;
                         __pawnMovable.SetDestination(newDestination);
                     }
                     

@@ -15,7 +15,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5891697494063280953
 Transform:
   m_ObjectHideFlags: 0
@@ -257,10 +257,12 @@ MonoBehaviour:
       value: 0
     isGuarding:
       value: 0
-    isCharging:
-      value: 0
     isAutoGuardEnabled:
       value: 1
+    isCharging:
+      value: 0
+    chargingLevel:
+      value: 0
 --- !u!114 &2118029493424771570
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -352,8 +354,8 @@ MonoBehaviour:
     _version: 3.31
     _category: 
     _comments: 
-    _translation: {x: 14, y: -291}
-    _zoomFactor: 0.66755205
+    _translation: {x: 349.4887, y: -170.11642}
+    _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 0
   _disableAction: 0
@@ -474,7 +476,7 @@ Transform:
   m_GameObject: {fileID: 1256200948239764842}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.4, z: 0.5}
+  m_LocalPosition: {x: 0, y: 1.567, z: -0.062}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -17800,7 +17802,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.2
+  m_Radius: 0.3
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
@@ -17904,10 +17906,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 1
-  m_Height: 2
+  m_Radius: 1.5
+  m_Height: 3
   m_Direction: 1
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Center: {x: 0, y: 1.5, z: 0}
 --- !u!114 &1104606249163493149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18042,10 +18044,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.4
-  m_Height: 2
+  m_Radius: 0.5
+  m_Height: 1.6
   m_Direction: 1
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Center: {x: 0, y: 0.8, z: 0}
 --- !u!114 &4575544682901093454
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18401,6 +18403,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Wep_Katana_01
       objectReference: {fileID: 0}
+    - target: {fileID: 2276896552023549132, guid: b255c974d56bce14a82e4ae60b493a76, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -18436,15 +18442,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 473958, guid: 1573d08a3535dbd499e540f5f80f4424, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 473958, guid: 1573d08a3535dbd499e540f5f80f4424, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 473958, guid: 1573d08a3535dbd499e540f5f80f4424, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.2212
       objectReference: {fileID: 0}
     - target: {fileID: 473958, guid: 1573d08a3535dbd499e540f5f80f4424, type: 3}
       propertyPath: m_LocalRotation.w
