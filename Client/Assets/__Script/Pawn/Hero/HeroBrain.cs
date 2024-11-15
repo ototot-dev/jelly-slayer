@@ -273,9 +273,13 @@ namespace Game
             }
         }
 
-        public void ChangeWeapon(WeaponSetType weaponType) 
+        public void ChangeWeapon(WeaponSetType weaponSetType) 
         {
-            switch(weaponType)
+            if(_weaponSetType == weaponSetType) 
+                return;
+
+            _weaponSetType = weaponSetType;
+            switch (weaponSetType)
             {
                 case WeaponSetType.ONEHAND_WEAPONSHIELD:
                     {

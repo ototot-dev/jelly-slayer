@@ -15,7 +15,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5891697494063280953
 Transform:
   m_ObjectHideFlags: 0
@@ -279,6 +279,8 @@ MonoBehaviour:
   rigBuilder: {fileID: 8157329558261335758}
   shieldSocket: {fileID: 3556273806665314536}
   HeadLookAt: {fileID: 3872346485875650652}
+  hipBone: {fileID: 0}
+  hipBoneOffset: 0
   animLayerBlendSpeed: 10
   legAnimGlueBlendSpeed: 1
   blockAdditiveAnimClips:
@@ -18405,7 +18407,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2276896552023549132, guid: b255c974d56bce14a82e4ae60b493a76, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

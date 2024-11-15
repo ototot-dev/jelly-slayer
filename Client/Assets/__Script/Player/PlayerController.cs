@@ -334,6 +334,10 @@ namespace Game
             bool isPress = value.Get<float>() > 0;
             if (isPress == true)
             {
+                MyHeroBrain.ActionCtrler.CancelAction(false);
+                MyHeroBrain.ActionCtrler.SetPendingAction("Kick");
+            }
+            /*
                 if (MyHeroBrain._chainCtrl.IsBind == true)
                 {
                     MyHeroBrain._chainCtrl.ResetChain();
@@ -348,6 +352,7 @@ namespace Game
                 //MyHeroBrain.ChainRolling(false);
                 MyHeroBrain.ActionCtrler.SetPendingAction("ChainShot");
             }
+            */
         }
 
         IDisposable __chargingAttackDisposable;
@@ -375,6 +380,8 @@ namespace Game
                     {
                         MyHeroBrain.BB.action.isCharging.Value = true;
                         MyHeroBrain.BB.action.chargingLevel.Value = Mathf.FloorToInt(Time.time - __attackPresssedTimeStamp) + 1;
+                    
+                        MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
                     }
                     else
                     {
@@ -387,6 +394,8 @@ namespace Game
             if (value.isPressed)
             {
                 __attackPresssedTimeStamp = Time.time;
+
+                //Debug.Log("<color=red>Attack Pressed</color> : " + MyHeroBrain.BB.IsCharging);
             }
             else
             {
@@ -398,6 +407,7 @@ namespace Game
                     var canAction2 = canAction1 && !MyHeroBrain.PawnBB.IsThrowing && !MyHeroBrain.PawnBB.IsGrabbed;
                     var canAction3 = canAction2 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.BuffCtrler.CheckBuff(BuffTypes.Staggered);
 
+                    //Debug.Log("<color=yellow>Attack Released</color> : " + MyHeroBrain.BB.IsCharging + " " + canAction3);
                     if (canAction3)
                     {
                         if (MyHeroBrain.ActionCtrler.CheckActionRunning())
@@ -424,11 +434,13 @@ namespace Game
                         }
                         else
                         {
+                            //Debug.Log("<color=yellow>Attack Released</color> : " + MyHeroBrain.BB.IsCharging + " " + canAction3);
                             MyHeroBrain.ActionCtrler.SetPendingAction(MyHeroBrain.BB.IsCharging ? "HeavySlash#1": "Slash#1");
                         }
+                        // 차징 상태에 따른 무기 교체
+                        MyHeroBrain.ChangeWeapon(MyHeroBrain.BB.IsCharging ? WeaponSetType.TWOHAND_WEAPON : WeaponSetType.ONEHAND_WEAPONSHIELD);
                     }
                 }
-
                 //* 챠징 어택 판별을 위해서 'isCharging' 값은 제일 마지막에 리셋
                 MyHeroBrain.BB.action.isCharging.Value = false;
             }

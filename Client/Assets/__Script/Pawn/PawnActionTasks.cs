@@ -1164,6 +1164,7 @@ namespace Game.NodeCanvasExtension
         public BBParameter<Vector3> position;
         public BBParameter<Vector3> pitchYawRool;
         public BBParameter<Vector3> scale = Vector3.one;
+        public BBParameter<Vector3> euler = Vector3.zero;
         public BBParameter<ParticleSystemScalingMode> scalingMode = ParticleSystemScalingMode.Local;
         public BBParameter<float> duration = -1f;
 
