@@ -42,7 +42,7 @@ namespace FIMSpace.FProceduralAnimation
 
         /// <summary> (world space move direction)\n(When rigidbody is assigned, rigidbody velocity is used here)\n Control value which helps animation based gluing detection </summary>
         public Vector3 DesiredMovementDirection { get; private set; }
-        protected bool usingCustomDesiredMovementDirection = false;
+        public bool usingCustomDesiredMovementDirection { get; private set; }
 
         CalibrateTransform _spineBoneCalibrate;
         CalibrateTransform _ChestBoneCalibrate;

@@ -19,6 +19,7 @@ namespace FIMSpace.FProceduralAnimation
             RagdolledDisablerBlend = 1f;
             _MainBlendNoRagdolling = 1f;
             DeltaTime = 0.05f;
+            usingCustomDesiredMovementDirection = false;
 
             RagdolledDisablerBlend = 1f;
             RagdolledTime = -100f;

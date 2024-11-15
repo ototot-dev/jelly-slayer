@@ -1,7 +1,7 @@
 __________________________________________________________________________________________
 
 Package "Legs Animator"
-Version 1.0.3.6
+Version 1.0.3.8
 
 Made by FImpossible Creations - Filip Moeglich
 http://fimpossiblecreations.pl
@@ -60,6 +60,14 @@ Check Manual for more
 
 
 __________________________________________________________________________________________
+
+Version 1.0.3.8
+- 'Rigidbody Step Further' module file renamed to 'Step Further with Velocity'
+- 'Step Further with Velocity' module will use position delta velocity if no rigidbody is found and not using Legs Animator.desired movement direction
+
+Version 1.0.3.7
+- 'Rigidbody Step Further' module now will work properly with 'Along Bones' raycast style
+- 'Rigidbody Step Further' now contains ProvideVelocity() method
 
 Version 1.0.3.6
 - Fade Legs On Animator extra feature now will read provided state names/tags with spaces in names properly

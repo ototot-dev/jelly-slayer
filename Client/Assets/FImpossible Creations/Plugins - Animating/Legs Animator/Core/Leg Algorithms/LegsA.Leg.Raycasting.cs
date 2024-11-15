@@ -116,6 +116,7 @@ namespace FIMSpace.FProceduralAnimation
             public void OverrideControlPositionsWithCurrentIKState()
             {
                 AnkleH.LastKeyframeRootPos = ToRootLocalSpace(_FinalIKPos);
+                _AnimatorEndBonePos = _FinalIKPos;
             }
 
             public void OverrideSourceIKPos()
