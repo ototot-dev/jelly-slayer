@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class GameManager : MonoSingleton<GameManager>
 {
+
+    // 주석
+    
     public delegate void OnPawnSpawned(PawnBrainController pawn);
     public OnPawnSpawned _delPawnSpawned;
 
