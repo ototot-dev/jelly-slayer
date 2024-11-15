@@ -46,7 +46,7 @@ namespace Game
                 mainModule.loop = false;
                 __particleSystem.Play();
 
-                duration = duration > 0 ? duration : Mathf.Max(0.01f, mainModule.duration * 0.99f);
+                duration = duration > 0 ? duration : Mathf.Max(0.1f, mainModule.duration * 0.99f);
                 Observable.Timer(TimeSpan.FromSeconds(duration)).Subscribe(_ => Stop(releaseInstance)).AddTo(this);
             }
         }
@@ -64,7 +64,7 @@ namespace Game
                 {
                     Debug.Assert(__stopDiposable == null);
 
-                    __stopDiposable = Observable.Timer(TimeSpan.FromSeconds(4)).Subscribe(_ =>
+                    __stopDiposable = Observable.Timer(TimeSpan.FromSeconds(1f)).Subscribe(_ =>
                     {
                         EffectManager.Instance.ReleaseInstance(this);
                         __stopDiposable = null;

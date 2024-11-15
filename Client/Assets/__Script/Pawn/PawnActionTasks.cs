@@ -6,6 +6,7 @@ using NodeCanvas.Framework;
 using Retween.Rx;
 using UniRx;
 using UnityEngine;
+using XftWeapon;
 
 namespace Game.NodeCanvasExtension
 {
@@ -1162,28 +1163,77 @@ namespace Game.NodeCanvasExtension
         public BBParameter<GameObject> fxPrefab;
         public BBParameter<Transform> localToWorld;
         public BBParameter<Vector3> position;
-        public BBParameter<Vector3> pitchYawRool;
+        public BBParameter<Vector3> pitchYawRoll;
         public BBParameter<Vector3> scale = Vector3.one;
-        public BBParameter<Vector3> euler = Vector3.zero;
         public BBParameter<ParticleSystemScalingMode> scalingMode = ParticleSystemScalingMode.Local;
         public BBParameter<float> duration = -1f;
+        public bool stopWhenActionCanceled = true;
+        PawnActionController __pawnActionCtrler;
+        EffectInstance __fxInstance;
+        int __capturedActionInstanceId;
 
         protected override void OnExecute()
         {
-            if (!localToWorld.isNoneOrNull)
+            if (agent.TryGetComponent<PawnActionController>(out var __pawnActionCtrler))
             {
-                var localToWorldMatrix = Matrix4x4.TRS(localToWorld.value.position, localToWorld.value.rotation, Vector3.one) * Matrix4x4.TRS(position.value, Quaternion.Euler(pitchYawRool.value), Vector3.one);
-                if (fxPrefab.isNoneOrNull)
-                    EffectManager.Instance.Show(fxName.value, localToWorldMatrix.GetPosition(), localToWorldMatrix.rotation, scale.value, duration.value, 0f, scalingMode.value);
+                if (!localToWorld.isNoneOrNull)
+                {
+                    var localToWorldMatrix = Matrix4x4.TRS(localToWorld.value.position, localToWorld.value.rotation, Vector3.one) * Matrix4x4.TRS(position.value, Quaternion.Euler(pitchYawRoll.value), Vector3.one);
+                    if (fxPrefab.isNoneOrNull)
+                        __fxInstance = EffectManager.Instance.Show(fxName.value, localToWorldMatrix.GetPosition(), localToWorldMatrix.rotation, scale.value, duration.value, 0f, scalingMode.value);
+                    else
+                        __fxInstance = EffectManager.Instance.Show(fxPrefab.value, localToWorldMatrix.GetPosition(), localToWorldMatrix.rotation, scale.value, duration.value, 0f, scalingMode.value);
+                }
                 else
-                    EffectManager.Instance.Show(fxPrefab.value, localToWorldMatrix.GetPosition(), localToWorldMatrix.rotation, scale.value, duration.value, 0f, scalingMode.value);
+                {
+                    if (fxPrefab.isNoneOrNull)
+                        __fxInstance = EffectManager.Instance.Show(fxName.value, position.value, Quaternion.Euler(pitchYawRoll.value), scale.value, duration.value, 0f, scalingMode.value);
+                    else
+                        __fxInstance = EffectManager.Instance.Show(fxPrefab.value, position.value, Quaternion.Euler(pitchYawRoll.value), scale.value, duration.value, 0f, scalingMode.value);
+                }
+
+                __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;
+
+                if (stopWhenActionCanceled)
+                {
+                    Observable.Timer(TimeSpan.FromSeconds(duration.value))
+                        .TakeWhile(_ => __pawnActionCtrler.CheckActionRunning() && __pawnActionCtrler.currActionContext.actionInstanceId == __capturedActionInstanceId)
+                        .DoOnCancel(() => __fxInstance?.gameObject.SetActive(false))
+                        .Subscribe().AddTo(agent);
+                }
             }
-            else
+
+            EndAction(true);
+        }
+    }
+
+    public class ShowTrailFX : ActionTask
+    {
+        protected override string info => $"Show Trail-FX <b>{(trailFx.isNoneOrNull ? trailFx.value : string.Empty)}</b>";
+        public BBParameter<XWeaponTrail> trailFx;
+        public BBParameter<Transform> startPoint;
+        public BBParameter<Transform> endPoint;
+        public BBParameter<float> duration = -1f;
+        PawnActionController __pawnActionCtrler;
+        int __capturedActionInstanceId;
+
+        protected override void OnExecute()
+        {
+            if (agent.TryGetComponent<PawnActionController>(out var __pawnActionCtrler))
             {
-                if (fxPrefab.isNoneOrNull)
-                    EffectManager.Instance.Show(fxName.value, position.value, Quaternion.Euler(pitchYawRool.value), scale.value, duration.value, 0f, scalingMode.value);
-                else
-                    EffectManager.Instance.Show(fxPrefab.value, position.value, Quaternion.Euler(pitchYawRool.value), scale.value, duration.value, 0f, scalingMode.value);
+                if (!startPoint.isNoneOrNull)
+                    trailFx.value.PointStart = startPoint.value;
+                if (!endPoint.isNoneOrNull)
+                    trailFx.value.PointEnd = endPoint.value;
+                trailFx.value.Activate();
+
+                __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;
+
+                Observable.Timer(TimeSpan.FromSeconds(duration.value))
+                    .TakeWhile(_ => __pawnActionCtrler.CheckActionRunning() && __pawnActionCtrler.currActionContext.actionInstanceId == __capturedActionInstanceId)
+                    .DoOnCancel(() => trailFx.value.Deactivate())
+                    .DoOnCompleted(() => trailFx.value.Deactivate())
+                    .Subscribe().AddTo(agent);
             }
 
             EndAction(true);
@@ -1203,6 +1253,7 @@ namespace Game.NodeCanvasExtension
             EndAction(true);
         }
     }
+
     public class HideBladeTrail : ActionTask
     {
         protected override string info => $"HideBladeTrail : {trailIndex}";

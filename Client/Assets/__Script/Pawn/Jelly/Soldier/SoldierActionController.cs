@@ -1,12 +1,16 @@
 using System;
 using UniRx;
 using UnityEngine;
+using XftWeapon;
 using static FIMSpace.FProceduralAnimation.LegsAnimator;
 
 namespace Game
 {
     public class SoldierActionController : PawnActionController
     {
+        [Header("Component")]
+        public Transform counterActionCollider;
+
         public override bool CanRootMotion(Vector3 rootMotionVec)
         {
             Debug.Assert(CheckActionRunning());
