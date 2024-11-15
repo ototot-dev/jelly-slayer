@@ -394,17 +394,6 @@ namespace Game
                     return false;
                 }
 
-                if (actionData.coolTime > 0 && __pawnActionSelector != null && __pawnActionSelector.SelectionStates.TryGetValue(actionData, out var actionState))
-                {
-                    if (actionState.currCoolTime > 0)
-                    {                    
-                        __Logger.LogR(gameObject, "CoolTime is not zero.", "currCoolTime", actionState.currCoolTime);
-                        return false;
-                    }
-                        
-                    actionState.ResetCoolTime();
-                }
-
                 currActionContext = new(actionData, actionSpeedMultiplier, rootMotionMultiplier, rootMotionCurve, manualAdvacneEnabled, Time.time);
                 if (actionData.staminaCost > 0)
                 {

@@ -28,6 +28,10 @@ namespace Game
             ActionCtrler = GetComponent<SoldierActionController>();
         }
 
+        float __lastComboAttackRateStepTimeStamp;
+        MainTable.ActionData __counterActionData;
+        MainTable.ActionData __comboActionData;
+
         protected override void StartInternal()
         {
             base.StartInternal();
@@ -39,12 +43,21 @@ namespace Game
                     
                 ActionDataSelector.UpdateSelection(deltaTick);
 
-                // if (!ActionCtrler.CheckActionRunning() && string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && !BuffCtrler.CheckBuff(BuffTypes.Staggered) && CheckTargetVisibility())
-                // {
-                //     var selection = ActionDataSelector.PickSelection(BB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position), BB.stat.stamina.Value);
-                //     if (selection != null)
-                //         ActionCtrler.SetPendingAction(selection.actionName);
-                // }
+                //* 콤보 공격
+                __comboActionData ??= ActionDataSelector.GetActionData("Attack#1");
+                if (ActionDataSelector.CheckExecutable(__comboActionData) && Time.time - PawnHP.LastDamageTimeStamp >= 1f && Time.time - __lastComboAttackRateStepTimeStamp >= 1f)
+                {
+                    if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && ActionDataSelector.EvaluateSelection(__comboActionData, -1f, 1f) && CheckTargetVisibility())
+                    {
+                        ActionDataSelector.ResetSelection(__comboActionData);
+                        ActionCtrler.SetPendingAction(__comboActionData.actionName);
+                    }
+                    else
+                    {
+                        __lastComboAttackRateStepTimeStamp = Time.time;
+                        ActionDataSelector.BoostSelection(__comboActionData, BB.selection.comboAttackRateStep);
+                    }
+                }
             };
         }
 
@@ -54,12 +67,15 @@ namespace Game
 
             if (damageContext.actionResult == ActionResults.Blocked)
             {   
-                //* 반격
-                if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && CheckTargetVisibility())
+                __counterActionData ??= ActionDataSelector.GetActionData("Counter");
+                if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && ActionDataSelector.EvaluateSelection(__counterActionData, -1f, 1f) && CheckTargetVisibility())
                 {
-                    var selection = ActionDataSelector.RandomSelection(0, 100, true);
-                    if (selection != null)
-                        ActionCtrler.SetPendingAction(selection.actionName);
+                    ActionDataSelector.ResetSelection(__counterActionData);
+                    ActionCtrler.SetPendingAction("Counter");
+                }
+                else
+                {
+                    ActionDataSelector.BoostSelection(__counterActionData, BB.selection.counterAttackRateStep);
                 }
             }
         }

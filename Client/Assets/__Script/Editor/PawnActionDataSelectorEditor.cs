@@ -18,21 +18,28 @@ namespace Game
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
+                
+            GUILayout.BeginVertical();
+            {
+                var oldBackgroundColor = GUI.backgroundColor;
+                foreach (var s in (target as PawnActionDataSelector).SelectionStates)
+                {
+                    GUI.backgroundColor = s.Value.currRate > 0f && s.Value.currCoolTime <= 0f ? new Color(0.8f, 0.8f, 1) : Color.white;
+                    if (GUILayout.Button($"{s.Value.actionData.actionName} | Rate:{s.Value.currRate:F2} | CoolTime:{s.Value.currCoolTime:F1}"))
+                        (target as PawnActionDataSelector).GetComponent<PawnActionController>().SetPendingAction(s.Value.actionData.actionName);
+                }
+                GUI.backgroundColor = oldBackgroundColor;
+            }
+            GUILayout.EndVertical();
 
             GUILayout.BeginHorizontal();
-            {
-                var options = (target as PawnActionDataSelector).SelectionStates.Keys.Select(k => k.actionName).ToArray();
-                __selectIndex = EditorGUILayout.Popup(__selectIndex, options);
-
-                if (GUILayout.Button("Execute Action", GUILayout.MaxWidth(120)))
-                    (target as PawnActionDataSelector).GetComponent<PawnActionController>().SetPendingAction(options[__selectIndex]);
-            }
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
             {
                 __currActionLabelStyle ??= new("U2D.createRect");
                 __prevActionLabelStyle ??= new GUIStyle("RectangleToolSelection");
+
                 if ((target as PawnActionDataSelector).TryGetComponent<PawnActionController>(out var actionCtrler))
                 {
                     if (__executedActionTable.Count == 0)

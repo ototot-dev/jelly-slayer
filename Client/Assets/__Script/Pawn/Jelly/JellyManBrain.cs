@@ -159,9 +159,6 @@ namespace Game
                     DamageReceiverHandler(ref damageContext);
                 else if (damageContext.senderBrain == this)
                     DamageSenderHandler(ref damageContext);
-
-                //* 데미지를 받은 후엔 바로 반격할 수 있도록 'BuffType.CanNotAction' 상태를 해제함
-                PawnBuff.RemoveBuff(BuffTypes.CanNotAction);
             };
 
             __pawnActionCtrler.onActionStart += (actionContext, _) =>
@@ -171,13 +168,6 @@ namespace Game
 
                 //* 액션 수행 중에 현재 이동 제어를 끔
                 InvalidateDecision(0.2f);
-            };
-
-            __pawnActionCtrler.onActionFinished += (_) =>
-            {
-                //* 스테미너 회복 전까지는 액션 수행 불가
-                if (__jellyManBB.stat.stamina.Value < 1f)
-                    PawnBuff.AddBuff(BuffTypes.CanNotAction);
             };
 
             onUpdate += () => 

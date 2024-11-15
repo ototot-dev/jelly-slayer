@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FIMSpace.Generating;
+using MainTable;
 using UnityEngine;
 
 namespace Game
@@ -69,6 +70,18 @@ namespace Game
             __pawnBrain = GetComponent<PawnBrainController>();
         }
 
+        public MainTable.ActionData GetActionData(string actionName)
+        {
+            var ret = DatasheetManager.Instance.GetActionData(__pawnBrain.PawnBB.common.pawnId, actionName);
+            if (ret == null)
+                __Logger.WarningF(gameObject, nameof(BoostSelection), "DatasheetManager.Instance.GetActionData() return false", "pawnId", __pawnBrain.PawnBB.common.pawnId, "actionName", actionName);
+
+            return ret;
+        }
+
+        public bool CheckExecutable(string actionName) => CheckExecutable(GetActionData(actionName));
+        public bool CheckExecutable(ActionData actionData) => __executables.Contains(actionData);
+
         public void UpdateSelection(float deltaTime)
         {            
             foreach (var s in SelectionStates)
@@ -78,18 +91,7 @@ namespace Game
             }
         }
 
-        public void BoostSelection(string actionName, float deltaRate)
-        {
-            var actionData = DatasheetManager.Instance.GetActionData(__pawnBrain.PawnBB.common.pawnId, actionName);
-            if (actionData == null)
-            {
-                __Logger.WarningF(gameObject, nameof(BoostSelection), "DatasheetManager.Instance.GetActionData() return false", "pawnId", __pawnBrain.PawnBB.common.pawnId, "actionName", actionData.actionName);
-                return;
-            }
-
-            BoostSelection(actionData, deltaRate);
-        }
-
+        public void BoostSelection(string actionName, float deltaRate) => BoostSelection(GetActionData(actionName), deltaRate);
         public void BoostSelection(MainTable.ActionData actionData, float deltaRate)
         {   
             Debug.Assert(actionData != null);
@@ -100,18 +102,7 @@ namespace Game
                 __Logger.WarningF(gameObject, nameof(BoostSelection), "SourceActionStates.TryGetValue() return false", "actionName", actionData.actionName);
         }
         
-        public void ResetSelection(string actionName)
-        {
-            var actionData = DatasheetManager.Instance.GetActionData(__pawnBrain.PawnBB.common.pawnId, actionName);
-            if (actionData == null)
-            {
-                __Logger.WarningF(gameObject, nameof(ResetSelection), "DatasheetManager.Instance.GetActionData() return false", "pawnId", __pawnBrain.PawnBB.common.pawnId, "actionName", actionData.actionName);
-                return;
-            }
-
-            ResetSelection(actionData);
-        }
-
+        public void ResetSelection(string actionName) => ResetSelection(GetActionData(actionName));
         public void ResetSelection(MainTable.ActionData actionData)
         {   
             Debug.Assert(actionData != null);
@@ -120,6 +111,7 @@ namespace Game
             {
                 state.ResetRate();
                 state.ResetCoolTime();
+                __executables.Remove(actionData);
             }
             else
             {
@@ -127,18 +119,7 @@ namespace Game
             }
         }
 
-        public bool EvaluateSelection(string actionName, float distanceConstraint, float staminaConstraint)
-        {
-            var actionData = DatasheetManager.Instance.GetActionData(__pawnBrain.PawnBB.common.pawnId, actionName);
-            if (actionData == null)
-            {
-                __Logger.WarningF(gameObject, nameof(EvaluateSelection), "DatasheetManager.Instance.GetActionData() return false", "pawnId", __pawnBrain.PawnBB.common.pawnId, "actionName", actionData.actionName);
-                return false;
-            }
-
-            return EvaluateSelection(actionData, distanceConstraint, staminaConstraint);
-        }
-
+        public bool EvaluateSelection(string actionName, float distanceConstraint, float staminaConstraint) => EvaluateSelection(GetActionData(actionName), distanceConstraint, staminaConstraint);
         public bool EvaluateSelection(MainTable.ActionData actionData, float distanceConstraint, float staminaConstraint)
         {
             Debug.Assert(actionData != null);
@@ -185,7 +166,7 @@ namespace Game
                         SelectionStates[d].ResetCoolTime();
                     }
                  
-                    __executables.Remove(d);       
+                    __executables.Remove(d);     
                     return d;
                 }
 

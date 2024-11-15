@@ -24,7 +24,7 @@ namespace Game
                 GUILayout.BeginVertical();
                 {
                     foreach (var b in (target as PawnBuffController).StackableBuffTable)
-                        GUILayout.Button($"{b.Key} => count:{b.Value.Count}", __buffLabelStyle);
+                        GUILayout.Button($"{b.Key} | count: {b.Value.Count}", __buffLabelStyle);
                 }
                 GUILayout.EndHorizontal();
             }
@@ -35,7 +35,7 @@ namespace Game
                 GUILayout.BeginVertical();
                 {
                     foreach (var b in (target as PawnBuffController).UniqueBuffTable)
-                        GUILayout.Button($"{b.Key} => duration:{b.Value.Item2 - Time.time}", __buffLabelStyle);
+                        GUILayout.Button(b.Value.Item2 < 0f ? $"{b.Key}" : $"{b.Key} | duration: {(b.Value.Item2 - Time.time):F1}", __buffLabelStyle);
                 }
                 GUILayout.EndHorizontal();
             }
@@ -49,7 +49,7 @@ namespace Game
                     {
                         var enumerator = b.GetBuffEnumerator();
                         while (enumerator.MoveNext())
-                            GUILayout.Button($"{enumerator.Current.Key} => duration:{enumerator.Current.Value.Item2 - Time.time}", __buffLabelStyle);
+                            GUILayout.Button(enumerator.Current.Value.Item2 < 0f ? $"{enumerator.Current.Key}" :  $"{enumerator.Current.Key} | duration: {(enumerator.Current.Value.Item2 - Time.time):F1}", __buffLabelStyle);
 
                         enumerator.Dispose();
                     }

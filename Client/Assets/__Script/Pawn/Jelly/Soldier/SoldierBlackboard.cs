@@ -11,10 +11,8 @@ namespace Game
         [Serializable]
         public class Selection
         {
-            public float comboAttackRate;
-            public float comboAttackRateStep;
             public float comboAttackRateBoostAfterCounterAttack;
-            public float counterAttackRate;
+            public float comboAttackRateStep;
             public float counterAttackRateStep;
         }
 
