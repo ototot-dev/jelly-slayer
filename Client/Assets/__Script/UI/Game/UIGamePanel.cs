@@ -29,6 +29,9 @@ public class UIGamePanel : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (_heroBrain == null)
+            return;
+
         // HP Value
         var maxValue = _heroBrain.PawnBB.stat.maxHeartPoint.Value;
         _playerHpSlider.value = (maxValue > 0) ? _heroBrain.PawnHP.heartPoint.Value / maxValue : 0;
