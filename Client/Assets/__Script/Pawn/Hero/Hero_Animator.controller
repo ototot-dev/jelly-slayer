@@ -2002,7 +2002,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: OnHit (Blocked)
+  m_Name: OnBlocked
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -2100,7 +2100,7 @@ AnimatorStateMachine:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: OnHit (Guard)
+  m_Name: OnHit (Block)
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: 1469761372202170305}

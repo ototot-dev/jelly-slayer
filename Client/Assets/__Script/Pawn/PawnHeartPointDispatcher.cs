@@ -163,6 +163,7 @@ namespace Game
             if (!damageContext.receiverBrain.PawnBB.IsSpawnFinished || damageContext.receiverBrain.PawnBB.IsDead)
                 return;
 
+            var senderActionCtrler = damageContext.senderBrain.GetComponent<PawnActionController>();
             var receiverActionCtrler = damageContext.receiverBrain.GetComponent<PawnActionController>();
             var canNotGuard = (damageContext.senderActionData?.cannotGuard ?? 0) > 0;
             var canNotParry = (damageContext.senderActionData?.cannotParry ?? 0) > 0;
@@ -230,9 +231,7 @@ namespace Game
             {
                 __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.Blocked", "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
 
-                //var staminaCost = (damageContext.receiverBrain.PawnBB.stat.guardStaminaCost * damageContext.senderActionData.guardStaminaCostMultiplier + damageContext.senderActionData.guardStaminaDamage) * Mathf.Clamp01(1f - damageContext.receiverBrain.PawnBB.stat.guardEfficiency);
-                var staminaCost = (damageContext.receiverBrain.PawnBB.stat.guardStaminaCost + 
-                    damageContext.senderActionData.guardStaminaDamage) * Mathf.Clamp01(1f - damageContext.receiverBrain.PawnBB.stat.guardEfficiency);
+                var staminaCost = (damageContext.receiverBrain.PawnBB.stat.guardStaminaCost * damageContext.senderActionData.guardStaminaCostMultiplier + damageContext.senderActionData.guardStaminaDamage) * Mathf.Clamp01(1f - damageContext.receiverBrain.PawnBB.stat.guardEfficiency);
                 damageContext.receiverBrain.PawnBB.stat.ReduceStamina(staminaCost);
 
                 if (damageContext.receiverBrain.PawnBB.stat.guardStrength <= damageContext.senderActionData.guardBreak)
@@ -251,9 +250,8 @@ namespace Game
                         Debug.Assert(damageContext.receiverActionData != null);
 
                         //* 'Block' 판정인 경우엔 Sender는 역경직을 받게 되고, Receiver도 짧은 자체 경직 시간을 갖게됨
-                        damageContext.senderPenalty = new(BuffTypes.Staggered, damageContext.receiverActionData.staggerDuration);
-                        // damageContext.receiverPenalty = new(BuffTypes.Staggered, damageContext.receiverActionData.actionDuration);
-                        damageContext.receiverPenalty = new(BuffTypes.Staggered, 0.1f);
+                        if (senderActionCtrler == null || !senderActionCtrler.IsSuperArmorEnabled )
+                            damageContext.senderPenalty = new(BuffTypes.Staggered, damageContext.receiverActionData.staggerDuration);
                     }
                 }
             }
@@ -337,7 +335,7 @@ namespace Game
             damageContext.receiverBrain.PawnHP.LastDamageTimeStamp = Time.time;
 
             //* 히트 시엔 impulseRootMotion을 꺼줌
-            if (damageContext.senderBrain.TryGetComponent<PawnActionController>(out var senderActionCtrler))
+            if (senderActionCtrler != null)
             {
                 senderActionCtrler.currActionContext.impulseRootMotionDisposable?.Dispose();
                 senderActionCtrler.currActionContext.impulseRootMotionDisposable = null;
