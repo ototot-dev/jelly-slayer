@@ -1,4 +1,5 @@
 using System.Linq;
+using MainTable;
 using UniRx;
 using UnityEngine;
 
@@ -30,7 +31,8 @@ namespace Game
 
         float __lastComboAttackRateStepTimeStamp;
         MainTable.ActionData __counterActionData;
-        MainTable.ActionData __comboActionData;
+        MainTable.ActionData __combo1ActionData;
+        MainTable.ActionData __combo2ActionData;
 
         protected override void StartInternal()
         {
@@ -43,19 +45,44 @@ namespace Game
                     
                 ActionDataSelector.UpdateSelection(deltaTick);
 
-                //* 콤보 공격
-                __comboActionData ??= ActionDataSelector.GetActionData("Attack#1");
-                if (ActionDataSelector.CheckExecutable(__comboActionData) && Time.time - PawnHP.LastDamageTimeStamp >= 1f && Time.time - __lastComboAttackRateStepTimeStamp >= 1f)
+                __combo1ActionData ??= ActionDataSelector.GetActionData("Attack#1");
+                __combo2ActionData ??= ActionDataSelector.GetActionData("Attack#2");
+
+                if (!ActionCtrler.CheckActionPending() && ActionCtrler.CheckActionRunning() && ActionCtrler.CanInterruptAction())
                 {
-                    if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && ActionDataSelector.EvaluateSelection(__comboActionData, -1f, 1f) && CheckTargetVisibility())
+                    if (ActionCtrler.CurrActionName == "Counter")
                     {
-                        ActionDataSelector.ResetSelection(__comboActionData);
-                        ActionCtrler.SetPendingAction(__comboActionData.actionName);
+                        //* 반격 후에 1타 공격
+                        if (ActionDataSelector.EvaluateSelection(__combo1ActionData, -1f, 1f))
+                        {
+                            ActionDataSelector.ResetSelection(__combo1ActionData);
+                            ActionCtrler.SetPendingAction(__combo1ActionData.actionName);
+                            ActionCtrler.CancelAction(false);
+                        }
+                    }
+                    else if (ActionCtrler.CurrActionName == "Attack#1") 
+                    {
+                        //* 1타 후에 2타 콤보 공격
+                        ActionCtrler.SetPendingAction(__combo2ActionData.actionName);
+                        ActionCtrler.CancelAction(false);
+                    }
+                }
+
+                if (ActionCtrler.CheckActionPending() || ActionCtrler.CheckActionRunning())
+                {
+                    __lastComboAttackRateStepTimeStamp = Time.time;
+                }
+                else if (ActionDataSelector.CheckExecutable(__combo1ActionData) && Time.time - PawnHP.LastDamageTimeStamp >= 1f && Time.time - __lastComboAttackRateStepTimeStamp >= 1f)
+                {
+                    if (ActionDataSelector.EvaluateSelection(__combo1ActionData, -1f, 1f) && CheckTargetVisibility())
+                    {
+                        ActionDataSelector.ResetSelection(__combo1ActionData);
+                        ActionCtrler.SetPendingAction(__combo1ActionData.actionName);
                     }
                     else
                     {
                         __lastComboAttackRateStepTimeStamp = Time.time;
-                        ActionDataSelector.BoostSelection(__comboActionData, BB.selection.comboAttackRateStep);
+                        ActionDataSelector.BoostSelection(__combo1ActionData, BB.selection.comboAttackRateStep);
                     }
                 }
             };
@@ -71,6 +98,7 @@ namespace Game
                 if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && ActionDataSelector.EvaluateSelection(__counterActionData, -1f, 1f) && CheckTargetVisibility())
                 {
                     ActionDataSelector.ResetSelection(__counterActionData);
+                    ActionDataSelector.BoostSelection(__combo1ActionData, BB.selection.comboAttackRateBoostAfterCounterAttack);
                     ActionCtrler.SetPendingAction("Counter");
                 }
                 else
