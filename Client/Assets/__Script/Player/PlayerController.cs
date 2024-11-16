@@ -441,6 +441,7 @@ namespace Game
                         MyHeroBrain.ChangeWeapon(MyHeroBrain.BB.IsCharging ? WeaponSetType.TWOHAND_WEAPON : WeaponSetType.ONEHAND_WEAPONSHIELD);
                     }
                 }
+                
                 //* 챠징 어택 판별을 위해서 'isCharging' 값은 제일 마지막에 리셋
                 MyHeroBrain.BB.action.isCharging.Value = false;
             }

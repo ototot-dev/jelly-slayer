@@ -18,6 +18,10 @@ namespace Game
             if (!base.CanRootMotion(rootMotionVec))
                 return false;
 
+            //* Down 상태면 RootMotion은 항상 적용함
+            if (__brain.BB.IsDown)
+                return true;
+
             if (__brain.BB.TargetBrain != null && __brain.SensorCtrler.TouchingColliders.Contains(__brain.BB.TargetBrain.coreColliderHelper.pawnCollider))
             {
                 //* RootMotion으로 목표물을 밀지 않도록 목묘물의 TouchingColliders와 접축할 정도로 가깝다면 rootMotionVec가 목표물에서 멀어지는 방향일때만 적용해준다.
@@ -36,8 +40,6 @@ namespace Game
                 return false;
             if (__brain.SensorCtrler.WatchingColliders.Contains(damageContext.senderBrain.coreColliderHelper.pawnCollider) == false)
                 return false;
-            // if (damageContext.receiverBrain.PawnBB.stat.stamina.Value < damageContext.actionData.guardDamage)
-            //     return false;
 
             return true;
         }
@@ -115,10 +117,14 @@ namespace Game
             __brain.AnimCtrler.mainAnimator.SetBool("IsDown", true);
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnDown");
 
-            var knockBackVec = damageContext.senderActionData.knockBackDistance / 0.2f * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-            Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.2f)))
-                .Subscribe(_ => __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity))
-                .AddTo(this);
+            //? 임시: knockBackDistance를 rootMotionMultiplier값에 대입하여 이동거리를 늘려줌
+            __brain.Movement.rootMotionMultiplier = damageContext.senderActionData.knockBackDistance;
+
+            //* 일어나기 연출을 위해 2초 전에 'IsDown'값을 false로 우선 변경함
+            Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverPenalty.Item2 - 2f)).Subscribe(_ =>
+            {
+                __brain.AnimCtrler.mainAnimator.SetBool("IsDown", false);
+            }).AddTo(this);
 
             return Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverPenalty.Item2))
                 .DoOnCancel(() =>

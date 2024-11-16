@@ -45,6 +45,9 @@ namespace Game
                     
                 ActionDataSelector.UpdateSelection(deltaTick);
 
+                if (debugActionDisabled)
+                    return;
+
                 __combo1ActionData ??= ActionDataSelector.GetActionData("Attack#1");
                 __combo2ActionData ??= ActionDataSelector.GetActionData("Attack#2");
 
@@ -94,6 +97,9 @@ namespace Game
 
             if (damageContext.actionResult == ActionResults.Blocked)
             {   
+                if (debugActionDisabled)
+                    return;
+                    
                 __counterActionData ??= ActionDataSelector.GetActionData("Counter");
                 if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && ActionDataSelector.EvaluateSelection(__counterActionData, -1f, 1f) && CheckTargetVisibility())
                 {
