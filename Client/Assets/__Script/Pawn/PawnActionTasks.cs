@@ -5,6 +5,7 @@ using NodeCanvas.BehaviourTrees;
 using NodeCanvas.Framework;
 using Retween.Rx;
 using UniRx;
+using Unity.Linq;
 using UnityEngine;
 using XftWeapon;
 
@@ -1167,6 +1168,7 @@ namespace Game.NodeCanvasExtension
         public BBParameter<Vector3> scale = Vector3.one;
         public BBParameter<ParticleSystemScalingMode> scalingMode = ParticleSystemScalingMode.Local;
         public BBParameter<float> duration = -1f;
+        public BBParameter<string[]> childNameToBeHidden;
         public bool stopWhenActionCanceled = true;
         PawnActionController __pawnActionCtrler;
         EffectInstance __fxInstance;
@@ -1190,6 +1192,22 @@ namespace Game.NodeCanvasExtension
                         __fxInstance = EffectManager.Instance.Show(fxName.value, position.value, Quaternion.Euler(pitchYawRoll.value), scale.value, duration.value, 0f, scalingMode.value);
                     else
                         __fxInstance = EffectManager.Instance.Show(fxPrefab.value, position.value, Quaternion.Euler(pitchYawRoll.value), scale.value, duration.value, 0f, scalingMode.value);
+                }
+
+                if (!childNameToBeHidden.isNoneOrNull && childNameToBeHidden.value.Length > 0)
+                {
+                    for (int i = 0; i < __fxInstance.transform.childCount; i++)
+                    {
+                        var child = __fxInstance.transform.GetChild(i);
+                        for (int j = 0; j < childNameToBeHidden.value.Length; j++)
+                        {
+                            if (childNameToBeHidden.value[j] == child.name)
+                            {
+                                child.gameObject.SetActive(false);
+                                break;
+                            }
+                        }
+                    }
                 }
 
                 __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;
