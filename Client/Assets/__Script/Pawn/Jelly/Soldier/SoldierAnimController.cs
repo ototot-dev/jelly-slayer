@@ -1,4 +1,5 @@
 using System.Linq;
+using FIMSpace.BonesStimulation;
 using FIMSpace.FEyes;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
@@ -11,14 +12,19 @@ namespace Game
         public Transform jellyMeshSlot;
         public Transform shieldMeshSlot;
         public Transform eyeTarget;
+        public MeshRenderer shieldMeshRenderer;
         public FEyesAnimator eyeAnimator;
+        public BonesStimulator leftShoulderBoneSimulator;
+        public BonesStimulator rightShoulderBoneSimulator;
         public JellySpringMassSystem springMassSystem;
 
         [Header("Parameter")]
-        public float rigBlendWeight = 1;
-        public float rigBlendSpeed = 1;
-        public float actionLayerBlendSpeed = 1;
-        public float legAnimGlueBlendSpeed = 1;
+        public float rigBlendWeight = 1f;
+        public float rigBlendSpeed = 1f;
+        public float actionLayerBlendSpeed = 1f;
+        public float legAnimGlueBlendSpeed = 1f;
+        public float boneSimulatorBlendSpeed = 1f;
+        public float boneSimulatorTargetWeight = 0f;
         SoldierBrain __brain;
         Rig __rig;
 
@@ -31,6 +37,27 @@ namespace Game
 
         void Start()
         {
+            __brain.BuffCtrler.onBuffActive += (buff) =>
+            {
+                if (buff == BuffTypes.Staggered)
+                {
+                    leftShoulderBoneSimulator.GravityEffectForce = rightShoulderBoneSimulator.GravityEffectForce = 9.8f * Vector3.down;
+                    leftShoulderBoneSimulator.GravityHeavyness = 4f;
+                    leftShoulderBoneSimulator.StimulatorAmount = 1f;
+                    boneSimulatorTargetWeight = 1f;
+                    shieldMeshRenderer.material.SetFloat("_Alpha", 0.03f);
+                }
+            };
+
+            __brain.BuffCtrler.onBuffDeactive += (buff) =>
+            {
+                if (buff == BuffTypes.Staggered)
+                {
+                    boneSimulatorTargetWeight = 0f;
+                    shieldMeshRenderer.material.SetFloat("_Alpha", 0.3f);
+                }
+            };
+
             __brain.onUpdate += () =>
             {    
                 if (__brain.ActionCtrler.CheckActionRunning())
@@ -56,9 +83,23 @@ namespace Game
 
                 var animMoveVec = __brain.coreColliderHelper.transform.InverseTransformDirection(__brain.Movement.CurrVelocity).Vector2D();
                 mainAnimator.SetFloat("MoveX", animMoveVec.x / __brain.Movement.moveSpeed);
-                mainAnimator.SetFloat("MoveY", animMoveVec.z / __brain.Movement.moveSpeed);
 
-                // __rig.weight = Mathf.Clamp(__rig.weight + (__brain.BB.IsGuarding ? rigBlendSpeed : -rigBlendSpeed) * Time.deltaTime, 0, rigBlendWeight);
+                if (boneSimulatorTargetWeight > 0f)
+                {
+                    if (!leftShoulderBoneSimulator.enabled) leftShoulderBoneSimulator.enabled = true;
+                    if (!rightShoulderBoneSimulator.enabled) rightShoulderBoneSimulator.enabled = true;
+                    leftShoulderBoneSimulator.StimulatorAmount = Mathf.Clamp01(leftShoulderBoneSimulator.StimulatorAmount + boneSimulatorBlendSpeed *Time.deltaTime);
+                    rightShoulderBoneSimulator.StimulatorAmount = Mathf.Clamp01(rightShoulderBoneSimulator.StimulatorAmount + boneSimulatorBlendSpeed *Time.deltaTime);
+                }
+                else
+                {
+                    leftShoulderBoneSimulator.StimulatorAmount = Mathf.Clamp01(leftShoulderBoneSimulator.StimulatorAmount - boneSimulatorBlendSpeed *Time.deltaTime);
+                    rightShoulderBoneSimulator.StimulatorAmount = Mathf.Clamp01(rightShoulderBoneSimulator.StimulatorAmount - boneSimulatorBlendSpeed *Time.deltaTime);
+                    if (leftShoulderBoneSimulator.StimulatorAmount <= 0f && leftShoulderBoneSimulator.enabled)
+                        leftShoulderBoneSimulator.enabled = false;
+                    if (rightShoulderBoneSimulator.StimulatorAmount <= 0f && rightShoulderBoneSimulator.enabled)
+                        rightShoulderBoneSimulator.enabled = false;
+                }
 
                 if (__brain.BB.IsDead)
                 {
