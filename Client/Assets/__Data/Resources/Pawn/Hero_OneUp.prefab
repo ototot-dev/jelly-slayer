@@ -277,9 +277,10 @@ MonoBehaviour:
   mainAnimator: {fileID: 3244703593152202959}
   legAnimator: {fileID: 3673634840836888687}
   rigBuilder: {fileID: 8157329558261335758}
-  shieldSocket: {fileID: 3556273806665314536}
+  shieldMeshSlot: {fileID: 3556273806665314536}
+  weaponMeshSlot: {fileID: 5806174125005292053}
   HeadLookAt: {fileID: 3872346485875650652}
-  hipBone: {fileID: 0}
+  hipBone: {fileID: 3244703593161533285}
   hipBoneOffset: 0
   animLayerBlendSpeed: 10
   legAnimGlueBlendSpeed: 1
@@ -355,7 +356,7 @@ MonoBehaviour:
     _version: 3.31
     _category: 
     _comments: 
-    _translation: {x: 349.4887, y: -170.11642}
+    _translation: {x: 291, y: -204}
     _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 0
@@ -378,22 +379,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _parentBlackboard: {fileID: 0}
-  _serializedBlackboard: '{"_variables":{"SlashYellowFx":{"_value":1,"_name":"SlashYellowFx","_id":"e3b84ea2-99ac-47d4-b800-c0e4e7d37ec2","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
-    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"SlashBlueFx":{"_value":2,"_name":"SlashBlueFx","_id":"1eec69b3-c82a-40e5-abcf-1b05a2cf50e1","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+  _serializedBlackboard: '{"_variables":{"SlashRoundYellow":{"_value":1,"_name":"SlashRoundYellow","_id":"e3b84ea2-99ac-47d4-b800-c0e4e7d37ec2","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"SlashRoundBlue":{"_value":2,"_name":"SlashRoundBlue","_id":"1eec69b3-c82a-40e5-abcf-1b05a2cf50e1","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"ChainShotPrefab":{"_value":3,"_name":"ChainShotPrefab","_id":"ee34bbd6-eff5-4970-b892-3085e3d79b3b","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"MagicPillarBlastRed":{"_value":4,"_name":"MagicPillarBlastRed","_id":"3054f73e-8c3e-4159-a661-4e3e38b9a7d3","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"MagicPillarBlastYellow":{"_value":5,"_name":"MagicPillarBlastYellow","_id":"7fef883a-e638-41a3-b1f9-cefe9eae4ba5","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}}}'
   _objectReferences:
   - {fileID: 0}
   - {fileID: 5929689904258409643, guid: c875b06c70f59cd49ba1751da0212306, type: 3}
   - {fileID: 5139001163658138898, guid: 52050f4836b96da4a995e0fce03e0dfe, type: 3}
   - {fileID: 8302651438673055125, guid: 5081af939ad0f42498d22c725eb1f85c, type: 3}
+  - {fileID: 5629602492193098048, guid: 265bf097dd85fb144b689a6ac2211310, type: 3}
+  - {fileID: 484316541744064046, guid: 01428f06eefd7b341b077152a3c814f4, type: 3}
   _serializedVariables:
-  - _json: '{"_value":1,"_name":"SlashYellowFx","_id":"e3b84ea2-99ac-47d4-b800-c0e4e7d37ec2","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+  - _json: '{"_value":1,"_name":"SlashRoundYellow","_id":"e3b84ea2-99ac-47d4-b800-c0e4e7d37ec2","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
       UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
     _references:
     - {fileID: 0}
     - {fileID: 5929689904258409643, guid: c875b06c70f59cd49ba1751da0212306, type: 3}
-  - _json: '{"_value":1,"_name":"SlashBlueFx","_id":"1eec69b3-c82a-40e5-abcf-1b05a2cf50e1","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+  - _json: '{"_value":1,"_name":"SlashRoundBlue","_id":"1eec69b3-c82a-40e5-abcf-1b05a2cf50e1","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
       UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
     _references:
     - {fileID: 0}
@@ -403,6 +408,16 @@ MonoBehaviour:
     _references:
     - {fileID: 0}
     - {fileID: 8302651438673055125, guid: 5081af939ad0f42498d22c725eb1f85c, type: 3}
+  - _json: '{"_value":1,"_name":"MagicPillarBlastRed","_id":"3054f73e-8c3e-4159-a661-4e3e38b9a7d3","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
+    _references:
+    - {fileID: 0}
+    - {fileID: 5629602492193098048, guid: 265bf097dd85fb144b689a6ac2211310, type: 3}
+  - _json: '{"_value":1,"_name":"MagicPillarBlastYellow","_id":"7fef883a-e638-41a3-b1f9-cefe9eae4ba5","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
+    _references:
+    - {fileID: 0}
+    - {fileID: 484316541744064046, guid: 01428f06eefd7b341b077152a3c814f4, type: 3}
 --- !u!1 &1101305529287299696
 GameObject:
   m_ObjectHideFlags: 0
@@ -5212,7 +5227,7 @@ GameObject:
   - component: {fileID: 8157329558261335758}
   - component: {fileID: 6722402446907569461}
   m_Layer: 0
-  m_Name: 1UP GIRL - SHIZUKA Mobile III
+  m_Name: ' '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18444,7 +18459,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 473958, guid: 1573d08a3535dbd499e540f5f80f4424, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 473958, guid: 1573d08a3535dbd499e540f5f80f4424, type: 3}
       propertyPath: m_LocalPosition.y
@@ -18452,7 +18467,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 473958, guid: 1573d08a3535dbd499e540f5f80f4424, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.2212
+      value: -0.22
       objectReference: {fileID: 0}
     - target: {fileID: 473958, guid: 1573d08a3535dbd499e540f5f80f4424, type: 3}
       propertyPath: m_LocalRotation.w

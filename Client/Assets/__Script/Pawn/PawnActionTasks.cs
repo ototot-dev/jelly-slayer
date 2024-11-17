@@ -23,6 +23,27 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    public class ModifyTransform : ActionTask
+    {
+        public BBParameter<Transform> target;
+        public BBParameter<Vector3> position;
+        public BBParameter<Vector3> pitchYawRoll;
+        public bool changePosition = true;
+        public bool changeRotation = true;
+
+        protected override void OnExecute()
+        {
+            if (changePosition && changeRotation)
+                target.value.SetLocalPositionAndRotation(position.value, Quaternion.Euler(pitchYawRoll.value.x, pitchYawRoll.value.y, pitchYawRoll.value.z));
+            else if (changePosition)
+                target.value.position = position.value;
+            else    
+                target.value.rotation = Quaternion.Euler(pitchYawRoll.value.x, pitchYawRoll.value.y, pitchYawRoll.value.z);
+
+            EndAction(true);
+        }
+    }
+
     public class HoldPosition : ActionTask
     {
         public BBParameter<Transform> lookAt;

@@ -77,7 +77,7 @@ namespace Game
                 }).AddTo(this);
 
                 SoundManager.Instance.Play(SoundID.HIT_BLOCK);
-                EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.AnimCtrler.shieldSocket.position, Quaternion.identity, Vector3.one, 1f);
+                EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);
             }
             else //* Sender의 액션을 파훼된 경우
             {
@@ -104,7 +104,7 @@ namespace Game
                     __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
 
                     SoundManager.Instance.Play(SoundID.HIT_BLOCK);
-                    EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.AnimCtrler.shieldSocket.position, Quaternion.identity, Vector3.one, 1f);
+                    EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);
                 }
             }
 
@@ -241,7 +241,11 @@ namespace Game
 
             onActiveParryEnabled += (_) => parryHitColliderHelper.pawnCollider.enabled = currActionContext.activeParryEnabled;
             onActionCanceled += (_, __) => parryHitColliderHelper.pawnCollider.enabled = false;
-            onActionFinished += (_) => parryHitColliderHelper.pawnCollider.enabled = false;
+            onActionFinished += (_) => 
+            {
+                __brain.AnimCtrler.weaponMeshSlot.transform.SetLocalPositionAndRotation(new Vector3(0f, 0f, -0.22f), Quaternion.identity);
+                parryHitColliderHelper.pawnCollider.enabled = false;
+            };
 
             onEmitProjectile += OnEmitProjectile;
         }

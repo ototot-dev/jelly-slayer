@@ -8,7 +8,8 @@ namespace Game
 {
     public class HeroAnimController : PawnAnimController
     {
-        public Transform shieldSocket;
+        public Transform shieldMeshSlot;
+        public Transform weaponMeshSlot;
         public Transform HeadLookAt;
         public Transform hipBone;
         public float hipBoneOffset;
