@@ -54,8 +54,8 @@ namespace Game
 
             if (damageContext.actionResult == ActionResults.Damaged)
             {
-                var hitVec = damageContext.senderBrain.coreColliderHelper.transform.position - damageContext.receiverBrain.coreColliderHelper.transform.position;
-                hitVec = damageContext.receiverBrain.coreColliderHelper.transform.InverseTransformDirection(hitVec).Vector2D().normalized;
+                var hitVec = damageContext.senderBrain.CoreTransform.position - damageContext.receiverBrain.coreColliderHelper.transform.position;
+                hitVec = damageContext.receiverBrain.CoreTransform.InverseTransformDirection(hitVec).Vector2D().normalized;
 
                 __brain.AnimCtrler.mainAnimator.SetFloat("HitX", hitVec.x);
                 __brain.AnimCtrler.mainAnimator.SetFloat("HitY", hitVec.z);
@@ -79,13 +79,15 @@ namespace Game
                 SoundManager.Instance.Play(SoundID.HIT_BLOCK);
                 EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);
             }
+            // Guard Break
             else if (damageContext.actionResult == ActionResults.GuardBreak) 
             {
                 __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 2);
                 __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
 
                 SoundManager.Instance.Play(SoundID.GUARD_BREAK);
-                EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);
+                EffectManager.Instance.Show("Crash", 
+                    __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);
             }
 
             var knockBackDisposable = Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.2f)))

@@ -30,6 +30,9 @@ namespace Game
             __brain.AnimCtrler.mainAnimator.SetBool("IsJumping", false);
             __brain.AnimCtrler.legAnimator.User_AddImpulse(new ImpulseExecutor(0.2f * Vector3.down, Vector3.zero, 0.2f));
             __brain.BB.action.isJumping.Value = false;
+
+            EffectManager.Instance.Show("JumpCloudSmall",
+                __brain.CoreTransform.position + 0.1f * Vector3.up, Quaternion.identity, Vector3.one, 1f);
         }
 
         public void StartRolling(float duration)
@@ -176,7 +179,7 @@ namespace Game
             if (canRotate3)
             {
                 if (freezeRotation && __brain.BB.TargetBrain != null)
-                    faceVec = (__brain.BB.TargetBrain.coreColliderHelper.transform.position - capsule.position).Vector2D().normalized;
+                    faceVec = (__brain.BB.TargetBrain.CoreTransform.position - capsule.position).Vector2D().normalized;
 
                 __ecmMovement.Rotate(faceVec, rotateSpeed);
             }
