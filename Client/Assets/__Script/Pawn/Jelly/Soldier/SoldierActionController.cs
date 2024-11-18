@@ -54,8 +54,8 @@ namespace Game
 
             if (damageContext.actionResult == ActionResults.Damaged)
             {
-                var hitVec = damageContext.senderBrain.coreColliderHelper.transform.position - damageContext.receiverBrain.coreColliderHelper.transform.position;
-                hitVec = damageContext.receiverBrain.coreColliderHelper.transform.InverseTransformDirection(hitVec).Vector2D().normalized;
+                var hitVec = damageContext.senderBrain.CoreTransform.position - damageContext.receiverBrain.coreColliderHelper.transform.position;
+                hitVec = damageContext.receiverBrain.CoreTransform.InverseTransformDirection(hitVec).Vector2D().normalized;
 
                 __brain.AnimCtrler.mainAnimator.SetFloat("HitX", hitVec.x);
                 __brain.AnimCtrler.mainAnimator.SetFloat("HitY", hitVec.z);
