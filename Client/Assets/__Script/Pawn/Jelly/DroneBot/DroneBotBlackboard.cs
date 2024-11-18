@@ -5,7 +5,14 @@ using UnityEngine;
 
 namespace Game
 {
-    public class DroneBotBlackboard : JellyManBlackboard
+    public class  DroneBotBlackboard : JellyManBlackboard
     {
+        [Serializable]
+        public class Selection
+        {
+            public float fireAttackRateStep;  //* Idle 상태에서 Fire 발생 확률 증가
+        }
+
+        public Selection selection = new();
     }
 }

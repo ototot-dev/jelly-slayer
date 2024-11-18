@@ -12,6 +12,7 @@ namespace Game
     {
         [Header("Component")]
         public Transform counterActionCollider;
+        public XWeaponTrail sworldWeaponTrail;
 
         public override bool CanRootMotion(Vector3 rootMotionVec)
         {
@@ -166,26 +167,34 @@ namespace Game
             return Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverPenalty.Item2)).Subscribe().AddTo(this);
         }
 
-        public override IDisposable StartOnBlockedAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
+        public override IDisposable StartOnParriedAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
         {
             Debug.Assert(damageContext.senderBrain == __brain);
 
+            __brain.AnimCtrler.mainAnimator.SetTrigger("OnParried");
             __brain.AnimCtrler.legAnimator.User_AddImpulse(new ImpulseExecutor(new Vector3(0, 0.2f, -0.1f), Vector3.zero, 0.2f));
 
-            var knockBackDistance = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "!OnBlock")?.knockBackDistance ?? 0f;
+            var knockBackDistance = 0f;
+            if (damageContext.actionResult == ActionResults.ActiveParried)
+                knockBackDistance = damageContext.receiverActionData.knockBackDistance;
+            else if (damageContext.actionResult == ActionResults.PassiveParried)
+                knockBackDistance = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "PassiveParry")?.knockBackDistance ?? 0f;
+            else
+                Debug.Assert(false);
+
             if (knockBackDistance <= 0f)
-                __Logger.WarningF(gameObject, nameof(StartOnBlockedAction), "knockBackDistance is invalid.", "knockBackDistance", knockBackDistance);
+                __Logger.WarningF(gameObject, nameof(StartOnParriedAction), "knockBackDistance is zero", "knockBackDistance", knockBackDistance);
 
             var knockBackVec = knockBackDistance / 0.2f * -damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
             return Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.2f)))
                 .DoOnCancel(() =>
                 {
-                    if (CurrActionName == "!OnBlocked")
+                    if (CurrActionName == "!OnParried")
                         FinishAction();
                 })
                 .DoOnCompleted(() =>
                 {
-                    if (CurrActionName == "!OnBlocked")
+                    if (CurrActionName == "!OnParried")
                         FinishAction();
                 })
                 .Subscribe(_ => __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity))

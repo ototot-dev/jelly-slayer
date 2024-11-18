@@ -32,6 +32,9 @@ namespace Game
             ActionCtrler = GetComponent<DroneBotActionController>();
         }
 
+        float __lastFireRateStepTimeStamp;
+        MainTable.ActionData __fireActionData;
+
         protected override void StartInternal()
         {
             base.StartInternal();
@@ -43,30 +46,29 @@ namespace Game
                     
                 ActionDataSelector.UpdateSelection(deltaTick);
 
-                //* 공격
-                if (!ActionCtrler.CheckActionRunning() && string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && !BuffCtrler.CheckBuff(BuffTypes.Staggered) && CheckTargetVisibility())
+                if (debugActionDisabled)
+                    return;
+
+                __fireActionData ??= ActionDataSelector.GetActionData("Fire");
+
+                if (ActionCtrler.CheckActionPending() || ActionCtrler.CheckActionRunning())
                 {
-                    var selection = ActionDataSelector.RandomSelection(BB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position), BB.stat.stamina.Value, true);
-                    if (selection != null)
-                        ActionCtrler.SetPendingAction(selection.actionName);
+                    __lastFireRateStepTimeStamp = Time.time;
+                }
+                else if (ActionDataSelector.CheckExecutable(__fireActionData) && Time.time - PawnHP.LastDamageTimeStamp >= 1f && Time.time - __lastFireRateStepTimeStamp >= 1f)
+                {
+                    if (ActionDataSelector.EvaluateSelection(__fireActionData, -1f, 1f) && CheckTargetVisibility())
+                    {
+                        ActionDataSelector.ResetSelection(__fireActionData);
+                        ActionCtrler.SetPendingAction(__fireActionData.actionName);
+                    }
+                    else
+                    {
+                        __lastFireRateStepTimeStamp = Time.time;
+                        ActionDataSelector.BoostSelection(__fireActionData, BB.selection.fireAttackRateStep);
+                    }
                 }
             };
-        }
-
-        protected override void DamageReceiverHandler(ref PawnHeartPointDispatcher.DamageContext damageContext)
-        {
-            base.DamageReceiverHandler(ref damageContext);
-
-            if (damageContext.actionResult == ActionResults.Blocked)
-            {   
-                //* 반격
-                if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && CheckTargetVisibility())
-                {
-                    var selection = ActionDataSelector.RandomSelection(0, 100, true);
-                    if (selection != null)
-                        ActionCtrler.SetPendingAction(selection.actionName);
-                }
-            }
         }
     }
 }
