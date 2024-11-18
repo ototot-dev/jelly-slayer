@@ -356,8 +356,8 @@ MonoBehaviour:
     _version: 3.31
     _category: 
     _comments: 
-    _translation: {x: 291, y: -204}
-    _zoomFactor: 1
+    _translation: {x: -16, y: -161}
+    _zoomFactor: 0.63258207
   _firstActivation: 0
   _enableAction: 0
   _disableAction: 0
@@ -5227,7 +5227,7 @@ GameObject:
   - component: {fileID: 8157329558261335758}
   - component: {fileID: 6722402446907569461}
   m_Layer: 0
-  m_Name: ' '
+  m_Name: 1UP GIRL - SHIZUKA Mobile III
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
