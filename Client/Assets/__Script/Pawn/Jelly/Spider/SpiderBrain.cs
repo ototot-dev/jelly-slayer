@@ -102,7 +102,7 @@ namespace Game
                 if (ActionCtrler.CheckActionRunning())
                     ActionCtrler.CancelAction(false);
 
-                ActionCtrler.StartAction(damageContext, "!OnHit");
+                ActionCtrler.StartAction(damageContext, "!OnHit", string.Empty);
                 // ActionCtrler.StartAction(damageContext, "!OnBigHit", 1, 1, 0);
 
                 // OnPawnDamaged

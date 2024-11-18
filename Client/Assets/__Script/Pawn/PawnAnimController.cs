@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using FIMSpace.FProceduralAnimation;
 using UniRx;
+using UniRx.Triggers.Extension;
 using Unity.Linq;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Animations.Rigging;
 
 namespace Game
@@ -16,6 +18,18 @@ namespace Game
         public LegsAnimator legAnimator;
         public RigBuilder rigBuilder;
         public  Dictionary<Rigidbody, Tuple<Vector3, Quaternion>> capturedPhysicsBodyTransforms = new();
+        Dictionary<string, ObservableStateMachineTriggerEx> __observableStateMachineTriggersCached = new();
+        
+        public ObservableStateMachineTriggerEx FindObservableStateMachineTriggerEx(string stateName)
+        {
+            if (__observableStateMachineTriggersCached.TryGetValue(stateName, out var ret))
+                return ret;
+            
+            var found = mainAnimator.GetBehaviours<ObservableStateMachineTriggerEx>().First(s => s.stateName == stateName);
+            __observableStateMachineTriggersCached.Add(stateName, found);
+
+            return found;
+        }
 
         public void StartRagdoll(bool useGravity = true, bool refreshPhysicsBodyTransform = false)
         {

@@ -5,8 +5,10 @@ using NodeCanvas.BehaviourTrees;
 using NodeCanvas.Framework;
 using Retween.Rx;
 using UniRx;
+using UniRx.Triggers.Extension;
 using Unity.Linq;
 using UnityEngine;
+using UnityEngine.UIElements.Experimental;
 using XftWeapon;
 
 namespace Game.NodeCanvasExtension
@@ -15,11 +17,23 @@ namespace Game.NodeCanvasExtension
     {
         [BlackboardOnly]
         public BBParameter<PawnActionController> actionCtrler;
-        protected override string info =>"CheckActionRunning() == " + (invert ? "False" : "True");
+        protected override string info => "CheckActionRunning() == " + (invert ? "False" : "True");
 
         protected override bool OnCheck() 
         {
             return actionCtrler.value.CheckActionRunning();
+        }
+    }
+
+    public class CheckActionHasPreMotion : ConditionTask
+    {
+        [BlackboardOnly]
+        public BBParameter<PawnActionController> actionCtrler;
+        protected override string info => "CheckActionHasPreMotion() == " + (invert ? "False" : "True");
+
+        protected override bool OnCheck() 
+        {
+            return actionCtrler.value.CheckPendingActionHasPreMotion();
         }
     }
 
@@ -399,7 +413,7 @@ namespace Game.NodeCanvasExtension
 
             if (actionCtrler.PendingActionData.Item1 == actionName.value)
             {
-                EndAction(actionCtrler.StartAction(actionName.value, animSpeedMultiplier.value, rootMotionMultiplier.value, rootMotionCurve.value, manualAdvanceEnabled.value));
+                EndAction(actionCtrler.StartAction(actionName.value, string.Empty,animSpeedMultiplier.value, rootMotionMultiplier.value, rootMotionCurve.value, manualAdvanceEnabled.value));
                 actionCtrler.ClearPendingAction();
 
                 if (animClipLength.value > 0)
@@ -426,7 +440,7 @@ namespace Game.NodeCanvasExtension
 
         protected override void OnExecute()
         {
-            EndAction(agent.GetComponent<PawnActionController>().StartAction(actionName.value, actionSpeed.value, rootMotionMultiplier.value, rootMotionCurve.value, manualAdvanceEnabled.value));
+            EndAction(agent.GetComponent<PawnActionController>().StartAction(actionName.value, string.Empty, actionSpeed.value, rootMotionMultiplier.value, rootMotionCurve.value, manualAdvanceEnabled.value));
         }
     }
 
@@ -446,7 +460,7 @@ namespace Game.NodeCanvasExtension
                 actionCtrler.FinishAction();
 
                 //* possibility.value가 0보다 크다면 EndAction(false)를 실행시켜 현재 Action 시퀀스 전체를 취소시킴
-                EndAction(possibility.value > 0f ? false : true);
+                EndAction(possibility.value <= 0f);
             }
             else
             {
@@ -489,7 +503,17 @@ namespace Game.NodeCanvasExtension
             //  'manualAdvanceEnabled' 값이 true라면 Action의 시작된 시간은 (Time.time - __pawnActionCtrler.currActionContext.manualAdvanceTime)가 된다.
             var baseTimeStamp = __pawnActionCtrler.currActionContext.waitTimeStamp;
             if (!useCurrentTime.value)
-                baseTimeStamp = __pawnActionCtrler.currActionContext.manualAdvanceEnabled ? (Time.time - __pawnActionCtrler.currActionContext.manualAdvanceTime) : __pawnActionCtrler.currActionContext.startTimeStamp;
+            {
+                if (__pawnActionCtrler.currActionContext.manualAdvanceEnabled)
+                {
+                    baseTimeStamp = Time.time - __pawnActionCtrler.currActionContext.manualAdvanceTime;
+                }
+                else
+                {
+                    //* 'preMotionTimeStamp'값이 있으면. 실제 액션 시작 시간은 preMotionTimeStamp으로 간주함
+                    baseTimeStamp = __pawnActionCtrler.currActionContext.preMotionTimeStamp > 0f ? __pawnActionCtrler.currActionContext.preMotionTimeStamp : __pawnActionCtrler.currActionContext.startTimeStamp;
+                }
+            }
 
             if (!__pawnActionCtrler.CheckWaitAction(waitTime.value, baseTimeStamp))
                 EndAction(true);
@@ -537,7 +561,8 @@ namespace Game.NodeCanvasExtension
             }
             else
             {
-                var baseTimeStamp = __pawnActionCtrler.currActionContext.startTimeStamp;
+                //* 'preMotionTimeStamp'값이 있으면. 실제 액션 시작 시간은 preMotionTimeStamp으로 간주함
+                var baseTimeStamp = __pawnActionCtrler.currActionContext.preMotionTimeStamp > 0f ? __pawnActionCtrler.currActionContext.preMotionTimeStamp : __pawnActionCtrler.currActionContext.startTimeStamp;
                 var waitTime = waitFrame.value > 0 ? 1f / __pawnActionCtrler.currActionContext.animClipFps * waitFrame.value : __pawnActionCtrler.currActionContext.animClipLength;
                 waitTime /= __pawnActionCtrler.currActionContext.actionSpeed;
                 if (!__pawnActionCtrler.CheckWaitAction(waitTime, baseTimeStamp))
@@ -551,6 +576,54 @@ namespace Game.NodeCanvasExtension
 
             //* Wait 종료 시점에서 interruptEnabled 값을 변경해준다.
             __pawnActionCtrler.SetInterruptEnabled(interruptEnabled.value);
+        }
+    }
+
+    public class WaitPreMotion : ActionTask
+    {
+        protected override string info => string.IsNullOrEmpty(stateName.value) ? base.info : $"Wait PreMotion <b>{stateName.value}</b>";
+        public BBParameter<string> stateName;
+        PawnActionController __pawnActionCtrler;
+        PawnAnimController __pawnAnimCtrler;
+        IDisposable __stateExitDisposable;
+        int __capturedActionInstanceId;
+        float __manualAdvanceSpeedCached;
+
+        protected override void OnExecute()
+        {
+            __pawnAnimCtrler = agent.GetComponent<PawnAnimController>();
+            __pawnActionCtrler = agent.GetComponent<PawnActionController>();
+            __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;
+            __manualAdvanceSpeedCached = __pawnActionCtrler.currActionContext.manualAdvanceSpeed;
+
+            //* animStateName 값이 비어 있으면 PreMotion은 없는 것으로 간주함
+            if (stateName.isNoneOrNull || string.IsNullOrEmpty(stateName.value))
+                EndAction(true);
+
+            var stateBehaviour =__pawnAnimCtrler.FindObservableStateMachineTriggerEx(stateName.value);
+            Debug.Assert(stateBehaviour != null);
+
+            __pawnActionCtrler.currActionContext.manualAdvanceSpeed = 0;
+            __stateExitDisposable = stateBehaviour.OnStateExitAsObservable().Subscribe(_ => 
+            {
+                __pawnActionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
+                __pawnActionCtrler.currActionContext.preMotionTimeStamp = Time.time;
+                EndAction(true);
+            }).AddTo(agent);
+        }
+
+        protected override void OnUpdate()
+        {
+            if (__pawnActionCtrler.currActionContext.actionData == null || __capturedActionInstanceId != __pawnActionCtrler.currActionContext.actionInstanceId)
+                EndAction(false);
+        }
+
+        protected override void OnStop(bool interrupted)
+        {
+            base.OnStop(interrupted);
+            
+            __stateExitDisposable?.Dispose();
+            __stateExitDisposable = null;
         }
     }
 
@@ -896,6 +969,7 @@ namespace Game.NodeCanvasExtension
 
     public class TriggerAnim : ActionTask
     {
+        protected override string info => string.IsNullOrEmpty(triggerName.value) ? base.info : $"Trigger <b>{triggerName.value}</b>";
         public BBParameter<Animator> animator;
         public BBParameter<string> triggerName;
         protected override void OnExecute()

@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using UniRx;
+using UniRx.Triggers.Extension;
 using UnityEngine;
 using XftWeapon;
 using static FIMSpace.FProceduralAnimation.LegsAnimator;

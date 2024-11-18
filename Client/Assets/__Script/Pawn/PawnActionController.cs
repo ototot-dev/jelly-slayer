@@ -22,6 +22,7 @@ namespace Game
         {
             public MainTable.ActionData actionData;
             public int actionInstanceId;
+            public string preMotionName;
             public string actionName;
             public float actionSpeed;
             public float rootMotionMultiplier;
@@ -39,17 +40,21 @@ namespace Game
             public float animClipLength;
             public int animClipFps;
             public float startTimeStamp;
+            public float preMotionTimeStamp;
             public float finishTimeStamp;
             public float waitTimeStamp;
             public IDisposable impulseRootMotionDisposable;
             public IDisposable homingRotationDisposable;
             public IDisposable actionDisposable;
             static int __actionInstanceIdCounter;
-            public ActionContext(MainTable.ActionData actionData, float actionSpeedMultiplier, float rootMotionMultiplier, AnimationCurve rootMotionCurve, bool manualAdvacneEnabled, float startTimeStamp)
+
+            //* 일반적인 Action 초기화
+            public ActionContext(MainTable.ActionData actionData, string preMotionName, float actionSpeedMultiplier, float rootMotionMultiplier, AnimationCurve rootMotionCurve, bool manualAdvacneEnabled, float startTimeStamp)
             {
                 Debug.Assert(actionData != null);
                 this.actionData = actionData;
                 actionInstanceId = ++__actionInstanceIdCounter;
+                this.preMotionName = preMotionName;
                 actionName = actionData.actionName;
                 actionSpeed = actionData.actionSpeed * actionSpeedMultiplier;
                 this.rootMotionMultiplier = rootMotionMultiplier;
@@ -62,22 +67,25 @@ namespace Game
                 activeParryEnabled = false;
                 traceRunning = false;
                 this.manualAdvanceEnabled = manualAdvacneEnabled;
-                manualAdvanceTime = 0;
+                manualAdvanceTime = 0f;
                 manualAdvanceSpeed = actionSpeed;
-                animClipLength = -1;
+                animClipLength = -1f;
                 animClipFps = -1;
                 this.startTimeStamp = startTimeStamp;
-                finishTimeStamp = 0;
-                waitTimeStamp = 0;
+                preMotionTimeStamp = 0f;
+                finishTimeStamp = 0f;
+                waitTimeStamp = 0f;
                 impulseRootMotionDisposable = null;
                 homingRotationDisposable = null;
                 actionDisposable = null;
             }
 
+            //* 리액션 및 Addictivie 액션 초기화
             public ActionContext(string actionName, float actionSpeed, float startTimeStamp)
             {
                 actionData = null;
                 actionInstanceId = ++__actionInstanceIdCounter;
+                preMotionName = string.Empty;
                 this.actionName = actionName;
                 this.actionSpeed = actionSpeed;
                 rootMotionMultiplier = 1;
@@ -90,36 +98,40 @@ namespace Game
                 activeParryEnabled = false;
                 traceRunning = false;
                 manualAdvanceEnabled = false;
-                manualAdvanceTime = 0;
+                manualAdvanceTime = 0f;
                 manualAdvanceSpeed = actionSpeed;
-                animClipLength = -1;
+                animClipLength = -1f;
                 animClipFps = -1;
                 this.startTimeStamp = startTimeStamp;
-                finishTimeStamp = 0;
-                waitTimeStamp = 0;
+                preMotionTimeStamp = 0f;
+                finishTimeStamp = 0f;
+                waitTimeStamp = 0f;
                 impulseRootMotionDisposable = null;
                 homingRotationDisposable = null;
                 actionDisposable = null;
             }
         }
 
-        public ActionContext prevActionContext = new(string.Empty, 1, 0);
-        public ActionContext currActionContext = new(string.Empty, 1, 0);
+        public ActionContext prevActionContext = new(string.Empty, 1f, 0f);
+        public ActionContext currActionContext = new(string.Empty, 1f, 0f);
         public bool CheckActionPending() => !string.IsNullOrEmpty(PendingActionData.Item1);
         public bool CheckActionRunning() => currActionContext.actionData != null || currActionContext.actionDisposable != null;
         public bool CheckActionCanceled() => currActionContext.actionCanceled && CheckActionRunning();
         public bool CanInterruptAction() => currActionContext.interruptEnabled;
+        public bool CheckPendingActionHasPreMotion() => !string.IsNullOrEmpty(PendingActionData.Item2);
         public float EvaluateRootMotion(float deltaTime) => currActionContext.rootMotionCurve == null ? 0f : deltaTime * currActionContext.rootMotionMultiplier * currActionContext.rootMotionCurve.Evaluate(currActionContext.manualAdvanceEnabled ? currActionContext.manualAdvanceTime : Time.time - currActionContext.startTimeStamp);
         public bool IsSuperArmorEnabled => currActionContext.superArmorEnabled && CheckActionRunning();
         public bool IsActiveParryEnabled => currActionContext.activeParryEnabled && CheckActionRunning();
         public bool IsTraceRunning => currActionContext.traceRunning && CheckActionRunning();
         public float LastActionTimeStamp => CheckActionRunning() ? Time.time : prevActionContext.finishTimeStamp;
+        public string PreMotionName => currActionContext.preMotionName;
         public string CurrActionName => currActionContext.actionName;
         public string PrevActionName => prevActionContext.actionName;
         public string PendingActionName => PendingActionData.Item1;
+        public string PendingPreMotionName => PendingActionData.Item2;
 
-        //* Item1: actionName, Item2: pendingTimeStamp
-        public  Tuple<string, float> PendingActionData { get; protected set; } = new(string.Empty, 0);
+        //* Item1: actionName, Item2: preMotionName, Item3: pendingTimeStamp
+        public  Tuple<string, string, float> PendingActionData { get; protected set; } = new(string.Empty, string.Empty, 0);
 
         //* Item1: Strength, Item2: Duration
         protected Dictionary<BuffTypes, Tuple<float, float>> __buffContainer = new();
@@ -184,15 +196,20 @@ namespace Game
 
         public void SetPendingAction(string actionName)
         {
+            SetPendingAction(actionName, string.Empty);
+        }
+
+        public void SetPendingAction(string actionName, string preMotionName)
+        {
             if (!string.IsNullOrEmpty(PendingActionData.Item1))
                 __Logger.WarningF(gameObject, nameof(PendingActionData), "__pendingAction is not empty value!!", "actionName", PendingActionData.Item1);
 
-            PendingActionData = new(actionName, Time.time);
+            PendingActionData = new(actionName, preMotionName, Time.time);
         }
 
         public void ClearPendingAction()
         {
-            PendingActionData = new(string.Empty, 0);
+            PendingActionData = new(string.Empty, string.Empty, 0);
         }
 
         void Awake()
@@ -347,12 +364,12 @@ namespace Game
             };
         }
 
-        public bool StartAction(string actionName, float actionSpeedMultiplier = 1, float rootMotionMultiplier = 1, AnimationCurve rootMotionCurve = null, bool manualAdvacneEnabled = false)
+        public bool StartAction(string actionName, string preMotionName, float actionSpeedMultiplier = 1, float rootMotionMultiplier = 1, AnimationCurve rootMotionCurve = null, bool manualAdvacneEnabled = false)
         {
-            return StartAction(new PawnHeartPointDispatcher.DamageContext(), actionName, actionSpeedMultiplier, rootMotionMultiplier, rootMotionCurve, manualAdvacneEnabled);
+            return StartAction(new PawnHeartPointDispatcher.DamageContext(), actionName, preMotionName, actionSpeedMultiplier, rootMotionMultiplier, rootMotionCurve, manualAdvacneEnabled);
         }
 
-        public bool StartAction(PawnHeartPointDispatcher.DamageContext damageContext, string actionName, float actionSpeedMultiplier = 1, float rootMotionMultiplier = 1, AnimationCurve rootMotionCurve = null, bool manualAdvacneEnabled = false)
+        public bool StartAction(PawnHeartPointDispatcher.DamageContext damageContext, string actionName, string preMotionName, float actionSpeedMultiplier = 1, float rootMotionMultiplier = 1, AnimationCurve rootMotionCurve = null, bool manualAdvacneEnabled = false)
         {
             if (CheckActionRunning())
             {
@@ -394,7 +411,7 @@ namespace Game
                     return false;
                 }
 
-                currActionContext = new(actionData, actionSpeedMultiplier, rootMotionMultiplier, rootMotionCurve, manualAdvacneEnabled, Time.time);
+                currActionContext = new(actionData, preMotionName, actionSpeedMultiplier, rootMotionMultiplier, rootMotionCurve, manualAdvacneEnabled, Time.time);
                 if (actionData.staminaCost > 0)
                 {
                     if (__pawnBrain.PawnBB.stat.stamina.Value < actionData.staminaCost)
@@ -463,14 +480,6 @@ namespace Game
             return true;
         }
 
-        public bool CheckActionCoolTime(MainTable.ActionData actionData)
-        {
-            if (__pawnActionSelector != null && __pawnActionSelector.SelectionStates.TryGetValue(actionData, out var actionState))
-                return actionState.currCoolTime <= 0;
-            else
-                return true;
-        }
-
         public void WaitAction()
         {
             currActionContext.waitTimeStamp = Time.time;
@@ -524,6 +533,7 @@ namespace Game
             {
                 __pawnAnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1);
                 __pawnAnimCtrler.mainAnimator.SetFloat("AnimAdvance", 0);
+                __pawnAnimCtrler.mainAnimator.SetBool("HasPreMotion", false);
             }
 
             currActionContext.actionDisposable?.Dispose();

@@ -164,7 +164,7 @@ namespace Game
 
         public void Build()
         {
-            //* 과거에 생성된 GameObject 제거함
+            //* 기존 NetPoint 제거함
             foreach (var c in root.gameObject.Children().Skip(1).ToArray())
                 DestroyImmediate(c);
             foreach (var c in boundsCenter.gameObject.Children().Skip(1).ToArray())
@@ -177,7 +177,7 @@ namespace Game
                 {
                     for (int x = 0; x < gridNum; x++)
                     {
-                        var position = -0.5f * BoundSize + 0.5f * stepSize + new Vector3(stepSize.x * x, stepSize.y * y, stepSize.x * z);
+                        var position = -0.5f * BoundSize + 0.5f * stepSize + new Vector3(stepSize.x * x, stepSize.y * y, stepSize.x * z) + transform.position;
                         if (index == 0)
                         {
                             boundsCenter.GetChild(0).position = root.GetChild(0).position = position;

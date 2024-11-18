@@ -80,7 +80,7 @@ namespace Game
                     if (ActionDataSelector.EvaluateSelection(__combo1ActionData, -1f, 1f) && CheckTargetVisibility())
                     {
                         ActionDataSelector.ResetSelection(__combo1ActionData);
-                        ActionCtrler.SetPendingAction(__combo1ActionData.actionName);
+                        ActionCtrler.SetPendingAction(__combo1ActionData.actionName, "PreMotion");
                     }
                     else
                     {

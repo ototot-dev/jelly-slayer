@@ -214,9 +214,9 @@ namespace Game
 
                 switch (damageContext.receiverPenalty.Item1)
                 {
-                    case BuffTypes.Groggy: __pawnActionCtrler.StartAction(damageContext, "!OnGroggy"); break;
-                    case BuffTypes.Staggered: __pawnActionCtrler.StartAction(damageContext, "!OnHit"); break;
-                    case BuffTypes.KnockDown: __pawnActionCtrler.StartAction(damageContext, "!OnKnockDown"); break;
+                    case BuffTypes.Groggy: __pawnActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty); break;
+                    case BuffTypes.Staggered: __pawnActionCtrler.StartAction(damageContext, "!OnHit", string.Empty); break;
+                    case BuffTypes.KnockDown: __pawnActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty); break;
                 }
             }
         }
@@ -232,11 +232,11 @@ namespace Game
             switch (damageContext.actionResult)
             {
                 case ActionResults.Blocked: 
-                    __pawnActionCtrler.StartAction(damageContext, "!OnBlocked"); break;
+                    __pawnActionCtrler.StartAction(damageContext, "!OnBlocked", string.Empty); break;
 
                 case ActionResults.ActiveParried:
                 case ActionResults.PassiveParried: 
-                    __pawnActionCtrler.StartAction(damageContext, "!OnParried"); break;
+                    __pawnActionCtrler.StartAction(damageContext, "!OnParried", string.Empty); break;
             }
         }
 
