@@ -1264,6 +1264,7 @@ namespace Game.NodeCanvasExtension
         public BBParameter<ParticleSystemScalingMode> scalingMode = ParticleSystemScalingMode.Local;
         public BBParameter<float> duration = -1f;
         public BBParameter<string[]> childNameToBeHidden;
+        public bool attachToTransform = false;
         public bool stopWhenActionCanceled = true;
         PawnActionController __pawnActionCtrler;
         EffectInstance __fxInstance;
@@ -1287,6 +1288,12 @@ namespace Game.NodeCanvasExtension
                         __fxInstance = EffectManager.Instance.Show(fxName.value, position.value, Quaternion.Euler(pitchYawRoll.value), scale.value, duration.value, 0f, scalingMode.value);
                     else
                         __fxInstance = EffectManager.Instance.Show(fxPrefab.value, position.value, Quaternion.Euler(pitchYawRoll.value), scale.value, duration.value, 0f, scalingMode.value);
+                }
+
+                if (attachToTransform)
+                {
+                    Debug.Assert(!localToWorld.isNoneOrNull);
+                    __fxInstance.transform.SetParent(localToWorld.value, true);
                 }
 
                 if (!childNameToBeHidden.isNoneOrNull && childNameToBeHidden.value.Length > 0)

@@ -63,7 +63,6 @@ namespace Game
                 if (releaseInstance)
                 {
                     Debug.Assert(__stopDiposable == null);
-
                     __stopDiposable = Observable.Timer(TimeSpan.FromSeconds(1f)).Subscribe(_ =>
                     {
                         EffectManager.Instance.ReleaseInstance(this);
@@ -145,8 +144,8 @@ namespace Game
             if (waitingTime > 0f)
             {
                 instance.gameObject.SetActive(false);
-                
-                Observable.Timer(TimeSpan.FromSeconds(waitingTime)).Subscribe(_ => { 
+                Observable.Timer(TimeSpan.FromSeconds(waitingTime)).Subscribe(_ => 
+                { 
                     instance.gameObject.SetActive(true); 
                     instance.Play(duration); 
                 }).AddTo(instance);
