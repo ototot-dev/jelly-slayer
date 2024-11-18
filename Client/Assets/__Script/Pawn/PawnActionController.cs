@@ -533,7 +533,6 @@ namespace Game
             {
                 __pawnAnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1);
                 __pawnAnimCtrler.mainAnimator.SetFloat("AnimAdvance", 0);
-                __pawnAnimCtrler.mainAnimator.SetBool("HasPreMotion", false);
             }
 
             currActionContext.actionDisposable?.Dispose();
