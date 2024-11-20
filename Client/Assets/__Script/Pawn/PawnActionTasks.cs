@@ -1334,6 +1334,7 @@ namespace Game.NodeCanvasExtension
         public BBParameter<Transform> startPoint;
         public BBParameter<Transform> endPoint;
         public BBParameter<float> duration = -1f;
+        public bool stopWhenActionCanceled = true;
         PawnActionController __pawnActionCtrler;
         int __capturedActionInstanceId;
 
@@ -1349,11 +1350,19 @@ namespace Game.NodeCanvasExtension
 
                 __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;
 
-                Observable.Timer(TimeSpan.FromSeconds(duration.value))
-                    .TakeWhile(_ => __pawnActionCtrler.CheckActionRunning() && __pawnActionCtrler.currActionContext.actionInstanceId == __capturedActionInstanceId)
-                    .DoOnCancel(() => trailFx.value.Deactivate())
-                    .DoOnCompleted(() => trailFx.value.Deactivate())
-                    .Subscribe().AddTo(agent);
+                if (stopWhenActionCanceled)
+                {
+                    Observable.Timer(TimeSpan.FromSeconds(duration.value))
+                        .TakeWhile(_ => __pawnActionCtrler.CheckActionRunning() && __pawnActionCtrler.currActionContext.actionInstanceId == __capturedActionInstanceId)
+                        .DoOnCancel(() => trailFx.value.Deactivate())
+                        .DoOnCompleted(() => trailFx.value.Deactivate())
+                        .Subscribe().AddTo(agent);
+                }
+                else
+                {
+                    Observable.Timer(TimeSpan.FromSeconds(duration.value))
+                        .Subscribe(_ => trailFx.value.Deactivate()).AddTo(agent);
+                }
             }
 
             EndAction(true);

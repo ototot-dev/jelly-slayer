@@ -13,6 +13,8 @@ namespace Game
         [Header("Component")]
         public Transform counterActionCollider;
         public XWeaponTrail sworldWeaponTrail;
+        public XWeaponTrail sworldWeaponTrailA;
+        public XWeaponTrail sworldWeaponTrailB;
 
         public override bool CanRootMotion(Vector3 rootMotionVec)
         {
