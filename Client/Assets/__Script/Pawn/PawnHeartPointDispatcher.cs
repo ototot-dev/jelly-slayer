@@ -278,7 +278,7 @@ namespace Game
                             damageContext.receiverPenalty = new(BuffTypes.Groggy, damageContext.receiverBrain.PawnBB.pawnData.groggyDuration);
                         }
                     }
-                    if (damageContext.senderActionData.knockDownStrength >= damageContext.receiverBrain.PawnBB.stat.poise && !damageContext.receiverBrain.PawnBB.IsDown) //* KnockDown 처리
+                    if (damageContext.senderActionData.knockDown >= damageContext.receiverBrain.PawnBB.stat.poise && !damageContext.receiverBrain.PawnBB.IsDown) //* KnockDown 처리
                     {
                         damageContext.receiverBrain.PawnBB.stat.knockDown.Value += damageContext.senderActionData.knockDownAccum;
 
