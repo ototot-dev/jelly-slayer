@@ -53,6 +53,8 @@ public class UIGame : MonoBehaviour
                 break;
 
         }
+        _hpBarManager.PawnDamaged(ref damageContext);
+
         // 액션 상태
         switch(damageContext.actionResult) 
         {

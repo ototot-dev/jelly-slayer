@@ -8,6 +8,7 @@ public class HPBarPanel : MonoBehaviour
 {
     public RectTransform _rtRoot;
     public RectTransform _rtCanvas;
+    public GameObject _counterViewObj;
 
     public PawnBrainController _pawn;
 
@@ -18,6 +19,8 @@ public class HPBarPanel : MonoBehaviour
     [SerializeField] bool _isStamina = false;
     public Slider _spSlider;
 
+    float _counterViewTime = 0;
+
     //Vector2 _pos;
 
     bool _isDead = false;
@@ -25,7 +28,7 @@ public class HPBarPanel : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        _counterViewObj.SetActive(false);
     }
     public void SetPawn(PawnBrainController pawn, bool isStamina = false) 
     {
@@ -33,6 +36,14 @@ public class HPBarPanel : MonoBehaviour
 
         _isStamina = isStamina;
         _spSlider.gameObject.SetActive(_isStamina);
+    }
+    public void PawnDamaged(ref PawnHeartPointDispatcher.DamageContext damageContext) 
+    { 
+        if(damageContext.actionResult == ActionResults.GuardBreak)
+        {
+            _counterViewObj.SetActive(true);
+            _counterViewTime = 2.0f;
+        }
     }
 
     // Update is called once per frame
@@ -52,7 +63,6 @@ public class HPBarPanel : MonoBehaviour
                 return;
             }
         }
-
         if (GameContext.Instance.cameraCtrler == null)
             return;
 
@@ -77,6 +87,15 @@ public class HPBarPanel : MonoBehaviour
         {
             var maxStamina = _pawn.PawnBB.stat.maxStamina.Value;
             _spSlider.value = (maxStamina > 0) ? _pawn.PawnBB.stat.stamina.Value / maxStamina : 0;
+        }
+        // Special Attack Panel
+        if(_counterViewTime > 0)
+        {
+            _counterViewTime -= Time.deltaTime;
+            if (_counterViewTime <= 0) 
+            {
+                _counterViewObj.SetActive(false);
+            }
         }
     }
 }

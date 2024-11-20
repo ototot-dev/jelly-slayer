@@ -14,6 +14,8 @@ public class HPBarManager : MonoBehaviour
     public GameObject _prefHPBar;
     public CameraController _cameraController;
 
+    public Dictionary<PawnBrainController, HPBarPanel> _dicPanel = new();
+
     private void Awake()
     {
         _instance = this;
@@ -29,12 +31,25 @@ public class HPBarManager : MonoBehaviour
             _cameraController = _camera.GetComponent<CameraController>();
         }
     }
+
+    public HPBarPanel GetPanel(PawnBrainController pawn)
+    {
+        if(_dicPanel.TryGetValue(pawn, out HPBarPanel panel))
+        {
+            return panel;
+        }
+        return null;
+    }
     public void Delete(HPBarPanel panel) 
     { 
         panel.gameObject.SetActive(false);
     }
-    public void Create(PawnBrainController pawn, bool isStamina) 
+    public bool Create(PawnBrainController pawn, bool isStamina) 
     {
+        if(_dicPanel.ContainsKey(pawn))
+        {
+            return false;
+        }
         GameObject obj = Instantiate(_prefHPBar);
 
         var panel = obj.GetComponent<HPBarPanel>();
@@ -43,5 +58,17 @@ public class HPBarManager : MonoBehaviour
         // panel._cameraController = _cameraController;
         panel._rtCanvas = _rtCanvas;
         panel.SetPawn(pawn, isStamina);
+
+        _dicPanel.Add(pawn, panel);
+
+        return true;
+    }
+    public void PawnDamaged(ref PawnHeartPointDispatcher.DamageContext damageContext) 
+    { 
+        var panel = GetPanel(damageContext.receiverBrain);
+        if(panel != null)
+        {
+            panel.PawnDamaged(ref damageContext);
+        }
     }
 }
