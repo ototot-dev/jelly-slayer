@@ -91,7 +91,7 @@ namespace Game
                 __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
 
                 SoundManager.Instance.Play(SoundID.GUARD_BREAK);
-                EffectManager.Instance.Show("Crash", 
+                EffectManager.Instance.Show("SwordHitRed", 
                     __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);
             }
 
