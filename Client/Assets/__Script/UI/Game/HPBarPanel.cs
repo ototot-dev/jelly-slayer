@@ -88,13 +88,22 @@ public class HPBarPanel : MonoBehaviour
             var maxStamina = _pawn.PawnBB.stat.maxStamina.Value;
             _spSlider.value = (maxStamina > 0) ? _pawn.PawnBB.stat.stamina.Value / maxStamina : 0;
         }
+
         // Special Attack Panel
-        if(_counterViewTime > 0)
+        if (_counterViewTime > 0)
         {
             _counterViewTime -= Time.deltaTime;
-            if (_counterViewTime <= 0) 
+            if (_counterViewTime <= 0)
             {
                 _counterViewObj.SetActive(false);
+            }
+        }
+        else 
+        {
+            if (_pawn.PawnBuff != null && _pawn.PawnBuff.CheckBuff(BuffTypes.Groggy))
+            {
+                _counterViewObj.SetActive(true);
+                _counterViewTime = 2.0f;
             }
         }
     }

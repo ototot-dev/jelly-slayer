@@ -46,10 +46,10 @@ public class UIGame : MonoBehaviour
                 //_dmgTextManager.Create("Stagger", damageContext.hitPoint);
                 break;
             case BuffTypes.KnockDown:
-                _dmgTextManager.Create("KnockDown", damageContext.hitPoint);
+                //_dmgTextManager.Create("KnockDown", damageContext.hitPoint);
                 break;
             case BuffTypes.Groggy:
-                _dmgTextManager.Create("Stunned", damageContext.hitPoint);
+                //_dmgTextManager.Create("Stunned", damageContext.hitPoint);
                 break;
 
         }
