@@ -9,7 +9,7 @@
                     "name": "Move",
                     "type": "Value",
                     "id": "7ba523d7-1719-4bf2-b4f5-4473c276a4a2",
-                    "expectedControlType": "Vector2",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
@@ -24,7 +24,16 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Target",
+                    "name": "PrevTarget",
+                    "type": "Button",
+                    "id": "d356e4e0-3a9c-42c3-ad5c-09eec8136350",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "NextTarget",
                     "type": "Button",
                     "id": "fca42100-0082-468e-8c72-3707eecad51f",
                     "expectedControlType": "",
@@ -88,12 +97,12 @@
                 },
                 {
                     "name": "SpecialAttack",
-                    "type": "Value",
+                    "type": "Button",
                     "id": "9fc87428-2503-4cab-ab0f-67593a4afd19",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -243,7 +252,7 @@
                 {
                     "name": "",
                     "id": "8c8e490b-c610-4785-884f-f04217b23ca4",
-                    "path": "<Pointer>/delta",
+                    "path": "<Mouse>/position",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse;Touch",
@@ -331,11 +340,11 @@
                 {
                     "name": "",
                     "id": "818e4f7f-bdc1-4087-b541-af58fbcd74c3",
-                    "path": "<Keyboard>/t",
+                    "path": "<Keyboard>/o",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "Target",
+                    "action": "NextTarget",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -386,7 +395,7 @@
                 {
                     "name": "",
                     "id": "693caf33-d24c-4cd6-a527-98c8a518ef51",
-                    "path": "<Keyboard>/k",
+                    "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -397,11 +406,22 @@
                 {
                     "name": "",
                     "id": "7f2b29c8-4420-4ebb-8bb6-7b6b195a6461",
-                    "path": "<Keyboard>/i",
+                    "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "SpecialAttack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b3cf26f5-ef8f-4646-a1d3-02f36f9fface",
+                    "path": "<Keyboard>/u",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "PrevTarget",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -12,26 +12,21 @@ namespace Game
         ONEHAND_WEAPONSHIELD,
         TWOHAND_WEAPON, 
     }
+    
     public enum WeaponBone
     {
         RIGHTHAND = 0,
         LEFTHAND,
         BACK,
     }
+
     public enum WeaponType 
     {
         SWORD = 0,
         SHIELD,
         KATANA,
     }
-    /*
-    public enum WEAPONSLOT 
-    {
-        NONE = 0,
-        MAINSLOT,
-        SUBSLOT,
-    }
-    */
+
     public class HeroBrain : PawnBrainController, ISpawnable, IMovable
     {
 
@@ -128,9 +123,6 @@ namespace Game
                 //* 1초마다 SoundSource를 발생시켜 주변의 어그로를 끔
                 if (Time.time - PawnSoundSourceGen.LastGenerateTimeStamp > 1f)
                     PawnSoundSourceGen.GenerateSoundSource(coreColliderHelper.pawnCollider, 1f, 1f);
-
-                if (GameContext.Instance.playerTargetManager != null)
-                    GameContext.Instance.playerTargetManager.UpdateTarget();
             };
         }
 

@@ -24,13 +24,21 @@ namespace Game
                 __pawnMovement.capsule.gameObject.layer = LayerMask.NameToLayer("PawnOverlapped");
             }
         }
-        void ISpawnable.OnFinishSpawnHandler() 
+        void ISpawnable.OnFinishSpawnHandler()
         {
             __jellyManBB.common.isRagdoll.Value = false;
             __pawnMovement.capsule.gameObject.layer = LayerMask.NameToLayer("Pawn");
+
+            // NpcSpawnManager.Instance.spawnedBrains.Add(this);
         }
         void ISpawnable.OnDespawnedHandler() { }
-        void ISpawnable.OnDeadHandler() { __pawnAnimCtrler.mainAnimator.SetTrigger("OnDead"); __pawnMovement.SetMovementEnabled(false); }
+        void ISpawnable.OnDeadHandler() 
+        { 
+            __pawnAnimCtrler.mainAnimator.SetTrigger("OnDead"); 
+            __pawnMovement.SetMovementEnabled(false);
+
+            // NpcSpawnManager.Instance.spawnedBrains.Remove(this);
+        }
         void ISpawnable.OnLifeTimeOutHandler() { PawnHP.Die("TimeOut"); }
         bool IMovable.CheckReachToDestination() { return __pawnMovement.CheckReachToDestination(); }
         bool IMovable.IsJumping() { return false; }

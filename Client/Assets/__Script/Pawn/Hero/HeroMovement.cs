@@ -177,12 +177,7 @@ namespace Game
             var canRotate3 = canRotate2 && !__actionCtrler.CheckActionRunning() && !__buffCtrler.CheckBuff(BuffTypes.Staggered);
 
             if (canRotate3)
-            {
-                if (freezeRotation && __brain.BB.TargetBrain != null)
-                    faceVec = (__brain.BB.TargetBrain.CoreTransform.position - capsule.position).Vector2D().normalized;
-
                 __ecmMovement.Rotate(faceVec, rotateSpeed);
-            }
         }
     }
 }

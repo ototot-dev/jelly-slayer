@@ -81,14 +81,20 @@ namespace Game
                 cameraTransform.transform.position = cameraTransform.transform.position + (Vector3)(__shakeStrength * UnityEngine.Random.insideUnitCircle);
         }
 
-        public RaycastHit GetTerrainHitPoint()
+        public bool TryGetPickingPointOnTerrain(Vector3 mousePoint, out Vector3 result)
         {
-            var hitPoints = Physics.RaycastAll(new Ray(cameraTransform.transform.position, cameraTransform.transform.forward), 100, LayerMask.GetMask(TerrainManager.LayerName));
+            if (viewCamera != null)
+            {
+                var ray = viewCamera.ScreenPointToRay(mousePoint);
+                if (Physics.Raycast(ray, out var hit, 9999f, LayerMask.GetMask(TerrainManager.LayerName)))
+                {
+                    result = hit.point;
+                    return true;
+                }
+            }
 
-            if (hitPoints.Length > 0)
-                return hitPoints[0];
-            else
-                return new RaycastHit();
+            result = Vector3.zero;
+            return false;
         }
 
         public RaycastHit GetPickingResult(Vector3 screenPoint, params string[] layerNames)

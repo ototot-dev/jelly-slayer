@@ -13,6 +13,7 @@ namespace Game
     /// </summary>
     public class CursorController : MonoBehaviour
     {
+        [Header("Component")]
         public Transform cursor;
         public Vector3 CurrPosition => cursor.position;
         PlayerController __playerCtrler;
@@ -25,16 +26,16 @@ namespace Game
 
         void Update()
         {
+            //* 자전 효과
             cursor.localRotation *= Quaternion.Euler(0f, 180f * Time.deltaTime, 0f);
+            cursor.localScale = (0.1f * Mathf.Sin(Time.time * 10f) + 1f) * Vector3.one;
 
-            if (GameContext.Instance.cameraCtrler != null && GameContext.Instance.cameraCtrler.viewCamera != null && __playerCtrler.MyHeroBrain != null && __playerCtrler.MyHeroBrain.BB.TargetBrain != null)
-            {
-                var targetCapsule = __playerCtrler.MyHeroBrain.BB.TargetBrain.coreColliderHelper.GetCapsuleCollider();
-                if (targetCapsule != null)
-                    cursor.position = targetCapsule.transform.position + targetCapsule.height * Vector3.up;
-                // cursor.position = __playerCtrler.MyHeroBrain.core.transform.position +
-                //     Quaternion.AngleAxis(GameContext.Instance.cameraCtrler.MainCamera.transform.eulerAngles.y, Vector3.up) * new Vector3(__playerCtrler.moveVec.Value.x, 0, __playerCtrler.moveVec.Value.y);
-            }
+            // if (GameContext.Instance.cameraCtrler != null && GameContext.Instance.cameraCtrler.viewCamera != null && __playerCtrler.MyHeroBrain != null && __playerCtrler.MyHeroBrain.BB.TargetBrain != null)
+            // {
+            //     var targetCapsule = __playerCtrler.MyHeroBrain.BB.TargetBrain.coreColliderHelper.GetCapsuleCollider();
+            //     if (targetCapsule != null)
+            //         cursor.position = targetCapsule.transform.position + targetCapsule.height * Vector3.up;
+            // }
         }
 
         /// <summary>
@@ -56,6 +57,22 @@ namespace Game
                 }
             }
 
+            return false;
+        }
+
+        public bool TryGetPickingPointOnTerrain(Vector3 mousePoint, out Vector3 result)
+        {
+            if (GameContext.Instance.cameraCtrler.viewCamera != null)
+            {
+                var ray = GameContext.Instance.cameraCtrler.viewCamera.ScreenPointToRay(mousePoint);
+                if (Physics.Raycast(ray, out var hit, 9999f, LayerMask.GetMask(TerrainManager.LayerName)))
+                {
+                    result = hit.point;
+                    return true;
+                }
+            }
+
+            result = Vector3.zero;
             return false;
         }
     }

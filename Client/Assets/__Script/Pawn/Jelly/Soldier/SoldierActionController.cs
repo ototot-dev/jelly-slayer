@@ -39,6 +39,8 @@ namespace Game
         
         public override bool CanBlockAction(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
+            if (__brain.BB.IsStunned)
+                return false;
             if (!__brain.ActionCtrler.CheckActionRunning() == false)
                 return false;
             if (__brain.SensorCtrler.WatchingColliders.Contains(damageContext.senderBrain.coreColliderHelper.pawnCollider) == false)

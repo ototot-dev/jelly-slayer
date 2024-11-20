@@ -14,7 +14,7 @@ namespace Game
 
     public class PawnActionController : MonoBehaviour, IBuffContainer
     {
-        [Header("Components")]
+        [Header("Component")]
         public PawnColliderHelper bodyHitColliderHelper;
         public PawnColliderHelper parryHitColliderHelper;
         

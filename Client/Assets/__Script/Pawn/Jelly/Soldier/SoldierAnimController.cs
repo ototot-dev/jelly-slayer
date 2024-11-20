@@ -39,7 +39,7 @@ namespace Game
         {
             __brain.BuffCtrler.onBuffActive += (buff) =>
             {
-                if (buff == BuffTypes.Staggered)
+                if (buff == BuffTypes.Staggered || buff == BuffTypes.Groggy)
                 {
                     leftShoulderBoneSimulator.GravityEffectForce = rightShoulderBoneSimulator.GravityEffectForce = 9.8f * Vector3.down;
                     leftShoulderBoneSimulator.GravityHeavyness = 4f;
@@ -51,7 +51,7 @@ namespace Game
 
             __brain.BuffCtrler.onBuffDeactive += (buff) =>
             {
-                if (buff == BuffTypes.Staggered)
+                if ((buff == BuffTypes.Staggered || buff == BuffTypes.Groggy) && !__brain.BuffCtrler.CheckBuff(BuffTypes.Staggered) && !__brain.BuffCtrler.CheckBuff(BuffTypes.Groggy))
                 {
                     boneSimulatorTargetWeight = 0f;
                     shieldMeshRenderer.material.SetFloat("_Alpha", 0.3f);

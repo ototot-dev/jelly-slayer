@@ -16,7 +16,7 @@ namespace Game
         [Header("Property")]
         public StringReactiveProperty playerName = new();
         public ReactiveProperty<Vector2> moveVec = new();
-
+        public ReactiveProperty<Vector3> lookVec = new();
         public Action<PawnBrainController> onPossessed;
         public Action<PawnBrainController> onUnpossessed;
 
@@ -66,56 +66,59 @@ namespace Game
             MyHeroBrain = null;
         }
 
-        IDisposable __moveDisposable;
-
-        public void OnMove(InputValue value)
+        void Update()
         {
-            if (__moveDisposable == null)
+            if (MyHeroBrain == null)
+                return;
+            
+            if (moveVec.Value.sqrMagnitude > 0)
             {
-                __moveDisposable = moveVec.Select(m => m.sqrMagnitude > 0).DistinctUntilChanged().StartWith(false).Where(m => m)
-                    .Subscribe(_ =>
-                    {
-                        Observable.EveryUpdate().TakeWhile(__ => moveVec.Value.sqrMagnitude > 0)
-                            .DoOnCompleted(() =>
-                            {
-                                if (MyHeroBrain != null)
-                                {
-                                    MyHeroBrain.Movement.moveVec = Vector3.zero;
-                                    MyHeroBrain.Movement.moveSpeed = 0;
-                                }
-                            })
-                            .Subscribe(__ =>
-                            {
-                                MyHeroBrain.Movement.moveSpeed = MyHeroBrain.BB.action.isGuarding.Value ? MyHeroBrain.BB.body.guardSpeed : MyHeroBrain.BB.body.moveSpeed;
-                                MyHeroBrain.Movement.faceVec = MyHeroBrain.Movement.moveVec = Quaternion.AngleAxis(45, Vector3.up) * new Vector3(moveVec.Value.x, 0, moveVec.Value.y);
-                            });
-                    }).AddTo(this);
-            }
+                MyHeroBrain.Movement.moveSpeed = MyHeroBrain.BB.action.isGuarding.Value ? MyHeroBrain.BB.body.guardSpeed : MyHeroBrain.BB.body.moveSpeed;
+                MyHeroBrain.Movement.moveVec = Quaternion.AngleAxis(45, Vector3.up) * new Vector3(moveVec.Value.x, 0, moveVec.Value.y);
 
-            moveVec.Value = value.Get<Vector2>();
-        }
-
-        public void OnTarget()
-        {
-            if (MyHeroBrain.BB.TargetPawn == null)
-            {
-                var newTarget = MyHeroBrain.SensorCtrler.ListeningColliders
-                    .Select(l => l.GetComponent<PawnColliderHelper>())
-                    .Where(p => p != null && p.pawnBrain != null)
-                    .OrderBy(p => (p.transform.position - MyHeroBrain.CoreTransform.position).sqrMagnitude).FirstOrDefault();
-
-                if (newTarget != null)
-                {
-                    MyHeroBrain.BB.action.targetPawnHP.Value = newTarget.pawnBrain.PawnHP;
-                    MyHeroBrain.Movement.freezeRotation = true;
-                }
+                //* Strafe 모드가 아닌 경우엔 이동 방향과 회전 방향이 동일함
+                if (!MyHeroBrain.Movement.freezeRotation)
+                    MyHeroBrain.Movement.faceVec = MyHeroBrain.Movement.moveVec;
             }
             else
             {
-                MyHeroBrain.BB.action.targetPawnHP.Value = null;
-                MyHeroBrain.Movement.freezeRotation = false;
+                MyHeroBrain.Movement.moveVec = Vector3.zero;
+                MyHeroBrain.Movement.moveSpeed = 0;
+            }
+
+            if (MyHeroBrain.Movement.freezeRotation)
+            {
+                if (MyHeroBrain.BB.TargetBrain != null)
+                {
+                    MyHeroBrain.Movement.faceVec = (MyHeroBrain.BB.TargetBrain.CoreTransform.position - MyHeroBrain.Movement.capsule.position).Vector2D().normalized;
+                    MyHeroBrain.AnimCtrler.HeadLookAt.position = MyHeroBrain.BB.TargetBrain.coreColliderHelper.transform.position + Vector3.up;
+
+                    var targetCapsule = MyHeroBrain.BB.TargetBrain.coreColliderHelper.GetCapsuleCollider();
+                    if (targetCapsule != null)
+                        cursorCtrler.cursor.position = targetCapsule.transform.position + (targetCapsule.radius * 2f + targetCapsule.height) * Vector3.up;
+                }
+                else
+                {
+                    MyHeroBrain.Movement.faceVec = lookVec.Value;
+                    if (MyHeroBrain.SensorCtrler.ListeningColliders.Count > 0)
+                        MyHeroBrain.AnimCtrler.HeadLookAt.position = MyHeroBrain.SensorCtrler.ListeningColliders.First().transform.position + Vector3.up;
+
+                    cursorCtrler.cursor.position = MyHeroBrain.Movement.capsule.position + lookVec.Value;
+                }
             }
         }
+
+        public void OnMove(InputValue value)
+        {
+            moveVec.Value = value.Get<Vector2>();
+        }
+
+        public void OnLook(InputValue value)
+        {
+            if (GameContext.Instance.cameraCtrler != null && GameContext.Instance.cameraCtrler.TryGetPickingPointOnTerrain(value.Get<Vector2>(), out var pickingPoint))
+                lookVec.Value = (pickingPoint - MyHeroBrain.Movement.capsule.transform.position).Vector2D().normalized;
+        }
+
         // 다음 액션 이름을 꺼내 준다
         string GetNewActionName()
         {
@@ -272,6 +275,71 @@ namespace Game
             MyHeroBrain.ChangeWeapon(weaponSlot);
         }
         */
+
+        public void OnNextTarget()
+        {
+            if (MyHeroBrain.BB.TargetPawn == null)
+            {
+                var newTarget = MyHeroBrain.PawnSensorCtrler.ListeningColliders.Select(c => c.GetComponent<PawnColliderHelper>())
+                    .Where(h => h != null && h.pawnBrain != null && !h.pawnBrain.PawnBB.IsDead)
+                    .OrderBy(p => (p.transform.position - MyHeroBrain.CoreTransform.position).sqrMagnitude)
+                    .FirstOrDefault();
+
+                if (newTarget != null)
+                {
+                    MyHeroBrain.BB.action.targetPawnHP.Value = newTarget.pawnBrain.PawnHP;
+                    MyHeroBrain.Movement.freezeRotation = true;
+                }
+            }
+            else
+            {
+                var colliderHelpers = MyHeroBrain.PawnSensorCtrler.ListeningColliders.Select(c => c.GetComponent<PawnColliderHelper>())
+                        .Where(h => h != null && h.pawnBrain != null && !h.pawnBrain.PawnBB.IsDead)
+                        .ToArray();
+                        
+                for (int i = 0 ; i < colliderHelpers.Length; i++)
+                {
+                    if (colliderHelpers[i].pawnBrain == MyHeroBrain.BB.TargetBrain)
+                    {
+                        MyHeroBrain.BB.action.targetPawnHP.Value  = (i + 1  < colliderHelpers.Length ? colliderHelpers[i + 1] : colliderHelpers[0]).pawnBrain.PawnHP;
+                        return;
+                    }
+                }
+            }
+        }
+
+        public void OnPrevTarget()
+        {
+            if (MyHeroBrain.BB.TargetPawn == null)
+            {
+                var newTarget = MyHeroBrain.PawnSensorCtrler.ListeningColliders.Select(c => c.GetComponent<PawnColliderHelper>())
+                    .Where(h => h != null && h.pawnBrain != null && !h.pawnBrain.PawnBB.IsDead)
+                    .OrderBy(p => (p.transform.position - MyHeroBrain.CoreTransform.position).sqrMagnitude)
+                    .FirstOrDefault();
+
+                if (newTarget != null)
+                {
+                    MyHeroBrain.BB.action.targetPawnHP.Value = newTarget.pawnBrain.PawnHP;
+                    MyHeroBrain.Movement.freezeRotation = true;
+                }
+            }
+            else
+            {
+                var colliderHelpers = MyHeroBrain.PawnSensorCtrler.ListeningColliders.Select(c => c.GetComponent<PawnColliderHelper>())
+                        .Where(h => h != null && h.pawnBrain != null && !h.pawnBrain.PawnBB.IsDead)
+                        .ToArray();
+
+                for (int i = colliderHelpers.Length - 1 ; i >= 0; i--)
+                {
+                    if (colliderHelpers[i].pawnBrain == MyHeroBrain.BB.TargetBrain)
+                    {
+                        MyHeroBrain.BB.action.targetPawnHP.Value  = (i - 1 >= 0 ? colliderHelpers[i - 1] : colliderHelpers[colliderHelpers.Length - 1]).pawnBrain.PawnHP;
+                        return;
+                    }
+                }
+            }
+        }
+
         public void OnRoll()
         {
             var actionData = DatasheetManager.Instance.GetActionData(MyHeroBrain.PawnBB.common.pawnId, "Rolling");
@@ -431,12 +499,33 @@ namespace Game
                                     MyHeroBrain.ActionCtrler.SetPendingAction("HeavySlash#3"); 
                                     break;
                             }
+
+                            //* 타겟이 없을 경우에도 조준 보정을 해줌
+                            if (MyHeroBrain.BB.TargetBrain == null && MyHeroBrain.SensorCtrler.ListeningColliders.Count > 0)
+                            {
+                                var attackPoint = MyHeroBrain.SensorCtrler.ListeningColliders.Select(c => c.transform.position)
+                                    .OrderBy(p => Vector3.Angle(MyHeroBrain.coreColliderHelper.transform.forward.Vector2D(), (p - MyHeroBrain.coreColliderHelper.transform.position).Vector2D()))
+                                    .FirstOrDefault();
+
+                                MyHeroBrain.Movement.FaceAt(attackPoint);
+                            }
                         }
                         else
                         {
                             //Debug.Log("<color=yellow>Attack Released</color> : " + MyHeroBrain.BB.IsCharging + " " + canAction3);
                             MyHeroBrain.ActionCtrler.SetPendingAction(MyHeroBrain.BB.IsCharging ? "HeavySlash#1": "Slash#1");
+
+                            //* 타겟이 없을 경우에도 조준 보정을 해줌
+                            if (MyHeroBrain.BB.TargetBrain == null && MyHeroBrain.SensorCtrler.ListeningColliders.Count > 0)
+                            {
+                                var attackPoint = MyHeroBrain.SensorCtrler.ListeningColliders.Select(c => c.transform.position)
+                                    .OrderBy(p => Vector3.Angle(MyHeroBrain.coreColliderHelper.transform.forward.Vector2D(), (p - MyHeroBrain.coreColliderHelper.transform.position).Vector2D()))
+                                    .FirstOrDefault();
+
+                                MyHeroBrain.Movement.FaceAt(attackPoint);
+                            }
                         }
+
                         // 차징 상태에 따른 무기 교체
                         MyHeroBrain.ChangeWeapon(MyHeroBrain.BB.IsCharging ? WeaponSetType.TWOHAND_WEAPON : WeaponSetType.ONEHAND_WEAPONSHIELD);
                     }

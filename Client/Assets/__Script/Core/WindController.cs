@@ -147,47 +147,47 @@ namespace Game
         /// <param name="lifeTime"></param>
         void SpawnWindEffect(float lifeTime)
         {
-            if (Time.realtimeSinceStartup - __spawnWindFxTimeStamp < 0.5f)
-                return;
+            // if (Time.realtimeSinceStartup - __spawnWindFxTimeStamp < 0.5f)
+            //     return;
 
-            __spawnWindFxTimeStamp = Time.realtimeSinceStartup;
+            // __spawnWindFxTimeStamp = Time.realtimeSinceStartup;
 
-            Debug.Assert(GameContext.Instance.cameraCtrler != null);
+            // Debug.Assert(GameContext.Instance.cameraCtrler != null);
 
-            var spawnPosition = GameContext.Instance.cameraCtrler.GetTerrainHitPoint().point;
+            // var spawnPosition = GameContext.Instance.cameraCtrler.GetTerrainHitPoint().point;
 
-            spawnPosition += Vector3.right * UnityEngine.Random.Range(-5f, 5f);
-            spawnPosition += Vector3.forward * UnityEngine.Random.Range(-5f, 5f);
+            // spawnPosition += Vector3.right * UnityEngine.Random.Range(-5f, 5f);
+            // spawnPosition += Vector3.forward * UnityEngine.Random.Range(-5f, 5f);
 
-            // Wind가 활성화된 Zone인지 체크
-            if (!windEffectZones.Contains(GameContext.Instance.terrainManager.GetTerrainZone(spawnPosition)))
-                return;
+            // // Wind가 활성화된 Zone인지 체크
+            // if (!windEffectZones.Contains(GameContext.Instance.terrainManager.GetTerrainZone(spawnPosition)))
+            //     return;
 
-            // 바람의 길이를 고려해서 바람 방향의 반대쪽으로 위치를 이동시킨다.
-            // 요렇게 하면 바람이 화면에 꽉차게 출력된다.
-            spawnPosition -= WindVec * 2f;
+            // // 바람의 길이를 고려해서 바람 방향의 반대쪽으로 위치를 이동시킨다.
+            // // 요렇게 하면 바람이 화면에 꽉차게 출력된다.
+            // spawnPosition -= WindVec * 2f;
 
-            var hitPoint = TerrainManager.GetTerrainHitPoint(spawnPosition);
+            // var hitPoint = TerrainManager.GetTerrainHitPoint(spawnPosition);
 
-            if (hitPoint.collider != null)
-                spawnPosition = hitPoint.point + Vector3.up;
+            // if (hitPoint.collider != null)
+            //     spawnPosition = hitPoint.point + Vector3.up;
 
-            var windFx = GetWindEffectFromPool(spawnPosition, Quaternion.LookRotation(WindVec));
+            // var windFx = GetWindEffectFromPool(spawnPosition, Quaternion.LookRotation(WindVec));
 
-            __spawnedWindEffects.Add(windFx);
+            // __spawnedWindEffects.Add(windFx);
 
-            Observable.Timer(TimeSpan.FromSeconds(lifeTime)).Subscribe(_ =>
-            {
-                var particle = windFx.GetComponent<ParticleSystem>();
+            // Observable.Timer(TimeSpan.FromSeconds(lifeTime)).Subscribe(_ =>
+            // {
+            //     var particle = windFx.GetComponent<ParticleSystem>();
 
-                particle.Stop();
+            //     particle.Stop();
 
-                Observable.Timer(TimeSpan.FromSeconds(particle.main.duration * 2)).Subscribe(_ =>
-                {
-                    __spawnedWindEffects.Remove(windFx);
-                    __windEffectPool.Enqueue(windFx);
-                }).AddTo(this);
-            }).AddTo(this);
+            //     Observable.Timer(TimeSpan.FromSeconds(particle.main.duration * 2)).Subscribe(_ =>
+            //     {
+            //         __spawnedWindEffects.Remove(windFx);
+            //         __windEffectPool.Enqueue(windFx);
+            //     }).AddTo(this);
+            // }).AddTo(this);
         }
 
         HashSet<GameObject> __spawnedWindEffects = new HashSet<GameObject>();

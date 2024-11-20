@@ -70,16 +70,16 @@ namespace Game
                 legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude > 0 ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.5f : 0.4f, 1);
             };
 
-            __brain.onLateUpdate += () =>
-            {
-                if (hipBone != null)
-                    hipBone.position -= hipBoneOffset * Vector3.down;
+            // __brain.onLateUpdate += () =>
+            // {
+            //     if (hipBone != null)
+            //         hipBone.position -= hipBoneOffset * Vector3.down;
 
-                if (__brain.BB.TargetBrain != null)
-                    HeadLookAt.transform.position = __brain.BB.TargetBrain.coreColliderHelper.GetCenter();
-                else
-                    HeadLookAt.transform.localPosition = new Vector3(0f, 1.2f, 1f);
-            };
+            //     if (__brain.BB.TargetBrain != null)
+            //         HeadLookAt.transform.position = __brain.BB.TargetBrain.coreColliderHelper.GetCenter();
+            //     else
+            //         HeadLookAt.transform.localPosition = new Vector3(0f, 1.2f, 1f);
+            // };
         }
 
         public bool Jump() 

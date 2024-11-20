@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
@@ -25,7 +23,7 @@ namespace Game
             var heroBrain = __playerCtrler.MyHeroBrain;
             var curTarget = heroBrain.BB.TargetBrain;
 
-            // Á×¾ú°Å³ª ¹­ÀÎ »ó´ë´Â Å¸°Ù Á¦¿Ü
+            // ï¿½×¾ï¿½ï¿½Å³ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             if (curTarget != null && (curTarget.PawnBB.IsBind == true || curTarget.PawnBB.IsDead == true))
             {
                 heroBrain.BB.action.targetPawnHP.Value = null;
