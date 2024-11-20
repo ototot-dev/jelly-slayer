@@ -227,6 +227,8 @@ namespace Game
                     case BuffTypes.KnockDown: __pawnActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty); break;
                 }
             }
+            // OnPawnDamaged
+            GameManager.Instance.PawnDamaged(ref damageContext);
         }
 
         protected virtual void DamageSenderHandler(ref PawnHeartPointDispatcher.DamageContext damageContext)

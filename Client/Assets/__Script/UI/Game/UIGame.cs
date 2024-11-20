@@ -53,5 +53,14 @@ public class UIGame : MonoBehaviour
                 break;
 
         }
+        // 액션 상태
+        switch(damageContext.actionResult) 
+        {
+            case ActionResults.GuardBreak:
+                {
+                    Debug.Log("GuardBreak!!!!!!");
+                }
+                break;
+        }
     }
 }
