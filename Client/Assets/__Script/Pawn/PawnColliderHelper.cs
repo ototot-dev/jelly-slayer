@@ -28,6 +28,7 @@ namespace Game
         public Vector3 GetCenter() => __capsuleCollider != null ? __capsuleCollider.transform.localToWorldMatrix.MultiplyPoint(__capsuleCollider.center) : pawnCollider.transform.position;
         public float GetRadius() => __capsuleCollider != null ? __capsuleCollider.radius : 0f;
         public float GetApproachDistance(Vector3 sourcePosition) => Mathf.Max(0f, (transform.position - sourcePosition).Vector2D().magnitude - GetRadius());
+        public float GetDistanceBetween(PawnColliderHelper otherColliderHelper) => Mathf.Max(0f, (transform.position - otherColliderHelper.transform.position).Vector2D().magnitude - GetRadius() - otherColliderHelper.GetRadius());
 
         void Awake()
         {

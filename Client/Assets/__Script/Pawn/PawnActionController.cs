@@ -709,7 +709,7 @@ namespace Game
                             (c.transform.position - __pawnBrain.coreColliderHelper.transform.position).Vector2D().normalized);
 
                         //* 정면 방향에서 'minRadius'만큼 가까이 붙어있는지 체크 (minRadius보다 안쪽에 있는 대상에 대해선 정면 180도 시야각 안에만 존재하면 히트한 것으로 판정함)
-                        var finalOverlapped = currDot >= 0 && tracedColliderHelper.GetApproachDistance(__pawnBrain.coreColliderHelper.transform.position) <= minRadius;
+                        var finalOverlapped = currDot >= 0 && tracedColliderHelper.GetDistanceBetween(__pawnBrain.coreColliderHelper) <= minRadius;
                         if (!finalOverlapped)
                         {
                             if (c as SphereCollider != null)

@@ -896,6 +896,8 @@ namespace Game.NodeCanvasExtension
             }
             else
             {
+                __lastSampleTimeStamp = Time.time;
+
                 foreach (var r in __traceResults)
                 {
                     if (!__sentDamageBrains.Contains(r.pawnBrain))
@@ -904,8 +906,6 @@ namespace Game.NodeCanvasExtension
                         __sentDamageBrains.Add(r.pawnBrain);
                     }
                 }
-
-                __lastSampleTimeStamp = Time.time;
                 return ++__sampleIndex;
             }
         }

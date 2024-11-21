@@ -73,7 +73,11 @@ namespace Game
             if (cameraTransform == null || GameContext.Instance.playerCtrler == null || GameContext.Instance.playerCtrler.MyHeroBrain == null)
                 return;
 
+            //* 점프 동작과 같이 y축 변화량이 큰 경우엔 카메라가 대상을 따라가는 y축 속도를 살짝 줄여줌
+            var interpY = __currFocusPoint.y.LerpSpeed(GameContext.Instance.playerCtrler.MyHeroBrain.coreColliderHelper.transform.position.y, 4f, Time.deltaTime);
             __currFocusPoint = GameContext.Instance.playerCtrler.MyHeroBrain.coreColliderHelper.transform.position;
+            __currFocusPoint.y = interpY;
+
             pixelCameraManager.ViewCameraZoom = pixelCameraManager.ViewCameraZoom.LerpSpeed(zoom, zoomSpeed, Time.deltaTime);
             cameraTransform.position = __currFocusPoint - 10f * cameraTransform.transform.forward;
 

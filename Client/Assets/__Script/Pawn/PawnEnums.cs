@@ -52,6 +52,32 @@ namespace Game
         Bind,           // 끈에 묶임
     }
 
+
+    [UGS(typeof(StatusTypes))]
+    public enum StatusTypes
+    {
+        None = 0,
+        __BUFF__STATUS__,
+        Invincible,         //* 일반 무적
+        InvincibleDodge,    //* 구르기 무적
+        PassiveParrying,
+        SuperArmor,
+        MoveSpeedUp,
+        ActionSpeedUp,
+        __DEBUFF__STATUS__,
+        Groggy,         //* 그로기
+        Staggered,      //* 경직
+        KnockDown,      //* 다운
+        CanNotDash, 
+        CanNotJump,
+        CanNotMove,
+        CanNotAction,
+        MoveSpeedDown,
+        ActionSpeedDown,
+        ActionStaminaLow,
+        Bind,           // 끈에 묶임
+    }
+
     [UGS(typeof(ActionResults))]
     public enum ActionResults
     {

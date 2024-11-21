@@ -171,37 +171,6 @@ namespace Game
             }
         }
 
-        public override void StartJump() 
-        {
-            // Effect
-            var pos = coreColliderHelper.transform.position;
-            pos.y = 0;
-            EffectManager.Instance.Show("FX_Cartoony_Jump_Up_01", pos, Quaternion.identity, Vector3.one, 1f);
-
-            SoundManager.Instance.Play(SoundID.JUMP);
-        }
-        public override void RollingGround()
-        {
-            // Effect
-            var pos = coreColliderHelper.transform.position;
-            pos.y = 0;
-            EffectManager.Instance.Show("FX_Cartoony_Jump_Up_01", pos, Quaternion.identity, Vector3.one, 1f);
-
-            SoundManager.Instance.Play(SoundID.ROLL);
-        }
-        public override void StartLand()
-        {
-            Debug.Log("PlayLandEffect");
-            AnimCtrler.OnEventLand();
-
-            // Effect
-            var pos = coreColliderHelper.transform.position;
-            pos.y = 0;
-            EffectManager.Instance.Show("FX_Cartoony_Jump_01", pos, Quaternion.identity, Vector3.one, 1f);
-
-            //SoundManager.Instance.Play(SoundID.LAND);
-        }
-
         public override void ShowTrail(bool isActive, int trailIndex) 
         {
             if (_weaponCtrlRightHand != null)

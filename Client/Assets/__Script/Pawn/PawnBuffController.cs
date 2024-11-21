@@ -63,7 +63,11 @@ namespace Game
         
         public bool CheckBuff(BuffTypes buff)
         {
-            return __uniqueBuffTable.ContainsKey(buff) || (__stackableBuffTable.ContainsKey(buff) && __stackableBuffTable[buff].Count > 0) || __externBuffTables.Any(e => e.Value.ContainsKey(buff));
+            //* 디버프라면 '__externBuffTables' 쪽은 검색에서 제외한다.
+            if ((int)buff > (int)BuffTypes.__DEBUFF__SEPERATOR__)
+                return __uniqueBuffTable.ContainsKey(buff) || (__stackableBuffTable.ContainsKey(buff) && __stackableBuffTable[buff].Count > 0);
+            else
+                return __uniqueBuffTable.ContainsKey(buff) || (__stackableBuffTable.ContainsKey(buff) && __stackableBuffTable[buff].Count > 0) || __externBuffTables.Any(e => e.Value.ContainsKey(buff));
         }
 
         public float GetBuffStrength(BuffTypes buff)
@@ -73,7 +77,9 @@ namespace Game
                 ret =  __uniqueBuffTable[buff].Item1;
             if (__stackableBuffTable.ContainsKey(buff) && __stackableBuffTable[buff].Count > 0)
                 ret = Mathf.Max(ret, __stackableBuffTable[buff].First().Item1);
-            if (__externBuffTables.Count > 0 && __externBuffTables.Any(e => e.Value.ContainsKey(buff)))
+
+            //* 디버프가 아닌 경우에만 '__externBuffTables'도 검색한다.
+            if ((int)buff < (int)BuffTypes.__DEBUFF__SEPERATOR__ && __externBuffTables.Count > 0 && __externBuffTables.Any(e => e.Value.ContainsKey(buff)))
                 ret = Mathf.Max(ret, __externBuffTables.Max(e => e.Value[buff].Item1));
 
             return ret;

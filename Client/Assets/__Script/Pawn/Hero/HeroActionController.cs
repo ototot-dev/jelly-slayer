@@ -239,6 +239,20 @@ namespace Game
         {
             base.StartInternal();
 
+            __brain.BB.action.isJumping.Skip(1).Subscribe(v =>
+            {
+                if (v)
+                {
+                    EffectManager.Instance.Show("FX_Cartoony_Jump_Up_01", __brain.coreColliderHelper.transform.position, Quaternion.identity, Vector3.one, 1f);
+                    SoundManager.Instance.Play(SoundID.JUMP);
+                }
+                else
+                {
+                    // EffectManager.Instance.Show("FX_Cartoony_Jump_01", __brain.coreColliderHelper.transform.position + Time.deltaTime * __brain.Movement.moveVec, Quaternion.identity, Vector3.one, 1f);
+                    EffectManager.Instance.Show("JumpCloudSmall", __brain.coreColliderHelper.transform.position + Time.deltaTime * __brain.Movement.moveSpeed * __brain.Movement.moveVec + 0.1f * Vector3.up, Quaternion.identity, Vector3.one, 1f);
+                }
+            }).AddTo(this);
+
             onActiveParryEnabled += (_) => parryHitColliderHelper.pawnCollider.enabled = currActionContext.activeParryEnabled;
             onActionCanceled += (_, __) => parryHitColliderHelper.pawnCollider.enabled = false;
             onActionFinished += (_) => 

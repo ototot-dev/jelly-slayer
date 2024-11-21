@@ -51,15 +51,13 @@ namespace Game
                 }
 
                 mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
-                // mainAnimator.SetLayerWeight(1, Mathf.Clamp01(mainAnimator.GetLayerWeight(1) + (__brain.BB.IsGuarding ? animLayerBlendSpeed : -animLayerBlendSpeed) * Time.deltaTime));
-                mainAnimator.SetLayerWeight(1, 1);
-                mainAnimator.SetLayerWeight(2, 1);
+                mainAnimator.SetLayerWeight(1, __brain.BB.IsJumping ? 0f : 1f);
+                mainAnimator.SetLayerWeight(2, __brain.BB.IsJumping ? 0f : 1f);
                 mainAnimator.SetLayerWeight(3, Mathf.Clamp01(mainAnimator.GetLayerWeight(3) + (__brain.BB.IsRolling || (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CurrActionName != "!OnHit" && __brain.ActionCtrler.CurrActionName != "ActiveParry") ? animLayerBlendSpeed : -animLayerBlendSpeed) * Time.deltaTime));
 
                 mainAnimator.SetFloat("MoveSpeed", __brain.Movement.freezeRotation ? -1 : __brain.Movement.CurrVelocity.Vector2D().magnitude / __brain.BB.body.moveSpeed);
                 mainAnimator.SetFloat("MoveAnimSpeed", __brain.Movement.freezeRotation ? (__brain.BB.IsGuarding ? 0.8f : 1.2f) : 1);
                 mainAnimator.SetBool("IsMoving", __brain.Movement.CurrVelocity.sqrMagnitude > 0);
-                // mainAnimator.SetBool("IsGrounded", __brain.Movement.IsOnGround);
 
                 var animMoveVec = __brain.coreColliderHelper.transform.InverseTransformDirection(__brain.Movement.CurrVelocity).Vector2D();
                 mainAnimator.SetFloat("MoveX", animMoveVec.x / __brain.Movement.moveSpeed);
@@ -69,17 +67,6 @@ namespace Game
                 legAnimator.User_SetIsGrounded( __brain.Movement.IsOnGround && !__brain.BB.IsRolling && !__brain.BB.IsDown && !__brain.BB.IsDead);
                 legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude > 0 ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.5f : 0.4f, 1);
             };
-
-            // __brain.onLateUpdate += () =>
-            // {
-            //     if (hipBone != null)
-            //         hipBone.position -= hipBoneOffset * Vector3.down;
-
-            //     if (__brain.BB.TargetBrain != null)
-            //         HeadLookAt.transform.position = __brain.BB.TargetBrain.coreColliderHelper.GetCenter();
-            //     else
-            //         HeadLookAt.transform.localPosition = new Vector3(0f, 1.2f, 1f);
-            // };
         }
 
         public bool Jump() 
