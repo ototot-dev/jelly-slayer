@@ -400,8 +400,24 @@ namespace Game
                 return;
 
             bool isPress = value.Get<float>() > 0;
-            if (isPress == true)
-                MyHeroBrain.ActionCtrler.SetPendingAction("Kick");
+            if (isPress == true) 
+            {
+                var target = PlayerTargetManager.FindStunnedTarget(MyHeroBrain);
+                if (target != null)
+                {
+                    Debug.Log("<color=red>Attack Groggy Enemy</color>");
+                }
+                else 
+                {
+                    target = PlayerTargetManager.FindGuardbreakTarget(MyHeroBrain);
+                    if(target != null) 
+                    {
+                        Debug.Log("<color=cyan>Attack Guardbreak Enemy</color>");
+
+                    }
+                }
+            }
+            //MyHeroBrain.ActionCtrler.SetPendingAction("Kick");
             /*
                 if (MyHeroBrain._chainCtrl.IsBind == true)
                 {

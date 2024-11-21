@@ -19,6 +19,7 @@ namespace Game
         public bool IsThrowing => common.isThrowing.Value;
         public bool IsGrabbed => common.isGrabbed.Value;
         public bool IsBind => common.isBind.Value;
+        public bool IsGuardbreak => common.isGuardbreak.Value;
         public float LifeTime => common.lifeTime.Value;
 
         /// <summary>
@@ -37,9 +38,10 @@ namespace Game
             public BoolReactiveProperty isDown = new();
             public BoolReactiveProperty isDead = new();
             public BoolReactiveProperty isRagdoll = new();
-            public BoolReactiveProperty isThrowing = new(); // 잡기
-            public BoolReactiveProperty isGrabbed = new();  // 잡힌 상태
-            public BoolReactiveProperty isBind = new();     // 묶인 상태
+            public BoolReactiveProperty isThrowing = new();     // 잡기
+            public BoolReactiveProperty isGrabbed = new();      // 잡힌 상태
+            public BoolReactiveProperty isBind = new();         // 묶인 상태
+            public BoolReactiveProperty isGuardbreak = new();   // 가드 깨진 상태
             public FloatReactiveProperty lifeTime = new(60);
         }
 
