@@ -808,7 +808,7 @@ namespace Game.NodeCanvasExtension
         PawnBrainController __pawnBrain;
         PawnActionController __pawnActionCtrler;
         List<PawnColliderHelper> __traceResults;
-        readonly HashSet<PawnBrainController> __sendDamageBrains = new();
+        readonly HashSet<PawnBrainController> __sentDamageBrains = new();
 
         protected override void OnExecute()
         {
@@ -846,7 +846,7 @@ namespace Game.NodeCanvasExtension
                 __halfFanAngle = 0.5f * fanAngle.value;
                 __stepFanAngle = fanAngle.value / __sampleNum;
                 __traceResults = null;
-                __sendDamageBrains.Clear();
+                __sentDamageBrains.Clear();
 
                 if (TraceSampleInternal() >= __sampleNum)
                     EndAction(true);
@@ -857,7 +857,7 @@ namespace Game.NodeCanvasExtension
                 traceDirection.value = 0;
                 __sampleNum = 1;
                 __traceResults = null;
-                __sendDamageBrains.Clear();
+                __sentDamageBrains.Clear();
 
                 TraceSampleInternal();
                 EndAction(true);
@@ -898,10 +898,10 @@ namespace Game.NodeCanvasExtension
             {
                 foreach (var r in __traceResults)
                 {
-                    if (!__sendDamageBrains.Contains(r.pawnBrain))
+                    if (!__sentDamageBrains.Contains(r.pawnBrain))
                     {
                         __pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__pawnBrain, r.pawnBrain, __actionData, r.pawnCollider, __pawnActionCtrler.currActionContext.insufficientStamina));
-                        __sendDamageBrains.Add(r.pawnBrain);
+                        __sentDamageBrains.Add(r.pawnBrain);
                     }
                 }
 
@@ -918,7 +918,7 @@ namespace Game.NodeCanvasExtension
             __pawnActionCtrler.SetTraceRunning(false);
 
             //* GC 될수도 있으니 Task 종료시에 바로 해제해줌
-            __sendDamageBrains.Clear();
+            __sentDamageBrains.Clear();
             __traceResults.Clear();
             __traceResults = null;
         }
@@ -1346,7 +1346,7 @@ namespace Game.NodeCanvasExtension
                     trailFx.value.PointStart = startPoint.value;
                 if (!endPoint.isNoneOrNull)
                     trailFx.value.PointEnd = endPoint.value;
-                    
+
                 trailFx.value.Activate();
 
                 __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;

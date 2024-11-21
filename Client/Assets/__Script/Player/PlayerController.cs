@@ -401,10 +401,7 @@ namespace Game
 
             bool isPress = value.Get<float>() > 0;
             if (isPress == true)
-            {
-                MyHeroBrain.ActionCtrler.CancelAction(false);
                 MyHeroBrain.ActionCtrler.SetPendingAction("Kick");
-            }
             /*
                 if (MyHeroBrain._chainCtrl.IsBind == true)
                 {

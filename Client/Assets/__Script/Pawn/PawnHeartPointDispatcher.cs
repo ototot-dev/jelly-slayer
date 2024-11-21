@@ -160,8 +160,22 @@ namespace Game
 
         void ProcessDamageContext(ref DamageContext damageContext)
         {
-            if (!damageContext.receiverBrain.PawnBB.IsSpawnFinished || damageContext.receiverBrain.PawnBB.IsDead)
+            if (!damageContext.receiverBrain.PawnBB.IsSpawnFinished || damageContext.receiverBrain.PawnBB.IsDead || damageContext.receiverBrain.PawnBB.IsDown)
                 return;
+
+            var cannotHitOnJump = (damageContext.senderActionData?.cannotHitOnJump ?? 1) > 0;
+            if (cannotHitOnJump && damageContext.receiverBrain is IMovable receiverMovable && receiverMovable.IsJumping())
+            {
+                __Logger.LogF(gameObject, nameof(CalcFinalDamage), "No damage. IsJumping() is true.", "sender", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
+                return;
+            }
+
+            var cannotAvoidOnRolling = (damageContext.senderActionData?.cannotAvoidOnRolling ?? 0) > 0;
+            if (!cannotAvoidOnRolling && damageContext.receiverBrain.TryGetComponent<PawnBuffController>(out var receiverBuffCtrler) && receiverBuffCtrler.CheckBuff(BuffTypes.InvincibleDodge))
+            {
+                __Logger.LogF(gameObject, nameof(ProcessDamageContext), "No damage. CheckBuff(BuffTypes.InvincibleDodge) is true.",  "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
+                return;
+            }
 
             var senderActionCtrler = damageContext.senderBrain.GetComponent<PawnActionController>();
             var receiverActionCtrler = damageContext.receiverBrain.GetComponent<PawnActionController>();
@@ -344,37 +358,16 @@ namespace Game
 
         float CalcFinalDamage(ref DamageContext damageContext)
         {
-            if (damageContext.receiverBrain.PawnBB.IsDown)
-            {
-                __Logger.LogF(gameObject, nameof(CalcFinalDamage), "No damage. PawnBB.IsDown is true.", "receiverBrain", damageContext.receiverBrain);
-                return 0f;
-            }
-
-            var buffCtrler = damageContext.receiverBrain.GetComponent<PawnBuffController>();
-            if (buffCtrler != null && buffCtrler.CheckBuff(BuffTypes.Invincible))
-            {
-                __Logger.LogF(gameObject, nameof(CalcFinalDamage), "No damage. buffCtrler.CheckBuff(BuffTypes.Invincible) is true.", "receiverBrain", damageContext.receiverBrain);
-                return 0f;
-            }
-
-            var cannotHitOnJump = (damageContext.senderActionData?.cannotHitOnJump ?? 1) > 0;
-            if (cannotHitOnJump && damageContext.receiverBrain is IMovable receiverMovable && receiverMovable.IsJumping())
-            {
-                __Logger.LogF(gameObject, nameof(CalcFinalDamage), "No damage. IsJumping() is true.", "receiverBrain", damageContext.receiverBrain);
-                return 0f;
-            }
-
-            var cannotAvoidOnRolling = (damageContext.senderActionData?.cannotAvoidOnRolling ?? 1) > 0;
-            if (!cannotAvoidOnRolling && buffCtrler != null && buffCtrler.CheckBuff(BuffTypes.InvincibleDodge))
-            {
-                __Logger.LogF(gameObject, nameof(CalcFinalDamage), "No damage. buffCtrler.CheckBuff(BuffTypes.InvincibleDodge) is true.", "receiverBrain", damageContext.receiverBrain);
-                return 0f;
-            }
-
             var physDamage = Mathf.Max(0f, damageContext.senderBrain.PawnBB.stat.physAttack - damageContext.receiverBrain.PawnBB.stat.physDefence);
             var magicDamage = Mathf.Max(0f, damageContext.senderBrain.PawnBB.stat.magicAttack - damageContext.receiverBrain.PawnBB.stat.magicDefense);
             damageContext.finalDamage = Mathf.Max(10f, (physDamage + magicDamage) * (damageContext.senderActionData?.damageMultiplier ?? 1));
 
+            if (damageContext.receiverBrain.TryGetComponent<PawnBuffController>(out var receiverBuffCtrler) && receiverBuffCtrler.CheckBuff(BuffTypes.Invincible))
+            {
+                __Logger.LogF(gameObject, nameof(CalcFinalDamage), "No damage. CheckBuff(BuffTypes.Invincible) is true.", "receiverBrain", damageContext.receiverBrain);
+                return 0f;
+            }
+            
             if (damageContext.insufficientStamina)
             {
                 damageContext.finalDamage *= 0.1f;
