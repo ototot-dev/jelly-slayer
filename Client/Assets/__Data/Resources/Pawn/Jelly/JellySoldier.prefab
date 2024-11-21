@@ -89,6 +89,37 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.048632592, y: -0.019479603, z: 0}
     m_Extent: {x: 0.11894043, y: 0.16489165, z: 0.21365741}
   m_DirtyAABB: 0
+--- !u!1 &16561739453874999
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4909087191656631357}
+  m_Layer: 0
+  m_Name: Start
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4909087191656631357
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 16561739453874999}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: 0.716, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4341131037163423784}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &78013730766867609
 GameObject:
   m_ObjectHideFlags: 0
@@ -3630,7 +3661,7 @@ GameObject:
   - component: {fileID: 5905730780835405055}
   - component: {fileID: 2531984228082749242}
   m_Layer: 0
-  m_Name: WeaponTrail
+  m_Name: WeaponTrail_A
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3671,11 +3702,68 @@ MonoBehaviour:
   SortingOrder: 0
   PointStart: {fileID: 8965258254502794249}
   PointEnd: {fileID: 3181840233186231301}
-  MaxFrame: 14
+  MaxFrame: 20
   Granularity: 60
   Fps: 60
-  MyColor: {r: 0.3962264, g: 0.3962264, b: 0.3962264, a: 1}
-  MyMaterial: {fileID: 2100000, guid: 557fe915d2ace144fba314182b2d290a, type: 2}
+  MyColor: {r: 1, g: 1, b: 1, a: 1}
+  MyMaterial: {fileID: 2100000, guid: 892c9edd446a447cbbf12419304b8eb3, type: 2}
+--- !u!1 &2726869062534013043
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4341131037163423784}
+  - component: {fileID: 722672261472128924}
+  m_Layer: 0
+  m_Name: WeaponTrail_B
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4341131037163423784
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2726869062534013043}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0.078459114, z: 0, w: 0.99691737}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4909087191656631357}
+  - {fileID: 7204046730251960051}
+  m_Father: {fileID: 6341947184674742915}
+  m_LocalEulerAnglesHint: {x: 0, y: 9, z: 0}
+--- !u!114 &722672261472128924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2726869062534013043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c2c9828fec98747a1b0680f47bed80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseWith2D: 0
+  UseWithSRP: 1
+  SortingLayerName: 
+  SortingOrder: 0
+  PointStart: {fileID: 4909087191656631357}
+  PointEnd: {fileID: 7204046730251960051}
+  MaxFrame: 10
+  Granularity: 60
+  Fps: 60
+  MyColor: {r: 1, g: 1, b: 1, a: 0.5019608}
+  MyMaterial: {fileID: 2100000, guid: 75f756109f216ad409ff1a5ea7dd7b2c, type: 2}
 --- !u!1 &2765769258747286868
 GameObject:
   m_ObjectHideFlags: 0
@@ -6609,6 +6697,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6920421996920446943}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4667915561215179820
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7204046730251960051}
+  m_Layer: 0
+  m_Name: End
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7204046730251960051
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4667915561215179820}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.638, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4341131037163423784}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4710021934830059485
 GameObject:
   m_ObjectHideFlags: 0
@@ -6794,7 +6913,7 @@ Transform:
   m_GameObject: {fileID: 4849261707184197937}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 3.207, z: 0}
+  m_LocalPosition: {x: -0, y: 3.45, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9353,6 +9472,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5905730780835405055}
+  - {fileID: 4341131037163423784}
   m_Father: {fileID: 1079021141562734688}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8047022998564941094
@@ -16125,7 +16245,7 @@ Transform:
   m_GameObject: {fileID: 8087078544382891722}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 0.716, z: 0}
+  m_LocalPosition: {x: -0, y: 1.533, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -17116,6 +17236,8 @@ MonoBehaviour:
   bodyHitColliderHelper: {fileID: 7827817497564531622}
   parryHitColliderHelper: {fileID: 0}
   counterActionCollider: {fileID: 8100486106525040855}
+  sworldWeaponTrailA: {fileID: 2531984228082749242}
+  sworldWeaponTrailB: {fileID: 722672261472128924}
 --- !u!114 &8683783354359918731
 MonoBehaviour:
   m_ObjectHideFlags: 0

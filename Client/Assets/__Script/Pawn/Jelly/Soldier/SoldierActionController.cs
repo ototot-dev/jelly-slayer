@@ -12,7 +12,6 @@ namespace Game
     {
         [Header("Component")]
         public Transform counterActionCollider;
-        public XWeaponTrail sworldWeaponTrail;
         public XWeaponTrail sworldWeaponTrailA;
         public XWeaponTrail sworldWeaponTrailB;
 

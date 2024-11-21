@@ -1346,6 +1346,7 @@ namespace Game.NodeCanvasExtension
                     trailFx.value.PointStart = startPoint.value;
                 if (!endPoint.isNoneOrNull)
                     trailFx.value.PointEnd = endPoint.value;
+                    
                 trailFx.value.Activate();
 
                 __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;
