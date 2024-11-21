@@ -15,6 +15,36 @@ namespace Game
 
         PlayerController __playerCtrler;
 
+        public static PawnColliderHelper FindTarget(HeroBrain heroBrain) 
+        {
+            var newTarget = heroBrain.SensorCtrler.ListeningColliders
+                .Select(l => l.GetComponent<PawnColliderHelper>())
+                .Where(p => p != null && p.pawnBrain != null &&
+                    p.pawnBrain.PawnBB.IsBind == false && p.pawnBrain.PawnBB.IsDead == false)
+                .OrderBy(p => (p.transform.position - heroBrain.CoreTransform.position).sqrMagnitude).FirstOrDefault();
+
+            return newTarget;
+        }
+        public static PawnColliderHelper FindStunnedTarget(HeroBrain heroBrain)
+        {
+            var newTarget = heroBrain.SensorCtrler.ListeningColliders
+                .Select(l => l.GetComponent<PawnColliderHelper>())
+                .Where(p => p != null && p.pawnBrain != null &&
+                    p.pawnBrain.PawnBB.IsStunned == true)
+                .OrderBy(p => (p.transform.position - heroBrain.CoreTransform.position).sqrMagnitude).FirstOrDefault();
+
+            return newTarget;
+        }
+        public static PawnColliderHelper FindGuardbreakTarget(HeroBrain heroBrain)
+        {
+            var newTarget = heroBrain.SensorCtrler.ListeningColliders
+                .Select(l => l.GetComponent<PawnColliderHelper>())
+                .Where(p => p != null && p.pawnBrain != null &&
+                    p.pawnBrain.PawnBB.IsGuardbreak == true)
+                .OrderBy(p => (p.transform.position - heroBrain.CoreTransform.position).sqrMagnitude).FirstOrDefault();
+
+            return newTarget;
+        }
         public void UpdateTarget()
         {
             if (__playerCtrler.MyHeroBrain == null)
@@ -23,19 +53,14 @@ namespace Game
             var heroBrain = __playerCtrler.MyHeroBrain;
             var curTarget = heroBrain.BB.TargetBrain;
 
-            // �׾��ų� ���� ���� Ÿ�� ����
+            // If Target is Dead....
             if (curTarget != null && (curTarget.PawnBB.IsBind == true || curTarget.PawnBB.IsDead == true))
             {
                 heroBrain.BB.action.targetPawnHP.Value = null;
                 heroBrain.Movement.freezeRotation = false;
                 return;
             }
-            var newTarget = heroBrain.SensorCtrler.ListeningColliders
-                .Select(l => l.GetComponent<PawnColliderHelper>())
-                .Where(p => p != null && p.pawnBrain != null && 
-                    p.pawnBrain.PawnBB.IsBind == false && p.pawnBrain.PawnBB.IsDead == false)
-                .OrderBy(p => (p.transform.position - heroBrain.CoreTransform.position).sqrMagnitude).FirstOrDefault();
-
+            var newTarget = FindTarget(__playerCtrler.MyHeroBrain);
             if (heroBrain.BB.TargetPawn == null)
             {
                 if (newTarget != null)

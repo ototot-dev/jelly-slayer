@@ -89,6 +89,9 @@ namespace Game
                 __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 2);
                 __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
 
+                // Guard break debuf
+                __brain.PawnBuff.AddBuff(BuffTypes.Guardbreak, duration: 1.0f);
+
                 SoundManager.Instance.Play(SoundID.GUARD_BREAK);
                 EffectManager.Instance.Show("SwordHitRed", 
                     __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);

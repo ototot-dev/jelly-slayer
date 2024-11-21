@@ -115,22 +115,31 @@ namespace Game
             {
                 PawnBuff.onBuffActive += (buff) =>
                 {
-                    if (buff == BuffTypes.KnockDown)
-                        PawnBB.common.isDown.Value = true;
-                    else if (buff == BuffTypes.Groggy)
-                        PawnBB.common.isStunned.Value = true;
-                    else if(buff == BuffTypes.Bind)
-                        PawnBB.common.isBind.Value = true;
+                    switch (buff) {
+                        case BuffTypes.KnockDown: 
+                            PawnBB.common.isDown.Value = true; break;
+                        case BuffTypes.Groggy: 
+                            PawnBB.common.isStunned.Value = true; break;
+                        case BuffTypes.Bind: 
+                            PawnBB.common.isBind.Value = true; break;
+                        case BuffTypes.Guardbreak: 
+                            PawnBB.common.isGuardbreak.Value = true; break;
+                    }
                 };
 
                 PawnBuff.onBuffDeactive += (buff) =>
                 {
-                    if (buff == BuffTypes.KnockDown)
-                        PawnBB.common.isDown.Value = false;
-                    else if (buff == BuffTypes.Groggy)
-                        PawnBB.common.isStunned.Value = false;
-                    else if (buff == BuffTypes.Bind)
-                        PawnBB.common.isBind.Value = false;
+                    switch (buff)
+                    {
+                        case BuffTypes.KnockDown:
+                            PawnBB.common.isDown.Value = false; break;
+                        case BuffTypes.Groggy:
+                            PawnBB.common.isStunned.Value = false; break;
+                        case BuffTypes.Bind:
+                            PawnBB.common.isBind.Value = false; break;
+                        case BuffTypes.Guardbreak:
+                            PawnBB.common.isGuardbreak.Value = false; break;
+                    }
                 };
             }
         }

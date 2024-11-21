@@ -50,6 +50,7 @@ namespace Game
         ActionSpeedDown,
         ActionStaminaLow,
         Bind,           // 끈에 묶임
+        Guardbreak,     // 가드 파괴
     }
 
 
