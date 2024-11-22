@@ -70,8 +70,8 @@ namespace Game
             public readonly FloatReactiveProperty SenderCurrHeartPoint => senderBrain.PawnHP.heartPoint;
             public readonly FloatReactiveProperty ReceiverCurrHeartPoint => receiverBrain.PawnHP.heartPoint;
             public ActionResults actionResult;
-            public Tuple<BuffTypes, float> senderPenalty;
-            public Tuple<BuffTypes, float> receiverPenalty;
+            public Tuple<PawnStatus, float> senderPenalty;
+            public Tuple<PawnStatus, float> receiverPenalty;
             public float finalDamage;
 
             public DamageContext(PawnBrainController senderBrain, PawnBrainController receiverBrain, MainTable.ActionData senderActionData, Vector3 hitPoint, Collider hitCollider, bool insufficientStamina)
@@ -86,8 +86,8 @@ namespace Game
                 this.receiverBrain = receiverBrain;
                 projectile = null;
                 actionResult = ActionResults.None;
-                senderPenalty = new(BuffTypes.None, -1);
-                receiverPenalty = new(BuffTypes.None, -1);
+                senderPenalty = new(PawnStatus.None, -1);
+                receiverPenalty = new(PawnStatus.None, -1);
                 finalDamage = -1;
             }
 
@@ -103,12 +103,12 @@ namespace Game
                 this.receiverBrain = receiverBrain;
                 projectile = null;
                 actionResult = ActionResults.None;
-                senderPenalty = new(BuffTypes.None, -1);
-                receiverPenalty = new(BuffTypes.None, -1);
+                senderPenalty = new(PawnStatus.None, -1);
+                receiverPenalty = new(PawnStatus.None, -1);
                 finalDamage = -1;
             }
 
-            public DamageContext(PawnBrainController senderBrain, string actionName, float finalDamage, BuffTypes penalty = BuffTypes.None, float penaltyDuration = -1)
+            public DamageContext(PawnBrainController senderBrain, string actionName, float finalDamage, PawnStatus penalty = PawnStatus.None, float penaltyDuration = -1)
             {
                 timeStamp = Time.time;
                 hitPoint = senderBrain.coreColliderHelper.pawnCollider.bounds.center;
@@ -120,8 +120,8 @@ namespace Game
                 this.receiverBrain = null;
                 projectile = null;
                 actionResult = ActionResults.None;
-                senderPenalty = new(BuffTypes.None, -1);
-                receiverPenalty = new(BuffTypes.None, -1);
+                senderPenalty = new(PawnStatus.None, -1);
+                receiverPenalty = new(PawnStatus.None, -1);
                 this.finalDamage = finalDamage;
             }
 
@@ -137,8 +137,8 @@ namespace Game
                 this.receiverBrain = receiverBrain.GetComponent<PawnBrainController>();
                 this.projectile = projectile;
                 actionResult = ActionResults.None;
-                senderPenalty = new(BuffTypes.None, -1);
-                receiverPenalty = new(BuffTypes.None, -1);
+                senderPenalty = new(PawnStatus.None, -1);
+                receiverPenalty = new(PawnStatus.None, -1);
                 finalDamage = -1;
             }
         }
@@ -171,7 +171,7 @@ namespace Game
             }
 
             var cannotAvoidOnRolling = (damageContext.senderActionData?.cannotAvoidOnRolling ?? 0) > 0;
-            if (!cannotAvoidOnRolling && damageContext.receiverBrain.TryGetComponent<PawnBuffController>(out var receiverBuffCtrler) && receiverBuffCtrler.CheckBuff(BuffTypes.InvincibleDodge))
+            if (!cannotAvoidOnRolling && damageContext.receiverBrain.TryGetComponent<PawnStatusController>(out var receiverBuffCtrler) && receiverBuffCtrler.CheckStatus(PawnStatus.InvincibleDodge))
             {
                 __Logger.LogF(gameObject, nameof(ProcessDamageContext), "No damage. CheckBuff(BuffTypes.InvincibleDodge) is true.",  "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
                 return;
@@ -215,11 +215,11 @@ namespace Game
                 if (damageContext.senderBrain.PawnBB.stat.stance.Value >= damageContext.senderBrain.PawnBB.stat.maxStance.Value)
                 {
                     damageContext.senderBrain.PawnBB.stat.stance.Value = 0;
-                    damageContext.senderPenalty = new(BuffTypes.Groggy, damageContext.senderBrain.PawnBB.pawnData.groggyDuration);
+                    damageContext.senderPenalty = new(PawnStatus.Groggy, damageContext.senderBrain.PawnBB.pawnData.groggyDuration);
                 }
                 else
                 {
-                    damageContext.senderPenalty = new(BuffTypes.Staggered, damageContext.receiverActionData.staggerDuration);
+                    damageContext.senderPenalty = new(PawnStatus.Staggered, damageContext.receiverActionData.staggerDuration);
                 }
             }
             else if (damageContext.actionResult == ActionResults.PassiveParried)
@@ -234,11 +234,11 @@ namespace Game
                 if (damageContext.senderBrain.PawnBB.stat.stance.Value >= damageContext.senderBrain.PawnBB.stat.maxStance.Value)
                 {
                     damageContext.senderBrain.PawnBB.stat.stance.Value = 0;
-                    damageContext.senderPenalty = new(BuffTypes.Groggy, damageContext.senderBrain.PawnBB.pawnData.groggyDuration);
+                    damageContext.senderPenalty = new(PawnStatus.Groggy, damageContext.senderBrain.PawnBB.pawnData.groggyDuration);
                 }
                 else
                 {
-                    damageContext.senderPenalty = new(BuffTypes.Staggered, damageContext.receiverActionData.staggerDuration);
+                    damageContext.senderPenalty = new(PawnStatus.Staggered, damageContext.receiverActionData.staggerDuration);
                 }
             }
             else if (damageContext.actionResult == ActionResults.Blocked)
@@ -254,7 +254,7 @@ namespace Game
                     damageContext.actionResult = ActionResults.GuardBreak;
 
                     //* 'BreakGuard'인 경우 'Staggered' 디버프를 받게 되며, 'Staggered' 지속 시간은 피격 경직 시간과 동일하게 적용함
-                    damageContext.receiverPenalty = new(BuffTypes.Staggered, damageContext.senderActionData.staggerDuration);
+                    damageContext.receiverPenalty = new(PawnStatus.Staggered, damageContext.senderActionData.staggerDuration);
                 }
                 else
                 {
@@ -265,7 +265,7 @@ namespace Game
 
                         //* 'Block' 판정인 경우엔 Sender는 역경직을 받게 되고, Receiver도 짧은 자체 경직 시간을 갖게됨
                         if (senderActionCtrler == null || !senderActionCtrler.IsSuperArmorEnabled )
-                            damageContext.senderPenalty = new(BuffTypes.Staggered, damageContext.receiverActionData.staggerDuration);
+                            damageContext.senderPenalty = new(PawnStatus.Staggered, damageContext.receiverActionData.staggerDuration);
                     }
                 }
             }
@@ -289,7 +289,7 @@ namespace Game
                         if (damageContext.receiverBrain.PawnBB.stat.stance.Value >= damageContext.receiverBrain.PawnBB.stat.maxStance.Value)
                         {
                             damageContext.receiverBrain.PawnBB.stat.stance.Value = 0;
-                            damageContext.receiverPenalty = new(BuffTypes.Groggy, damageContext.receiverBrain.PawnBB.pawnData.groggyDuration);
+                            damageContext.receiverPenalty = new(PawnStatus.Groggy, damageContext.receiverBrain.PawnBB.pawnData.groggyDuration);
                         }
                     }
                     if (damageContext.senderActionData.knockDown >= damageContext.receiverBrain.PawnBB.stat.poise && !damageContext.receiverBrain.PawnBB.IsDown) //* KnockDown 처리
@@ -298,13 +298,13 @@ namespace Game
 
                         __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged", "stat.knockDown", damageContext.receiverBrain.PawnBB.stat.knockDown.Value, "stat.maxKnockDown", damageContext.receiverBrain.PawnBB.stat.maxKnockDown.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
 
-                        if (damageContext.receiverPenalty.Item1 == BuffTypes.None && damageContext.receiverBrain.PawnBB.stat.knockDown.Value >= damageContext.receiverBrain.PawnBB.stat.maxKnockDown.Value)
+                        if (damageContext.receiverPenalty.Item1 == PawnStatus.None && damageContext.receiverBrain.PawnBB.stat.knockDown.Value >= damageContext.receiverBrain.PawnBB.stat.maxKnockDown.Value)
                         {
                             damageContext.receiverBrain.PawnBB.stat.knockDown.Value = 0;
-                            damageContext.receiverPenalty = new(BuffTypes.KnockDown, damageContext.receiverBrain.PawnBB.pawnData.knockDownDuration);
+                            damageContext.receiverPenalty = new(PawnStatus.KnockDown, damageContext.receiverBrain.PawnBB.pawnData.knockDownDuration);
                         }
                     }
-                    if (damageContext.receiverPenalty.Item1 == BuffTypes.None && damageContext.receiverBrain.PawnBB.stat.poise - damageContext.senderActionData.stagger <= 0) //* 경직 처리
+                    if (damageContext.receiverPenalty.Item1 == PawnStatus.None && damageContext.receiverBrain.PawnBB.stat.poise - damageContext.senderActionData.stagger <= 0) //* 경직 처리
                     {
                         if (receiverActionCtrler.IsSuperArmorEnabled)
                         {
@@ -312,7 +312,7 @@ namespace Game
                         }
                         else
                         {
-                            damageContext.receiverPenalty = new(BuffTypes.Staggered, damageContext.senderActionData.staggerDuration);
+                            damageContext.receiverPenalty = new(PawnStatus.Staggered, damageContext.senderActionData.staggerDuration);
                         }
                     }
                 }
@@ -327,20 +327,20 @@ namespace Game
             }
             else
             {
-                if (damageContext.receiverPenalty.Item1 != BuffTypes.None)
+                if (damageContext.receiverPenalty.Item1 != PawnStatus.None)
                 {
                     __Logger.LogF(gameObject, nameof(ProcessDamageContext), "receiverPenalty is added.", "BuffTypes", damageContext.receiverPenalty.Item1, "duration", damageContext.receiverPenalty.Item2, "receiverBrain", damageContext.receiverBrain);
-                    damageContext.receiverBrain.PawnBuff.AddBuff(damageContext.receiverPenalty.Item1, 1f, damageContext.receiverPenalty.Item2);
+                    damageContext.receiverBrain.PawnBuff.AddStatus(damageContext.receiverPenalty.Item1, 1f, damageContext.receiverPenalty.Item2);
                 }
                 damageContext.receiverBrain.PawnHP.onDamaged?.Invoke(damageContext);
             }
 
             if (damageContext.senderBrain != damageContext.receiverBrain)
             {
-                if (damageContext.senderPenalty.Item1 != BuffTypes.None)
+                if (damageContext.senderPenalty.Item1 != PawnStatus.None)
                 {
                     __Logger.LogF(gameObject, nameof(ProcessDamageContext), "senderPenalty is added.", "BuffTypes", damageContext.senderPenalty.Item1, "duration", damageContext.senderPenalty.Item2, "senderBrain", damageContext.senderBrain);
-                    damageContext.senderBrain.PawnBuff.AddBuff(damageContext.senderPenalty.Item1, 1f, damageContext.senderPenalty.Item2);
+                    damageContext.senderBrain.PawnBuff.AddStatus(damageContext.senderPenalty.Item1, 1f, damageContext.senderPenalty.Item2);
                 }
                 damageContext.senderBrain.PawnHP.onDamaged?.Invoke(damageContext);
             }
@@ -362,7 +362,7 @@ namespace Game
             var magicDamage = Mathf.Max(0f, damageContext.senderBrain.PawnBB.stat.magicAttack - damageContext.receiverBrain.PawnBB.stat.magicDefense);
             damageContext.finalDamage = Mathf.Max(10f, (physDamage + magicDamage) * (damageContext.senderActionData?.damageMultiplier ?? 1));
 
-            if (damageContext.receiverBrain.TryGetComponent<PawnBuffController>(out var receiverBuffCtrler) && receiverBuffCtrler.CheckBuff(BuffTypes.Invincible))
+            if (damageContext.receiverBrain.TryGetComponent<PawnStatusController>(out var receiverBuffCtrler) && receiverBuffCtrler.CheckStatus(PawnStatus.Invincible))
             {
                 __Logger.LogF(gameObject, nameof(CalcFinalDamage), "No damage. CheckBuff(BuffTypes.Invincible) is true.", "receiverBrain", damageContext.receiverBrain);
                 return 0f;

@@ -70,7 +70,7 @@ namespace Game
             Max
         }
 
-        public PawnBuffController BuffCtrler { get; private set; }
+        public PawnStatusController BuffCtrler { get; private set; }
         public PawnSensorController SensorCtrler { get; private set; }
         public PawnActionDataSelector ActionDataSelector { get; private set; }
         protected PawnMovementEx __pawnMovement;
@@ -108,7 +108,7 @@ namespace Game
         {
             base.AwakeInternal();
 
-            BuffCtrler = GetComponent<PawnBuffController>();
+            BuffCtrler = GetComponent<PawnStatusController>();
             SensorCtrler = GetComponent<PawnSensorController>();
             ActionDataSelector = GetComponent<PawnActionDataSelector>();
             __pawnMovement = GetComponent<PawnMovementEx>();
@@ -188,8 +188,8 @@ namespace Game
                     __jellyManBB.stat.RecoverStamina(Mathf.Max(__pawnActionCtrler.prevActionContext.startTimeStamp, __pawnActionCtrler.prevActionContext.finishTimeStamp), Time.deltaTime);
 
                     //* 스테니머 회복 후 액션 수행 가능으로 변경
-                    if (__jellyManBB.stat.stamina.Value ==__jellyManBB.stat.maxStamina.Value && PawnBuff.CheckBuff(BuffTypes.CanNotAction))
-                        PawnBuff.RemoveBuff(BuffTypes.CanNotAction);
+                    if (__jellyManBB.stat.stamina.Value ==__jellyManBB.stat.maxStamina.Value && PawnBuff.CheckStatus(PawnStatus.CanNotAction))
+                        PawnBuff.RemoveStatus(PawnStatus.CanNotAction);
                 }
 
                 __jellyManBB.stat.ReduceStance(PawnHP.LastDamageTimeStamp, Time.deltaTime);
@@ -209,7 +209,7 @@ namespace Game
             if (damageContext.receiverBrain.PawnBB.IsDead)
                 return;
             
-            if (damageContext.receiverPenalty.Item1 == BuffTypes.None)
+            if (damageContext.receiverPenalty.Item1 == PawnStatus.None)
             {
                 //* receiverPenalty가 없다면 Sender 액션을 'Blocked' 혹은 'PassiveParried'등으로 파훼한 것으로 판정하여, Sender 공격에 대한 반동 연출을 한다.
                 //* 이 때, "!OnHit" 액션을 Addictive 모드로 실행하여 실제 Action이 실행되지는 않도록 한다.
@@ -222,9 +222,9 @@ namespace Game
 
                 switch (damageContext.receiverPenalty.Item1)
                 {
-                    case BuffTypes.Groggy: __pawnActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty); break;
-                    case BuffTypes.Staggered: __pawnActionCtrler.StartAction(damageContext, "!OnHit", string.Empty); break;
-                    case BuffTypes.KnockDown: __pawnActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty); break;
+                    case PawnStatus.Groggy: __pawnActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty); break;
+                    case PawnStatus.Staggered: __pawnActionCtrler.StartAction(damageContext, "!OnHit", string.Empty); break;
+                    case PawnStatus.KnockDown: __pawnActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty); break;
                 }
             }
             // OnPawnDamaged
@@ -236,7 +236,7 @@ namespace Game
             if (damageContext.senderBrain.PawnBB.IsDead)
                 return;
 
-            if (damageContext.senderPenalty.Item1 != BuffTypes.None && __pawnActionCtrler.CheckActionRunning())
+            if (damageContext.senderPenalty.Item1 != PawnStatus.None && __pawnActionCtrler.CheckActionRunning())
                 __pawnActionCtrler.CancelAction(false);
 
             switch (damageContext.actionResult)

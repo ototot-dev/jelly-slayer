@@ -26,7 +26,7 @@ namespace Game
             {
                 var canMove1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsStunned && !__pawnBrain.PawnBB.IsDown && !__pawnBrain.PawnBB.IsBind;
                 var canMove2 = canMove1 && !CheckReachToDestination() && (__actionCtrler == null || !__actionCtrler.CheckActionRunning());
-                var canMove3 = canMove2 && (__buffCtrler == null || !__buffCtrler.CheckBuff(BuffTypes.Staggered));
+                var canMove3 = canMove2 && (__buffCtrler == null || !__buffCtrler.CheckStatus(PawnStatus.Staggered));
 
                 if (IsMovingToDestination)
                     moveVec = canMove3 ? (destination - capsule.position).Vector2D().normalized : Vector3.zero;

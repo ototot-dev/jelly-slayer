@@ -143,7 +143,7 @@ namespace Game
                 if (!freezeMovement)
                 {
                     var canMove1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsStunned && !__pawnBrain.PawnBB.IsDown;
-                    var canMove2 = canMove1 && !__actionCtrler.CheckActionRunning() && !__buffCtrler.CheckBuff(BuffTypes.Staggered);
+                    var canMove2 = canMove1 && !__actionCtrler.CheckActionRunning() && !__buffCtrler.CheckStatus(PawnStatus.Staggered);
                     moveVec = canMove2 ? moveVec : Vector3.zero;
                 }
 
@@ -171,7 +171,7 @@ namespace Game
 
             var canRotate1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsStunned && !__pawnBrain.PawnBB.IsDown;
             var canRotate2 = canRotate1 && !__brain.BB.IsRolling && !__brain.BB.IsJumping;
-            var canRotate3 = canRotate2 && !__actionCtrler.CheckActionRunning() && !__buffCtrler.CheckBuff(BuffTypes.Staggered);
+            var canRotate3 = canRotate2 && !__actionCtrler.CheckActionRunning() && !__buffCtrler.CheckStatus(PawnStatus.Staggered);
 
             if (canRotate3)
                 __ecmMovement.Rotate(faceVec, rotateSpeed);

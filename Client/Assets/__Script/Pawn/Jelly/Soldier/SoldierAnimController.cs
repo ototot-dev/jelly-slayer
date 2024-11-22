@@ -37,9 +37,9 @@ namespace Game
 
         void Start()
         {
-            __brain.BuffCtrler.onBuffActive += (buff) =>
+            __brain.BuffCtrler.onStatusActive += (buff) =>
             {
-                if (buff == BuffTypes.Staggered || buff == BuffTypes.Groggy)
+                if (buff == PawnStatus.Staggered || buff == PawnStatus.Groggy)
                 {
                     leftShoulderBoneSimulator.GravityEffectForce = rightShoulderBoneSimulator.GravityEffectForce = 9.8f * Vector3.down;
                     leftShoulderBoneSimulator.GravityHeavyness = 4f;
@@ -49,9 +49,9 @@ namespace Game
                 }
             };
 
-            __brain.BuffCtrler.onBuffDeactive += (buff) =>
+            __brain.BuffCtrler.onStatusDeactive += (buff) =>
             {
-                if ((buff == BuffTypes.Staggered || buff == BuffTypes.Groggy) && !__brain.BuffCtrler.CheckBuff(BuffTypes.Staggered) && !__brain.BuffCtrler.CheckBuff(BuffTypes.Groggy))
+                if ((buff == PawnStatus.Staggered || buff == PawnStatus.Groggy) && !__brain.BuffCtrler.CheckStatus(PawnStatus.Staggered) && !__brain.BuffCtrler.CheckStatus(PawnStatus.Groggy))
                 {
                     boneSimulatorTargetWeight = 0f;
                     shieldMeshRenderer.material.SetFloat("_Alpha", 0.3f);

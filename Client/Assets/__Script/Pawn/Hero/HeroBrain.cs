@@ -73,7 +73,7 @@ namespace Game
         public HeroAnimController AnimCtrler { get; private set; }
         public HeroActionController ActionCtrler { get; private set; }
         public PawnSensorController SensorCtrler { get; private set; }
-        public PawnBuffController BuffCtrler { get; private set;}
+        public PawnStatusController BuffCtrler { get; private set;}
 
         public bool _isBind = false;
         public List<PawnBrainController> _bindLIst = new ();
@@ -87,7 +87,7 @@ namespace Game
             AnimCtrler = GetComponent<HeroAnimController>();
             ActionCtrler = GetComponent<HeroActionController>();
             SensorCtrler = GetComponent<PawnSensorController>();
-            BuffCtrler = GetComponent<PawnBuffController>();
+            BuffCtrler = GetComponent<PawnStatusController>();
         }
 
         protected override void StartInternal()
@@ -135,16 +135,16 @@ namespace Game
             {
                 ActionCtrler.StartAddictiveAction(damageContext, "!OnHit");
             }
-            else if (damageContext.receiverPenalty.Item1 != BuffTypes.None)
+            else if (damageContext.receiverPenalty.Item1 != PawnStatus.None)
             {
                 if (ActionCtrler.CheckActionRunning())
                     ActionCtrler.CancelAction(false);
 
                 switch (damageContext.receiverPenalty.Item1)
                 {
-                    case BuffTypes.Groggy: ActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty); break;
-                    case BuffTypes.Staggered: ActionCtrler.StartAction(damageContext, "!OnHit", string.Empty); break;
-                    case BuffTypes.KnockDown: ActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty); break;
+                    case PawnStatus.Groggy: ActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty); break;
+                    case PawnStatus.Staggered: ActionCtrler.StartAction(damageContext, "!OnHit", string.Empty); break;
+                    case PawnStatus.KnockDown: ActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty); break;
                 }
             }
             
@@ -157,7 +157,7 @@ namespace Game
             if (damageContext.senderBrain.PawnBB.IsDead)
                 return;
 
-            if (damageContext.senderPenalty.Item1 != BuffTypes.None && ActionCtrler.CheckActionRunning())
+            if (damageContext.senderPenalty.Item1 != PawnStatus.None && ActionCtrler.CheckActionRunning())
                 ActionCtrler.CancelAction(false);
 
             switch (damageContext.actionResult)
@@ -184,14 +184,14 @@ namespace Game
             _isBind = isBind;
             if (_isBind == true)
             {
-                pawn.PawnBuff.AddBuff(BuffTypes.Bind);
+                pawn.PawnBuff.AddStatus(PawnStatus.Bind);
                 _bindLIst.Add(pawn);
             }
             else 
             {
                 if (pawn != null)
                 {
-                    pawn.PawnBuff.RemoveBuff(BuffTypes.Bind);
+                    pawn.PawnBuff.RemoveStatus(PawnStatus.Bind);
                 }
                 _bindLIst.Clear();
             }

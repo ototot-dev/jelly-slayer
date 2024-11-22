@@ -12,7 +12,7 @@ namespace Game
         Knockback,
     }
 
-    public class PawnActionController : MonoBehaviour, IBuffContainer
+    public class PawnActionController : MonoBehaviour, IStatusContainer
     {
         [Header("Component")]
         public PawnColliderHelper bodyHitColliderHelper;
@@ -134,7 +134,7 @@ namespace Game
         public  Tuple<string, string, float> PendingActionData { get; protected set; } = new(string.Empty, string.Empty, 0);
 
         //* Item1: Strength, Item2: Duration
-        protected Dictionary<BuffTypes, Tuple<float, float>> __buffContainer = new();
+        protected Dictionary<PawnStatus, Tuple<float, float>> __buffContainer = new();
 
         public Action<ActionContext, PawnHeartPointDispatcher.DamageContext> onActionStart;
         public Action<ActionContext, PawnHeartPointDispatcher.DamageContext> onAddictiveActionStart;
@@ -151,36 +151,36 @@ namespace Game
 #endif
 
 #region IBuffContainer
-        Dictionary<BuffTypes, Tuple<float, float>> IBuffContainer.GetBuffTable() => __buffContainer;
+        Dictionary<PawnStatus, Tuple<float, float>> IStatusContainer.GetStatusTable() => __buffContainer;
 
-        bool IBuffContainer.AddBuff(BuffTypes buff, float strength, float duration)
+        bool IStatusContainer.AddBuff(PawnStatus buff, float strength, float duration)
         {
             Debug.Assert(__pawnBrain.PawnBuff != null && CheckActionRunning());
 
-            __pawnBrain.PawnBuff.AddExternBuff(this, buff, strength, duration);
+            __pawnBrain.PawnBuff.AddExternStatus(this, buff, strength, duration);
             return true;
         }
 
-        void IBuffContainer.RemoveBuff(BuffTypes buff)
+        void IStatusContainer.RemoveBuff(PawnStatus buff)
         {
             Debug.Assert(__pawnBrain.PawnBuff != null && CheckActionRunning());
-            __pawnBrain.PawnBuff.RemoveExternBuff(this, buff);
+            __pawnBrain.PawnBuff.RemoveExternStatus(this, buff);
         }
 
-        bool IBuffContainer.CheckBuff(BuffTypes buff)
+        bool IStatusContainer.CheckBuff(PawnStatus buff)
         {
             Debug.Assert(__pawnBrain.PawnBuff != null && CheckActionRunning());
-            return __pawnBrain.PawnBuff.CheckBuff(buff);
+            return __pawnBrain.PawnBuff.CheckStatus(buff);
         }
 
-        float IBuffContainer.GetBuffStrength(BuffTypes buff)
+        float IStatusContainer.GetBuffStrength(PawnStatus buff)
         {
             Debug.Assert(__pawnBrain.PawnBuff != null && CheckActionRunning());
-            return __pawnBrain.PawnBuff.GetBuffStrength(buff);
+            return __pawnBrain.PawnBuff.GetStrength(buff);
         }
 
 #if UNITY_EDITOR
-        Dictionary<BuffTypes, Tuple<float, float>>.Enumerator IBuffContainer.GetBuffEnumerator() => __buffContainer.GetEnumerator();
+        Dictionary<PawnStatus, Tuple<float, float>>.Enumerator IStatusContainer.GetStatusEnumerator() => __buffContainer.GetEnumerator();
 #endif
 #endregion
 
@@ -237,7 +237,7 @@ namespace Game
 
         protected virtual void StartInternal() 
         {
-            __pawnBrain.PawnBuff.RegisterBuffContainer(this);
+            __pawnBrain.PawnBuff.RegisterExternContainer(this);
             __pawnBrain.onUpdate += () =>
             {
                 if (CheckActionRunning() && currActionContext.manualAdvanceEnabled && __pawnAnimCtrler != null && __pawnAnimCtrler.mainAnimator != null)

@@ -46,7 +46,7 @@ namespace Game
         {
             FSM = GetComponent<FSMOwner>();
             PawnBB = GetComponent<PawnBlackboard>();
-            PawnBuff = GetComponent<PawnBuffController>();
+            PawnBuff = GetComponent<PawnStatusController>();
             PawnHP = GetComponent<PawnHeartPointDispatcher>();
             PawnSensorCtrler = GetComponent<PawnSensorController>();
             PawnSoundSourceGen = GetComponent<PawnSoundSourceGenerator>();
@@ -54,7 +54,7 @@ namespace Game
 
         public FSMOwner FSM { get; private set; }
         public PawnBlackboard PawnBB { get; private set; }
-        public PawnBuffController PawnBuff { get; private set;}
+        public PawnStatusController PawnBuff { get; private set;}
         public PawnHeartPointDispatcher PawnHP { get; private set; }
         public PawnSensorController PawnSensorCtrler { get; private set;}
         public PawnSoundSourceGenerator PawnSoundSourceGen { get; private set; }
@@ -113,31 +113,31 @@ namespace Game
 
             if (PawnBuff != null)
             {
-                PawnBuff.onBuffActive += (buff) =>
+                PawnBuff.onStatusActive += (buff) =>
                 {
                     switch (buff) {
-                        case BuffTypes.KnockDown: 
+                        case PawnStatus.KnockDown: 
                             PawnBB.common.isDown.Value = true; break;
-                        case BuffTypes.Groggy: 
+                        case PawnStatus.Groggy: 
                             PawnBB.common.isStunned.Value = true; break;
-                        case BuffTypes.Bind: 
+                        case PawnStatus.Bind: 
                             PawnBB.common.isBind.Value = true; break;
-                        case BuffTypes.Guardbreak: 
+                        case PawnStatus.Guardbreak: 
                             PawnBB.common.isGuardbreak.Value = true; break;
                     }
                 };
 
-                PawnBuff.onBuffDeactive += (buff) =>
+                PawnBuff.onStatusDeactive += (buff) =>
                 {
                     switch (buff)
                     {
-                        case BuffTypes.KnockDown:
+                        case PawnStatus.KnockDown:
                             PawnBB.common.isDown.Value = false; break;
-                        case BuffTypes.Groggy:
+                        case PawnStatus.Groggy:
                             PawnBB.common.isStunned.Value = false; break;
-                        case BuffTypes.Bind:
+                        case PawnStatus.Bind:
                             PawnBB.common.isBind.Value = false; break;
-                        case BuffTypes.Guardbreak:
+                        case PawnStatus.Guardbreak:
                             PawnBB.common.isGuardbreak.Value = false; break;
                     }
                 };

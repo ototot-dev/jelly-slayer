@@ -100,7 +100,7 @@ public class HPBarPanel : MonoBehaviour
         }
         else 
         {
-            if (_pawn.PawnBuff != null && _pawn.PawnBuff.CheckBuff(BuffTypes.Groggy))
+            if (_pawn.PawnBuff != null && _pawn.PawnBuff.CheckStatus(PawnStatus.Groggy))
             {
                 _counterViewObj.SetActive(true);
                 _counterViewTime = 2.0f;

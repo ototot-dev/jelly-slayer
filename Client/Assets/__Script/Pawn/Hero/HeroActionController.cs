@@ -32,7 +32,7 @@ namespace Game
 
         public override bool CanParryAction(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
-            return IsActiveParryEnabled || __brain.BuffCtrler.CheckBuff(BuffTypes.PassiveParrying);
+            return IsActiveParryEnabled || __brain.BuffCtrler.CheckStatus(PawnStatus.PassiveParrying);
         }
 
         public override bool CanBlockAction(ref PawnHeartPointDispatcher.DamageContext damageContext)

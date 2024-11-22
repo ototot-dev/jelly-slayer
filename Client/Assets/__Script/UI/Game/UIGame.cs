@@ -42,20 +42,20 @@ public class UIGame : MonoBehaviour
         }
         switch(damageContext.receiverPenalty.Item1)
         {
-            case BuffTypes.Staggered:
+            case PawnStatus.Staggered:
                 //_dmgTextManager.Create("Stagger", damageContext.hitPoint);
                 break;
-            case BuffTypes.KnockDown:
+            case PawnStatus.KnockDown:
                 //_dmgTextManager.Create("KnockDown", damageContext.hitPoint);
                 break;
-            case BuffTypes.Groggy:
+            case PawnStatus.Groggy:
                 //_dmgTextManager.Create("Stunned", damageContext.hitPoint);
                 break;
 
         }
         _hpBarManager.PawnDamaged(ref damageContext);
 
-        // ╬в╪г ╩Себ
+        // О©╫в╪О©╫ О©╫О©╫О©╫О©╫
         switch(damageContext.actionResult) 
         {
             case ActionResults.GuardBreak:

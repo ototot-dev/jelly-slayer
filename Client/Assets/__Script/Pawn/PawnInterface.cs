@@ -37,16 +37,16 @@ namespace Game
         void Stop();
     }
 
-    public interface IBuffContainer
+    public interface IStatusContainer
     {
-        Dictionary<BuffTypes, Tuple<float, float>> GetBuffTable();
-        bool AddBuff(BuffTypes buff, float strength, float duration);
-        void RemoveBuff(BuffTypes buff);
-        bool CheckBuff(BuffTypes buff);
-        float GetBuffStrength(BuffTypes buff);
+        Dictionary<PawnStatus, Tuple<float, float>> GetStatusTable();
+        bool AddBuff(PawnStatus status, float strength, float duration);
+        void RemoveBuff(PawnStatus status);
+        bool CheckBuff(PawnStatus status);
+        float GetBuffStrength(PawnStatus status);
         
 #if UNITY_EDITOR
-        Dictionary<BuffTypes, Tuple<float, float>>.Enumerator GetBuffEnumerator();
+        Dictionary<PawnStatus, Tuple<float, float>>.Enumerator GetStatusEnumerator();
 #endif
     }
 }

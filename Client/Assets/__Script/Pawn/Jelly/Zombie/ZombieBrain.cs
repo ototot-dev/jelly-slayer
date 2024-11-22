@@ -65,7 +65,7 @@ namespace Game
                 else
                 {
                     //* 공격 시작
-                    if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && !BuffCtrler.CheckBuff(BuffTypes.CanNotAction) && !BuffCtrler.CheckBuff(BuffTypes.Staggered) && CheckTargetVisibility())
+                    if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && !BuffCtrler.CheckStatus(PawnStatus.CanNotAction) && !BuffCtrler.CheckStatus(PawnStatus.Staggered) && CheckTargetVisibility())
                     {
                         var selection = ActionDataSelector.RandomSelection(BB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position), BB.stat.stamina.Value, true);
                         if (selection != null)

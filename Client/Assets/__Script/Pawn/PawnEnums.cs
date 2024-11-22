@@ -16,6 +16,45 @@ namespace Game
         SlimeMini,
     }
 
+    [UGS(typeof(PawnStatus))]
+    public enum PawnStatus
+    {
+        None = 0,
+        Invincible,         //* 일반 무적
+        InvincibleDodge,    //* 구르기 무적
+        PassiveParrying,
+        SuperArmor,
+        MoveSpeedUp,
+        ActionSpeedUp,
+        __DEBUFF__SEPERATOR__,
+        Groggy,         //* 그로기
+        Staggered,      //* 경직
+        KnockDown,      //* 다운
+        Guardbreak,     //* 가드 뚫림
+        CanNotDash, 
+        CanNotJump,
+        CanNotMove,
+        CanNotAction,
+        MoveSpeedDown,
+        ActionSpeedDown,
+        ActionStaminaLow,
+        Bind,           // 끈에 묶임
+    }
+
+
+    [UGS(typeof(ActionResults))]
+    public enum ActionResults
+    {
+        None = 0,
+        Damaged,
+        Blocked,
+        GuardBreak,
+        ActiveParried,
+        PassiveParried,
+    }
+
+
+
     [UGS(typeof(ActionId))]
     public enum ActionId
     {
@@ -31,62 +70,6 @@ namespace Game
     [UGS(typeof(BuffTypes))]
     public enum BuffTypes
     {
-        None = 0,
-        Invincible,         //* 일반 무적
-        InvincibleDodge,    //* 구르기 무적
-        PassiveParrying,
-        SuperArmor,
-        MoveSpeedUp,
-        ActionSpeedUp,
-        __DEBUFF__SEPERATOR__,
-        Groggy,         //* 그로기
-        Staggered,      //* 경직
-        KnockDown,      //* 다운
-        CanNotDash, 
-        CanNotJump,
-        CanNotMove,
-        CanNotAction,
-        MoveSpeedDown,
-        ActionSpeedDown,
-        ActionStaminaLow,
-        Bind,           // 끈에 묶임
-        Guardbreak,     // 가드 파괴
-    }
-
-
-    [UGS(typeof(StatusTypes))]
-    public enum StatusTypes
-    {
-        None = 0,
-        __BUFF__STATUS__,
-        Invincible,         //* 일반 무적
-        InvincibleDodge,    //* 구르기 무적
-        PassiveParrying,
-        SuperArmor,
-        MoveSpeedUp,
-        ActionSpeedUp,
-        __DEBUFF__STATUS__,
-        Groggy,         //* 그로기
-        Staggered,      //* 경직
-        KnockDown,      //* 다운
-        CanNotDash, 
-        CanNotJump,
-        CanNotMove,
-        CanNotAction,
-        MoveSpeedDown,
-        ActionSpeedDown,
-        ActionStaminaLow,
-        Bind,           // 끈에 묶임
-    }
-
-    [UGS(typeof(ActionResults))]
-    public enum ActionResults
-    {
-        None = 0,
-        Damaged,
-        Blocked,
-        GuardBreak,
-        ActiveParried,
-        PassiveParried,
+        None,
     }
 }

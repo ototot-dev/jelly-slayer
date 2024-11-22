@@ -81,7 +81,7 @@ namespace Game
 
         public FootmanBlackboard BB { get; private set; }
         public PawnMovementEx Movement { get; private set; }
-        public PawnBuffController BuffCtrler { get; private set; }
+        public PawnStatusController BuffCtrler { get; private set; }
         public PawnActionController ActionCtrler { get; private set; }
         public PawnSensorController SensorCtrler { get; private set; }
 
@@ -97,7 +97,7 @@ namespace Game
 
             BB = GetComponent<FootmanBlackboard>();
             Movement = GetComponent<PawnMovementEx>();
-            BuffCtrler = GetComponent<PawnBuffController>();
+            BuffCtrler = GetComponent<PawnStatusController>();
             ActionCtrler = GetComponent<PawnActionController>();
             SensorCtrler = GetComponent<PawnSensorController>();
 

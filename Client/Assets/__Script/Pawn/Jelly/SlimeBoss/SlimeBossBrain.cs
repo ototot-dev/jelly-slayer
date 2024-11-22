@@ -54,7 +54,7 @@ namespace Game
             Max
         }
 
-        public PawnBuffController BuffCtrler { get; private set; }
+        public PawnStatusController BuffCtrler { get; private set; }
         public PawnSensorController SensorCtrler { get; private set; }
         public PawnActionDataSelector ActionDataSelector { get; private set; }
         public SlimeBossBlackboard BB { get; private set; }
@@ -92,7 +92,7 @@ namespace Game
         {
             base.AwakeInternal();
 
-            BuffCtrler = GetComponent<PawnBuffController>();
+            BuffCtrler = GetComponent<PawnStatusController>();
             SensorCtrler = GetComponent<PawnSensorController>();
             ActionDataSelector = GetComponent<PawnActionDataSelector>();
             BB = GetComponent<SlimeBossBlackboard>();
@@ -158,16 +158,16 @@ namespace Game
             if (damageContext.receiverBrain.PawnBB.IsDead)
                 return;
 
-            if (damageContext.receiverPenalty.Item1 != BuffTypes.None)
+            if (damageContext.receiverPenalty.Item1 != PawnStatus.None)
             {
                 if (ActionCtrler.CheckActionRunning())
                     ActionCtrler.CancelAction(false);
 
                 switch (damageContext.receiverPenalty.Item1)
                 {
-                    case BuffTypes.Groggy: ActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty); break;
-                    case BuffTypes.Staggered: ActionCtrler.StartAction(damageContext, "!OnHit", string.Empty); break;
-                    case BuffTypes.KnockDown: ActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty); break;
+                    case PawnStatus.Groggy: ActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty); break;
+                    case PawnStatus.Staggered: ActionCtrler.StartAction(damageContext, "!OnHit", string.Empty); break;
+                    case PawnStatus.KnockDown: ActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty); break;
                 }
             }
             else if (damageContext.finalDamage > 0 || damageContext.actionResult == ActionResults.Blocked || damageContext.actionResult == ActionResults.PassiveParried)
@@ -181,7 +181,7 @@ namespace Game
             if (damageContext.senderBrain.PawnBB.IsDead)
                 return;
 
-            if (damageContext.senderPenalty.Item1 != BuffTypes.None && ActionCtrler.CheckActionRunning())
+            if (damageContext.senderPenalty.Item1 != PawnStatus.None && ActionCtrler.CheckActionRunning())
                 ActionCtrler.CancelAction(false);
 
             switch (damageContext.actionResult)
@@ -232,7 +232,7 @@ namespace Game
 
                     var canAction1 = !BB.IsStunned && !BB.IsDown && !BB.IsJumping && !BB.IsBumping && !BB.IsSmashing;
                     var canAction2 = canAction1 && string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && !ActionCtrler.CheckActionRunning();
-                    var canAction3 = canAction2 && !BuffCtrler.CheckBuff(BuffTypes.Staggered) && CheckTargetVisibility();
+                    var canAction3 = canAction2 && !BuffCtrler.CheckStatus(PawnStatus.Staggered) && CheckTargetVisibility();
 
                     //* 공격 시작
                     if (canAction3)

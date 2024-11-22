@@ -180,7 +180,7 @@ namespace Game
 
                 var canJump1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsStunned && !__pawnBrain.PawnBB.IsDown;
                 var canJump2 = canJump1 && (__actionCtrler == null || (!__actionCtrler.CheckActionPending() && !__actionCtrler.CheckActionRunning()));
-                var canJump3 = canJump2 && (__buffCtrler == null || !__buffCtrler.CheckBuff(BuffTypes.Staggered));
+                var canJump3 = canJump2 && (__buffCtrler == null || !__buffCtrler.CheckStatus(PawnStatus.Staggered));
 
                 if (__brain.BB.IsJumping)
                 {

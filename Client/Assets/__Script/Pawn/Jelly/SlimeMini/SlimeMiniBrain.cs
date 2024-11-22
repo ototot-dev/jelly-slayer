@@ -102,7 +102,7 @@ namespace Game
             Max
         }
 
-        public PawnBuffController BuffCtrler { get; private set; }
+        public PawnStatusController BuffCtrler { get; private set; }
         public PawnSensorController SensorCtrler { get; private set; }
         public PawnActionDataSelector ActionDataSelector { get; private set; }
         public SlimeMiniBlackboard BB { get; private set; }
@@ -140,7 +140,7 @@ namespace Game
         {
             base.AwakeInternal();
 
-            BuffCtrler = GetComponent<PawnBuffController>();
+            BuffCtrler = GetComponent<PawnStatusController>();
             SensorCtrler = GetComponent<PawnSensorController>();
             ActionDataSelector = GetComponent<PawnActionDataSelector>();
             BB = GetComponent<SlimeMiniBlackboard>();
@@ -201,16 +201,16 @@ namespace Game
             if (damageContext.receiverBrain.PawnBB.IsDead)
                 return;
 
-            if (damageContext.receiverPenalty.Item1 != BuffTypes.None)
+            if (damageContext.receiverPenalty.Item1 != PawnStatus.None)
             {
                 if (ActionCtrler.CheckActionRunning())
                     ActionCtrler.CancelAction(false);
 
                 switch (damageContext.receiverPenalty.Item1)
                 {
-                    case BuffTypes.Groggy: ActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty); break;
-                    case BuffTypes.Staggered: ActionCtrler.StartAction(damageContext, "!OnHit", string.Empty); break;
-                    case BuffTypes.KnockDown: ActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty); break;
+                    case PawnStatus.Groggy: ActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty); break;
+                    case PawnStatus.Staggered: ActionCtrler.StartAction(damageContext, "!OnHit", string.Empty); break;
+                    case PawnStatus.KnockDown: ActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty); break;
                 }
             }
             else if (damageContext.finalDamage > 0)
@@ -259,7 +259,7 @@ namespace Game
                         BB.currDecision.Value = Decisions.Approach;
                     
                     //* 공격 시작
-                    if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && !BB.IsJumping && !ActionCtrler.CheckActionRunning() && !BuffCtrler.CheckBuff(BuffTypes.Staggered) && CheckTargetVisibility())
+                    if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && !BB.IsJumping && !ActionCtrler.CheckActionRunning() && !BuffCtrler.CheckStatus(PawnStatus.Staggered) && CheckTargetVisibility())
                     {
                         var selection = ActionDataSelector.RandomSelection(BB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position), BB.stat.stamina.Value, true);
                         if (selection != null)

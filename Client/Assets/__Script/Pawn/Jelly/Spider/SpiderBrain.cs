@@ -48,7 +48,7 @@ namespace Game
         public SpiderMovement Movement { get; private set; }
         public SpiderAnimController AnimCtrler { get; private set; }
         public SpiderActionController ActionCtrler { get; private set; }
-        public PawnBuffController BuffCtrler { get; private set; }
+        public PawnStatusController BuffCtrler { get; private set; }
         public PawnSensorController SensorCtrler { get; private set; }
 
 
@@ -60,7 +60,7 @@ namespace Game
             Movement = GetComponent<SpiderMovement>();
             AnimCtrler = GetComponent<SpiderAnimController>();
             ActionCtrler = GetComponent<SpiderActionController>();
-            BuffCtrler = GetComponent<PawnBuffController>();
+            BuffCtrler = GetComponent<PawnStatusController>();
             SensorCtrler = GetComponent<PawnSensorController>();
 
             // PawnHP.heartPoint.Value = BB.stat.maxHeartPoint.Value;
@@ -177,7 +177,7 @@ namespace Game
                         //         InvalidateDecision(0);
                         // }
 
-                        if (!BuffCtrler.CheckBuff(BuffTypes.Staggered) && (!ActionCtrler.CheckActionRunning() || ActionCtrler.CanInterruptAction()))
+                        if (!BuffCtrler.CheckStatus(PawnStatus.Staggered) && (!ActionCtrler.CheckActionRunning() || ActionCtrler.CanInterruptAction()))
                         {
                             var newActionName = string.Empty;
                             // if (ActionCtrler.CheckActionRunning() && ActionCtrler.CanInterruptAction() && ActionCtrler.CurrActionName == "Attack#1" && BB.stat.stamina.Value >= BB.temp.attack2_stamina)
