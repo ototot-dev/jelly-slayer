@@ -402,18 +402,25 @@ namespace Game
             bool isPress = value.Get<float>() > 0;
             if (isPress == true) 
             {
+                // Stunned Enemy
                 var target = PlayerTargetManager.FindStunnedTarget(MyHeroBrain);
                 if (target != null)
                 {
                     Debug.Log("<color=red>Attack Groggy Enemy</color>");
+                    MyHeroBrain.ActionCtrler.SetPendingAction("SpecialSlash#1");
                 }
                 else 
                 {
+                    // Guard Breaked Enemy
                     target = PlayerTargetManager.FindGuardbreakTarget(MyHeroBrain);
-                    if(target != null) 
+                    if (target != null)
                     {
                         Debug.Log("<color=cyan>Attack Guardbreak Enemy</color>");
 
+                    }
+                    else 
+                    {
+                        MyHeroBrain.ActionCtrler.SetPendingAction("SpecialSlash#1");
                     }
                 }
             }

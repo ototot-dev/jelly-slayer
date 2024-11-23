@@ -231,6 +231,9 @@ namespace Game
             if (weaponBone == WeaponBone.RIGHTHAND) 
             {
                 _weaponCtrlRightHand = controller;
+
+                AnimCtrler.weaponMeshSlot = controller.transform;
+
             }
         }
 
