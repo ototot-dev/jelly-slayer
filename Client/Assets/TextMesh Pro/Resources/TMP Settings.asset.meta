@@ -6,3 +6,10 @@ NativeFormatImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 224302
+  packageName: 'GunFu: Pistol Attacks'
+  packageVersion: 1.0
+  assetPath: Assets/TextMesh Pro/Resources/TMP Settings.asset
+  uploadId: 505117
