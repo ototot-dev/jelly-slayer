@@ -555,7 +555,7 @@ namespace Game.NodeCanvasExtension
             if (__pawnActionCtrler.currActionContext.manualAdvanceEnabled)
             {
                 var baseTimeStamp = Time.time - __pawnActionCtrler.currActionContext.manualAdvanceTime;
-                var waitTime = waitFrame.value > 0 ? 1f / __pawnActionCtrler.currActionContext.animClipFps * waitFrame.value : __pawnActionCtrler.currActionContext.animClipLength;
+                var waitTime = waitFrame.value > 0 ? 1f / __pawnActionCtrler.currActionContext.animClipFps * Mathf.Max(0, waitFrame.value - 1) : __pawnActionCtrler.currActionContext.animClipLength;
                 if (!__pawnActionCtrler.CheckWaitAction(waitTime, baseTimeStamp))
                     EndAction(true);
             }
@@ -563,7 +563,7 @@ namespace Game.NodeCanvasExtension
             {
                 //* 'preMotionTimeStamp'값이 있으면. 실제 액션 시작 시간은 preMotionTimeStamp으로 간주함
                 var baseTimeStamp = __pawnActionCtrler.currActionContext.preMotionTimeStamp > 0f ? __pawnActionCtrler.currActionContext.preMotionTimeStamp : __pawnActionCtrler.currActionContext.startTimeStamp;
-                var waitTime = waitFrame.value > 0 ? 1f / __pawnActionCtrler.currActionContext.animClipFps * waitFrame.value : __pawnActionCtrler.currActionContext.animClipLength;
+                var waitTime = waitFrame.value > 0 ? 1f / __pawnActionCtrler.currActionContext.animClipFps * Mathf.Max(0, waitFrame.value - 1) : __pawnActionCtrler.currActionContext.animClipLength;
                 waitTime /= __pawnActionCtrler.currActionContext.actionSpeed;
                 if (!__pawnActionCtrler.CheckWaitAction(waitTime, baseTimeStamp))
                     EndAction(true);

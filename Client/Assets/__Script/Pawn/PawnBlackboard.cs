@@ -76,8 +76,6 @@ namespace Game
             public float staminaRecoverTimeThreshold;
             public float stanceReduceSpeed;
             public float stanceReduceTimeThreshold;
-            public float knockDownReduceSpeed;
-            public float knockDownReduceTimeThreshold;
         }
 
         public Stat stat = new();

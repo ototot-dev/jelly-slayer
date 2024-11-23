@@ -58,11 +58,19 @@ namespace Game
 
             if (damageContext.actionResult == ActionResults.Damaged)
             {
-                var hitVec = damageContext.senderBrain.CoreTransform.position - damageContext.receiverBrain.coreColliderHelper.transform.position;
+                var hitVec = damageContext.receiverBrain.coreColliderHelper.transform.position - damageContext.senderBrain.CoreTransform.position;
                 hitVec = damageContext.receiverBrain.CoreTransform.InverseTransformDirection(hitVec).Vector2D().normalized;
 
-                __brain.AnimCtrler.mainAnimator.SetFloat("HitX", hitVec.x);
-                __brain.AnimCtrler.mainAnimator.SetFloat("HitY", hitVec.z);
+                if (Mathf.Abs(hitVec.x) > Mathf.Abs(hitVec.z))
+                {
+                    __brain.AnimCtrler.mainAnimator.SetFloat("HitX", hitVec.x > 0f ? 1f : -1f);
+                    __brain.AnimCtrler.mainAnimator.SetFloat("HitY", 0f);
+                }
+                else
+                {
+                    __brain.AnimCtrler.mainAnimator.SetFloat("HitX", 0f);
+                    __brain.AnimCtrler.mainAnimator.SetFloat("HitY", hitVec.z > 0f ? 1f : -1f);
+                }
                 __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0);
                 __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
 

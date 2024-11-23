@@ -55,13 +55,24 @@ namespace Game
 
             if (damageContext.actionResult == ActionResults.Damaged)
             {
-                var hitVec = damageContext.senderBrain.coreColliderHelper.transform.position - damageContext.receiverBrain.coreColliderHelper.transform.position;
-                hitVec = damageContext.receiverBrain.coreColliderHelper.transform.InverseTransformDirection(hitVec).Vector2D().normalized;
+                var hitVec = damageContext.receiverBrain.coreColliderHelper.transform.position - damageContext.senderBrain.CoreTransform.position;
+                hitVec = damageContext.receiverBrain.CoreTransform.InverseTransformDirection(hitVec).Vector2D().normalized;
 
-                __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
+                if (Mathf.Abs(hitVec.x) > Mathf.Abs(hitVec.z))
+                {
+                    __brain.AnimCtrler.mainAnimator.SetFloat("HitX", hitVec.x > 0f ? 1f : -1f);
+                    __brain.AnimCtrler.mainAnimator.SetFloat("HitY", 0f);
+                }
+                else
+                {
+                    __brain.AnimCtrler.mainAnimator.SetFloat("HitX", 0f);
+                    __brain.AnimCtrler.mainAnimator.SetFloat("HitY", hitVec.z > 0f ? 1f : -1f);
+                }
                 __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0);
-                __brain.AnimCtrler.mainAnimator.SetFloat("HitX", hitVec.x);
-                __brain.AnimCtrler.mainAnimator.SetFloat("HitY", hitVec.z);
+                __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
+
+                //* 경직 지속 시간과 맞춰주기 위해서 'AnimSpeed' 값을 조정함
+                __brain.AnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1f / damageContext.receiverPenalty.Item2);
 
                 SoundManager.Instance.Play(SoundID.HIT_FLESH);
                 EffectManager.Instance.Show("@Hit 23 cube", damageContext.hitPoint, Quaternion.identity, Vector3.one, 1f);
@@ -109,8 +120,8 @@ namespace Game
             }
 
             var actionResult = damageContext.actionResult;
-            var knockBackVec = damageContext.senderActionData.knockBackDistance / 0.2f * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-            var knockBackDisposable = Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.2f)))
+            var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+            var knockBackDisposable = Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
                 .DoOnCancel(() => __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0))
                 .DoOnCompleted(() => __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0))
                 .Subscribe(_ =>

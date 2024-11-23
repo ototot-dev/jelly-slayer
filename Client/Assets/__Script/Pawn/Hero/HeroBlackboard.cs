@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using MainTable;
 using UniRx;
 using UnityEngine;
 
@@ -19,8 +20,8 @@ namespace Game
         [Serializable]
         public class Body
         {   
-            public float moveSpeed = 1;
-            public float walkSpeed = 1;
+            public float moveSpeed = 1f;
+            public float walkSpeed = 1f;
             public float sprintSpeed = 0.1f;
             public float guardSpeed = 0.1f;
             public float rollingDistance = 2f;
@@ -49,21 +50,16 @@ namespace Game
         {
             base.AwakeInternal();
 
-            var pawnDataMove = MainTable.PawnData_Movement.PawnData_MovementList.First(d => d.pawnId == common.pawnId);
-            body.moveSpeed = pawnDataMove.moveSpeed;
-            body.guardSpeed = pawnDataMove.guardSpeed;
-            body.sprintSpeed = pawnDataMove.sprintSpeed;
-            // body.rollingDistance = pawnDataMove.dashDistance;
-            // body.rollingDuration = pawnDataMove.dashDuration;
-            body.jumpHeight = pawnDataMove.jumpHeight;
+            stat.staminaRecoverSpeed = pawnData.staminaRecoverSpeed;
+            stat.staminaRecoverTimeThreshold = pawnData.staminaRecoverTime;;
 
-            // Stamina
-            if (MainTable.PawnData.PawnDataMap.TryGetValue(0, out var pawnData) == true) 
-            {
-                stat.staminaRecoverSpeed = pawnData.staminaRecoverSpeed;
-                stat.staminaRecoverTimeThreshold = pawnData.staminaRecoverTime;
-            }
-            //action.isGuarding.Value = true;
+            pawnData_Movement = MainTable.PawnData_Movement.PawnData_MovementList.First(d => d.pawnId == common.pawnId);
+            body.moveSpeed = pawnData_Movement.moveSpeed;
+            body.guardSpeed = pawnData_Movement.guardSpeed;
+            body.sprintSpeed = pawnData_Movement.sprintSpeed;
+            body.jumpHeight = pawnData_Movement.jumpHeight;
         }
+
+        public MainTable.PawnData_Movement pawnData_Movement;
     }
 }

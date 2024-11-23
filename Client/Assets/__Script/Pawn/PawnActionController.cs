@@ -251,7 +251,9 @@ namespace Game
 
             __pawnBrain.onLateUpdate += () =>
             {
-                if (__traceCollider == null || Time.time - __prevTraceTimeStamp < __traceSampleInterval)
+                if (__traceCollider == null)
+                    return;
+                if (__traceCount > 0 && (Time.time - __prevTraceTimeStamp) < __traceSampleInterval)
                     return;
 
                 var hitCount = 0;
@@ -260,10 +262,13 @@ namespace Game
                 {
                     var halfExtent = 0.5f * __traceBoxCollider.size;
                     var interpRotation = Quaternion.Lerp(__prevTraceRotation, __traceCollider.transform.rotation, 0.5f);
-                    var currPosition = __traceBoxCollider.transform.position + __traceBoxCollider.transform.rotation * __traceBoxCollider.center;
+                    var currPosition = __traceBoxCollider.transform.localToWorldMatrix.MultiplyPoint(__traceSphereCollider.center);
                     var deltaVec = currPosition - __prevTracePosition;
 
-                    hitCount = Physics.BoxCastNonAlloc(__prevTracePosition, halfExtent, deltaVec.normalized, __traceTempHits, interpRotation, deltaVec.magnitude, __traceLayerMask);
+                    if (__traceCount == 0)
+                        hitCount = Physics.BoxCastNonAlloc(__prevTracePosition, halfExtent, __traceBoxCollider.transform.right, __traceTempHits, __traceBoxCollider.transform.rotation, 0.1f, __traceLayerMask);
+                    else
+                        hitCount = Physics.BoxCastNonAlloc(__prevTracePosition, halfExtent, deltaVec.normalized, __traceTempHits, interpRotation, deltaVec.magnitude, __traceLayerMask);
 
                     if (__traceDrawGizmosEnabled)
                     {
@@ -289,7 +294,10 @@ namespace Game
                     var currPosition = __traceSphereCollider.transform.localToWorldMatrix.MultiplyPoint(__traceSphereCollider.center);
                     var deltaVec = currPosition - __prevTracePosition;
 
-                    hitCount = Physics.SphereCastNonAlloc(__prevTracePosition, __traceSphereCollider.radius, deltaVec.normalized, __traceTempHits, deltaVec.magnitude, __traceLayerMask);
+                    if (__traceCount == 0)
+                        hitCount = Physics.SphereCastNonAlloc(__prevTracePosition, __traceSphereCollider.radius, __traceSphereCollider.transform.forward, __traceTempHits, 0.1f, __traceLayerMask);
+                    else
+                        hitCount = Physics.SphereCastNonAlloc(__prevTracePosition, __traceSphereCollider.radius, deltaVec.normalized, __traceTempHits, deltaVec.magnitude, __traceLayerMask);
 
                     if (__traceDrawGizmosEnabled)
                     {
@@ -310,32 +318,30 @@ namespace Game
                 }
                 else if (__traceCapsuleCollider != null)
                 {
-                    var heightWithoutCap = __traceCapsuleCollider.height - __traceCapsuleCollider.radius * 2f;
-                    var point1 = __traceCapsuleCollider.center + heightWithoutCap * 0.5f * __traceCapsuleCollider.transform.up;
-                    var point2 = __traceCapsuleCollider.center - heightWithoutCap * 0.5f * __traceCapsuleCollider.transform.up;
-                    point1 = __traceCapsuleCollider.transform.localToWorldMatrix.MultiplyPoint(point1);
-                    point2 = __traceCapsuleCollider.transform.localToWorldMatrix.MultiplyPoint(point2);
-
-                    var currPosition = 0.5f * (point1 + point2);
+                    var currPosition = __traceCapsuleCollider.transform.localToWorldMatrix.MultiplyPoint(__traceCapsuleCollider.center);
+                    var heightWithoutCap = Mathf.Max(0f, __traceCapsuleCollider.height - __traceCapsuleCollider.radius * 2f);
+                    var point1 = currPosition + heightWithoutCap * 0.5f * __traceCapsuleCollider.transform.up;
+                    var point2 = currPosition - heightWithoutCap * 0.5f * __traceCapsuleCollider.transform.up;
                     var deltaVec = currPosition - __prevTracePosition;
-                    hitCount = Physics.CapsuleCastNonAlloc(point1, point2, __traceCapsuleCollider.radius, deltaVec.normalized, __traceTempHits, deltaVec.magnitude, __traceLayerMask);
+
+                    if (__traceCount == 0)
+                        hitCount = Physics.CapsuleCastNonAlloc(point1, point2, __traceCapsuleCollider.radius, __traceCapsuleCollider.transform.up, __traceTempHits, 0.1f, __traceLayerMask);
+                    else
+                        hitCount = Physics.CapsuleCastNonAlloc(point1, point2, __traceCapsuleCollider.radius, deltaVec.normalized, __traceTempHits, deltaVec.magnitude, __traceLayerMask);
 
                     if (__traceDrawGizmosEnabled)
                     {
-                            // var drawRotation = interpRotation;
-                            // var drawPosition0 = currPosition;
-                            // var drawPosition1 = __prevTracePosition;
-                            // var drawHalfExtent = 0.5f * __traceBoxCollider.size;
+                        var drawPosition0 = point1;
+                        var drawPosition1 = point2;
+                        var drawRadius = __traceCapsuleCollider.radius;
 
-                            // Debug.Log($"@@ __traceDrawGizmosEnabled => {Time.time}: {drawPosition0}, {drawPosition1}, {drawRotation}");
-
-                            // GizmosDrawer.Instance.Draw(__traceDrawGizmosDuration, () =>
-                            // {
-                            //     Gizmos.color = Color.yellow;
-                            //     GizmosDrawExtension.DrawBox(drawPosition0, drawRotation, drawHalfExtent);
-                            //     GizmosDrawExtension.DrawBox(drawPosition1, drawRotation, drawHalfExtent);
-                            //     GizmosDrawExtension.DrawBox(0.5f * (drawPosition0 + drawPosition1), drawRotation, drawHalfExtent);
-                            // });
+                        GizmosDrawer.Instance.Draw(__traceDrawGizmosDuration, () =>
+                        {
+                            Gizmos.color = Color.yellow;
+                            Gizmos.DrawWireSphere(drawPosition0, drawRadius);
+                            Gizmos.DrawWireSphere(drawPosition1, drawRadius);
+                            Gizmos.DrawLine(drawPosition0, drawPosition1);
+                        });
                     }
 
                     __prevTracePosition = currPosition;
@@ -343,6 +349,7 @@ namespace Game
                 }
 
                 __prevTraceTimeStamp = Time.time;
+                __traceCount++;
 
                 for (int i = 0; i < hitCount; i++)
                 {
@@ -603,6 +610,7 @@ namespace Game
         static readonly RaycastHit[] __traceTempHits = new RaycastHit[16];
         static readonly Collider[] __traceTempColliders = new Collider[16];
         int __traceLayerMask;
+        int __traceCount = 0;
         float __traceSampleInterval = 0;
         bool __traceDrawGizmosEnabled;
         float __traceDrawGizmosDuration;
@@ -624,6 +632,7 @@ namespace Game
             SetTraceRunning(true);
 
             __traceLayerMask = LayerMask.GetMask(__traceLayerNames.ToArray());
+            __traceCount = 0;
             __traceSampleInterval = 1f / (float)samplingRate;
             __multiHitEnabled = multiHitEnabled;
             __sendDamageOnTrace = sendDamageImmediately;

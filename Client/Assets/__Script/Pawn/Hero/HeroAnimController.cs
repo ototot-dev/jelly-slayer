@@ -32,8 +32,17 @@ namespace Game
         void Start()
         {
             //* Charging 예비 모션은 IsGuarding 애님을 공용으로 쓴다.
-            __brain.BB.action.isCharging.Subscribe(v => mainAnimator.SetBool("IsGuarding", v)).AddTo(this);
-            __brain.BB.action.isGuarding.Subscribe(v => mainAnimator.SetBool("IsGuarding", v)).AddTo(this);
+            __brain.BB.action.isCharging.Subscribe(v => 
+            {
+                mainAnimator.SetBool("IsGuarding", v);
+                shieldMeshSlot.localEulerAngles = v || __brain.BB.IsGuarding ? new Vector3(-30f, 0f, -20f) : Vector3.zero;
+            }).AddTo(this);
+            
+            __brain.BB.action.isGuarding.Subscribe(v => 
+            {
+                mainAnimator.SetBool("IsGuarding", v);
+                shieldMeshSlot.localEulerAngles = v || __brain.BB.IsCharging ? new Vector3(-30f, 0f, -20f) : Vector3.zero;
+            }).AddTo(this);
 
             __brain.onUpdate += () =>
             {

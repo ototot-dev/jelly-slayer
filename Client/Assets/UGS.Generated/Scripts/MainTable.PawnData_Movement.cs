@@ -63,6 +63,7 @@ namespace MainTable
 		public System.Single walkSpeed;
 		public System.Single sprintSpeed;
 		public System.Single guardSpeed;
+		public System.Single knockBackSpeed;
 		public System.Single dashDistance;
 		public System.Single jumpHeight;
   
