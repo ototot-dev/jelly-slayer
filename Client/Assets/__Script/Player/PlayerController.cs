@@ -542,6 +542,12 @@ namespace Game
                                 MyHeroBrain.ActionCtrler.SetPendingAction("JumpAttack");
 
                                 MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
+
+                                MyHeroBrain.Movement.Gravity = new Vector3(0, -0, 0);
+                                Observable.Timer(TimeSpan.FromSeconds(0.3f)).Subscribe(_ =>
+                                {
+                                    MyHeroBrain.Movement.Gravity = new Vector3(0, -30, 0);
+                                }).AddTo(this);
                             }
                             else
                             {

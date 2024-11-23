@@ -1,6 +1,7 @@
 using UnityEngine;
 using FIMSpace.FProceduralAnimation;
 using static FIMSpace.FProceduralAnimation.LegsAnimator;
+using Unity.VisualScripting;
 
 namespace Game
 {
@@ -12,6 +13,11 @@ namespace Game
         public float JumpVerticalImpulse => Mathf.Sqrt(2 * __brain.BB.body.jumpHeight * __ecmMovement.gravity.magnitude);
         public float EstimatedJumpDuration => Mathf.Sqrt(8 * __brain.BB.body.jumpHeight / __ecmMovement.gravity.magnitude);
         public void LegAnimatorStepEvent(LegsAnimator.Leg leg, float power, bool isRight, Vector3 position, Quaternion rotation, LegsAnimator.EStepType type) {}
+
+        public Vector3 Gravity {
+            get { return __ecmMovement.gravity; }
+            set { __ecmMovement.gravity = value; }
+        }
 
         public void StartJumping()
         {
