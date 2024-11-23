@@ -229,7 +229,9 @@ namespace Game
         {
             if (MyHeroBrain == null)
                 return;
-                
+
+            MyHeroBrain.ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
+
             MyHeroBrain.BB.action.isGuarding.Value = value.Get<float>() > 0;
             if (MyHeroBrain.BB.IsGuarding)
             {
@@ -402,18 +404,26 @@ namespace Game
             bool isPress = value.Get<float>() > 0;
             if (isPress == true) 
             {
+                // Stunned Enemy
                 var target = PlayerTargetManager.FindStunnedTarget(MyHeroBrain);
                 if (target != null)
                 {
                     Debug.Log("<color=red>Attack Groggy Enemy</color>");
+                    MyHeroBrain.ActionCtrler.SetPendingAction("SpecialSlash#1");
                 }
                 else 
                 {
+                    // Guard Breaked Enemy
                     target = PlayerTargetManager.FindGuardbreakTarget(MyHeroBrain);
-                    if(target != null) 
+                    if (target != null)
                     {
                         Debug.Log("<color=cyan>Attack Guardbreak Enemy</color>");
 
+                    }
+                    else
+                    { 
+                        MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON); 
+                        MyHeroBrain.ActionCtrler.SetPendingAction("SpecialSlash#1");
                     }
                 }
             }
@@ -526,8 +536,32 @@ namespace Game
                         else
                         {
                             //Debug.Log("<color=yellow>Attack Released</color> : " + MyHeroBrain.BB.IsCharging + " " + canAction3);
-                            MyHeroBrain.ActionCtrler.SetPendingAction(MyHeroBrain.BB.IsCharging ? "HeavySlash#1": "Slash#1");
+                            if (MyHeroBrain.BB.IsJumping == true)
+                            {
+                                MyHeroBrain.ActionCtrler.CancelAction(false);
+                                MyHeroBrain.ActionCtrler.SetPendingAction("JumpAttack");
 
+                                MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
+
+                                MyHeroBrain.Movement.Gravity = new Vector3(0, -0, 0);
+                                Observable.Timer(TimeSpan.FromSeconds(0.3f)).Subscribe(_ =>
+                                {
+                                    MyHeroBrain.Movement.Gravity = new Vector3(0, -30, 0);
+                                }).AddTo(this);
+                            }
+                            else
+                            {
+                                if (MyHeroBrain.BB.IsCharging) 
+                                { 
+                                    MyHeroBrain.ActionCtrler.SetPendingAction("HeavySlash#1");
+                                    MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
+                                }
+                                else
+                                {
+                                    MyHeroBrain.ActionCtrler.SetPendingAction("Slash#1");
+                                    MyHeroBrain.ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
+                                }
+                            }
                             //* 타겟이 없을 경우에도 조준 보정을 해줌
                             if (MyHeroBrain.BB.TargetBrain == null && MyHeroBrain.SensorCtrler.ListeningColliders.Count > 0)
                             {
@@ -538,9 +572,6 @@ namespace Game
                                 MyHeroBrain.Movement.FaceAt(attackPoint);
                             }
                         }
-
-                        // 차징 상태에 따른 무기 교체
-                        MyHeroBrain.ChangeWeapon(MyHeroBrain.BB.IsCharging ? WeaponSetType.TWOHAND_WEAPON : WeaponSetType.ONEHAND_WEAPONSHIELD);
                     }
                 }
                 

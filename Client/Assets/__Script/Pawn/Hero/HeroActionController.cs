@@ -268,7 +268,8 @@ namespace Game
             onActionCanceled += (_, __) => parryHitColliderHelper.pawnCollider.enabled = false;
             onActionFinished += (_) => 
             {
-                __brain.AnimCtrler.weaponMeshSlot.transform.SetLocalPositionAndRotation(new Vector3(0f, 0f, -0.22f), Quaternion.identity);
+                //__brain.AnimCtrler.weaponMeshSlot.transform.SetLocalPositionAndRotation(new Vector3(0f, 0f, 0f), Quaternion.identity);
+                //__brain._weaponCtrlRightHand.ResetToHandle();
                 parryHitColliderHelper.pawnCollider.enabled = false;
             };
 

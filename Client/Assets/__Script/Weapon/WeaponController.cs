@@ -3,6 +3,7 @@ using XftWeapon;
 
 public class WeaponController : MonoBehaviour
 {
+    [SerializeField] string _name;
     [SerializeField] Transform _trHandle;
 
     [Header("Trail")]
@@ -29,9 +30,22 @@ public class WeaponController : MonoBehaviour
         }
     }
 
-    public void EquipToBone(Transform trBone) 
+    public void EquipToBone(Transform trBone, bool isMainHand = false) 
     {
         transform.SetParent(trBone);
+
+        if (isMainHand == true)
+        {
+            ResetToHandle();
+        }
+        else 
+        {
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.identity;
+        }
+    }
+    public void ResetToHandle() 
+    {
         var pos = -_trHandle.localPosition;
         var scale = transform.localScale;
         transform.localPosition = new Vector3(scale.x * pos.x, scale.y * pos.y, scale.z * pos.z);
