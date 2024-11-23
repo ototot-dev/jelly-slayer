@@ -200,6 +200,8 @@ MonoBehaviour:
       value: 0
     isBind:
       value: 0
+    isGuardbreak:
+      value: 0
     lifeTime:
       value: -1
   stat:
@@ -323,7 +325,7 @@ MonoBehaviour:
   capsuleRigidBody: {fileID: 155878440203396063}
   capsuleCollider: {fileID: 4741360635043825763}
   freezeMovement: 0
-  freezeRotation: 0
+  freezeRotation: 1
   rootMotionEnabled: 1
   rootMotionMultiplier: 1
   moveSpeed: 1
@@ -356,8 +358,8 @@ MonoBehaviour:
     _version: 3.31
     _category: 
     _comments: 
-    _translation: {x: -16, y: -161}
-    _zoomFactor: 0.63258207
+    _translation: {x: 233, y: -262}
+    _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 0
   _disableAction: 0
