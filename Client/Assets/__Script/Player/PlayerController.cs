@@ -418,8 +418,9 @@ namespace Game
                         Debug.Log("<color=cyan>Attack Guardbreak Enemy</color>");
 
                     }
-                    else 
-                    {
+                    else
+                    { 
+                        MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON); 
                         MyHeroBrain.ActionCtrler.SetPendingAction("SpecialSlash#1");
                     }
                 }

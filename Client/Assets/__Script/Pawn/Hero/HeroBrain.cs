@@ -226,14 +226,12 @@ namespace Game
         {
             var controller = GetWeaponController(weaponType);
             var bone = GetWeaponBone(weaponBone);
-            controller.EquipToBone(bone);
+            controller.EquipToBone(bone, (weaponBone == WeaponBone.RIGHTHAND));
 
-            if (weaponBone == WeaponBone.RIGHTHAND) 
+            if (weaponBone == WeaponBone.RIGHTHAND)
             {
                 _weaponCtrlRightHand = controller;
-
                 AnimCtrler.weaponMeshSlot = controller.transform;
-
             }
         }
 
