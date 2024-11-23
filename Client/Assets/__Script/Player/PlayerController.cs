@@ -229,7 +229,9 @@ namespace Game
         {
             if (MyHeroBrain == null)
                 return;
-                
+
+            MyHeroBrain.ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
+
             MyHeroBrain.BB.action.isGuarding.Value = value.Get<float>() > 0;
             if (MyHeroBrain.BB.IsGuarding)
             {
@@ -534,8 +536,26 @@ namespace Game
                         else
                         {
                             //Debug.Log("<color=yellow>Attack Released</color> : " + MyHeroBrain.BB.IsCharging + " " + canAction3);
-                            MyHeroBrain.ActionCtrler.SetPendingAction(MyHeroBrain.BB.IsCharging ? "HeavySlash#1": "Slash#1");
+                            if (MyHeroBrain.BB.IsJumping == true)
+                            {
+                                MyHeroBrain.ActionCtrler.CancelAction(false);
+                                MyHeroBrain.ActionCtrler.SetPendingAction("JumpAttack");
 
+                                MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
+                            }
+                            else
+                            {
+                                if (MyHeroBrain.BB.IsCharging) 
+                                { 
+                                    MyHeroBrain.ActionCtrler.SetPendingAction("HeavySlash#1");
+                                    MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
+                                }
+                                else
+                                {
+                                    MyHeroBrain.ActionCtrler.SetPendingAction("Slash#1");
+                                    MyHeroBrain.ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
+                                }
+                            }
                             //* 타겟이 없을 경우에도 조준 보정을 해줌
                             if (MyHeroBrain.BB.TargetBrain == null && MyHeroBrain.SensorCtrler.ListeningColliders.Count > 0)
                             {
@@ -546,9 +566,6 @@ namespace Game
                                 MyHeroBrain.Movement.FaceAt(attackPoint);
                             }
                         }
-
-                        // 차징 상태에 따른 무기 교체
-                        MyHeroBrain.ChangeWeapon(MyHeroBrain.BB.IsCharging ? WeaponSetType.TWOHAND_WEAPON : WeaponSetType.ONEHAND_WEAPONSHIELD);
                     }
                 }
                 

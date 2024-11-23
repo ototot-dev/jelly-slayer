@@ -190,6 +190,11 @@ namespace Game.NodeCanvasExtension
 
         protected override void OnExecute()
         {
+            if (target.value == null) 
+            {
+                EndAction(true);
+                return;
+            }
             __targetBrain = target.value.GetComponent<PawnBrainController>();
             __targetCapsuleRadius = __targetBrain != null && __targetBrain.coreColliderHelper.GetCapsuleCollider() != null ? __targetBrain.coreColliderHelper.GetCapsuleCollider().radius : 0f;
             __pawnBrain = agent.GetComponent<PawnBrainController>();
@@ -216,9 +221,10 @@ namespace Game.NodeCanvasExtension
         {
             base.OnStop(interrupted);
             
-            __pawnMovable.Stop();
+            if(__pawnMovable != null)
+                __pawnMovable.Stop();
 
-            if (!interrupted && notifyDecisionFinished)
+            if (!interrupted && notifyDecisionFinished && __pawnBrain != null)
                 __pawnBrain.OnDecisionFinishedHandler();
         }
     }

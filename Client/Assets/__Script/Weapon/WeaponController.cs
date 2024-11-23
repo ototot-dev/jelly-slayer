@@ -3,6 +3,7 @@ using XftWeapon;
 
 public class WeaponController : MonoBehaviour
 {
+    [SerializeField] string _name;
     [SerializeField] Transform _trHandle;
 
     [Header("Trail")]

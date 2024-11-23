@@ -78,6 +78,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9009b549499cc784daf9bd3bedfdf391, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _name: Katana
   _trHandle: {fileID: 2480493328551348125}
   _trailRender: {fileID: 0}
   _trailXWeapon: {fileID: 2456055697739482448}
