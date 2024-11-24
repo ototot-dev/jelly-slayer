@@ -418,12 +418,16 @@ namespace Game
                     if (target != null)
                     {
                         Debug.Log("<color=cyan>Attack Guardbreak Enemy</color>");
+                        MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
+                        MyHeroBrain.ActionCtrler.SetPendingAction("SpecialSlash#1");
 
+                        var vDist = target.pawnBrain.CoreTransform.position - MyHeroBrain.Movement.capsule.position;
+                        MyHeroBrain.Movement.faceVec = vDist.Vector2D().normalized;
                     }
                     else
                     { 
-                        MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON); 
-                        MyHeroBrain.ActionCtrler.SetPendingAction("SpecialSlash#1");
+                        //MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON); 
+                        //MyHeroBrain.ActionCtrler.SetPendingAction("SpecialSlash#1");
                     }
                 }
             }

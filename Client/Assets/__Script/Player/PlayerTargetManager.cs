@@ -60,6 +60,7 @@ namespace Game
                 heroBrain.Movement.freezeRotation = false;
                 return;
             }
+            // If the target is null, find a target.
             var newTarget = FindTarget(__playerCtrler.MyHeroBrain);
             if (heroBrain.BB.TargetPawn == null)
             {
@@ -89,6 +90,7 @@ namespace Game
                         }
                     }
                 }
+                // Out of a certain range...
                 else
                 {
                     var vDist = heroBrain.CoreTransform.position - curTarget.CoreTransform.position;
