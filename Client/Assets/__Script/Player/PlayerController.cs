@@ -414,8 +414,8 @@ namespace Game
                         MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
                         MyHeroBrain.ActionCtrler.SetPendingAction("SpecialSlash#1");
 
-                        var vDist = target.pawnBrain.CoreTransform.position - MyHeroBrain.Movement.capsule.position;
-                        MyHeroBrain.Movement.faceVec = vDist.Vector2D().normalized;
+                        // var vDist = target.pawnBrain.CoreTransform.position - MyHeroBrain.Movement.capsule.position;
+                        // MyHeroBrain.Movement.faceVec = vDist.Vector2D().normalized;
                     }
                     else
                     { 
