@@ -98,6 +98,11 @@ namespace Game
 
             Observable.Timer(TimeSpan.FromSeconds(0.2f)).Subscribe(_ => GameContext.Instance.playerCtrler.Possess(this));
 
+            ActionCtrler.onActionFinished += (_) =>
+            {
+                ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
+            };
+
             PawnHP.onDamaged += (damageContext) =>
             {
                 //! Sender와 Recevier가 동일할 수 있기 때문에 반드시 'receiverBrain'을 먼저 체크해야 함
@@ -239,24 +244,24 @@ namespace Game
             // if(_weaponSetType == weaponSetType) 
             //     return;
 
-            // _weaponSetType = weaponSetType;
-            // switch (weaponSetType)
-            // {
-            //     case WeaponSetType.ONEHAND_WEAPONSHIELD:
-            //         {
-            //             EquipWeaponToBone(WeaponType.SWORD, WeaponBone.RIGHTHAND);
-            //             EquipWeaponToBone(WeaponType.SHIELD, WeaponBone.LEFTHAND);
-            //             EquipWeaponToBone(WeaponType.KATANA, WeaponBone.BACK);
-            //         }
-            //         break;
-            //     case WeaponSetType.TWOHAND_WEAPON:
-            //         {
-            //             EquipWeaponToBone(WeaponType.SWORD, WeaponBone.BACK);
-            //             EquipWeaponToBone(WeaponType.SHIELD, WeaponBone.BACK);
-            //             EquipWeaponToBone(WeaponType.KATANA, WeaponBone.RIGHTHAND);
-            //         }
-            //         break;
-            // }
+            _weaponSetType = weaponSetType;
+            switch (weaponSetType)
+            {
+                case WeaponSetType.ONEHAND_WEAPONSHIELD:
+                    {
+                        EquipWeaponToBone(WeaponType.SWORD, WeaponBone.RIGHTHAND);
+                        EquipWeaponToBone(WeaponType.SHIELD, WeaponBone.LEFTHAND);
+                        EquipWeaponToBone(WeaponType.KATANA, WeaponBone.BACK);
+                    }
+                    break;
+                case WeaponSetType.TWOHAND_WEAPON:
+                    {
+                        EquipWeaponToBone(WeaponType.SWORD, WeaponBone.BACK);
+                        EquipWeaponToBone(WeaponType.SHIELD, WeaponBone.BACK);
+                        EquipWeaponToBone(WeaponType.KATANA, WeaponBone.RIGHTHAND);
+                    }
+                    break;
+            }
         }
     }
 }

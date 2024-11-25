@@ -406,6 +406,8 @@ namespace Game
                 //Debug.Log("<color=yellow>Attack Released</color> : " + MyHeroBrain.BB.IsCharging + " " + canAction3);
                 if (canAction2)
                 {
+                    MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
+
                     if (MyHeroBrain.ActionCtrler.CheckActionRunning())
                     {
                         switch (MyHeroBrain.ActionCtrler.CurrActionName)
