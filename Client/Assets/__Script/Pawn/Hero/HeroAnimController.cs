@@ -21,10 +21,11 @@ namespace Game
         void Awake()
         {
             __brain = GetComponent<HeroBrain>();
-
+#if UNITY_EDITOR
             //* Block 애님의 Additive Ref-Pose를 셋팅
             foreach (var c in blockAdditiveAnimClips)
                 AnimationUtility.SetAdditiveReferencePose(c, blockAdditiveAnimClips[0], 0);
+#endif
         }
 
         HeroBrain __brain;
