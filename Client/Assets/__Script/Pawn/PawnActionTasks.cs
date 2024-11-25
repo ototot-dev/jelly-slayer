@@ -396,8 +396,7 @@ namespace Game.NodeCanvasExtension
                         __pawnMovable.AddRootMotion(rootMotionVec, Quaternion.identity);
                 }).AddTo(agent);
 
-            if (!endActionWhenReachToTarget)
-                EndAction(true);
+            EndAction(true);
         }
     }
 
@@ -694,6 +693,21 @@ namespace Game.NodeCanvasExtension
             __pawnActionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
         }
     }
+
+    public class SetLegGlueEnabled : ActionTask
+    {
+        protected override string info => enabled.value ? $"Leg Glue <b>Enabled</b>" : $"Leg Glue <b>Disabled</b>";
+        public BBParameter<bool> enabled;
+
+        protected override void OnExecute()
+        {
+            if (agent.TryGetComponent<PawnActionController>(out var actionCtrler))
+                actionCtrler.currActionContext.legAnimGlueEnabled = enabled.value;
+
+            EndAction(true);
+        }
+    }
+
 
     public class StartHomingRotation : ActionTask
     {
@@ -1271,6 +1285,7 @@ namespace Game.NodeCanvasExtension
         public BBParameter<Vector3> scale = Vector3.one;
         public BBParameter<ParticleSystemScalingMode> scalingMode = ParticleSystemScalingMode.Local;
         public BBParameter<float> duration = -1f;
+        public BBParameter<float> playRate = 1f;
         public BBParameter<string[]> childNameToBeHidden;
         public bool attachToTransform = false;
         public bool stopWhenActionCanceled = true;
@@ -1286,16 +1301,16 @@ namespace Game.NodeCanvasExtension
                 {
                     var localToWorldMatrix = Matrix4x4.TRS(localToWorld.value.position, localToWorld.value.rotation, Vector3.one) * Matrix4x4.TRS(position.value, Quaternion.Euler(pitchYawRoll.value), Vector3.one);
                     if (fxPrefab.isNoneOrNull)
-                        __fxInstance = EffectManager.Instance.Show(fxName.value, localToWorldMatrix.GetPosition(), localToWorldMatrix.rotation, scale.value, duration.value, 0f, scalingMode.value);
+                        __fxInstance = EffectManager.Instance.Show(fxName.value, localToWorldMatrix.GetPosition(), localToWorldMatrix.rotation, scale.value, duration.value, 0f, scalingMode.value, playRate.value);
                     else
-                        __fxInstance = EffectManager.Instance.Show(fxPrefab.value, localToWorldMatrix.GetPosition(), localToWorldMatrix.rotation, scale.value, duration.value, 0f, scalingMode.value);
+                        __fxInstance = EffectManager.Instance.Show(fxPrefab.value, localToWorldMatrix.GetPosition(), localToWorldMatrix.rotation, scale.value, duration.value, 0f, scalingMode.value, playRate.value);
                 }
                 else
                 {
                     if (fxPrefab.isNoneOrNull)
-                        __fxInstance = EffectManager.Instance.Show(fxName.value, position.value, Quaternion.Euler(pitchYawRoll.value), scale.value, duration.value, 0f, scalingMode.value);
+                        __fxInstance = EffectManager.Instance.Show(fxName.value, position.value, Quaternion.Euler(pitchYawRoll.value), scale.value, duration.value, 0f, scalingMode.value, playRate.value);
                     else
-                        __fxInstance = EffectManager.Instance.Show(fxPrefab.value, position.value, Quaternion.Euler(pitchYawRoll.value), scale.value, duration.value, 0f, scalingMode.value);
+                        __fxInstance = EffectManager.Instance.Show(fxPrefab.value, position.value, Quaternion.Euler(pitchYawRoll.value), scale.value, duration.value, 0f, scalingMode.value, playRate.value);
                 }
 
                 if (attachToTransform)
@@ -1321,10 +1336,9 @@ namespace Game.NodeCanvasExtension
                 }
 
                 __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;
-
                 if (stopWhenActionCanceled)
                 {
-                    Observable.Timer(TimeSpan.FromSeconds(duration.value))
+                    Observable.Timer(TimeSpan.FromSeconds(__fxInstance.LifeTime))
                         .TakeWhile(_ => __pawnActionCtrler.CheckActionRunning() && __pawnActionCtrler.currActionContext.actionInstanceId == __capturedActionInstanceId)
                         .DoOnCancel(() => __fxInstance?.gameObject.SetActive(false))
                         .Subscribe().AddTo(agent);

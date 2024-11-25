@@ -134,7 +134,7 @@ namespace Game
                 if (v)
                     EffectManager.Instance.ShowLooping("StunnedStars", fxAttachPoint.position, fxAttachPoint.rotation, Vector3.one).transform.SetParent(fxAttachPoint, true);
                 else
-                    fxAttachPoint.gameObject.Children().Select(c => c.GetComponent<EffectInstance>()).First(e => e != null && e.effectName == "StunnedStars").Stop();
+                    fxAttachPoint.gameObject.Children().Select(c => c.GetComponent<EffectInstance>()).First(e => e != null && e.sourceName == "StunnedStars").Stop();
             }).AddTo(this);
 
             __jellyManBB.decision.currDecision.Subscribe(v =>

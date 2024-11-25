@@ -398,52 +398,59 @@ namespace Game
 
         public void OnSpecialAttack(InputValue value) 
         {
-            if (MyHeroBrain._chainCtrl == null)
-                return;
-
-            bool isPress = value.Get<float>() > 0;
-            if (isPress == true) 
+            if (value.isPressed)
             {
-                // Stunned Enemy
-                var target = PlayerTargetManager.FindStunnedTarget(MyHeroBrain);
-                if (target != null)
+                __attackReleasedTimeStamp = Time.time;
+
+                if (MyHeroBrain != null)
                 {
-                    Debug.Log("<color=red>Attack Groggy Enemy</color>");
-                    MyHeroBrain.ActionCtrler.SetPendingAction("SpecialSlash#1");
-                }
-                else 
-                {
-                    // Guard Breaked Enemy
-                    target = PlayerTargetManager.FindGuardbreakTarget(MyHeroBrain);
-                    if (target != null)
+                    var canAction1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsStunned && !MyHeroBrain.BB.IsRolling;
+                    var canAction2 = canAction1 && !MyHeroBrain.PawnBB.IsThrowing && !MyHeroBrain.PawnBB.IsGrabbed;
+                    var canAction3 = canAction2 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.BuffCtrler.CheckStatus(PawnStatus.Staggered);
+
+                    if (canAction3)
                     {
-                        Debug.Log("<color=cyan>Attack Guardbreak Enemy</color>");
+                        if (MyHeroBrain.ActionCtrler.CheckActionRunning())
+                        {
+                            switch (MyHeroBrain.ActionCtrler.CurrActionName)
+                            {
+                                case "HeavySlash#1":
+                                    MyHeroBrain.ActionCtrler.CancelAction(false);
+                                    MyHeroBrain.ActionCtrler.SetPendingAction("HeavySlash#2"); 
+                                    break;
+                                case "HeavySlash#2":
+                                    MyHeroBrain.ActionCtrler.CancelAction(false);
+                                    MyHeroBrain.ActionCtrler.SetPendingAction("HeavySlash#3"); 
+                                    break;
+                            }
 
+                            //* 타겟이 없을 경우에도 조준 보정을 해줌
+                            if (MyHeroBrain.BB.TargetBrain == null && MyHeroBrain.SensorCtrler.ListeningColliders.Count > 0)
+                            {
+                                var attackPoint = MyHeroBrain.SensorCtrler.ListeningColliders.Select(c => c.transform.position)
+                                    .OrderBy(p => Vector3.Angle(MyHeroBrain.coreColliderHelper.transform.forward.Vector2D(), (p - MyHeroBrain.coreColliderHelper.transform.position).Vector2D()))
+                                    .FirstOrDefault();
+
+                                MyHeroBrain.Movement.FaceAt(attackPoint);
+                            }
+                        }
+                        else
+                        {
+                            MyHeroBrain.ActionCtrler.SetPendingAction("HeavySlash#1");
+
+                            //* 타겟이 없을 경우에도 조준 보정을 해줌
+                            if (MyHeroBrain.BB.TargetBrain == null && MyHeroBrain.SensorCtrler.ListeningColliders.Count > 0)
+                            {
+                                var attackPoint = MyHeroBrain.SensorCtrler.ListeningColliders.Select(c => c.transform.position)
+                                    .OrderBy(p => Vector3.Angle(MyHeroBrain.coreColliderHelper.transform.forward.Vector2D(), (p - MyHeroBrain.coreColliderHelper.transform.position).Vector2D()))
+                                    .FirstOrDefault();
+
+                                MyHeroBrain.Movement.FaceAt(attackPoint);
+                            }
+                        }
                     }
-                    else
-                    { 
-                        MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON); 
-                        MyHeroBrain.ActionCtrler.SetPendingAction("SpecialSlash#1");
-                    }
                 }
             }
-            //MyHeroBrain.ActionCtrler.SetPendingAction("Kick");
-            /*
-                if (MyHeroBrain._chainCtrl.IsBind == true)
-                {
-                    MyHeroBrain._chainCtrl.ResetChain();
-                }
-                else
-                {
-                    MyHeroBrain.ChainRolling(true);
-                }
-            }
-            else if (MyHeroBrain._chainCtrl.IsRolling == true) 
-            {
-                //MyHeroBrain.ChainRolling(false);
-                MyHeroBrain.ActionCtrler.SetPendingAction("ChainShot");
-            }
-            */
         }
 
         IDisposable __chargingAttackDisposable;
@@ -485,7 +492,6 @@ namespace Game
             if (value.isPressed)
             {
                 __attackPresssedTimeStamp = Time.time;
-
                 //Debug.Log("<color=red>Attack Pressed</color> : " + MyHeroBrain.BB.IsCharging);
             }
             else
@@ -511,7 +517,7 @@ namespace Game
                                     break;
                                 case "Slash#2": 
                                     MyHeroBrain.ActionCtrler.CancelAction(false); 
-                                    MyHeroBrain.ActionCtrler.SetPendingAction("Slash#3"); 
+                                    MyHeroBrain.ActionCtrler.SetPendingAction("Slash#1"); 
                                     break;
                                 case "HeavySlash#1":
                                     MyHeroBrain.ActionCtrler.CancelAction(false);

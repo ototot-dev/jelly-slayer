@@ -30,6 +30,7 @@ namespace Game
             public bool insufficientStamina;
             public bool actionCanceled;
             public bool rootMotionEnabled;
+            public bool legAnimGlueEnabled;
             public bool interruptEnabled;
             public bool superArmorEnabled;
             public bool activeParryEnabled;
@@ -62,6 +63,7 @@ namespace Game
                 insufficientStamina = false;
                 actionCanceled = false;
                 rootMotionEnabled = true;
+                legAnimGlueEnabled = true;
                 interruptEnabled = false;
                 superArmorEnabled = false;
                 activeParryEnabled = false;
@@ -93,6 +95,7 @@ namespace Game
                 insufficientStamina = false;
                 actionCanceled = false;
                 rootMotionEnabled = true;
+                legAnimGlueEnabled = true;
                 interruptEnabled = false;
                 superArmorEnabled = false;
                 activeParryEnabled = false;

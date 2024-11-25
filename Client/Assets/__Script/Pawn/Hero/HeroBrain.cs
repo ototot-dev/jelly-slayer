@@ -236,27 +236,27 @@ namespace Game
 
         public void ChangeWeapon(WeaponSetType weaponSetType) 
         {
-            if(_weaponSetType == weaponSetType) 
-                return;
+            // if(_weaponSetType == weaponSetType) 
+            //     return;
 
-            _weaponSetType = weaponSetType;
-            switch (weaponSetType)
-            {
-                case WeaponSetType.ONEHAND_WEAPONSHIELD:
-                    {
-                        EquipWeaponToBone(WeaponType.SWORD, WeaponBone.RIGHTHAND);
-                        EquipWeaponToBone(WeaponType.SHIELD, WeaponBone.LEFTHAND);
-                        EquipWeaponToBone(WeaponType.KATANA, WeaponBone.BACK);
-                    }
-                    break;
-                case WeaponSetType.TWOHAND_WEAPON:
-                    {
-                        EquipWeaponToBone(WeaponType.SWORD, WeaponBone.BACK);
-                        EquipWeaponToBone(WeaponType.SHIELD, WeaponBone.BACK);
-                        EquipWeaponToBone(WeaponType.KATANA, WeaponBone.RIGHTHAND);
-                    }
-                    break;
-            }
+            // _weaponSetType = weaponSetType;
+            // switch (weaponSetType)
+            // {
+            //     case WeaponSetType.ONEHAND_WEAPONSHIELD:
+            //         {
+            //             EquipWeaponToBone(WeaponType.SWORD, WeaponBone.RIGHTHAND);
+            //             EquipWeaponToBone(WeaponType.SHIELD, WeaponBone.LEFTHAND);
+            //             EquipWeaponToBone(WeaponType.KATANA, WeaponBone.BACK);
+            //         }
+            //         break;
+            //     case WeaponSetType.TWOHAND_WEAPON:
+            //         {
+            //             EquipWeaponToBone(WeaponType.SWORD, WeaponBone.BACK);
+            //             EquipWeaponToBone(WeaponType.SHIELD, WeaponBone.BACK);
+            //             EquipWeaponToBone(WeaponType.KATANA, WeaponBone.RIGHTHAND);
+            //         }
+            //         break;
+            // }
         }
     }
 }

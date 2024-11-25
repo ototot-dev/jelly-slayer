@@ -35,13 +35,13 @@ namespace Game
             __brain.BB.action.isCharging.Subscribe(v => 
             {
                 mainAnimator.SetBool("IsGuarding", v);
-                shieldMeshSlot.localEulerAngles = v || __brain.BB.IsGuarding ? new Vector3(-30f, 0f, -20f) : Vector3.zero;
+                // shieldMeshSlot.localEulerAngles = v || __brain.BB.IsGuarding ? new Vector3(-30f, 0f, -20f) : Vector3.zero;
             }).AddTo(this);
             
             __brain.BB.action.isGuarding.Subscribe(v => 
             {
                 mainAnimator.SetBool("IsGuarding", v);
-                shieldMeshSlot.localEulerAngles = v || __brain.BB.IsCharging ? new Vector3(-30f, 0f, -20f) : Vector3.zero;
+                // shieldMeshSlot.localEulerAngles = v || __brain.BB.IsCharging ? new Vector3(-30f, 0f, -20f) : Vector3.zero;
             }).AddTo(this);
 
             __brain.onUpdate += () =>
@@ -73,7 +73,7 @@ namespace Game
                 mainAnimator.SetFloat("MoveY", animMoveVec.z / __brain.Movement.moveSpeed);
 
                 legAnimator.User_SetIsMoving(__brain.Movement.CurrVelocity.sqrMagnitude > 0);
-                legAnimator.User_SetIsGrounded( __brain.Movement.IsOnGround && !__brain.BB.IsRolling && !__brain.BB.IsDown && !__brain.BB.IsDead);
+                legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround && !__brain.BB.IsRolling && !__brain.BB.IsDown && !__brain.BB.IsDead && (!__brain.ActionCtrler.CheckActionRunning() || __brain.ActionCtrler.currActionContext.legAnimGlueEnabled));
                 legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude > 0 ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.5f : 0.4f, 1);
             };
         }

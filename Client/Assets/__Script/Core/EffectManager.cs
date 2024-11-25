@@ -9,7 +9,7 @@ namespace Game
 {
     public class EffectInstance : MonoBehaviour
     {
-        public string effectName;
+        public string sourceName;
         public GameObject sourcePrefab;
 
         void OnParticleCollision(GameObject other)
@@ -25,18 +25,23 @@ namespace Game
         List<ParticleCollisionEvent> __collisionEvents;
         public Action<ParticleCollisionEvent> onCollisionEvent;
 
-        public void PlayLooping()
+        public void PlayLooping(float playRate = 1f)
         {
             Debug.Assert(__stopDiposable == null);
             
             if (__particleSystem != null || TryGetComponent<ParticleSystem>(out __particleSystem))
             {
-                var mainModule = __particleSystem.main; mainModule.loop = true;
+                var mainModule = __particleSystem.main; 
+                mainModule.loop = true;
+                mainModule.simulationSpeed = playRate;
                 __particleSystem.Play();
+
+                //* 음수면 재생 시간은 무한대, 즉 Looping임을 뜻함
+                LifeTime = -1f;
             }
         }
 
-        public void Play(float duration, bool releaseInstance = true)
+        public void Play(float duration, float playRate = 1f, bool releaseInstance = true)
         {
             Debug.Assert(__stopDiposable == null);
 
@@ -44,13 +49,15 @@ namespace Game
             {
                 var mainModule = __particleSystem.main; 
                 mainModule.loop = false;
+                mainModule.simulationSpeed = playRate;
                 __particleSystem.Play();
 
-                duration = duration > 0 ? duration : Mathf.Max(0.1f, mainModule.duration * 0.99f);
-                Observable.Timer(TimeSpan.FromSeconds(duration)).Subscribe(_ => Stop(releaseInstance)).AddTo(this);
+                LifeTime = duration > 0 ? duration : Mathf.Max(0.1f, mainModule.duration * 0.99f);
+                Observable.Timer(TimeSpan.FromSeconds(LifeTime)).Subscribe(_ => Stop(releaseInstance)).AddTo(this);
             }
         }
 
+        public float LifeTime { get; private set; }
         ParticleSystem __particleSystem;
         IDisposable __stopDiposable;
 
@@ -101,7 +108,7 @@ namespace Game
         /// <summary>
         /// Pooling을 이용하지 않는 경우 (한번 쓰고 버림)
         /// </summary>
-        public GameObject ShowAndForget(string effectName, Vector3 position, Quaternion rotation, Vector3 scale, ParticleSystemScalingMode scalingMode = ParticleSystemScalingMode.Local)
+        public GameObject ShowAndForget(string effectName, Vector3 position, Quaternion rotation, Vector3 scale, ParticleSystemScalingMode scalingMode = ParticleSystemScalingMode.Local, float playRate = 1f)
         {
             var instance = Instantiate(Resources.Load<GameObject>($"FX/{effectName}"), position, rotation);
             if (scale != Vector3.zero && instance.TryGetComponent<ParticleSystem>(out var particleSystem))
@@ -110,6 +117,7 @@ namespace Game
                 {
                     var mainModule = particleSystem.main;
                     mainModule.scalingMode = scalingMode;
+                    mainModule.simulationSpeed = playRate;
                 }
 
                 instance.transform.localScale = scale;
@@ -118,7 +126,7 @@ namespace Game
             return instance;
         }
 
-        public EffectInstance ShowLooping(string effectName, Vector3 position, Quaternion rotation, Vector3 scale, float waitingTime = 0f, ParticleSystemScalingMode scalingMode = ParticleSystemScalingMode.Local)
+        public EffectInstance ShowLooping(string effectName, Vector3 position, Quaternion rotation, Vector3 scale, float waitingTime = 0f, ParticleSystemScalingMode scalingMode = ParticleSystemScalingMode.Local, float playRate = 1f)
         {
             var instance = GetInstance(effectName, position, rotation, scale, scalingMode);
             if (waitingTime > 0)
@@ -127,7 +135,7 @@ namespace Game
                 Observable.Timer(TimeSpan.FromSeconds(waitingTime)).Subscribe(_ =>
                 {
                     instance.gameObject.SetActive(true);
-                    instance.PlayLooping();
+                    instance.PlayLooping(playRate);
                 }).AddTo(instance);
             }
             else
@@ -138,7 +146,7 @@ namespace Game
             return instance;
         }
 
-        public EffectInstance Show(string effectName, Vector3 position, Quaternion rotation, Vector3 scale, float duration = -1f, float waitingTime = 0f, ParticleSystemScalingMode scalingMode = ParticleSystemScalingMode.Local)
+        public EffectInstance Show(string effectName, Vector3 position, Quaternion rotation, Vector3 scale, float duration = -1f, float waitingTime = 0f, ParticleSystemScalingMode scalingMode = ParticleSystemScalingMode.Local, float playRate = 1f)
         {
             var instance = GetInstance(effectName, position, rotation, scale, scalingMode);
             if (waitingTime > 0f)
@@ -147,7 +155,7 @@ namespace Game
                 Observable.Timer(TimeSpan.FromSeconds(waitingTime)).Subscribe(_ => 
                 { 
                     instance.gameObject.SetActive(true); 
-                    instance.Play(duration); 
+                    instance.Play(duration, playRate); 
                 }).AddTo(instance);
             }
             else
@@ -158,7 +166,7 @@ namespace Game
             return instance;
         }
 
-        public EffectInstance ShowLooping(GameObject sourcePrefab, Vector3 position, Quaternion rotation, Vector3 scale, float waitingTime = 0f, ParticleSystemScalingMode scalingMode = ParticleSystemScalingMode.Local)
+        public EffectInstance ShowLooping(GameObject sourcePrefab, Vector3 position, Quaternion rotation, Vector3 scale, float waitingTime = 0f, ParticleSystemScalingMode scalingMode = ParticleSystemScalingMode.Local, float playRate = 1f)
         {
             Debug.Assert(sourcePrefab != null);
 
@@ -166,12 +174,12 @@ namespace Game
             if (waitingTime > 0f)
                 Observable.Timer(TimeSpan.FromSeconds(waitingTime)).Subscribe(_ => instance.PlayLooping()).AddTo(instance);
             else
-                instance.PlayLooping();
+                instance.PlayLooping(playRate);
 
             return instance;
         }
 
-        public EffectInstance Show(GameObject sourcePrefab, Vector3 position, Quaternion rotation, Vector3 scale, float duration = -1f, float waitingTime = 0f, ParticleSystemScalingMode scalingMode = ParticleSystemScalingMode.Local)
+        public EffectInstance Show(GameObject sourcePrefab, Vector3 position, Quaternion rotation, Vector3 scale, float duration = -1f, float waitingTime = 0f, ParticleSystemScalingMode scalingMode = ParticleSystemScalingMode.Local, float playRate = 1f)
         {
             Debug.Assert(sourcePrefab != null);
 
@@ -182,7 +190,7 @@ namespace Game
                 Observable.Timer(TimeSpan.FromSeconds(waitingTime)).Subscribe(_ =>
                 {
                     instance.gameObject.SetActive(true);
-                    instance.Play(duration);
+                    instance.Play(duration, playRate);
                 }).AddTo(instance);
             }
             else
@@ -207,7 +215,7 @@ namespace Game
             else
             {
                 instance = Instantiate(Resources.Load<GameObject>($"FX/{effectName}"), position, rotation).AddComponent<EffectInstance>();
-                instance.effectName = effectName;
+                instance.sourceName = effectName;
 
                 //* (성능 이슈로 인해서..) Light는 기본적으로 끔
                 foreach (var d in instance.gameObject.DescendantsAndSelf())
@@ -238,7 +246,7 @@ namespace Game
             else
             {
                 instance = Instantiate(sourcePrefab, position, rotation).AddComponent<EffectInstance>();
-                instance.effectName = string.Empty;
+                instance.sourceName = string.Empty;
                 instance.sourcePrefab = sourcePrefab;
 
                 //* (성능 이슈로 인해서..) Light는 기본적으로 끔
@@ -269,8 +277,8 @@ namespace Game
             }
             else
             {
-                Debug.Assert(effectInstance.effectName != string.Empty);
-                __instancePoolA[effectInstance.effectName].Add(effectInstance);
+                Debug.Assert(effectInstance.sourceName != string.Empty);
+                __instancePoolA[effectInstance.sourceName].Add(effectInstance);
             }
         }
 
