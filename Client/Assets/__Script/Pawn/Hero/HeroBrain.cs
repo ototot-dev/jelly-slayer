@@ -135,16 +135,16 @@ namespace Game
             {
                 ActionCtrler.StartAddictiveAction(damageContext, "!OnHit");
             }
-            else if (damageContext.receiverPenalty.Item1 != PawnStatus.None)
+            else if (damageContext.receiverPenalty.Item1 != Game.PawnStatus.None)
             {
                 if (ActionCtrler.CheckActionRunning())
                     ActionCtrler.CancelAction(false);
 
                 switch (damageContext.receiverPenalty.Item1)
                 {
-                    case PawnStatus.Groggy: ActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty); break;
-                    case PawnStatus.Staggered: ActionCtrler.StartAction(damageContext, "!OnHit", string.Empty); break;
-                    case PawnStatus.KnockDown: ActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty); break;
+                    case Game.PawnStatus.Groggy: ActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty); break;
+                    case Game.PawnStatus.Staggered: ActionCtrler.StartAction(damageContext, "!OnHit", string.Empty); break;
+                    case Game.PawnStatus.KnockDown: ActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty); break;
                 }
             }
             
@@ -157,7 +157,7 @@ namespace Game
             if (damageContext.senderBrain.PawnBB.IsDead)
                 return;
 
-            if (damageContext.senderPenalty.Item1 != PawnStatus.None && ActionCtrler.CheckActionRunning())
+            if (damageContext.senderPenalty.Item1 != Game.PawnStatus.None && ActionCtrler.CheckActionRunning())
                 ActionCtrler.CancelAction(false);
 
             switch (damageContext.actionResult)
@@ -166,8 +166,8 @@ namespace Game
                     ActionCtrler.StartAction(damageContext, "!OnBlocked", string.Empty); break;
                     
                 case ActionResults.ActiveParried:
-                case ActionResults.PassiveParried: 
-                    ActionCtrler.StartAction(damageContext, "!OnParried", string.Empty); break;
+                case ActionResults.PassiveParried:
+                    ActionCtrler.StartAction(damageContext, damageContext.senderPenalty.Item1 == Game.PawnStatus.Groggy ? "!OnGroggy" : "!OnParried", string.Empty); break;
             }
         }
 
@@ -184,14 +184,14 @@ namespace Game
             _isBind = isBind;
             if (_isBind == true)
             {
-                pawn.PawnBuff.AddStatus(PawnStatus.Bind);
+                pawn.PawnStatusCtrler.AddStatus(Game.PawnStatus.Bind);
                 _bindLIst.Add(pawn);
             }
             else 
             {
                 if (pawn != null)
                 {
-                    pawn.PawnBuff.RemoveStatus(PawnStatus.Bind);
+                    pawn.PawnStatusCtrler.RemoveStatus(Game.PawnStatus.Bind);
                 }
                 _bindLIst.Clear();
             }

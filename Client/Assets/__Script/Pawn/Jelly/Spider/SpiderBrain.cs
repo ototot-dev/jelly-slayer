@@ -177,7 +177,7 @@ namespace Game
                         //         InvalidateDecision(0);
                         // }
 
-                        if (!BuffCtrler.CheckStatus(PawnStatus.Staggered) && (!ActionCtrler.CheckActionRunning() || ActionCtrler.CanInterruptAction()))
+                        if (!BuffCtrler.CheckStatus(Game.PawnStatus.Staggered) && (!ActionCtrler.CheckActionRunning() || ActionCtrler.CanInterruptAction()))
                         {
                             var newActionName = string.Empty;
                             // if (ActionCtrler.CheckActionRunning() && ActionCtrler.CanInterruptAction() && ActionCtrler.CurrActionName == "Attack#1" && BB.stat.stamina.Value >= BB.temp.attack2_stamina)

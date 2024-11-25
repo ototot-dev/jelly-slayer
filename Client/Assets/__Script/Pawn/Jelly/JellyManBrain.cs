@@ -129,13 +129,13 @@ namespace Game
 
             base.StartInternal();
 
-            __jellyManBB.common.isStunned.Skip(1).Subscribe(v =>
-            {
-                if (v)
-                    EffectManager.Instance.ShowLooping("StunnedStars", fxAttachPoint.position, fxAttachPoint.rotation, Vector3.one).transform.SetParent(fxAttachPoint, true);
-                else
-                    fxAttachPoint.gameObject.Children().Select(c => c.GetComponent<EffectInstance>()).First(e => e != null && e.sourceName == "StunnedStars").Stop();
-            }).AddTo(this);
+            // __jellyManBB.common.isStunned.Skip(1).Subscribe(v =>
+            // {
+            //     if (v)
+            //         EffectManager.Instance.ShowLooping("StunnedStars", fxAttachPoint.position, fxAttachPoint.rotation, Vector3.one).transform.SetParent(fxAttachPoint, true);
+            //     else
+            //         fxAttachPoint.gameObject.Children().Select(c => c.GetComponent<EffectInstance>()).First(e => e != null && e.sourceName == "StunnedStars").Stop();
+            // }).AddTo(this);
 
             __jellyManBB.decision.currDecision.Subscribe(v =>
             {
@@ -188,8 +188,8 @@ namespace Game
                     __jellyManBB.stat.RecoverStamina(Mathf.Max(__pawnActionCtrler.prevActionContext.startTimeStamp, __pawnActionCtrler.prevActionContext.finishTimeStamp), Time.deltaTime);
 
                     //* 스테니머 회복 후 액션 수행 가능으로 변경
-                    if (__jellyManBB.stat.stamina.Value ==__jellyManBB.stat.maxStamina.Value && PawnBuff.CheckStatus(PawnStatus.CanNotAction))
-                        PawnBuff.RemoveStatus(PawnStatus.CanNotAction);
+                    if (__jellyManBB.stat.stamina.Value == __jellyManBB.stat.maxStamina.Value && PawnStatusCtrler.CheckStatus(Game.PawnStatus.CanNotAction))
+                        PawnStatusCtrler.RemoveStatus(Game.PawnStatus.CanNotAction);
                 }
 
                 __jellyManBB.stat.ReduceStance(PawnHP.LastDamageTimeStamp, Time.deltaTime);
@@ -209,7 +209,7 @@ namespace Game
             if (damageContext.receiverBrain.PawnBB.IsDead)
                 return;
             
-            if (damageContext.receiverPenalty.Item1 == PawnStatus.None)
+            if (damageContext.receiverPenalty.Item1 == Game.PawnStatus.None)
             {
                 //* receiverPenalty가 없다면 Sender 액션을 'Blocked' 혹은 'PassiveParried'등으로 파훼한 것으로 판정하여, Sender 공격에 대한 반동 연출을 한다.
                 //* 이 때, "!OnHit" 액션을 Addictive 모드로 실행하여 실제 Action이 실행되지는 않도록 한다.
@@ -222,9 +222,9 @@ namespace Game
 
                 switch (damageContext.receiverPenalty.Item1)
                 {
-                    case PawnStatus.Groggy: __pawnActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty); break;
-                    case PawnStatus.Staggered: __pawnActionCtrler.StartAction(damageContext, "!OnHit", string.Empty); break;
-                    case PawnStatus.KnockDown: __pawnActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty); break;
+                    case Game.PawnStatus.Groggy: __pawnActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty); break;
+                    case Game.PawnStatus.Staggered: __pawnActionCtrler.StartAction(damageContext, "!OnHit", string.Empty); break;
+                    case Game.PawnStatus.KnockDown: __pawnActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty); break;
                 }
             }
             // OnPawnDamaged
@@ -236,17 +236,19 @@ namespace Game
             if (damageContext.senderBrain.PawnBB.IsDead)
                 return;
 
-            if (damageContext.senderPenalty.Item1 != PawnStatus.None && __pawnActionCtrler.CheckActionRunning())
+            if (damageContext.senderPenalty.Item1 != Game.PawnStatus.None && __pawnActionCtrler.CheckActionRunning())
                 __pawnActionCtrler.CancelAction(false);
 
             switch (damageContext.actionResult)
             {
                 case ActionResults.Blocked: 
-                    __pawnActionCtrler.StartAction(damageContext, "!OnBlocked", string.Empty); break;
+                    __pawnActionCtrler.StartAction(damageContext, "!OnBlocked", string.Empty); 
+                    break;
 
                 case ActionResults.ActiveParried:
-                case ActionResults.PassiveParried: 
-                    __pawnActionCtrler.StartAction(damageContext, "!OnParried", string.Empty); break;
+                case ActionResults.PassiveParried:
+                    __pawnActionCtrler.StartAction(damageContext, damageContext.senderPenalty.Item1 == Game.PawnStatus.Groggy ? "!OnGroggy" : "!OnParried", string.Empty); 
+                    break;
             }
         }
 

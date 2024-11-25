@@ -398,29 +398,51 @@ namespace Game
 
         public void OnSpecialAttack(InputValue value) 
         {
-            if (value.isPressed)
+            if (value.isPressed && MyHeroBrain != null)
             {
-                __attackReleasedTimeStamp = Time.time;
+                var canAction1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsStunned && !MyHeroBrain.BB.IsRolling;
+                var canAction2 = canAction1 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.BuffCtrler.CheckStatus(PawnStatus.Staggered);
 
-                if (MyHeroBrain != null)
+                //Debug.Log("<color=yellow>Attack Released</color> : " + MyHeroBrain.BB.IsCharging + " " + canAction3);
+                if (canAction2)
                 {
-                    var canAction1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsStunned && !MyHeroBrain.BB.IsRolling;
-                    var canAction2 = canAction1 && !MyHeroBrain.PawnBB.IsThrowing && !MyHeroBrain.PawnBB.IsGrabbed;
-                    var canAction3 = canAction2 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.BuffCtrler.CheckStatus(PawnStatus.Staggered);
-
-                    if (canAction3)
+                    if (MyHeroBrain.ActionCtrler.CheckActionRunning())
                     {
-                        Debug.Log("<color=cyan>Attack Guardbreak Enemy</color>");
-                        MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
-                        MyHeroBrain.ActionCtrler.SetPendingAction("SpecialSlash#1");
+                        switch (MyHeroBrain.ActionCtrler.CurrActionName)
+                        {
+                            case "HeavySlash#1":
+                                MyHeroBrain.ActionCtrler.CancelAction(false);
+                                MyHeroBrain.ActionCtrler.SetPendingAction("HeavySlash#2"); 
+                                break;
+                            case "HeavySlash#2":
+                                MyHeroBrain.ActionCtrler.CancelAction(false);
+                                MyHeroBrain.ActionCtrler.SetPendingAction("HeavySlash#3"); 
+                                break;
+                        }
 
-                        // var vDist = target.pawnBrain.CoreTransform.position - MyHeroBrain.Movement.capsule.position;
-                        // MyHeroBrain.Movement.faceVec = vDist.Vector2D().normalized;
+                        //* 타겟이 없을 경우에도 조준 보정을 해줌
+                        if (MyHeroBrain.BB.TargetBrain == null && MyHeroBrain.SensorCtrler.ListeningColliders.Count > 0)
+                        {
+                            var attackPoint = MyHeroBrain.SensorCtrler.ListeningColliders.Select(c => c.transform.position)
+                                .OrderBy(p => Vector3.Angle(MyHeroBrain.coreColliderHelper.transform.forward.Vector2D(), (p - MyHeroBrain.coreColliderHelper.transform.position).Vector2D()))
+                                .FirstOrDefault();
+
+                            MyHeroBrain.Movement.FaceAt(attackPoint);
+                        }
                     }
                     else
-                    { 
-                        //MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON); 
-                        //MyHeroBrain.ActionCtrler.SetPendingAction("SpecialSlash#1");
+                    {
+                        MyHeroBrain.ActionCtrler.SetPendingAction("HeavySlash#1");
+
+                        //* 타겟이 없을 경우에도 조준 보정을 해줌
+                        if (MyHeroBrain.BB.TargetBrain == null && MyHeroBrain.SensorCtrler.ListeningColliders.Count > 0)
+                        {
+                            var attackPoint = MyHeroBrain.SensorCtrler.ListeningColliders.Select(c => c.transform.position)
+                                .OrderBy(p => Vector3.Angle(MyHeroBrain.coreColliderHelper.transform.forward.Vector2D(), (p - MyHeroBrain.coreColliderHelper.transform.position).Vector2D()))
+                                .FirstOrDefault();
+
+                            MyHeroBrain.Movement.FaceAt(attackPoint);
+                        }
                     }
                 }
             }

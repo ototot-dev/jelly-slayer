@@ -47,6 +47,11 @@ namespace Game
                     boneSimulatorTargetWeight = 1f;
                     shieldMeshRenderer.material.SetFloat("_Alpha", 0.03f);
                 }
+                else if (buff == PawnStatus.KnockDown)
+                {
+                    boneSimulatorTargetWeight = 0f;
+                    shieldMeshRenderer.material.SetFloat("_Alpha", 0.3f);
+                }
             };
 
             __brain.BuffCtrler.onStatusDeactive += (buff) =>
@@ -58,7 +63,7 @@ namespace Game
                 }
             };
 
-            __brain.onUpdate += () =>
+        __brain.onUpdate += () =>
             {    
                 if (__brain.ActionCtrler.CheckActionRunning())
                 {
@@ -110,15 +115,14 @@ namespace Game
                 }
                 else if (__brain.BB.IsDown)
                 {
-                    mainAnimator.SetLayerWeight(1, 1f);
+                    mainAnimator.SetLayerWeight(1, 0f);
                     legAnimator.LegsAnimatorBlend = 0f;
                     legAnimator.User_SetIsMoving(false);
                     legAnimator.User_SetIsGrounded(false);
                 }
                 else if (__brain.BB.IsStunned)
                 {
-                    if (__brain.ActionCtrler.CurrActionName != "!OnHit")
-                        mainAnimator.SetLayerWeight(1, 0f);
+                    mainAnimator.SetLayerWeight(1, 0f);
                     legAnimator.LegsAnimatorBlend = 1f;
                     legAnimator.User_SetIsMoving(false);
                     legAnimator.User_SetIsGrounded(true);

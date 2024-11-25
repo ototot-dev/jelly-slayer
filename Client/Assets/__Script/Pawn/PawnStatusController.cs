@@ -85,7 +85,7 @@ namespace Game
             return ret;
         }
         
-        public void AddStatus(PawnStatus status, float strength = 1, float duration = -1, bool isStackable = false)
+        public void AddStatus(PawnStatus status, float strength = 1f, float duration = -1f, bool isStackable = false)
         {
             if (__immunedStatuses.Contains(status))
             {

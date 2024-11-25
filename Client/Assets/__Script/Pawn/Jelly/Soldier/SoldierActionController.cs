@@ -22,8 +22,7 @@ namespace Game
             if (!base.CanRootMotion(rootMotionVec))
                 return false;
 
-            //* Down 상태면 RootMotion은 항상 적용함
-            if (__brain.BB.IsDown)
+            if (__brain.BB.IsDown || __brain.BB.IsStunned)
                 return true;
 
             if (__brain.BB.TargetBrain != null && __brain.SensorCtrler.TouchingColliders.Contains(__brain.BB.TargetBrain.coreColliderHelper.pawnCollider))
@@ -91,18 +90,14 @@ namespace Game
                 SoundManager.Instance.Play(SoundID.HIT_BLOCK);
                 EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);
             }
-            // Guard Break
             else if (damageContext.actionResult == ActionResults.GuardBreak) 
             {
                 __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 2);
                 __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
-
-                // Guard break debuf
-                __brain.PawnBuff.AddStatus(PawnStatus.Guardbreak, duration: 1.0f);
+                __brain.PawnStatusCtrler.AddStatus(PawnStatus.Guardbreak, duration: 1.0f);
 
                 SoundManager.Instance.Play(SoundID.GUARD_BREAK);
-                EffectManager.Instance.Show("SwordHitRed", 
-                    __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);
+                EffectManager.Instance.Show("SwordHitRed", __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);
             }
 
             var knockBackDisposable = Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.2f)))
@@ -133,52 +128,53 @@ namespace Game
         {
             Debug.Assert(damageContext.receiverBrain == __brain);
 
+            if (damageContext.actionResult == ActionResults.Damaged)
+            {
+                SoundManager.Instance.Play(SoundID.HIT_FLESH);
+                EffectManager.Instance.Show("@Hit 23 cube", damageContext.hitPoint, Quaternion.identity, Vector3.one, 1);
+                EffectManager.Instance.Show("@BloodFX_impact_col", damageContext.hitPoint, Quaternion.identity, 1.5f * Vector3.one, 3);
+            }
+
             __brain.AnimCtrler.mainAnimator.SetBool("IsDown", true);
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnDown");
 
             //? 임시: knockBackDistance를 rootMotionMultiplier값에 대입하여 이동거리를 늘려줌
             __brain.Movement.rootMotionMultiplier = damageContext.senderActionData.knockBackDistance;
 
-            //* 일어나기 연출을 위해 2초 전에 'IsDown'값을 false로 우선 변경함
-            Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverPenalty.Item2 - 2f)).Subscribe(_ =>
-            {
-                __brain.AnimCtrler.mainAnimator.SetBool("IsDown", false);
-            }).AddTo(this);
-
+            //* KnockDown 애님의 RootMotion 재생을 위해서 'penaltyDuration' 동안 Action을 유지시켜준다.
             return Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverPenalty.Item2))
                 .DoOnCancel(() =>
                 {
-                    __brain.BB.common.isDown.Value = false;
-                    __brain.AnimCtrler.mainAnimator.SetBool("IsDown", false);
                     if (CurrActionName == "!OnKnockDown")
                         FinishAction();
                 })
                 .DoOnCompleted(() =>
                 {
-                    __brain.BB.common.isDown.Value = false;
-                    __brain.AnimCtrler.mainAnimator.SetBool("IsDown", false);
                     if (CurrActionName == "!OnKnockDown")
                         FinishAction();
                 })
                 .Subscribe().AddTo(this);
         }
-        
+
         public override IDisposable StartOnGroogyAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
         {
-            Debug.Assert(damageContext.receiverBrain == __brain);
+            __brain.AnimCtrler.mainAnimator.SetBool("IsGroggy", true);
+            __brain.AnimCtrler.mainAnimator.SetTrigger("OnGroggy");
 
-            __brain.AnimCtrler.mainAnimator.SetBool("IsStunned", true);
-            __brain.AnimCtrler.mainAnimator.SetTrigger("OnStunned");
-
-            Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverPenalty.Item2)).Subscribe(_ =>
-            {
-                __brain.BB.common.isStunned.Value = false;
-                __brain.AnimCtrler.mainAnimator.SetBool("IsStunned", false);
-                if (CurrActionName == "!OnGroggy")
-                    FinishAction();
-            }).AddTo(this);
-
-            return Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverPenalty.Item2)).Subscribe().AddTo(this);
+            //* Groogy 애님의 RootMotion 재생을 위해서 'penaltyDuration' 동안 Action을 유지시켜준다.
+            var penaltyDuration = damageContext.senderBrain == __brain ? damageContext.senderPenalty.Item2 : damageContext.receiverPenalty.Item2;
+            return Observable.Timer(TimeSpan.FromSeconds(penaltyDuration))
+                .DoOnCancel(() =>
+                {
+                    if (CurrActionName == "!OnGroggy")
+                        FinishAction();
+                })
+                .DoOnCompleted(() =>
+                {
+                    if (CurrActionName == "!OnGroggy")
+                        FinishAction();
+                })
+                .Subscribe().AddTo(this);
         }
 
         public override IDisposable StartOnParriedAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
@@ -230,6 +226,23 @@ namespace Game
             __brain.BB.decision.isGuarding.Subscribe(v =>
             {
                 __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", v);
+            }).AddTo(this);
+
+            __brain.BB.common.isDown.Where(v => !v).Subscribe(_ =>
+            {
+                //* 일어나는 모션동안은 무적
+                __brain.PawnStatusCtrler.AddStatus(PawnStatus.Invincible, 1f, 1f);
+                __brain.AnimCtrler.mainAnimator.SetBool("IsDown", false);
+            }).AddTo(this);
+
+            __brain.BB.common.isStunned.Where(v => !v).Subscribe(_ =>
+            {
+                if (!__brain.PawnStatusCtrler.CheckStatus(PawnStatus.KnockDown))
+                {
+                    //* 일어나는 모션동안은 무적
+                    __brain.PawnStatusCtrler.AddStatus(PawnStatus.Invincible, 1f, 1f);
+                    __brain.AnimCtrler.mainAnimator.SetBool("IsGroggy", false);
+                }
             }).AddTo(this);
         }
     }

@@ -215,6 +215,7 @@ namespace Game
                 if (damageContext.senderBrain.PawnBB.stat.stance.Value >= damageContext.senderBrain.PawnBB.stat.maxStance.Value)
                 {
                     damageContext.senderBrain.PawnBB.stat.stance.Value = 0;
+                    damageContext.senderBrain.PawnBB.stat.knockDown.Value = 0;
                     damageContext.senderPenalty = new(PawnStatus.Groggy, damageContext.senderBrain.PawnBB.pawnData.groggyDuration);
                 }
                 else
@@ -234,6 +235,7 @@ namespace Game
                 if (damageContext.senderBrain.PawnBB.stat.stance.Value >= damageContext.senderBrain.PawnBB.stat.maxStance.Value)
                 {
                     damageContext.senderBrain.PawnBB.stat.stance.Value = 0;
+                    damageContext.senderBrain.PawnBB.stat.knockDown.Value = 0;
                     damageContext.senderPenalty = new(PawnStatus.Groggy, damageContext.senderBrain.PawnBB.pawnData.groggyDuration);
                 }
                 else
@@ -289,12 +291,22 @@ namespace Game
                         if (damageContext.receiverBrain.PawnBB.stat.stance.Value >= damageContext.receiverBrain.PawnBB.stat.maxStance.Value)
                         {
                             damageContext.receiverBrain.PawnBB.stat.stance.Value = 0;
+                            damageContext.receiverBrain.PawnBB.stat.knockDown.Value = 0;
                             damageContext.receiverPenalty = new(PawnStatus.Groggy, damageContext.receiverBrain.PawnBB.pawnData.groggyDuration);
                         }
                     }
-                    if (damageContext.senderActionData.knockDown >= damageContext.receiverBrain.PawnBB.stat.poise && !damageContext.receiverBrain.PawnBB.IsDown) //* KnockDown 처리
+                    if (damageContext.receiverBrain.PawnBB.IsStunned || (damageContext.senderActionData.knockDown >= damageContext.receiverBrain.PawnBB.stat.poise && !damageContext.receiverBrain.PawnBB.IsDown)) //* KnockDown 처리
                     {
-                        damageContext.receiverBrain.PawnBB.stat.knockDown.Value += damageContext.senderActionData.knockDownAccum;
+                        if (damageContext.receiverBrain.PawnBB.IsStunned)
+                        {
+                            //* Groggy 상태에서 3타가 들어가면 KnockDown이 발생하도록 하드코딩
+                            damageContext.receiverBrain.PawnBB.stat.knockDown.Value += damageContext.receiverBrain.PawnBB.stat.maxKnockDown.Value * 0.4f;
+                            Debug.Assert(damageContext.receiverPenalty.Item1 == PawnStatus.None);
+                        }
+                        else
+                        {
+                            damageContext.receiverBrain.PawnBB.stat.knockDown.Value += damageContext.senderActionData.knockDownAccum;
+                        }
 
                         __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged", "stat.knockDown", damageContext.receiverBrain.PawnBB.stat.knockDown.Value, "stat.maxKnockDown", damageContext.receiverBrain.PawnBB.stat.maxKnockDown.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
 
@@ -330,7 +342,11 @@ namespace Game
                 if (damageContext.receiverPenalty.Item1 != PawnStatus.None)
                 {
                     __Logger.LogF(gameObject, nameof(ProcessDamageContext), "receiverPenalty is added.", "BuffTypes", damageContext.receiverPenalty.Item1, "duration", damageContext.receiverPenalty.Item2, "receiverBrain", damageContext.receiverBrain);
-                    damageContext.receiverBrain.PawnBuff.AddStatus(damageContext.receiverPenalty.Item1, 1f, damageContext.receiverPenalty.Item2);
+                    damageContext.receiverBrain.PawnStatusCtrler.AddStatus(damageContext.receiverPenalty.Item1, 1f, damageContext.receiverPenalty.Item2);
+
+                    //* Groggy 상태에서 KnockDown이 발생하면 Groggy는 종료시킴
+                    if (damageContext.receiverPenalty.Item1 == PawnStatus.KnockDown && damageContext.receiverBrain.PawnStatusCtrler.CheckStatus(PawnStatus.Groggy))
+                        damageContext.receiverBrain.PawnStatusCtrler.RemoveStatus(PawnStatus.Groggy);
                 }
                 damageContext.receiverBrain.PawnHP.onDamaged?.Invoke(damageContext);
             }
@@ -340,7 +356,7 @@ namespace Game
                 if (damageContext.senderPenalty.Item1 != PawnStatus.None)
                 {
                     __Logger.LogF(gameObject, nameof(ProcessDamageContext), "senderPenalty is added.", "BuffTypes", damageContext.senderPenalty.Item1, "duration", damageContext.senderPenalty.Item2, "senderBrain", damageContext.senderBrain);
-                    damageContext.senderBrain.PawnBuff.AddStatus(damageContext.senderPenalty.Item1, 1f, damageContext.senderPenalty.Item2);
+                    damageContext.senderBrain.PawnStatusCtrler.AddStatus(damageContext.senderPenalty.Item1, 1f, damageContext.senderPenalty.Item2);
                 }
                 damageContext.senderBrain.PawnHP.onDamaged?.Invoke(damageContext);
             }

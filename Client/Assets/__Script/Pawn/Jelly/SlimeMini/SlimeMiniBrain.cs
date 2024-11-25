@@ -201,16 +201,16 @@ namespace Game
             if (damageContext.receiverBrain.PawnBB.IsDead)
                 return;
 
-            if (damageContext.receiverPenalty.Item1 != PawnStatus.None)
+            if (damageContext.receiverPenalty.Item1 != Game.PawnStatus.None)
             {
                 if (ActionCtrler.CheckActionRunning())
                     ActionCtrler.CancelAction(false);
 
                 switch (damageContext.receiverPenalty.Item1)
                 {
-                    case PawnStatus.Groggy: ActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty); break;
-                    case PawnStatus.Staggered: ActionCtrler.StartAction(damageContext, "!OnHit", string.Empty); break;
-                    case PawnStatus.KnockDown: ActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty); break;
+                    case Game.PawnStatus.Groggy: ActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty); break;
+                    case Game.PawnStatus.Staggered: ActionCtrler.StartAction(damageContext, "!OnHit", string.Empty); break;
+                    case Game.PawnStatus.KnockDown: ActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty); break;
                 }
             }
             else if (damageContext.finalDamage > 0)
@@ -259,7 +259,7 @@ namespace Game
                         BB.currDecision.Value = Decisions.Approach;
                     
                     //* 공격 시작
-                    if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && !BB.IsJumping && !ActionCtrler.CheckActionRunning() && !BuffCtrler.CheckStatus(PawnStatus.Staggered) && CheckTargetVisibility())
+                    if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && !BB.IsJumping && !ActionCtrler.CheckActionRunning() && !BuffCtrler.CheckStatus(Game.PawnStatus.Staggered) && CheckTargetVisibility())
                     {
                         var selection = ActionDataSelector.RandomSelection(BB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position), BB.stat.stamina.Value, true);
                         if (selection != null)

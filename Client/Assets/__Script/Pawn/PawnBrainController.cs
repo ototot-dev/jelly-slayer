@@ -46,16 +46,16 @@ namespace Game
         {
             FSM = GetComponent<FSMOwner>();
             PawnBB = GetComponent<PawnBlackboard>();
-            PawnBuff = GetComponent<PawnStatusController>();
             PawnHP = GetComponent<PawnHeartPointDispatcher>();
+            PawnStatusCtrler = GetComponent<PawnStatusController>();
             PawnSensorCtrler = GetComponent<PawnSensorController>();
             PawnSoundSourceGen = GetComponent<PawnSoundSourceGenerator>();
         }
 
         public FSMOwner FSM { get; private set; }
         public PawnBlackboard PawnBB { get; private set; }
-        public PawnStatusController PawnBuff { get; private set;}
         public PawnHeartPointDispatcher PawnHP { get; private set; }
+        public PawnStatusController PawnStatusCtrler { get; private set;}
         public PawnSensorController PawnSensorCtrler { get; private set;}
         public PawnSoundSourceGenerator PawnSoundSourceGen { get; private set; }
 
@@ -111,33 +111,33 @@ namespace Game
                 }).AddTo(this);
             }).AddTo(this);
 
-            if (PawnBuff != null)
+            if (PawnStatusCtrler != null)
             {
-                PawnBuff.onStatusActive += (buff) =>
+                PawnStatusCtrler.onStatusActive += (buff) =>
                 {
                     switch (buff) {
-                        case PawnStatus.KnockDown: 
+                        case Game.PawnStatus.KnockDown:
                             PawnBB.common.isDown.Value = true; break;
-                        case PawnStatus.Groggy: 
+                        case Game.PawnStatus.Groggy:
                             PawnBB.common.isStunned.Value = true; break;
-                        case PawnStatus.Bind: 
+                        case Game.PawnStatus.Bind:
                             PawnBB.common.isBind.Value = true; break;
-                        case PawnStatus.Guardbreak: 
+                        case Game.PawnStatus.Guardbreak:
                             PawnBB.common.isGuardbreak.Value = true; break;
                     }
                 };
 
-                PawnBuff.onStatusDeactive += (buff) =>
+                PawnStatusCtrler.onStatusDeactive += (buff) =>
                 {
                     switch (buff)
                     {
-                        case PawnStatus.KnockDown:
-                            PawnBB.common.isDown.Value = false; break;
-                        case PawnStatus.Groggy:
+                        case Game.PawnStatus.KnockDown:
+                             PawnBB.common.isDown.Value = false; break;
+                        case Game.PawnStatus.Groggy:
                             PawnBB.common.isStunned.Value = false; break;
-                        case PawnStatus.Bind:
+                        case Game.PawnStatus.Bind:
                             PawnBB.common.isBind.Value = false; break;
-                        case PawnStatus.Guardbreak:
+                        case Game.PawnStatus.Guardbreak:
                             PawnBB.common.isGuardbreak.Value = false; break;
                     }
                 };

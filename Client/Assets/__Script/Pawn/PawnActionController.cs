@@ -158,28 +158,28 @@ namespace Game
 
         bool IStatusContainer.AddBuff(PawnStatus buff, float strength, float duration)
         {
-            Debug.Assert(__pawnBrain.PawnBuff != null && CheckActionRunning());
+            Debug.Assert(__pawnBrain.PawnStatusCtrler != null && CheckActionRunning());
 
-            __pawnBrain.PawnBuff.AddExternStatus(this, buff, strength, duration);
+            __pawnBrain.PawnStatusCtrler.AddExternStatus(this, buff, strength, duration);
             return true;
         }
 
         void IStatusContainer.RemoveBuff(PawnStatus buff)
         {
-            Debug.Assert(__pawnBrain.PawnBuff != null && CheckActionRunning());
-            __pawnBrain.PawnBuff.RemoveExternStatus(this, buff);
+            Debug.Assert(__pawnBrain.PawnStatusCtrler != null && CheckActionRunning());
+            __pawnBrain.PawnStatusCtrler.RemoveExternStatus(this, buff);
         }
 
         bool IStatusContainer.CheckBuff(PawnStatus buff)
         {
-            Debug.Assert(__pawnBrain.PawnBuff != null && CheckActionRunning());
-            return __pawnBrain.PawnBuff.CheckStatus(buff);
+            Debug.Assert(__pawnBrain.PawnStatusCtrler != null && CheckActionRunning());
+            return __pawnBrain.PawnStatusCtrler.CheckStatus(buff);
         }
 
         float IStatusContainer.GetBuffStrength(PawnStatus buff)
         {
-            Debug.Assert(__pawnBrain.PawnBuff != null && CheckActionRunning());
-            return __pawnBrain.PawnBuff.GetStrength(buff);
+            Debug.Assert(__pawnBrain.PawnStatusCtrler != null && CheckActionRunning());
+            return __pawnBrain.PawnStatusCtrler.GetStrength(buff);
         }
 
 #if UNITY_EDITOR
@@ -240,7 +240,7 @@ namespace Game
 
         protected virtual void StartInternal() 
         {
-            __pawnBrain.PawnBuff.RegisterExternContainer(this);
+            __pawnBrain.PawnStatusCtrler.RegisterExternContainer(this);
             __pawnBrain.onUpdate += () =>
             {
                 if (CheckActionRunning() && currActionContext.manualAdvanceEnabled && __pawnAnimCtrler != null && __pawnAnimCtrler.mainAnimator != null)
@@ -411,6 +411,10 @@ namespace Game
                     case "!OnBlocked": currActionContext.actionDisposable = StartOnBlockedAction(ref damageContext); break;
                     case "!OnParried": currActionContext.actionDisposable = StartOnParriedAction(ref damageContext); break;
                 }
+
+                //* 수행할 액션이 없다면 다음 프레임에 종료시켜준다.
+                if (currActionContext.actionDisposable == null)
+                    Observable.NextFrame().Subscribe(_ => FinishAction()).AddTo(this);
             }
             else
             {
@@ -538,7 +542,7 @@ namespace Game
             if (__traceCollider != null)
                 FinishTraceActionTargets();
             if (__pawnMovement != null)
-                __pawnMovement.rootMotionMultiplier = 1;
+                __pawnMovement.rootMotionMultiplier = 1f;
             if (__pawnAnimCtrler != null && __pawnAnimCtrler.mainAnimator != null)
             {
                 __pawnAnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1);
