@@ -410,44 +410,17 @@ namespace Game
 
                     if (canAction3)
                     {
-                        if (MyHeroBrain.ActionCtrler.CheckActionRunning())
-                        {
-                            switch (MyHeroBrain.ActionCtrler.CurrActionName)
-                            {
-                                case "HeavySlash#1":
-                                    MyHeroBrain.ActionCtrler.CancelAction(false);
-                                    MyHeroBrain.ActionCtrler.SetPendingAction("HeavySlash#2"); 
-                                    break;
-                                case "HeavySlash#2":
-                                    MyHeroBrain.ActionCtrler.CancelAction(false);
-                                    MyHeroBrain.ActionCtrler.SetPendingAction("HeavySlash#3"); 
-                                    break;
-                            }
+                        Debug.Log("<color=cyan>Attack Guardbreak Enemy</color>");
+                        MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
+                        MyHeroBrain.ActionCtrler.SetPendingAction("SpecialSlash#1");
 
-                            //* 타겟이 없을 경우에도 조준 보정을 해줌
-                            if (MyHeroBrain.BB.TargetBrain == null && MyHeroBrain.SensorCtrler.ListeningColliders.Count > 0)
-                            {
-                                var attackPoint = MyHeroBrain.SensorCtrler.ListeningColliders.Select(c => c.transform.position)
-                                    .OrderBy(p => Vector3.Angle(MyHeroBrain.coreColliderHelper.transform.forward.Vector2D(), (p - MyHeroBrain.coreColliderHelper.transform.position).Vector2D()))
-                                    .FirstOrDefault();
-
-                                MyHeroBrain.Movement.FaceAt(attackPoint);
-                            }
-                        }
-                        else
-                        {
-                            MyHeroBrain.ActionCtrler.SetPendingAction("HeavySlash#1");
-
-                            //* 타겟이 없을 경우에도 조준 보정을 해줌
-                            if (MyHeroBrain.BB.TargetBrain == null && MyHeroBrain.SensorCtrler.ListeningColliders.Count > 0)
-                            {
-                                var attackPoint = MyHeroBrain.SensorCtrler.ListeningColliders.Select(c => c.transform.position)
-                                    .OrderBy(p => Vector3.Angle(MyHeroBrain.coreColliderHelper.transform.forward.Vector2D(), (p - MyHeroBrain.coreColliderHelper.transform.position).Vector2D()))
-                                    .FirstOrDefault();
-
-                                MyHeroBrain.Movement.FaceAt(attackPoint);
-                            }
-                        }
+                        var vDist = target.pawnBrain.CoreTransform.position - MyHeroBrain.Movement.capsule.position;
+                        MyHeroBrain.Movement.faceVec = vDist.Vector2D().normalized;
+                    }
+                    else
+                    { 
+                        //MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON); 
+                        //MyHeroBrain.ActionCtrler.SetPendingAction("SpecialSlash#1");
                     }
                 }
             }
