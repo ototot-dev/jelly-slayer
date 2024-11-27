@@ -282,7 +282,7 @@ namespace Game
 
                 if (damageContext.receiverBrain.PawnHP.heartPoint.Value > 0)
                 {
-                    if (damageContext.senderActionData.groggy >= damageContext.receiverBrain.PawnBB.stat.poise && !damageContext.receiverBrain.PawnBB.IsStunned) //* Groggy 처리
+                    if (damageContext.senderActionData.groggy >= damageContext.receiverBrain.PawnBB.stat.poise && !damageContext.receiverBrain.PawnBB.IsGroggy) //* Groggy 처리
                     {
                         damageContext.receiverBrain.PawnBB.stat.stance.Value += damageContext.senderActionData.groggyAccum;
 
@@ -295,9 +295,9 @@ namespace Game
                             damageContext.receiverPenalty = new(PawnStatus.Groggy, damageContext.receiverBrain.PawnBB.pawnData.groggyDuration);
                         }
                     }
-                    if (damageContext.receiverBrain.PawnBB.IsStunned || (damageContext.senderActionData.knockDown >= damageContext.receiverBrain.PawnBB.stat.poise && !damageContext.receiverBrain.PawnBB.IsDown)) //* KnockDown 처리
+                    if (damageContext.receiverBrain.PawnBB.IsGroggy || (damageContext.senderActionData.knockDown >= damageContext.receiverBrain.PawnBB.stat.poise && !damageContext.receiverBrain.PawnBB.IsDown)) //* KnockDown 처리
                     {
-                        if (damageContext.receiverBrain.PawnBB.IsStunned)
+                        if (damageContext.receiverBrain.PawnBB.IsGroggy)
                         {
                             //* Groggy 상태에서 3타가 들어가면 KnockDown이 발생하도록 하드코딩
                             damageContext.receiverBrain.PawnBB.stat.knockDown.Value += damageContext.receiverBrain.PawnBB.stat.maxKnockDown.Value * 0.4f;

@@ -22,7 +22,7 @@ namespace Game
             if (!base.CanRootMotion(rootMotionVec))
                 return false;
 
-            if (__brain.BB.IsDown || __brain.BB.IsStunned)
+            if (__brain.BB.IsDown || __brain.BB.IsGroggy)
                 return true;
 
             if (__brain.BB.TargetBrain != null && __brain.SensorCtrler.TouchingColliders.Contains(__brain.BB.TargetBrain.coreColliderHelper.pawnCollider))
@@ -39,11 +39,11 @@ namespace Game
         
         public override bool CanBlockAction(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
-            if (__brain.BB.IsStunned)
+            if (__brain.BB.IsGroggy)
                 return false;
-            if (!__brain.ActionCtrler.CheckActionRunning() == false)
+            else if (__brain.ActionCtrler.CheckActionRunning())
                 return false;
-            if (__brain.SensorCtrler.WatchingColliders.Contains(damageContext.senderBrain.coreColliderHelper.pawnCollider) == false)
+            else if (__brain.SensorCtrler.WatchingColliders.Contains(damageContext.senderBrain.coreColliderHelper.pawnCollider) == false)
                 return false;
 
             return true;
@@ -53,10 +53,10 @@ namespace Game
         {
             Debug.Assert(damageContext.receiverBrain == __brain);
 
-            var knockBackVec = damageContext.senderActionData.knockBackDistance / 0.2f * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+            var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
 
             if (damageContext.actionResult == ActionResults.Damaged)
-            {
+            {                
                 var hitVec = damageContext.receiverBrain.coreColliderHelper.transform.position - damageContext.senderBrain.CoreTransform.position;
                 hitVec = damageContext.receiverBrain.CoreTransform.InverseTransformDirection(hitVec).Vector2D().normalized;
 
@@ -100,9 +100,12 @@ namespace Game
                 EffectManager.Instance.Show("SwordHitRed", __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);
             }
 
-            var knockBackDisposable = Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.2f)))
+            var knockBackDisposable = Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
+                .DoOnCancel(() => __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0))
+                .DoOnCompleted(() => __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0))
                 .Subscribe(_ => __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity))
                 .AddTo(this);
+
 
             if (isAddictiveAction)
             {
@@ -233,15 +236,17 @@ namespace Game
                 //* 일어나는 모션동안은 무적
                 __brain.PawnStatusCtrler.AddStatus(PawnStatus.Invincible, 1f, 1f);
                 __brain.AnimCtrler.mainAnimator.SetBool("IsDown", false);
+                __brain.InvalidateDecision(1f);
             }).AddTo(this);
 
-            __brain.BB.common.isStunned.Where(v => !v).Subscribe(_ =>
+            __brain.BB.common.isGroggy.Where(v => !v).Subscribe(v =>
             {
                 if (!__brain.PawnStatusCtrler.CheckStatus(PawnStatus.KnockDown))
                 {
                     //* 일어나는 모션동안은 무적
                     __brain.PawnStatusCtrler.AddStatus(PawnStatus.Invincible, 1f, 1f);
                     __brain.AnimCtrler.mainAnimator.SetBool("IsGroggy", false);
+                    __brain.InvalidateDecision(1f);
                 }
             }).AddTo(this);
         }

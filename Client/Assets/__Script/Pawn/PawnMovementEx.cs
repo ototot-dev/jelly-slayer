@@ -24,7 +24,7 @@ namespace Game
         {
             if (!freezeMovement)
             {
-                var canMove1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsStunned && !__pawnBrain.PawnBB.IsDown && !__pawnBrain.PawnBB.IsBind;
+                var canMove1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsGroggy && !__pawnBrain.PawnBB.IsDown && !__pawnBrain.PawnBB.IsBind;
                 var canMove2 = canMove1 && !CheckReachToDestination() && (__actionCtrler == null || !__actionCtrler.CheckActionRunning());
                 var canMove3 = canMove2 && (__buffCtrler == null || !__buffCtrler.CheckStatus(PawnStatus.Staggered));
 
@@ -42,7 +42,7 @@ namespace Game
             var isHomingRunning = __actionCtrler != null && __actionCtrler.currActionContext.homingRotationDisposable != null;
             if (!isHomingRunning && !freezeRotation)
             {
-                var canRotate1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsStunned && !__pawnBrain.PawnBB.IsDown && !__pawnBrain.PawnBB.IsBind;
+                var canRotate1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsGroggy && !__pawnBrain.PawnBB.IsDown && !__pawnBrain.PawnBB.IsBind;
                 var canRotate2 = canRotate1 && (__actionCtrler == null || !__actionCtrler.CheckActionRunning());
                 
                 if (IsMovingToDestination)

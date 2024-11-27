@@ -148,7 +148,7 @@ namespace Game
             {
                 if (!freezeMovement)
                 {
-                    var canMove1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsStunned && !__pawnBrain.PawnBB.IsDown;
+                    var canMove1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsGroggy && !__pawnBrain.PawnBB.IsDown;
                     var canMove2 = canMove1 && !__actionCtrler.CheckActionRunning() && !__buffCtrler.CheckStatus(PawnStatus.Staggered);
                     moveVec = canMove2 ? moveVec : Vector3.zero;
                 }
@@ -175,7 +175,7 @@ namespace Game
             if (!__ecmMovement.enabled)
                 return;
 
-            var canRotate1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsStunned && !__pawnBrain.PawnBB.IsDown;
+            var canRotate1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsGroggy && !__pawnBrain.PawnBB.IsDown;
             var canRotate2 = canRotate1 && !__brain.BB.IsRolling && !__brain.BB.IsJumping;
             var canRotate3 = canRotate2 && !__actionCtrler.CheckActionRunning() && !__buffCtrler.CheckStatus(PawnStatus.Staggered);
 

@@ -76,7 +76,7 @@ namespace Game
                     legAnimator.User_SetIsMoving(false);
                     legAnimator.User_SetIsGrounded(false);
                 }
-                else if (__brain.BB.IsStunned)
+                else if (__brain.BB.IsGroggy)
                 {
                     if (__brain.ActionCtrler.CurrActionName != "!OnHit")
                         mainAnimator.SetLayerWeight(1, 0f);

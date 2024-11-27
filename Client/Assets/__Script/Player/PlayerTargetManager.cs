@@ -30,7 +30,7 @@ namespace Game
             var newTarget = heroBrain.SensorCtrler.ListeningColliders
                 .Select(l => l.GetComponent<PawnColliderHelper>())
                 .Where(p => p != null && p.pawnBrain != null &&
-                    p.pawnBrain.PawnBB.IsStunned == true)
+                    p.pawnBrain.PawnBB.IsGroggy == true)
                 .OrderBy(p => (p.transform.position - heroBrain.CoreTransform.position).sqrMagnitude).FirstOrDefault();
 
             return newTarget;

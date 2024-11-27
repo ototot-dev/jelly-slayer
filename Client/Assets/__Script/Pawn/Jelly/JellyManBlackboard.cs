@@ -56,9 +56,10 @@ namespace Game
         {
             base.AwakeInternal();
 
-            var pawnData = MainTable.PawnData_Movement.PawnData_MovementList.First(d => d.pawnId == common.pawnId);
-            body.moveSpeed = pawnData.moveSpeed;
-            body.walkSpeed = pawnData.walkSpeed;
+            pawnData_Movement = MainTable.PawnData_Movement.PawnData_MovementList.First(d => d.pawnId == common.pawnId);
+            
+            body.moveSpeed = pawnData_Movement.moveSpeed;
+            body.walkSpeed = pawnData_Movement.walkSpeed;
             
             var movement = GetComponent<PawnMovementEx>();
             movement.moveSpeed = body.moveSpeed;
@@ -66,5 +67,7 @@ namespace Game
             movement.moveBrake = body.moveBrake;
             movement.rotateSpeed = body.rotateSpeed;
         }
+        
+        public MainTable.PawnData_Movement pawnData_Movement;
     }
 }

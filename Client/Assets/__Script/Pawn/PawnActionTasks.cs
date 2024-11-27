@@ -342,6 +342,8 @@ namespace Game.NodeCanvasExtension
         PawnActionController __pawnActionCtrler;
         IMovable __pawnMovable;
         IDisposable __rootMotionDisposable;
+        int __capturedActionInstanceId;
+        float __manualAdvanceSpeedCached;
         
         protected override void OnExecute()
         {
@@ -352,6 +354,14 @@ namespace Game.NodeCanvasExtension
             Debug.Assert(__pawnBrain != null && __pawnMovable as IMovable != null);
             Debug.Assert(__pawnActionCtrler != null);
 
+            __capturedActionInstanceId =  __pawnActionCtrler.currActionContext.actionInstanceId;
+            if (endActionWhenReachToTarget)
+            {
+                __pawnActionCtrler.WaitAction();
+                __manualAdvanceSpeedCached = __pawnActionCtrler.currActionContext.manualAdvanceSpeed;
+                __pawnActionCtrler.currActionContext.manualAdvanceSpeed = 0;
+            }
+
             var executeTimeStamp = Time.time;
 
             __pawnActionCtrler.currActionContext.impulseRootMotionDisposable?.Dispose();
@@ -361,27 +371,43 @@ namespace Game.NodeCanvasExtension
                 {
                     __rootMotionDisposable = __pawnActionCtrler.currActionContext.impulseRootMotionDisposable = null;
                     if (endActionWhenReachToTarget)
+                    {
+                        __pawnActionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
                         EndAction(true);
+                    }
                 })
                 .DoOnCompleted(() =>
                 {
                     __rootMotionDisposable = __pawnActionCtrler.currActionContext.impulseRootMotionDisposable = null;
                     if (endActionWhenReachToTarget)
+                    {
+                        __pawnActionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
                         EndAction(true);
+                    }
                 })
                 .Subscribe(_ =>
                 {
-                    //* Target과 최소 접근 거리에 도달헀으면 RootMotion 적용 안함
-                    if (!targetColliderHelper.isNoneOrNull && targetColliderHelper.value.GetApproachDistance(__pawnBrain.coreColliderHelper.transform.position) <= __pawnMovable.GetDefaultMinApproachDistance())
+                    __pawnActionCtrler.currActionContext.manualAdvanceSpeed = 0;
+
+                    if (__pawnActionCtrler.currActionContext.actionData == null || __capturedActionInstanceId != __pawnActionCtrler.currActionContext.actionInstanceId)
                     {
-                        if (endActionWhenReachToTarget)
+                        Debug.Assert(__rootMotionDisposable != null && __rootMotionDisposable == __pawnActionCtrler.currActionContext.impulseRootMotionDisposable);
+                        __rootMotionDisposable.Dispose();
+                        __rootMotionDisposable = __pawnActionCtrler.currActionContext.impulseRootMotionDisposable = null;
+
+                        return;
+                    }
+                    else if (endActionWhenReachToTarget)
+                    {
+                        //* Target과 최소 접근 거리에 도달헀으면 RootMotion 적용 안함
+                        if (!targetColliderHelper.isNoneOrNull && targetColliderHelper.value.GetDistanceBetween(__pawnBrain.coreColliderHelper) <= 0.2f)
                         {
                             Debug.Assert(__rootMotionDisposable != null && __rootMotionDisposable == __pawnActionCtrler.currActionContext.impulseRootMotionDisposable);
                             __rootMotionDisposable.Dispose();
                             __rootMotionDisposable = __pawnActionCtrler.currActionContext.impulseRootMotionDisposable = null;
-                        }
 
-                        return;
+                            return;
+                        }
                     }
 
                     var impulse = impulseStrength.value;
@@ -396,7 +422,8 @@ namespace Game.NodeCanvasExtension
                         __pawnMovable.AddRootMotion(rootMotionVec, Quaternion.identity);
                 }).AddTo(agent);
 
-            EndAction(true);
+            if (!endActionWhenReachToTarget)
+                EndAction(true);
         }
     }
 
@@ -634,13 +661,12 @@ namespace Game.NodeCanvasExtension
 
     public class DelayAction : ActionTask
     {
-        protected override string info => endActionWhenImpluseRootMotionDisposed ? $"Delay {delayTime} secs" : $"Delay {delayTime} secs";
+        protected override string info => $"Delay {delayTime} secs";
         public BBParameter<float> delayTime = 1f;
         public BBParameter<float> randomRangeMin = -0.1f;
         public BBParameter<float> randomRangeMax = 0.1f;
         public BBParameter<float> animAdvanceSinusoidalAmplitude = 0.1f;
         public BBParameter<float> animAdvanceSinusoidalFrequence = 1;
-        public bool endActionWhenImpluseRootMotionDisposed;
         PawnActionController __pawnActionCtrler;
         int __capturedActionInstanceId;
         float __waitDuration;
@@ -651,10 +677,6 @@ namespace Game.NodeCanvasExtension
         protected override void OnExecute()
         {
             __pawnActionCtrler = agent.GetComponent<PawnActionController>();
-
-            if (endActionWhenImpluseRootMotionDisposed)
-                Debug.Assert(__pawnActionCtrler.currActionContext.impulseRootMotionDisposable != null);
-
             __pawnActionCtrler.WaitAction();
             __capturedActionInstanceId =  __pawnActionCtrler.currActionContext.actionInstanceId;
             __waitDuration = delayTime.value + (randomRangeMax.value > randomRangeMin.value ? UnityEngine.Random.Range(randomRangeMin.value, randomRangeMax.value) : 0);
@@ -674,10 +696,6 @@ namespace Game.NodeCanvasExtension
             }
             else if (!__pawnActionCtrler.CheckWaitAction(__waitDuration))
             {   
-                EndAction(true);
-            }
-            else if (endActionWhenImpluseRootMotionDisposed && __pawnActionCtrler.currActionContext.impulseRootMotionDisposable == null)
-            {
                 EndAction(true);
             }
             else if (animAdvanceSinusoidalAmplitude.value > 0)

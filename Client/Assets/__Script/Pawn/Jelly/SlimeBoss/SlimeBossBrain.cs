@@ -105,7 +105,7 @@ namespace Game
         {
             base.StartInternal();
 
-            BB.common.isStunned.Skip(1).Subscribe(v =>
+            BB.common.isGroggy.Skip(1).Subscribe(v =>
             {
                 if (v)
                     EffectManager.Instance.ShowLooping("StunnedStars", fxAttachPoint.position, fxAttachPoint.rotation, Vector3.one).transform.SetParent(fxAttachPoint, true);
@@ -230,7 +230,7 @@ namespace Game
                     if (BB.CurrDecision != Decisions.Approach && __decisionCoolTime <= 0f)
                         BB.currDecision.Value = Decisions.Approach;
 
-                    var canAction1 = !BB.IsStunned && !BB.IsDown && !BB.IsJumping && !BB.IsBumping && !BB.IsSmashing;
+                    var canAction1 = !BB.IsGroggy && !BB.IsDown && !BB.IsJumping && !BB.IsBumping && !BB.IsSmashing;
                     var canAction2 = canAction1 && string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && !ActionCtrler.CheckActionRunning();
                     var canAction3 = canAction2 && !BuffCtrler.CheckStatus(Game.PawnStatus.Staggered) && CheckTargetVisibility();
 

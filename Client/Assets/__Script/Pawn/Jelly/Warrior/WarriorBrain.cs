@@ -34,7 +34,7 @@ namespace Game
             
             onTick += (deltaTick) =>
             {
-                if (!BB.IsSpawnFinished || BB.IsDead || BB.IsStunned || BB.IsDown || !BB.IsInCombat || BB.TargetPawn == null)
+                if (!BB.IsSpawnFinished || BB.IsDead || BB.IsGroggy || BB.IsDown || !BB.IsInCombat || BB.TargetPawn == null)
                     return;
                     
                 ActionDataSelector.UpdateSelection(deltaTick);

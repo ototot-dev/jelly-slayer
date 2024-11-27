@@ -120,7 +120,7 @@ namespace Game
                     legAnimator.User_SetIsMoving(false);
                     legAnimator.User_SetIsGrounded(false);
                 }
-                else if (__brain.BB.IsStunned)
+                else if (__brain.BB.IsGroggy)
                 {
                     mainAnimator.SetLayerWeight(1, 0f);
                     legAnimator.LegsAnimatorBlend = 1f;

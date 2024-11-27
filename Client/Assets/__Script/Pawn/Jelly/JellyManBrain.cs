@@ -98,7 +98,7 @@ namespace Game
             }
         }
 
-        protected void InvalidateDecision(float decisionCoolTime = 0)
+        public void InvalidateDecision(float decisionCoolTime = 0)
         {
             __decisionCoolTime = decisionCoolTime;
             __jellyManBB.decision.currDecision.Value = Decisions.None;

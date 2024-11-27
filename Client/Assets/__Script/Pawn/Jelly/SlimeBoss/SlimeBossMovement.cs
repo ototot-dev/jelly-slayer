@@ -178,7 +178,7 @@ namespace Game
             {
                 moveSpeed = __brain.BB.jumpSpeed;
 
-                var canJump1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsStunned && !__pawnBrain.PawnBB.IsDown;
+                var canJump1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsGroggy && !__pawnBrain.PawnBB.IsDown;
                 var canJump2 = canJump1 && (__actionCtrler == null || (!__actionCtrler.CheckActionPending() && !__actionCtrler.CheckActionRunning()));
                 var canJump3 = canJump2 && (__buffCtrler == null || !__buffCtrler.CheckStatus(PawnStatus.Staggered));
 
@@ -237,7 +237,7 @@ namespace Game
         {   
             if (!freezeRotation)
             {
-                var canRotate1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsStunned && !__pawnBrain.PawnBB.IsDown;
+                var canRotate1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsGroggy && !__pawnBrain.PawnBB.IsDown;
                 var canRotate2 = canRotate1 && (__actionCtrler == null || !__actionCtrler.CheckActionRunning());
                 var canRotate3 = canRotate2 && __brain.BB.IsJumping && __impluseTimeStamp > 0f;
 

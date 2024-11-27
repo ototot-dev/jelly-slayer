@@ -135,7 +135,7 @@ namespace Game
             else
             {
                 // 이동 가능 체크 스텝
-                var canMove1 = __brain.BB.IsSpawnFinished && !__brain.BB.IsDead && !__brain.BB.IsStunned;
+                var canMove1 = __brain.BB.IsSpawnFinished && !__brain.BB.IsDead && !__brain.BB.IsGroggy;
                 var canMove2 = IsMoving && Vector3.Angle(core.forward.Vector2D(), ForwardVecCached) < 5;
                 var canMove3 = !CheckReachToTargetPoint() && !__brain.ActionCtrler.CheckActionRunning();
 
@@ -155,7 +155,7 @@ namespace Game
             
             ForwardVecCached = (targetPoint - core.position).Vector2D().normalized;
 
-            var canRotate1 = __brain.BB.IsSpawnFinished && !__brain.BB.IsDead && !__brain.BB.IsStunned && ForwardVecCached != Vector3.zero;
+            var canRotate1 = __brain.BB.IsSpawnFinished && !__brain.BB.IsDead && !__brain.BB.IsGroggy && ForwardVecCached != Vector3.zero;
             var canRotate2 =  IsMoving && (Vector3.Angle(core.forward.Vector2D(), ForwardVecCached) < 5 || __ecmMovement.forwardSpeed < 0.02f);
             var canRotate3 = !__brain.ActionCtrler.CheckActionRunning();
 

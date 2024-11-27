@@ -12,7 +12,7 @@ namespace Game
         public bool IsLifeTimeInfinite => LifeTime < 0;
         public bool IsLifeTimeOut => LifeTime == 0;
         public bool IsInvincible => common.isInvincible.Value;
-        public bool IsStunned => common.isStunned.Value;
+        public bool IsGroggy => common.isGroggy.Value;
         public bool IsDown => common.isDown.Value;
         public bool IsDead => common.isDead.Value;
         public bool IsRagdoll => common.isRagdoll.Value;
@@ -34,7 +34,7 @@ namespace Game
             public float despawnWaitingTime = 1;
             public BoolReactiveProperty isSpawnFinished = new();
             public BoolReactiveProperty isInvincible = new();
-            public BoolReactiveProperty isStunned = new();
+            public BoolReactiveProperty isGroggy = new();
             public BoolReactiveProperty isDown = new();
             public BoolReactiveProperty isDead = new();
             public BoolReactiveProperty isRagdoll = new();

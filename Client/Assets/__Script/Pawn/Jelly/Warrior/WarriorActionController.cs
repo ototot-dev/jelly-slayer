@@ -148,7 +148,7 @@ namespace Game
 
             Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverPenalty.Item2)).Subscribe(_ =>
             {
-                __brain.BB.common.isStunned.Value = false;
+                __brain.BB.common.isGroggy.Value = false;
                 __brain.AnimCtrler.mainAnimator.SetBool("IsStunned", false);
                 if (CurrActionName == "!OnGroggy")
                     FinishAction();

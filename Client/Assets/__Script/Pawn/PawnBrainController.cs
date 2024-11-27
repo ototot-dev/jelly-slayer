@@ -119,7 +119,7 @@ namespace Game
                         case Game.PawnStatus.KnockDown:
                             PawnBB.common.isDown.Value = true; break;
                         case Game.PawnStatus.Groggy:
-                            PawnBB.common.isStunned.Value = true; break;
+                            PawnBB.common.isGroggy.Value = true; break;
                         case Game.PawnStatus.Bind:
                             PawnBB.common.isBind.Value = true; break;
                         case Game.PawnStatus.Guardbreak:
@@ -134,7 +134,7 @@ namespace Game
                         case Game.PawnStatus.KnockDown:
                              PawnBB.common.isDown.Value = false; break;
                         case Game.PawnStatus.Groggy:
-                            PawnBB.common.isStunned.Value = false; break;
+                            PawnBB.common.isGroggy.Value = false; break;
                         case Game.PawnStatus.Bind:
                             PawnBB.common.isBind.Value = false; break;
                         case Game.PawnStatus.Guardbreak:

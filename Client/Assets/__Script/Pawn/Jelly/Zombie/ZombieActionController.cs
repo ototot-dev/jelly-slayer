@@ -104,7 +104,7 @@ namespace Game
             __brain.AnimCtrler.mainAnimator.SetBool("IsStunned", true);
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnStunned");
 
-            return Observable.EveryFixedUpdate().TakeWhile(_ => __brain.BB.IsStunned)
+            return Observable.EveryFixedUpdate().TakeWhile(_ => __brain.BB.IsGroggy)
                 .DoOnCancel(() =>
                 {
                     __brain.AnimCtrler.mainAnimator.SetBool("IsStunned", false);
@@ -136,7 +136,7 @@ namespace Game
                 .Subscribe(_ => __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity))
                 .AddTo(this);
                 
-            return Observable.EveryFixedUpdate().TakeWhile(_ => __brain.BB.IsStunned)
+            return Observable.EveryFixedUpdate().TakeWhile(_ => __brain.BB.IsGroggy)
                 .DoOnCancel(() =>
                 {
                     __brain.AnimCtrler.mainAnimator.SetBool("IsStunned", false);
@@ -169,7 +169,7 @@ namespace Game
                 .Subscribe(_ => __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity))
                 .AddTo(this);
                 
-            return Observable.EveryFixedUpdate().TakeWhile(_ => __brain.BB.IsStunned)
+            return Observable.EveryFixedUpdate().TakeWhile(_ => __brain.BB.IsGroggy)
                 .DoOnCancel(() =>
                 {
                     __brain.AnimCtrler.mainAnimator.SetBool("IsStunned", false);

@@ -70,7 +70,7 @@ namespace Game
         {
             if (MyHeroBrain == null)
                 return;
-            
+
             if (moveVec.Value.sqrMagnitude > 0)
             {
                 MyHeroBrain.Movement.moveSpeed = MyHeroBrain.BB.action.isGuarding.Value ? MyHeroBrain.BB.body.guardSpeed : MyHeroBrain.BB.body.moveSpeed;
@@ -131,7 +131,7 @@ namespace Game
                 if (MyHeroBrain.BB.action.targetPawnHP != null && MyHeroBrain.BB.action.targetPawnHP.Value != null)
                 {
                     var targetBrain = MyHeroBrain.BB.action.targetPawnHP.Value.PawnBrain;
-                    if (targetBrain != null && targetBrain.PawnBB.IsStunned == true)
+                    if (targetBrain != null && targetBrain.PawnBB.IsGroggy == true)
                     {
                         var dist = MyHeroBrain.GetDistance(targetBrain);
                         //Debug.Log($"dist = {dist}");
@@ -143,7 +143,7 @@ namespace Game
                             var trTarget = targetBrain.CoreTransform;
                             var trHero = MyHeroBrain.CoreTransform;
                             var vDist = trHero.position - trTarget.position;
-                            trHero.position = trTarget.position + (1.0f * vDist.normalized); 
+                            trHero.position = trTarget.position + (1.0f * vDist.normalized);
 
                             return "Execution";
                         }
@@ -215,7 +215,7 @@ namespace Game
                     }
                 }
             }
-            else 
+            else
             {
                 var actRunning = actionCtrler.CheckActionRunning();
                 var actSlash = actionCtrler.CurrActionName.StartsWith("Slash");
@@ -235,7 +235,7 @@ namespace Game
             MyHeroBrain.BB.action.isGuarding.Value = value.Get<float>() > 0;
             if (MyHeroBrain.BB.IsGuarding)
             {
-                var canParry1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsStunned && !MyHeroBrain.BB.IsJumping && !MyHeroBrain.BB.IsRolling;
+                var canParry1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsGroggy && !MyHeroBrain.BB.IsJumping && !MyHeroBrain.BB.IsRolling;
                 var canParry2 = canParry1 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.BuffCtrler.CheckStatus(PawnStatus.Staggered);
                 if (canParry2)
                     MyHeroBrain.BuffCtrler.AddStatus(PawnStatus.PassiveParrying, 1f, 0.1f);
@@ -247,7 +247,7 @@ namespace Game
             float jumpStaminaCost = 10;
 
             // 이동 가능 체크
-            var canJump1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsStunned && !MyHeroBrain.BB.IsJumping && !MyHeroBrain.BB.IsRolling;
+            var canJump1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsGroggy && !MyHeroBrain.BB.IsJumping && !MyHeroBrain.BB.IsRolling;
             var canJump2 = canJump1 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.BuffCtrler.CheckStatus(PawnStatus.Staggered);
             var canJump3 = canJump2 && MyHeroBrain.PawnBB.stat.stamina.Value >= jumpStaminaCost;
 
@@ -298,12 +298,12 @@ namespace Game
                 var colliderHelpers = MyHeroBrain.PawnSensorCtrler.ListeningColliders.Select(c => c.GetComponent<PawnColliderHelper>())
                         .Where(h => h != null && h.pawnBrain != null && !h.pawnBrain.PawnBB.IsDead)
                         .ToArray();
-                        
-                for (int i = 0 ; i < colliderHelpers.Length; i++)
+
+                for (int i = 0; i < colliderHelpers.Length; i++)
                 {
                     if (colliderHelpers[i].pawnBrain == MyHeroBrain.BB.TargetBrain)
                     {
-                        MyHeroBrain.BB.action.targetPawnHP.Value  = (i + 1  < colliderHelpers.Length ? colliderHelpers[i + 1] : colliderHelpers[0]).pawnBrain.PawnHP;
+                        MyHeroBrain.BB.action.targetPawnHP.Value = (i + 1 < colliderHelpers.Length ? colliderHelpers[i + 1] : colliderHelpers[0]).pawnBrain.PawnHP;
                         return;
                     }
                 }
@@ -331,11 +331,11 @@ namespace Game
                         .Where(h => h != null && h.pawnBrain != null && !h.pawnBrain.PawnBB.IsDead)
                         .ToArray();
 
-                for (int i = colliderHelpers.Length - 1 ; i >= 0; i--)
+                for (int i = colliderHelpers.Length - 1; i >= 0; i--)
                 {
                     if (colliderHelpers[i].pawnBrain == MyHeroBrain.BB.TargetBrain)
                     {
-                        MyHeroBrain.BB.action.targetPawnHP.Value  = (i - 1 >= 0 ? colliderHelpers[i - 1] : colliderHelpers[colliderHelpers.Length - 1]).pawnBrain.PawnHP;
+                        MyHeroBrain.BB.action.targetPawnHP.Value = (i - 1 >= 0 ? colliderHelpers[i - 1] : colliderHelpers[colliderHelpers.Length - 1]).pawnBrain.PawnHP;
                         return;
                     }
                 }
@@ -348,7 +348,7 @@ namespace Game
             Debug.Assert(actionData != null);
 
             // 대쉬 가능 체크
-            var canRolling1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsStunned && !MyHeroBrain.BB.IsJumping && !MyHeroBrain.BB.IsRolling;
+            var canRolling1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsGroggy && !MyHeroBrain.BB.IsJumping && !MyHeroBrain.BB.IsRolling;
             var canRolling2 = canRolling1 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.BuffCtrler.CheckStatus(PawnStatus.Staggered);
 
             if (canRolling2)
@@ -383,71 +383,14 @@ namespace Game
                 }
 
                 MyHeroBrain.ActionCtrler.SetPendingAction("Rolling");
-
-                // MyHeroBrain.BuffCtrler.AddBuff(BuffTypes.InvincibleDodge, 1f, 0.2f);
-                // MyHeroBrain.Movement.StartRolling(MyHeroBrain.BB.body.rollingDuration);
             }
         }
-        public void OnParry() 
+        public void OnParry()
         {
             var actionData = DatasheetManager.Instance.GetActionData(MyHeroBrain.PawnBB.common.pawnId, "ActiveParry");
             Debug.Assert(actionData != null);
 
             MyHeroBrain.ActionCtrler.SetPendingAction("ActiveParry");
-        }
-
-        public void OnSpecialAttack(InputValue value) 
-        {
-            if (value.isPressed && MyHeroBrain != null)
-            {
-                var canAction1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsStunned && !MyHeroBrain.BB.IsRolling;
-                var canAction2 = canAction1 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.BuffCtrler.CheckStatus(PawnStatus.Staggered);
-
-                //Debug.Log("<color=yellow>Attack Released</color> : " + MyHeroBrain.BB.IsCharging + " " + canAction3);
-                if (canAction2)
-                {
-                    MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
-
-                    if (MyHeroBrain.ActionCtrler.CheckActionRunning())
-                    {
-                        switch (MyHeroBrain.ActionCtrler.CurrActionName)
-                        {
-                            case "HeavySlash#1":
-                                MyHeroBrain.ActionCtrler.CancelAction(false);
-                                MyHeroBrain.ActionCtrler.SetPendingAction("HeavySlash#2"); 
-                                break;
-                            case "HeavySlash#2":
-                                MyHeroBrain.ActionCtrler.CancelAction(false);
-                                MyHeroBrain.ActionCtrler.SetPendingAction("HeavySlash#3"); 
-                                break;
-                        }
-
-                        //* 타겟이 없을 경우에도 조준 보정을 해줌
-                        if (MyHeroBrain.BB.TargetBrain == null && MyHeroBrain.SensorCtrler.ListeningColliders.Count > 0)
-                        {
-                            var attackPoint = MyHeroBrain.SensorCtrler.ListeningColliders.Select(c => c.transform.position)
-                                .OrderBy(p => Vector3.Angle(MyHeroBrain.coreColliderHelper.transform.forward.Vector2D(), (p - MyHeroBrain.coreColliderHelper.transform.position).Vector2D()))
-                                .FirstOrDefault();
-
-                            MyHeroBrain.Movement.FaceAt(attackPoint);
-                        }
-                    }
-                    else
-                    {
-                        MyHeroBrain.ActionCtrler.SetPendingAction("HeavySlash#1");
-
-                        //* 타겟이 없을 경우에도 조준 보정을 해줌
-                        if (MyHeroBrain.BB.TargetBrain == null && MyHeroBrain.SensorCtrler.ListeningColliders.Count > 0)
-                        {
-                            var attackPoint = MyHeroBrain.SensorCtrler.ListeningColliders.Select(c => c.transform.position)
-                                .OrderBy(p => Vector3.Angle(MyHeroBrain.coreColliderHelper.transform.forward.Vector2D(), (p - MyHeroBrain.coreColliderHelper.transform.position).Vector2D()))
-                                .FirstOrDefault();
-
-                            MyHeroBrain.Movement.FaceAt(attackPoint);
-                        }
-                    }
-                }
-            }
         }
 
         IDisposable __chargingAttackDisposable;
@@ -456,7 +399,10 @@ namespace Game
 
         public void OnAttack(InputValue value)
         {
-            __chargingAttackDisposable ??= Observable.EveryUpdate().Where(_ => __attackPresssedTimeStamp > __attackReleasedTimeStamp).Subscribe(_ => 
+            if (MyHeroBrain == null)
+                return;
+
+            __chargingAttackDisposable ??= Observable.EveryUpdate().Where(_ => __attackPresssedTimeStamp > __attackReleasedTimeStamp).Subscribe(_ =>
             {
                 if (MyHeroBrain.ActionCtrler.CheckActionRunning())
                 {
@@ -470,12 +416,12 @@ namespace Game
                 {
                     var chargingTime = Time.time - __attackPresssedTimeStamp;
 
-                    //* 챠징 판정 시간은 0.2초
-                    if (chargingTime > 0.2f)
+                    //* 챠징 판정 시간은 1초
+                    if (chargingTime > 1f)
                     {
                         MyHeroBrain.BB.action.isCharging.Value = true;
                         MyHeroBrain.BB.action.chargingLevel.Value = Mathf.FloorToInt(Time.time - __attackPresssedTimeStamp) + 1;
-                    
+
                         MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
                     }
                     else
@@ -486,100 +432,103 @@ namespace Game
                 }
             }).AddTo(this);
 
+            var canAction1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsGroggy && !MyHeroBrain.BB.IsRolling;
+            var canAction2 = canAction1 && !MyHeroBrain.PawnBB.IsThrowing && !MyHeroBrain.PawnBB.IsGrabbed;
+            var canAction3 = canAction2 && !MyHeroBrain.BuffCtrler.CheckStatus(PawnStatus.Staggered);
+
             if (value.isPressed)
             {
                 __attackPresssedTimeStamp = Time.time;
-                //Debug.Log("<color=red>Attack Pressed</color> : " + MyHeroBrain.BB.IsCharging);
+
+                if (canAction3 && MyHeroBrain.ActionCtrler.CheckActionRunning() && MyHeroBrain.ActionCtrler.CanInterruptAction())
+                {
+                    switch (MyHeroBrain.ActionCtrler.CurrActionName)
+                    {
+                        case "Slash#1":
+                            MyHeroBrain.ActionCtrler.CancelAction(false);
+                            MyHeroBrain.ActionCtrler.SetPendingAction("Slash#2");
+                            break;
+                        case "Slash#2":
+                            MyHeroBrain.ActionCtrler.CancelAction(false);
+                            MyHeroBrain.ActionCtrler.SetPendingAction("Slash#3");
+                            break;
+                        case "HeavySlash#1":
+                            MyHeroBrain.ActionCtrler.CancelAction(false);
+                            MyHeroBrain.ActionCtrler.SetPendingAction("HeavySlash#2");
+                            break;
+                        case "HeavySlash#2":
+                            MyHeroBrain.ActionCtrler.CancelAction(false);
+                            MyHeroBrain.ActionCtrler.SetPendingAction("HeavySlash#3");
+                            break;
+                    }
+
+                    //* 타겟이 없을 경우에도 조준 보정을 해줌
+                    if (MyHeroBrain.BB.TargetBrain == null && MyHeroBrain.SensorCtrler.ListeningColliders.Count > 0)
+                    {
+                        var attackPoint = MyHeroBrain.SensorCtrler.ListeningColliders.Select(c => c.transform.position)
+                            .OrderBy(p => Vector3.Angle(MyHeroBrain.coreColliderHelper.transform.forward.Vector2D(), (p - MyHeroBrain.coreColliderHelper.transform.position).Vector2D()))
+                            .FirstOrDefault();
+
+                        MyHeroBrain.Movement.FaceAt(attackPoint);
+                    }
+                }
             }
             else
             {
                 __attackReleasedTimeStamp = Time.time;
 
-                if (MyHeroBrain != null)
+                if (canAction3 && !MyHeroBrain.ActionCtrler.CheckActionRunning())
                 {
-                    var canAction1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsStunned && !MyHeroBrain.BB.IsRolling;
-                    var canAction2 = canAction1 && !MyHeroBrain.PawnBB.IsThrowing && !MyHeroBrain.PawnBB.IsGrabbed;
-                    var canAction3 = canAction2 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.BuffCtrler.CheckStatus(PawnStatus.Staggered);
-
-                    //Debug.Log("<color=yellow>Attack Released</color> : " + MyHeroBrain.BB.IsCharging + " " + canAction3);
-                    if (canAction3)
+                    if (MyHeroBrain.BB.IsJumping)
                     {
-                        if (MyHeroBrain.ActionCtrler.CheckActionRunning())
-                        {
-                            switch (MyHeroBrain.ActionCtrler.CurrActionName)
-                            {
-                                case "Slash#1":
-                                    MyHeroBrain.ActionCtrler.CancelAction(false);
-                                    MyHeroBrain.ActionCtrler.SetPendingAction("Slash#2");
-                                    break;
-                                case "Slash#2": 
-                                    MyHeroBrain.ActionCtrler.CancelAction(false); 
-                                    MyHeroBrain.ActionCtrler.SetPendingAction("Slash#1"); 
-                                    break;
-                                case "HeavySlash#1":
-                                    MyHeroBrain.ActionCtrler.CancelAction(false);
-                                    MyHeroBrain.ActionCtrler.SetPendingAction("HeavySlash#2"); 
-                                    break;
-                                case "HeavySlash#2":
-                                    MyHeroBrain.ActionCtrler.CancelAction(false);
-                                    MyHeroBrain.ActionCtrler.SetPendingAction("HeavySlash#3"); 
-                                    break;
-                            }
+                        MyHeroBrain.ActionCtrler.SetPendingAction("JumpAttack");
+                        MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
+                    }
+                    else if (MyHeroBrain.BB.IsCharging)
+                    {
+                        MyHeroBrain.ActionCtrler.SetPendingAction("HeavySlash#1");
+                        MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
+                    }
+                    else
+                    {
+                        MyHeroBrain.ActionCtrler.SetPendingAction("Slash#1");
+                        MyHeroBrain.ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
+                    }
 
-                            //* 타겟이 없을 경우에도 조준 보정을 해줌
-                            if (MyHeroBrain.BB.TargetBrain == null && MyHeroBrain.SensorCtrler.ListeningColliders.Count > 0)
-                            {
-                                var attackPoint = MyHeroBrain.SensorCtrler.ListeningColliders.Select(c => c.transform.position)
-                                    .OrderBy(p => Vector3.Angle(MyHeroBrain.coreColliderHelper.transform.forward.Vector2D(), (p - MyHeroBrain.coreColliderHelper.transform.position).Vector2D()))
-                                    .FirstOrDefault();
+                    //* 타겟이 없을 경우에도 조준 보정을 해줌
+                    if (MyHeroBrain.BB.TargetBrain == null && MyHeroBrain.SensorCtrler.ListeningColliders.Count > 0)
+                    {
+                        var attackPoint = MyHeroBrain.SensorCtrler.ListeningColliders.Select(c => c.transform.position)
+                            .OrderBy(p => Vector3.Angle(MyHeroBrain.coreColliderHelper.transform.forward.Vector2D(), (p - MyHeroBrain.coreColliderHelper.transform.position).Vector2D()))
+                            .FirstOrDefault();
 
-                                MyHeroBrain.Movement.FaceAt(attackPoint);
-                            }
-                        }
-                        else
-                        {
-                            //Debug.Log("<color=yellow>Attack Released</color> : " + MyHeroBrain.BB.IsCharging + " " + canAction3);
-                            if (MyHeroBrain.BB.IsJumping == true)
-                            {
-                                MyHeroBrain.ActionCtrler.CancelAction(false);
-                                MyHeroBrain.ActionCtrler.SetPendingAction("JumpAttack");
-
-                                MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
-
-                                MyHeroBrain.Movement.Gravity = new Vector3(0, -0, 0);
-                                Observable.Timer(TimeSpan.FromSeconds(0.3f)).Subscribe(_ =>
-                                {
-                                    MyHeroBrain.Movement.Gravity = new Vector3(0, -30, 0);
-                                }).AddTo(this);
-                            }
-                            else
-                            {
-                                if (MyHeroBrain.BB.IsCharging) 
-                                { 
-                                    MyHeroBrain.ActionCtrler.SetPendingAction("HeavySlash#1");
-                                    MyHeroBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
-                                }
-                                else
-                                {
-                                    MyHeroBrain.ActionCtrler.SetPendingAction("Slash#1");
-                                    MyHeroBrain.ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
-                                }
-                            }
-                            //* 타겟이 없을 경우에도 조준 보정을 해줌
-                            if (MyHeroBrain.BB.TargetBrain == null && MyHeroBrain.SensorCtrler.ListeningColliders.Count > 0)
-                            {
-                                var attackPoint = MyHeroBrain.SensorCtrler.ListeningColliders.Select(c => c.transform.position)
-                                    .OrderBy(p => Vector3.Angle(MyHeroBrain.coreColliderHelper.transform.forward.Vector2D(), (p - MyHeroBrain.coreColliderHelper.transform.position).Vector2D()))
-                                    .FirstOrDefault();
-
-                                MyHeroBrain.Movement.FaceAt(attackPoint);
-                            }
-                        }
+                        MyHeroBrain.Movement.FaceAt(attackPoint);
                     }
                 }
-                
+
                 //* 챠징 어택 판별을 위해서 'isCharging' 값은 제일 마지막에 리셋
                 MyHeroBrain.BB.action.isCharging.Value = false;
+            }
+        }
+
+        public void OnSpecialAttack(InputValue value)
+        {
+            if (MyHeroBrain == null)
+                return;
+
+            if (value.isPressed)
+            {
+                var canAction1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsGroggy && !MyHeroBrain.BB.IsRolling;
+                var canAction2 = canAction1 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.BuffCtrler.CheckStatus(PawnStatus.Staggered);
+
+                if (canAction2)
+                {
+
+                    if (MyHeroBrain.ActionCtrler.CheckActionRunning())
+                        MyHeroBrain.ActionCtrler.CancelAction(false);
+
+                    MyHeroBrain.ActionCtrler.SetPendingAction("Kick");
+                }
             }
         }
     }
