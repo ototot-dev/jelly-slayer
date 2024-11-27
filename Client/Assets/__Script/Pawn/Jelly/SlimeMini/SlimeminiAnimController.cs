@@ -4,8 +4,6 @@ using FIMSpace.FEyes;
 using FIMSpace.FProceduralAnimation;
 using Retween.Rx;
 using UniRx;
-using Unity.Burst.Intrinsics;
-using UnityEditor.Rendering;
 using UnityEngine;
 
 namespace Game

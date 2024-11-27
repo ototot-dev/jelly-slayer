@@ -21,8 +21,8 @@ public class DamageTextManager : MonoBehaviour
     public float _yMin = 2.0f;
     public float _yMax = 2.5f;
 
-    [Space(10)]
 #if UNITY_EDITOR
+    [Space(10)]
     [SerializeField]
     PawnBrainController _testPawn;
 #endif

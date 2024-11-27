@@ -22,9 +22,7 @@ namespace Game
 
         void Start()
         {
-            DatasheetManager.Instance.Load();
-            SoundManager.Instance.Init();
-            NpcSpawnManager.Instance.Init();
+            InitManager.Initialize();
 
             if (gameMode == GameModes.Default)
             {
