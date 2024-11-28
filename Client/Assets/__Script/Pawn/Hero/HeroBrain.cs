@@ -136,20 +136,20 @@ namespace Game
             if (damageContext.receiverBrain.PawnBB.IsDead)
                 return;
 
-            if (damageContext.actionResult == ActionResults.Blocked || damageContext.actionResult == ActionResults.ActiveParried || damageContext.actionResult == ActionResults.PassiveParried)
+            if (damageContext.receiverPenalty.Item1 == Game.PawnStatus.None)
             {
                 ActionCtrler.StartAddictiveAction(damageContext, "!OnHit");
             }
-            else if (damageContext.receiverPenalty.Item1 != Game.PawnStatus.None)
+            else
             {
                 if (ActionCtrler.CheckActionRunning())
                     ActionCtrler.CancelAction(false);
 
                 switch (damageContext.receiverPenalty.Item1)
                 {
-                    case Game.PawnStatus.Groggy: ActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty); break;
                     case Game.PawnStatus.Staggered: ActionCtrler.StartAction(damageContext, "!OnHit", string.Empty); break;
                     case Game.PawnStatus.KnockDown: ActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty); break;
+                    case Game.PawnStatus.Groggy: ActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty); break;
                 }
             }
             
@@ -170,8 +170,8 @@ namespace Game
                 case ActionResults.Blocked: 
                     ActionCtrler.StartAction(damageContext, "!OnBlocked", string.Empty); break;
                     
-                case ActionResults.ActiveParried:
-                case ActionResults.PassiveParried:
+                case ActionResults.KickParried:
+                case ActionResults.GuardParried:
                     ActionCtrler.StartAction(damageContext, damageContext.senderPenalty.Item1 == Game.PawnStatus.Groggy ? "!OnGroggy" : "!OnParried", string.Empty); break;
             }
         }

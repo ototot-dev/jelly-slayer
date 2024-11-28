@@ -8,8 +8,10 @@ namespace Game
 {
     public class HeroActionController : PawnActionController
     {
-        public Collider swordCollider;
+        [Header("Component")]
         public MeshRenderer shieldMesh;
+        public Collider kickActionCollider;
+        public Collider swordActionCollider;
 
         public override bool CanRootMotion(Vector3 rootMotionVec)
         {
@@ -32,7 +34,7 @@ namespace Game
 
         public override bool CanParryAction(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
-            return IsActiveParryEnabled || __brain.BuffCtrler.CheckStatus(PawnStatus.PassiveParrying);
+            return IsActiveParryEnabled || __brain.BuffCtrler.CheckStatus(PawnStatus.GuardParrying);
         }
 
         public override bool CanBlockAction(ref PawnHeartPointDispatcher.DamageContext damageContext)
@@ -92,7 +94,7 @@ namespace Game
             }
             else //* Sender의 액션을 파훼된 경우
             {
-                if (damageContext.actionResult == ActionResults.ActiveParried)
+                if (damageContext.actionResult == ActionResults.KickParried)
                 {
                     var hitPoint = damageContext.senderBrain.coreColliderHelper.GetCenter() + damageContext.senderBrain.coreColliderHelper.GetRadius() * (__brain.coreColliderHelper.GetCenter() - damageContext.senderBrain.coreColliderHelper.GetCenter()).Vector2D().normalized;
                     EffectManager.Instance.Show("Hit 26 blue crystal", hitPoint, Quaternion.identity, 2f * Vector3.one, 1f);
@@ -100,7 +102,7 @@ namespace Game
 
                     return null;
                 }
-                else if (damageContext.actionResult == ActionResults.PassiveParried)
+                else if (damageContext.actionResult == ActionResults.GuardParried)
                 {
                     __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 2);
                     __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
@@ -126,7 +128,7 @@ namespace Game
                 .DoOnCompleted(() => __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0))
                 .Subscribe(_ =>
                 {
-                    if (actionResult != ActionResults.PassiveParried)
+                    if (actionResult != ActionResults.GuardParried)
                         __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity);
                 }).AddTo(this);
 
@@ -266,12 +268,7 @@ namespace Game
 
             onActiveParryEnabled += (_) => parryHitColliderHelper.pawnCollider.enabled = currActionContext.activeParryEnabled;
             onActionCanceled += (_, __) => parryHitColliderHelper.pawnCollider.enabled = false;
-            onActionFinished += (_) => 
-            {
-                //__brain.AnimCtrler.weaponMeshSlot.transform.SetLocalPositionAndRotation(new Vector3(0f, 0f, 0f), Quaternion.identity);
-                //__brain._weaponCtrlRightHand.ResetToHandle();
-                parryHitColliderHelper.pawnCollider.enabled = false;
-            };
+            onActionFinished += (_) => parryHitColliderHelper.pawnCollider.enabled = false;
 
             onEmitProjectile += OnEmitProjectile;
         }

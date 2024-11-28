@@ -66,6 +66,7 @@ namespace MainTable
 		public System.Single selectionRate;
 		public System.Single coolTime;
 		public System.Single damageMultiplier;
+		public System.Single damageMultiplierOnGroggy;
 		public System.Int32 cannotHitOnJump;
 		public System.Int32 cannotAvoidOnRolling;
 		public System.Int32 cannotGuard;

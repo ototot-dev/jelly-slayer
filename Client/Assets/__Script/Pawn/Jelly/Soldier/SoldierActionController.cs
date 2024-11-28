@@ -56,7 +56,7 @@ namespace Game
             var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
 
             if (damageContext.actionResult == ActionResults.Damaged)
-            {                
+            {
                 var hitVec = damageContext.receiverBrain.coreColliderHelper.transform.position - damageContext.senderBrain.CoreTransform.position;
                 hitVec = damageContext.receiverBrain.CoreTransform.InverseTransformDirection(hitVec).Vector2D().normalized;
 
@@ -77,10 +77,13 @@ namespace Game
                 EffectManager.Instance.Show("@Hit 23 cube", damageContext.hitPoint, Quaternion.identity, Vector3.one, 1);
                 EffectManager.Instance.Show("@BloodFX_impact_col", damageContext.hitPoint, Quaternion.identity, 1.5f * Vector3.one, 3);
             }
+            else if (damageContext.actionResult == ActionResults.ZeroDamaged)
+            {
+                SoundManager.Instance.Play(SoundID.HIT_BLOCK);
+                EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);
+            }
             else if (damageContext.actionResult == ActionResults.Blocked)
             {
-                knockBackVec *= 0.1f;
-
                 __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", true);
                 __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 1);
                 __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
@@ -100,12 +103,23 @@ namespace Game
                 EffectManager.Instance.Show("SwordHitRed", __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);
             }
 
-            var knockBackDisposable = Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
-                .DoOnCancel(() => __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0))
-                .DoOnCompleted(() => __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0))
-                .Subscribe(_ => __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity))
-                .AddTo(this);
-
+            IDisposable knockBackDisposable = null;
+            if (damageContext.actionResult == ActionResults.ZeroDamaged || damageContext.actionResult == ActionResults.Blocked)
+            {
+                knockBackDisposable = Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.2f / __brain.BB.pawnData_Movement.knockBackSpeed)))
+                    .DoOnCancel(() => __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0))
+                    .DoOnCompleted(() => __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0))
+                    .Subscribe(_ => __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity))
+                    .AddTo(this);
+            }
+            else
+            {            
+                knockBackDisposable = Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
+                    .DoOnCancel(() => __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0))
+                    .DoOnCompleted(() => __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0))
+                    .Subscribe(_ => __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity))
+                    .AddTo(this);
+            }
 
             if (isAddictiveAction)
             {
@@ -164,7 +178,27 @@ namespace Game
             __brain.AnimCtrler.mainAnimator.SetBool("IsGroggy", true);
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnGroggy");
 
-            //* Groogy 애님의 RootMotion 재생을 위해서 'penaltyDuration' 동안 Action을 유지시켜준다.
+            if (damageContext.actionResult == ActionResults.KickParried)
+            {
+                //* Groogy 애님의 RootMotion 배율 짧게 조정
+                currActionContext.rootMotionMultiplier = 0f;
+
+                if (__brain == damageContext.senderBrain)
+                {
+                    var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.receiverBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                    Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
+                        .Subscribe(_ => __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity))
+                        .AddTo(this);
+                }
+                else
+                {
+                    var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                    Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
+                        .Subscribe(_ => __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity))
+                        .AddTo(this);
+                }
+            }
+
             var penaltyDuration = damageContext.senderBrain == __brain ? damageContext.senderPenalty.Item2 : damageContext.receiverPenalty.Item2;
             return Observable.Timer(TimeSpan.FromSeconds(penaltyDuration))
                 .DoOnCancel(() =>
@@ -187,19 +221,22 @@ namespace Game
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnParried");
             __brain.AnimCtrler.legAnimator.User_AddImpulse(new ImpulseExecutor(new Vector3(0, 0.2f, -0.1f), Vector3.zero, 0.2f));
 
+            //* Groogy 애님의 RootMotion 배율 짧게 조정
+            currActionContext.rootMotionMultiplier = 0f;
+
             var knockBackDistance = 0f;
-            if (damageContext.actionResult == ActionResults.ActiveParried)
+            if (damageContext.actionResult == ActionResults.KickParried)
                 knockBackDistance = damageContext.receiverActionData.knockBackDistance;
-            else if (damageContext.actionResult == ActionResults.PassiveParried)
-                knockBackDistance = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "PassiveParry")?.knockBackDistance ?? 0f;
+            else if (damageContext.actionResult == ActionResults.GuardParried)
+                knockBackDistance = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "GuardParry")?.knockBackDistance ?? 0f;
             else
                 Debug.Assert(false);
 
             if (knockBackDistance <= 0f)
                 __Logger.WarningF(gameObject, nameof(StartOnParriedAction), "knockBackDistance is zero", "knockBackDistance", knockBackDistance);
 
-            var knockBackVec = knockBackDistance / 0.2f * -damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-            return Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.2f)))
+            var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.receiverBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+            return Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
                 .DoOnCancel(() =>
                 {
                     if (CurrActionName == "!OnParried")

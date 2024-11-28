@@ -209,7 +209,7 @@ namespace Game
             
             if (damageContext.receiverPenalty.Item1 == Game.PawnStatus.None)
             {
-                //* receiverPenalty가 없다면 Sender 액션을 'Blocked' 혹은 'PassiveParried'등으로 파훼한 것으로 판정하여, Sender 공격에 대한 반동 연출을 한다.
+                //* receiverPenalty가 없다면 Sender 액션을 'Blocked' 혹은 'GuardParried'등으로 파훼한 것으로 판정하여, Sender 공격에 대한 반동 연출을 한다.
                 //* 이 때, "!OnHit" 액션을 Addictive 모드로 실행하여 실제 Action이 실행되지는 않도록 한다.
                 __pawnActionCtrler.StartAddictiveAction(damageContext, "!OnHit");
             }
@@ -225,6 +225,7 @@ namespace Game
                     case Game.PawnStatus.KnockDown: __pawnActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty); break;
                 }
             }
+            
             // OnPawnDamaged
             GameManager.Instance.PawnDamaged(ref damageContext);
         }
@@ -243,8 +244,8 @@ namespace Game
                     __pawnActionCtrler.StartAction(damageContext, "!OnBlocked", string.Empty); 
                     break;
 
-                case ActionResults.ActiveParried:
-                case ActionResults.PassiveParried:
+                case ActionResults.KickParried:
+                case ActionResults.GuardParried:
                     __pawnActionCtrler.StartAction(damageContext, damageContext.senderPenalty.Item1 == Game.PawnStatus.Groggy ? "!OnGroggy" : "!OnParried", string.Empty); 
                     break;
             }

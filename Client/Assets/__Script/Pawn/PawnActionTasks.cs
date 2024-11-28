@@ -714,7 +714,7 @@ namespace Game.NodeCanvasExtension
 
     public class SetLegGlueEnabled : ActionTask
     {
-        protected override string info => enabled.value ? $"Leg Glue <b>Enabled</b>" : $"Leg Glue <b>Disabled</b>";
+        protected override string info => enabled.value ? $"Leg Glue <b>On</b>" : $"Leg Glue <b>Off</b>";
         public BBParameter<bool> enabled;
 
         protected override void OnExecute()

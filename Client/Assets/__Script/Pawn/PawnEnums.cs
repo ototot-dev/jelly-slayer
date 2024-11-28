@@ -22,7 +22,7 @@ namespace Game
         None = 0,
         Invincible,         //* 일반 무적
         InvincibleDodge,    //* 구르기 무적
-        PassiveParrying,
+        GuardParrying,
         SuperArmor,
         MoveSpeedUp,
         ActionSpeedUp,
@@ -47,12 +47,12 @@ namespace Game
     {
         None = 0,
         Damaged,
+        ZeroDamaged,
         Blocked,
         GuardBreak,
-        ActiveParried,
-        PassiveParried,
+        GuardParried,
+        KickParried,
     }
-
 
 
     [UGS(typeof(ActionId))]

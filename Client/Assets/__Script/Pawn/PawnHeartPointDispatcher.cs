@@ -187,23 +187,23 @@ namespace Game
                 {
                     if (damageContext.hitCollider == receiverActionCtrler.parryHitColliderHelper.pawnCollider)
                     {
-                        damageContext.actionResult = ActionResults.ActiveParried;
-                        damageContext.receiverActionData = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "ActiveParry");
+                        damageContext.actionResult = ActionResults.KickParried;
+                        damageContext.receiverActionData = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "Kick");
                     }
                     else
                     {
-                        damageContext.actionResult = ActionResults.PassiveParried;
-                        damageContext.receiverActionData = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "PassiveParry");
+                        damageContext.actionResult = ActionResults.GuardParried;
+                        damageContext.receiverActionData = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "GuardParry");
                     }
                 }
                 else if (!canNotGuard && receiverActionCtrler.CanBlockAction(ref damageContext))
                 {
                     damageContext.actionResult = ActionResults.Blocked;
-                    damageContext.receiverActionData = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "Block");
+                    damageContext.receiverActionData = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "Blocking");
                 }
             }
 
-            if (damageContext.actionResult == ActionResults.ActiveParried)
+            if (damageContext.actionResult == ActionResults.KickParried)
             {
                 //* Sender의 현재 액션이 'ActiveParry'인지 검증함
                 Debug.Assert(receiverActionCtrler.currActionContext.actionData != null && receiverActionCtrler.currActionContext.actionData == damageContext.receiverActionData);
@@ -223,14 +223,14 @@ namespace Game
                     damageContext.senderPenalty = new(PawnStatus.Staggered, damageContext.receiverActionData.staggerDuration);
                 }
             }
-            else if (damageContext.actionResult == ActionResults.PassiveParried)
+            else if (damageContext.actionResult == ActionResults.GuardParried)
             {
-                //* Receiver가 'PassiveParried' ActionData가 있는지 검증
+                //* Receiver가 'GuardParried' ActionData가 있는지 검증
                 Debug.Assert(damageContext.receiverActionData != null);
 
                 damageContext.senderBrain.PawnBB.stat.stance.Value += damageContext.receiverActionData.groggyAccum;
 
-                __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.PassiveParried", "stance", damageContext.senderBrain.PawnBB.stat.stance.Value, "maxStance", damageContext.senderBrain.PawnBB.stat.maxStance.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
+                __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.GuardParried", "stance", damageContext.senderBrain.PawnBB.stat.stance.Value, "maxStance", damageContext.senderBrain.PawnBB.stat.maxStance.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
 
                 if (damageContext.senderBrain.PawnBB.stat.stance.Value >= damageContext.senderBrain.PawnBB.stat.maxStance.Value)
                 {
@@ -336,6 +336,13 @@ namespace Game
                     }
                 }
             }
+            else
+            {
+                //* 데미지 없는 공격 (Kick 액션이 유효타가 터지지 않는 경우)
+                damageContext.actionResult = ActionResults.ZeroDamaged;
+                damageContext.finalDamage = 0f;
+                damageContext.receiverPenalty = new(PawnStatus.None, 0f);
+            }
 
             if (damageContext.receiverBrain.PawnHP.heartPoint.Value <= 0)
             {
@@ -383,7 +390,8 @@ namespace Game
         {
             var physDamage = Mathf.Max(0f, damageContext.senderBrain.PawnBB.stat.physAttack - damageContext.receiverBrain.PawnBB.stat.physDefence);
             var magicDamage = Mathf.Max(0f, damageContext.senderBrain.PawnBB.stat.magicAttack - damageContext.receiverBrain.PawnBB.stat.magicDefense);
-            damageContext.finalDamage = Mathf.Max(10f, (physDamage + magicDamage) * (damageContext.senderActionData?.damageMultiplier ?? 1));
+            var damageMultiplier = damageContext.receiverBrain.PawnBB.IsGroggy ? (damageContext.senderActionData?.damageMultiplierOnGroggy ?? 1f) : (damageContext.senderActionData?.damageMultiplier ?? 1f);
+            damageContext.finalDamage = damageMultiplier > 0f ? Mathf.Max(1f, (physDamage + magicDamage) * damageMultiplier) : 0f;
 
             if (damageContext.receiverBrain.TryGetComponent<PawnStatusController>(out var receiverBuffCtrler) && receiverBuffCtrler.CheckStatus(PawnStatus.Invincible))
             {
@@ -393,7 +401,7 @@ namespace Game
             
             if (damageContext.insufficientStamina)
             {
-                damageContext.finalDamage *= 0.1f;
+                damageContext.finalDamage = Mathf.Max(1f, damageContext.finalDamage * 0.1f);
                 __Logger.LogF(gameObject, nameof(CalcFinalDamage), "damageContext.finalDamage is reduced. (insufficientStamina is true)", "finalDamage", damageContext.finalDamage);
             }
             else

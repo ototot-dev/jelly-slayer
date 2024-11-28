@@ -170,7 +170,7 @@ namespace Game
                     case Game.PawnStatus.KnockDown: ActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty); break;
                 }
             }
-            else if (damageContext.finalDamage > 0 || damageContext.actionResult == ActionResults.Blocked || damageContext.actionResult == ActionResults.PassiveParried)
+            else if (damageContext.finalDamage > 0 || damageContext.actionResult == ActionResults.Blocked || damageContext.actionResult == ActionResults.GuardParried)
             {
                 ActionCtrler.StartAddictiveAction(damageContext, "!OnHit");
             }
@@ -186,7 +186,7 @@ namespace Game
 
             switch (damageContext.actionResult)
             {
-                case ActionResults.PassiveParried: ActionCtrler.StartAction(damageContext, "!OnParried", string.Empty); break;
+                case ActionResults.GuardParried: ActionCtrler.StartAction(damageContext, "!OnParried", string.Empty); break;
                 case ActionResults.Blocked: ActionCtrler.StartAction(damageContext, "!OnBlocked", string.Empty); break;
             }
         }

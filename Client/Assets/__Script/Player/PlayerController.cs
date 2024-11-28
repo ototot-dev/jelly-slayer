@@ -238,7 +238,7 @@ namespace Game
                 var canParry1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsGroggy && !MyHeroBrain.BB.IsJumping && !MyHeroBrain.BB.IsRolling;
                 var canParry2 = canParry1 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.BuffCtrler.CheckStatus(PawnStatus.Staggered);
                 if (canParry2)
-                    MyHeroBrain.BuffCtrler.AddStatus(PawnStatus.PassiveParrying, 1f, 0.1f);
+                    MyHeroBrain.BuffCtrler.AddStatus(PawnStatus.GuardParrying, 1f, 0.1f);
             }
         }
 

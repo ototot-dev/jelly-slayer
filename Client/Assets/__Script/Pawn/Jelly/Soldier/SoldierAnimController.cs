@@ -68,7 +68,7 @@ namespace Game
                 if (__brain.ActionCtrler.CheckActionRunning())
                 {
                     if (__brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
-                        __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation);
+                        __brain.Movement.AddRootMotion(__brain.ActionCtrler.currActionContext.rootMotionMultiplier * mainAnimator.deltaPosition, mainAnimator.deltaRotation);
 
                     if (__brain.ActionCtrler.currActionContext.rootMotionCurve != null)
                     {
