@@ -57,21 +57,29 @@ namespace Game
 
             if (damageContext.actionResult == ActionResults.Damaged)
             {
-                var hitVec = damageContext.receiverBrain.coreColliderHelper.transform.position - damageContext.senderBrain.CoreTransform.position;
-                hitVec = damageContext.receiverBrain.CoreTransform.InverseTransformDirection(hitVec).Vector2D().normalized;
-
-                if (Mathf.Abs(hitVec.x) > Mathf.Abs(hitVec.z))
+                if (damageContext.receiverBrain.PawnBB.IsGroggy)
                 {
-                    __brain.AnimCtrler.mainAnimator.SetFloat("HitX", hitVec.x > 0f ? 1f : -1f);
-                    __brain.AnimCtrler.mainAnimator.SetFloat("HitY", 0f);
+                    __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 3);
+                    __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
                 }
                 else
                 {
-                    __brain.AnimCtrler.mainAnimator.SetFloat("HitX", 0f);
-                    __brain.AnimCtrler.mainAnimator.SetFloat("HitY", hitVec.z > 0f ? 1f : -1f);
+                    var hitVec = damageContext.receiverBrain.coreColliderHelper.transform.position - damageContext.senderBrain.CoreTransform.position;
+                    hitVec = damageContext.receiverBrain.CoreTransform.InverseTransformDirection(hitVec).Vector2D().normalized;
+
+                    if (Mathf.Abs(hitVec.x) > Mathf.Abs(hitVec.z))
+                    {
+                        __brain.AnimCtrler.mainAnimator.SetFloat("HitX", hitVec.x > 0f ? 1f : -1f);
+                        __brain.AnimCtrler.mainAnimator.SetFloat("HitY", 0f);
+                    }
+                    else
+                    {
+                        __brain.AnimCtrler.mainAnimator.SetFloat("HitX", 0f);
+                        __brain.AnimCtrler.mainAnimator.SetFloat("HitY", hitVec.z > 0f ? 1f : -1f);
+                    }
+                    __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0);
+                    __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
                 }
-                __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0);
-                __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
 
                 SoundManager.Instance.Play(SoundID.HIT_FLESH);
                 EffectManager.Instance.Show("@Hit 23 cube", damageContext.hitPoint, Quaternion.identity, Vector3.one, 1);
@@ -180,38 +188,59 @@ namespace Game
 
             if (damageContext.actionResult == ActionResults.KickParried)
             {
+                Debug.Assert(__brain == damageContext.senderBrain);
+
                 //* Groogy 애님의 RootMotion 배율 짧게 조정
                 currActionContext.rootMotionMultiplier = 0f;
 
-                if (__brain == damageContext.senderBrain)
-                {
-                    var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.receiverBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-                    Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
-                        .Subscribe(_ => __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity))
-                        .AddTo(this);
-                }
-                else
-                {
-                    var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-                    Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
-                        .Subscribe(_ => __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity))
-                        .AddTo(this);
-                }
-            }
+                //* KnockBack 연출 후에 Groogy 모션 진입
+                var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.receiverBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
+                    .DoOnCancel(() =>
+                    {
+                        __brain.AnimCtrler.mainAnimator.SetBool("IsGroggy", true);
+                        __brain.AnimCtrler.mainAnimator.SetTrigger("OnGroggy");
+                    })
+                    .DoOnCompleted(() =>
+                    {
+                        __brain.AnimCtrler.mainAnimator.SetBool("IsGroggy", true);
+                        __brain.AnimCtrler.mainAnimator.SetTrigger("OnGroggy");
+                    })
+                    .Subscribe(_ => __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity))
+                    .AddTo(this);
 
-            var penaltyDuration = damageContext.senderBrain == __brain ? damageContext.senderPenalty.Item2 : damageContext.receiverPenalty.Item2;
-            return Observable.Timer(TimeSpan.FromSeconds(penaltyDuration))
-                .DoOnCancel(() =>
-                {
-                    if (CurrActionName == "!OnGroggy")
-                        FinishAction();
-                })
-                .DoOnCompleted(() =>
-                {
-                    if (CurrActionName == "!OnGroggy")
-                        FinishAction();
-                })
-                .Subscribe().AddTo(this);
+                return Observable.NextFrame()
+                    .DoOnCancel(() =>
+                    {
+                        if (CurrActionName == "!OnGroggy")
+                            FinishAction();
+                    })
+                    .DoOnCompleted(() =>
+                    {
+                        if (CurrActionName == "!OnGroggy")
+                            FinishAction();
+                    })
+                    .Subscribe().AddTo(this);
+            }
+            else
+            {
+                __brain.AnimCtrler.mainAnimator.SetBool("IsGroggy", true);
+                __brain.AnimCtrler.mainAnimator.SetTrigger("OnGroggy");
+
+                //* Groggy 진입 애님 Length가 1초라고 1초간 Groggy 액션 지속함
+                return Observable.Timer(TimeSpan.FromSeconds(1f))
+                    .DoOnCancel(() =>
+                    {
+                        if (CurrActionName == "!OnGroggy")
+                            FinishAction();
+                    })
+                    .DoOnCompleted(() =>
+                    {
+                        if (CurrActionName == "!OnGroggy")
+                            FinishAction();
+                    })
+                    .Subscribe().AddTo(this);
+            }
         }
 
         public override IDisposable StartOnParriedAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
@@ -219,7 +248,7 @@ namespace Game
             Debug.Assert(damageContext.senderBrain == __brain);
 
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnParried");
-            __brain.AnimCtrler.legAnimator.User_AddImpulse(new ImpulseExecutor(new Vector3(0, 0.2f, -0.1f), Vector3.zero, 0.2f));
+            // __brain.AnimCtrler.legAnimator.User_AddImpulse(new ImpulseExecutor(new Vector3(0, 0.2f, -0.1f), Vector3.zero, 0.2f));
 
             //* Groogy 애님의 RootMotion 배율 짧게 조정
             currActionContext.rootMotionMultiplier = 0f;
