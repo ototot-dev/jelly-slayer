@@ -74,6 +74,7 @@ namespace MainTable
 		public System.Single staggerDuration;
 		public System.Int32 groggy;
 		public System.Int32 groggyAccum;
+		public System.Int32 groggyHit;
 		public System.Int32 knockDown;
 		public System.Single knockDownAccum;
 		public System.Single knockBackDistance;

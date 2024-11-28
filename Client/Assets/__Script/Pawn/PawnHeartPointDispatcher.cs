@@ -295,18 +295,24 @@ namespace Game
                             damageContext.receiverPenalty = new(PawnStatus.Groggy, damageContext.receiverBrain.PawnBB.pawnData.groggyDuration);
                         }
                     }
-                    if (damageContext.receiverBrain.PawnBB.IsGroggy || (damageContext.senderActionData.knockDown >= damageContext.receiverBrain.PawnBB.stat.poise && !damageContext.receiverBrain.PawnBB.IsDown)) //* KnockDown 처리
+
+                    //* KnockDown 처리
+                    if (damageContext.receiverBrain.PawnBB.IsGroggy)
                     {
-                        if (damageContext.receiverBrain.PawnBB.IsGroggy)
+                        damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value += damageContext.senderActionData.groggyHit;
+                        Debug.Assert(damageContext.receiverPenalty.Item1 == PawnStatus.None);
+
+                        __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged", "stat.groggyHitCount", damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value, "stat.maxGroggyHitCount", damageContext.receiverBrain.PawnBB.stat.maxGroggyHitCount.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
+
+                        if (damageContext.receiverPenalty.Item1 == PawnStatus.None && damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value >= damageContext.receiverBrain.PawnBB.stat.maxGroggyHitCount.Value)
                         {
-                            //* Groggy 상태에서 3타가 들어가면 KnockDown이 발생하도록 하드코딩
-                            damageContext.receiverBrain.PawnBB.stat.knockDown.Value += damageContext.receiverBrain.PawnBB.stat.maxKnockDown.Value * 0.4f;
-                            Debug.Assert(damageContext.receiverPenalty.Item1 == PawnStatus.None);
+                            damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value = 0;
+                            damageContext.receiverPenalty = new(PawnStatus.KnockDown, damageContext.receiverBrain.PawnBB.pawnData.knockDownDuration);
                         }
-                        else
-                        {
-                            damageContext.receiverBrain.PawnBB.stat.knockDown.Value += damageContext.senderActionData.knockDownAccum;
-                        }
+                    }
+                    else if (damageContext.senderActionData.knockDown >= damageContext.receiverBrain.PawnBB.stat.poise && !damageContext.receiverBrain.PawnBB.IsDown)
+                    {
+                        damageContext.receiverBrain.PawnBB.stat.knockDown.Value += damageContext.senderActionData.knockDownAccum;
 
                         __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged", "stat.knockDown", damageContext.receiverBrain.PawnBB.stat.knockDown.Value, "stat.maxKnockDown", damageContext.receiverBrain.PawnBB.stat.maxKnockDown.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
 
@@ -316,6 +322,7 @@ namespace Game
                             damageContext.receiverPenalty = new(PawnStatus.KnockDown, damageContext.receiverBrain.PawnBB.pawnData.knockDownDuration);
                         }
                     }
+
                     if (damageContext.receiverPenalty.Item1 == PawnStatus.None && damageContext.receiverBrain.PawnBB.stat.poise - damageContext.senderActionData.stagger <= 0) //* 경직 처리
                     {
                         if (receiverActionCtrler.IsSuperArmorEnabled)

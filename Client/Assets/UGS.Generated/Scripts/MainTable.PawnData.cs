@@ -75,6 +75,7 @@ namespace MainTable
 		public System.Single guardStaggerDuration;
 		public System.Single staminaRecoverSpeed;
 		public System.Single staminaRecoverTime;
+		public System.Int32 groggyHitCount;
 		public System.Single groggyDuration;
 		public System.Single knockDownDuration;
   

@@ -19,14 +19,12 @@ namespace Game
         {
             if (spawnAttachPoint != null && spawnAttachSource != null && spawnAttachSource.TryGetComponent<Rigidbody>(out __spawnAttachSourceRigidBody))
             {
-                __jellyManBB.common.isRagdoll.Value = true;
                 __spawnAttachSourceRigidBody.isKinematic = true;
                 __pawnMovement.capsule.gameObject.layer = LayerMask.NameToLayer("PawnOverlapped");
             }
         }
         void ISpawnable.OnFinishSpawnHandler()
         {
-            __jellyManBB.common.isRagdoll.Value = false;
             __pawnMovement.capsule.gameObject.layer = LayerMask.NameToLayer("Pawn");
 
             // NpcSpawnManager.Instance.spawnedBrains.Add(this);
@@ -119,13 +117,13 @@ namespace Game
 
         protected override void StartInternal()
         {
-            __jellyManBB.common.isRagdoll.Skip(1).Subscribe(v =>
-            {
-                if (v)
-                    __pawnAnimCtrler.StartRagdoll(false, true);
-                else
-                    __pawnAnimCtrler.FinishRagdoll(1f);
-            }).AddTo(this);
+            // __jellyManBB.common.isRagdoll.Skip(1).Subscribe(v =>
+            // {
+            //     if (v)
+            //         __pawnAnimCtrler.StartRagdoll(false, true);
+            //     else
+            //         __pawnAnimCtrler.FinishRagdoll(1f);
+            // }).AddTo(this);
 
             base.StartInternal();
 

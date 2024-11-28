@@ -15,7 +15,6 @@ namespace Game
         public bool IsGroggy => common.isGroggy.Value;
         public bool IsDown => common.isDown.Value;
         public bool IsDead => common.isDead.Value;
-        public bool IsRagdoll => common.isRagdoll.Value;
         public bool IsThrowing => common.isThrowing.Value;
         public bool IsGrabbed => common.isGrabbed.Value;
         public bool IsBind => common.isBind.Value;
@@ -34,15 +33,15 @@ namespace Game
             public float despawnWaitingTime = 1;
             public BoolReactiveProperty isSpawnFinished = new();
             public BoolReactiveProperty isInvincible = new();
-            public BoolReactiveProperty isGroggy = new();
-            public BoolReactiveProperty isDown = new();
             public BoolReactiveProperty isDead = new();
-            public BoolReactiveProperty isRagdoll = new();
+            public BoolReactiveProperty isDown = new();
+            public BoolReactiveProperty isGroggy = new();
+            public FloatReactiveProperty lifeTime = new(60);
+
             public BoolReactiveProperty isThrowing = new();     // 잡기
             public BoolReactiveProperty isGrabbed = new();      // 잡힌 상태
             public BoolReactiveProperty isBind = new();         // 묶인 상태
             public BoolReactiveProperty isGuardbreak = new();   // 가드 깨진 상태
-            public FloatReactiveProperty lifeTime = new(60);
         }
 
         public Common common = new();
@@ -58,11 +57,13 @@ namespace Game
             public FloatReactiveProperty maxStamina = new(1);
             public FloatReactiveProperty maxStance = new(1);
             public FloatReactiveProperty maxKnockDown = new(1);
+            public IntReactiveProperty maxGroggyHitCount = new();
             public FloatReactiveProperty heartPoint = null;
             public FloatReactiveProperty magicPoint = new(1);
             public FloatReactiveProperty stamina = new(1);
             public FloatReactiveProperty stance = new();
             public FloatReactiveProperty knockDown = new();
+            public IntReactiveProperty groggyHitCount = new();
             public float poise;
             public float guardStrength;
             public float guardEfficiency;
@@ -98,6 +99,7 @@ namespace Game
             stat.maxStamina.Value = stat.stamina.Value = pawnData.stamina;
             stat.maxStance.Value = pawnData.stance;
             stat.maxKnockDown.Value = pawnData.knockDown;
+            stat.maxGroggyHitCount.Value = pawnData.groggyHitCount;
             stat.poise = pawnData.poise;
             stat.physAttack = pawnData.physAttack;
             stat.magicAttack = pawnData.magicAttack;
