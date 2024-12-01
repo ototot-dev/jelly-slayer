@@ -47,18 +47,20 @@ public class DamageTextManager : MonoBehaviour
 
         return dmgText;
     }
-    public void Create(string text, Vector3 vPos) 
+    public DamageText Create(string text, Vector3 vPos, float scale, Color color) 
     {
         var dmgText = Alloc();
         if (dmgText == null)
-            return;
+            return null;
 
-        float scale = 0.2f;
+        //float scale = 0.2f;
         //vPos.x += scale * Random.Range(-1.0f, 1.0f);
         //vPos.y += 0.3f * scale * Random.Range(-1.0f, 1.0f);
         //vPos.z += 0.3f * scale * Random.Range(-1.0f, 1.0f);             
 
-        dmgText.SetText(text, vPos);
+        dmgText.SetText(text, vPos, scale, color);
+
+        return dmgText;
     }
     public void Die(DamageText damageText) 
     {
@@ -88,10 +90,10 @@ public class DamageTextManager : MonoBehaviour
         if (_testPawn == null)
             return;
 
-        if (Input.GetKeyDown(KeyCode.N))
+        //if (Input.GetKeyDown(KeyCode.N))
         {
-            Vector3 vPos = _testPawn.coreColliderHelper.transform.position + (2 * Vector3.up);
-            Create("Test", vPos);
+            ///Vector3 vPos = _testPawn.coreColliderHelper.transform.position + (2 * Vector3.up);
+            //Create("Test", vPos, Color.white);
         }
     }
 #endif

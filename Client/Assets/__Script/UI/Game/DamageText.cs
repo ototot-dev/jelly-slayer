@@ -33,7 +33,7 @@ public class DamageText : MonoBehaviour
     {
         
     }
-    public void SetText(string text, Vector3 vPos) 
+    public void SetText(string text, Vector3 vPos, float scale, Color color) 
     {
         _text.text = text;
         _lifeTimeCur = _lifeTimeMax;
@@ -43,7 +43,7 @@ public class DamageText : MonoBehaviour
         _yAdd = 0;
         _isDie = false;
         _isYDamp = true;
-        _color = Color.white;
+        _color = color;
         _text.color = _color;
 
         gameObject.SetActive(true);
@@ -56,6 +56,7 @@ public class DamageText : MonoBehaviour
         }
         _vWorldPos = vPos;
         _rtRoot.localPosition = Manager.GetCanvasPos(_vWorldPos);
+        _rtRoot.localScale = scale * Vector3.one;
     }
     void Die() 
     {
@@ -105,9 +106,9 @@ public class DamageText : MonoBehaviour
             return;
         }
         // Alpha
-        if (_lifeTimeCur <= 1.0f) 
+        if (_lifeTimeCur <= 0.5f) 
         {
-            _color.a = _lifeTimeCur;
+            _color.a = 2.0f * _lifeTimeCur;
             _text.color = _color;
         }
     }

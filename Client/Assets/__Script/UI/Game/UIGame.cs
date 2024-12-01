@@ -38,7 +38,10 @@ public class UIGame : MonoBehaviour
 
         if (damageContext.finalDamage > 0)
         {
-            _dmgTextManager.Create(damageContext.finalDamage.ToString(), damageContext.hitPoint);
+            var isGroggy = damageContext.receiverBrain.PawnBB.IsGroggy;
+            Color color = (isGroggy) ? Color.yellow : Color.white;
+            float scale = (isGroggy) ? 1.4f : 1.0f;
+            _dmgTextManager.Create(damageContext.finalDamage.ToString(), damageContext.hitPoint, scale, color);
         }
         switch(damageContext.receiverPenalty.Item1)
         {
@@ -55,7 +58,7 @@ public class UIGame : MonoBehaviour
         }
         _hpBarManager.PawnDamaged(ref damageContext);
 
-        // �׼� ����
+        // 
         switch(damageContext.actionResult) 
         {
             case ActionResults.GuardBreak:
