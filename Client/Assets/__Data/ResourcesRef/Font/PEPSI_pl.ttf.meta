@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 242c40b0bf4e6fc459ac614efdd33c24
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 32
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - '! PEPSI !'
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 68f8790c93f13f148b382aac029be36f, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

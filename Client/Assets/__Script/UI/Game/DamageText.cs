@@ -1,8 +1,6 @@
-using FlowCanvas.Nodes;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DamageText : MonoBehaviour
 {
@@ -10,7 +8,9 @@ public class DamageText : MonoBehaviour
 
     public RectTransform _rtRoot;
     [SerializeField]
-    private TextMeshProUGUI _text;
+    private TextMeshProUGUI _textTmp;
+    [SerializeField]
+    private Text _text;
 
     private float _lifeTimeCur = 0;
     [SerializeField]
