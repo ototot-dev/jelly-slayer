@@ -1,8 +1,10 @@
 using System;
 using System.Linq;
+using System.Threading;
 using UniRx;
 using UniRx.Triggers.Extension;
 using UnityEngine;
+using UnityEngine.Playables;
 using XftWeapon;
 using static FIMSpace.FProceduralAnimation.LegsAnimator;
 
@@ -227,17 +229,28 @@ namespace Game
                 __brain.AnimCtrler.mainAnimator.SetBool("IsGroggy", true);
                 __brain.AnimCtrler.mainAnimator.SetTrigger("OnGroggy");
 
+                // 0.3초간 0.5 만큼 느리게 셋팅
+                Util.SlomoTime(this, slomoRate: 0.5f, slomoTime: 0.3f);
+ 
                 //* Groggy 진입 애님 Length가 1초라고 1초간 Groggy 액션 지속함
                 return Observable.Timer(TimeSpan.FromSeconds(1f))
                     .DoOnCancel(() =>
                     {
                         if (CurrActionName == "!OnGroggy")
+                        {
+                            // 0.15초간 0.5 만큼 느리게 셋팅
+                            Util.SlomoTime(this, slomoRate: 0.5f, slomoTime: 0.15f);
                             FinishAction();
+                        }
                     })
                     .DoOnCompleted(() =>
                     {
                         if (CurrActionName == "!OnGroggy")
+                        {
+                            // 0.15초간 0.5 만큼 느리게 셋팅
+                            Util.SlomoTime(this, slomoRate: 0.5f, slomoTime: 0.15f);
                             FinishAction();
+                        }
                     })
                     .Subscribe().AddTo(this);
             }
