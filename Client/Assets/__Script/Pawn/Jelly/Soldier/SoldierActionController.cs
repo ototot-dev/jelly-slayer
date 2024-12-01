@@ -66,7 +66,7 @@ namespace Game
                 }
                 else
                 {
-                    var hitVec = damageContext.receiverBrain.coreColliderHelper.transform.position - damageContext.senderBrain.CoreTransform.position;
+                    var hitVec = damageContext.receiverBrain.CoreTransform.position - damageContext.senderBrain.CoreTransform.position;
                     hitVec = damageContext.receiverBrain.CoreTransform.InverseTransformDirection(hitVec).Vector2D().normalized;
 
                     if (Mathf.Abs(hitVec.x) > Mathf.Abs(hitVec.z))
@@ -185,8 +185,9 @@ namespace Game
 
         public override IDisposable StartOnGroogyAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
         {
-            __brain.AnimCtrler.mainAnimator.SetBool("IsGroggy", true);
-            __brain.AnimCtrler.mainAnimator.SetTrigger("OnGroggy");
+            var anim = __brain.AnimCtrler.mainAnimator;
+            anim.SetBool("IsGroggy", true);
+            anim.SetTrigger("OnGroggy");
 
             if (damageContext.actionResult == ActionResults.KickParried)
             {
@@ -200,13 +201,13 @@ namespace Game
                 Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
                     .DoOnCancel(() =>
                     {
-                        __brain.AnimCtrler.mainAnimator.SetBool("IsGroggy", true);
-                        __brain.AnimCtrler.mainAnimator.SetTrigger("OnGroggy");
+                        anim.SetBool("IsGroggy", true);
+                        anim.SetTrigger("OnGroggy");
                     })
                     .DoOnCompleted(() =>
                     {
-                        __brain.AnimCtrler.mainAnimator.SetBool("IsGroggy", true);
-                        __brain.AnimCtrler.mainAnimator.SetTrigger("OnGroggy");
+                        anim.SetBool("IsGroggy", true);
+                        anim.SetTrigger("OnGroggy");
                     })
                     .Subscribe(_ => __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity))
                     .AddTo(this);
@@ -226,8 +227,8 @@ namespace Game
             }
             else
             {
-                __brain.AnimCtrler.mainAnimator.SetBool("IsGroggy", true);
-                __brain.AnimCtrler.mainAnimator.SetTrigger("OnGroggy");
+                anim.SetBool("IsGroggy", true);
+                anim.SetTrigger("OnGroggy");
 
                 // 0.3초간 0.5 만큼 느리게 셋팅
                 Util.SlomoTime(this, slomoRate: 0.5f, slomoTime: 0.3f);
