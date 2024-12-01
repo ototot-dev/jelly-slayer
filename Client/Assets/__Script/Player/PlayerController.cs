@@ -351,39 +351,44 @@ namespace Game
             var canRolling1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsGroggy && !MyHeroBrain.BB.IsJumping && !MyHeroBrain.BB.IsRolling;
             var canRolling2 = canRolling1 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.BuffCtrler.CheckStatus(PawnStatus.Staggered);
 
-            if (canRolling2)
+            if (canRolling2 == false)
+                return;
+
+            if (MyHeroBrain.ActionCtrler.CheckActionRunning())
+                MyHeroBrain.ActionCtrler.CancelAction(false);
+
+            var rollingXZ = Vector3.zero;
+            var rollingVec = Vector3.zero;
+            if (MyHeroBrain.Movement.moveVec == Vector3.zero)
             {
-                if (MyHeroBrain.ActionCtrler.CheckActionRunning())
-                    MyHeroBrain.ActionCtrler.CancelAction(false);
-
-                var rollingXZ = Vector3.zero;
-                var rollingVec = Vector3.zero;
-                if (MyHeroBrain.Movement.moveVec == Vector3.zero)
-                {
-                    rollingXZ = Vector3.back;
-                    rollingVec = -MyHeroBrain.Movement.capsule.forward.Vector2D().normalized;
-                }
-                else
-                {
-                    rollingXZ = MyHeroBrain.Movement.capsule.InverseTransformDirection(MyHeroBrain.Movement.moveVec);
-                    rollingVec = MyHeroBrain.Movement.moveVec.Vector2D().normalized;
-                }
-
-                if (Mathf.Abs(rollingXZ.x) > Mathf.Abs(rollingXZ.z))
-                {
-                    MyHeroBrain.AnimCtrler.mainAnimator.SetInteger("RollingX", rollingXZ.x > 0f ? 1 : -1);
-                    MyHeroBrain.AnimCtrler.mainAnimator.SetInteger("RollingZ", 0);
-                    MyHeroBrain.Movement.FaceTo(Quaternion.Euler(0f, rollingXZ.x > 0f ? -90f : 90f, 0f) * rollingVec);
-                }
-                else
-                {
-                    MyHeroBrain.AnimCtrler.mainAnimator.SetInteger("RollingX", 0);
-                    MyHeroBrain.AnimCtrler.mainAnimator.SetInteger("RollingZ", rollingXZ.z > 0f ? 1 : -1);
-                    MyHeroBrain.Movement.FaceTo(rollingXZ.z > 0f ? rollingVec : -rollingVec);
-                }
-
-                MyHeroBrain.ActionCtrler.SetPendingAction("Rolling");
+                rollingXZ = Vector3.back;
+                rollingVec = -MyHeroBrain.Movement.capsule.forward.Vector2D().normalized;
             }
+            else
+            {
+                rollingXZ = MyHeroBrain.Movement.capsule.InverseTransformDirection(MyHeroBrain.Movement.moveVec);
+                rollingVec = MyHeroBrain.Movement.moveVec.Vector2D().normalized;
+            }
+
+            if (Mathf.Abs(rollingXZ.x) > Mathf.Abs(rollingXZ.z))
+            {
+                MyHeroBrain.AnimCtrler.mainAnimator.SetInteger("RollingX", rollingXZ.x > 0f ? 1 : -1);
+                MyHeroBrain.AnimCtrler.mainAnimator.SetInteger("RollingZ", 0);
+                MyHeroBrain.Movement.FaceTo(Quaternion.Euler(0f, rollingXZ.x > 0f ? -90f : 90f, 0f) * rollingVec);
+            }
+            else
+            {
+                MyHeroBrain.AnimCtrler.mainAnimator.SetInteger("RollingX", 0);
+                MyHeroBrain.AnimCtrler.mainAnimator.SetInteger("RollingZ", rollingXZ.z > 0f ? 1 : -1);
+                MyHeroBrain.Movement.FaceTo(rollingXZ.z > 0f ? rollingVec : -rollingVec);
+            }
+
+            MyHeroBrain.ActionCtrler.SetPendingAction("Rolling");
+
+            // Roll Sound
+            EffectManager.Instance.Show("FX_Cartoony_Jump_Up_01", MyHeroBrain.CoreTransform.position,
+                Quaternion.identity, Vector3.one, 1f);
+            SoundManager.Instance.Play(SoundID.JUMP);
         }
         public void OnParry()
         {

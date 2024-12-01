@@ -20,7 +20,7 @@ public class SoundManager : MonoSingleton<SoundManager>
     public SoundID _idClick = 0;
 	public int _count = 0;
 
-	public SoundObject Play(SoundID id, bool i_isLoop = false, float i_delay = 0) //, SoundInfo.TYPE i_soundType = SoundInfo.TYPE.SFX
+	public SoundObject Play(SoundID id, bool loop = false, float delay = 0) //, SoundInfo.TYPE i_soundType = SoundInfo.TYPE.SFX
 	{
         SoundData data = GetData(id);
 #if UNITY_EDITOR
@@ -31,13 +31,13 @@ public class SoundManager : MonoSingleton<SoundManager>
 #endif
         if (data == null)
         {
-			Debug.Log("SoundPlay Error 1 : " + id + ", " + i_isLoop);
+			Debug.Log("SoundPlay Error 1 : " + id + ", " + loop);
 			return null;
         }
 		SoundObject sound = data.Create();
         if (sound == null)
         {
-			Debug.Log("SoundPlay Error 2 : " + id + ", " + i_isLoop);
+			Debug.Log("SoundPlay Error 2 : " + id + ", " + loop);
 			return null;
         }
 
@@ -54,11 +54,10 @@ public class SoundManager : MonoSingleton<SoundManager>
 				Debug.Log("Sound type is not correct!");
 				return null;
 		}
-		sound.SetLoop(i_isLoop);
-
-		if (i_delay > 0)
+		sound.SetLoop(loop);
+		if (delay > 0)
 		{
-			sound.Invoke("Play", i_delay);
+			sound.Invoke("Play", delay);
 		}
 		else
 		{

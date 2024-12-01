@@ -260,13 +260,16 @@ namespace Game
             {
                 if (v)
                 {
-                    EffectManager.Instance.Show("FX_Cartoony_Jump_Up_01", __brain.coreColliderHelper.transform.position, Quaternion.identity, Vector3.one, 1f);
+                    EffectManager.Instance.Show("FX_Cartoony_Jump_Up_01", __brain.CoreTransform.position, 
+                        Quaternion.identity, Vector3.one, 1f);
                     SoundManager.Instance.Play(SoundID.JUMP);
                 }
                 else
                 {
-                    // EffectManager.Instance.Show("FX_Cartoony_Jump_01", __brain.coreColliderHelper.transform.position + Time.deltaTime * __brain.Movement.moveVec, Quaternion.identity, Vector3.one, 1f);
-                    EffectManager.Instance.Show("JumpCloudSmall", __brain.coreColliderHelper.transform.position + Time.deltaTime * __brain.Movement.moveSpeed * __brain.Movement.moveVec + 0.1f * Vector3.up, Quaternion.identity, Vector3.one, 1f);
+                    EffectManager.Instance.Show("JumpCloudSmall", __brain.CoreTransform.position + 
+                        Time.deltaTime * __brain.Movement.moveSpeed * __brain.Movement.moveVec + 
+                        0.1f * Vector3.up, Quaternion.identity, 0.8f * Vector3.one, 1f);
+                    SoundManager.Instance.Play(SoundID.LAND);
                 }
             }).AddTo(this);
 
