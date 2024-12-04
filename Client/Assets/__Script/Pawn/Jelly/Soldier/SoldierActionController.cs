@@ -1,11 +1,8 @@
 using System;
 using System.Linq;
 using UniRx;
-using UniRx.Triggers.Extension;
 using UnityEngine;
-using UnityEngine.AI;
 using XftWeapon;
-using static FIMSpace.FProceduralAnimation.LegsAnimator;
 
 namespace Game
 {
@@ -65,7 +62,7 @@ namespace Game
                 }
                 else
                 {
-                    var hitVec = damageContext.receiverBrain.coreColliderHelper.transform.position - damageContext.senderBrain.CoreTransform.position;
+                    var hitVec = damageContext.receiverBrain.CoreTransform.position - damageContext.senderBrain.CoreTransform.position;
                     hitVec = damageContext.receiverBrain.CoreTransform.InverseTransformDirection(hitVec).Vector2D().normalized;
 
                     if (Mathf.Abs(hitVec.x) > Mathf.Abs(hitVec.z))
@@ -230,17 +227,28 @@ namespace Game
                 __brain.AnimCtrler.mainAnimator.SetBool("IsGroggy", true);
                 __brain.AnimCtrler.mainAnimator.SetTrigger("OnGroggy");
 
+                // 0.3초간 0.5 만큼 느리게 셋팅
+                // Util.SlomoTime(this, slomoRate: 0.5f, slomoTime: 0.3f);
+ 
                 //* Groggy 진입 애님 Length가 1초라고 1초간 Groggy 액션 지속함
                 return Observable.Timer(TimeSpan.FromSeconds(1f))
                     .DoOnCancel(() =>
                     {
                         if (CurrActionName == "!OnGroggy")
+                        {
+                            // 0.15초간 0.5 만큼 느리게 셋팅
+                            // Util.SlomoTime(this, slomoRate: 0.5f, slomoTime: 0.15f);
                             FinishAction();
+                        }
                     })
                     .DoOnCompleted(() =>
                     {
                         if (CurrActionName == "!OnGroggy")
+                        {
+                            // 0.15초간 0.5 만큼 느리게 셋팅
+                            // Util.SlomoTime(this, slomoRate: 0.5f, slomoTime: 0.15f);
                             FinishAction();
+                        }
                     })
                     .Subscribe().AddTo(this);
             }

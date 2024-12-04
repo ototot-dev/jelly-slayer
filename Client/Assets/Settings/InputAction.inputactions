@@ -103,6 +103,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Drink",
+                    "type": "Button",
+                    "id": "a64ebabf-57b3-4db6-ac69-4c4e639b8693",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -306,19 +315,8 @@
                 },
                 {
                     "name": "",
-                    "id": "886e731e-7071-4ae4-95c0-e61739dad6fd",
-                    "path": "<Touchscreen>/primaryTouch/tap",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Touch",
-                    "action": "Attack",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "6862c37c-c876-4d16-a0c2-389ff75a747f",
-                    "path": "<Gamepad>/rightTrigger",
+                    "path": "<Gamepad>/dpad/right",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
@@ -372,6 +370,17 @@
                 },
                 {
                     "name": "",
+                    "id": "ecb27a6f-b074-4d56-a23b-48b5de62dccc",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "a565ace6-de4e-4868-828a-6b11cf39dba3",
                     "path": "<Keyboard>/space",
                     "interactions": "",
@@ -383,22 +392,22 @@
                 },
                 {
                     "name": "",
-                    "id": "f2c5e073-6427-4652-9bc6-1edfebed0609",
-                    "path": "<Gamepad>/leftTrigger",
+                    "id": "ea9a5d3b-57ff-4499-b0a5-abf5ea600653",
+                    "path": "<Keyboard>/leftShift",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Gamepad",
+                    "groups": "Keyboard&Mouse",
                     "action": "Guard",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "ea9a5d3b-57ff-4499-b0a5-abf5ea600653",
-                    "path": "<Keyboard>/leftShift",
+                    "id": "c6bbfa6d-cc7a-4069-b852-4f490df306af",
+                    "path": "<Gamepad>/leftTrigger",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard&Mouse",
+                    "groups": ";Gamepad",
                     "action": "Guard",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -449,12 +458,34 @@
                 },
                 {
                     "name": "",
+                    "id": "2356524f-44d9-4520-9bfb-e6853f128d16",
+                    "path": "<Gamepad>/dpad/left",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "PrevTarget",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "b3cf26f5-ef8f-4646-a1d3-02f36f9fface",
                     "path": "<Keyboard>/u",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "PrevTarget",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e6bdec55-7c62-49e1-90a2-78fd88674e42",
+                    "path": "<Keyboard>/o",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Drink",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

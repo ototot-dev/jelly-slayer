@@ -2,6 +2,7 @@ using Game;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class UIGamePanel : MonoBehaviour
 {
@@ -24,6 +25,10 @@ public class UIGamePanel : MonoBehaviour
         {
             _heroBrain = FindAnyObjectByType<HeroBrain>();
         }
+    }
+    public void OnClickMenu() 
+    {
+        SceneManager.LoadScene("Title");
     }
 
     // Update is called once per frame
