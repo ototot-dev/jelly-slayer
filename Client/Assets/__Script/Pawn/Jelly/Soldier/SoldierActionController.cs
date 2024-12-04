@@ -90,11 +90,8 @@ namespace Game
             }
             else if (damageContext.actionResult == ActionResults.Blocked)
             {
-                __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", true);
-                __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 1);
                 __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
-                Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverPenalty.Item2))
-                    .Subscribe(_ => __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", false)).AddTo(this);
+                __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 1);
 
                 SoundManager.Instance.Play(SoundID.HIT_BLOCK);
                 EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);
