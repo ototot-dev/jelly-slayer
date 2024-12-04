@@ -6,7 +6,7 @@ using UnityEngine.Animations.Rigging;
 
 namespace Game
 {
-    public class SoldierAnimController : PawnAnimController
+    public class WorkerAnimController : PawnAnimController
     {
         [Header("Component")]
         public Transform jellyMeshSlot;
@@ -26,34 +26,34 @@ namespace Game
         public float boneSimulatorBlendSpeed = 1f;
         public float boneSimulatorTargetWeight = 0f;
         public Vector3[] moveXmoveY_Table;
-        SoldierBrain __brain;
+        WorkerBrain __brain;
         Rig __rig;
 
         void Awake()
         {
-            __brain = GetComponent<SoldierBrain>();
+            __brain = GetComponent<WorkerBrain>();
             // __rig = mainAnimator.GetComponent<RigBuilder>().layers.First().rig;
             springMassSystem.coreAttachPoint = jellyMeshSlot;
         }
 
         void Start()
         {
-            // __brain.BuffCtrler.onStatusActive += (buff) =>
-            // {
-            //     if (buff == PawnStatus.Staggered || buff == PawnStatus.Groggy)
-            //     {
-            //         leftShoulderBoneSimulator.GravityEffectForce = rightShoulderBoneSimulator.GravityEffectForce = 9.8f * Vector3.down;
-            //         leftShoulderBoneSimulator.GravityHeavyness = 4f;
-            //         leftShoulderBoneSimulator.StimulatorAmount = 1f;
-            //         boneSimulatorTargetWeight = 1f;
-            //         shieldMeshRenderer.material.SetFloat("_Alpha", 0.03f);
-            //     }
-            //     else if (buff == PawnStatus.KnockDown)
-            //     {
-            //         boneSimulatorTargetWeight = 0f;
-            //         shieldMeshRenderer.material.SetFloat("_Alpha", 0.3f);
-            //     }
-            // };
+            __brain.BuffCtrler.onStatusActive += (buff) =>
+            {
+                if (buff == PawnStatus.Staggered || buff == PawnStatus.Groggy)
+                {
+                    leftShoulderBoneSimulator.GravityEffectForce = rightShoulderBoneSimulator.GravityEffectForce = 9.8f * Vector3.down;
+                    leftShoulderBoneSimulator.GravityHeavyness = 4f;
+                    leftShoulderBoneSimulator.StimulatorAmount = 1f;
+                    boneSimulatorTargetWeight = 1f;
+                    shieldMeshRenderer.material.SetFloat("_Alpha", 0.03f);
+                }
+                else if (buff == PawnStatus.KnockDown)
+                {
+                    boneSimulatorTargetWeight = 0f;
+                    shieldMeshRenderer.material.SetFloat("_Alpha", 0.3f);
+                }
+            };
 
             __brain.BuffCtrler.onStatusDeactive += (buff) =>
             {
@@ -94,22 +94,22 @@ namespace Game
                 mainAnimator.SetFloat("MoveX", animMoveVecClamped.x / __brain.Movement.moveSpeed);
                 mainAnimator.SetFloat("MoveY", animMoveVecClamped.z / __brain.Movement.moveSpeed);
 
-                if (boneSimulatorTargetWeight > 0f)
-                {
-                    if (!leftShoulderBoneSimulator.enabled) leftShoulderBoneSimulator.enabled = true;
-                    if (!rightShoulderBoneSimulator.enabled) rightShoulderBoneSimulator.enabled = true;
-                    leftShoulderBoneSimulator.StimulatorAmount = Mathf.Clamp01(leftShoulderBoneSimulator.StimulatorAmount + boneSimulatorBlendSpeed *Time.deltaTime);
-                    rightShoulderBoneSimulator.StimulatorAmount = Mathf.Clamp01(rightShoulderBoneSimulator.StimulatorAmount + boneSimulatorBlendSpeed *Time.deltaTime);
-                }
-                else
-                {
-                    leftShoulderBoneSimulator.StimulatorAmount = Mathf.Clamp01(leftShoulderBoneSimulator.StimulatorAmount - boneSimulatorBlendSpeed *Time.deltaTime);
-                    rightShoulderBoneSimulator.StimulatorAmount = Mathf.Clamp01(rightShoulderBoneSimulator.StimulatorAmount - boneSimulatorBlendSpeed *Time.deltaTime);
-                    if (leftShoulderBoneSimulator.StimulatorAmount <= 0f && leftShoulderBoneSimulator.enabled)
-                        leftShoulderBoneSimulator.enabled = false;
-                    if (rightShoulderBoneSimulator.StimulatorAmount <= 0f && rightShoulderBoneSimulator.enabled)
-                        rightShoulderBoneSimulator.enabled = false;
-                }
+                // if (boneSimulatorTargetWeight > 0f)
+                // {
+                //     if (!leftShoulderBoneSimulator.enabled) leftShoulderBoneSimulator.enabled = true;
+                //     if (!rightShoulderBoneSimulator.enabled) rightShoulderBoneSimulator.enabled = true;
+                //     leftShoulderBoneSimulator.StimulatorAmount = Mathf.Clamp01(leftShoulderBoneSimulator.StimulatorAmount + boneSimulatorBlendSpeed *Time.deltaTime);
+                //     rightShoulderBoneSimulator.StimulatorAmount = Mathf.Clamp01(rightShoulderBoneSimulator.StimulatorAmount + boneSimulatorBlendSpeed *Time.deltaTime);
+                // }
+                // else
+                // {
+                //     leftShoulderBoneSimulator.StimulatorAmount = Mathf.Clamp01(leftShoulderBoneSimulator.StimulatorAmount - boneSimulatorBlendSpeed *Time.deltaTime);
+                //     rightShoulderBoneSimulator.StimulatorAmount = Mathf.Clamp01(rightShoulderBoneSimulator.StimulatorAmount - boneSimulatorBlendSpeed *Time.deltaTime);
+                //     if (leftShoulderBoneSimulator.StimulatorAmount <= 0f && leftShoulderBoneSimulator.enabled)
+                //         leftShoulderBoneSimulator.enabled = false;
+                //     if (rightShoulderBoneSimulator.StimulatorAmount <= 0f && rightShoulderBoneSimulator.enabled)
+                //         rightShoulderBoneSimulator.enabled = false;
+                // }
 
                 if (__brain.BB.IsDead)
                 {
@@ -134,10 +134,10 @@ namespace Game
                 }
                 else
                 {   
-                    if (__brain.BB.IsGuarding)
+                    // if (__brain.BB.IsGuarding)
                         legAnimator.MainGlueBlend = 1f;
-                    else
-                        legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude  > 0 && !__brain.ActionCtrler.CheckActionRunning() ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.8f : 0.9f, 1);
+                    // else
+                        // legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude  > 0 && !__brain.ActionCtrler.CheckActionRunning() ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.8f : 0.9f, 1);
 
                     legAnimator.User_SetIsMoving(__brain.Movement.CurrVelocity.sqrMagnitude > 0 && !__brain.ActionCtrler.CheckActionRunning());
                     legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround);

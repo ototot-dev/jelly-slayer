@@ -9,6 +9,7 @@ namespace Game
         Hero,
         DroneBot,
         Soldier,
+        Worker,
         Zombie,
         Footman,
         Warrior,

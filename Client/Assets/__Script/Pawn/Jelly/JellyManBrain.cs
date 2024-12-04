@@ -137,7 +137,7 @@ namespace Game
 
             __jellyManBB.decision.currDecision.Subscribe(v =>
             {
-                __pawnMovement.moveSpeed = v == Decisions.Spacing ? __jellyManBB.body.walkSpeed : __jellyManBB.body.moveSpeed;
+                __pawnMovement.moveSpeed = v == Decisions.Spacing ? __jellyManBB.body.walkSpeed : __jellyManBB.body.sprintSpeed;
             }).AddTo(this);
 
             SensorCtrler.onListenSomething += (s) =>
@@ -296,7 +296,7 @@ namespace Game
                         if (__jellyManBB.CurrDecision == Decisions.Spacing && distance > __jellyManBB.decision.spacingOutDistance)
                             InvalidateDecision(1f);
                         else if (__jellyManBB.CurrDecision == Decisions.Approach && distance <= __jellyManBB.decision.spacingInDistance)
-                            InvalidateDecision(0.2f);
+                            InvalidateDecision(1f);
                     }
                     else
                     {

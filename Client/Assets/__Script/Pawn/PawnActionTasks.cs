@@ -914,6 +914,8 @@ namespace Game.NodeCanvasExtension
 
         int TraceSampleInternal()
         {   
+            __Logger.LogF(__pawnBrain.gameObject, nameof(TraceSampleInternal), "=>", "__sampleNum", __sampleIndex);
+
             if (traceDirection.value == 0 || __sampleNum == 1)
             {
                 __traceResults = __pawnActionCtrler.TraceActionTargets(offset.value, pitchYawRoll.value, fanRadius.value, fanAngle.value, fanHeight.value, minRadius.value, maxTargetNum.value, false, drawGizmos, drawGizmosDuration);

@@ -23,12 +23,9 @@ namespace Game
         [Serializable]
         public class Body
         {
-            public float walkSpeed = 1;
-            public float moveSpeed = 1;
-            public float moveAccel = 1;
-            public float moveBrake = 1;
-            public float rotateSpeed = 360;
-            public float minApproachDistance = 1;
+            public float walkSpeed = 1f;
+            public float runSpeed = 1f;
+            public float sprintSpeed = 1f;
         }
 
         public Body body = new();
@@ -58,14 +55,14 @@ namespace Game
 
             pawnData_Movement = MainTable.PawnData_Movement.PawnData_MovementList.First(d => d.pawnId == common.pawnId);
             
-            body.moveSpeed = pawnData_Movement.moveSpeed;
+            // body.moveSpeed = pawnData_Movement.moveSpeed;
             body.walkSpeed = pawnData_Movement.walkSpeed;
             
             var movement = GetComponent<PawnMovementEx>();
-            movement.moveSpeed = body.moveSpeed;
-            movement.moveAccel = body.moveAccel;
-            movement.moveBrake = body.moveBrake;
-            movement.rotateSpeed = body.rotateSpeed;
+            // movement.moveSpeed = body.moveSpeed;
+            // movement.moveAccel = body.moveAccel;
+            // movement.moveBrake = body.moveBrake;
+            // movement.rotateSpeed = body.rotateSpeed;
         }
         
         public MainTable.PawnData_Movement pawnData_Movement;

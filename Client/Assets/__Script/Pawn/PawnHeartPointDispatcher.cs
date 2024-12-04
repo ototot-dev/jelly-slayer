@@ -247,27 +247,37 @@ namespace Game
             {
                 __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.Blocked", "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
 
-                var staminaCost = (damageContext.receiverBrain.PawnBB.stat.guardStaminaCost * damageContext.senderActionData.guardStaminaCostMultiplier + damageContext.senderActionData.guardStaminaDamage) * Mathf.Clamp01(1f - damageContext.receiverBrain.PawnBB.stat.guardEfficiency);
-                damageContext.receiverBrain.PawnBB.stat.ReduceStamina(staminaCost);
-
-                if (damageContext.receiverBrain.PawnBB.stat.guardStrength <= damageContext.senderActionData.guardBreak)
+                if (damageContext.insufficientStamina)
                 {
-                    __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.GuardBreak", "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
-                    damageContext.actionResult = ActionResults.GuardBreak;
-
-                    //* 'BreakGuard'인 경우 'Staggered' 디버프를 받게 되며, 'Staggered' 지속 시간은 피격 경직 시간과 동일하게 적용함
-                    damageContext.receiverPenalty = new(PawnStatus.Staggered, damageContext.senderActionData.staggerDuration);
+                    damageContext.receiverPenalty = new(PawnStatus.None, 0f);
                 }
                 else
                 {
-                    if (damageContext.projectile == null)
-                    {
-                        //* Receiver가 'Block' ActionData가 있는지 검증
-                        Debug.Assert(damageContext.receiverActionData != null);
+                    var staminaCost = (damageContext.receiverBrain.PawnBB.stat.guardStaminaCost * damageContext.senderActionData.guardStaminaCostMultiplier + damageContext.senderActionData.guardStaminaDamage) * Mathf.Clamp01(1f - damageContext.receiverBrain.PawnBB.stat.guardEfficiency);
+                    damageContext.receiverBrain.PawnBB.stat.ReduceStamina(staminaCost);
 
-                        //* 'Block' 판정인 경우엔 Sender는 역경직을 받게 되고, Receiver도 짧은 자체 경직 시간을 갖게됨
-                        if (senderActionCtrler == null || !senderActionCtrler.IsSuperArmorEnabled )
-                            damageContext.senderPenalty = new(PawnStatus.Staggered, damageContext.receiverActionData.staggerDuration);
+                    if (damageContext.receiverBrain.PawnBB.stat.guardStrength <= damageContext.senderActionData.guardBreak)
+                    {
+                        __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.GuardBreak", "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
+                        damageContext.actionResult = ActionResults.GuardBreak;
+
+                        //* 'BreakGuard'인 경우 'Staggered' 디버프를 받게 되며, 'Staggered' 지속 시간은 피격 경직 시간과 동일하게 적용함
+                        damageContext.receiverPenalty = new(PawnStatus.Staggered, damageContext.senderActionData.staggerDuration);
+                    }
+                    else
+                    {
+                        if (damageContext.projectile == null)
+                        {
+                            //* Receiver가 'Block' ActionData가 있는지 검증
+                            Debug.Assert(damageContext.receiverActionData != null);
+
+                            //* 'Block' 판정인 경우엔 Sender는 역경직을 받게 되고, Receiver도 짧은 자체 경직 시간을 갖게됨
+                            if (senderActionCtrler == null || !senderActionCtrler.IsSuperArmorEnabled )
+                            {
+                                damageContext.senderPenalty = new(PawnStatus.Staggered, damageContext.receiverActionData.staggerDuration);
+                                damageContext.receiverPenalty = new(PawnStatus.Staggered, 0.1f);
+                            }
+                        }
                     }
                 }
             }
@@ -280,58 +290,65 @@ namespace Game
                 if (!damageContext.receiverBrain.PawnBB.IsInvincible)
                     damageContext.receiverBrain.PawnHP.heartPoint.Value = Mathf.Max(0, damageContext.receiverBrain.PawnHP.heartPoint.Value - damageContext.finalDamage);
 
-                if (damageContext.receiverBrain.PawnHP.heartPoint.Value > 0)
+                if (damageContext.insufficientStamina)
                 {
-                    if (damageContext.senderActionData.groggy >= damageContext.receiverBrain.PawnBB.stat.poise && !damageContext.receiverBrain.PawnBB.IsGroggy) //* Groggy 처리
+                    damageContext.receiverPenalty = new(PawnStatus.None, 0f);
+                }
+                else
+                {
+                    if (damageContext.receiverBrain.PawnHP.heartPoint.Value > 0)
                     {
-                        damageContext.receiverBrain.PawnBB.stat.stance.Value += damageContext.senderActionData.groggyAccum;
-
-                        __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged", "stat.stance", damageContext.senderBrain.PawnBB.stat.stance.Value, "stat.maxStance", damageContext.senderBrain.PawnBB.stat.maxStance.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
-
-                        if (damageContext.receiverBrain.PawnBB.stat.stance.Value >= damageContext.receiverBrain.PawnBB.stat.maxStance.Value)
+                        if (damageContext.senderActionData.groggy >= damageContext.receiverBrain.PawnBB.stat.poise && !damageContext.receiverBrain.PawnBB.IsGroggy) //* Groggy 처리
                         {
-                            damageContext.receiverBrain.PawnBB.stat.stance.Value = 0;
-                            damageContext.receiverBrain.PawnBB.stat.knockDown.Value = 0;
-                            damageContext.receiverPenalty = new(PawnStatus.Groggy, damageContext.receiverBrain.PawnBB.pawnData.groggyDuration);
+                            damageContext.receiverBrain.PawnBB.stat.stance.Value += damageContext.senderActionData.groggyAccum;
+
+                            __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged", "stat.stance", damageContext.senderBrain.PawnBB.stat.stance.Value, "stat.maxStance", damageContext.senderBrain.PawnBB.stat.maxStance.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
+
+                            if (damageContext.receiverBrain.PawnBB.stat.stance.Value >= damageContext.receiverBrain.PawnBB.stat.maxStance.Value)
+                            {
+                                damageContext.receiverBrain.PawnBB.stat.stance.Value = 0;
+                                damageContext.receiverBrain.PawnBB.stat.knockDown.Value = 0;
+                                damageContext.receiverPenalty = new(PawnStatus.Groggy, damageContext.receiverBrain.PawnBB.pawnData.groggyDuration);
+                            }
                         }
-                    }
 
-                    //* KnockDown 처리
-                    if (damageContext.receiverBrain.PawnBB.IsGroggy)
-                    {
-                        damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value += damageContext.senderActionData.groggyHit;
-                        Debug.Assert(damageContext.receiverPenalty.Item1 == PawnStatus.None);
-
-                        __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged", "stat.groggyHitCount", damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value, "stat.maxGroggyHitCount", damageContext.receiverBrain.PawnBB.stat.maxGroggyHitCount.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
-
-                        if (damageContext.receiverPenalty.Item1 == PawnStatus.None && damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value >= damageContext.receiverBrain.PawnBB.stat.maxGroggyHitCount.Value)
+                        //* KnockDown 처리
+                        if (damageContext.receiverBrain.PawnBB.IsGroggy)
                         {
-                            damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value = 0;
-                            damageContext.receiverPenalty = new(PawnStatus.KnockDown, damageContext.receiverBrain.PawnBB.pawnData.knockDownDuration);
+                            damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value += damageContext.senderActionData.groggyHit;
+                            Debug.Assert(damageContext.receiverPenalty.Item1 == PawnStatus.None);
+
+                            __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged", "stat.groggyHitCount", damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value, "stat.maxGroggyHitCount", damageContext.receiverBrain.PawnBB.stat.maxGroggyHitCount.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
+
+                            if (damageContext.receiverPenalty.Item1 == PawnStatus.None && damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value >= damageContext.receiverBrain.PawnBB.stat.maxGroggyHitCount.Value)
+                            {
+                                damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value = 0;
+                                damageContext.receiverPenalty = new(PawnStatus.KnockDown, damageContext.receiverBrain.PawnBB.pawnData.knockDownDuration);
+                            }
                         }
-                    }
-                    else if (damageContext.senderActionData.knockDown >= damageContext.receiverBrain.PawnBB.stat.poise && !damageContext.receiverBrain.PawnBB.IsDown)
-                    {
-                        damageContext.receiverBrain.PawnBB.stat.knockDown.Value += damageContext.senderActionData.knockDownAccum;
-
-                        __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged", "stat.knockDown", damageContext.receiverBrain.PawnBB.stat.knockDown.Value, "stat.maxKnockDown", damageContext.receiverBrain.PawnBB.stat.maxKnockDown.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
-
-                        if (damageContext.receiverPenalty.Item1 == PawnStatus.None && damageContext.receiverBrain.PawnBB.stat.knockDown.Value >= damageContext.receiverBrain.PawnBB.stat.maxKnockDown.Value)
+                        else if (damageContext.senderActionData.knockDown >= damageContext.receiverBrain.PawnBB.stat.poise && !damageContext.receiverBrain.PawnBB.IsDown)
                         {
-                            damageContext.receiverBrain.PawnBB.stat.knockDown.Value = 0;
-                            damageContext.receiverPenalty = new(PawnStatus.KnockDown, damageContext.receiverBrain.PawnBB.pawnData.knockDownDuration);
+                            damageContext.receiverBrain.PawnBB.stat.knockDown.Value += damageContext.senderActionData.knockDownAccum;
+
+                            __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged", "stat.knockDown", damageContext.receiverBrain.PawnBB.stat.knockDown.Value, "stat.maxKnockDown", damageContext.receiverBrain.PawnBB.stat.maxKnockDown.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
+
+                            if (damageContext.receiverPenalty.Item1 == PawnStatus.None && damageContext.receiverBrain.PawnBB.stat.knockDown.Value >= damageContext.receiverBrain.PawnBB.stat.maxKnockDown.Value)
+                            {
+                                damageContext.receiverBrain.PawnBB.stat.knockDown.Value = 0;
+                                damageContext.receiverPenalty = new(PawnStatus.KnockDown, damageContext.receiverBrain.PawnBB.pawnData.knockDownDuration);
+                            }
                         }
-                    }
 
-                    if (damageContext.receiverPenalty.Item1 == PawnStatus.None && damageContext.receiverBrain.PawnBB.stat.poise - damageContext.senderActionData.stagger <= 0) //* 경직 처리
-                    {
-                        if (receiverActionCtrler.IsSuperArmorEnabled)
+                        if (damageContext.receiverPenalty.Item1 == PawnStatus.None && damageContext.receiverBrain.PawnBB.stat.poise - damageContext.senderActionData.stagger <= 0) //* 경직 처리
                         {
-                            __Logger.LogF(gameObject, nameof(ProcessDamageContext), "receiverActionCtrler.IsSuperArmorEnabled is true. BuffTypes.Staggered is ignored.");
-                        }
-                        else
-                        {
-                            damageContext.receiverPenalty = new(PawnStatus.Staggered, damageContext.senderActionData.staggerDuration);
+                            if (receiverActionCtrler.IsSuperArmorEnabled)
+                            {
+                                __Logger.LogF(gameObject, nameof(ProcessDamageContext), "receiverActionCtrler.IsSuperArmorEnabled is true. BuffTypes.Staggered is ignored.");
+                            }
+                            else
+                            {
+                                damageContext.receiverPenalty = new(PawnStatus.Staggered, damageContext.senderActionData.staggerDuration);
+                            }
                         }
                     }
                 }

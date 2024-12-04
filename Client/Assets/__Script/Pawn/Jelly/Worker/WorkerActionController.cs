@@ -9,7 +9,7 @@ using static FIMSpace.FProceduralAnimation.LegsAnimator;
 
 namespace Game
 {
-    public class SoldierActionController : PawnActionController
+    public class WorkerActionController : PawnActionController
     {
         [Header("Component")]
         public Transform counterActionCollider;
@@ -44,10 +44,10 @@ namespace Game
                 return false;
             else if (__brain.ActionCtrler.CheckActionRunning())
                 return false;
-            else if (__brain.SensorCtrler.WatchingColliders.Contains(damageContext.senderBrain.coreColliderHelper.pawnCollider) == false)
+            else if (!__brain.SensorCtrler.WatchingColliders.Contains(damageContext.senderBrain.coreColliderHelper.pawnCollider))
                 return false;
 
-            return true;
+            return damageContext.insufficientStamina;
         }
 
         public override IDisposable StartOnHitAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
@@ -93,9 +93,9 @@ namespace Game
             }
             else if (damageContext.actionResult == ActionResults.Blocked)
             {
-                __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", true);
                 __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 1);
                 __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
+                __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", true);
                 Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverPenalty.Item2))
                     .Subscribe(_ => __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", false)).AddTo(this);
 
@@ -284,12 +284,12 @@ namespace Game
                 .AddTo(this);
         }
 
-        SoldierBrain __brain;
+        WorkerBrain __brain;
 
         protected override void AwakeInternal()
         {
             base.AwakeInternal();
-            __brain = GetComponent<SoldierBrain>();
+            __brain = GetComponent<WorkerBrain>();
         }
 
         protected override void StartInternal()
