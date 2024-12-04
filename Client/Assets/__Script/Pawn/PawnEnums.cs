@@ -14,6 +14,7 @@ namespace Game
         Warrior,
         SlimeBoss,
         SlimeMini,
+        Worker,
     }
 
     [UGS(typeof(PawnStatus))]

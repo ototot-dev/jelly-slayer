@@ -536,5 +536,10 @@ namespace Game
                 }
             }
         }
+        public void OnDrink() 
+        {
+            Debug.Log("<color=red>OnDrink</color>");
+            MyHeroBrain.ActionCtrler.SetPendingAction("DrinkPotion");
+        }
     }
 }
