@@ -34,11 +34,17 @@ namespace Game
         MainTable.ActionData __combo1ActionData;
         MainTable.ActionData __combo2ActionData;
         MainTable.ActionData __combo3ActionData;
+        MainTable.ActionData __combo4ActionData;
 
         protected override void StartInternal()
         {
             base.StartInternal();
             
+            BB.decision.currDecision.Subscribe(v =>
+            {
+                __pawnMovement.moveSpeed = v == Decisions.Spacing ? __jellyManBB.body.walkSpeed : __jellyManBB.body.runSpeed;
+            }).AddTo(this);
+
             onTick += (deltaTick) =>
             {
                 if (!BB.IsSpawnFinished || BB.IsDead || BB.IsGroggy || BB.IsDown || !BB.IsInCombat || BB.TargetPawn == null)
@@ -52,6 +58,7 @@ namespace Game
                 __combo1ActionData ??= ActionDataSelector.GetActionData("Attack#1");
                 __combo2ActionData ??= ActionDataSelector.GetActionData("Attack#2");
                 __combo3ActionData ??= ActionDataSelector.GetActionData("Attack#3");
+                __combo4ActionData ??= ActionDataSelector.GetActionData("Attack#4");
 
                 if (!ActionCtrler.CheckActionPending() && ActionCtrler.CheckActionRunning() && ActionCtrler.CanInterruptAction())
                 {
@@ -77,6 +84,12 @@ namespace Game
                         ActionCtrler.SetPendingAction(__combo3ActionData.actionName);
                         ActionCtrler.CancelAction(false);
                     }
+                    else if (ActionCtrler.CurrActionName == "Attack#3") 
+                    {
+                        //* 2타 후에 3타 콤보 공격
+                        ActionCtrler.SetPendingAction(__combo4ActionData.actionName);
+                        ActionCtrler.CancelAction(false);
+                    }
                 }
 
                 if (ActionCtrler.CheckActionPending() || ActionCtrler.CheckActionRunning())
@@ -85,7 +98,8 @@ namespace Game
                 }
                 else if (ActionDataSelector.CheckExecutable(__combo1ActionData) && Time.time - PawnHP.LastDamageTimeStamp >= 1f && Time.time - __lastComboAttackRateStepTimeStamp >= 1f)
                 {
-                    if (ActionDataSelector.EvaluateSelection(__combo1ActionData, -1f, 1f) && CheckTargetVisibility())
+                    var distanceConstraint = BB.TargetBrain != null ? BB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position) : -1f;
+                    if (ActionDataSelector.EvaluateSelection(__combo1ActionData, distanceConstraint, 1f) && CheckTargetVisibility())
                     {
                         ActionDataSelector.ResetSelection(__combo1ActionData);
                         ActionCtrler.SetPendingAction(__combo1ActionData.actionName);

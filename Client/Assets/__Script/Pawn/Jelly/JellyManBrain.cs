@@ -135,10 +135,10 @@ namespace Game
             //         fxAttachPoint.gameObject.Children().Select(c => c.GetComponent<EffectInstance>()).First(e => e != null && e.sourceName == "StunnedStars").Stop();
             // }).AddTo(this);
 
-            __jellyManBB.decision.currDecision.Subscribe(v =>
-            {
-                __pawnMovement.moveSpeed = v == Decisions.Spacing ? __jellyManBB.body.walkSpeed : __jellyManBB.body.sprintSpeed;
-            }).AddTo(this);
+            // __jellyManBB.decision.currDecision.Subscribe(v =>
+            // {
+            //     __pawnMovement.moveSpeed = v == Decisions.Spacing ? __jellyManBB.body.walkSpeed : __jellyManBB.body.sprintSpeed;
+            // }).AddTo(this);
 
             SensorCtrler.onListenSomething += (s) =>
             {
