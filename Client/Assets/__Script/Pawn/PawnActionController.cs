@@ -198,10 +198,10 @@ namespace Game
         public virtual bool CanBlockAction(ref PawnHeartPointDispatcher.DamageContext damageContext) { return false; }
         public virtual bool CanParryAction(ref PawnHeartPointDispatcher.DamageContext damageContext) { return false; }
         public virtual IDisposable StartOnHitAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false) { return null; }
-        public virtual IDisposable StartOnKnockDownAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false) { return null; }
-        public virtual IDisposable StartOnGroogyAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false) { return null; }
         public virtual IDisposable StartOnBlockedAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false) { return null; }
         public virtual IDisposable StartOnParriedAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false) { return null; }
+        public virtual IDisposable StartOnKnockDownAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false) { return null; }
+        public virtual IDisposable StartOnGroogyAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false) { return null; }
         public virtual IDisposable StartActionDisposable(ref PawnHeartPointDispatcher.DamageContext damageContext, string actionName) { return null;}
 
         public void SetPendingAction(string actionName)

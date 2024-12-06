@@ -42,7 +42,7 @@ namespace Game
         {
             if ((!__brain.BB.IsGuarding && !__brain.BB.IsAutoGuardEnabled) || __brain.BB.IsJumping == true)
                 return false;
-            if (!__brain.ActionCtrler.CheckActionRunning() == false)
+            if (__brain.ActionCtrler.CheckActionRunning() || __brain.BuffCtrler.CheckStatus(PawnStatus.Staggered) || __brain.BuffCtrler.CheckStatus(PawnStatus.CanNotGuard))
                 return false;
             if (__brain.SensorCtrler.WatchingColliders.Contains(damageContext.senderBrain.coreColliderHelper.pawnCollider) == false)
                 return false;
@@ -166,14 +166,24 @@ namespace Game
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
             __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 3);
 
-            var knockBackVec = damageContext.receiverActionData.knockBackDistance / 0.2f * damageContext.receiverBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-            var knockBackDisposable = Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.2f)))
+            var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+            Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
                 .Subscribe(_ =>
                 {
                     __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity);
                 }).AddTo(this);
 
-            return null;
+            return Observable.Timer(TimeSpan.FromSeconds(damageContext.senderPenalty.Item2))
+                .DoOnCancel(() =>
+                {
+                    if (CurrActionName == "!OnBlocked")
+                        FinishAction();
+                })
+                .Subscribe(_ =>
+                {
+                    if (CurrActionName == "!OnBlocked")
+                        FinishAction();
+                }).AddTo(this);
         }
 
         public override IDisposable StartOnKnockDownAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
@@ -188,8 +198,8 @@ namespace Game
             __brain.AnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1);
             __brain.AnimCtrler.mainAnimator.SetFloat("AnimAdvance", 99f);
 
-            var knockBackVec = damageContext.senderActionData.knockBackDistance / 0.2f * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-            Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.2f)))
+            var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+            Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
                 .Subscribe(_ => __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity))
                 .AddTo(this);
 
@@ -200,6 +210,7 @@ namespace Game
 
                 __downStateStartDisposable = downStartBehaviour.OnStateExitAsObservable().Subscribe(s =>
                 {
+                    //* KnockDown 동안 다른 Pawn을 밀쳐내지 않도록 Layer를 'PawnOverlapped'으로 변경함
                     __brain.coreColliderHelper.gameObject.layer = LayerMask.NameToLayer("PawnOverlapped");
                 }).AddTo(this);
             }
@@ -207,6 +218,7 @@ namespace Game
             return Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverPenalty.Item2))
                 .DoOnCancel(() =>
                 {
+                    //* Layer 원래값으로 복구
                     __brain.coreColliderHelper.gameObject.layer = LayerMask.NameToLayer("Pawn");
                     __brain.AnimCtrler.mainAnimator.SetBool("IsDown", false);
                     if (CurrActionName == "!OnKnockDown")
@@ -214,12 +226,14 @@ namespace Game
                 })
                 .Subscribe(_ =>
                 {
+                    //* Layer 원래값으로 복구
                     __brain.coreColliderHelper.gameObject.layer = LayerMask.NameToLayer("Pawn");
                     __brain.AnimCtrler.mainAnimator.SetBool("IsDown", false);
                     if (CurrActionName == "!OnKnockDown")
                         FinishAction();
                 }).AddTo(this);
         }
+
         IDisposable __downStateStartDisposable;
 
         public override IDisposable StartOnGroogyAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)

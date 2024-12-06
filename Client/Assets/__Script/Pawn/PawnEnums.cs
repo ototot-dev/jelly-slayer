@@ -35,6 +35,7 @@ namespace Game
         CanNotDash, 
         CanNotJump,
         CanNotMove,
+        CanNotGuard,
         CanNotAction,
         MoveSpeedDown,
         ActionSpeedDown,

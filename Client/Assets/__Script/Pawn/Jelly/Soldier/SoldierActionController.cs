@@ -144,6 +144,73 @@ namespace Game
             }
         }
 
+        public override IDisposable StartOnBlockedAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
+        {
+            Debug.Assert(damageContext.senderBrain == __brain);
+            Debug.Assert(damageContext.receiverActionData != null);
+            Debug.Assert(!isAddictiveAction);
+
+            __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
+            __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 3);
+
+            var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+            Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
+                .Subscribe(_ =>
+                {
+                    __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity);
+                }).AddTo(this);
+
+            return Observable.Timer(TimeSpan.FromSeconds(damageContext.senderPenalty.Item2))
+                .DoOnCancel(() =>
+                {
+                    if (CurrActionName == "!OnBlocked")
+                        FinishAction();
+                })
+                .Subscribe(_ =>
+                {
+                    if (CurrActionName == "!OnBlocked")
+                        FinishAction();
+                }).AddTo(this);
+        }
+
+        public override IDisposable StartOnParriedAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
+        {
+            Debug.Assert(damageContext.senderBrain == __brain);
+
+            __Logger.LogF(gameObject, nameof(StartOnParriedAction), "-", "Distance", damageContext.senderBrain.coreColliderHelper.GetDistanceBetween(damageContext.receiverBrain.coreColliderHelper));
+
+            __brain.AnimCtrler.mainAnimator.SetTrigger("OnParried");
+
+            //* Groogy 애님의 RootMotion 배율 짧게 조정
+            currActionContext.rootMotionMultiplier = 0f;
+
+            var knockBackDistance = 0f;
+            if (damageContext.actionResult == ActionResults.KickParried)
+                knockBackDistance = damageContext.receiverActionData.knockBackDistance;
+            else if (damageContext.actionResult == ActionResults.GuardParried)
+                knockBackDistance = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "GuardParry")?.knockBackDistance ?? 0f;
+            else
+                Debug.Assert(false);
+
+            if (knockBackDistance <= 0f)
+                __Logger.WarningF(gameObject, nameof(StartOnParriedAction), "knockBackDistance is zero", "knockBackDistance", knockBackDistance);
+
+            var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.receiverBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+            return Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
+                .DoOnCancel(() =>
+                {
+                    if (CurrActionName == "!OnParried")
+                        FinishAction();
+                })
+                .DoOnCompleted(() =>
+                {
+                    if (CurrActionName == "!OnParried")
+                        FinishAction();
+                })
+                .Subscribe(_ => __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity))
+                .AddTo(this);
+        }
+        
         public override IDisposable StartOnKnockDownAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
         {
             Debug.Assert(damageContext.receiverBrain == __brain);
@@ -178,7 +245,7 @@ namespace Game
 
         public override IDisposable StartOnGroogyAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
         {
-            __Logger.LogF(gameObject, nameof(StartOnParriedAction), "-", "Distance", damageContext.senderBrain.coreColliderHelper.GetDistanceBetween(damageContext.receiverBrain.coreColliderHelper));
+            __Logger.LogF(gameObject, nameof(StartOnGroogyAction), "-", "Distance", damageContext.senderBrain.coreColliderHelper.GetDistanceBetween(damageContext.receiverBrain.coreColliderHelper));
 
             __brain.AnimCtrler.mainAnimator.SetBool("IsGroggy", true);
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnGroggy");
@@ -249,44 +316,6 @@ namespace Game
                     })
                     .Subscribe().AddTo(this);
             }
-        }
-
-        public override IDisposable StartOnParriedAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
-        {
-            Debug.Assert(damageContext.senderBrain == __brain);
-
-            __Logger.LogF(gameObject, nameof(StartOnParriedAction), "-", "Distance", damageContext.senderBrain.coreColliderHelper.GetDistanceBetween(damageContext.receiverBrain.coreColliderHelper));
-
-            __brain.AnimCtrler.mainAnimator.SetTrigger("OnParried");
-
-            //* Groogy 애님의 RootMotion 배율 짧게 조정
-            currActionContext.rootMotionMultiplier = 0f;
-
-            var knockBackDistance = 0f;
-            if (damageContext.actionResult == ActionResults.KickParried)
-                knockBackDistance = damageContext.receiverActionData.knockBackDistance;
-            else if (damageContext.actionResult == ActionResults.GuardParried)
-                knockBackDistance = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "GuardParry")?.knockBackDistance ?? 0f;
-            else
-                Debug.Assert(false);
-
-            if (knockBackDistance <= 0f)
-                __Logger.WarningF(gameObject, nameof(StartOnParriedAction), "knockBackDistance is zero", "knockBackDistance", knockBackDistance);
-
-            var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.receiverBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-            return Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
-                .DoOnCancel(() =>
-                {
-                    if (CurrActionName == "!OnParried")
-                        FinishAction();
-                })
-                .DoOnCompleted(() =>
-                {
-                    if (CurrActionName == "!OnParried")
-                        FinishAction();
-                })
-                .Subscribe(_ => __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity))
-                .AddTo(this);
         }
 
         SoldierBrain __brain;
