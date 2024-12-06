@@ -29,12 +29,13 @@ namespace Game
             public AnimationCurve rootMotionCurve;
             public bool insufficientStamina;
             public bool actionCanceled;
+            public bool movementEnabled;
             public bool rootMotionEnabled;
             public bool legAnimGlueEnabled;
             public bool interruptEnabled;
             public bool superArmorEnabled;
             public bool activeParryEnabled;
-            public bool traceRunning;
+            public bool isTraceRunning;
             public bool manualAdvanceEnabled;
             public float manualAdvanceTime;
             public float manualAdvanceSpeed;
@@ -62,12 +63,13 @@ namespace Game
                 this.rootMotionCurve = rootMotionCurve;
                 insufficientStamina = false;
                 actionCanceled = false;
+                movementEnabled = false;
                 rootMotionEnabled = true;
                 legAnimGlueEnabled = true;
                 interruptEnabled = false;
                 superArmorEnabled = false;
                 activeParryEnabled = false;
-                traceRunning = false;
+                isTraceRunning = false;
                 this.manualAdvanceEnabled = manualAdvacneEnabled;
                 manualAdvanceTime = 0f;
                 manualAdvanceSpeed = actionSpeed;
@@ -94,12 +96,13 @@ namespace Game
                 rootMotionCurve = null;
                 insufficientStamina = false;
                 actionCanceled = false;
+                movementEnabled = false;
                 rootMotionEnabled = true;
                 legAnimGlueEnabled = true;
                 interruptEnabled = false;
                 superArmorEnabled = false;
                 activeParryEnabled = false;
-                traceRunning = false;
+                isTraceRunning = false;
                 manualAdvanceEnabled = false;
                 manualAdvanceTime = 0f;
                 manualAdvanceSpeed = actionSpeed;
@@ -120,12 +123,16 @@ namespace Game
         public bool CheckActionPending() => !string.IsNullOrEmpty(PendingActionData.Item1);
         public bool CheckActionRunning() => currActionContext.actionData != null || currActionContext.actionDisposable != null;
         public bool CheckActionCanceled() => currActionContext.actionCanceled && CheckActionRunning();
+        public bool CheckMovementEnabled() => currActionContext.movementEnabled;
         public bool CanInterruptAction() => currActionContext.interruptEnabled;
         public bool CheckPendingActionHasPreMotion() => !string.IsNullOrEmpty(PendingActionData.Item2);
-        public float EvaluateRootMotion(float deltaTime) => currActionContext.rootMotionCurve == null ? 0f : deltaTime * currActionContext.rootMotionMultiplier * currActionContext.rootMotionCurve.Evaluate(currActionContext.manualAdvanceEnabled ? currActionContext.manualAdvanceTime : Time.time - currActionContext.startTimeStamp);
+        public float EvaluateRootMotion(float deltaTime) => currActionContext.rootMotionCurve == null ? 0f : deltaTime * currActionContext.rootMotionMultiplier * currActionContext.rootMotionCurve.Evaluate(currActionContext.manualAdvanceEnabled ? currActionContext.manualAdvanceTime : Time.time - (currActionContext.preMotionTimeStamp > 0f ? currActionContext.preMotionTimeStamp : currActionContext.startTimeStamp));
+        public bool IsMovementEnabled => currActionContext.movementEnabled && CheckActionRunning();
+        public bool IsRootMotionEnabled => currActionContext.rootMotionEnabled && CheckActionRunning();
+        public bool IsLegAnimGlueEnabled => currActionContext.legAnimGlueEnabled && CheckActionRunning();
         public bool IsSuperArmorEnabled => currActionContext.superArmorEnabled && CheckActionRunning();
         public bool IsActiveParryEnabled => currActionContext.activeParryEnabled && CheckActionRunning();
-        public bool IsTraceRunning => currActionContext.traceRunning && CheckActionRunning();
+        public bool IsTraceRunning => currActionContext.isTraceRunning && CheckActionRunning();
         public float LastActionTimeStamp => CheckActionRunning() ? Time.time : prevActionContext.finishTimeStamp;
         public string PreMotionName => currActionContext.preMotionName;
         public string CurrActionName => currActionContext.actionName;
@@ -566,6 +573,39 @@ namespace Game
 #endif
         }
 
+        public void SetMovementEnabled(bool newValue)
+        {
+            if (!CheckActionRunning())
+            {
+                __Logger.WarningF(gameObject, nameof(SetMovementEnabled), "CheckActionRunning() return false.");
+                return;
+            }
+
+            currActionContext.movementEnabled = newValue;
+        }
+
+        public void SetRootMotionEnabled(bool newValue)
+        {
+            if (!CheckActionRunning())
+            {
+                __Logger.WarningF(gameObject, nameof(SetRootMotionEnabled), "CheckActionRunning() return false.");
+                return;
+            }
+
+            currActionContext.rootMotionEnabled = newValue;
+        }
+
+        public void SetLegAnimGlueEnabled(bool newValue)
+        {
+            if (!CheckActionRunning())
+            {
+                __Logger.WarningF(gameObject, nameof(SetLegAnimGlueEnabled), "CheckActionRunning() return false.");
+                return;
+            }
+
+            currActionContext.legAnimGlueEnabled = newValue;
+        }
+
         public void SetInterruptEnabled(bool newValue)
         {
             if (!CheckActionRunning())
@@ -611,7 +651,7 @@ namespace Game
                 return;
             }
 
-            currActionContext.traceRunning = newValue;
+            currActionContext.isTraceRunning = newValue;
         }
         
         static readonly RaycastHit[] __traceTempHits = new RaycastHit[16];
@@ -694,7 +734,7 @@ namespace Game
 
         public List<PawnColliderHelper> TraceActionTargets(Matrix4x4 fanMatrix, float fanRadius, float fanAngle, float fanHeight, float minRadius, int maxTargetNum = -1, bool sendDamageImmediately = false, bool drawGizmosEnabled = false, float drawGizmosDuration = 0)
         {
-            Debug.Assert(CheckActionRunning() && currActionContext.traceRunning, $"Brain: {gameObject}, CheckActionRunning(): {CheckActionRunning()}, currActionContext.traceRunning: {currActionContext.traceRunning}");
+            Debug.Assert(CheckActionRunning() && currActionContext.isTraceRunning, $"Brain: {gameObject}, CheckActionRunning(): {CheckActionRunning()}, currActionContext.traceRunning: {currActionContext.isTraceRunning}");
 
             var fanCenter = __pawnBrain.coreColliderHelper.pawnCollider.bounds.center + __pawnBrain.coreColliderHelper.transform.rotation * fanMatrix.GetPosition();
             var overlappedCount = __traceLayerNames != null ?

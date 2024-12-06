@@ -2361,7 +2361,7 @@ Transform:
   m_GameObject: {fileID: 2987360398849741464}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 33.4, z: -0}
+  m_LocalPosition: {x: 0, y: 35.8, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4261,7 +4261,7 @@ Transform:
   m_GameObject: {fileID: 5898522368810163366}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 47.9, z: -0}
+  m_LocalPosition: {x: 0, y: 50.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4292,7 +4292,7 @@ Transform:
   m_GameObject: {fileID: 5922726402889284793}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 8, z: -0}
+  m_LocalPosition: {x: 0, y: 11.2, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4482,7 +4482,7 @@ Transform:
   m_GameObject: {fileID: 6362478074883054750}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 1.5, z: -0}
+  m_LocalPosition: {x: 0, y: 1.1, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5501,7 +5501,7 @@ Transform:
   m_GameObject: {fileID: 7491447617304141977}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 44.9, z: -0}
+  m_LocalPosition: {x: -0, y: 41, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6618,9 +6618,9 @@ MonoBehaviour:
   GlueRangeThreshold: 0.5
   GlueFadeInSpeed: 0.5
   AllowGlueBelowFoot: 0.1
-  GlueFadeOutSpeed: 0.2
+  GlueFadeOutSpeed: 0.5
   UnglueOn: 15
-  AllowGlueDrag: 0.6
+  AllowGlueDrag: 0.4
   GlueMode: 2
   OnlyLocalAnimation: 0
   SmoothSuddenSteps: 0.5
@@ -7987,7 +7987,7 @@ MonoBehaviour:
     isSpawnFinished:
       value: 0
     isInvincible:
-      value: 1
+      value: 0
     isDead:
       value: 0
     isDown:
@@ -8045,7 +8045,7 @@ MonoBehaviour:
   body:
     walkSpeed: 1.5
     runSpeed: 2.5
-    sprintSpeed: 4
+    sprintSpeed: 3.5
   decision:
     targetPawnHP:
       value: {fileID: 0}

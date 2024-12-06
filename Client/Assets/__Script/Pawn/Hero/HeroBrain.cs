@@ -98,8 +98,26 @@ namespace Game
 
             Observable.Timer(TimeSpan.FromSeconds(0.2f)).Subscribe(_ => GameContext.Instance.playerCtrler.Possess(this));
 
-            ActionCtrler.onActionFinished += (_) =>
+            ActionCtrler.onActionStart += (actionContext, _) =>
             {
+                if ((actionContext.actionData?.actionName ?? string.Empty) == "DrinkPotion")
+                    Movement.moveSpeed = BB.body.walkSpeed;
+
+            };
+
+            ActionCtrler.onActionCanceled += (actionContext, _) =>
+            {
+                if ((actionContext.actionData?.actionName ?? string.Empty) == "DrinkPotion")
+                    Movement.moveSpeed = BB.body.moveSpeed;
+
+                ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
+            };
+
+            ActionCtrler.onActionFinished += (actionContext) =>
+            {
+                if ((actionContext.actionData?.actionName ?? string.Empty) == "DrinkPotion")
+                    Movement.moveSpeed = BB.body.moveSpeed;
+
                 ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
             };
 

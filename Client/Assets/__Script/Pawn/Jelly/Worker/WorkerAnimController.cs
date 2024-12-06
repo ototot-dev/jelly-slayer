@@ -87,10 +87,9 @@ namespace Game
                 mainAnimator.SetFloat("MoveSpeed", __brain.Movement.CurrVelocity.magnitude);
                 mainAnimator.SetFloat("MoveAnimSpeed", 1f);
 
-                var animMoveVec = __brain.coreColliderHelper.transform.InverseTransformDirection(__brain.Movement.CurrVelocity).Vector2D();
-                var animMoveVecClamped = moveXmoveY_Table.OrderBy(v => Vector3.Angle(v, animMoveVec)).First();
-
-                animMoveVecClamped = Vector3.Lerp(animMoveVec, animMoveVecClamped, 0.5f);
+                var animMoveVec = __brain.coreColliderHelper.transform.InverseTransformDirection(__brain.Movement.CurrVelocity).normalized.Vector2D();
+                var animMoveVecClamped = moveXmoveY_Table.OrderBy(v => Vector3.Angle(v, animMoveVec)).First().normalized;
+                animMoveVecClamped = __brain.Movement.CurrVelocity.magnitude *  Vector3.Lerp(animMoveVec, animMoveVecClamped, 0.2f);
                 mainAnimator.SetFloat("MoveX", animMoveVecClamped.x / __brain.Movement.moveSpeed);
                 mainAnimator.SetFloat("MoveY", animMoveVecClamped.z / __brain.Movement.moveSpeed);
 

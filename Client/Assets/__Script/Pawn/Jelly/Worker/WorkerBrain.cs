@@ -31,6 +31,8 @@ namespace Game
 
         float __lastComboAttackRateStepTimeStamp;
         MainTable.ActionData __counterActionData;
+        MainTable.ActionData __chargeActionData;
+        MainTable.ActionData __rollingActionData;
         MainTable.ActionData __combo1ActionData;
         MainTable.ActionData __combo2ActionData;
         MainTable.ActionData __combo3ActionData;
@@ -55,6 +57,9 @@ namespace Game
                 if (debugActionDisabled)
                     return;
 
+                __counterActionData ??= ActionDataSelector.GetActionData("Counter");
+                __chargeActionData ??= ActionDataSelector.GetActionData("Charge");
+                __rollingActionData ??= ActionDataSelector.GetActionData("Rolling");
                 __combo1ActionData ??= ActionDataSelector.GetActionData("Attack#1");
                 __combo2ActionData ??= ActionDataSelector.GetActionData("Attack#2");
                 __combo3ActionData ??= ActionDataSelector.GetActionData("Attack#3");
@@ -64,13 +69,9 @@ namespace Game
                 {
                     if (ActionCtrler.CurrActionName == "Counter")
                     {
-                        //* 반격 후에 1타 공격
-                        if (ActionDataSelector.EvaluateSelection(__combo1ActionData, -1f, 1f))
-                        {
-                            ActionDataSelector.ResetSelection(__combo1ActionData);
-                            ActionCtrler.SetPendingAction(__combo1ActionData.actionName);
-                            ActionCtrler.CancelAction(false);
-                        }
+                        //* 반격 후에 콤보 3타 공격
+                        ActionCtrler.SetPendingAction(__combo3ActionData.actionName);
+                        ActionCtrler.CancelAction(false);
                     }
                     else if (ActionCtrler.CurrActionName == "Attack#1") 
                     {
@@ -86,8 +87,14 @@ namespace Game
                     }
                     else if (ActionCtrler.CurrActionName == "Attack#3") 
                     {
-                        //* 2타 후에 3타 콤보 공격
+                        //* 3타 후에 4타 콤보 공격
                         ActionCtrler.SetPendingAction(__combo4ActionData.actionName);
+                        ActionCtrler.CancelAction(false);
+                    }
+                    else if (ActionCtrler.CurrActionName == "Attack#4") 
+                    {
+                        //* 롤링 회피
+                        ActionCtrler.SetPendingAction(__rollingActionData.actionName);
                         ActionCtrler.CancelAction(false);
                     }
                 }
@@ -96,13 +103,23 @@ namespace Game
                 {
                     __lastComboAttackRateStepTimeStamp = Time.time;
                 }
-                else if (ActionDataSelector.CheckExecutable(__combo1ActionData) && Time.time - PawnHP.LastDamageTimeStamp >= 1f && Time.time - __lastComboAttackRateStepTimeStamp >= 1f)
+                else if (Time.time - PawnHP.LastDamageTimeStamp >= 1f && Time.time - __lastComboAttackRateStepTimeStamp >= 1f)
                 {
                     var distanceConstraint = BB.TargetBrain != null ? BB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position) : -1f;
-                    if (ActionDataSelector.EvaluateSelection(__combo1ActionData, distanceConstraint, 1f) && CheckTargetVisibility())
+                    if (ActionDataSelector.CheckExecutable(__combo1ActionData) && ActionDataSelector.EvaluateSelection(__combo1ActionData, distanceConstraint, 1f) && CheckTargetVisibility())
                     {
                         ActionDataSelector.ResetSelection(__combo1ActionData);
                         ActionCtrler.SetPendingAction(__combo1ActionData.actionName);
+                    }
+                    else if (ActionDataSelector.CheckExecutable(__counterActionData) && ActionDataSelector.EvaluateSelection(__counterActionData, distanceConstraint, 1f) && CheckTargetVisibility())
+                    {
+                        ActionDataSelector.ResetSelection(__counterActionData);
+                        ActionCtrler.SetPendingAction(__counterActionData.actionName);
+                    }
+                    else if (ActionDataSelector.CheckExecutable(__chargeActionData) && ActionDataSelector.EvaluateSelection(__chargeActionData, distanceConstraint, 1f) && CheckTargetVisibility())
+                    {
+                        ActionDataSelector.ResetSelection(__chargeActionData);
+                        ActionCtrler.SetPendingAction(__chargeActionData.actionName);
                     }
                     else
                     {
@@ -124,7 +141,8 @@ namespace Game
                     
                 if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && CheckTargetVisibility())
                 {
-                    ActionCtrler.SetPendingAction("Attack#1");
+                    __counterActionData ??= ActionDataSelector.GetActionData("Counter");
+                    ActionCtrler.SetPendingAction(__counterActionData.actionName);
                     ActionDataSelector.ResetSelection(__combo1ActionData);
                 }
             }

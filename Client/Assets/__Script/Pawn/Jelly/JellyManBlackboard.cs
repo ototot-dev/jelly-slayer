@@ -56,7 +56,7 @@ namespace Game
             pawnData_Movement = MainTable.PawnData_Movement.PawnData_MovementList.First(d => d.pawnId == common.pawnId);
             
             // body.moveSpeed = pawnData_Movement.moveSpeed;
-            body.walkSpeed = pawnData_Movement.walkSpeed;
+            // body.walkSpeed = pawnData_Movement.walkSpeed;
             
             var movement = GetComponent<PawnMovementEx>();
             // movement.moveSpeed = body.moveSpeed;

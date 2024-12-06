@@ -626,7 +626,9 @@ namespace Game.NodeCanvasExtension
             __pawnAnimCtrler = agent.GetComponent<PawnAnimController>();
             __pawnActionCtrler = agent.GetComponent<PawnActionController>();
             __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;
-            __manualAdvanceSpeedCached = __pawnActionCtrler.currActionContext.manualAdvanceSpeed;
+
+            if (__pawnActionCtrler.currActionContext.manualAdvanceEnabled)
+                __manualAdvanceSpeedCached = __pawnActionCtrler.currActionContext.manualAdvanceSpeed;
 
             //* animStateName 값이 비어 있으면 PreMotion은 없는 것으로 간주함
             if (stateName.isNoneOrNull || string.IsNullOrEmpty(stateName.value))
@@ -638,7 +640,8 @@ namespace Game.NodeCanvasExtension
             __pawnActionCtrler.currActionContext.manualAdvanceSpeed = 0;
             __stateExitDisposable = stateBehaviour.OnStateExitAsObservable().Subscribe(_ => 
             {
-                __pawnActionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
+                if (__pawnActionCtrler.currActionContext.manualAdvanceEnabled)
+                    __pawnActionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
                 __pawnActionCtrler.currActionContext.preMotionTimeStamp = Time.time;
                 EndAction(true);
             }).AddTo(agent);
@@ -709,20 +712,6 @@ namespace Game.NodeCanvasExtension
         {
             base.OnStop(interrupted);
             __pawnActionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
-        }
-    }
-
-    public class SetLegGlueEnabled : ActionTask
-    {
-        protected override string info => enabled.value ? $"Leg Glue <b>On</b>" : $"Leg Glue <b>Off</b>";
-        public BBParameter<bool> enabled;
-
-        protected override void OnExecute()
-        {
-            if (agent.TryGetComponent<PawnActionController>(out var actionCtrler))
-                actionCtrler.currActionContext.legAnimGlueEnabled = enabled.value;
-
-            EndAction(true);
         }
     }
 
@@ -1240,14 +1229,80 @@ namespace Game.NodeCanvasExtension
         }
     }
 
-    public class SetSuperArmor : ActionTask
+    public class SetMovementEnabled : ActionTask
+    {
+        protected override string info => enabled.value ? $"Movement <b>On</b>" : $"Movement <b>Off</b>";
+        public BBParameter<bool> enabled;
+
+        protected override void OnExecute()
+        {
+            if (agent.TryGetComponent<PawnActionController>(out var actionCtrler))
+                actionCtrler.currActionContext.movementEnabled = enabled.value;
+
+            EndAction(true);
+        }
+    }
+
+    public class SetRootMotionMultiplier : ActionTask
     {   
-        protected override string info => newValue.value ? "Set SuperArmor <b>On</b>" : "Set SuperArmor <b>Off</b>";
+        protected override string info => $"Set RootMotion Multiplier <b>{newValue.value}</b>";
+        public BBParameter<float> newValue;
+        protected override void OnExecute()
+        {
+            if (agent.TryGetComponent<PawnActionController>(out var actionCtrler) && actionCtrler.currActionContext.actionData != null)
+                actionCtrler.currActionContext.rootMotionMultiplier = newValue.value;
+            EndAction(true);
+        }
+    }
+
+    public class SetLegGlueEnabled : ActionTask
+    {
+        protected override string info => enabled.value ? $"Leg Glue <b>On</b>" : $"Leg Glue <b>Off</b>";
+        public BBParameter<bool> enabled;
+
+        protected override void OnExecute()
+        {
+            if (agent.TryGetComponent<PawnActionController>(out var actionCtrler))
+                actionCtrler.currActionContext.legAnimGlueEnabled = enabled.value;
+
+            EndAction(true);
+        }
+    }
+
+    public class SetInterruptEnabled : ActionTask
+    {
+        protected override string info => enabled.value ? $"Interrupt <b>Enabled</b>" : $"Interrupt <b>Disabled</b>";
+        public BBParameter<bool> enabled;
+
+        protected override void OnExecute()
+        {
+            if (agent.TryGetComponent<PawnActionController>(out var actionCtrler))
+                actionCtrler.currActionContext.interruptEnabled = enabled.value;
+
+            EndAction(true);
+        }
+    }
+
+    public class SetSuperArmorEnabled : ActionTask
+    {   
+        protected override string info => newValue.value ? "SuperArmor <b>On</b>" : "SuperArmor <b>Off</b>";
         public BBParameter<bool> newValue;
         protected override void OnExecute()
         {
             if (agent.TryGetComponent<PawnActionController>(out var actionCtrler) && actionCtrler.currActionContext.actionData != null)
                 actionCtrler.SetSuperArmorEnabled(newValue.value);
+            EndAction(true);
+        }
+    }
+
+    public class SetParryingEnabled : ActionTask
+    {   
+        protected override string info => newValue.value ? "Parrying <b>On</b>" : "Parrying <b>Off</b>";
+        public BBParameter<bool> newValue;
+        protected override void OnExecute()
+        {
+            if (agent.TryGetComponent<PawnActionController>(out var actionCtrler) && actionCtrler.currActionContext.actionData != null)
+                actionCtrler.SetActiveParryingEnabled(newValue.value);
             EndAction(true);
         }
     }
