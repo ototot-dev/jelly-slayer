@@ -40,7 +40,7 @@ namespace Game
                 ActionDataSelector.UpdateSelection(deltaTick);
                 return;
                 //* 공격
-                if (!ActionCtrler.CheckActionRunning() && string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && !BuffCtrler.CheckStatus(Game.PawnStatus.Staggered) && base.CheckTargetVisibility())
+                if (!ActionCtrler.CheckActionRunning() && string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && !StatusCtrler.CheckStatus(Game.PawnStatus.Staggered) && base.CheckTargetVisibility())
                 {
                     var selection = ActionDataSelector.RandomSelection(BB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position), BB.stat.stamina.Value, true);
                     if (selection != null)

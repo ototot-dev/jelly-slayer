@@ -118,113 +118,6 @@ namespace Game
             if (GameContext.Instance.cameraCtrler != null && GameContext.Instance.cameraCtrler.TryGetPickingPointOnTerrain(value.Get<Vector2>(), out var pickingPoint))
                 lookVec.Value = (pickingPoint - MyHeroBrain.Movement.capsule.transform.position).Vector2D().normalized;
         }
-
-        // 다음 액션 이름을 꺼내 준다
-        string GetNewActionName()
-        {
-            var newActionName = string.Empty;
-            var actionCtrler = MyHeroBrain.ActionCtrler;
-            var isCtrlDown = Input.GetKey(KeyCode.LeftControl);
-            if (!actionCtrler.CheckActionRunning())
-            {
-                // 타겟이 있고 타겟이 스턴 상태면... 처형
-                if (MyHeroBrain.BB.action.targetPawnHP != null && MyHeroBrain.BB.action.targetPawnHP.Value != null)
-                {
-                    var targetBrain = MyHeroBrain.BB.action.targetPawnHP.Value.PawnBrain;
-                    if (targetBrain != null && targetBrain.PawnBB.IsGroggy == true)
-                    {
-                        var dist = MyHeroBrain.GetDistance(targetBrain);
-                        //Debug.Log($"dist = {dist}");
-                        if (dist <= 4)
-                        {
-                            MyHeroBrain.TargetPawn = targetBrain;
-
-                            // 타겟 일정 거리로 강제 이동
-                            var trTarget = targetBrain.CoreTransform;
-                            var trHero = MyHeroBrain.CoreTransform;
-                            var vDist = trHero.position - trTarget.position;
-                            trHero.position = trTarget.position + (1.0f * vDist.normalized);
-
-                            return "Execution";
-                        }
-                    }
-                }
-                // 콤보 중 인지 체크
-                var context = MyHeroBrain.ActionCtrler.prevActionContext;
-                if (actionCtrler.PrevActionName.Contains("Slash") && (Time.time - context.finishTimeStamp) <= 0.05f)   //* 'Slash'류 액션은 종료 후 0.05초 안에 입력이 들어오면, 다음 콤보 액션을 수행한다. 
-                {
-                    // Debug.Log($"CheckActionRunning true : {Time.time}, {context.startTimeStamp}, {context.finishTimeStamp} : {context.actionName}");
-                    if (isCtrlDown)
-                    {
-                        switch (actionCtrler.PrevActionName)
-                        {
-                            case "SlashHeavy#1": newActionName = "SlashHeavy#2"; break;
-                            case "SlashHeavy#2": newActionName = "SlashHeavy#1"; break;
-                            default:
-                                Debug.Log("onFire, getActionName is Default 1");
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        switch (actionCtrler.PrevActionName)
-                        {
-                            case "Slash#1": newActionName = "Slash#2"; break;
-                            case "Slash#2": newActionName = "Slash#3"; break;
-
-                            case "THSlash#1": newActionName = "THSlash#2"; break;
-                            case "THSlash#2": newActionName = "THSlash#3"; break;
-                            default: break;
-                        }
-                    }
-                }
-                else
-                {
-                    newActionName = "Slash#1";
-                    /*
-                    if(MyHeroBrain._weaponSlot == WEAPONSLOT.MAINSLOT)
-                        newActionName = (isCtrlDown) ? "SlashHeavy#1" : "Slash#1";
-                    else
-                        newActionName = (isCtrlDown) ? "THSlashHeavy#1" : "THSlash#1";
-                    */
-                }
-            }
-            else if (actionCtrler.CurrActionName.Contains("Slash") && actionCtrler.CanInterruptAction())  //* CanInterruptAction()가 true면, 현재 액션을 취소하고 다음 액션을 수행할 수 있다.
-            {
-                if (isCtrlDown)
-                {
-                    switch (actionCtrler.CurrActionName)
-                    {
-                        case "SlashHeavy#1": newActionName = "SlashHeavy#2"; break;
-                        case "SlashHeavy#2": newActionName = "SlashHeavy#1"; break;
-                        default:
-                            Debug.Log("onFire, getActionName is Default 2 : " + actionCtrler.PrevActionName);
-                            break;
-                    }
-                }
-                else
-                {
-                    switch (actionCtrler.CurrActionName)
-                    {
-                        case "Slash#1": newActionName = "Slash#2"; break;
-                        case "Slash#2": newActionName = "Slash#3"; break;
-
-                        case "THSlash#1": newActionName = "THSlash#2"; break;
-                        case "THSlash#2": newActionName = "THSlash#3"; break;
-                        default: break;
-                    }
-                }
-            }
-            else
-            {
-                var actRunning = actionCtrler.CheckActionRunning();
-                var actSlash = actionCtrler.CurrActionName.StartsWith("Slash");
-                var actInterrupt = actionCtrler.CanInterruptAction();
-                Debug.Log("onFire, fail : " + actRunning + ", " + actSlash + ", " + actInterrupt);
-            }
-            return newActionName;
-        }
-
         public void OnGuard(InputValue value)
         {
             if (MyHeroBrain == null)
@@ -261,6 +154,7 @@ namespace Game
                 MyHeroBrain.BB.stat.ReduceStamina(jumpStaminaCost);
             }
         }
+
         /*
         public void OnSwap() 
         {
@@ -445,9 +339,11 @@ namespace Game
             {
                 __attackPresssedTimeStamp = Time.time;
 
-                if (canAction3 && MyHeroBrain.ActionCtrler.CheckActionRunning() && MyHeroBrain.ActionCtrler.CanInterruptAction())
+                var baseActionName = MyHeroBrain.ActionCtrler.CheckActionRunning() ? MyHeroBrain.ActionCtrler.CurrActionName : MyHeroBrain.ActionCtrler.PrevActionName;
+                var canNextAction = MyHeroBrain.ActionCtrler.CheckActionRunning() ? MyHeroBrain.ActionCtrler.CanInterruptAction() : (Time.time - MyHeroBrain.ActionCtrler.prevActionContext.finishTimeStamp) < MainTable.PlayerData.GetList().First().actionInputTimePadding;
+                if (canAction3 && canNextAction)
                 {
-                    switch (MyHeroBrain.ActionCtrler.CurrActionName)
+                    switch (baseActionName)
                     {
                         case "Slash#1":
                             MyHeroBrain.ActionCtrler.CancelAction(false);

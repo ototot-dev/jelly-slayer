@@ -38,7 +38,7 @@ namespace Game
 
         void Start()
         {
-            __brain.BuffCtrler.onStatusActive += (buff) =>
+            __brain.StatusCtrler.onStatusActive += (buff) =>
             {
                 if (buff == PawnStatus.Staggered || buff == PawnStatus.Groggy)
                 {
@@ -55,9 +55,9 @@ namespace Game
                 }
             };
 
-            __brain.BuffCtrler.onStatusDeactive += (buff) =>
+            __brain.StatusCtrler.onStatusDeactive += (buff) =>
             {
-                if ((buff == PawnStatus.Staggered || buff == PawnStatus.Groggy) && !__brain.BuffCtrler.CheckStatus(PawnStatus.Staggered) && !__brain.BuffCtrler.CheckStatus(PawnStatus.Groggy))
+                if ((buff == PawnStatus.Staggered || buff == PawnStatus.Groggy) && !__brain.StatusCtrler.CheckStatus(PawnStatus.Staggered) && !__brain.StatusCtrler.CheckStatus(PawnStatus.Groggy))
                 {
                     boneSimulatorTargetWeight = 0f;
                     shieldMeshRenderer.material.SetFloat("_Alpha", 0.3f);

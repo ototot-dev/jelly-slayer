@@ -1,13 +1,18 @@
+using System;
+using System.Linq;
 using UniRx;
 using UniRx.Triggers;
+using UniRx.Triggers.Extension;
 using Unity.Burst.Intrinsics;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 namespace Game
 {
     public class HeroAnimController : PawnAnimController
     {
+        public OverrideTransform spineOverrideTransform;
         public Transform shieldMeshSlot;
         public Transform weaponMeshSlot;
         public Transform HeadLookAt;
@@ -29,6 +34,7 @@ namespace Game
         }
 
         HeroBrain __brain;
+        // IDisposable __emptyState
 
         void Start()
         {
@@ -36,13 +42,31 @@ namespace Game
             __brain.BB.action.isCharging.Subscribe(v => 
             {
                 mainAnimator.SetBool("IsGuarding", v);
-                // shieldMeshSlot.localEulerAngles = v || __brain.BB.IsGuarding ? new Vector3(-30f, 0f, -20f) : Vector3.zero;
+                shieldMeshSlot.localEulerAngles = v || __brain.BB.IsGuarding ? new Vector3(-30f, 0f, -20f) : Vector3.zero;
             }).AddTo(this);
             
             __brain.BB.action.isGuarding.Subscribe(v => 
             {
                 mainAnimator.SetBool("IsGuarding", v);
-                // shieldMeshSlot.localEulerAngles = v || __brain.BB.IsCharging ? new Vector3(-30f, 0f, -20f) : Vector3.zero;
+                shieldMeshSlot.localEulerAngles = v || __brain.BB.IsCharging ? new Vector3(-30f, 0f, -20f) : Vector3.zero;
+            }).AddTo(this);
+
+            mainAnimator.SetLayerWeight(1, 0f);
+            spineOverrideTransform.weight = 1f;
+
+            var emptyStateBehaviour = mainAnimator.GetBehaviours<ObservableStateMachineTriggerEx>().First(s => s.stateName == "Empty (Upper Layer)");
+            Debug.Assert(emptyStateBehaviour != null);
+
+            emptyStateBehaviour.OnStateEnterAsObservable().Subscribe(s => 
+            {
+                mainAnimator.SetLayerWeight(1, 0f);
+                spineOverrideTransform.weight = 1f;
+            }).AddTo(this);
+
+            emptyStateBehaviour.OnStateExitAsObservable().Subscribe(s => 
+            {
+                mainAnimator.SetLayerWeight(1, 1f);
+                spineOverrideTransform.weight = 0f;
             }).AddTo(this);
 
             __brain.onUpdate += () =>
@@ -61,7 +85,6 @@ namespace Game
                 }
 
                 mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
-                mainAnimator.SetLayerWeight(1, __brain.BB.IsJumping ? 0f : 1f);
                 mainAnimator.SetLayerWeight(2, __brain.BB.IsJumping ? 0f : 1f);
                 mainAnimator.SetLayerWeight(3, Mathf.Clamp01(mainAnimator.GetLayerWeight(3) + (__brain.BB.IsRolling || (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CurrActionName != "!OnHit" && __brain.ActionCtrler.CurrActionName != "ActiveParry") ? animLayerBlendSpeed : -animLayerBlendSpeed) * Time.deltaTime));
 

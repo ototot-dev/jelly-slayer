@@ -279,6 +279,7 @@ MonoBehaviour:
   mainAnimator: {fileID: 3244703593152202959}
   legAnimator: {fileID: 3673634840836888687}
   rigBuilder: {fileID: 8157329558261335758}
+  spineOverrideTransform: {fileID: 7333061147978076615}
   shieldMeshSlot: {fileID: 3556273806665314536}
   weaponMeshSlot: {fileID: 5806174125005292053}
   HeadLookAt: {fileID: 3872346485875650652}
@@ -358,7 +359,7 @@ MonoBehaviour:
     _version: 3.31
     _category: 
     _comments: 
-    _translation: {x: -69, y: -311}
+    _translation: {x: -185, y: -285}
     _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 0
@@ -458,6 +459,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 459012276261514446}
+  - {fileID: 8819654574563920222}
   m_Father: {fileID: 3244703593161533231}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &18808741469499199
@@ -17943,14 +17945,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6325787630190255997}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.6281042, y: 0.31077743, z: 0.21291271, w: 0.6808603}
-  m_LocalPosition: {x: -0.039071485, y: 0.11197108, z: -0.00303001}
+  m_LocalRotation: {x: 0.6801682, y: -0.082991816, z: -0.14418842, w: 0.71392804}
+  m_LocalPosition: {x: 0.013, y: -0.021, z: 0.061}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3556273806665314536}
   m_Father: {fileID: 3244703593161533269}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 71.307, y: -79.034, z: -84.061}
 --- !u!1 &6533689133961398233
 GameObject:
   m_ObjectHideFlags: 0
@@ -18309,6 +18311,59 @@ MonoBehaviour:
   _trHandle: {fileID: 4345447210819212558}
   _trailRender: {fileID: 0}
   _trailXWeapon: {fileID: 0}
+--- !u!1 &8015736920700019374
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8819654574563920222}
+  - component: {fileID: 7333061147978076615}
+  m_Layer: 0
+  m_Name: Sprine-Override
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8819654574563920222
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8015736920700019374}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8679573797350098768}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7333061147978076615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8015736920700019374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf219326d2292de48a0c671da18d402b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Weight: 1
+  m_Data:
+    m_ConstrainedObject: {fileID: 3244703593161533085}
+    m_OverrideSource: {fileID: 0}
+    m_OverridePosition: {x: 0, y: 0, z: 0}
+    m_OverrideRotation: {x: 5, y: 30, z: 0}
+    m_PositionWeight: 0
+    m_RotationWeight: 1
+    m_Space: 2
 --- !u!1 &8867396402939727795
 GameObject:
   m_ObjectHideFlags: 0

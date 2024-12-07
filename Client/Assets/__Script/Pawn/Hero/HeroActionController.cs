@@ -288,6 +288,13 @@ namespace Game
                 }
             }).AddTo(this);
 
+            __brain.PawnStatusCtrler.onStatusDeactive += (status) =>
+            {
+                //* 경직 종료 후에 짧은 시간 동안 가드 불가 부여 
+                if (status == PawnStatus.Staggered)
+                    __brain.PawnStatusCtrler.AddStatus(PawnStatus.CanNotGuard, 1f, MainTable.PlayerData.GetList().First().canNotGuardStaggerDuration);
+            };
+
             onActiveParryEnabled += (_) => parryHitColliderHelper.pawnCollider.enabled = currActionContext.activeParryEnabled;
             onActionCanceled += (_, __) => parryHitColliderHelper.pawnCollider.enabled = false;
             onActionFinished += (_) => parryHitColliderHelper.pawnCollider.enabled = false;

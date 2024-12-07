@@ -39,7 +39,7 @@ namespace Game
         {
             if (__brain.BB.IsGroggy)
                 return false;
-            else if (__brain.ActionCtrler.CheckActionRunning())
+            else if (__brain.ActionCtrler.CheckActionRunning() || __brain.StatusCtrler.CheckStatus(PawnStatus.Staggered) || __brain.StatusCtrler.CheckStatus(PawnStatus.CanNotGuard))
                 return false;
             else if (__brain.SensorCtrler.WatchingColliders.Contains(damageContext.senderBrain.coreColliderHelper.pawnCollider) == false)
                 return false;
@@ -210,7 +210,7 @@ namespace Game
                 .Subscribe(_ => __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity))
                 .AddTo(this);
         }
-        
+
         public override IDisposable StartOnKnockDownAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
         {
             Debug.Assert(damageContext.receiverBrain == __brain);

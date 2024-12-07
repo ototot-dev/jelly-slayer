@@ -272,10 +272,10 @@ namespace Game
                             Debug.Assert(damageContext.receiverActionData != null);
 
                             //* 'Block' 판정인 경우엔 Sender는 역경직을 받게 되고, Receiver도 짧은 자체 경직 시간을 갖게됨
-                            if (senderActionCtrler == null || !senderActionCtrler.IsSuperArmorEnabled )
+                            if (senderActionCtrler == null || !senderActionCtrler.IsSuperArmorEnabled)
                             {
                                 damageContext.senderPenalty = new(PawnStatus.Staggered, damageContext.receiverActionData.staggerDuration);
-                                damageContext.receiverPenalty = new(PawnStatus.Staggered, 0.1f);
+                                damageContext.receiverPenalty = new(PawnStatus.Staggered, damageContext.receiverBrain.PawnBB.pawnData.guardStaggerDuration);
                             }
                         }
                     }

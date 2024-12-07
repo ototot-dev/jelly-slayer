@@ -562,9 +562,11 @@ namespace Game
             currActionContext.actionDisposable = null;
             currActionContext.homingRotationDisposable = null;
             currActionContext.impulseRootMotionDisposable = null;
+            currActionContext.finishTimeStamp = Time.time;
 
             prevActionContext = currActionContext;
-            currActionContext = new(string.Empty, 1, 0) { finishTimeStamp = Time.time };
+            prevActionContext.finishTimeStamp = Time.time;
+            currActionContext = new(string.Empty, 1, 0);
             onActionFinished?.Invoke(prevActionContext);
 
 #if UNITY_EDITOR

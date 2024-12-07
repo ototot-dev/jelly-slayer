@@ -68,7 +68,7 @@ namespace Game
             Max
         }
 
-        public PawnStatusController BuffCtrler { get; private set; }
+        public PawnStatusController StatusCtrler { get; private set; }
         public PawnSensorController SensorCtrler { get; private set; }
         public PawnActionDataSelector ActionDataSelector { get; private set; }
         protected PawnMovementEx __pawnMovement;
@@ -106,7 +106,7 @@ namespace Game
         {
             base.AwakeInternal();
 
-            BuffCtrler = GetComponent<PawnStatusController>();
+            StatusCtrler = GetComponent<PawnStatusController>();
             SensorCtrler = GetComponent<PawnSensorController>();
             ActionDataSelector = GetComponent<PawnActionDataSelector>();
             __pawnMovement = GetComponent<PawnMovementEx>();
