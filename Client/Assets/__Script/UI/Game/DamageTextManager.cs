@@ -31,11 +31,11 @@ public class DamageTextManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
-    DamageText Alloc() 
+    DamageText Alloc()
     {
-        if(_stack.Count > 0)
+        if (_stack.Count > 0)
         {
             return _stack.Pop();
         }
@@ -47,6 +47,7 @@ public class DamageTextManager : MonoBehaviour
 
         return dmgText;
     }
+    
     public DamageText Create(string text, Vector3 vPos, float scale, Color color) 
     {
         var dmgText = Alloc();

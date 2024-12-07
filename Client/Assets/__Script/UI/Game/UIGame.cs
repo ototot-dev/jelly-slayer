@@ -39,9 +39,27 @@ public class UIGame : MonoBehaviour
         if (damageContext.finalDamage > 0)
         {
             var isGroggy = damageContext.receiverBrain.PawnBB.IsGroggy;
-            Color color = (isGroggy) ? Color.yellow : Color.white;
-            float scale = (isGroggy) ? 1.4f : 1.0f;
-            _dmgTextManager.Create(damageContext.finalDamage.ToString(), damageContext.hitPoint, scale, color);
+            Color color = Color.white;
+            float scale = 1.0f;
+
+            // Player Attacked
+            if (damageContext.receiverBrain.owner != null)
+            {
+                color = Color.red;
+            }
+            else
+            {
+                if (damageContext.insufficientStamina == true)
+                {
+                    color = Color.grey;
+                }
+                else if (isGroggy == true) 
+                {
+                    scale = 1.3f;
+                    color = Color.yellow;
+                }
+            }
+            _dmgTextManager.Create(damageContext.finalDamage.ToString("0"), damageContext.hitPoint, scale, color);
         }
         switch(damageContext.receiverPenalty.Item1)
         {

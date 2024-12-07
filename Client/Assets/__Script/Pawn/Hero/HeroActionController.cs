@@ -58,7 +58,7 @@ namespace Game
 
             if (damageContext.actionResult == ActionResults.Damaged)
             {
-                var hitVec = damageContext.receiverBrain.coreColliderHelper.transform.position - damageContext.senderBrain.CoreTransform.position;
+                var hitVec = damageContext.receiverBrain.CoreTransform.position - damageContext.senderBrain.CoreTransform.position;
                 hitVec = damageContext.receiverBrain.CoreTransform.InverseTransformDirection(hitVec).Vector2D().normalized;
 
                 if (Mathf.Abs(hitVec.x) > Mathf.Abs(hitVec.z))
@@ -166,7 +166,7 @@ namespace Game
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
             __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 3);
 
-            var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+            var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.CoreTransform.forward.Vector2D().normalized;
             Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
                 .Subscribe(_ =>
                 {
