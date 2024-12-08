@@ -18,6 +18,14 @@ namespace Game
         public PawnColliderHelper bodyHitColliderHelper;
         public PawnColliderHelper parryHitColliderHelper;
         
+        public enum SuperArmorLevels : int
+        {
+            None = 0,
+            CanNotStraggerOnBlacked,
+            CanNotStarggerOnDamaged,
+            Max,
+        }
+
         public struct ActionContext
         {
             public MainTable.ActionData actionData;
@@ -33,7 +41,6 @@ namespace Game
             public bool rootMotionEnabled;
             public bool legAnimGlueEnabled;
             public bool interruptEnabled;
-            public bool superArmorEnabled;
             public bool activeParryEnabled;
             public bool isTraceRunning;
             public bool manualAdvanceEnabled;
@@ -67,7 +74,6 @@ namespace Game
                 rootMotionEnabled = true;
                 legAnimGlueEnabled = true;
                 interruptEnabled = false;
-                superArmorEnabled = false;
                 activeParryEnabled = false;
                 isTraceRunning = false;
                 this.manualAdvanceEnabled = manualAdvacneEnabled;
@@ -100,7 +106,6 @@ namespace Game
                 rootMotionEnabled = true;
                 legAnimGlueEnabled = true;
                 interruptEnabled = false;
-                superArmorEnabled = false;
                 activeParryEnabled = false;
                 isTraceRunning = false;
                 manualAdvanceEnabled = false;
@@ -122,17 +127,13 @@ namespace Game
         public ActionContext currActionContext = new(string.Empty, 1f, 0f);
         public bool CheckActionPending() => !string.IsNullOrEmpty(PendingActionData.Item1);
         public bool CheckActionRunning() => currActionContext.actionData != null || currActionContext.actionDisposable != null;
-        public bool CheckActionCanceled() => currActionContext.actionCanceled && CheckActionRunning();
-        public bool CheckMovementEnabled() => currActionContext.movementEnabled;
-        public bool CanInterruptAction() => currActionContext.interruptEnabled;
+        public bool CheckActionCanceled() { Debug.Assert(CheckActionRunning()); return currActionContext.actionCanceled; }
+        public bool CheckMovementEnabled() { Debug.Assert(CheckActionRunning()); return currActionContext.movementEnabled; }
+        public bool CanInterruptAction() { Debug.Assert(CheckActionRunning()); return currActionContext.interruptEnabled; }
+        public SuperArmorLevels GetSuperArmorLevel() => (SuperArmorLevels)(currActionContext.actionData?.superArmorLevel?? 0);
+        public bool CheckSuperArmorLevel(SuperArmorLevels compareLevel) { return (currActionContext.actionData?.superArmorLevel?? 0) >= (int)compareLevel; }
         public bool CheckPendingActionHasPreMotion() => !string.IsNullOrEmpty(PendingActionData.Item2);
         public float EvaluateRootMotion(float deltaTime) => currActionContext.rootMotionCurve == null ? 0f : deltaTime * currActionContext.rootMotionMultiplier * currActionContext.rootMotionCurve.Evaluate(currActionContext.manualAdvanceEnabled ? currActionContext.manualAdvanceTime : Time.time - (currActionContext.preMotionTimeStamp > 0f ? currActionContext.preMotionTimeStamp : currActionContext.startTimeStamp));
-        public bool IsMovementEnabled => currActionContext.movementEnabled && CheckActionRunning();
-        public bool IsRootMotionEnabled => currActionContext.rootMotionEnabled && CheckActionRunning();
-        public bool IsLegAnimGlueEnabled => currActionContext.legAnimGlueEnabled && CheckActionRunning();
-        public bool IsSuperArmorEnabled => currActionContext.superArmorEnabled && CheckActionRunning();
-        public bool IsActiveParryEnabled => currActionContext.activeParryEnabled && CheckActionRunning();
-        public bool IsTraceRunning => currActionContext.isTraceRunning && CheckActionRunning();
         public float LastActionTimeStamp => CheckActionRunning() ? Time.time : prevActionContext.finishTimeStamp;
         public string PreMotionName => currActionContext.preMotionName;
         public string CurrActionName => currActionContext.actionName;
@@ -627,7 +628,7 @@ namespace Game
                 return;
             }
 
-            currActionContext.superArmorEnabled = newValue;
+            // currActionContext.superArmorEnabled = newValue;
         }
 
         public void SetActiveParryingEnabled(bool newValue)

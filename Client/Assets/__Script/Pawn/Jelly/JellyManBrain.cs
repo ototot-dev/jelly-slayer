@@ -241,7 +241,7 @@ namespace Game
             switch (damageContext.actionResult)
             {
                 case ActionResults.Blocked: 
-                    __pawnActionCtrler.StartAction(damageContext, "!OnBlocked", string.Empty); 
+                    __pawnActionCtrler.StartAction(damageContext, "!OnBlocked", string.Empty);
                     break;
 
                 case ActionResults.KickParried:

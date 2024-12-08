@@ -30,6 +30,7 @@ namespace Game
         }
 
         float __lastComboAttackRateStepTimeStamp;
+        MainTable.ActionData __leapActionData;
         MainTable.ActionData __counterActionData;
         MainTable.ActionData __combo1ActionData;
         MainTable.ActionData __combo2ActionData;
@@ -38,6 +39,11 @@ namespace Game
         {
             base.StartInternal();
             
+            __leapActionData ??= ActionDataSelector.GetActionData("Leap");
+            __counterActionData ??= ActionDataSelector.GetActionData("Counter");
+            __combo1ActionData ??= ActionDataSelector.GetActionData("Attack#1");
+            __combo2ActionData ??= ActionDataSelector.GetActionData("Attack#2");
+
             onTick += (deltaTick) =>
             {
                 if (!BB.IsSpawnFinished || BB.IsDead || BB.IsGroggy || BB.IsDown || !BB.IsInCombat || BB.TargetPawn == null)
@@ -48,12 +54,19 @@ namespace Game
                 if (debugActionDisabled)
                     return;
 
-                __combo1ActionData ??= ActionDataSelector.GetActionData("Attack#1");
-                __combo2ActionData ??= ActionDataSelector.GetActionData("Attack#2");
-
                 if (!ActionCtrler.CheckActionPending() && ActionCtrler.CheckActionRunning() && ActionCtrler.CanInterruptAction())
                 {
-                    if (ActionCtrler.CurrActionName == "Counter")
+                    if (ActionCtrler.CurrActionName == "Leap")
+                    {
+                        //* 점프 접근 후에 카운터 공격 시도
+                        if (CheckTargetVisibility())
+                        {
+                            ActionDataSelector.ResetSelection(__counterActionData);
+                            ActionCtrler.SetPendingAction("Counter");
+                            ActionCtrler.CancelAction(false);
+                        }
+                    }
+                    else if (ActionCtrler.CurrActionName == "Counter")
                     {
                         //* 반격 후에 1타 공격
                         if (ActionDataSelector.EvaluateSelection(__combo1ActionData, -1f, 1f))
@@ -83,6 +96,18 @@ namespace Game
                         ActionDataSelector.ResetSelection(__combo1ActionData);
                         ActionCtrler.SetPendingAction(__combo1ActionData.actionName, "PreMotion");
                     }
+                    else if (distanceConstraint > __leapActionData.actionRange)
+                    {
+                        if (ActionDataSelector.EvaluateSelection(__leapActionData, -1f, 1f) && CheckTargetVisibility())
+                        {
+                            ActionDataSelector.ResetSelection(__leapActionData);
+                            ActionCtrler.SetPendingAction(__leapActionData.actionName);
+                        }
+                        else
+                        {
+                            ActionDataSelector.BoostSelection(__leapActionData, BB.selection.leapRateStep * Time.deltaTime);
+                        }
+                    }
                     else
                     {
                         __lastComboAttackRateStepTimeStamp = Time.time;
@@ -101,7 +126,6 @@ namespace Game
                 if (debugActionDisabled)
                     return;
                     
-                __counterActionData ??= ActionDataSelector.GetActionData("Counter");
                 if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && ActionDataSelector.EvaluateSelection(__counterActionData, -1f, 1f) && CheckTargetVisibility())
                 {
                     ActionDataSelector.ResetSelection(__counterActionData);

@@ -173,7 +173,7 @@ namespace Game
             var cannotAvoidOnRolling = (damageContext.senderActionData?.cannotAvoidOnRolling ?? 0) > 0;
             if (!cannotAvoidOnRolling && damageContext.receiverBrain.TryGetComponent<PawnStatusController>(out var receiverBuffCtrler) && receiverBuffCtrler.CheckStatus(PawnStatus.InvincibleDodge))
             {
-                __Logger.LogF(gameObject, nameof(ProcessDamageContext), "No damage. CheckBuff(BuffTypes.InvincibleDodge) is true.",  "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
+                __Logger.LogF(gameObject, nameof(ProcessDamageContext), "No damage. CheckBuff(PawnStatus.InvincibleDodge) is true.",  "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
                 return;
             }
 
@@ -272,11 +272,12 @@ namespace Game
                             Debug.Assert(damageContext.receiverActionData != null);
 
                             //* 'Block' 판정인 경우엔 Sender는 역경직을 받게 되고, Receiver도 짧은 자체 경직 시간을 갖게됨
-                            if (senderActionCtrler == null || !senderActionCtrler.IsSuperArmorEnabled)
-                            {
+                            if (senderActionCtrler == null || !senderActionCtrler.CheckSuperArmorLevel(PawnActionController.SuperArmorLevels.CanNotStraggerOnBlacked))
                                 damageContext.senderPenalty = new(PawnStatus.Staggered, damageContext.receiverActionData.staggerDuration);
-                                damageContext.receiverPenalty = new(PawnStatus.Staggered, damageContext.receiverBrain.PawnBB.pawnData.guardStaggerDuration);
-                            }
+                            else
+                                __Logger.LogF(gameObject, nameof(ProcessDamageContext), "receiverActionCtrler.CheckSuperArmorLevel(CanNotStraggerOnBlacked) returns true. PawnStatus.Staggered is ignored.");
+
+                            damageContext.receiverPenalty = new(PawnStatus.Staggered, damageContext.receiverBrain.PawnBB.pawnData.guardStaggerDuration);
                         }
                     }
                 }
@@ -341,14 +342,10 @@ namespace Game
 
                         if (damageContext.receiverPenalty.Item1 == PawnStatus.None && damageContext.receiverBrain.PawnBB.stat.poise - damageContext.senderActionData.stagger <= 0) //* 경직 처리
                         {
-                            if (receiverActionCtrler.IsSuperArmorEnabled)
-                            {
-                                __Logger.LogF(gameObject, nameof(ProcessDamageContext), "receiverActionCtrler.IsSuperArmorEnabled is true. BuffTypes.Staggered is ignored.");
-                            }
-                            else
-                            {
+                            if (!receiverActionCtrler.CheckSuperArmorLevel(PawnActionController.SuperArmorLevels.CanNotStarggerOnDamaged))
                                 damageContext.receiverPenalty = new(PawnStatus.Staggered, damageContext.senderActionData.staggerDuration);
-                            }
+                            else
+                                __Logger.LogF(gameObject, nameof(ProcessDamageContext), "receiverActionCtrler.CheckSuperArmorLevel(CanNotStarggerOnDamaged) returns true. PawnStatus.Staggered is ignored.");
                         }
                     }
                 }
@@ -372,7 +369,7 @@ namespace Game
             {
                 if (damageContext.receiverPenalty.Item1 != PawnStatus.None)
                 {
-                    __Logger.LogF(gameObject, nameof(ProcessDamageContext), "receiverPenalty is added.", "BuffTypes", damageContext.receiverPenalty.Item1, "duration", damageContext.receiverPenalty.Item2, "receiverBrain", damageContext.receiverBrain);
+                    __Logger.LogF(gameObject, nameof(ProcessDamageContext), "receiverPenalty is added.", "PawnStatus", damageContext.receiverPenalty.Item1, "duration", damageContext.receiverPenalty.Item2, "receiverBrain", damageContext.receiverBrain);
                     damageContext.receiverBrain.PawnStatusCtrler.AddStatus(damageContext.receiverPenalty.Item1, 1f, damageContext.receiverPenalty.Item2);
 
                     //* Groggy 상태에서 KnockDown이 발생하면 Groggy는 종료시킴
@@ -386,7 +383,7 @@ namespace Game
             {
                 if (damageContext.senderPenalty.Item1 != PawnStatus.None)
                 {
-                    __Logger.LogF(gameObject, nameof(ProcessDamageContext), "senderPenalty is added.", "BuffTypes", damageContext.senderPenalty.Item1, "duration", damageContext.senderPenalty.Item2, "senderBrain", damageContext.senderBrain);
+                    __Logger.LogF(gameObject, nameof(ProcessDamageContext), "senderPenalty is added.", "PawnStatus", damageContext.senderPenalty.Item1, "duration", damageContext.senderPenalty.Item2, "senderBrain", damageContext.senderBrain);
                     damageContext.senderBrain.PawnStatusCtrler.AddStatus(damageContext.senderPenalty.Item1, 1f, damageContext.senderPenalty.Item2);
                 }
                 damageContext.senderBrain.PawnHP.onDamaged?.Invoke(damageContext);
@@ -412,7 +409,7 @@ namespace Game
 
             if (damageContext.receiverBrain.TryGetComponent<PawnStatusController>(out var receiverBuffCtrler) && receiverBuffCtrler.CheckStatus(PawnStatus.Invincible))
             {
-                __Logger.LogF(gameObject, nameof(CalcFinalDamage), "No damage. CheckBuff(BuffTypes.Invincible) is true.", "receiverBrain", damageContext.receiverBrain);
+                __Logger.LogF(gameObject, nameof(CalcFinalDamage), "No damage. CheckBuff(PawnStatus.Invincible) is true.", "receiverBrain", damageContext.receiverBrain);
                 return 0f;
             }
             

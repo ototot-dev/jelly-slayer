@@ -34,7 +34,7 @@ namespace Game
 
         public override bool CanParryAction(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
-            return IsActiveParryEnabled && damageContext.receiverBrain.coreColliderHelper.GetDistanceBetween(damageContext.senderBrain.coreColliderHelper) < 1f || 
+            return currActionContext.activeParryEnabled && damageContext.receiverBrain.coreColliderHelper.GetDistanceBetween(damageContext.senderBrain.coreColliderHelper) < 1f || 
                 __brain.BuffCtrler.CheckStatus(PawnStatus.GuardParrying);
         }
 

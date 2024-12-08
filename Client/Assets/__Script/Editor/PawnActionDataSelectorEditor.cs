@@ -33,9 +33,6 @@ namespace Game
             GUILayout.EndVertical();
 
             GUILayout.BeginHorizontal();
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
             {
                 __currActionLabelStyle ??= new("U2D.createRect");
                 __prevActionLabelStyle ??= new GUIStyle("RectangleToolSelection");

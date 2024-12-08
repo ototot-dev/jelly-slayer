@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public class SoldierBlackboard : JellyManBlackboard
+    public class AlienBlackboard : JellyManBlackboard
     {
 
         [Serializable]
@@ -14,7 +14,6 @@ namespace Game
             public float comboAttackRateBoostAfterCounterAttack;   //* 반격 후 콤보 1타 콤보 발생 확률 증가
             public float comboAttackRateStep;  //* Idle 상태에서 콤보 1타 발생 확률 증가
             public float counterAttackRateStep; //* 블럭 후 반격 발생 확률 증가
-            public float leapRateStep; //* 타켓과 거리가 떨어졌을 때 Leap 발생 확률 증가
         }
 
         public Selection selection = new();

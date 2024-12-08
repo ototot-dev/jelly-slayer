@@ -10,6 +10,7 @@ namespace Game
         DroneBot,
         Soldier,
         Worker,
+        Alien,
         Zombie,
         Footman,
         Warrior,

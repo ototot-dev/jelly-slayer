@@ -37,7 +37,6 @@ namespace Game
             public BoolReactiveProperty isDown = new();
             public BoolReactiveProperty isGroggy = new();
             public FloatReactiveProperty lifeTime = new(60);
-
             public BoolReactiveProperty isThrowing = new();     // 잡기
             public BoolReactiveProperty isGrabbed = new();      // 잡힌 상태
             public BoolReactiveProperty isBind = new();         // 묶인 상태

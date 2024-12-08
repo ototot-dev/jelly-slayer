@@ -61,6 +61,7 @@ namespace MainTable
 		public PawnId pawnId;
 		public System.Single moveSpeed;
 		public System.Single walkSpeed;
+		public System.Single runSpeed;
 		public System.Single sprintSpeed;
 		public System.Single guardSpeed;
 		public System.Single knockBackSpeed;

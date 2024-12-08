@@ -71,6 +71,7 @@ namespace MainTable
 		public System.Int32 cannotAvoidOnRolling;
 		public System.Int32 cannotGuard;
 		public System.Int32 cannotParry;
+		public System.Int32 superArmorLevel;
 		public System.Int32 stagger;
 		public System.Single staggerDuration;
 		public System.Int32 groggy;

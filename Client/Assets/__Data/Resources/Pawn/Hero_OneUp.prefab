@@ -185,7 +185,7 @@ MonoBehaviour:
     isSpawnFinished:
       value: 0
     isInvincible:
-      value: 0
+      value: 1
     isDead:
       value: 0
     isDown:
