@@ -158,14 +158,17 @@ namespace Game
 
             if (tickEnabled)
             {
-                Observable.Interval(TimeSpan.FromSeconds(tickInterval)).Subscribe(_ =>
+                Observable.Timer(TimeSpan.FromSeconds(UnityEngine.Random.Range(0f, 1f))).Subscribe(_ =>
                 {
-                    if (__brainInited)
+                    Observable.Interval(TimeSpan.FromSeconds(tickInterval)).Subscribe(_ =>
                     {
+                        if (!__brainInited) 
+                            return;
+
                         onPreTick?.Invoke(tickInterval);
                         OnTickInternal(tickInterval);
                         onTick?.Invoke(tickInterval);
-                    }
+                    }).AddTo(this);
                 }).AddTo(this);
             }
 
