@@ -142,7 +142,7 @@ namespace Game
             // 이동 가능 체크
             var canJump1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsGroggy && !MyHeroBrain.BB.IsJumping && !MyHeroBrain.BB.IsRolling;
             var canJump2 = canJump1 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.BuffCtrler.CheckStatus(PawnStatus.Staggered);
-            var canJump3 = canJump2 && MyHeroBrain.PawnBB.stat.stamina.Value >= jumpStaminaCost;
+            var canJump3 = canJump2;// && MyHeroBrain.PawnBB.stat.stamina.Value >= jumpStaminaCost;
 
             if (canJump3)
             {
