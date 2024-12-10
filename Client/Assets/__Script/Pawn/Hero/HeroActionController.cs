@@ -107,7 +107,8 @@ namespace Game
                     var senderHelper = damageContext.senderBrain.coreColliderHelper;
                     var hitPoint = senderHelper.GetCenter() + senderHelper.GetRadius() * 
                         (__brain.coreColliderHelper.GetCenter() - senderHelper.GetCenter()).Vector2D().normalized;
-                    EffectManager.Instance.Show("Hit 26 blue crystal", hitPoint, Quaternion.identity, 3f * Vector3.one, 1f);
+
+                    // EffectManager.Instance.Show("Hit 26 blue crystal", hitPoint, Quaternion.identity, 3f * Vector3.one, 1f);
                     EffectManager.Instance.Show("BasicSparkExplosion", hitPoint, Quaternion.identity, 1f * Vector3.one, 1f);
                     SoundManager.Instance.Play(SoundID.HIT_PARRYING);
                 }
@@ -238,11 +239,11 @@ namespace Game
 
             __brain.PawnStatusCtrler.onStatusActive += (status) =>
             {
-                if (status == PawnStatus.Staggered && __staggerFxInstance == null)
-                {
-                    __staggerFxInstance = EffectManager.Instance.ShowLooping(staggerFx, fxAttachPoint.position, Quaternion.identity, Vector3.one);
-                    __staggerFxInstance.transform.SetParent(fxAttachPoint);
-                }
+                // if (status == PawnStatus.Staggered && __staggerFxInstance == null)
+                // {
+                //     __staggerFxInstance = EffectManager.Instance.ShowLooping(staggerFx, fxAttachPoint.position, Quaternion.identity, Vector3.one);
+                //     __staggerFxInstance.transform.SetParent(fxAttachPoint);
+                // }
             };
 
             __brain.PawnStatusCtrler.onStatusDeactive += (status) =>
@@ -250,9 +251,9 @@ namespace Game
                 //* 경직 종료 후에 짧은 시간 동안 가드 불가 부여 
                 if (status == PawnStatus.Staggered)
                 {
-                    __brain.PawnStatusCtrler.AddStatus(PawnStatus.CanNotGuard, 1f, MainTable.PlayerData.GetList().First().canNotGuardStaggerDuration);
-                    __staggerFxInstance?.Stop();
-                    __staggerFxInstance = null;
+                    // __brain.PawnStatusCtrler.AddStatus(PawnStatus.CanNotGuard, 1f, MainTable.PlayerData.GetList().First().canNotGuardStaggerDuration);
+                    // __staggerFxInstance?.Stop();
+                    // __staggerFxInstance = null;
                 }
             };
 
