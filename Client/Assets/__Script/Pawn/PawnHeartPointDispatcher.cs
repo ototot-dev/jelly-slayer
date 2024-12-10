@@ -288,9 +288,11 @@ namespace Game
 
                 damageContext.actionResult = ActionResults.Damaged;
 
+                // 무적 상태가 아니라면?
                 if (!damageContext.receiverBrain.PawnBB.IsInvincible)
+                {
                     damageContext.receiverBrain.PawnHP.heartPoint.Value = Mathf.Max(0, damageContext.receiverBrain.PawnHP.heartPoint.Value - damageContext.finalDamage);
-
+                }
                 if (damageContext.insufficientStamina)
                 {
                     damageContext.receiverPenalty = new(PawnStatus.None, 0f);

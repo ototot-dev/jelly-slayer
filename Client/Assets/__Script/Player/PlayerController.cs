@@ -142,7 +142,7 @@ namespace Game
             // 이동 가능 체크
             var canJump1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsGroggy && !MyHeroBrain.BB.IsJumping && !MyHeroBrain.BB.IsRolling;
             var canJump2 = canJump1 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.BuffCtrler.CheckStatus(PawnStatus.Staggered);
-            var canJump3 = canJump2 && MyHeroBrain.PawnBB.stat.stamina.Value >= jumpStaminaCost;
+            var canJump3 = canJump2;// && MyHeroBrain.PawnBB.stat.stamina.Value >= jumpStaminaCost;
 
             if (canJump3)
             {
@@ -318,6 +318,13 @@ namespace Game
                     //* 챠징 판정 시간은 1초
                     if (chargingTime > 1f)
                     {
+                        if (MyHeroBrain.BB.action.isCharging.Value == false)
+                        {
+                            Observable.Timer(TimeSpan.FromSeconds(0.2f)).Subscribe(_ 
+                                => EffectManager.Instance.Show("ChonkExplosionBlue", 
+                                MyHeroBrain.CoreTransform.position + Vector3.up,
+                                Quaternion.identity, 0.8f * Vector3.one, 1f)).AddTo(this);
+                        }
                         MyHeroBrain.BB.action.isCharging.Value = true;
                         MyHeroBrain.BB.action.chargingLevel.Value = Mathf.FloorToInt(Time.time - __attackPresssedTimeStamp) + 1;
 
