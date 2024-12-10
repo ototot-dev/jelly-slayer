@@ -271,13 +271,15 @@ namespace Game
                             //* Receiver가 'Block' ActionData가 있는지 검증
                             Debug.Assert(damageContext.receiverActionData != null);
 
-                            //* 'Block' 판정인 경우엔 Sender는 역경직을 받게 되고, Receiver도 짧은 자체 경직 시간을 갖게됨
+                            //* 'Block' 판정인 경우엔 Sender에게 경직 발생
                             if (senderActionCtrler == null || !senderActionCtrler.CheckSuperArmorLevel(PawnActionController.SuperArmorLevels.CanNotStraggerOnBlacked))
                                 damageContext.senderPenalty = new(PawnStatus.Staggered, damageContext.receiverActionData.staggerDuration);
                             else
                                 __Logger.LogF(gameObject, nameof(ProcessDamageContext), "receiverActionCtrler.CheckSuperArmorLevel(CanNotStraggerOnBlacked) returns true. PawnStatus.Staggered is ignored.");
-
-                            damageContext.receiverPenalty = new(PawnStatus.Staggered, damageContext.receiverBrain.PawnBB.pawnData.guardStaggerDuration);
+                            
+                            //* Receiver도 약한 경직 발생함
+                            if (damageContext.receiverBrain.PawnBB.pawnData.guardStaggerDuration > 0f)
+                                damageContext.receiverPenalty = new(PawnStatus.Staggered, damageContext.receiverBrain.PawnBB.pawnData.guardStaggerDuration);
                         }
                     }
                 }

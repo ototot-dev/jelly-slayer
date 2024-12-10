@@ -1,9 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UniRx;
 using UniRx.Triggers;
 using UniRx.Triggers.Extension;
-using Unity.Burst.Intrinsics;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
@@ -34,6 +34,7 @@ namespace Game
         }
 
         HeroBrain __brain;
+        HashSet<string> __watchingStateNames = new();
 
         void Start()
         {
@@ -53,19 +54,26 @@ namespace Game
             mainAnimator.SetLayerWeight(1, 0f);
             spineOverrideTransform.weight = 1f;
 
-            var emptyStateBehaviour = mainAnimator.GetBehaviours<ObservableStateMachineTriggerEx>().First(s => s.stateName == "Empty (Upper Layer)");
-            Debug.Assert(emptyStateBehaviour != null);
-
-            emptyStateBehaviour.OnStateEnterAsObservable().Subscribe(s => 
+            FindObservableStateMachineTriggerEx("Empty (UpperLayer)").OnStateEnterAsObservable().Subscribe(s => 
             {
                 mainAnimator.SetLayerWeight(1, 0f);
                 spineOverrideTransform.weight = 1f;
             }).AddTo(this);
 
-            emptyStateBehaviour.OnStateExitAsObservable().Subscribe(s => 
+            FindObservableStateMachineTriggerEx("Empty (UpperLayer)").OnStateExitAsObservable().Subscribe(s => 
             {
                 mainAnimator.SetLayerWeight(1, 1f);
                 spineOverrideTransform.weight = 0f;
+            }).AddTo(this);
+
+            FindObservableStateMachineTriggerEx("GuardParry").OnStateEnterAsObservable().Subscribe(s => 
+            {
+                __watchingStateNames.Add("GuardParry");
+            }).AddTo(this);
+
+            FindObservableStateMachineTriggerEx("GuardParry").OnStateExitAsObservable().Subscribe(s => 
+            {
+                __watchingStateNames.Remove("GuardParry");
             }).AddTo(this);
 
             __brain.onUpdate += () =>
@@ -82,10 +90,18 @@ namespace Game
                             __brain.Movement.AddRootMotion(__brain.ActionCtrler.EvaluateRootMotion(Time.deltaTime) * __brain.coreColliderHelper.transform.forward.Vector2D().normalized, Quaternion.identity);
                     }
                 }
+                else if (__watchingStateNames.Contains("GuardParry"))
+                {
+                    __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation);
+                }
 
                 mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
                 mainAnimator.SetLayerWeight(2, __brain.BB.IsJumping ? 0f : 1f);
-                mainAnimator.SetLayerWeight(3, Mathf.Clamp01(mainAnimator.GetLayerWeight(3) + (__brain.BB.IsRolling || (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CurrActionName != "!OnHit" && __brain.ActionCtrler.CurrActionName != "ActiveParry") ? animLayerBlendSpeed : -animLayerBlendSpeed) * Time.deltaTime));
+
+                if (__watchingStateNames.Contains("GuardParry"))
+                    mainAnimator.SetLayerWeight(3, 1f);
+                else
+                    mainAnimator.SetLayerWeight(3, Mathf.Clamp01(mainAnimator.GetLayerWeight(3) + (__brain.BB.IsRolling || (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CurrActionName != "!OnHit") ? animLayerBlendSpeed : -animLayerBlendSpeed) * Time.deltaTime));
 
                 mainAnimator.SetFloat("MoveSpeed", __brain.Movement.freezeRotation ? -1 : __brain.Movement.CurrVelocity.Vector2D().magnitude / __brain.BB.body.moveSpeed);
                 mainAnimator.SetFloat("MoveAnimSpeed", __brain.Movement.freezeRotation ? (__brain.BB.IsGuarding ? 0.8f : 1.2f) : 1);

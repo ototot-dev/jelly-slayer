@@ -50,7 +50,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 482121057316969072}
   serializedVersion: 4
-  m_Mass: 99
+  m_Mass: 1
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -5602,9 +5602,9 @@ MonoBehaviour:
   rootMotionEnabled: 1
   rootMotionMultiplier: 1
   moveSpeed: 1
-  moveAccel: 1
+  moveAccel: 10
   moveBrake: 10
-  rotateSpeed: 720
+  rotateSpeed: 360
   gravity: {x: 0, y: -9.81, z: 0}
   moveVec: {x: 0, y: 0, z: 0}
   faceVec: {x: 0, y: 0, z: 1}
@@ -5704,14 +5704,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   common:
-    pawnId: 3
-    pawnName: Soldier
+    pawnId: 5
+    pawnName: Alien
     spawnWaitingTime: 1
     despawnWaitingTime: 1
     isSpawnFinished:
       value: 0
     isInvincible:
-      value: 0
+      value: 1
     isDead:
       value: 0
     isDown:
@@ -5781,10 +5781,10 @@ MonoBehaviour:
       value: 0
     isGuarding:
       value: 0
-    spacingInDistance: 3
-    spacingOutDistance: 4
-    minSpacingDistance: 2
-    maxSpacingDistance: 3
+    spacingInDistance: 2
+    spacingOutDistance: 3
+    minSpacingDistance: 1
+    maxSpacingDistance: 2
     holdPositionWeight: 0
     moveAroundWeight: 1
     minApproachDistance: 1
@@ -5849,8 +5849,8 @@ MonoBehaviour:
     _version: 3.31
     _category: 
     _comments: 
-    _translation: {x: 150.4246, y: 264.07773}
-    _zoomFactor: 0.75009847
+    _translation: {x: 436, y: 141}
+    _zoomFactor: 0.25009352
   _firstActivation: 0
   _enableAction: 0
   _disableAction: 0
