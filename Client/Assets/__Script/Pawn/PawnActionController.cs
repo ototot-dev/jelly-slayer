@@ -21,8 +21,8 @@ namespace Game
         public enum SuperArmorLevels : int
         {
             None = 0,
-            CanNotStraggerOnBlacked,
-            CanNotStarggerOnDamaged,
+            CanNotStraggerOnBlacked,    //* 블럭킹에 의해서 Action이 캔슬되지 않음
+            CanNotStarggerOnDamaged,    //* 데미지에 의해서 Action이 캔슬되지 않음
             Max,
         }
 
@@ -549,8 +549,10 @@ namespace Game
 
             if (__traceCollider != null)
                 FinishTraceActionTargets();
+
             if (__pawnMovement != null)
                 __pawnMovement.rootMotionMultiplier = 1f;
+
             if (__pawnAnimCtrler != null && __pawnAnimCtrler.mainAnimator != null)
             {
                 __pawnAnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1);

@@ -353,7 +353,7 @@ namespace Game
             else
             {
                 //* 데미지 없는 공격 (Kick 액션이 유효타가 터지지 않는 경우)
-                damageContext.actionResult = ActionResults.ZeroDamaged;
+                damageContext.actionResult = ActionResults.Missed;
                 damageContext.finalDamage = 0f;
                 damageContext.receiverPenalty = new(PawnStatus.None, 0f);
             }

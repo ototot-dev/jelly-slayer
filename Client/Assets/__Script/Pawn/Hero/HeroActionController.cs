@@ -9,6 +9,8 @@ namespace Game
     public class HeroActionController : PawnActionController
     {
         [Header("Component")]
+        public GameObject staggerFx;
+        public Transform fxAttachPoint;
         public MeshRenderer shieldMesh;
         public Collider kickActionCollider;
         public Collider swordActionCollider;
@@ -83,13 +85,6 @@ namespace Game
             }
             else if (damageContext.actionResult == ActionResults.GuardBreak)
             {
-                __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", true);
-                Observable.Timer(TimeSpan.FromSeconds(0.2f)).Subscribe(_ => 
-                {
-                    if (!__brain.BB.IsGuarding)
-                        __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", false);
-                }).AddTo(this);
-
                 SoundManager.Instance.Play(SoundID.HIT_BLOCK);
                 EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);
             }
@@ -120,6 +115,12 @@ namespace Game
                 {
                     __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 1);
                     __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
+                    __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", true);
+                    Observable.Timer(TimeSpan.FromSeconds(0.2f)).Subscribe(_ => 
+                    {
+                        if (!__brain.BB.IsGuarding)
+                            __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", false);
+                    }).AddTo(this);
 
                     SoundManager.Instance.Play(SoundID.HIT_BLOCK);
                     EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);
@@ -127,35 +128,22 @@ namespace Game
                 }
             }
 
-            var actionResult = damageContext.actionResult;
-            var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-            var knockBackDisposable = Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
-                .DoOnCancel(() => __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0))
-                .DoOnCompleted(() => __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0))
-                .Subscribe(_ =>
+            var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;            
+            return Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
+                .DoOnCancel(() =>
                 {
-                    if (actionResult != ActionResults.GuardParried)
-                        __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity);
-                }).AddTo(this);
-
-            if (isAddictiveAction)
-            {
-                return knockBackDisposable;
-            }
-            else
-            {
-                return Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverPenalty.Item2))
-                    .DoOnCancel(() =>
-                    {
-                        if (CurrActionName == "!OnHit")
-                            FinishAction();
-                    })
-                    .Subscribe(_ =>
-                    {
-                        if (CurrActionName == "!OnHit")
-                            FinishAction();
-                    }).AddTo(this);
-            }
+                    __brain.Movement.Freeze();
+                    if (CurrActionName == "!OnHit")
+                        FinishAction();
+                })
+                .DoOnCompleted(() =>
+                {
+                    __brain.Movement.Freeze();
+                    if (CurrActionName == "!OnHit")
+                        FinishAction();
+                })
+                .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity))
+                .AddTo(this);
         }
 
         public override IDisposable StartOnBlockedAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
@@ -168,23 +156,20 @@ namespace Game
             __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 3);
 
             var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.CoreTransform.forward.Vector2D().normalized;
-            Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
-                .Subscribe(_ =>
-                {
-                    __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity);
-                }).AddTo(this);
-
-            return Observable.Timer(TimeSpan.FromSeconds(damageContext.senderPenalty.Item2))
+            return Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
                 .DoOnCancel(() =>
                 {
+                    __brain.Movement.Freeze();
                     if (CurrActionName == "!OnBlocked")
                         FinishAction();
                 })
-                .Subscribe(_ =>
+                .DoOnCompleted(() =>
                 {
+                    __brain.Movement.Freeze();
                     if (CurrActionName == "!OnBlocked")
                         FinishAction();
-                }).AddTo(this);
+                })
+                .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity)).AddTo(this);
         }
 
         public override IDisposable StartOnKnockDownAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
@@ -192,75 +177,18 @@ namespace Game
             Debug.Assert(damageContext.receiverBrain == __brain);
             Debug.Assert(!isAddictiveAction);
 
-            __brain.AnimCtrler.mainAnimator.SetBool("IsDown", true);
-            __brain.AnimCtrler.mainAnimator.SetTrigger("OnDown");
-
-            //* Down (Loop) 스테이트에서 애님 클립이 진행되지 않고 강제로 멈춰있도록 함
-            __brain.AnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1);
-            __brain.AnimCtrler.mainAnimator.SetFloat("AnimAdvance", 99f);
-
             var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-            Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
-                .Subscribe(_ => __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity))
+            Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
+                .DoOnCancel(() => __brain.Movement.Freeze())
+                .DoOnCompleted(() => __brain.Movement.Freeze())
+                .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity))
                 .AddTo(this);
 
-            if (__downStateStartDisposable == null)
-            {
-                var downStartBehaviour = __brain.AnimCtrler.mainAnimator.GetBehaviours<ObservableStateMachineTriggerEx>().First(s => s.stateName == "Down (Start)");
-                Debug.Assert(downStartBehaviour != null);
-
-                __downStateStartDisposable = downStartBehaviour.OnStateExitAsObservable().Subscribe(s =>
-                {
-                    //* KnockDown 동안 다른 Pawn을 밀쳐내지 않도록 Layer를 'PawnOverlapped'으로 변경함
-                    __brain.coreColliderHelper.gameObject.layer = LayerMask.NameToLayer("PawnOverlapped");
-                }).AddTo(this);
-            }
-
-            return Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverPenalty.Item2))
-                .DoOnCancel(() =>
-                {
-                    //* Layer 원래값으로 복구
-                    __brain.coreColliderHelper.gameObject.layer = LayerMask.NameToLayer("Pawn");
-                    __brain.AnimCtrler.mainAnimator.SetBool("IsDown", false);
-                    if (CurrActionName == "!OnKnockDown")
-                        FinishAction();
-                })
-                .Subscribe(_ =>
-                {
-                    //* Layer 원래값으로 복구
-                    __brain.coreColliderHelper.gameObject.layer = LayerMask.NameToLayer("Pawn");
-                    __brain.AnimCtrler.mainAnimator.SetBool("IsDown", false);
-                    if (CurrActionName == "!OnKnockDown")
-                        FinishAction();
-                }).AddTo(this);
-        }
-
-        IDisposable __downStateStartDisposable;
-
-        public override IDisposable StartOnGroogyAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
-        {
-            Debug.Assert(damageContext.receiverBrain == __brain);
-            Debug.Assert(!isAddictiveAction);
-
-            __brain.AnimCtrler.mainAnimator.SetBool("IsStunned", true);
-            __brain.AnimCtrler.mainAnimator.SetTrigger("OnStunned");
-
-            return Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverPenalty.Item2))
-                .DoOnCancel(() =>
-                {
-                    __brain.AnimCtrler.mainAnimator.SetBool("IsStunned", false);
-                    if (CurrActionName == "!OnGroggy")
-                        FinishAction();
-                })
-                .Subscribe(_ =>
-                {
-                    __brain.AnimCtrler.mainAnimator.SetBool("IsStunned", false);
-                    if (CurrActionName == "!OnGroggy")
-                        FinishAction();
-                }).AddTo(this);
+            return null;
         }
 
         HeroBrain __brain;
+        EffectInstance __staggerFxInstance;
 
         protected override void AwakeInternal()
         {
@@ -271,6 +199,25 @@ namespace Game
         protected override void StartInternal()
         {
             base.StartInternal();
+
+            __brain.BB.common.isDown.Subscribe(v =>
+            {
+                if (v)
+                {
+                    __brain.AnimCtrler.mainAnimator.SetBool("IsDown", true);
+                    __brain.AnimCtrler.mainAnimator.SetTrigger("OnDown");
+
+                    //* Down (Loop) 스테이트에서 애님 클립이 진행되지 않고 강제로 멈춰있도록 함
+                    __brain.AnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1);
+                    __brain.AnimCtrler.mainAnimator.SetFloat("AnimAdvance", 99f);
+                }
+                else
+                {
+                    //* 일어나는 모션동안은 무적
+                    __brain.PawnStatusCtrler.AddStatus(PawnStatus.Invincible, 1f, 1f);
+                    __brain.AnimCtrler.mainAnimator.SetBool("IsDown", false);
+                }
+            }).AddTo(this);
 
             __brain.BB.action.isJumping.Skip(1).Subscribe(v =>
             {
@@ -289,11 +236,24 @@ namespace Game
                 }
             }).AddTo(this);
 
+            __brain.PawnStatusCtrler.onStatusActive += (status) =>
+            {
+                if (status == PawnStatus.Staggered && __staggerFxInstance == null)
+                {
+                    __staggerFxInstance = EffectManager.Instance.ShowLooping(staggerFx, fxAttachPoint.position, Quaternion.identity, Vector3.one);
+                    __staggerFxInstance.transform.SetParent(fxAttachPoint);
+                }
+            };
+
             __brain.PawnStatusCtrler.onStatusDeactive += (status) =>
             {
                 //* 경직 종료 후에 짧은 시간 동안 가드 불가 부여 
                 if (status == PawnStatus.Staggered)
+                {
                     __brain.PawnStatusCtrler.AddStatus(PawnStatus.CanNotGuard, 1f, MainTable.PlayerData.GetList().First().canNotGuardStaggerDuration);
+                    __staggerFxInstance?.Stop();
+                    __staggerFxInstance = null;
+                }
             };
 
             onActiveParryEnabled += (_) => parryHitColliderHelper.pawnCollider.enabled = currActionContext.activeParryEnabled;

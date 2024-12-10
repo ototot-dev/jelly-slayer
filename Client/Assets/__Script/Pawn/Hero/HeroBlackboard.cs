@@ -57,7 +57,7 @@ namespace Game
             body.moveSpeed = pawnData_Movement.moveSpeed;
             body.guardSpeed = pawnData_Movement.guardSpeed;
             body.sprintSpeed = pawnData_Movement.sprintSpeed;
-            body.jumpHeight = pawnData_Movement.jumpHeight;
+            // body.jumpHeight = pawnData_Movement.jumpHeight;
         }
 
         public MainTable.PawnData_Movement pawnData_Movement;

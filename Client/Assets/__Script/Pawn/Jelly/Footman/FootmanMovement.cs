@@ -18,7 +18,7 @@ namespace Game
         public float forwardBrake = 0;
         public float rotateSpeed = 720;
         public Vector3 CurrVelocity => __ecmMovement.velocity;
-        public Vector3 CurrGravity => __ecmMovement.gravity;
+        public Vector3 CurrGravity => Physics.gravity;
         public Vector3 ForwardVecCached { get; private set; } = Vector3.back;
 
         [Header("Target")]
@@ -32,11 +32,11 @@ namespace Game
         void Awake()
         {
             __brain = GetComponent<SpiderBrain>();
-            __ecmMovement = capsuleCollider.GetComponent<ECM.Components.CharacterMovement>();
+            __ecmMovement = capsuleCollider.GetComponent<ECM2.CharacterMovement>();
         }
 
         SpiderBrain __brain;
-        ECM.Components.CharacterMovement __ecmMovement;
+        ECM2.CharacterMovement __ecmMovement;
         bool __movementStopped = true;
         public bool IsMoving => !__movementStopped;
         public event Action<bool> OnMovementStopped;
@@ -53,7 +53,7 @@ namespace Game
 
         public void FaceTo(Vector3 targetPoint, float rotateSpeed = 360 * 360)
         {
-            __ecmMovement.Rotate((targetPoint - core.position).Vector2D().normalized, rotateSpeed);
+            __ecmMovement.RotateTowards((targetPoint - core.position).Vector2D().normalized, rotateSpeed);
         }
 
         public float GoTo(Vector3 targetPoint, bool rememberTargetPoint = true)
@@ -127,7 +127,7 @@ namespace Game
             if (IsBackForceRunning)
             {
                 __ecmMovement.Move(__backForceVec * __backForceMagnitude, __backForceMagnitude);
-                __ecmMovement.useGravity = true;
+                // __ecmMovement.useGravity = true;
             }
             else
             {
@@ -137,9 +137,9 @@ namespace Game
                 var canMove3 = !CheckReachToTargetPoint() && !__brain.ActionCtrler.CheckActionRunning();
 
                 if (canMove1 && canMove2 && canMove3)
-                    __ecmMovement.Move(ForwardVecCached * forwardSpeed, forwardSpeed);
+                    __ecmMovement.Move(ForwardVecCached * forwardSpeed, Time.fixedDeltaTime);
                 else
-                    __ecmMovement.Move(Vector3.zero, forwardSpeed, 1, forwardBrake, 1, 1);
+                    __ecmMovement.Move(Vector3.zero, Time.fixedDeltaTime);
             }
 
             legAnimator.transform.SetPositionAndRotation(core.position, core.rotation);
@@ -158,7 +158,7 @@ namespace Game
 
             //* 회전
             if (canRotate1 && canRotate2 && canRotate3)
-                __ecmMovement.Rotate(ForwardVecCached, rotateSpeed);
+                __ecmMovement.RotateTowards(ForwardVecCached, rotateSpeed);
         }
 
         [Header("Gizmos")]

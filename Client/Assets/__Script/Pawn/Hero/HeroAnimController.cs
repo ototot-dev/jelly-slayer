@@ -34,7 +34,6 @@ namespace Game
         }
 
         HeroBrain __brain;
-        // IDisposable __emptyState
 
         void Start()
         {

@@ -2,6 +2,7 @@ using UnityEngine;
 using FIMSpace.FProceduralAnimation;
 using static FIMSpace.FProceduralAnimation.LegsAnimator;
 using Unity.VisualScripting;
+using UnityEditor.Rendering;
 
 namespace Game
 {
@@ -10,21 +11,16 @@ namespace Game
     {
         public float LastJumpTimeStamp => __jumpTimeStamp;
         public float LastRollingTimeStamp => __rollingTimeStamp;
-        public float JumpVerticalImpulse => Mathf.Sqrt(2 * __brain.BB.body.jumpHeight * __ecmMovement.gravity.magnitude);
-        public float EstimatedJumpDuration => Mathf.Sqrt(8 * __brain.BB.body.jumpHeight / __ecmMovement.gravity.magnitude);
+        public float ImpulsePowerOnJump => Mathf.Sqrt(2 * __brain.BB.body.jumpHeight * Physics.gravity.magnitude);
+        public float EstimatedJumpDuration => Mathf.Sqrt(8 * __brain.BB.body.jumpHeight / Physics.gravity.magnitude);
         public void LegAnimatorStepEvent(LegsAnimator.Leg leg, float power, bool isRight, Vector3 position, Quaternion rotation, LegsAnimator.EStepType type) {}
-
-        public Vector3 Gravity {
-            get { return __ecmMovement.gravity; }
-            set { __ecmMovement.gravity = value; }
-        }
 
         public void StartJumping()
         {
             __isFalling = false;
             __jumpTimeStamp = Time.time;
-            __ecmMovement.ApplyVerticalImpulse(JumpVerticalImpulse);
-            __ecmMovement.DisableGrounding();
+            __ecmMovement.velocity.y = ImpulsePowerOnJump;
+            __ecmMovement.PauseGroundConstraint();
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnJump");
             __brain.AnimCtrler.mainAnimator.SetBool("IsJumping", true);
             __brain.BB.action.isJumping.Value = true;
@@ -56,6 +52,7 @@ namespace Game
             }
 
             __rollingTimeStamp = Time.time;
+            __rollingSpeed = __brain.BB.body.rollingDistance / duration;
             __rollingDuration = duration;
 
             if (Mathf.Abs(rollingXZ.x) > Mathf.Abs(rollingXZ.z))
@@ -103,46 +100,44 @@ namespace Game
             if (!__ecmMovement.enabled)
                 return;
 
-            if (__brain.BB.IsJumping) // 점프
+            if (__brain.BB.IsJumping)
             {
-                ResetRootMotion();
-
                 if (__prevCapsulePositionY > capsule.position.y && Time.time - __jumpTimeStamp > 2f * Time.fixedDeltaTime)
-                {
                     __isFalling = true;
-                    __ecmMovement.EnableGroundDetection();
-                }
                 __prevCapsulePositionY = capsule.position.y;
 
-                if (__isFalling && __ecmMovement.isOnGround)
+                if (__isFalling && __ecmMovement.isGrounded)
+                {
                     FinishJumping();
-                else
-                    __ecmMovement.Move(moveVec * moveSpeed, moveSpeed);
-
-            }
-            else if (__brain.BB.IsRolling) // 대시
-            {
-                if (Time.time - __rollingTimeStamp <= __rollingDuration)
-                {
-                    var rollingSpeed = __brain.BB.body.rollingDistance / __rollingDuration;
-                    AddRootMotion(rollingSpeed * Time.fixedDeltaTime * __rollingVec, Quaternion.identity);
                 }
                 else
                 {
-                    FinishRolling();
+                    __ecmMovement.velocity += Time.fixedDeltaTime * gravity;
+                    __ecmMovement.Move(Time.fixedDeltaTime);
                 }
 
-                ConsumeRootMotion();
                 ResetRootMotion();
 
-                __ecmMovement.Move(Vector3.zero, 0);
+            }
+            else if (__brain.BB.IsRolling)
+            {
+                if (Time.time - __rollingTimeStamp <= __rollingDuration)
+                    AddRootMotion(__rollingSpeed * Time.fixedDeltaTime * __rollingVec, Quaternion.identity);
+                else
+                    FinishRolling();
+
+                if (__rootMotionPosition.sqrMagnitude > 0f)
+                    __ecmMovement.Move(GetRootMotionVelocity(Time.fixedDeltaTime), Time.fixedDeltaTime);
+                else
+                    __ecmMovement.SimpleMove(moveSpeed * moveVec, moveSpeed, moveAccel, moveBrake, 1f, 1f, gravity, false, Time.fixedDeltaTime);
+                
+                __ecmMovement.rotation *= __rootMotionRotation;
+                ResetRootMotion();
             }
             else if (IsPushForceRunning)
             {
-                ResetRootMotion();
-
                 __ecmMovement.Move(__pushForceVec * __pushForceMagnitude, __pushForceMagnitude);
-                __ecmMovement.useGravity = true;
+                ResetRootMotion();
             }
             else
             {
@@ -153,20 +148,22 @@ namespace Game
                     moveVec = canMove2 ? moveVec : Vector3.zero;
                 }
 
-                ConsumeRootMotion();
-                ResetRootMotion();
-
-                if (moveVec != Vector3.zero)
+                if (__freezeMovementFoeOneFrame)
                 {
-                    if (freezeRotation)
-                        __ecmMovement.Move(moveVec * moveSpeed, moveSpeed, moveAccel, moveBrake, 0.1f, 0.2f);
-                    else
-                        __ecmMovement.Move(moveVec * moveSpeed, moveSpeed);
+                    __freezeMovementFoeOneFrame = false;
+                    __ecmMovement.Move(Time.fixedDeltaTime);
+                }
+                else if (__rootMotionPosition.sqrMagnitude > 0f)
+                {
+                    __ecmMovement.Move(GetRootMotionVelocity(Time.fixedDeltaTime), Time.fixedDeltaTime);
                 }
                 else
                 {
-                    __ecmMovement.Move(Vector3.zero, moveSpeed, 0, moveBrake, 1, 1);
+                    __ecmMovement.SimpleMove(moveSpeed * moveVec, moveSpeed, moveAccel, moveBrake, 1f, 1f, gravity, false, Time.fixedDeltaTime);
                 }
+
+                __ecmMovement.rotation *= __rootMotionRotation;
+                ResetRootMotion();
             }
         }
 
@@ -180,7 +177,7 @@ namespace Game
             var canRotate3 = canRotate2 && (!__actionCtrler.CheckActionRunning() || __actionCtrler.currActionContext.movementEnabled) && !__buffCtrler.CheckStatus(PawnStatus.Staggered);
 
             if (canRotate3)
-                __ecmMovement.Rotate(faceVec, rotateSpeed);
+                __ecmMovement.RotateTowards(faceVec, rotateSpeed);
         }
     }
 }

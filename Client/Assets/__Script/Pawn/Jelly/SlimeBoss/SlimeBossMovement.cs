@@ -11,8 +11,8 @@ namespace Game
         public float jumpHeight = 1f;
         public float minApproachDistance = 1f;
         public float LastJumpTimeStamp => __jumpTimeStamp;
-        public float GetVerticalImpulseOnJump() => Mathf.Sqrt(2 * jumpHeight * __ecmMovement.gravity.magnitude);
-        public float GetEstimatedJumpDuration() => Mathf.Sqrt(8 * jumpHeight / __ecmMovement.gravity.magnitude);
+        public float GetVerticalImpulseOnJump() => Mathf.Sqrt(2 * jumpHeight * Physics.gravity.magnitude);
+        public float GetEstimatedJumpDuration() => Mathf.Sqrt(8 * jumpHeight / Physics.gravity.magnitude);
         public virtual float GetDefaultMinApproachDistance() => 1f;
         public bool CheckReachToDestination() => (destination - capsule.position).SqrMagnitude2D() < minApproachDistance * minApproachDistance;
         public float DistanceToDestination() => Mathf.Max(0, (destination - capsule.position).Magnitude2D() - minApproachDistance);
@@ -97,8 +97,8 @@ namespace Game
                 if (__impluseTimeStamp < 0f && (Time.time - __jumpTimeStamp) > __PREJUMP_DURATION)
                 {
                     __impluseTimeStamp = Time.time;
-                    __ecmMovement.DisableGrounding();
-                    __ecmMovement.ApplyVerticalImpulse(GetVerticalImpulseOnJump());
+                    __ecmMovement.PauseGroundConstraint();
+                    __ecmMovement.velocity += GetVerticalImpulseOnJump() * Vector3.up;
 
                     //* HitBox를 Trace할 수 있도록 'PawnOverlapped'로 Layer를 변경함
                     capsule.gameObject.layer = LayerMask.NameToLayer("PawnOverlapped");
@@ -118,10 +118,7 @@ namespace Game
                     moveVec = Vector3.zero;
 
                     if (__prevCapsulePositionY > capsule.position.y && (Time.time - __jumpTimeStamp) > Time.fixedDeltaTime * 2f)
-                    {
                         __isFalling = true;
-                        __ecmMovement.EnableGroundDetection();
-                    }
                     __prevCapsulePositionY = capsule.position.y;
 
                     if (__isFalling && __ecmMovement.isOnGround)
@@ -139,8 +136,8 @@ namespace Game
                 if (__impluseTimeStamp < 0f && (Time.time - __jumpTimeStamp) > __PREJUMP_DURATION)
                 {
                     __impluseTimeStamp = Time.time;
-                    __ecmMovement.DisableGrounding();
-                    __ecmMovement.ApplyVerticalImpulse(GetVerticalImpulseOnJump());
+                    __ecmMovement.PauseGroundConstraint();
+                    __ecmMovement.velocity += GetVerticalImpulseOnJump() * Vector3.up;
 
                     //* Smashing 중에는 다른 Pawn의 Capsule Collider를 밀치지 못하도록 'PawnOverlapped'로 Layer를 변경함
                     capsule.gameObject.layer = LayerMask.NameToLayer("PawnOverlapped");
@@ -159,8 +156,7 @@ namespace Game
                     if (__prevCapsulePositionY > capsule.position.y && (Time.time - __jumpTimeStamp) > Time.fixedDeltaTime * 2f)
                     {
                         __isFalling = true;
-                        __ecmMovement.EnableGroundDetection();
-                        __ecmMovement.ApplyImpulse(__brain.BB.smashingForce * Vector3.down);
+                        __ecmMovement.velocity += __brain.BB.smashingForce * Vector3.down;
                     }
                     __prevCapsulePositionY = capsule.position.y;
 
@@ -187,17 +183,14 @@ namespace Game
                     if (__impluseTimeStamp < 0f && (Time.time - __jumpTimeStamp) > __PREJUMP_DURATION)
                     {
                         __impluseTimeStamp = Time.time;
-                        __ecmMovement.DisableGrounding();
-                        __ecmMovement.ApplyVerticalImpulse(GetVerticalImpulseOnJump());
+                        __ecmMovement.PauseGroundConstraint();
+                        __ecmMovement.velocity += GetVerticalImpulseOnJump() * Vector3.up;
                     }
 
                     if (__impluseTimeStamp > 0f)
                     {
                         if (__prevCapsulePositionY > capsule.position.y && (Time.time - __jumpTimeStamp) > Time.fixedDeltaTime * 2f)
-                        {
                             __isFalling = true;
-                            __ecmMovement.EnableGroundDetection();
-                        }
 
                         __prevCapsulePositionY = capsule.position.y;
                         if (__isFalling && __ecmMovement.isOnGround)

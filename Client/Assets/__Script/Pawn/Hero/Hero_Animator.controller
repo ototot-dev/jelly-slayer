@@ -1901,8 +1901,8 @@ AnimatorStateTransition:
   m_PrefabAsset: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 7
-    m_ConditionEvent: HitType
+  - m_ConditionMode: 2
+    m_ConditionEvent: IsGuarding
     m_EventTreshold: 1
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -6208394091948612423}
@@ -1910,7 +1910,7 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.25
+  m_TransitionDuration: 0.07724488
   m_TransitionOffset: 0
   m_ExitTime: 0.8584906
   m_HasExitTime: 0

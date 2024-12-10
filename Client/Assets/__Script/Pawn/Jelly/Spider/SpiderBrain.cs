@@ -31,7 +31,7 @@ namespace Game
         void IMovable.FreezeRotation(bool newValue) { Movement.freezeRotation = newValue; }
         void IMovable.AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation) { Movement.AddRootMotion(deltaPosition, deltaRotation); }
         void IMovable.Teleport(Vector3 destination) { Movement.Teleport(destination); }
-        void IMovable.MoveTo(Vector3 destination) { Movement.MoveTo(destination); }
+        void IMovable.MoveTo(Vector3 destination) { Movement.destination = destination; }
         void IMovable.FaceTo(Vector3 direction) { Movement.FaceTo(direction); }
         void IMovable.Stop() { Movement.Stop(); }
 

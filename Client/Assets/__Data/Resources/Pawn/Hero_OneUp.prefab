@@ -308,6 +308,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bodyHitColliderHelper: {fileID: 0}
   parryHitColliderHelper: {fileID: 1104606249163493149}
+  staggerFx: {fileID: 7902684546752631038, guid: 1a4146f5a4768c24d907b77fd5275c06, type: 3}
+  fxAttachPoint: {fileID: 6667022547613719956}
   shieldMesh: {fileID: 4082651064568185550}
   kickActionCollider: {fileID: 515486780858504094}
   swordActionCollider: {fileID: 0}
@@ -334,6 +336,7 @@ MonoBehaviour:
   moveAccel: 40
   moveBrake: 10
   rotateSpeed: 360
+  gravity: {x: 0, y: -9.81, z: 0}
   moveVec: {x: 0, y: 0, z: 0}
   faceVec: {x: 0, y: 0, z: 1}
 --- !u!114 &4592272242371362991
@@ -388,6 +391,7 @@ MonoBehaviour:
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"MagicPillarBlastRed":{"_value":4,"_name":"MagicPillarBlastRed","_id":"3054f73e-8c3e-4159-a661-4e3e38b9a7d3","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"MagicPillarBlastYellow":{"_value":5,"_name":"MagicPillarBlastYellow","_id":"7fef883a-e638-41a3-b1f9-cefe9eae4ba5","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"SlashRoundRed":{"_value":6,"_name":"SlashRoundRed","_id":"e2d28471-6969-499f-904b-985050c2c1a2","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"Stun":{"_value":7,"_name":"Stun","_id":"7284c0b8-c87e-48fd-927e-be90c524c981","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}}}'
   _objectReferences:
   - {fileID: 0}
@@ -397,6 +401,7 @@ MonoBehaviour:
   - {fileID: 5629602492193098048, guid: 265bf097dd85fb144b689a6ac2211310, type: 3}
   - {fileID: 484316541744064046, guid: 01428f06eefd7b341b077152a3c814f4, type: 3}
   - {fileID: 6209972863228401158, guid: 346845f5ec84256469525d334ac20d56, type: 3}
+  - {fileID: 7902684546752631038, guid: 1a4146f5a4768c24d907b77fd5275c06, type: 3}
   _serializedVariables:
   - _json: '{"_value":1,"_name":"SlashRoundYellow","_id":"e3b84ea2-99ac-47d4-b800-c0e4e7d37ec2","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
       UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
@@ -428,6 +433,11 @@ MonoBehaviour:
     _references:
     - {fileID: 0}
     - {fileID: 6209972863228401158, guid: 346845f5ec84256469525d334ac20d56, type: 3}
+  - _json: '{"_value":1,"_name":"Stun","_id":"7284c0b8-c87e-48fd-927e-be90c524c981","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
+    _references:
+    - {fileID: 0}
+    - {fileID: 7902684546752631038, guid: 1a4146f5a4768c24d907b77fd5275c06, type: 3}
 --- !u!1 &1101305529287299696
 GameObject:
   m_ObjectHideFlags: 0
@@ -17849,6 +17859,37 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &4950337271445656269
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6667022547613719956}
+  m_Layer: 6
+  m_Name: FxAttachPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6667022547613719956
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4950337271445656269}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.8, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5773660180996915832}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5285208192711114776
 GameObject:
   m_ObjectHideFlags: 0
@@ -18068,8 +18109,7 @@ GameObject:
   - component: {fileID: 155878440203396063}
   - component: {fileID: 4741360635043825763}
   - component: {fileID: 4575544682901093454}
-  - component: {fileID: 3622234799005796512}
-  - component: {fileID: 8376023838626878152}
+  - component: {fileID: 2718480038974104576}
   m_Layer: 6
   m_Name: Capsule
   m_TagString: Untagged
@@ -18097,6 +18137,7 @@ Transform:
   - {fileID: 3153643672898653959}
   - {fileID: 5887700154971376602}
   - {fileID: 463780701322609585}
+  - {fileID: 6667022547613719956}
   m_Father: {fileID: 3758835991799220657}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &155878440203396063
@@ -18122,7 +18163,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
@@ -18146,9 +18187,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 1.6
+  m_Height: 2
   m_Direction: 1
-  m_Center: {x: 0, y: 0.8, z: 0}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &4575544682901093454
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18165,7 +18206,7 @@ MonoBehaviour:
   pawnCollider: {fileID: 0}
   pawnBrain: {fileID: 0}
   sensorTrigger: 255
---- !u!114 &3622234799005796512
+--- !u!114 &2718480038974104576
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -18174,39 +18215,36 @@ MonoBehaviour:
   m_GameObject: {fileID: 7600030847904851378}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dad2beb1f5ff1d146b5668716966d9ab, type: 3}
+  m_Script: {fileID: 11500000, guid: 8a5e05c5b0509214d911dd005a610d9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _groundMask:
-    serializedVersion: 2
-    m_Bits: 8
-  _groundLimit: 60
-  _stepOffset: 0.15
-  _ledgeOffset: 0
-  _castDistance: 0.5
-  _triggerInteraction: 1
---- !u!114 &8376023838626878152
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7600030847904851378}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0eae04a4fe514bf4789aec1bdb93100b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _maxLateralSpeed: 10
-  _maxRiseSpeed: 20
-  _maxFallSpeed: 20
-  _useGravity: 1
-  _gravity: {x: 0, y: -30, z: 0}
-  _slideOnSteepSlope: 0
+  _planeConstraint: 0
+  _rootTransform: {fileID: 0}
+  _rootTransformOffset: {x: 0, y: 0, z: 0}
+  _radius: 0.5
+  _height: 2
   _slopeLimit: 45
-  _slideGravityMultiplier: 2
-  _snapToGround: 1
-  _snapStrength: 0.5
+  _stepOffset: 0.45
+  _perchOffset: 0.5
+  _perchAdditionalHeight: 0.4
+  _slopeLimitOverride: 0
+  _useFlatTop: 0
+  _useFlatBaseForGroundChecks: 0
+  _collisionLayers:
+    serializedVersion: 2
+    m_Bits: 12872
+  _triggerInteraction: 1
+  _advanced:
+    minMoveDistance: 0
+    maxMovementIterations: 5
+    maxDepenetrationIterations: 1
+    useFastGeomNormalPath: 0
+    enablePhysicsInteraction: 0
+    allowPushCharacters: 0
+    impartPlatformMovement: 0
+    impartPlatformRotation: 0
+    impartPlatformVelocity: 0
+  _minSlopeLimit: 0.7069833
 --- !u!1 &7685290805279813274
 GameObject:
   m_ObjectHideFlags: 0
@@ -18360,7 +18398,7 @@ MonoBehaviour:
     m_ConstrainedObject: {fileID: 3244703593161533085}
     m_OverrideSource: {fileID: 0}
     m_OverridePosition: {x: 0, y: 0, z: 0}
-    m_OverrideRotation: {x: 5, y: 30, z: 0}
+    m_OverrideRotation: {x: 5, y: 25, z: 0}
     m_PositionWeight: 0
     m_RotationWeight: 1
     m_Space: 2

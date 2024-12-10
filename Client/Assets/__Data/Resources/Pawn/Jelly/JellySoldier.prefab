@@ -43,8 +43,7 @@ GameObject:
   - component: {fileID: 7402423699649128735}
   - component: {fileID: 2631676355314689051}
   - component: {fileID: 168326260960991395}
-  - component: {fileID: 131484903403355622}
-  - component: {fileID: 4043911747676066859}
+  - component: {fileID: 3491578883216556144}
   m_Layer: 6
   m_Name: Capsule
   m_TagString: Untagged
@@ -96,8 +95,8 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
+  m_UseGravity: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
@@ -121,9 +120,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 2.2
+  m_Height: 2
   m_Direction: 1
-  m_Center: {x: 0, y: 1.1, z: 0}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &168326260960991395
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140,7 +139,7 @@ MonoBehaviour:
   pawnCollider: {fileID: 0}
   pawnBrain: {fileID: 0}
   sensorTrigger: 255
---- !u!114 &131484903403355622
+--- !u!114 &3491578883216556144
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -149,39 +148,36 @@ MonoBehaviour:
   m_GameObject: {fileID: 482121057316969072}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dad2beb1f5ff1d146b5668716966d9ab, type: 3}
+  m_Script: {fileID: 11500000, guid: 8a5e05c5b0509214d911dd005a610d9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _groundMask:
-    serializedVersion: 2
-    m_Bits: 8
-  _groundLimit: 60
-  _stepOffset: 0.2
-  _ledgeOffset: 0
-  _castDistance: 0.5
-  _triggerInteraction: 1
---- !u!114 &4043911747676066859
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 482121057316969072}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0eae04a4fe514bf4789aec1bdb93100b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _maxLateralSpeed: 10
-  _maxRiseSpeed: 20
-  _maxFallSpeed: 20
-  _useGravity: 1
-  _gravity: {x: 0, y: -30, z: 0}
-  _slideOnSteepSlope: 0
+  _planeConstraint: 0
+  _rootTransform: {fileID: 0}
+  _rootTransformOffset: {x: 0, y: 0, z: 0}
+  _radius: 0.5
+  _height: 2
   _slopeLimit: 45
-  _slideGravityMultiplier: 2
-  _snapToGround: 1
-  _snapStrength: 0.5
+  _stepOffset: 0.45
+  _perchOffset: 0.5
+  _perchAdditionalHeight: 0.4
+  _slopeLimitOverride: 0
+  _useFlatTop: 0
+  _useFlatBaseForGroundChecks: 0
+  _collisionLayers:
+    serializedVersion: 2
+    m_Bits: 12872
+  _triggerInteraction: 1
+  _advanced:
+    minMoveDistance: 0
+    maxMovementIterations: 5
+    maxDepenetrationIterations: 1
+    useFastGeomNormalPath: 0
+    enablePhysicsInteraction: 0
+    allowPushCharacters: 0
+    impartPlatformMovement: 0
+    impartPlatformRotation: 0
+    impartPlatformVelocity: 0
+  _minSlopeLimit: 0.7069833
 --- !u!1 &858553045467599790
 GameObject:
   m_ObjectHideFlags: 0
@@ -3725,7 +3721,7 @@ MonoBehaviour:
   FadeOutDistance: 0
   DistanceFrom: {fileID: 0}
   AutoHelperOffset: 1
-  HelperOffset: {x: -0.24140105, y: 0.34673622, z: -0.025778841}
+  HelperOffset: {x: -0.24140105, y: 0.34673613, z: -0.025778841}
   GravityEffectForce: {x: 0, y: 0, z: 0}
   GravityHeavyness: 2
   _editor_Title: ' Bones Stimulator'
@@ -4140,9 +4136,10 @@ MonoBehaviour:
   rootMotionEnabled: 1
   rootMotionMultiplier: 1
   moveSpeed: 1
-  moveAccel: 1
+  moveAccel: 10
   moveBrake: 10
-  rotateSpeed: 720
+  rotateSpeed: 360
+  gravity: {x: 0, y: -9.81, z: 0}
   moveVec: {x: 0, y: 0, z: 0}
   faceVec: {x: 0, y: 0, z: 1}
   destination: {x: 0, y: 0, z: 0}
@@ -4316,8 +4313,8 @@ MonoBehaviour:
       value: 0
     isGuarding:
       value: 0
-    spacingInDistance: 4
-    spacingOutDistance: 5
+    spacingInDistance: 98
+    spacingOutDistance: 99
     minSpacingDistance: 3
     maxSpacingDistance: 2
     holdPositionWeight: 1
@@ -4327,6 +4324,7 @@ MonoBehaviour:
     comboAttackRateBoostAfterCounterAttack: 0.5
     comboAttackRateStep: 0.1
     counterAttackRateStep: 0.1
+    leapRateStep: 0.02
 --- !u!114 &8593737910688562853
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4384,7 +4382,7 @@ MonoBehaviour:
     _version: 3.31
     _category: 
     _comments: 
-    _translation: {x: -532, y: -143}
+    _translation: {x: -539, y: -224}
     _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 0

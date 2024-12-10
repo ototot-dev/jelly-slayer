@@ -20,8 +20,8 @@ namespace Game
             if (!base.CanRootMotion(rootMotionVec))
                 return false;
 
-            if (__brain.BB.IsDown || __brain.BB.IsGroggy)
-                return true;
+            if (__brain.StatusCtrler.CheckStatus(PawnStatus.Staggered))
+                return false;
 
             if (__brain.BB.TargetBrain != null && __brain.SensorCtrler.TouchingColliders.Contains(__brain.BB.TargetBrain.coreColliderHelper.pawnCollider))
             {
@@ -83,7 +83,7 @@ namespace Game
                 EffectManager.Instance.Show("@Hit 23 cube", damageContext.hitPoint, Quaternion.identity, Vector3.one, 1);
                 EffectManager.Instance.Show("@BloodFX_impact_col", damageContext.hitPoint, Quaternion.identity, 1.5f * Vector3.one, 3);
             }
-            else if (damageContext.actionResult == ActionResults.ZeroDamaged)
+            else if (damageContext.actionResult == ActionResults.Missed)
             {
                 SoundManager.Instance.Play(SoundID.HIT_BLOCK);
                 EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);
@@ -107,41 +107,41 @@ namespace Game
                 EffectManager.Instance.Show("SwordHitRed", __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);
             }
 
-            IDisposable knockBackDisposable = null;
-            if (damageContext.actionResult == ActionResults.ZeroDamaged || damageContext.actionResult == ActionResults.Blocked)
+            if (damageContext.actionResult == ActionResults.Missed || damageContext.actionResult == ActionResults.Blocked)
             {
-                knockBackDisposable = Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.2f / __brain.BB.pawnData_Movement.knockBackSpeed)))
-                    .DoOnCancel(() => __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0))
-                    .DoOnCompleted(() => __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0))
+                return Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.2f / __brain.BB.pawnData_Movement.knockBackSpeed)))
+                    .DoOnCancel(() =>
+                    {
+                        __brain.Movement.Freeze();
+                        if (CurrActionName == "!OnHit")
+                            FinishAction();
+                    })
+                    .DoOnCompleted(() =>
+                    {
+                        __brain.Movement.Freeze();
+                        if (CurrActionName == "!OnHit")
+                            FinishAction();
+                    })
                     .Subscribe(_ => __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity))
                     .AddTo(this);
             }
             else
             {            
-                knockBackDisposable = Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
-                    .DoOnCancel(() => __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0))
-                    .DoOnCompleted(() => __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0))
-                    .Subscribe(_ => __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity))
-                    .AddTo(this);
-            }
-
-            if (isAddictiveAction)
-            {
-                return knockBackDisposable;
-            }
-            else
-            {
-                return Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverPenalty.Item2))
+                return Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
                     .DoOnCancel(() =>
                     {
+                        __brain.Movement.Freeze();
                         if (CurrActionName == "!OnHit")
                             FinishAction();
                     })
-                    .Subscribe(_ =>
+                    .DoOnCompleted(() =>
                     {
+                        __brain.Movement.Freeze();
                         if (CurrActionName == "!OnHit")
                             FinishAction();
-                    }).AddTo(this);
+                    })
+                    .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity))
+                    .AddTo(this);
             }
         }
 
@@ -155,23 +155,20 @@ namespace Game
             __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 3);
 
             var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-            Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
-                .Subscribe(_ =>
-                {
-                    __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity);
-                }).AddTo(this);
-
-            return Observable.Timer(TimeSpan.FromSeconds(damageContext.senderPenalty.Item2))
+            return Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
                 .DoOnCancel(() =>
                 {
+                    __brain.Movement.Freeze();
                     if (CurrActionName == "!OnBlocked")
                         FinishAction();
                 })
-                .Subscribe(_ =>
+                .DoOnCompleted(() =>
                 {
+                    __brain.Movement.Freeze();
                     if (CurrActionName == "!OnBlocked")
                         FinishAction();
-                }).AddTo(this);
+                })
+                .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity)).AddTo(this);
         }
 
         public override IDisposable StartOnParriedAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
@@ -179,7 +176,6 @@ namespace Game
             Debug.Assert(damageContext.senderBrain == __brain);
 
             __Logger.LogF(gameObject, nameof(StartOnParriedAction), "-", "Distance", damageContext.senderBrain.coreColliderHelper.GetDistanceBetween(damageContext.receiverBrain.coreColliderHelper));
-
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnParried");
 
             //* Groogy 애님의 RootMotion 배율 짧게 조정
@@ -197,18 +193,20 @@ namespace Game
                 __Logger.WarningF(gameObject, nameof(StartOnParriedAction), "knockBackDistance is zero", "knockBackDistance", knockBackDistance);
 
             var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.receiverBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-            return Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
+            return Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
                 .DoOnCancel(() =>
                 {
+                    __brain.Movement.Freeze();
                     if (CurrActionName == "!OnParried")
                         FinishAction();
                 })
                 .DoOnCompleted(() =>
                 {
+                    __brain.Movement.Freeze();
                     if (CurrActionName == "!OnParried")
                         FinishAction();
                 })
-                .Subscribe(_ => __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity))
+                .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity))
                 .AddTo(this);
         }
 
@@ -223,25 +221,10 @@ namespace Game
                 EffectManager.Instance.Show("@BloodFX_impact_col", damageContext.hitPoint, Quaternion.identity, 1.5f * Vector3.one, 3);
             }
 
-            __brain.AnimCtrler.mainAnimator.SetBool("IsDown", true);
-            __brain.AnimCtrler.mainAnimator.SetTrigger("OnDown");
-
             //? 임시: knockBackDistance를 rootMotionMultiplier값에 대입하여 이동거리를 늘려줌
             __brain.Movement.rootMotionMultiplier = damageContext.senderActionData.knockBackDistance;
 
-            //* KnockDown 애님의 RootMotion 재생을 위해서 'penaltyDuration' 동안 Action을 유지시켜준다.
-            return Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverPenalty.Item2))
-                .DoOnCancel(() =>
-                {
-                    if (CurrActionName == "!OnKnockDown")
-                        FinishAction();
-                })
-                .DoOnCompleted(() =>
-                {
-                    if (CurrActionName == "!OnKnockDown")
-                        FinishAction();
-                })
-                .Subscribe().AddTo(this);
+            return null;
         }
 
         public override IDisposable StartOnGroogyAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
@@ -260,63 +243,29 @@ namespace Game
 
                 //* KnockBack 연출 후에 Groogy 모션 진입
                 var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.receiverBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-                Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
+                Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
                     .DoOnCancel(() =>
                     {
+                        __brain.Movement.Freeze();
                         __brain.AnimCtrler.mainAnimator.SetBool("IsGroggy", true);
                         __brain.AnimCtrler.mainAnimator.SetTrigger("OnGroggy");
                     })
                     .DoOnCompleted(() =>
                     {
+                        __brain.Movement.Freeze();
                         __brain.AnimCtrler.mainAnimator.SetBool("IsGroggy", true);
                         __brain.AnimCtrler.mainAnimator.SetTrigger("OnGroggy");
                     })
-                    .Subscribe(_ => __brain.Movement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity))
+                    .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity))
                     .AddTo(this);
-
-                return Observable.NextFrame()
-                    .DoOnCancel(() =>
-                    {
-                        if (CurrActionName == "!OnGroggy")
-                            FinishAction();
-                    })
-                    .DoOnCompleted(() =>
-                    {
-                        if (CurrActionName == "!OnGroggy")
-                            FinishAction();
-                    })
-                    .Subscribe().AddTo(this);
             }
             else
             {
                 __brain.AnimCtrler.mainAnimator.SetBool("IsGroggy", true);
                 __brain.AnimCtrler.mainAnimator.SetTrigger("OnGroggy");
-
-                // 0.3초간 0.5 만큼 느리게 셋팅
-                // Util.SlomoTime(this, slomoRate: 0.5f, slomoTime: 0.3f);
- 
-                //* Groggy 진입 애님 Length가 1초라고 1초간 Groggy 액션 지속함
-                return Observable.Timer(TimeSpan.FromSeconds(1f))
-                    .DoOnCancel(() =>
-                    {
-                        if (CurrActionName == "!OnGroggy")
-                        {
-                            // 0.15초간 0.5 만큼 느리게 셋팅
-                            // Util.SlomoTime(this, slomoRate: 0.5f, slomoTime: 0.15f);
-                            FinishAction();
-                        }
-                    })
-                    .DoOnCompleted(() =>
-                    {
-                        if (CurrActionName == "!OnGroggy")
-                        {
-                            // 0.15초간 0.5 만큼 느리게 셋팅
-                            // Util.SlomoTime(this, slomoRate: 0.5f, slomoTime: 0.15f);
-                            FinishAction();
-                        }
-                    })
-                    .Subscribe().AddTo(this);
             }
+
+            return null;
         }
 
         SoldierBrain __brain;
@@ -336,12 +285,20 @@ namespace Game
                 __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", v);
             }).AddTo(this);
 
-            __brain.BB.common.isDown.Where(v => !v).Subscribe(_ =>
+            __brain.BB.common.isDown.Subscribe(v =>
             {
-                //* 일어나는 모션동안은 무적
-                __brain.PawnStatusCtrler.AddStatus(PawnStatus.Invincible, 1f, 1f);
-                __brain.AnimCtrler.mainAnimator.SetBool("IsDown", false);
-                __brain.InvalidateDecision(1f);
+                if (v)
+                {
+                    __brain.AnimCtrler.mainAnimator.SetBool("IsDown", true);
+                    __brain.AnimCtrler.mainAnimator.SetTrigger("OnDown");
+                }
+                else
+                {
+                    //* 일어나는 모션동안은 무적
+                    __brain.PawnStatusCtrler.AddStatus(PawnStatus.Invincible, 1f, 1f);
+                    __brain.AnimCtrler.mainAnimator.SetBool("IsDown", false);
+                    __brain.InvalidateDecision(1f);
+                }
             }).AddTo(this);
 
             __brain.BB.common.isGroggy.Where(v => !v).Subscribe(v =>

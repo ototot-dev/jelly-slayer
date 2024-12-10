@@ -43,9 +43,9 @@ namespace Game
                 if (buff == PawnStatus.Staggered || buff == PawnStatus.Groggy)
                 {
                     leftShoulderBoneSimulator.GravityEffectForce = rightShoulderBoneSimulator.GravityEffectForce = 9.8f * Vector3.down;
-                    leftShoulderBoneSimulator.GravityHeavyness = 4f;
-                    leftShoulderBoneSimulator.StimulatorAmount = 1f;
-                    boneSimulatorTargetWeight = 1f;
+                    leftShoulderBoneSimulator.GravityHeavyness = rightShoulderBoneSimulator.GravityHeavyness = 4f;
+                    leftShoulderBoneSimulator.StimulatorAmount = rightShoulderBoneSimulator.StimulatorAmount= 1f;
+                    boneSimulatorTargetWeight = __brain.BB.IsDown ? 0f : 1f;
                 }
                 else if (buff == PawnStatus.KnockDown)
                 {
@@ -61,7 +61,11 @@ namespace Game
 
         __brain.onUpdate += () =>
             {    
-                if (__brain.ActionCtrler.CheckActionRunning())
+                if (__brain.BB.IsDown)
+                {
+                    __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation);
+                }
+                else if (__brain.ActionCtrler.CheckActionRunning())
                 {
                     if (__brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
                         __brain.Movement.AddRootMotion(__brain.ActionCtrler.currActionContext.rootMotionMultiplier * mainAnimator.deltaPosition, mainAnimator.deltaRotation);
@@ -88,23 +92,6 @@ namespace Game
                 mainAnimator.SetFloat("MoveX", animMoveVecClamped.x / __brain.Movement.moveSpeed);
                 mainAnimator.SetFloat("MoveY", animMoveVecClamped.z / __brain.Movement.moveSpeed);
 
-                // if (boneSimulatorTargetWeight > 0f)
-                // {
-                //     if (!leftShoulderBoneSimulator.enabled) leftShoulderBoneSimulator.enabled = true;
-                //     if (!rightShoulderBoneSimulator.enabled) rightShoulderBoneSimulator.enabled = true;
-                //     leftShoulderBoneSimulator.StimulatorAmount = Mathf.Clamp01(leftShoulderBoneSimulator.StimulatorAmount + boneSimulatorBlendSpeed *Time.deltaTime);
-                //     rightShoulderBoneSimulator.StimulatorAmount = Mathf.Clamp01(rightShoulderBoneSimulator.StimulatorAmount + boneSimulatorBlendSpeed *Time.deltaTime);
-                // }
-                // else
-                // {
-                //     leftShoulderBoneSimulator.StimulatorAmount = Mathf.Clamp01(leftShoulderBoneSimulator.StimulatorAmount - boneSimulatorBlendSpeed *Time.deltaTime);
-                //     rightShoulderBoneSimulator.StimulatorAmount = Mathf.Clamp01(rightShoulderBoneSimulator.StimulatorAmount - boneSimulatorBlendSpeed *Time.deltaTime);
-                //     if (leftShoulderBoneSimulator.StimulatorAmount <= 0f && leftShoulderBoneSimulator.enabled)
-                //         leftShoulderBoneSimulator.enabled = false;
-                //     if (rightShoulderBoneSimulator.StimulatorAmount <= 0f && rightShoulderBoneSimulator.enabled)
-                //         rightShoulderBoneSimulator.enabled = false;
-                // }
-
                 if (__brain.BB.IsDead)
                 {
                     eyeAnimator.MinOpenValue = Mathf.Clamp01(eyeAnimator.MinOpenValue - legAnimGlueBlendSpeed * Time.deltaTime);
@@ -128,11 +115,7 @@ namespace Game
                 }
                 else
                 {   
-                    // if (__brain.BB.IsGuarding)
-                        legAnimator.MainGlueBlend = 1f;
-                    // else
-                        // legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude  > 0 && !__brain.ActionCtrler.CheckActionRunning() ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.8f : 0.9f, 1);
-
+                    legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude  > 0 && !__brain.ActionCtrler.CheckActionRunning() ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.8f : 0.9f, 1f);
                     legAnimator.User_SetIsMoving(__brain.Movement.CurrVelocity.sqrMagnitude > 0 && !__brain.ActionCtrler.CheckActionRunning());
                     legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround);
                 }

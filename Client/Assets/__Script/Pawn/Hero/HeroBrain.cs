@@ -53,7 +53,7 @@ namespace Game
         void IMovable.FreezeMovement(bool newValue) {}
         void IMovable.FreezeRotation(bool newValue) {}
         void IMovable.Teleport(Vector3 destination) { Movement.Teleport(destination); }
-        void IMovable.MoveTo(Vector3 destination) { Movement.MoveTo(destination); }
+        void IMovable.MoveTo(Vector3 destination) { Debug.Assert(false); }
         void IMovable.FaceTo(Vector3 lookAt) { Movement.FaceTo(lookAt); }
         void IMovable.Stop() {}
         #endregion

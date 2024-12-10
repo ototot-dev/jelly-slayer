@@ -50,7 +50,7 @@ namespace Game
     {
         None = 0,
         Damaged,
-        ZeroDamaged,
+        Missed,
         Blocked,
         GuardBreak,
         GuardParried,

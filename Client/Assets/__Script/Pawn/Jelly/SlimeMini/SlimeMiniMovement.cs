@@ -11,8 +11,8 @@ namespace Game
         public float jumpHeight = 1f;
         public float minApproachDistance = 1f;
         public float LastJumpTimeStamp => __jumpTimeStamp;
-        public float GetVerticalImpulseOnJump() => Mathf.Sqrt(2 * jumpHeight * __ecmMovement.gravity.magnitude);
-        public float GetEstimatedJumpDuration() => Mathf.Sqrt(8 * jumpHeight / __ecmMovement.gravity.magnitude);
+        public float GetVerticalImpulseOnJump() => Mathf.Sqrt(2f * jumpHeight * gravity.magnitude);
+        public float GetEstimatedJumpDuration() => Mathf.Sqrt(8f * jumpHeight / gravity.magnitude);
         public virtual float GetDefaultMinApproachDistance() => 1f;
         public bool CheckReachToDestination() => (destination - capsule.position).SqrMagnitude2D() < minApproachDistance * minApproachDistance;
         public float DistanceToDestination() => Mathf.Max(0, (destination - capsule.position).Magnitude2D() - minApproachDistance);
@@ -62,17 +62,14 @@ namespace Game
                     if (__impulseTimeStamp < 0f && (Time.time - __jumpTimeStamp) > __PREJUMP_DURATION)
                     {
                         __impulseTimeStamp = Time.time;
-                        __ecmMovement.DisableGrounding();
-                        __ecmMovement.ApplyVerticalImpulse(GetVerticalImpulseOnJump());
+                        __ecmMovement.PauseGroundConstraint();
+                        __ecmMovement.velocity += GetVerticalImpulseOnJump() * Vector3.up;
                     }
 
                     if (__impulseTimeStamp > 0f)
                     {
                         if (__prevCapsulePositionY > capsule.position.y && (Time.time - __jumpTimeStamp) > Time.fixedDeltaTime * 2f)
-                        {
                             __isFalling = true;
-                            __ecmMovement.EnableGroundDetection();
-                        }
 
                         __prevCapsulePositionY = capsule.position.y;
                         if (__isFalling && __ecmMovement.isOnGround)
