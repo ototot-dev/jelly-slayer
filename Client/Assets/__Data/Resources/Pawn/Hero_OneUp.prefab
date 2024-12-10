@@ -247,7 +247,7 @@ MonoBehaviour:
     guardSpeed: 0.2
     rollingDistance: 2
     rollingDuration: 0.5
-    jumpHeight: 2
+    jumpHeight: 1
     smashingHeight: 1
   action:
     targetPawnHP:
@@ -333,8 +333,8 @@ MonoBehaviour:
   rootMotionEnabled: 1
   rootMotionMultiplier: 1
   moveSpeed: 1
-  moveAccel: 40
-  moveBrake: 10
+  moveAccel: 20
+  moveBrake: 20
   rotateSpeed: 360
   gravity: {x: 0, y: -9.81, z: 0}
   moveVec: {x: 0, y: 0, z: 0}
@@ -3097,7 +3097,6 @@ Transform:
   - {fileID: 3244703593161533095}
   - {fileID: 3244703593161533065}
   - {fileID: 3244703593161533083}
-  - {fileID: 3452488443664082073}
   m_Father: {fileID: 3244703593161533279}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3244703594817834082
@@ -3478,6 +3477,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3244703593161533269}
+  - {fileID: 3452488443664082073}
   m_Father: {fileID: 3244703593161533249}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3244703594768668196
@@ -6140,7 +6140,7 @@ MonoBehaviour:
   GlueRangeThreshold: 0.5
   GlueFadeInSpeed: 0.5
   AllowGlueBelowFoot: 0.1
-  GlueFadeOutSpeed: 0.2
+  GlueFadeOutSpeed: 0.4
   UnglueOn: 15
   AllowGlueDrag: 0.6
   GlueMode: 2
@@ -6157,9 +6157,9 @@ MonoBehaviour:
   _Editor_EnsureCount: 1
   _Editor_OnValidateTrigger: 1
   _EditorAllowAutoUpdateFeetParams: 1
-  _EditorCategory: 0
+  _EditorCategory: 1
   _EditorSetupCategory: 2
-  _EditorMotionCategory: 0
+  _EditorMotionCategory: 2
   _EditorExtraCategory: 0
   IKHintMode: 0
   LimitLegStretch: 0.99
@@ -17986,14 +17986,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6325787630190255997}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.6801682, y: -0.082991816, z: -0.14418842, w: 0.71392804}
-  m_LocalPosition: {x: 0.013, y: -0.021, z: 0.061}
+  m_LocalRotation: {x: 0.68734807, y: -0.048808247, z: 0.0023380192, w: 0.7246827}
+  m_LocalPosition: {x: -0.008522593, y: 0.14453495, z: 0.054590587}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3556273806665314536}
-  m_Father: {fileID: 3244703593161533269}
-  m_LocalEulerAnglesHint: {x: 71.307, y: -79.034, z: -84.061}
+  m_Father: {fileID: 3244703593161533279}
+  m_LocalEulerAnglesHint: {x: 85.169, y: -53.296, z: -49.147}
 --- !u!1 &6533689133961398233
 GameObject:
   m_ObjectHideFlags: 0
@@ -18272,14 +18272,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7685290805279813274}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.25488698, y: -0.044943467, z: -0.16773133, w: 0.95125127}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4345447210819212558}
   m_Father: {fileID: 3452488443664082073}
-  m_LocalEulerAnglesHint: {x: -30, y: 0, z: -20}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &4442171453989800438
 MeshFilter:
   m_ObjectHideFlags: 0

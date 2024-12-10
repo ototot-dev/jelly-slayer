@@ -149,9 +149,6 @@ namespace Game
             __Logger.LogF(gameObject, nameof(StartOnParriedAction), "-", "Distance", damageContext.senderBrain.coreColliderHelper.GetDistanceBetween(damageContext.receiverBrain.coreColliderHelper));
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnParried");
 
-            //* Groogy 애님의 RootMotion 배율 짧게 조정
-            currActionContext.rootMotionMultiplier = 0f;
-
             var knockBackDistance = 0f;
             if (damageContext.actionResult == ActionResults.KickParried)
                 knockBackDistance = damageContext.receiverActionData.knockBackDistance;
@@ -183,9 +180,6 @@ namespace Game
                 EffectManager.Instance.Show("@BloodFX_impact_col", damageContext.hitPoint, Quaternion.identity, 1.5f * Vector3.one, 3);
             }
 
-            //? 임시: knockBackDistance를 rootMotionMultiplier값에 대입하여 이동거리를 늘려줌
-            __brain.Movement.rootMotionMultiplier = damageContext.senderActionData.knockBackDistance;
-
             return null;
         }
 
@@ -193,28 +187,31 @@ namespace Game
         {
             __Logger.LogF(gameObject, nameof(StartOnGroogyAction), "-", "Distance", damageContext.senderBrain.coreColliderHelper.GetDistanceBetween(damageContext.receiverBrain.coreColliderHelper));
 
-            __brain.AnimCtrler.mainAnimator.SetBool("IsGroggy", true);
-            __brain.AnimCtrler.mainAnimator.SetTrigger("OnGroggy");
-
-            if (damageContext.actionResult == ActionResults.KickParried)
+            if (damageContext.actionResult == ActionResults.GuardParried || damageContext.actionResult == ActionResults.KickParried)
             {
                 Debug.Assert(__brain == damageContext.senderBrain);
 
-                //* Groogy 애님의 RootMotion 배율 짧게 조정
-                currActionContext.rootMotionMultiplier = 0f;
+                var knockBackDistance = 0f;
+                if (damageContext.actionResult == ActionResults.KickParried)
+                    knockBackDistance = damageContext.receiverActionData.knockBackDistance;
+                else if (damageContext.actionResult == ActionResults.GuardParried)
+                    knockBackDistance = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "GuardParry")?.knockBackDistance ?? 0f;
+                else
+                    Debug.Assert(false);
 
-                //* KnockBack 연출 후에 Groogy 모션 진입
                 var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.receiverBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-                Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
+                Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
                     .DoOnCancel(() =>
                     {
                         __brain.Movement.Freeze();
+                        //* KnockBack 연출 후에 Groogy 모션 진입
                         __brain.AnimCtrler.mainAnimator.SetBool("IsGroggy", true);
                         __brain.AnimCtrler.mainAnimator.SetTrigger("OnGroggy");
                     })
                     .DoOnCompleted(() =>
                     {
                         __brain.Movement.Freeze();
+                        //* KnockBack 연출 후에 Groogy 모션 진입
                         __brain.AnimCtrler.mainAnimator.SetBool("IsGroggy", true);
                         __brain.AnimCtrler.mainAnimator.SetTrigger("OnGroggy");
                     })

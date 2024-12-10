@@ -6,6 +6,7 @@ namespace Game
     {
         public static void ReduceStamina(this PawnBlackboard.Stat stat, float delta)
         {   
+            return;
             stat.stamina.Value = Mathf.Max(0f, stat.stamina.Value -delta);
         }
 

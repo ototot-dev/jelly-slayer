@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cinemachine.Utility;
 using UniRx;
 using UniRx.Triggers;
 using UniRx.Triggers.Extension;
@@ -42,39 +43,24 @@ namespace Game
             __brain.BB.action.isCharging.Subscribe(v => 
             {
                 mainAnimator.SetBool("IsGuarding", v);
-                shieldMeshSlot.localEulerAngles = v || __brain.BB.IsGuarding ? new Vector3(-30f, 0f, -20f) : Vector3.zero;
+                // shieldMeshSlot.localEulerAngles = v || __brain.BB.IsGuarding ? new Vector3(-30f, 0f, -20f) : Vector3.zero;
             }).AddTo(this);
             
             __brain.BB.action.isGuarding.Subscribe(v => 
             {
                 mainAnimator.SetBool("IsGuarding", v);
-                shieldMeshSlot.localEulerAngles = v || __brain.BB.IsCharging ? new Vector3(-30f, 0f, -20f) : Vector3.zero;
+                // shieldMeshSlot.localEulerAngles = v || __brain.BB.IsCharging ? new Vector3(-30f, 0f, -20f) : Vector3.zero;
             }).AddTo(this);
+
+            FindObservableStateMachineTriggerEx("Empty (UpperLayer)").OnStateEnterAsObservable().Subscribe(_ => mainAnimator.SetLayerWeight(1, 0f)).AddTo(this);
+            FindObservableStateMachineTriggerEx("Empty (UpperLayer)").OnStateExitAsObservable().Subscribe(_ => mainAnimator.SetLayerWeight(1, 1f)).AddTo(this);
+            FindObservableStateMachineTriggerEx("DrinkPotion").OnStateEnterAsObservable().Subscribe(s => __watchingStateNames.Add("DrinkPotion")).AddTo(this);
+            FindObservableStateMachineTriggerEx("DrinkPotion").OnStateExitAsObservable().Subscribe(s => __watchingStateNames.Remove("DrinkPotion")).AddTo(this);
+            FindObservableStateMachineTriggerEx("GuardParry").OnStateEnterAsObservable().Subscribe(s => __watchingStateNames.Add("GuardParry")).AddTo(this);
+            FindObservableStateMachineTriggerEx("GuardParry").OnStateExitAsObservable().Subscribe(s => __watchingStateNames.Remove("GuardParry")).AddTo(this);
 
             mainAnimator.SetLayerWeight(1, 0f);
             spineOverrideTransform.weight = 1f;
-
-            FindObservableStateMachineTriggerEx("Empty (UpperLayer)").OnStateEnterAsObservable().Subscribe(s => 
-            {
-                mainAnimator.SetLayerWeight(1, 0f);
-                spineOverrideTransform.weight = 1f;
-            }).AddTo(this);
-
-            FindObservableStateMachineTriggerEx("Empty (UpperLayer)").OnStateExitAsObservable().Subscribe(s => 
-            {
-                mainAnimator.SetLayerWeight(1, 1f);
-                spineOverrideTransform.weight = 0f;
-            }).AddTo(this);
-
-            FindObservableStateMachineTriggerEx("GuardParry").OnStateEnterAsObservable().Subscribe(s => 
-            {
-                __watchingStateNames.Add("GuardParry");
-            }).AddTo(this);
-
-            FindObservableStateMachineTriggerEx("GuardParry").OnStateExitAsObservable().Subscribe(s => 
-            {
-                __watchingStateNames.Remove("GuardParry");
-            }).AddTo(this);
 
             __brain.onUpdate += () =>
             {
@@ -92,16 +78,23 @@ namespace Game
                 }
                 else if (__watchingStateNames.Contains("GuardParry"))
                 {
-                    __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation);
+                    __brain.Movement.AddRootMotion(2f * mainAnimator.deltaPosition, Quaternion.identity);
                 }
+
+                if (__brain.ActionCtrler.CheckActionRunning() || __watchingStateNames.Contains("DrinkPotion") || __watchingStateNames.Contains("GuardParry"))
+                    spineOverrideTransform.weight = 0f;
+                else
+                    spineOverrideTransform.weight = 1f;
 
                 mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
                 mainAnimator.SetLayerWeight(2, __brain.BB.IsJumping ? 0f : 1f);
 
                 if (__watchingStateNames.Contains("GuardParry"))
                     mainAnimator.SetLayerWeight(3, 1f);
+                else if (__watchingStateNames.Contains("DrinkPotion"))
+                    mainAnimator.SetLayerWeight(3, 0f);
                 else
-                    mainAnimator.SetLayerWeight(3, Mathf.Clamp01(mainAnimator.GetLayerWeight(3) + (__brain.BB.IsRolling || (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CurrActionName != "!OnHit") ? animLayerBlendSpeed : -animLayerBlendSpeed) * Time.deltaTime));
+                    mainAnimator.SetLayerWeight(3, Mathf.Clamp01(mainAnimator.GetLayerWeight(3) + ((__brain.BB.IsRolling || __brain.ActionCtrler.CheckActionRunning()) ? animLayerBlendSpeed : -animLayerBlendSpeed) * Time.deltaTime));
 
                 mainAnimator.SetFloat("MoveSpeed", __brain.Movement.freezeRotation ? -1 : __brain.Movement.CurrVelocity.Vector2D().magnitude / __brain.BB.body.moveSpeed);
                 mainAnimator.SetFloat("MoveAnimSpeed", __brain.Movement.freezeRotation ? (__brain.BB.IsGuarding ? 0.8f : 1.2f) : 1);
