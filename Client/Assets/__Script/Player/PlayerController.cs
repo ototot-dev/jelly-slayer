@@ -73,7 +73,8 @@ namespace Game
 
             if (moveVec.Value.sqrMagnitude > 0)
             {
-                MyHeroBrain.Movement.moveSpeed = MyHeroBrain.BB.action.isGuarding.Value ? MyHeroBrain.BB.body.guardSpeed : MyHeroBrain.BB.body.moveSpeed;
+                var isAction = MyHeroBrain.BB.IsGuarding || MyHeroBrain.BB.IsCharging;
+                MyHeroBrain.Movement.moveSpeed = isAction ? MyHeroBrain.BB.body.guardSpeed : MyHeroBrain.BB.body.moveSpeed;
                 MyHeroBrain.Movement.moveVec = Quaternion.AngleAxis(45, Vector3.up) * new Vector3(moveVec.Value.x, 0, moveVec.Value.y);
 
                 //* Strafe 모드가 아닌 경우엔 이동 방향과 회전 방향이 동일함
