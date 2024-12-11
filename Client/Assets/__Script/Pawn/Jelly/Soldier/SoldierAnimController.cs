@@ -38,22 +38,22 @@ namespace Game
 
         void Start()
         {
-            // __brain.BuffCtrler.onStatusActive += (buff) =>
-            // {
-            //     if (buff == PawnStatus.Staggered || buff == PawnStatus.Groggy)
-            //     {
-            //         leftShoulderBoneSimulator.GravityEffectForce = rightShoulderBoneSimulator.GravityEffectForce = 9.8f * Vector3.down;
-            //         leftShoulderBoneSimulator.GravityHeavyness = 4f;
-            //         leftShoulderBoneSimulator.StimulatorAmount = 1f;
-            //         boneSimulatorTargetWeight = 1f;
-            //         shieldMeshRenderer.material.SetFloat("_Alpha", 0.03f);
-            //     }
-            //     else if (buff == PawnStatus.KnockDown)
-            //     {
-            //         boneSimulatorTargetWeight = 0f;
-            //         shieldMeshRenderer.material.SetFloat("_Alpha", 0.3f);
-            //     }
-            // };
+            __brain.StatusCtrler.onStatusActive += (buff) =>
+            {
+                if (buff == PawnStatus.Staggered || buff == PawnStatus.Groggy)
+                {
+                    leftShoulderBoneSimulator.GravityEffectForce = rightShoulderBoneSimulator.GravityEffectForce = 9.8f * Vector3.down;
+                    leftShoulderBoneSimulator.GravityHeavyness = 4f;
+                    leftShoulderBoneSimulator.StimulatorAmount = 1f;
+                    boneSimulatorTargetWeight = 1f;
+                    shieldMeshRenderer.material.SetFloat("_Alpha", 0.03f);
+                }
+                else if (buff == PawnStatus.KnockDown)
+                {
+                    boneSimulatorTargetWeight = 0f;
+                    shieldMeshRenderer.material.SetFloat("_Alpha", 0.3f);
+                }
+            };
 
             __brain.StatusCtrler.onStatusDeactive += (buff) =>
             {
@@ -78,9 +78,13 @@ namespace Game
                             __brain.Movement.AddRootMotion(__brain.ActionCtrler.EvaluateRootMotion(Time.deltaTime) * __brain.coreColliderHelper.transform.forward.Vector2D().normalized, Quaternion.identity);
                     }
                 }
+                else if (__brain.BB.IsDown)
+                {
+                    __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation);
+                }
 
                 mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
-                mainAnimator.SetLayerWeight(1, Mathf.Clamp01(mainAnimator.GetLayerWeight(1) + ((__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CurrActionName != "!OnHit") ? actionLayerBlendSpeed : -actionLayerBlendSpeed) * Time.deltaTime));
+                mainAnimator.SetLayerWeight(1, Mathf.Clamp01(mainAnimator.GetLayerWeight(1) + (__brain.ActionCtrler.CheckActionRunning() ? actionLayerBlendSpeed : -actionLayerBlendSpeed) * Time.deltaTime));
                 mainAnimator.SetLayerWeight(2, 1f);
                 mainAnimator.SetBool("IsMoving", __brain.Movement.CurrVelocity.sqrMagnitude > 0);
                 mainAnimator.SetBool("IsMovingStrafe", __brain.Movement.freezeRotation);
@@ -120,20 +124,20 @@ namespace Game
                 }
                 else if (__brain.BB.IsDown)
                 {
-                    mainAnimator.SetLayerWeight(1, 0f);
                     legAnimator.LegsAnimatorBlend = 0f;
                     legAnimator.User_SetIsMoving(false);
                     legAnimator.User_SetIsGrounded(false);
                 }
                 else if (__brain.BB.IsGroggy)
                 {
-                    mainAnimator.SetLayerWeight(1, 0f);
                     legAnimator.LegsAnimatorBlend = 1f;
                     legAnimator.User_SetIsMoving(false);
                     legAnimator.User_SetIsGrounded(true);
                 }
                 else
                 {   
+                    legAnimator.LegsAnimatorBlend = 1f;
+
                     if (__brain.BB.IsGuarding)
                         legAnimator.MainGlueBlend = 1f;
                     else

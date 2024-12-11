@@ -117,28 +117,7 @@ namespace Game
 
         protected override void StartInternal()
         {
-            // __jellyManBB.common.isRagdoll.Skip(1).Subscribe(v =>
-            // {
-            //     if (v)
-            //         __pawnAnimCtrler.StartRagdoll(false, true);
-            //     else
-            //         __pawnAnimCtrler.FinishRagdoll(1f);
-            // }).AddTo(this);
-
             base.StartInternal();
-
-            // __jellyManBB.common.isStunned.Skip(1).Subscribe(v =>
-            // {
-            //     if (v)
-            //         EffectManager.Instance.ShowLooping("StunnedStars", fxAttachPoint.position, fxAttachPoint.rotation, Vector3.one).transform.SetParent(fxAttachPoint, true);
-            //     else
-            //         fxAttachPoint.gameObject.Children().Select(c => c.GetComponent<EffectInstance>()).First(e => e != null && e.sourceName == "StunnedStars").Stop();
-            // }).AddTo(this);
-
-            // __jellyManBB.decision.currDecision.Subscribe(v =>
-            // {
-            //     __pawnMovement.moveSpeed = v == Decisions.Spacing ? __jellyManBB.body.walkSpeed : __jellyManBB.body.sprintSpeed;
-            // }).AddTo(this);
 
             SensorCtrler.onListenSomething += (s) =>
             {
@@ -156,6 +135,12 @@ namespace Game
             {
                 if (__jellyManBB.IsSpawnFinished && !__jellyManBB.IsDead && __jellyManBB.TargetPawn == null && ValidateTargetCollider(s))
                     OnWatchSomethingOrDamagedHandler(s.GetComponent<PawnColliderHelper>().pawnBrain, 0.1f);
+            };
+
+            PawnStatusCtrler.onStatusActive += (status) =>
+            {
+                if (status == PawnStatus.KnockDown || status == PawnStatus.Groggy)
+                    InvalidateDecision(0.2f);
             };
 
             PawnHP.onDamaged += (damageContext) =>
@@ -263,7 +248,13 @@ namespace Game
                 {
                     __jellyManBB.decision.targetPawnHP.Value = null;
                     __jellyManBB.decision.isInCombat.Value = false;
-                    InvalidateDecision(0.5f);
+                    InvalidateDecision(1f);
+                }
+                else if (__jellyManBB.IsDown || __jellyManBB.IsGroggy)
+                {
+                    //* Down이나 Groogy 상태라면 Decision 갱신이 안되도록 공회전시킴
+                    if (__decisionCoolTime <= 0f)
+                        InvalidateDecision(0.2f);
                 }
                 else if (!ValidateTargetBrain(__jellyManBB.TargetBrain))
                 {

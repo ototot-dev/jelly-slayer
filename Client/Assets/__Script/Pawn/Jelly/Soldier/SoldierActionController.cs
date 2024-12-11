@@ -256,7 +256,7 @@ namespace Game
                     //* 일어나는 모션동안은 무적
                     __brain.PawnStatusCtrler.AddStatus(PawnStatus.Invincible, 1f, 1f);
                     __brain.AnimCtrler.mainAnimator.SetBool("IsDown", false);
-                    __brain.InvalidateDecision(1f);
+                    __brain.InvalidateDecision(2f);
                 }
             }).AddTo(this);
 

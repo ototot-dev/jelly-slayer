@@ -630,7 +630,7 @@ namespace Game
                 return;
             }
 
-            // currActionContext.superArmorEnabled = newValue;
+            // currActionContext. = newValue;
         }
 
         public void SetActiveParryingEnabled(bool newValue)

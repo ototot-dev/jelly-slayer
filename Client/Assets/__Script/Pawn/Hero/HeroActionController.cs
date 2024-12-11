@@ -106,7 +106,7 @@ namespace Game
                     __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
                     __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", true);
 
-                    Observable.Timer(TimeSpan.FromSeconds(0.2f)).Subscribe(_ => 
+                    Observable.Timer(TimeSpan.FromSeconds(0.5f)).Subscribe(_ => 
                     {
                         if (!__brain.BB.IsGuarding)
                             __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", false);
