@@ -59,6 +59,7 @@ namespace MainTable
 		public System.Int32 index;
 		public System.Single actionInputTimePadding;
 		public System.Single canNotGuardStaggerDuration;
+		public System.Single kickKnockBackDistance;
   
 
 #region fuctions
