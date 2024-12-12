@@ -28,11 +28,13 @@ namespace Game
         SuperArmor,
         MoveSpeedUp,
         ActionSpeedUp,
+        HPRegen,            // 체력 회복
+
         __DEBUFF__SEPERATOR__,
-        Groggy,         //* 그로기
-        Staggered,      //* 경직
-        KnockDown,      //* 다운
-        Guardbreak,     //* 가드 뚫림
+        Groggy,             //* 그로기
+        Staggered,          //* 경직
+        KnockDown,          //* 다운
+        Guardbreak,         //* 가드 뚫림
         CanNotDash, 
         CanNotJump,
         CanNotMove,
@@ -41,7 +43,7 @@ namespace Game
         MoveSpeedDown,
         ActionSpeedDown,
         ActionStaminaLow,
-        Bind,           // 끈에 묶임
+        Bind,               // 끈에 묶임
     }
 
 
