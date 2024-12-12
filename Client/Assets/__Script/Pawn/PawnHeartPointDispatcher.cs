@@ -290,13 +290,14 @@ namespace Game
 
                 damageContext.actionResult = ActionResults.Damaged;
 
-                // 무적 상태가 아니라면?
                 if (!damageContext.receiverBrain.PawnBB.IsInvincible)
                 {
                     damageContext.receiverBrain.PawnHP.heartPoint.Value = Mathf.Max(0, damageContext.receiverBrain.PawnHP.heartPoint.Value - damageContext.finalDamage);
                 }
+
                 if (damageContext.insufficientStamina)
                 {
+                    damageContext.actionResult = ActionResults.Missed;
                     damageContext.receiverPenalty = new(PawnStatus.None, 0f);
                 }
                 else
@@ -356,9 +357,9 @@ namespace Game
             }
             else
             {
-                //* 데미지 없는 공격 (Kick 액션이 유효타가 터지지 않는 경우)
-                damageContext.actionResult = ActionResults.Missed;
+                //* 데미지 없는 공격은 Missed 처리한다.
                 damageContext.finalDamage = 0f;
+                damageContext.actionResult = ActionResults.Missed;
                 damageContext.receiverPenalty = new(PawnStatus.None, 0f);
             }
 

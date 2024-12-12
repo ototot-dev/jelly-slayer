@@ -5637,18 +5637,18 @@ MonoBehaviour:
   rigBlendWeight: 1
   rigBlendSpeed: 1
   actionLayerBlendSpeed: 10
-  legAnimGlueBlendSpeed: 2
-  boneSimulatorBlendSpeed: 4
+  legAnimGlueBlendSpeed: 1
+  boneSimulatorBlendSpeed: 3
   boneSimulatorTargetWeight: 0
   moveXmoveY_Table:
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
+  - {x: -1, y: 0, z: 0}
+  - {x: 1, y: 0, z: 0}
+  - {x: 0, y: 0, z: -1}
+  - {x: 0, y: 0, z: 1}
+  - {x: -0.7, y: 0, z: -0.7}
+  - {x: 0.7, y: 0, z: -0.7}
+  - {x: -0.7, y: 0, z: 0.7}
+  - {x: 0.7, y: 0, z: 0.7}
 --- !u!114 &698686804900779431
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5680,16 +5680,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 956c27e8b458b47bab1a130e977643c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  coreColliderHelper: {fileID: 168326260960991395}
+  owner: {fileID: 0}
   tickInterval: 0.1
   tickEnabled: 1
   updateEnabled: 1
   lateUpdateEnabled: 1
   fixedUpdateEnabled: 1
-  coreColliderHelper: {fileID: 168326260960991395}
-  owner: {fileID: 0}
-  fxAttachPoint: {fileID: 5781964363949412845}
-  spawnAttachPoint: {fileID: 0}
-  spawnAttachSource: {fileID: 0}
   debugActionDisabled: 0
 --- !u!114 &2610375868671528517
 MonoBehaviour:
@@ -5720,14 +5717,6 @@ MonoBehaviour:
       value: 0
     lifeTime:
       value: -1
-    isThrowing:
-      value: 0
-    isGrabbed:
-      value: 0
-    isBind:
-      value: 0
-    isGuardbreak:
-      value: 0
   stat:
     maxHeartPoint:
       value: 1
@@ -5766,32 +5755,30 @@ MonoBehaviour:
     staminaRecoverTimeThreshold: 0
     stanceReduceSpeed: 0
     stanceReduceTimeThreshold: 0
-  body:
-    walkSpeed: 1
-    runSpeed: 2
-    sprintSpeed: 3
-  decision:
+  target:
     targetPawnHP:
       value: {fileID: 0}
+  decision:
     currDecision:
       value: -1
     aggressiveLevel:
       value: 0
-    isInCombat:
-      value: 0
+  body:
+    walkSpeed: 1
+    runSpeed: 2
+  action:
     isGuarding:
       value: 0
     spacingInDistance: 2
     spacingOutDistance: 3
     minSpacingDistance: 1
     maxSpacingDistance: 2
-    holdPositionWeight: 0
-    moveAroundWeight: 1
     minApproachDistance: 1
-  selection:
-    comboAttackRateBoostAfterCounterAttack: 1
-    comboAttackRateStep: 1
-    counterAttackRateStep: 1
+    holdPositionRate: 1
+    moveAroundRate: 1
+    comboAttackRateBoostAfterCounterAttack: 0.1
+    comboAttackRateStep: 0.2
+    counterAttackRateStep: 0.5
 --- !u!114 &8593737910688562853
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5849,8 +5836,8 @@ MonoBehaviour:
     _version: 3.31
     _category: 
     _comments: 
-    _translation: {x: 436, y: 141}
-    _zoomFactor: 0.25009352
+    _translation: {x: -262, y: -77}
+    _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 0
   _disableAction: 0
