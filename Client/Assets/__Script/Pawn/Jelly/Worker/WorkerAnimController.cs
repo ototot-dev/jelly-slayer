@@ -119,24 +119,24 @@ namespace Game
                 }
                 else if (__brain.BB.IsDown)
                 {
-                    mainAnimator.SetLayerWeight(1, 0f);
                     legAnimator.LegsAnimatorBlend = 0f;
                     legAnimator.User_SetIsMoving(false);
                     legAnimator.User_SetIsGrounded(false);
                 }
                 else if (__brain.BB.IsGroggy)
                 {
-                    mainAnimator.SetLayerWeight(1, 0f);
                     legAnimator.LegsAnimatorBlend = 1f;
                     legAnimator.User_SetIsMoving(false);
                     legAnimator.User_SetIsGrounded(true);
                 }
                 else
                 {   
-                    // if (__brain.BB.IsGuarding)
+                    legAnimator.LegsAnimatorBlend = 1f;
+
+                    if (__brain.BB.IsGuarding)
                         legAnimator.MainGlueBlend = 1f;
-                    // else
-                        // legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude  > 0 && !__brain.ActionCtrler.CheckActionRunning() ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.8f : 0.9f, 1);
+                    else
+                        legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude  > 0 && !__brain.ActionCtrler.CheckActionRunning() ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.8f : 0.9f, 1);
 
                     legAnimator.User_SetIsMoving(__brain.Movement.CurrVelocity.sqrMagnitude > 0 && !__brain.ActionCtrler.CheckActionRunning());
                     legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround);

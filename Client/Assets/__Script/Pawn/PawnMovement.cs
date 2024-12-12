@@ -89,7 +89,7 @@ namespace Game
                 return;
 
             if (faceVec != Vector3.zero)
-                __ecmMovement.RotateTowards(faceVec, rotateSpeed);
+                __ecmMovement.RotateTowards(faceVec, rotateSpeed * Time.deltaTime);
         }
 
         public void Teleport(Vector3 destination)

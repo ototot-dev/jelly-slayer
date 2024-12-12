@@ -305,8 +305,7 @@ namespace Game.NodeCanvasExtension
                         __pawnMovable.SetDestination(newDestination);
                     }
                     
-                    if (!__pawnBrain.PawnBB.IsDown)
-                        __pawnMovable.SetFaceVector((__targetBrain.coreColliderHelper.transform.position - __pawnBrain.coreColliderHelper.transform.position).Vector2D().normalized);
+                    __pawnMovable.SetFaceVector((__targetBrain.coreColliderHelper.transform.position - __pawnBrain.coreColliderHelper.transform.position).Vector2D().normalized);
                 }).AddTo(agent);
         }
 

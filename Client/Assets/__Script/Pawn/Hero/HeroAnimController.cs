@@ -43,13 +43,13 @@ namespace Game
             __brain.BB.action.isCharging.Subscribe(v => 
             {
                 mainAnimator.SetBool("IsGuarding", v);
-                // shieldMeshSlot.localEulerAngles = v || __brain.BB.IsGuarding ? new Vector3(-30f, 0f, -20f) : Vector3.zero;
+                shieldMeshSlot.localEulerAngles = v || __brain.BB.IsCharging ? new Vector3(0f, 0f, -60f) : Vector3.zero;
             }).AddTo(this);
             
             __brain.BB.action.isGuarding.Subscribe(v => 
             {
                 mainAnimator.SetBool("IsGuarding", v);
-                // shieldMeshSlot.localEulerAngles = v || __brain.BB.IsCharging ? new Vector3(-30f, 0f, -20f) : Vector3.zero;
+                shieldMeshSlot.localEulerAngles = v || __brain.BB.IsCharging ? new Vector3(0f, 0f, -60f) : Vector3.zero;
             }).AddTo(this);
 
             FindObservableStateMachineTriggerEx("Empty (UpperLayer)").OnStateEnterAsObservable().Subscribe(_ => mainAnimator.SetLayerWeight(1, 0f)).AddTo(this);
@@ -81,7 +81,7 @@ namespace Game
                     __brain.Movement.AddRootMotion(2f * mainAnimator.deltaPosition, Quaternion.identity);
                 }
 
-                if (__brain.ActionCtrler.CheckActionRunning() || __watchingStateNames.Contains("DrinkPotion") || __watchingStateNames.Contains("GuardParry"))
+                if (__brain.BB.IsGuarding ||  __brain.ActionCtrler.CheckActionRunning() || __watchingStateNames.Contains("DrinkPotion") || __watchingStateNames.Contains("GuardParry"))
                     spineOverrideTransform.weight = 0f;
                 else
                     spineOverrideTransform.weight = 1f;
