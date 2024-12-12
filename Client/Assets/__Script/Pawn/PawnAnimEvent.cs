@@ -11,7 +11,7 @@ public class PawnAnimEvent : MonoBehaviour
         Debug.Log("OnEventStartJump");
         if (_controller != null)
         {
-            _controller.StartJump();
+            // _controller.StartJump();
         }
     }
 
@@ -20,7 +20,7 @@ public class PawnAnimEvent : MonoBehaviour
         Debug.Log("OnEventStartLand");
         if (_controller != null)
         {
-            _controller.StartLand();
+            // _controller.StartLand();
         }
     }
 
@@ -29,7 +29,7 @@ public class PawnAnimEvent : MonoBehaviour
         Debug.Log("OnEventRollingGround");
         if (_controller != null)
         {
-            _controller.RollingGround();
+            // _controller.RollingGround();
         }
     }
 

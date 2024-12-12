@@ -164,7 +164,7 @@ namespace Game
                 return;
 
             var cannotHitOnJump = (damageContext.senderActionData?.cannotHitOnJump ?? 1) > 0;
-            if (cannotHitOnJump && damageContext.receiverBrain is IMovable receiverMovable && receiverMovable.IsJumping())
+            if (cannotHitOnJump && damageContext.receiverBrain is IPawnMovable receiverMovable && receiverMovable.IsJumping())
             {
                 __Logger.LogF(gameObject, nameof(CalcFinalDamage), "No damage. IsJumping() is true.", "sender", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
                 return;

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public class ZombieBrain : JellyManBrain
+    public class ZombieBrain : JellyBrain
     {
         [Header("Weapon")]
         public WeaponController[] _handWeaponCtrl;
@@ -65,41 +65,41 @@ namespace Game
                 else
                 {
                     //* 공격 시작
-                    if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && !StatusCtrler.CheckStatus(Game.PawnStatus.CanNotAction) && !StatusCtrler.CheckStatus(Game.PawnStatus.Staggered) && base.CheckTargetVisibility())
-                    {
-                        var selection = ActionDataSelector.RandomSelection(BB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position), BB.stat.stamina.Value, true);
-                        if (selection != null)
-                            ActionCtrler.SetPendingAction(selection.actionName);
-                    }
+                    // if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && !StatusCtrler.CheckStatus(Game.PawnStatus.CanNotAction) && !StatusCtrler.CheckStatus(Game.PawnStatus.Staggered) && base.CheckTargetVisibility())
+                    // {
+                    //     var selection = ActionDataSelector.RandomSelection(BB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position), BB.stat.stamina.Value, true);
+                    //     if (selection != null)
+                    //         ActionCtrler.SetPendingAction(selection.actionName);
+                    // }
                 }
             };
         }
 
-        public override void ShowTrail(bool isActive, int trailIndex)
-        {
-            if (_handWeaponCtrl != null && trailIndex < _handWeaponCtrl.Length)
-            {
-                _handWeaponCtrl[trailIndex].ShowTrail(isActive);
-            }
-        }
+        // public override void ShowTrail(bool isActive, int trailIndex)
+        // {
+        //     if (_handWeaponCtrl != null && trailIndex < _handWeaponCtrl.Length)
+        //     {
+        //         _handWeaponCtrl[trailIndex].ShowTrail(isActive);
+        //     }
+        // }
 
-        public override void DoAction(ActionType type, PawnBrainController attacker)
-        {
-            switch (type)
-            {
-                case ActionType.Knockback:
-                    {
-                        AnimCtrler.mainAnimator.SetBool("IsDown", true);
-                        AnimCtrler.mainAnimator.SetTrigger("OnDown");
+        // public override void DoAction(ActionType type, PawnBrainController attacker)
+        // {
+        //     switch (type)
+        //     {
+        //         case ActionType.Knockback:
+        //             {
+        //                 AnimCtrler.mainAnimator.SetBool("IsDown", true);
+        //                 AnimCtrler.mainAnimator.SetTrigger("OnDown");
 
-                        var vDist = CoreTransform.position - attacker.CoreTransform.position;
-                        var knockBackVec = 1.2f * vDist.normalized;
-                        Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.5f)))
-                            .Subscribe(_ => Movement.AddRootMotion(4 * Time.fixedDeltaTime * knockBackVec, Quaternion.identity))
-                            .AddTo(this);
-                    }
-                    break;
-            }
-        }
+        //                 var vDist = CoreTransform.position - attacker.CoreTransform.position;
+        //                 var knockBackVec = 1.2f * vDist.normalized;
+        //                 Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.5f)))
+        //                     .Subscribe(_ => Movement.AddRootMotion(4 * Time.fixedDeltaTime * knockBackVec, Quaternion.identity))
+        //                     .AddTo(this);
+        //             }
+        //             break;
+        //     }
+        // }
     }
 }

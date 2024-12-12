@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public class SlimeBossBrain : PawnBrainController, ISpawnable, IMovable
+    public class SlimeBossBrain : PawnBrainController, IPawnSpawnable, IPawnMovable
     {
         [Header("Component")]
         public Transform fxAttachPoint;
@@ -19,31 +19,31 @@ namespace Game
         }
 
         #region ISpawnable/IMovable 구현
-        Vector3 ISpawnable.GetSpawnPosition() => Vector3.zero;
-        void ISpawnable.OnStartSpawnHandler() { }
-        void ISpawnable.OnFinishSpawnHandler() { }
-        void ISpawnable.OnDespawnedHandler() { }
-        void ISpawnable.OnDeadHandler() { AnimCtrler.mainAnimator.SetTrigger("OnDead"); Movement.SetMovementEnabled(false); }
-        void ISpawnable.OnLifeTimeOutHandler() { PawnHP.Die("TimeOut"); }
-        bool IMovable.IsJumping() { return false; }
-        bool IMovable.IsRolling() { return false; }
-        bool IMovable.CheckReachToDestination() { return Movement.CheckReachToDestination(); }
-        Vector3 IMovable.GetDestination() { return Movement.destination; }
-        float IMovable.GetEstimateTimeToDestination() { return Movement.EstimateTimeToDestination(); }
-        float IMovable.GetDefaultMinApproachDistance() { return Movement.GetDefaultMinApproachDistance(); }
-        bool IMovable.GetFreezeMovement() { return Movement.freezeMovement; }
-        bool IMovable.GetFreezeRotation() { return Movement.freezeRotation; }
-        void IMovable.ReserveDestination(Vector3 destination) { Movement.ReserveDestination(destination); }
-        float IMovable.SetDestination(Vector3 destination) { return Movement.SetDestination(destination); }
-        void IMovable.SetMinApproachDistance(float distance) { Movement.minApproachDistance = distance; }
-        void IMovable.SetFaceVector(Vector3 faceVec) { Movement.faceVec = faceVec; }
-        void IMovable.FreezeMovement(bool newValue) { Movement.freezeMovement = newValue; }
-        void IMovable.FreezeRotation(bool newValue) { Movement.freezeRotation = newValue; }
-        void IMovable.AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation) { Movement.AddRootMotion(deltaPosition, deltaRotation); }
-        void IMovable.Teleport(Vector3 destination) { Movement.Teleport(destination); }
-        void IMovable.MoveTo(Vector3 destination) { Movement.destination = destination; }
-        void IMovable.FaceTo(Vector3 direction) { Movement.FaceTo(direction); }
-        void IMovable.Stop() { Movement.Stop(); }
+        Vector3 IPawnSpawnable.GetSpawnPosition() => Vector3.zero;
+        void IPawnSpawnable.OnStartSpawnHandler() { }
+        void IPawnSpawnable.OnFinishSpawnHandler() { }
+        void IPawnSpawnable.OnDespawnedHandler() { }
+        void IPawnSpawnable.OnDeadHandler() { AnimCtrler.mainAnimator.SetTrigger("OnDead"); Movement.SetMovementEnabled(false); }
+        void IPawnSpawnable.OnLifeTimeOutHandler() { PawnHP.Die("TimeOut"); }
+        bool IPawnMovable.IsJumping() { return false; }
+        bool IPawnMovable.IsRolling() { return false; }
+        bool IPawnMovable.CheckReachToDestination() { return Movement.CheckReachToDestination(); }
+        Vector3 IPawnMovable.GetDestination() { return Movement.destination; }
+        float IPawnMovable.GetEstimateTimeToDestination() { return Movement.EstimateTimeToDestination(); }
+        float IPawnMovable.GetDefaultMinApproachDistance() { return Movement.GetDefaultMinApproachDistance(); }
+        bool IPawnMovable.GetFreezeMovement() { return Movement.freezeMovement; }
+        bool IPawnMovable.GetFreezeRotation() { return Movement.freezeRotation; }
+        void IPawnMovable.ReserveDestination(Vector3 destination) { Movement.ReserveDestination(destination); }
+        float IPawnMovable.SetDestination(Vector3 destination) { return Movement.SetDestination(destination); }
+        void IPawnMovable.SetMinApproachDistance(float distance) { Movement.minApproachDistance = distance; }
+        void IPawnMovable.SetFaceVector(Vector3 faceVec) { Movement.faceVec = faceVec; }
+        void IPawnMovable.FreezeMovement(bool newValue) { Movement.freezeMovement = newValue; }
+        void IPawnMovable.FreezeRotation(bool newValue) { Movement.freezeRotation = newValue; }
+        void IPawnMovable.AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation) { Movement.AddRootMotion(deltaPosition, deltaRotation); }
+        void IPawnMovable.Teleport(Vector3 destination) { Movement.Teleport(destination); }
+        void IPawnMovable.MoveTo(Vector3 destination) { Movement.destination = destination; }
+        void IPawnMovable.FaceTo(Vector3 direction) { Movement.FaceTo(direction); }
+        void IPawnMovable.Stop() { Movement.Stop(); }
         #endregion
 
         public enum Decisions

@@ -45,11 +45,11 @@ GameObject:
   - component: {fileID: 1853797499062314162}
   - component: {fileID: 629930389286374974}
   - component: {fileID: 3540552371793380332}
-  - component: {fileID: 8791414763947496166}
-  - component: {fileID: 4268522763273999486}
+  - component: {fileID: 6760044505968453408}
   - component: {fileID: 2118029493424771570}
   - component: {fileID: 7401026273244081378}
-  - component: {fileID: 6760044505968453408}
+  - component: {fileID: 4268522763273999486}
+  - component: {fileID: 8791414763947496166}
   - component: {fileID: 4592272242371362991}
   - component: {fileID: 6873228617776499816}
   m_Layer: 0
@@ -133,7 +133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dfbf849edb984cc3a4631ebd36857ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &8791414763947496166
+--- !u!114 &6760044505968453408
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -142,128 +142,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 859846127300755753}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bec369379137d4e2d83a006a10a3bb57, type: 3}
+  m_Script: {fileID: 11500000, guid: d80cbf2baa7da45a5b0ccf7f2ab6fd7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tickInterval: 0.1
-  tickEnabled: 1
-  updateEnabled: 1
-  lateUpdateEnabled: 1
-  fixedUpdateEnabled: 1
-  coreColliderHelper: {fileID: 4575544682901093454}
-  owner: {fileID: 0}
-  _weaponCtrlRightHand: {fileID: 3604952522941733246}
-  _weaponSetType: 0
-  _trWeaponBone:
-  - {fileID: 244103361750439637}
-  - {fileID: 3452488443664082073}
-  - {fileID: 5891697494063280953}
-  _weaponController:
-  - {fileID: 3604952522941733246}
-  - {fileID: 5206738947422469673}
-  - {fileID: 8179485229091800959}
-  _chainCtrl: {fileID: 7371286568505109311}
-  _isBind: 0
-  _bindLIst: []
---- !u!114 &4268522763273999486
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 859846127300755753}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2717f4c718f634e348692310a70010c7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  common:
-    pawnId: 1
-    pawnName: Hero
-    spawnWaitingTime: 1
-    despawnWaitingTime: 1
-    isSpawnFinished:
-      value: 0
-    isInvincible:
-      value: 1
-    isDead:
-      value: 0
-    isDown:
-      value: 0
-    isGroggy:
-      value: 0
-    lifeTime:
-      value: -1
-    isThrowing:
-      value: 0
-    isGrabbed:
-      value: 0
-    isBind:
-      value: 0
-    isGuardbreak:
-      value: 0
-  stat:
-    maxHeartPoint:
-      value: 1
-    maxMagicPoint:
-      value: 1
-    maxStamina:
-      value: 1
-    maxStance:
-      value: 1
-    maxKnockDown:
-      value: 1
-    maxGroggyHitCount:
-      value: 0
-    heartPoint:
-      value: 0
-    magicPoint:
-      value: 1
-    stamina:
-      value: 1
-    stance:
-      value: 1
-    knockDown:
-      value: 1
-    groggyHitCount:
-      value: 0
-    poise: 0
-    guardStrength: 0
-    guardEfficiency: 0
-    guardStaminaCost: 0
-    guardStaggerDuration: 0
-    physAttack: 0
-    magicAttack: 0
-    physDefence: 0
-    magicDefense: 0
-    staminaRecoverSpeed: 13
-    staminaRecoverTimeThreshold: 2
-    stanceReduceSpeed: 0
-    stanceReduceTimeThreshold: 0
-  body:
-    moveSpeed: 3
-    walkSpeed: 1
-    sprintSpeed: 0.1
-    guardSpeed: 0.2
-    rollingDistance: 2
-    rollingDuration: 0.5
-    jumpHeight: 1
-    smashingHeight: 1
-  action:
-    targetPawnHP:
-      value: {fileID: 0}
-    isJumping:
-      value: 0
-    isRolling:
-      value: 0
-    isGuarding:
-      value: 0
-    isAutoGuardEnabled:
-      value: 1
-    isCharging:
-      value: 0
-    chargingLevel:
-      value: 0
+  capsule: {fileID: 5773660180996915832}
+  capsuleRigidBody: {fileID: 155878440203396063}
+  capsuleCollider: {fileID: 4741360635043825763}
+  freezeMovement: 0
+  freezeRotation: 1
+  rootMotionEnabled: 1
+  rootMotionMultiplier: 1
+  moveSpeed: 1
+  moveAccel: 20
+  moveBrake: 20
+  rotateSpeed: 360
+  gravity: {x: 0, y: -9.81, z: 0}
+  moveVec: {x: 0, y: 0, z: 0}
+  faceVec: {x: 0, y: 0, z: 1}
 --- !u!114 &2118029493424771570
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -313,7 +208,7 @@ MonoBehaviour:
   shieldMesh: {fileID: 4082651064568185550}
   kickActionCollider: {fileID: 515486780858504094}
   swordActionCollider: {fileID: 0}
---- !u!114 &6760044505968453408
+--- !u!114 &4268522763273999486
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -322,23 +217,122 @@ MonoBehaviour:
   m_GameObject: {fileID: 859846127300755753}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d80cbf2baa7da45a5b0ccf7f2ab6fd7a, type: 3}
+  m_Script: {fileID: 11500000, guid: 2717f4c718f634e348692310a70010c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  capsule: {fileID: 5773660180996915832}
-  capsuleRigidBody: {fileID: 155878440203396063}
-  capsuleCollider: {fileID: 4741360635043825763}
-  freezeMovement: 0
-  freezeRotation: 1
-  rootMotionEnabled: 1
-  rootMotionMultiplier: 1
-  moveSpeed: 1
-  moveAccel: 20
-  moveBrake: 20
-  rotateSpeed: 360
-  gravity: {x: 0, y: -9.81, z: 0}
-  moveVec: {x: 0, y: 0, z: 0}
-  faceVec: {x: 0, y: 0, z: 1}
+  common:
+    pawnId: 1
+    pawnName: Hero
+    spawnWaitingTime: 1
+    despawnWaitingTime: 1
+    isSpawnFinished:
+      value: 0
+    isInvincible:
+      value: 1
+    isDead:
+      value: 0
+    isDown:
+      value: 0
+    isGroggy:
+      value: 0
+    lifeTime:
+      value: -1
+  stat:
+    maxHeartPoint:
+      value: 1
+    maxMagicPoint:
+      value: 1
+    maxStamina:
+      value: 1
+    maxStance:
+      value: 1
+    maxKnockDown:
+      value: 1
+    maxGroggyHitCount:
+      value: 0
+    heartPoint:
+      value: 0
+    magicPoint:
+      value: 1
+    stamina:
+      value: 1
+    stance:
+      value: 1
+    knockDown:
+      value: 1
+    groggyHitCount:
+      value: 0
+    poise: 0
+    guardStrength: 0
+    guardEfficiency: 0
+    guardStaminaCost: 0
+    guardStaggerDuration: 0
+    physAttack: 0
+    magicAttack: 0
+    physDefence: 0
+    magicDefense: 0
+    staminaRecoverSpeed: 13
+    staminaRecoverTimeThreshold: 2
+    stanceReduceSpeed: 0
+    stanceReduceTimeThreshold: 0
+  body:
+    walkSpeed: 1
+    runSpeed: 1
+    sprintSpeed: 0.1
+    guardSpeed: 0.2
+    rollingDistance: 2
+    rollingDuration: 0.5
+    jumpHeight: 1
+    smashingHeight: 1
+  action:
+    isJumping:
+      value: 0
+    isRolling:
+      value: 0
+    isGuarding:
+      value: 0
+    isGuardbroken:
+      value: 0
+    isAutoGuardEnabled:
+      value: 1
+    isCharging:
+      value: 0
+    chargingLevel:
+      value: 0
+--- !u!114 &8791414763947496166
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 859846127300755753}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bec369379137d4e2d83a006a10a3bb57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coreColliderHelper: {fileID: 4575544682901093454}
+  owner: {fileID: 0}
+  targetPawnHP:
+    value: {fileID: 0}
+  tickInterval: 0.1
+  tickEnabled: 1
+  updateEnabled: 1
+  lateUpdateEnabled: 1
+  fixedUpdateEnabled: 1
+  _weaponCtrlRightHand: {fileID: 3604952522941733246}
+  _weaponSetType: 0
+  _trWeaponBone:
+  - {fileID: 244103361750439637}
+  - {fileID: 3452488443664082073}
+  - {fileID: 5891697494063280953}
+  _weaponController:
+  - {fileID: 3604952522941733246}
+  - {fileID: 5206738947422469673}
+  - {fileID: 8179485229091800959}
+  _chainCtrl: {fileID: 7371286568505109311}
+  _isBind: 0
+  _bindLIst: []
 --- !u!114 &4592272242371362991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17987,7 +17981,7 @@ Transform:
   m_GameObject: {fileID: 6325787630190255997}
   serializedVersion: 2
   m_LocalRotation: {x: 0.68734807, y: -0.048808247, z: 0.0023380192, w: 0.7246827}
-  m_LocalPosition: {x: -0.01, y: 0.145, z: 0.07}
+  m_LocalPosition: {x: -0.005, y: 0.221, z: 0.067}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

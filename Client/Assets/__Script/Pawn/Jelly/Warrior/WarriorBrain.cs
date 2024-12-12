@@ -8,7 +8,7 @@ namespace Game
     [RequireComponent(typeof(WarriorBlackboard))]
     [RequireComponent(typeof(WarriorAnimController))]
     [RequireComponent(typeof(WarriorActionController))]
-    public class WarriorBrain : JellyManBrain
+    public class WarriorBrain : JellyBrain
     {
         [Header("Debug")]
         public bool debugActionDisabled;
@@ -40,12 +40,12 @@ namespace Game
                 ActionDataSelector.UpdateSelection(deltaTick);
                 return;
                 //* 공격
-                if (!ActionCtrler.CheckActionRunning() && string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && !StatusCtrler.CheckStatus(Game.PawnStatus.Staggered) && base.CheckTargetVisibility())
-                {
-                    var selection = ActionDataSelector.RandomSelection(BB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position), BB.stat.stamina.Value, true);
-                    if (selection != null)
-                        ActionCtrler.SetPendingAction(selection.actionName);
-                }
+                // if (!ActionCtrler.CheckActionRunning() && string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && !StatusCtrler.CheckStatus(Game.PawnStatus.Staggered) && base.CheckTargetVisibility())
+                // {
+                //     var selection = ActionDataSelector.RandomSelection(BB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position), BB.stat.stamina.Value, true);
+                //     if (selection != null)
+                //         ActionCtrler.SetPendingAction(selection.actionName);
+                // }
             };
         }
 
@@ -56,12 +56,12 @@ namespace Game
             if (damageContext.actionResult == ActionResults.Blocked)
             {   
                 //* 반격
-                if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && CheckTargetVisibility())
-                {
-                    var selection = ActionDataSelector.RandomSelection(0, 100, true);
-                    if (selection != null)
-                        ActionCtrler.SetPendingAction(selection.actionName);
-                }
+                // if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && CheckTargetVisibility())
+                // {
+                //     var selection = ActionDataSelector.RandomSelection(0, 100, true);
+                //     if (selection != null)
+                //         ActionCtrler.SetPendingAction(selection.actionName);
+                // }
             }
         }
     }

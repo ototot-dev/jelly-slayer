@@ -195,10 +195,10 @@ namespace Game
         {
             base.StartInternal();
 
-            __brain.BB.decision.isGuarding.Subscribe(v =>
-            {
-                __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", v);
-            }).AddTo(this);
+            // __brain.BB.decision.isGuarding.Subscribe(v =>
+            // {
+            //     __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", v);
+            // }).AddTo(this);
         }
     }
 }

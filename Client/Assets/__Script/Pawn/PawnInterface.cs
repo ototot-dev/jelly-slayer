@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public interface ISpawnable
+    public interface IPawnSpawnable
     {
         Vector3 GetSpawnPosition();
         void OnStartSpawnHandler();
@@ -14,7 +14,7 @@ namespace Game
         void OnLifeTimeOutHandler();
     }
 
-    public interface IMovable
+    public interface IPawnMovable
     {
         bool IsJumping();
         bool IsRolling();
@@ -35,6 +35,12 @@ namespace Game
         void MoveTo(Vector3 destination);
         void FaceTo(Vector3 direction);
         void Stop();
+    }
+
+    public interface IPawnDecision
+    {
+        void OnDecisionFinishedHandler() {}
+        void InvalidateDecision(float decisionCoolTime = 0) {}
     }
 
     public interface IStatusContainer

@@ -12,7 +12,7 @@ namespace Game
     [RequireComponent(typeof(DroneBotBlackboard))]
     [RequireComponent(typeof(DroneBotAnimController))]
     [RequireComponent(typeof(DroneBotActionController))]
-    public class DroneBotBrain : JellyManBrain
+    public class DroneBotBrain : JellyBrain
     {
         [Header("Debug")]
         public bool debugActionDisabled;
@@ -57,16 +57,16 @@ namespace Game
                 }
                 else if (ActionDataSelector.CheckExecutable(__fireActionData) && Time.time - PawnHP.LastDamageTimeStamp >= 1f && Time.time - __lastFireRateStepTimeStamp >= 1f)
                 {
-                    if (ActionDataSelector.EvaluateSelection(__fireActionData, -1f, 1f) && CheckTargetVisibility())
-                    {
-                        ActionDataSelector.ResetSelection(__fireActionData);
-                        ActionCtrler.SetPendingAction(__fireActionData.actionName);
-                    }
-                    else
-                    {
-                        __lastFireRateStepTimeStamp = Time.time;
-                        ActionDataSelector.BoostSelection(__fireActionData, BB.selection.fireAttackRateStep);
-                    }
+                    // if (ActionDataSelector.EvaluateSelection(__fireActionData, -1f, 1f) && CheckTargetVisibility())
+                    // {
+                    //     ActionDataSelector.ResetSelection(__fireActionData);
+                    //     ActionCtrler.SetPendingAction(__fireActionData.actionName);
+                    // }
+                    // else
+                    // {
+                    //     __lastFireRateStepTimeStamp = Time.time;
+                    //     ActionDataSelector.BoostSelection(__fireActionData, BB.selection.fireAttackRateStep);
+                    // }
                 }
             };
         }

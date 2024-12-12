@@ -27,35 +27,35 @@ namespace Game
         KATANA,
     }
 
-    public class HeroBrain : PawnBrainController, ISpawnable, IMovable
+    public class HeroBrain : PawnBrainController, IPawnSpawnable, IPawnMovable
     {
 
 #region ISpawnable/IMovable 구현
-        Vector3 ISpawnable.GetSpawnPosition() => Vector3.zero;
-        void ISpawnable.OnDespawnedHandler() {}
-        void ISpawnable.OnStartSpawnHandler() {}
-        void ISpawnable.OnFinishSpawnHandler() {}
-        void ISpawnable.OnDeadHandler() {}
-        void ISpawnable.OnLifeTimeOutHandler() {}
-        bool IMovable.IsJumping() { return BB.IsJumping; }
-        bool IMovable.IsRolling() { return BB.IsRolling; }
-        bool IMovable.CheckReachToDestination() { return false; }
-        Vector3 IMovable.GetDestination() { return Movement.capsule.position + Movement.moveVec; }
-        float IMovable.GetEstimateTimeToDestination() { return 0; }
-        float IMovable.GetDefaultMinApproachDistance() { return 0; }
-        bool IMovable.GetFreezeMovement() { return Movement.freezeMovement; }
-        bool IMovable.GetFreezeRotation() { return Movement.freezeRotation; }
-        void IMovable.AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation) { Movement.AddRootMotion(deltaPosition, deltaRotation); }
-        void IMovable.ReserveDestination(Vector3 destination) {}
-        float IMovable.SetDestination(UnityEngine.Vector3 destination) { return 0; }
-        void IMovable.SetMinApproachDistance(float distance) {}
-        void IMovable.SetFaceVector(Vector3 faceVec) { Movement.faceVec = faceVec; }
-        void IMovable.FreezeMovement(bool newValue) {}
-        void IMovable.FreezeRotation(bool newValue) {}
-        void IMovable.Teleport(Vector3 destination) { Movement.Teleport(destination); }
-        void IMovable.MoveTo(Vector3 destination) { Debug.Assert(false); }
-        void IMovable.FaceTo(Vector3 lookAt) { Movement.FaceTo(lookAt); }
-        void IMovable.Stop() {}
+        Vector3 IPawnSpawnable.GetSpawnPosition() => Vector3.zero;
+        void IPawnSpawnable.OnDespawnedHandler() {}
+        void IPawnSpawnable.OnStartSpawnHandler() {}
+        void IPawnSpawnable.OnFinishSpawnHandler() {}
+        void IPawnSpawnable.OnDeadHandler() {}
+        void IPawnSpawnable.OnLifeTimeOutHandler() {}
+        bool IPawnMovable.IsJumping() { return BB.IsJumping; }
+        bool IPawnMovable.IsRolling() { return BB.IsRolling; }
+        bool IPawnMovable.CheckReachToDestination() { return false; }
+        Vector3 IPawnMovable.GetDestination() { return Movement.capsule.position + Movement.moveVec; }
+        float IPawnMovable.GetEstimateTimeToDestination() { return 0; }
+        float IPawnMovable.GetDefaultMinApproachDistance() { return 0; }
+        bool IPawnMovable.GetFreezeMovement() { return Movement.freezeMovement; }
+        bool IPawnMovable.GetFreezeRotation() { return Movement.freezeRotation; }
+        void IPawnMovable.AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation) { Movement.AddRootMotion(deltaPosition, deltaRotation); }
+        void IPawnMovable.ReserveDestination(Vector3 destination) {}
+        float IPawnMovable.SetDestination(UnityEngine.Vector3 destination) { return 0; }
+        void IPawnMovable.SetMinApproachDistance(float distance) {}
+        void IPawnMovable.SetFaceVector(Vector3 faceVec) { Movement.faceVec = faceVec; }
+        void IPawnMovable.FreezeMovement(bool newValue) {}
+        void IPawnMovable.FreezeRotation(bool newValue) {}
+        void IPawnMovable.Teleport(Vector3 destination) { Movement.Teleport(destination); }
+        void IPawnMovable.MoveTo(Vector3 destination) { Debug.Assert(false); }
+        void IPawnMovable.FaceTo(Vector3 lookAt) { Movement.FaceTo(lookAt); }
+        void IPawnMovable.Stop() {}
         #endregion
 
         [Header("Weapon")]
@@ -73,7 +73,7 @@ namespace Game
         public HeroAnimController AnimCtrler { get; private set; }
         public HeroActionController ActionCtrler { get; private set; }
         public PawnSensorController SensorCtrler { get; private set; }
-        public PawnStatusController BuffCtrler { get; private set;}
+        public PawnStatusController StatusCtrler { get; private set;}
 
         public bool _isBind = false;
         public List<PawnBrainController> _bindLIst = new ();
@@ -87,7 +87,7 @@ namespace Game
             AnimCtrler = GetComponent<HeroAnimController>();
             ActionCtrler = GetComponent<HeroActionController>();
             SensorCtrler = GetComponent<PawnSensorController>();
-            BuffCtrler = GetComponent<PawnStatusController>();
+            StatusCtrler = GetComponent<PawnStatusController>();
         }
 
         protected override void StartInternal()
@@ -108,7 +108,7 @@ namespace Game
             ActionCtrler.onActionCanceled += (actionContext, _) =>
             {
                 if ((actionContext.actionData?.actionName ?? string.Empty) == "DrinkPotion")
-                    Movement.moveSpeed = BB.body.moveSpeed;
+                    Movement.moveSpeed = BB.body.walkSpeed;
 
                 ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
             };
@@ -116,7 +116,7 @@ namespace Game
             ActionCtrler.onActionFinished += (actionContext) =>
             {
                 if ((actionContext.actionData?.actionName ?? string.Empty) == "DrinkPotion")
-                    Movement.moveSpeed = BB.body.moveSpeed;
+                    Movement.moveSpeed = BB.body.walkSpeed;
 
                 ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
             };
@@ -194,42 +194,42 @@ namespace Game
             }
         }
 
-        public override void ShowTrail(bool isActive, int trailIndex) 
-        {
-            if (_weaponCtrlRightHand != null)
-            {
-                _weaponCtrlRightHand.ShowTrail(isActive);
-            }
-        }
+        // public override void ShowTrail(bool isActive, int trailIndex) 
+        // {
+        //     if (_weaponCtrlRightHand != null)
+        //     {
+        //         _weaponCtrlRightHand.ShowTrail(isActive);
+        //     }
+        // }
 
-        public void Bind(PawnBrainController pawn, bool isBind = true) 
-        {
-            _isBind = isBind;
-            if (_isBind == true)
-            {
-                pawn.PawnStatusCtrler.AddStatus(Game.PawnStatus.Bind);
-                _bindLIst.Add(pawn);
-            }
-            else 
-            {
-                if (pawn != null)
-                {
-                    pawn.PawnStatusCtrler.RemoveStatus(Game.PawnStatus.Bind);
-                }
-                _bindLIst.Clear();
-            }
-        }
+        // public void Bind(PawnBrainController pawn, bool isBind = true) 
+        // {
+        //     _isBind = isBind;
+        //     if (_isBind == true)
+        //     {
+        //         pawn.PawnStatusCtrler.AddStatus(Game.PawnStatus.Bind);
+        //         _bindLIst.Add(pawn);
+        //     }
+        //     else 
+        //     {
+        //         if (pawn != null)
+        //         {
+        //             pawn.PawnStatusCtrler.RemoveStatus(Game.PawnStatus.Bind);
+        //         }
+        //         _bindLIst.Clear();
+        //     }
+        // }
 
-        public void ChainRolling(bool isRolling) 
-        {
-            _chainCtrl.Rolling(isRolling);
-        }
+        // public void ChainRolling(bool isRolling) 
+        // {
+        //     _chainCtrl.Rolling(isRolling);
+        // }
 
-        public void ChainShoot() 
-        {
-            Debug.Log("ChainShoot");
-            _chainCtrl.Shoot(TargetPawn);
-        }
+        // public void ChainShoot() 
+        // {
+        //     Debug.Log("ChainShoot");
+        //     _chainCtrl.Shoot(TargetPawn);
+        // }
 
         void ResetToMainWeapon() 
         {

@@ -107,14 +107,14 @@ namespace Game
                     legAnimator.User_SetIsMoving(false);
                     legAnimator.User_SetIsGrounded(true);
                 }
-                else if (__brain.BB.IsBind)
-                {
-                    //if (__brain.ActionCtrler.CurrActionName != "!OnHit")
-                        //mainAnimator.SetLayerWeight(1, 0f);
-                    legAnimator.LegsAnimatorBlend = 1f;
-                    legAnimator.User_SetIsMoving(false);
-                    legAnimator.User_SetIsGrounded(true);
-                }
+                // else if (__brain.BB.IsBind)
+                // {
+                //     //if (__brain.ActionCtrler.CurrActionName != "!OnHit")
+                //         //mainAnimator.SetLayerWeight(1, 0f);
+                //     legAnimator.LegsAnimatorBlend = 1f;
+                //     legAnimator.User_SetIsMoving(false);
+                //     legAnimator.User_SetIsGrounded(true);
+                // }
                 else
                 {   
                     // legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude > 0f && !__brain.ActionCtrler.CheckActionRunning() ? -1f : 1f) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.8f : 0.9f, 1f);

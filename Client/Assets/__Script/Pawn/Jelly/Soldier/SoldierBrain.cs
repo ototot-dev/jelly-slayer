@@ -9,7 +9,7 @@ namespace Game
     [RequireComponent(typeof(SoldierBlackboard))]
     [RequireComponent(typeof(SoldierAnimController))]
     [RequireComponent(typeof(SoldierActionController))]
-    public class SoldierBrain : JellyManBrain
+    public class SoldierBrain : JellyHumanoidBrain
     {
         [Header("Debug")]
         public bool debugActionDisabled;
@@ -105,13 +105,13 @@ namespace Game
                         }
                         else
                         {
-                            ActionDataSelector.BoostSelection(__leapActionData, BB.selection.leapRateStep * Time.deltaTime);
+                            ActionDataSelector.BoostSelection(__leapActionData, BB.action.leapRateStep * Time.deltaTime);
                         }
                     }
                     else
                     {
                         __lastComboAttackRateStepTimeStamp = Time.time;
-                        ActionDataSelector.BoostSelection(__combo1ActionData, BB.selection.comboAttackRateStep);
+                        ActionDataSelector.BoostSelection(__combo1ActionData, BB.action.comboAttackRateStep);
                     }
                 }
             };
@@ -129,12 +129,12 @@ namespace Game
                 if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && ActionDataSelector.EvaluateSelection(__counterActionData, -1f, 1f) && CheckTargetVisibility())
                 {
                     ActionDataSelector.ResetSelection(__counterActionData);
-                    ActionDataSelector.BoostSelection(__combo1ActionData, BB.selection.comboAttackRateBoostAfterCounterAttack);
+                    ActionDataSelector.BoostSelection(__combo1ActionData, BB.action.comboAttackRateBoostAfterCounterAttack);
                     ActionCtrler.SetPendingAction("Counter");
                 }
                 else
                 {
-                    ActionDataSelector.BoostSelection(__counterActionData, BB.selection.counterAttackRateStep);
+                    ActionDataSelector.BoostSelection(__counterActionData, BB.action.counterAttackRateStep);
                 }
             }
         }

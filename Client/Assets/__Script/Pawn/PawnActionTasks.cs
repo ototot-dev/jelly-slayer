@@ -1,39 +1,29 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NodeCanvas.BehaviourTrees;
 using NodeCanvas.Framework;
 using Retween.Rx;
 using UniRx;
-using UniRx.Triggers.Extension;
-using Unity.Linq;
 using UnityEngine;
-using UnityEngine.UIElements.Experimental;
 using XftWeapon;
 
 namespace Game.NodeCanvasExtension
 {
     public class CheckActionRunning : ConditionTask
     {
-        [BlackboardOnly]
-        public BBParameter<PawnActionController> actionCtrler;
         protected override string info => "CheckActionRunning() == " + (invert ? "False" : "True");
-
         protected override bool OnCheck() 
         {
-            return actionCtrler.value.CheckActionRunning();
+            return agent.GetComponent<PawnActionController>().CheckActionRunning();
         }
     }
 
     public class CheckActionHasPreMotion : ConditionTask
     {
-        [BlackboardOnly]
-        public BBParameter<PawnActionController> actionCtrler;
         protected override string info => "CheckActionHasPreMotion() == " + (invert ? "False" : "True");
-
         protected override bool OnCheck() 
         {
-            return actionCtrler.value.CheckPendingActionHasPreMotion();
+            return agent.GetComponent<PawnActionController>().CheckPendingActionHasPreMotion();
         }
     }
 
@@ -64,7 +54,7 @@ namespace Game.NodeCanvasExtension
         public BBParameter<float> duration = -1;
         public bool notifyDecisionFinished = false;
         PawnBrainController __pawnBrain;
-        IMovable __pawnMovable;
+        IPawnMovable __pawnMovable;
         float __executeTimeStamp;
 
         protected override void OnExecute()
@@ -72,7 +62,7 @@ namespace Game.NodeCanvasExtension
             __pawnBrain = agent.GetComponent<PawnBrainController>();
             Debug.Assert(__pawnBrain != null);
 
-            __pawnMovable = __pawnBrain as IMovable;
+            __pawnMovable = __pawnBrain as IPawnMovable;
             Debug.Assert(__pawnMovable != null);
             
             __pawnMovable.Stop();
@@ -102,12 +92,12 @@ namespace Game.NodeCanvasExtension
     public class MoveTo : ActionTask
     {
         public BBParameter<Vector3> destination;
-        IMovable __pawnMovable;
+        IPawnMovable __pawnMovable;
         IDisposable __moveDisposable;
 
         protected override void OnExecute()
         {
-            __pawnMovable = agent.GetComponent<PawnBrainController>() as IMovable;
+            __pawnMovable = agent.GetComponent<PawnBrainController>() as IPawnMovable;
             __pawnMovable.MoveTo(destination.value);
             __moveDisposable = Observable.EveryUpdate()
                 .TakeWhile(_ => !__pawnMovable.CheckReachToDestination())
@@ -138,13 +128,13 @@ namespace Game.NodeCanvasExtension
         public BBParameter<float> maxTurnAngle = 90;
         public BBParameter<float> moveDistanceMultiplier = 1;
         PawnBrainController __pawnBrain;
-        IMovable __pawnMovable;
+        IPawnMovable __pawnMovable;
         IDisposable __moveDisposable;
 
         protected override void OnExecute()
         {
             __pawnBrain = agent.GetComponent<PawnBrainController>();
-            __pawnMovable = __pawnBrain as IMovable;
+            __pawnMovable = __pawnBrain as IPawnMovable;
 
             var targetPoint = agent.GetComponent<PawnSensorController>().GetRandomPointInListeningArea(__pawnBrain.coreColliderHelper.transform.forward, maxTurnAngle.value, moveDistanceMultiplier.value);
             var distance = __pawnMovable.SetDestination(targetPoint);
@@ -184,7 +174,7 @@ namespace Game.NodeCanvasExtension
         PawnBrainController __targetBrain;
         PawnBrainController __pawnBrain;
         PawnActionController __pawnActionCtrler;
-        IMovable __pawnMovable;
+        IPawnMovable __pawnMovable;
         float __targetCapsuleRadius;
         float __executeTimeStamp;
 
@@ -199,7 +189,7 @@ namespace Game.NodeCanvasExtension
             __targetCapsuleRadius = __targetBrain != null && __targetBrain.coreColliderHelper.GetCapsuleCollider() != null ? __targetBrain.coreColliderHelper.GetCapsuleCollider().radius : 0f;
             __pawnBrain = agent.GetComponent<PawnBrainController>();
             __pawnActionCtrler = __pawnBrain.GetComponent<PawnActionController>();
-            __pawnMovable = __pawnBrain as IMovable;
+            __pawnMovable = __pawnBrain as IPawnMovable;
             __executeTimeStamp = Time.time;
         }
 
@@ -239,7 +229,7 @@ namespace Game.NodeCanvasExtension
         public bool notifyDecisionFinished = false;
         PawnBrainController __targetBrain;
         PawnBrainController __pawnBrain;
-        IMovable __pawnMovable;
+        IPawnMovable __pawnMovable;
         IDisposable __moveStrafeDisposable;
         Vector3 __strafeMoveVec;
         float __strafeDuration;
@@ -252,7 +242,7 @@ namespace Game.NodeCanvasExtension
             __targetBrain = target.value.GetComponent<PawnBrainController>();
             __targetCapsuleRadius = __targetBrain.coreColliderHelper.GetCapsuleCollider() != null ? __targetBrain.coreColliderHelper.GetCapsuleCollider().radius : 0f;
             __pawnBrain = agent.GetComponent<PawnBrainController>();
-            __pawnMovable = __pawnBrain as IMovable;
+            __pawnMovable = __pawnBrain as IPawnMovable;
             __strafeMoveVec = Vector3.zero;
             __minApproachDistance = Mathf.Max(0.1f, __pawnBrain.coreColliderHelper.GetRadius() + __targetCapsuleRadius);
             __pawnMovable.SetMinApproachDistance(__minApproachDistance);
@@ -339,7 +329,7 @@ namespace Game.NodeCanvasExtension
         public bool endActionWhenReachToTarget;
         PawnBrainController __pawnBrain;
         PawnActionController __pawnActionCtrler;
-        IMovable __pawnMovable;
+        IPawnMovable __pawnMovable;
         IDisposable __rootMotionDisposable;
         int __capturedActionInstanceId;
         float __manualAdvanceSpeedCached;
@@ -348,9 +338,9 @@ namespace Game.NodeCanvasExtension
         {
             __pawnBrain = agent.GetComponent<PawnBrainController>();
             __pawnActionCtrler = agent.GetComponent<PawnActionController>();
-            __pawnMovable = __pawnBrain as IMovable;
+            __pawnMovable = __pawnBrain as IPawnMovable;
 
-            Debug.Assert(__pawnBrain != null && __pawnMovable as IMovable != null);
+            Debug.Assert(__pawnBrain != null && __pawnMovable as IPawnMovable != null);
             Debug.Assert(__pawnActionCtrler != null);
 
             __capturedActionInstanceId =  __pawnActionCtrler.currActionContext.actionInstanceId;
@@ -726,11 +716,11 @@ namespace Game.NodeCanvasExtension
             var brain = agent.GetComponent<PawnBrainController>();
             var actionCtrler = agent.GetComponent<PawnActionController>();
 
-            Debug.Assert(brain != null && brain as IMovable != null);
+            Debug.Assert(brain != null && brain as IPawnMovable != null);
             Debug.Assert(actionCtrler != null);
 
             var executeTimeStamp = Time.time;
-            var movable = brain as IMovable;
+            var movable = brain as IPawnMovable;
 
             actionCtrler.currActionContext.homingRotationDisposable?.Dispose();
             actionCtrler.currActionContext.homingRotationDisposable = Observable.EveryUpdate().Subscribe(_ =>
@@ -1070,7 +1060,7 @@ namespace Game.NodeCanvasExtension
             if (isKnockDown.value == true) 
             {
                 var brain = agent.GetComponent<PawnBrainController>();
-                brain.TargetAction(ActionType.Knockback);
+                // brain.TargetAction(ActionType.Knockback);
             }
             EndAction(true);
         }
@@ -1466,33 +1456,33 @@ namespace Game.NodeCanvasExtension
         }
     }
 
-    public class ShowBladeTrail : ActionTask
-    {
-        protected override string info => $"ShowBladeTrail : {trailIndex}";
-        public BBParameter<int> trailIndex;
+    // public class ShowBladeTrail : ActionTask
+    // {
+    //     protected override string info => $"ShowBladeTrail : {trailIndex}";
+    //     public BBParameter<int> trailIndex;
 
-        protected override void OnExecute()
-        {
-            var brain = agent.GetComponent<PawnBrainController>();
-            brain.ShowTrail(true, trailIndex.value);
+    //     protected override void OnExecute()
+    //     {
+    //         var brain = agent.GetComponent<PawnBrainController>();
+    //         brain.ShowTrail(true, trailIndex.value);
 
-            EndAction(true);
-        }
-    }
+    //         EndAction(true);
+    //     }
+    // }
 
-    public class HideBladeTrail : ActionTask
-    {
-        protected override string info => $"HideBladeTrail : {trailIndex}";
-        public BBParameter<int> trailIndex;
+    // public class HideBladeTrail : ActionTask
+    // {
+    //     protected override string info => $"HideBladeTrail : {trailIndex}";
+    //     public BBParameter<int> trailIndex;
 
-        protected override void OnExecute()
-        {
-            var brain = agent.GetComponent<PawnBrainController>();
-            brain.ShowTrail(false, trailIndex.value);
+    //     protected override void OnExecute()
+    //     {
+    //         var brain = agent.GetComponent<PawnBrainController>();
+    //         brain.ShowTrail(false, trailIndex.value);
 
-            EndAction(true);
-        }
-    }
+    //         EndAction(true);
+    //     }
+    // }
 
     public class PlaySound : ActionTask 
     {

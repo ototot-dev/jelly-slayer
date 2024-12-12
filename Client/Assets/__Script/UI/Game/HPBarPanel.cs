@@ -69,7 +69,7 @@ public class HPBarPanel : MonoBehaviour
         float rate = 2.5f * (GameContext.Instance.cameraCtrler.zoom / 20.0f);
         rate = Mathf.Max(rate, 2.5f);
         rate = Mathf.Min(rate, 4.0f);
-        var pos = _pawn.CoreTransform.position + (rate * Vector3.up);
+        var pos = _pawn.GetWorldPosition() + (rate * Vector3.up);
 
         Vector2 viewportPosition = GameContext.Instance.cameraCtrler.viewCamera.WorldToViewportPoint(pos);
         Vector2 screenPosition = new Vector2(

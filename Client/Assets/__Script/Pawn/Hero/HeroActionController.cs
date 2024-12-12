@@ -37,14 +37,14 @@ namespace Game
         public override bool CanParryAction(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
             return currActionContext.activeParryEnabled && damageContext.receiverBrain.coreColliderHelper.GetDistanceBetween(damageContext.senderBrain.coreColliderHelper) < 1f || 
-                __brain.BuffCtrler.CheckStatus(PawnStatus.GuardParrying);
+                __brain.StatusCtrler.CheckStatus(PawnStatus.GuardParrying);
         }
 
         public override bool CanBlockAction(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
             if ((!__brain.BB.IsGuarding && !__brain.BB.IsAutoGuardEnabled) || __brain.BB.IsJumping == true)
                 return false;
-            if (__brain.ActionCtrler.CheckActionRunning() || __brain.BuffCtrler.CheckStatus(PawnStatus.Staggered) || __brain.BuffCtrler.CheckStatus(PawnStatus.CanNotGuard))
+            if (__brain.ActionCtrler.CheckActionRunning() || __brain.StatusCtrler.CheckStatus(PawnStatus.Staggered) || __brain.StatusCtrler.CheckStatus(PawnStatus.CanNotGuard))
                 return false;
             if (__brain.SensorCtrler.WatchingColliders.Contains(damageContext.senderBrain.coreColliderHelper.pawnCollider) == false)
                 return false;
@@ -60,8 +60,8 @@ namespace Game
 
             if (damageContext.actionResult == ActionResults.Damaged || damageContext.actionResult == ActionResults.GuardBreak)
             {
-                var hitVec = damageContext.receiverBrain.CoreTransform.position - damageContext.senderBrain.CoreTransform.position;
-                hitVec = damageContext.receiverBrain.CoreTransform.InverseTransformDirection(hitVec).Vector2D().normalized;
+                var hitVec = damageContext.receiverBrain.GetWorldPosition() - damageContext.senderBrain.GetWorldPosition();
+                hitVec = damageContext.receiverBrain.GetWorldTransform().InverseTransformDirection(hitVec).Vector2D().normalized;
                 if (Mathf.Abs(hitVec.x) > Mathf.Abs(hitVec.z))
                 {
                     __brain.AnimCtrler.mainAnimator.SetFloat("HitX", hitVec.x > 0f ? 1f : -1f);
@@ -160,7 +160,7 @@ namespace Game
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
             __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 3);
 
-            var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.CoreTransform.forward.Vector2D().normalized;
+            var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.GetWorldTransform().forward.Vector2D().normalized;
             Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
                 .DoOnCancel(() =>
                 {
@@ -230,13 +230,13 @@ namespace Game
             {
                 if (v)
                 {
-                    EffectManager.Instance.Show("FX_Cartoony_Jump_Up_01", __brain.CoreTransform.position, 
+                    EffectManager.Instance.Show("FX_Cartoony_Jump_Up_01", __brain.GetWorldPosition(), 
                         Quaternion.identity, Vector3.one, 1f);
                     SoundManager.Instance.Play(SoundID.JUMP);
                 }
                 else
                 {
-                    EffectManager.Instance.Show("JumpCloudSmall", __brain.CoreTransform.position + 
+                    EffectManager.Instance.Show("JumpCloudSmall", __brain.GetWorldPosition() + 
                         Time.deltaTime * __brain.Movement.moveSpeed * __brain.Movement.moveVec + 
                         0.1f * Vector3.up, Quaternion.identity, 0.8f * Vector3.one, 1f);
                     SoundManager.Instance.Play(SoundID.LAND);
@@ -274,7 +274,7 @@ namespace Game
         {
             var obj = GameObject.Instantiate(proj);
 
-            var trRoot = __brain.CoreTransform;
+            var trRoot = __brain.GetWorldTransform();
 
             var chainProj = obj.GetComponent<HeroChainShotProjectile>();
             var pos = (trRoot.position + Vector3.up) + trRoot.forward;

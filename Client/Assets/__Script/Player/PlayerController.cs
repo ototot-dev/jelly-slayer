@@ -74,7 +74,7 @@ namespace Game
             if (moveVec.Value.sqrMagnitude > 0)
             {
                 var isAction = MyHeroBrain.BB.IsGuarding || MyHeroBrain.BB.IsCharging;
-                MyHeroBrain.Movement.moveSpeed = isAction ? MyHeroBrain.BB.body.guardSpeed : MyHeroBrain.BB.body.moveSpeed;
+                MyHeroBrain.Movement.moveSpeed = isAction ? MyHeroBrain.BB.body.guardSpeed : MyHeroBrain.BB.body.walkSpeed;
                 MyHeroBrain.Movement.moveVec = Quaternion.AngleAxis(45, Vector3.up) * new Vector3(moveVec.Value.x, 0, moveVec.Value.y);
 
                 //* Strafe 모드가 아닌 경우엔 이동 방향과 회전 방향이 동일함
@@ -91,7 +91,7 @@ namespace Game
             {
                 if (MyHeroBrain.BB.TargetBrain != null)
                 {
-                    MyHeroBrain.Movement.faceVec = (MyHeroBrain.BB.TargetBrain.CoreTransform.position - MyHeroBrain.Movement.capsule.position).Vector2D().normalized;
+                    MyHeroBrain.Movement.faceVec = (MyHeroBrain.BB.TargetBrain.GetWorldPosition() - MyHeroBrain.Movement.capsule.position).Vector2D().normalized;
                     MyHeroBrain.AnimCtrler.HeadLookAt.position = MyHeroBrain.BB.TargetBrain.coreColliderHelper.transform.position + Vector3.up;
 
                     var targetCapsule = MyHeroBrain.BB.TargetBrain.coreColliderHelper.GetCapsuleCollider();
@@ -130,9 +130,9 @@ namespace Game
             if (MyHeroBrain.BB.IsGuarding)
             {
                 var canParry1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsGroggy && !MyHeroBrain.BB.IsJumping && !MyHeroBrain.BB.IsRolling;
-                var canParry2 = canParry1 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.BuffCtrler.CheckStatus(PawnStatus.Staggered);
+                var canParry2 = canParry1 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
                 if (canParry2)
-                    MyHeroBrain.BuffCtrler.AddStatus(PawnStatus.GuardParrying, 1f, 0.1f);
+                    MyHeroBrain.StatusCtrler.AddStatus(PawnStatus.GuardParrying, 1f, 0.1f);
             }
         }
 
@@ -142,7 +142,7 @@ namespace Game
 
             // 이동 가능 체크
             var canJump1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsGroggy && !MyHeroBrain.BB.IsJumping && !MyHeroBrain.BB.IsRolling;
-            var canJump2 = canJump1 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.BuffCtrler.CheckStatus(PawnStatus.Staggered);
+            var canJump2 = canJump1 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
             var canJump3 = canJump2;// && MyHeroBrain.PawnBB.stat.stamina.Value >= jumpStaminaCost;
 
             if (canJump3)
@@ -179,12 +179,12 @@ namespace Game
             {
                 var newTarget = MyHeroBrain.PawnSensorCtrler.ListeningColliders.Select(c => c.GetComponent<PawnColliderHelper>())
                     .Where(h => h != null && h.pawnBrain != null && !h.pawnBrain.PawnBB.IsDead)
-                    .OrderBy(p => (p.transform.position - MyHeroBrain.CoreTransform.position).sqrMagnitude)
+                    .OrderBy(p => (p.transform.position - MyHeroBrain.GetWorldPosition()).sqrMagnitude)
                     .FirstOrDefault();
 
                 if (newTarget != null)
                 {
-                    MyHeroBrain.BB.action.targetPawnHP.Value = newTarget.pawnBrain.PawnHP;
+                    MyHeroBrain.BB.target.targetPawnHP.Value = newTarget.pawnBrain.PawnHP;
                     MyHeroBrain.Movement.freezeRotation = true;
                 }
             }
@@ -198,7 +198,7 @@ namespace Game
                 {
                     if (colliderHelpers[i].pawnBrain == MyHeroBrain.BB.TargetBrain)
                     {
-                        MyHeroBrain.BB.action.targetPawnHP.Value = (i + 1 < colliderHelpers.Length ? colliderHelpers[i + 1] : colliderHelpers[0]).pawnBrain.PawnHP;
+                        MyHeroBrain.BB.target.targetPawnHP.Value = (i + 1 < colliderHelpers.Length ? colliderHelpers[i + 1] : colliderHelpers[0]).pawnBrain.PawnHP;
                         return;
                     }
                 }
@@ -211,12 +211,12 @@ namespace Game
             {
                 var newTarget = MyHeroBrain.PawnSensorCtrler.ListeningColliders.Select(c => c.GetComponent<PawnColliderHelper>())
                     .Where(h => h != null && h.pawnBrain != null && !h.pawnBrain.PawnBB.IsDead)
-                    .OrderBy(p => (p.transform.position - MyHeroBrain.CoreTransform.position).sqrMagnitude)
+                    .OrderBy(p => (p.transform.position - MyHeroBrain.GetWorldPosition()).sqrMagnitude)
                     .FirstOrDefault();
 
                 if (newTarget != null)
                 {
-                    MyHeroBrain.BB.action.targetPawnHP.Value = newTarget.pawnBrain.PawnHP;
+                    MyHeroBrain.BB.target.targetPawnHP.Value = newTarget.pawnBrain.PawnHP;
                     MyHeroBrain.Movement.freezeRotation = true;
                 }
             }
@@ -230,7 +230,7 @@ namespace Game
                 {
                     if (colliderHelpers[i].pawnBrain == MyHeroBrain.BB.TargetBrain)
                     {
-                        MyHeroBrain.BB.action.targetPawnHP.Value = (i - 1 >= 0 ? colliderHelpers[i - 1] : colliderHelpers[colliderHelpers.Length - 1]).pawnBrain.PawnHP;
+                        MyHeroBrain.BB.target.targetPawnHP.Value = (i - 1 >= 0 ? colliderHelpers[i - 1] : colliderHelpers[colliderHelpers.Length - 1]).pawnBrain.PawnHP;
                         return;
                     }
                 }
@@ -244,7 +244,7 @@ namespace Game
 
             // 대쉬 가능 체크
             var canRolling1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsGroggy && !MyHeroBrain.BB.IsJumping && !MyHeroBrain.BB.IsRolling;
-            var canRolling2 = canRolling1 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.BuffCtrler.CheckStatus(PawnStatus.Staggered);
+            var canRolling2 = canRolling1 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
 
             if (canRolling2 == false)
                 return;
@@ -281,7 +281,7 @@ namespace Game
             MyHeroBrain.ActionCtrler.SetPendingAction("Rolling");
 
             // Roll Sound
-            EffectManager.Instance.Show("FX_Cartoony_Jump_Up_01", MyHeroBrain.CoreTransform.position,
+            EffectManager.Instance.Show("FX_Cartoony_Jump_Up_01", MyHeroBrain.GetWorldPosition(),
                 Quaternion.identity, Vector3.one, 1f);
             SoundManager.Instance.Play(SoundID.JUMP);
         }
@@ -323,7 +323,7 @@ namespace Game
                         {
                             Observable.Timer(TimeSpan.FromSeconds(0.2f)).Subscribe(_ 
                                 => EffectManager.Instance.Show("ChonkExplosionBlue", 
-                                MyHeroBrain.CoreTransform.position + Vector3.up,
+                                MyHeroBrain.GetWorldPosition() + Vector3.up,
                                 Quaternion.identity, 0.8f * Vector3.one, 1f)).AddTo(this);
                         }
                         MyHeroBrain.BB.action.isCharging.Value = true;
@@ -340,8 +340,8 @@ namespace Game
             }).AddTo(this);
 
             var canAction1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsGroggy && !MyHeroBrain.BB.IsRolling;
-            var canAction2 = canAction1 && !MyHeroBrain.PawnBB.IsThrowing && !MyHeroBrain.PawnBB.IsGrabbed;
-            var canAction3 = canAction2 && !MyHeroBrain.BuffCtrler.CheckStatus(PawnStatus.Staggered);
+            // var canAction2 = canAction1 && !MyHeroBrain.PawnBB.IsThrowing && !MyHeroBrain.PawnBB.IsGrabbed;
+            var canAction3 = canAction1 && !MyHeroBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
 
             if (value.isPressed)
             {
@@ -428,7 +428,7 @@ namespace Game
             if (value.isPressed)
             {
                 var canAction1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsGroggy && !MyHeroBrain.BB.IsRolling;
-                var canAction2 = canAction1 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.BuffCtrler.CheckStatus(PawnStatus.Staggered);
+                var canAction2 = canAction1 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
 
                 if (canAction2)
                 {

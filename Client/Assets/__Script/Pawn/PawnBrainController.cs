@@ -12,9 +12,17 @@ namespace Game
         public virtual void OnPossessedHandler() {}
         public virtual void OnUnpossessedHandler() {}
         public virtual void OnTouchTerrainBoundaryHandler(GameObject boundary) {}
-        public virtual void OnDecisionFinishedHandler() {}
         public virtual void OnWatchSomethingOrDamagedHandler(PawnBrainController otherBrain, float reservedDecisionCoolTime) {}
-     
+        public virtual void OnDecisionFinishedHandler() {}
+        public virtual void InvalidateDecision(float decisionCoolTime = 0) {}
+        public virtual Vector3 GetWorldPosition() => coreColliderHelper != null ? coreColliderHelper.transform.position : transform.position;
+        public virtual Quaternion GetWorldRotation() => coreColliderHelper != null ? coreColliderHelper.transform.rotation : transform.rotation;
+        public virtual Transform GetWorldTransform() => coreColliderHelper != null ? coreColliderHelper.transform : transform;
+
+        [Header("Component")]
+        public PawnColliderHelper coreColliderHelper;
+        public PlayerController owner;
+
         [Header("Update")]
         public float tickInterval = 0.1f;
         public bool tickEnabled = true;
@@ -27,15 +35,6 @@ namespace Game
         public Action onFixedUpdate;
         public Action<float> onTick;
         public Action<float> onPreTick;
-
-        // 타겟팅 기술을 쓸 경우 셋팅 (잡기, 처형 등등)
-        public PawnBrainController TargetPawn { get; set; }
-
-        [Header("Component")]
-        public PawnColliderHelper coreColliderHelper;
-
-        [Header("Ownership")]
-        public PlayerController owner;
 
         void Awake()
         {
@@ -55,22 +54,9 @@ namespace Game
         public FSMOwner FSM { get; private set; }
         public PawnBlackboard PawnBB { get; private set; }
         public PawnHeartPointDispatcher PawnHP { get; private set; }
-        public PawnStatusController PawnStatusCtrler { get; private set;}
-        public PawnSensorController PawnSensorCtrler { get; private set;}
+        public PawnStatusController PawnStatusCtrler { get; private set; }
+        public PawnSensorController PawnSensorCtrler { get; private set; }
         public PawnSoundSourceGenerator PawnSoundSourceGen { get; private set; }
-
-        // 실제 모델 위치
-        public Transform CoreTransform {
-            get { return (coreColliderHelper) ? coreColliderHelper.transform : transform; }
-        }
-        
-        public void TargetAction(ActionType type)
-        {
-            if (TargetPawn == null)
-                return;
-
-            TargetPawn.DoAction(type, this);
-        }
 
         protected virtual void StartInternal()
         {
@@ -84,7 +70,7 @@ namespace Game
 
             if (!PawnBB.IsSpawnFinished)
             {
-                (this as ISpawnable)?.OnStartSpawnHandler();
+                (this as IPawnSpawnable)?.OnStartSpawnHandler();
 
                 //* spawnWaitingTime 값이 0보다 클때만 자동으로 isSpawnFinished 값이 true가 되도록 타아머 에약 (spawnWaitingTime값이 음수면 수동으로 직접 값을 true로 변경해줘야 함)
                 if (PawnBB.common.spawnWaitingTime > 0f)
@@ -93,19 +79,19 @@ namespace Game
                     Observable.Timer(TimeSpan.FromSeconds(PawnBB.common.spawnWaitingTime)).Subscribe(_ =>
                     {
                         PawnBB.common.isSpawnFinished.Value = true;
-                        (this as ISpawnable)?.OnFinishSpawnHandler();
+                        (this as IPawnSpawnable)?.OnFinishSpawnHandler();
                     }).AddTo(this);
                 }
             }
 
             PawnBB.common.isDead.Where(v => v).Subscribe(v =>
             {
-                (this as ISpawnable)?.OnDeadHandler();
+                (this as IPawnSpawnable)?.OnDeadHandler();
 
                 //* Despawn 웨이팅 걸기
                 Observable.Timer(TimeSpan.FromSeconds(PawnBB.common.despawnWaitingTime)).Where(_ => PawnBB.IsDead).Subscribe(_ =>
                 {
-                    (this as ISpawnable)?.OnDespawnedHandler();
+                    (this as IPawnSpawnable)?.OnDespawnedHandler();
                     if (FSM != null) FSM.enabled = false;
                     Destroy(gameObject, 0.1f);
                 }).AddTo(this);
@@ -113,32 +99,25 @@ namespace Game
 
             if (PawnStatusCtrler != null)
             {
-                PawnStatusCtrler.onStatusActive += (buff) =>
+                PawnStatusCtrler.onStatusActive += (status) =>
                 {
-                    switch (buff) {
+                    switch (status)
+                    {
                         case Game.PawnStatus.KnockDown:
                             PawnBB.common.isDown.Value = true; break;
                         case Game.PawnStatus.Groggy:
                             PawnBB.common.isGroggy.Value = true; break;
-                        case Game.PawnStatus.Bind:
-                            PawnBB.common.isBind.Value = true; break;
-                        case Game.PawnStatus.Guardbreak:
-                            PawnBB.common.isGuardbreak.Value = true; break;
                     }
                 };
 
-                PawnStatusCtrler.onStatusDeactive += (buff) =>
+                PawnStatusCtrler.onStatusDeactive += (status) =>
                 {
-                    switch (buff)
+                    switch (status)
                     {
                         case Game.PawnStatus.KnockDown:
-                             PawnBB.common.isDown.Value = false; break;
+                            PawnBB.common.isDown.Value = false; break;
                         case Game.PawnStatus.Groggy:
                             PawnBB.common.isGroggy.Value = false; break;
-                        case Game.PawnStatus.Bind:
-                            PawnBB.common.isBind.Value = false; break;
-                        case Game.PawnStatus.Guardbreak:
-                            PawnBB.common.isGuardbreak.Value = false; break;
                     }
                 };
             }
@@ -150,7 +129,7 @@ namespace Game
 
             StartInternal();
 
-            Observable.NextFrame().Subscribe(_ => 
+            Observable.NextFrame().Subscribe(_ =>
             {
                 Init();
                 onInit?.Invoke();
@@ -162,7 +141,7 @@ namespace Game
                 {
                     Observable.Interval(TimeSpan.FromSeconds(tickInterval)).Subscribe(_ =>
                     {
-                        if (!__brainInited) 
+                        if (!__isBrainInited)
                             return;
 
                         onPreTick?.Invoke(tickInterval);
@@ -173,21 +152,21 @@ namespace Game
             }
 
             if (fixedUpdateEnabled)
-                Observable.EveryFixedUpdate().Where(_ => __brainInited).Subscribe(_ => onFixedUpdate?.Invoke()).AddTo(this);
+                Observable.EveryFixedUpdate().Where(_ => __isBrainInited).Subscribe(_ => onFixedUpdate?.Invoke()).AddTo(this);
             if (lateUpdateEnabled)
-                Observable.EveryLateUpdate().Where(_ => __brainInited).Subscribe(_ => onLateUpdate?.Invoke()).AddTo(this);
+                Observable.EveryLateUpdate().Where(_ => __isBrainInited).Subscribe(_ => onLateUpdate?.Invoke()).AddTo(this);
             if (updateEnabled)
-                Observable.EveryUpdate().Where(_ => __brainInited).Subscribe(_ => onUpdate?.Invoke()).AddTo(this);
+                Observable.EveryUpdate().Where(_ => __isBrainInited).Subscribe(_ => onUpdate?.Invoke()).AddTo(this);
 
             // Spawn
             GameManager.Instance.Spawn(this);
         }
 
-        protected bool __brainInited;
+        protected bool __isBrainInited;
 
         protected virtual void Init()
         {
-            __brainInited = true;
+            __isBrainInited = true;
         }
 
         protected virtual void OnTickInternal(float interval)
@@ -195,19 +174,28 @@ namespace Game
             if (PawnBB.IsSpawnFinished && !PawnBB.IsLifeTimeOut && !PawnBB.IsLifeTimeInfinite)
             {
                 if ((PawnBB.common.lifeTime.Value = Mathf.Max(0, PawnBB.common.lifeTime.Value - interval)) <= 0)
-                    (this as ISpawnable)?.OnLifeTimeOutHandler();
+                    (this as IPawnSpawnable)?.OnLifeTimeOutHandler();
             }
         }
-        public float GetDistance(PawnBrainController pawn) 
-        {
-            var vDist = CoreTransform.position - pawn.CoreTransform.position;
-            return vDist.magnitude;
-        }
         
-        public virtual void StartJump() { }
-        public virtual void StartLand() { }
-        public virtual void RollingGround() { }
-        public virtual void ShowTrail(bool isActive, int trailIndex) { }
-        public virtual void DoAction(ActionType type, PawnBrainController attacker) { }
+        // public float GetDistance(PawnBrainController pawn)
+        // {
+        //     var vDist = CoreTransform.position - pawn.CoreTransform.position;
+        //     return vDist.magnitude;
+        // }
+
+        // public void TargetAction(ActionType type)
+        // {
+        //     if (TargetPawn == null)
+        //         return;
+
+        //     TargetPawn.DoAction(type, this);
+        // }
+
+        // public virtual void StartJump() {}
+        // public virtual void StartLand() {}
+        // public virtual void RollingGround() {}
+        // public virtual void ShowTrail(bool isActive, int trailIndex) {}
+        // public virtual void DoAction(ActionType type, PawnBrainController attacker) {}
     }
 }

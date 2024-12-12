@@ -220,7 +220,7 @@ namespace Game
             foreach (var c in __pawnBrain.PawnSensorCtrler.TouchingColliders)
             {
                 if (c.TryGetComponent<PawnColliderHelper>(out var collierHelper) && collierHelper.pawnBrain.PawnBB.common.pawnId == PawnId.Zombie && collierHelper.pawnBrain.PawnBB.IsSpawnFinished)
-                    (collierHelper.pawnBrain as IMovable).AddRootMotion(Time.fixedDeltaTime * (c.transform.position - capsule.position).Vector2D().normalized, Quaternion.identity);
+                    (collierHelper.pawnBrain as IPawnMovable).AddRootMotion(Time.fixedDeltaTime * (c.transform.position - capsule.position).Vector2D().normalized, Quaternion.identity);
             }
 
             base.OnFixedUpdateHandler();

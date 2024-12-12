@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using MainTable;
 using UniRx;
@@ -9,7 +10,7 @@ namespace Game
     [RequireComponent(typeof(WorkerBlackboard))]
     [RequireComponent(typeof(WorkerAnimController))]
     [RequireComponent(typeof(WorkerActionController))]
-    public class WorkerBrain : JellyManBrain
+    public class WorkerBrain : JellyHumanoidBrain
     {
         [Header("Debug")]
         public bool debugActionDisabled;
@@ -44,7 +45,7 @@ namespace Game
             
             BB.decision.currDecision.Subscribe(v =>
             {
-                __pawnMovement.moveSpeed = v == Decisions.Spacing ? __jellyManBB.body.walkSpeed : __jellyManBB.body.runSpeed;
+                Movement.moveSpeed = v == Decisions.Spacing ? BB.body.walkSpeed : BB.body.runSpeed;
             }).AddTo(this);
 
             onTick += (deltaTick) =>
@@ -124,7 +125,7 @@ namespace Game
                     else
                     {
                         __lastComboAttackRateStepTimeStamp = Time.time;
-                        ActionDataSelector.BoostSelection(__combo1ActionData, BB.selection.comboAttackRateStep);
+                        ActionDataSelector.BoostSelection(__combo1ActionData, BB.action.comboAttackRateStep);
                     }
                 }
             };

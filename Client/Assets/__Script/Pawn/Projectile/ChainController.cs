@@ -76,7 +76,7 @@ public class ChainController : MonoBehaviour
 
         _shotSpeed = 30;
 
-        _shootPos = _heroBrain.CoreTransform.position;
+        _shootPos = _heroBrain.GetWorldPosition();
         _shootPos.y += 1.0f;
         _trDagger.position = _shootPos;
 
@@ -84,13 +84,13 @@ public class ChainController : MonoBehaviour
 
         if (targetPawn != null)
         {
-            var targetPos = targetPawn.CoreTransform.position;
+            var targetPos = targetPawn.GetWorldPosition();
             targetPos.y = _shootPos.y;
             _vShoot = (targetPos - _shootPos).normalized;
         }
         else 
         { 
-            _vShoot = _heroBrain.CoreTransform.forward;
+            _vShoot = _heroBrain.GetWorldTransform().forward;
         }
         _trDagger.LookAt(_shootPos + (10.0f * _vShoot));
     }
@@ -107,12 +107,12 @@ public class ChainController : MonoBehaviour
         {
             _status = ChainStatus.Bind;
             _bindBrain = helper.pawnBrain;
-            _heroBrain.Bind(_bindBrain, true);
+            // _heroBrain.Bind(_bindBrain, true);
 
             _trDagger.SetParent(null);
 
             // Ÿ�ٰ� �ܰ��� ��� ��ġ ����
-            _bindLocalPos = _bindBrain.CoreTransform.position - _trDagger.position;
+            _bindLocalPos = _bindBrain.GetWorldPosition() - _trDagger.position;
 
             // ���� ���
             SoundManager.Instance.Play(SoundID.HIT_FLESH);
@@ -128,7 +128,7 @@ public class ChainController : MonoBehaviour
         _trDagger.gameObject.SetActive(false);
 
         // ���� �ִٸ� ���´�
-        _heroBrain.Bind(_bindBrain, false);
+        // _heroBrain.Bind(_bindBrain, false);
         _bindBrain = null;
     }
 
@@ -143,7 +143,7 @@ public class ChainController : MonoBehaviour
             case ChainStatus.Rolling:
                 {
                     // ȸ��
-                    Quaternion rot = Quaternion.AngleAxis(_angle, _heroBrain.CoreTransform.right);
+                    Quaternion rot = Quaternion.AngleAxis(_angle, _heroBrain.GetWorldTransform().right);
                     _trDagger.position = handlePos + (rot * Vector3.up);
 
                     // �ܰ� ����
@@ -177,7 +177,7 @@ public class ChainController : MonoBehaviour
                         _trDagger.position = handlePos + (_bindDist * vDist.normalized);
                     }
                     // ���� �ܰ� ��ġ�� ����
-                    _bindBrain.CoreTransform.position = _trDagger.position + _bindLocalPos;
+                    _bindBrain.GetWorldTransform().position = _trDagger.position + _bindLocalPos;
                 }
                 break;
         }
@@ -188,7 +188,7 @@ public class ChainController : MonoBehaviour
     }
     private void OnDrawGizmos()
     {
-        var vec = _heroBrain.CoreTransform.right;
+        var vec = _heroBrain.GetWorldTransform().right;
         var start = _trRightHand.position;
         Gizmos.color = Color.red;
         //Gizmos.DrawLine(start, start + 100.0f * vec);

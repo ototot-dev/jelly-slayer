@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public class WarriorBlackboard : JellyManBlackboard
+    public class WarriorBlackboard : JellyBlackboard
     {
 
         [Serializable]

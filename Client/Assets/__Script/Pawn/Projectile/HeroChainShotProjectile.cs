@@ -20,7 +20,7 @@ namespace Game
         {
             base.StartInternal();
 
-            //* Terrain µðÅØ¼Ç ÄÚµå
+            //* Terrain ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½Úµï¿½
             /*
             rigidBodyCollider.OnCollisionEnterAsObservable().Subscribe(c =>
             {
@@ -38,13 +38,13 @@ namespace Game
                     {
                         _isBind = true;
                         _targetBrain = helper.pawnBrain;
-                        emitterBrain.Bind(_targetBrain);
+                        // emitterBrain.Bind(_targetBrain);
 
-                        transform.SetParent(_targetBrain.CoreTransform);
+                        transform.SetParent(_targetBrain.GetWorldTransform());
 
-                        // ¹­ÀÎ °Å¸® ¼³Á¤
+                        // ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½
                         var posTarget = transform.position;
-                        var posSource = emitterBrain.CoreTransform.position;
+                        var posSource = emitterBrain.GetWorldPosition();
                         _bindVec = posTarget - posSource;
 
                         _bindRot = transform.rotation;
@@ -60,18 +60,18 @@ namespace Game
 
             if (_isBind == true)
             {
-                var posTarget = _targetBrain.CoreTransform.position;
-                var posSource = emitterBrain.CoreTransform.position;
+                var posTarget = _targetBrain.GetWorldPosition();
+                var posSource = emitterBrain.GetWorldPosition();
 
                 var vDist = (posTarget - posSource);
 
                 if (vDist.magnitude > _bindVec.magnitude)
                 {
                     var newPos = posSource + (_bindVec.magnitude * vDist.normalized);
-                    _targetBrain.CoreTransform.position = newPos;
+                    _targetBrain.GetWorldTransform().position = newPos;
 
                     var rot = Quaternion.FromToRotation(_bindVec, vDist.normalized);
-                    _targetBrain.CoreTransform.rotation = rot;
+                    _targetBrain.GetWorldTransform().rotation = rot;
                 }
             }
             else if (_isPulling == true) 

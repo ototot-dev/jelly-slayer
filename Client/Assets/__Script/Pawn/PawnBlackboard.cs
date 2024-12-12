@@ -9,45 +9,43 @@ namespace Game
     {
         public bool IsPossessed => __pawnBrain.owner != null;
         public bool IsSpawnFinished => common.isSpawnFinished.Value;
-        public bool IsLifeTimeInfinite => LifeTime < 0;
-        public bool IsLifeTimeOut => LifeTime == 0;
+        public bool IsLifeTimeInfinite => LifeTime < 0f;
+        public bool IsLifeTimeOut => LifeTime == 0f;
         public bool IsInvincible => common.isInvincible.Value;
         public bool IsGroggy => common.isGroggy.Value;
         public bool IsDown => common.isDown.Value;
         public bool IsDead => common.isDead.Value;
-        public bool IsThrowing => common.isThrowing.Value;
-        public bool IsGrabbed => common.isGrabbed.Value;
-        public bool IsBind => common.isBind.Value;
-        public bool IsGuardbreak => common.isGuardbreak.Value;
+        // public bool IsThrowing => common.isThrowing.Value;
+        // public bool IsGrabbed => common.isGrabbed.Value;
+        // public bool IsBind => common.isBind.Value;
+        // public bool IsGuardbreak => common.isGuardbreak.Value;
         public float LifeTime => common.lifeTime.Value;
+        public PawnBrainController TargetBrain => target.targetPawnHP.Value != null ? target.targetPawnHP.Value.PawnBrain : null;
+        public PawnColliderHelper TargetColliderHelper => target.targetPawnHP.Value != null && target.targetPawnHP.Value.PawnBrain != null ? target.targetPawnHP.Value.PawnBrain.coreColliderHelper : null;
+        public Transform TargetCore => TargetBrain != null ? TargetBrain.coreColliderHelper.transform : null;
+        public GameObject TargetPawn => target.targetPawnHP.Value != null ? target.targetPawnHP.Value.gameObject : null;
 
-        /// <summary>
-        /// Common 데이터 섹션
-        /// </summary>
         [Serializable]
         public class Common
         {
             public PawnId pawnId;
             public string pawnName;
-            public float spawnWaitingTime = 1;
-            public float despawnWaitingTime = 1;
+            public float spawnWaitingTime = 1f;
+            public float despawnWaitingTime = 1f;
             public BoolReactiveProperty isSpawnFinished = new();
             public BoolReactiveProperty isInvincible = new();
             public BoolReactiveProperty isDead = new();
             public BoolReactiveProperty isDown = new();
             public BoolReactiveProperty isGroggy = new();
             public FloatReactiveProperty lifeTime = new(60);
-            public BoolReactiveProperty isThrowing = new();     // 잡기
-            public BoolReactiveProperty isGrabbed = new();      // 잡힌 상태
-            public BoolReactiveProperty isBind = new();         // 묶인 상태
-            public BoolReactiveProperty isGuardbreak = new();   // 가드 깨진 상태
+            // public BoolReactiveProperty isThrowing = new();     // 잡기
+            // public BoolReactiveProperty isGrabbed = new();      // 잡힌 상태
+            // public BoolReactiveProperty isBind = new();         // 묶인 상태
+            // public BoolReactiveProperty isGuardbreak = new();   // 가드 깨진 상태
         }
 
         public Common common = new();
 
-        /// <summary>
-        /// Stat 데이터 섹션
-        /// </summary>
         [Serializable]
         public class Stat
         {
@@ -79,6 +77,14 @@ namespace Game
         }
 
         public Stat stat = new();
+
+        [Serializable]
+        public class Target
+        {
+            public ReactiveProperty<PawnHeartPointDispatcher> targetPawnHP = new();
+        }
+
+        public Target target = new();
         
         void Awake()
         {
