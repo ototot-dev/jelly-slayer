@@ -37,19 +37,13 @@ namespace Game
         void Stop();
     }
 
-    public interface IPawnDecision
-    {
-        void OnDecisionFinishedHandler() {}
-        void InvalidateDecision(float decisionCoolTime = 0) {}
-    }
-
     public interface IStatusContainer
     {
         Dictionary<PawnStatus, Tuple<float, float>> GetStatusTable();
-        bool AddBuff(PawnStatus status, float strength, float duration);
-        void RemoveBuff(PawnStatus status);
-        bool CheckBuff(PawnStatus status);
-        float GetBuffStrength(PawnStatus status);
+        bool AddStatus(PawnStatus status, float strength, float duration);
+        void RemoveStatus(PawnStatus status);
+        bool CheckStatus(PawnStatus status);
+        float GetStatusStrength(PawnStatus status);
         
 #if UNITY_EDITOR
         Dictionary<PawnStatus, Tuple<float, float>>.Enumerator GetStatusEnumerator();

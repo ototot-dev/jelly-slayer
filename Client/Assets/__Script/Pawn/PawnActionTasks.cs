@@ -1314,12 +1314,21 @@ namespace Game.NodeCanvasExtension
         public BBParameter<PawnStatus> buffType;
         public BBParameter<float> strength;
         public BBParameter<float> duration;
+        public bool removeBuffWhenActionFinished = true;
         protected override void OnExecute()
         {
             Debug.Assert(buffType.value < PawnStatus.__DEBUFF__SEPERATOR__);
 
-            if (agent.TryGetComponent<PawnActionController>(out var actionCtrler))
-                (actionCtrler as IStatusContainer).AddBuff(buffType.value, strength.value, duration.value);
+            if (removeBuffWhenActionFinished)
+            {
+                if (agent.TryGetComponent<PawnActionController>(out var actionCtrler))
+                    (actionCtrler as IStatusContainer).AddStatus(buffType.value, strength.value, duration.value);
+            }
+            else
+            {
+                if (agent.TryGetComponent<PawnStatusController>(out var statusCtrler))
+                    statusCtrler.AddStatus(buffType.value, strength.value, duration.value);
+            }
 
             EndAction(true);
         }
@@ -1332,7 +1341,7 @@ namespace Game.NodeCanvasExtension
         protected override void OnExecute()
         {
             if (agent.TryGetComponent<PawnActionController>(out var actionCtrler))
-                (actionCtrler as IStatusContainer).RemoveBuff(buffType.value);
+                (actionCtrler as IStatusContainer).RemoveStatus(buffType.value);
 
             EndAction(true);
         }

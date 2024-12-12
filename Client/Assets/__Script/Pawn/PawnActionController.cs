@@ -164,7 +164,7 @@ namespace Game
 #region IBuffContainer
         Dictionary<PawnStatus, Tuple<float, float>> IStatusContainer.GetStatusTable() => __buffContainer;
 
-        bool IStatusContainer.AddBuff(PawnStatus buff, float strength, float duration)
+        bool IStatusContainer.AddStatus(PawnStatus buff, float strength, float duration)
         {
             Debug.Assert(__pawnBrain.PawnStatusCtrler != null && CheckActionRunning());
 
@@ -172,19 +172,19 @@ namespace Game
             return true;
         }
 
-        void IStatusContainer.RemoveBuff(PawnStatus buff)
+        void IStatusContainer.RemoveStatus(PawnStatus buff)
         {
             Debug.Assert(__pawnBrain.PawnStatusCtrler != null && CheckActionRunning());
             __pawnBrain.PawnStatusCtrler.RemoveExternStatus(this, buff);
         }
 
-        bool IStatusContainer.CheckBuff(PawnStatus buff)
+        bool IStatusContainer.CheckStatus(PawnStatus buff)
         {
             Debug.Assert(__pawnBrain.PawnStatusCtrler != null && CheckActionRunning());
             return __pawnBrain.PawnStatusCtrler.CheckStatus(buff);
         }
 
-        float IStatusContainer.GetBuffStrength(PawnStatus buff)
+        float IStatusContainer.GetStatusStrength(PawnStatus buff)
         {
             Debug.Assert(__pawnBrain.PawnStatusCtrler != null && CheckActionRunning());
             return __pawnBrain.PawnStatusCtrler.GetStrength(buff);
