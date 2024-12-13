@@ -130,8 +130,9 @@ namespace Game
             if (MyHeroBrain.BB.IsGuarding)
             {
                 var canParry1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsGroggy && !MyHeroBrain.BB.IsJumping && !MyHeroBrain.BB.IsRolling;
-                var canParry2 = canParry1 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
-                if (canParry2)
+                var canParry2 = canParry1 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction());
+                var canParry3 = canParry2 && !MyHeroBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered) && !MyHeroBrain.StatusCtrler.CheckStatus(PawnStatus.CanNotGuard);
+                if (canParry3)
                     MyHeroBrain.StatusCtrler.AddStatus(PawnStatus.GuardParrying, 1f, 0.1f);
             }
         }

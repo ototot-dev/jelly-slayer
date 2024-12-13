@@ -7,6 +7,7 @@ using UniRx.Triggers;
 using UniRx.Triggers.Extension;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Animations.Rigging;
 
 namespace Game
@@ -39,18 +40,17 @@ namespace Game
 
         void Start()
         {
-            //* Charging 예비 모션은 IsGuarding 애님을 공용으로 쓴다.
-            __brain.BB.action.isCharging.Subscribe(v => 
-            {
-                mainAnimator.SetBool("IsGuarding", v);
-                shieldMeshSlot.localEulerAngles = v || __brain.BB.IsCharging ? new Vector3(0f, 0f, -60f) : Vector3.zero;
-            }).AddTo(this);
+            // __brain.BB.action.isCharging.Subscribe(v => 
+            // {
+            //     mainAnimator.SetBool("IsGuarding", v);
+            //     shieldMeshSlot.localEulerAngles = v || __brain.BB.IsCharging ? new Vector3(0f, 0f, -60f) : Vector3.zero;
+            // }).AddTo(this);
             
-            __brain.BB.action.isGuarding.Subscribe(v => 
-            {
-                mainAnimator.SetBool("IsGuarding", v);
-                shieldMeshSlot.localEulerAngles = v || __brain.BB.IsCharging ? new Vector3(0f, 0f, -60f) : Vector3.zero;
-            }).AddTo(this);
+            // __brain.BB.action.isGuarding.Subscribe(v => 
+            // {
+            //     mainAnimator.SetBool("IsGuarding", v);
+            //     shieldMeshSlot.localEulerAngles = v || __brain.BB.IsCharging ? new Vector3(0f, 0f, -60f) : Vector3.zero;
+            // }).AddTo(this);
 
             FindObservableStateMachineTriggerEx("Empty (UpperLayer)").OnStateEnterAsObservable().Subscribe(_ => mainAnimator.SetLayerWeight(1, 0f)).AddTo(this);
             FindObservableStateMachineTriggerEx("Empty (UpperLayer)").OnStateExitAsObservable().Subscribe(_ => mainAnimator.SetLayerWeight(1, 1f)).AddTo(this);
@@ -81,7 +81,7 @@ namespace Game
                     __brain.Movement.AddRootMotion(2f * mainAnimator.deltaPosition, Quaternion.identity);
                 }
 
-                if (__brain.BB.IsGuarding ||  __brain.ActionCtrler.CheckActionRunning() || __watchingStateNames.Contains("DrinkPotion") || __watchingStateNames.Contains("GuardParry"))
+                if (__brain.BB.IsGuarding || __brain.ActionCtrler.CheckActionRunning() || __watchingStateNames.Contains("DrinkPotion") || __watchingStateNames.Contains("GuardParry"))
                     spineOverrideTransform.weight = 0f;
                 else
                     spineOverrideTransform.weight = 1f;
@@ -95,6 +95,23 @@ namespace Game
                     mainAnimator.SetLayerWeight(3, 0f);
                 else
                     mainAnimator.SetLayerWeight(3, Mathf.Clamp01(mainAnimator.GetLayerWeight(3) + ((__brain.BB.IsRolling || __brain.ActionCtrler.CheckActionRunning()) ? animLayerBlendSpeed : -animLayerBlendSpeed) * Time.deltaTime));
+
+                if (__brain.BB.IsCharging)
+                {
+                    //* Charging 예비 모션은 IsGuarding 애님을 공용으로 쓴다.
+                    mainAnimator.SetBool("IsGuarding", true);
+                    shieldMeshSlot.localEulerAngles = new Vector3(0f, 0f, -60f);
+                }
+                else if (__brain.BB.IsGuarding && !__brain.StatusCtrler.CheckStatus(PawnStatus.Staggered) && !__brain.StatusCtrler.CheckStatus(PawnStatus.CanNotGuard))
+                {
+                    mainAnimator.SetBool("IsGuarding", true);
+                    shieldMeshSlot.localEulerAngles = new Vector3(0f, 0f, -60f);
+                }
+                else
+                {
+                    mainAnimator.SetBool("IsGuarding", false);
+                    shieldMeshSlot.localEulerAngles = Vector3.zero;
+                }
 
                 mainAnimator.SetFloat("MoveSpeed", __brain.Movement.freezeRotation ? -1 : __brain.Movement.CurrVelocity.Vector2D().magnitude / __brain.BB.body.walkSpeed);
                 mainAnimator.SetFloat("MoveAnimSpeed", __brain.Movement.freezeRotation ? (__brain.BB.IsGuarding ? 0.8f : 1.2f) : 1);
