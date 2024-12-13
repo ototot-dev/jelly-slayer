@@ -135,7 +135,7 @@ namespace Game
                         onStatusActive?.Invoke(status);
                     }
                 }
-                else
+                else if (__uniqueTable[status].Item2 < tuple.Item2)
                 {
                     __uniqueTable[status] = tuple;
                 }

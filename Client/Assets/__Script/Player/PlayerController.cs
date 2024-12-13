@@ -244,7 +244,7 @@ namespace Game
 
             // 대쉬 가능 체크
             var canRolling1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsGroggy && !MyHeroBrain.BB.IsJumping && !MyHeroBrain.BB.IsRolling;
-            var canRolling2 = canRolling1 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
+            var canRolling2 = canRolling1 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.StatusCtrler.CheckStatus(PawnStatus.CanNotRoll);
 
             if (canRolling2 == false)
                 return;

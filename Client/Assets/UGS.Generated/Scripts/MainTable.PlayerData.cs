@@ -58,8 +58,8 @@ namespace MainTable
 
 		public System.Int32 index;
 		public System.Single actionInputTimePadding;
-		public System.Single canNotGuardStaggerDuration;
-		public System.Single kickKnockBackDistance;
+		public System.Single postGuardDelayOnStaggered;
+		public System.Single earlyRollOffsetOnStarggerd;
   
 
 #region fuctions

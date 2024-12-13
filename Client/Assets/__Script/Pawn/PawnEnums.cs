@@ -35,7 +35,7 @@ namespace Game
         Staggered,          //* 경직
         KnockDown,          //* 다운
         Guardbreak,         //* 가드 뚫림
-        CanNotDash, 
+        CanNotRoll, 
         CanNotJump,
         CanNotMove,
         CanNotGuard,

@@ -97,6 +97,10 @@ namespace Game
                     .DoOnCompleted(() => __brain.Movement.Freeze())
                     .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity))
                     .AddTo(this);
+
+                //* 구르기 불가 상태 부여
+                var canNotRollDuration = Mathf.Max(0.1f, damageContext.receiverPenalty.Item2 - MainTable.PlayerData.GetList().First().earlyRollOffsetOnStarggerd);
+                __brain.StatusCtrler.AddStatus(PawnStatus.CanNotRoll, 1f, canNotRollDuration);
             }
             else //* Sender의 액션을 파훼된 경우
             {
@@ -257,7 +261,7 @@ namespace Game
                 //* 경직 종료 후에 짧은 시간 동안 가드 불가 부여 
                 if (status == PawnStatus.Staggered)
                 {
-                    __brain.PawnStatusCtrler.AddStatus(PawnStatus.CanNotGuard, 1f, MainTable.PlayerData.GetList().First().canNotGuardStaggerDuration);
+                    __brain.PawnStatusCtrler.AddStatus(PawnStatus.CanNotGuard, 1f, MainTable.PlayerData.GetList().First().postGuardDelayOnStaggered);
                     // __staggerFxInstance?.Stop();
                     // __staggerFxInstance = null;
                 }

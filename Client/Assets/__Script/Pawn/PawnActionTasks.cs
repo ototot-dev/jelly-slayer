@@ -804,6 +804,7 @@ namespace Game.NodeCanvasExtension
         public BBParameter<int> maxTargetNum = 1;
         public BBParameter<string[]> traceLayerNames;
         public BBParameter<string[]> tracePawnNames;
+        // public BBParameter<StatusInjectionData[]> statusInjections;'
         public BBParameter<bool> resetTraceNames = true;
         public BBParameter<int> traceSampleNum = 1;
         public BBParameter<int> traceDirection = 1;
@@ -825,6 +826,14 @@ namespace Game.NodeCanvasExtension
         PawnActionController __pawnActionCtrler;
         List<PawnColliderHelper> __traceResults;
         readonly HashSet<PawnBrainController> __sentDamageBrains = new();
+
+        // [Serializable]
+        // struct StatusInjectionData
+        // {
+        //     public PawnStatus status;
+        //     public float strength;
+        //     public float duration;
+        // }
 
         protected override void OnExecute()
         {
@@ -1347,6 +1356,45 @@ namespace Game.NodeCanvasExtension
         }
     }
     
+    public class AddStatus : ActionTask
+    {
+        protected override string info => duration.value < 0 ? $"<b>{status.value}</b> On" : $"<b>{status.value}</b> On for <b>{duration.value}</b> secs";
+        public BBParameter<PawnStatus> status;
+        public BBParameter<float> strength;
+        public BBParameter<float> duration;
+        public bool removeBuffWhenActionFinished = true;
+        protected override void OnExecute()
+        {
+            Debug.Assert(status.value < PawnStatus.__DEBUFF__SEPERATOR__);
+
+            if (removeBuffWhenActionFinished)
+            {
+                if (agent.TryGetComponent<PawnActionController>(out var actionCtrler))
+                    (actionCtrler as IStatusContainer).AddStatus(status.value, strength.value, duration.value);
+            }
+            else
+            {
+                if (agent.TryGetComponent<PawnStatusController>(out var statusCtrler))
+                    statusCtrler.AddStatus(status.value, strength.value, duration.value);
+            }
+
+            EndAction(true);
+        }
+    }
+
+    public class RemoveStatus : ActionTask
+    {
+        protected override string info => $"<b>{status.value}</b> Off";
+        public BBParameter<PawnStatus> status;
+        protected override void OnExecute()
+        {
+            if (agent.TryGetComponent<PawnActionController>(out var actionCtrler))
+                (actionCtrler as IStatusContainer).RemoveStatus(status.value);
+
+            EndAction(true);
+        }
+    }
+
     public class ShowFX : ActionTask
     {
         protected override string info => $"Show FX <b>{(fxPrefab.isNoneOrNull ? fxName.value : fxPrefab)}</b>";

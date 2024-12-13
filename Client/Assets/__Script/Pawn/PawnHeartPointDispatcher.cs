@@ -19,7 +19,7 @@ namespace Game
 
         void Start()
         {
-            //* 
+            //* Groggy 종료 후 groggyHitCount 초기화
             PawnBrain.PawnBB.common.isGroggy.Skip(1).Where(v => !v).Subscribe(_ => 
             {
                 PawnBrain.PawnBB.stat.groggyHitCount.Value = 0;
