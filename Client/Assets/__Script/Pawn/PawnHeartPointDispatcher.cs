@@ -17,6 +17,15 @@ namespace Game
             PawnBrain = GetComponent<PawnBrainController>();
         }
 
+        void Start()
+        {
+            //* 
+            PawnBrain.PawnBB.common.isGroggy.Skip(1).Where(v => !v).Subscribe(_ => 
+            {
+                PawnBrain.PawnBB.stat.groggyHitCount.Value = 0;
+            }).AddTo(this);
+        }
+
         /// <summary>
         /// 데미지 히스토리
         /// Key => Attacker, Value => (Item1: Damage, Item2: IsDamageBlocked, Item3: ActionName, Item4: TimeStamp)
