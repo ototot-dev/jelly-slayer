@@ -116,7 +116,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   listenLen: 8
   visionLen: 10
-  visionAngle: 60
+  visionAngle: 120
   nearVisionLen: 1
   touchSensorTrigger: {fileID: 2816493633811847595}
   soundSensorTrigger: {fileID: 1174811389787285577}
@@ -156,7 +156,7 @@ MonoBehaviour:
   moveAccel: 20
   moveBrake: 20
   rotateSpeed: 360
-  gravity: {x: 0, y: -9.81, z: 0}
+  gravity: {x: 0, y: -19.81, z: 0}
   moveVec: {x: 0, y: 0, z: 0}
   faceVec: {x: 0, y: 0, z: 1}
 --- !u!114 &2118029493424771570
@@ -285,7 +285,7 @@ MonoBehaviour:
     guardSpeed: 0.2
     rollingDistance: 2
     rollingDuration: 0.5
-    jumpHeight: 1
+    jumpHeight: 1.6
     smashingHeight: 1
   action:
     isJumping:
@@ -18189,9 +18189,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 2
+  m_Height: 1.6
   m_Direction: 1
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Center: {x: 0, y: 0.8, z: 0}
 --- !u!114 &4575544682901093454
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18224,7 +18224,7 @@ MonoBehaviour:
   _rootTransform: {fileID: 0}
   _rootTransformOffset: {x: 0, y: 0, z: 0}
   _radius: 0.5
-  _height: 2
+  _height: 1.6
   _slopeLimit: 45
   _stepOffset: 0.45
   _perchOffset: 0.5
@@ -18677,7 +18677,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7341644547219310195, guid: 1573d08a3535dbd499e540f5f80f4424, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.22
+      value: 0.263
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
