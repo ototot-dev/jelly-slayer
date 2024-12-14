@@ -757,6 +757,7 @@ namespace Game.NodeCanvasExtension
         public BBParameter<Collider> traceCollider;
         public BBParameter<string[]> traceLayerNames;
         public BBParameter<string[]> tracePawnNames;
+        public BBParameter<PawnStatusController.StatusParam[]> debuffParams;
         public BBParameter<bool> resetTraceNames;
         public BBParameter<int> traceSamplingRate = 60;
         public BBParameter<bool> multiHitEnabled;
@@ -775,7 +776,7 @@ namespace Game.NodeCanvasExtension
             if (!tracePawnNames.isNull && tracePawnNames.value.Length > 0)
                 actionCtrler.AddTracePawnNames(tracePawnNames.value);
 
-            actionCtrler.StartTraceActionTargets(traceCollider.value, traceSamplingRate.value, multiHitEnabled.value, true, drawGizmos, drawGizmosDuration);
+            actionCtrler.StartTraceActionTargets(traceCollider.value, traceSamplingRate.value, multiHitEnabled.value, debuffParams.value, true, drawGizmos, drawGizmosDuration);
             EndAction(true);
         }
     }
@@ -786,7 +787,7 @@ namespace Game.NodeCanvasExtension
 
         protected override void OnExecute()
         {
-            EndAction(agent.GetComponent<PawnActionController>().FinishTraceActionTargets().Count > 0 || !cancelActionWhenTraceFailed);
+            EndAction(agent.GetComponent<PawnActionController>().FinishTraceActionTargets() > 0 || !cancelActionWhenTraceFailed);
         }
     }
 
@@ -804,7 +805,7 @@ namespace Game.NodeCanvasExtension
         public BBParameter<int> maxTargetNum = 1;
         public BBParameter<string[]> traceLayerNames;
         public BBParameter<string[]> tracePawnNames;
-        // public BBParameter<StatusInjectionData[]> statusInjections;'
+        public BBParameter<PawnStatusController.StatusParam[]> debuffParams;
         public BBParameter<bool> resetTraceNames = true;
         public BBParameter<int> traceSampleNum = 1;
         public BBParameter<int> traceDirection = 1;
@@ -827,13 +828,13 @@ namespace Game.NodeCanvasExtension
         List<PawnColliderHelper> __traceResults;
         readonly HashSet<PawnBrainController> __sentDamageBrains = new();
 
-        // [Serializable]
-        // struct StatusInjectionData
-        // {
-        //     public PawnStatus status;
-        //     public float strength;
-        //     public float duration;
-        // }
+        [Serializable]
+        public struct StatusInjectionData
+        {
+            public PawnStatus status;
+            public float strength;
+            public float duration;
+        }
 
         protected override void OnExecute()
         {
@@ -905,13 +906,13 @@ namespace Game.NodeCanvasExtension
 
             if (traceDirection.value == 0 || __sampleNum == 1)
             {
-                __traceResults = __pawnActionCtrler.TraceActionTargets(offset.value, pitchYawRoll.value, fanRadius.value, fanAngle.value, fanHeight.value, minRadius.value, maxTargetNum.value, false, drawGizmos, drawGizmosDuration);
+                __traceResults = __pawnActionCtrler.TraceActionTargets(offset.value, pitchYawRoll.value, fanRadius.value, fanAngle.value, fanHeight.value, minRadius.value, maxTargetNum.value, null, false, drawGizmos, drawGizmosDuration);
             }
             else
             {
                 var sampleYaw =  (traceDirection.value > 0 ? 1f : -1f) * ((__sampleIndex + 0.5f) * __stepFanAngle - __halfFanAngle);
                 var fanMatrix = Matrix4x4.TRS(offset.value + __pawnBrain.coreColliderHelper.pawnCollider.bounds.center - __pawnBrain.coreColliderHelper.transform.position, Quaternion.Euler(pitchYawRoll.value) * Quaternion.Euler(0f, sampleYaw, 0f), Vector3.one);
-                __traceResults = __pawnActionCtrler.TraceActionTargets(fanMatrix, fanRadius.value, __stepFanAngle, fanHeight.value, minRadius.value, maxTargetNum.value, false, drawGizmos, drawGizmosDuration);
+                __traceResults = __pawnActionCtrler.TraceActionTargets(fanMatrix, fanRadius.value, __stepFanAngle, fanHeight.value, minRadius.value, maxTargetNum.value, null, false, drawGizmos, drawGizmosDuration);
             }
 
             if (__sampleNum == 1)
@@ -929,8 +930,20 @@ namespace Game.NodeCanvasExtension
                 {
                     if (!__sentDamageBrains.Contains(r.pawnBrain))
                     {
-                        __pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__pawnBrain, r.pawnBrain, __actionData, r.pawnCollider, __pawnActionCtrler.currActionContext.insufficientStamina));
                         __sentDamageBrains.Add(r.pawnBrain);
+                        __pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__pawnBrain, r.pawnBrain, __actionData, r.pawnCollider, __pawnActionCtrler.currActionContext.insufficientStamina));
+
+                        //* Debuff 할당
+                        if (!debuffParams.isNoneOrNull && debuffParams.value.Length > 0)
+                        {
+                            foreach (var p in debuffParams.value)
+                            {
+                                if (p.isExtern && r.pawnBrain.TryGetComponent<PawnActionController>(out var receiverActionCtrler))
+                                    r.pawnBrain.PawnStatusCtrler.AddExternStatus(receiverActionCtrler, p);
+                                else
+                                    r.pawnBrain.PawnStatusCtrler.AddStatus(p);
+                            }
+                        }
                     }
                 }
                 return ++__sampleIndex;

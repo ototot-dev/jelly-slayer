@@ -31,11 +31,11 @@ namespace Game
 
         void Awake()
         {
-            __brain = GetComponent<SpiderBrain>();
+            __spiderBrain = GetComponent<SpiderBrain>();
             __ecmMovement = capsuleCollider.GetComponent<ECM2.CharacterMovement>();
         }
 
-        SpiderBrain __brain;
+        SpiderBrain __spiderBrain;
         ECM2.CharacterMovement __ecmMovement;
         bool __movementStopped = true;
         public bool IsMoving => !__movementStopped;
@@ -118,8 +118,8 @@ namespace Game
 
         void Start()
         {
-            __brain.onFixedUpdate += OnFixedUpdateHandler;
-            __brain.onUpdate += OnUpdateHandler;
+            __spiderBrain.onFixedUpdate += OnFixedUpdateHandler;
+            __spiderBrain.onUpdate += OnUpdateHandler;
         }
 
         public void OnFixedUpdateHandler()
@@ -132,9 +132,9 @@ namespace Game
             else
             {
                 // 이동 가능 체크 스텝
-                var canMove1 = __brain.BB.IsSpawnFinished && !__brain.BB.IsDead && !__brain.BB.IsGroggy;
+                var canMove1 = __spiderBrain.BB.IsSpawnFinished && !__spiderBrain.BB.IsDead && !__spiderBrain.BB.IsGroggy;
                 var canMove2 = IsMoving && Vector3.Angle(core.forward.Vector2D(), ForwardVecCached) < 5;
-                var canMove3 = !CheckReachToTargetPoint() && !__brain.ActionCtrler.CheckActionRunning();
+                var canMove3 = !CheckReachToTargetPoint() && !__spiderBrain.ActionCtrler.CheckActionRunning();
 
                 if (canMove1 && canMove2 && canMove3)
                     __ecmMovement.Move(ForwardVecCached * forwardSpeed, Time.fixedDeltaTime);
@@ -147,14 +147,14 @@ namespace Game
 
         public void OnUpdateHandler()
         {
-            if (__brain.BB.IsDead)
+            if (__spiderBrain.BB.IsDead)
                 return;
             
             ForwardVecCached = (targetPoint - core.position).Vector2D().normalized;
 
-            var canRotate1 = __brain.BB.IsSpawnFinished && !__brain.BB.IsDead && !__brain.BB.IsGroggy && ForwardVecCached != Vector3.zero;
+            var canRotate1 = __spiderBrain.BB.IsSpawnFinished && !__spiderBrain.BB.IsDead && !__spiderBrain.BB.IsGroggy && ForwardVecCached != Vector3.zero;
             var canRotate2 =  IsMoving && (Vector3.Angle(core.forward.Vector2D(), ForwardVecCached) < 5 || __ecmMovement.forwardSpeed < 0.02f);
-            var canRotate3 = !__brain.ActionCtrler.CheckActionRunning();
+            var canRotate3 = !__spiderBrain.ActionCtrler.CheckActionRunning();
 
             //* 회전
             if (canRotate1 && canRotate2 && canRotate3)

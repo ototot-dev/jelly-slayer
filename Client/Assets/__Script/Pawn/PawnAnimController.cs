@@ -6,7 +6,6 @@ using UniRx;
 using UniRx.Triggers.Extension;
 using Unity.Linq;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.Animations.Rigging;
 
 namespace Game

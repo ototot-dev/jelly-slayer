@@ -55,9 +55,9 @@ namespace Game
             __externTables.Remove(container);
         }
 
-        public void SetImmunedStatus(params PawnStatus[] statuses)
+        public void SetStatusImmuned(params PawnStatus[] status)
         {
-            foreach (var s in statuses)
+            foreach (var s in status)
                 __immunedStatuses.Add(s);
         }
         
@@ -83,6 +83,21 @@ namespace Game
                 ret = Mathf.Max(ret, __externTables.Max(e => e.Value[status].Item1));
 
             return ret;
+        }
+
+        public struct StatusParam
+        {
+            public PawnStatus status;
+            public float strength;
+            public float duration;
+            public bool isStackable;
+            public bool isExtern;
+        };
+
+        public void AddStatus(StatusParam param)
+        {
+            Debug.Assert(!param.isExtern);
+            AddStatus(param.status, param.strength, param.duration, param.isStackable);
         }
         
         public void AddStatus(PawnStatus status, float strength = 1f, float duration = -1f, bool isStackable = false)
@@ -140,6 +155,12 @@ namespace Game
                     __uniqueTable[status] = tuple;
                 }
             }
+        }
+
+        public void AddExternStatus(IStatusContainer container, StatusParam param)
+        {
+            Debug.Assert(param.isExtern);
+            AddExternStatus(container, param.status, param.strength, param.duration);
         }
 
         public void AddExternStatus(IStatusContainer container, PawnStatus status, float strength = 1, float duration = -1)
@@ -211,16 +232,16 @@ namespace Game
             }
         }
 
-        PawnBrainController __brain;
+        PawnBrainController __pawnBrain;
 
         void Awake()
         {
-            __brain = GetComponent<PawnBrainController>();
+            __pawnBrain = GetComponent<PawnBrainController>();
         }
 
         void Start()
         {
-            __brain.onTick += OnTickHandler;
+            __pawnBrain.onTick += OnTickHandler;
         }
 
         public void OnTickHandler(float interval)

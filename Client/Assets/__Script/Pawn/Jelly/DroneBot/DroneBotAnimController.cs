@@ -17,54 +17,54 @@ namespace Game
 
         void Awake()
         {
-            __brain = GetComponent<DroneBotBrain>();
+            __droneBotBrain = GetComponent<DroneBotBrain>();
 
             if (springMass != null)
                 springMass.coreAttachPoint = jellySocket;
         }
 
-        DroneBotBrain __brain;
+        DroneBotBrain __droneBotBrain;
 
         void Start()
         {
-            __brain.onUpdate += () =>
+            __droneBotBrain.onUpdate += () =>
             {   
-                if (__brain.ActionCtrler.CheckActionRunning())
+                if (__droneBotBrain.ActionCtrler.CheckActionRunning())
                 {
-                    if (__brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
-                        __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation);
+                    if (__droneBotBrain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
+                        __droneBotBrain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation);
 
-                    if (__brain.ActionCtrler.currActionContext.rootMotionCurve != null)
+                    if (__droneBotBrain.ActionCtrler.currActionContext.rootMotionCurve != null)
                     {
-                        var rootMotionVec = __brain.ActionCtrler.EvaluateRootMotion(Time.deltaTime) * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
-                        if (__brain.ActionCtrler.CanRootMotion(rootMotionVec))
-                            __brain.Movement.AddRootMotion(__brain.ActionCtrler.EvaluateRootMotion(Time.deltaTime) * __brain.coreColliderHelper.transform.forward.Vector2D().normalized, Quaternion.identity);
+                        var rootMotionVec = __droneBotBrain.ActionCtrler.EvaluateRootMotion(Time.deltaTime) * __droneBotBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                        if (__droneBotBrain.ActionCtrler.CanRootMotion(rootMotionVec))
+                            __droneBotBrain.Movement.AddRootMotion(__droneBotBrain.ActionCtrler.EvaluateRootMotion(Time.deltaTime) * __droneBotBrain.coreColliderHelper.transform.forward.Vector2D().normalized, Quaternion.identity);
                     }
                 }
                 
-                mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
-                mainAnimator.SetLayerWeight(1, Mathf.Clamp01(mainAnimator.GetLayerWeight(1) + ((__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CurrActionName != "!OnHit") ? 10f : -10f) * Time.deltaTime));
+                mainAnimator.transform.SetPositionAndRotation(__droneBotBrain.coreColliderHelper.transform.position, __droneBotBrain.coreColliderHelper.transform.rotation);
+                mainAnimator.SetLayerWeight(1, Mathf.Clamp01(mainAnimator.GetLayerWeight(1) + ((__droneBotBrain.ActionCtrler.CheckActionRunning() && __droneBotBrain.ActionCtrler.CurrActionName != "!OnHit") ? 10f : -10f) * Time.deltaTime));
                 mainAnimator.SetLayerWeight(2, 1f);
 
-                var animMoveVec = __brain.coreColliderHelper.transform.InverseTransformDirection(__brain.Movement.CurrVelocity).Vector2D();
-                mainAnimator.SetFloat("MoveX", animMoveVec.x / __brain.Movement.moveSpeed);
-                mainAnimator.SetBool("IsMoving", __brain.Movement.CurrVelocity.sqrMagnitude > 0);
-                mainAnimator.SetBool("IsMovingStrafe", __brain.Movement.freezeRotation);
+                var animMoveVec = __droneBotBrain.coreColliderHelper.transform.InverseTransformDirection(__droneBotBrain.Movement.CurrVelocity).Vector2D();
+                mainAnimator.SetFloat("MoveX", animMoveVec.x / __droneBotBrain.Movement.moveSpeed);
+                mainAnimator.SetBool("IsMoving", __droneBotBrain.Movement.CurrVelocity.sqrMagnitude > 0);
+                mainAnimator.SetBool("IsMovingStrafe", __droneBotBrain.Movement.freezeRotation);
                 // mainAnimator.SetFloat("MoveY", animMoveVec.z / __brain.Movement.moveSpeed);
 
-                if (__brain.BB.IsDead)
+                if (__droneBotBrain.BB.IsDead)
                     eyeAnimator.MinOpenValue = Mathf.Clamp01(eyeAnimator.MinOpenValue - Time.deltaTime);
             };
 
-            __brain.onLateUpdate += () =>
+            __droneBotBrain.onLateUpdate += () =>
             {
                 if (eyeSocket != null)
                     eyeAnimator.transform.position = eyeSocket.position;
 
-                if (!__brain.BB.IsDead && __brain.BB.TargetBrain != null)
-                    lookAt.position = __brain.BB.TargetBrain.coreColliderHelper.GetCenter();
+                if (!__droneBotBrain.BB.IsDead && __droneBotBrain.BB.TargetBrain != null)
+                    lookAt.position = __droneBotBrain.BB.TargetBrain.coreColliderHelper.GetCenter();
                 else
-                    lookAt.position = __brain.Movement.IsMovingToDestination ? __brain.Movement.destination : __brain.coreColliderHelper.transform.position + __brain.SensorCtrler.visionLen * __brain.coreColliderHelper.transform.forward;
+                    lookAt.position = __droneBotBrain.Movement.IsMovingToDestination ? __droneBotBrain.Movement.destination : __droneBotBrain.coreColliderHelper.transform.position + __droneBotBrain.SensorCtrler.visionLen * __droneBotBrain.coreColliderHelper.transform.forward;
             };
         }
     }

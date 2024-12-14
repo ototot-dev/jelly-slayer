@@ -1,13 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using Cinemachine.Utility;
 using UniRx;
-using UniRx.Triggers;
-using UniRx.Triggers.Extension;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.Animations.Rigging;
 
 namespace Game

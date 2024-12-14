@@ -231,15 +231,15 @@ namespace Game
         protected virtual void AwakeInternal()
         {
             __pawnBrain = GetComponent<PawnBrainController>();
-            __pawnActionSelector = GetComponent<PawnActionDataSelector>();
-            __pawnAnimCtrler = GetComponent<PawnAnimController>();
             __pawnMovement = GetComponent<PawnMovement>();
+            __pawnAnimCtrler = GetComponent<PawnAnimController>();
+            __pawnActionSelector = GetComponent<PawnActionDataSelector>();
         }
 
-        PawnBrainController __pawnBrain;
-        PawnActionDataSelector __pawnActionSelector;
-        PawnAnimController __pawnAnimCtrler;
-        PawnMovement __pawnMovement;
+        protected PawnBrainController __pawnBrain;
+        protected PawnMovement __pawnMovement;
+        protected PawnAnimController __pawnAnimCtrler;
+        protected PawnActionDataSelector __pawnActionSelector;
 
         void Start()
         {
@@ -373,8 +373,23 @@ namespace Game
                     {
                         if (!__multiHitEnabled)
                             __tracedPawnBrains.Add(hitColliderHelper.pawnBrain);
+
                         if (__sendDamageOnTrace)
+                        {
                             hitColliderHelper.pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__pawnBrain, hitColliderHelper.pawnBrain, currActionContext.actionData, hitColliderHelper.pawnCollider, currActionContext.insufficientStamina));
+
+                            //* Debuff 할당
+                            if (__debuffParams != null && __debuffParams.Length > 0)
+                            {
+                                foreach (var p in __debuffParams)
+                                {
+                                    if (p.isExtern && hitColliderHelper.pawnBrain.TryGetComponent<PawnActionController>(out var receiverActionCtrler))
+                                        hitColliderHelper.pawnBrain.PawnStatusCtrler.AddExternStatus(receiverActionCtrler, p);
+                                    else
+                                        hitColliderHelper.pawnBrain.PawnStatusCtrler.AddStatus(p);
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -676,10 +691,11 @@ namespace Game
         readonly HashSet<string> __traceLayerNames = new();
         readonly HashSet<string> __tracePawnNames = new();
         readonly HashSet<PawnBrainController> __tracedPawnBrains = new();
+        PawnStatusController.StatusParam[] __debuffParams;
         bool __multiHitEnabled;
         bool __sendDamageOnTrace;
 
-        public void StartTraceActionTargets(Collider traceCollider, int samplingRate = 60, bool multiHitEnabled = false, bool sendDamageImmediately = false, bool drawGizmosEnabled = false, float drawGizmosDuration = 0)
+        public void StartTraceActionTargets(Collider traceCollider, int samplingRate = 60, bool multiHitEnabled = false, PawnStatusController.StatusParam[] debuffParams = null, bool sendDamageImmediately = false, bool drawGizmosEnabled = false, float drawGizmosDuration = 0)
         {
             SetTraceRunning(true);
 
@@ -687,6 +703,7 @@ namespace Game
             __traceCount = 0;
             __traceSampleInterval = 1f / (float)samplingRate;
             __multiHitEnabled = multiHitEnabled;
+            __debuffParams = debuffParams;
             __sendDamageOnTrace = sendDamageImmediately;
             __traceDrawGizmosEnabled = drawGizmosEnabled;
             __traceDrawGizmosDuration = drawGizmosDuration;
@@ -716,7 +733,7 @@ namespace Game
             }
         }
 
-        public List<PawnBrainController> FinishTraceActionTargets()
+        public int FinishTraceActionTargets()
         {
             SetTraceRunning(false);
 
@@ -724,20 +741,21 @@ namespace Game
             __traceBoxCollider = null;
             __traceSphereCollider = null;
             __traceCapsuleCollider = null;
+            __debuffParams = null;
             __sendDamageOnTrace = false;
 
-            var ret = __tracedPawnBrains.ToList();
+            var ret = __tracedPawnBrains.Count;
             __tracedPawnBrains.Clear();
 
             return ret;
         }
 
-        public List<PawnColliderHelper> TraceActionTargets(Vector3 offset, Vector3 pitchYawRoll, float fanRadius, float fanAngle, float fanHeight, float minRadius, int maxTargetNum = -1, bool sendDamageImmediately = false, bool drawGizmosEnabled = false, float drawGizmosDuration = 0)
+        public List<PawnColliderHelper> TraceActionTargets(Vector3 offset, Vector3 pitchYawRoll, float fanRadius, float fanAngle, float fanHeight, float minRadius, int maxTargetNum = -1, PawnStatusController.StatusParam[] debuffParams = null, bool sendDamageImmediately = false, bool drawGizmosEnabled = false, float drawGizmosDuration = 0)
         {
-            return TraceActionTargets(Matrix4x4.TRS(offset + __pawnBrain.coreColliderHelper.pawnCollider.bounds.center - __pawnBrain.coreColliderHelper.transform.position, Quaternion.Euler(pitchYawRoll), Vector3.one), fanRadius, fanAngle, fanHeight, minRadius, maxTargetNum, sendDamageImmediately, drawGizmosEnabled, drawGizmosDuration);
+            return TraceActionTargets(Matrix4x4.TRS(offset + __pawnBrain.coreColliderHelper.pawnCollider.bounds.center - __pawnBrain.coreColliderHelper.transform.position, Quaternion.Euler(pitchYawRoll), Vector3.one), fanRadius, fanAngle, fanHeight, minRadius, maxTargetNum, debuffParams, sendDamageImmediately, drawGizmosEnabled, drawGizmosDuration);
         }
 
-        public List<PawnColliderHelper> TraceActionTargets(Matrix4x4 fanMatrix, float fanRadius, float fanAngle, float fanHeight, float minRadius, int maxTargetNum = -1, bool sendDamageImmediately = false, bool drawGizmosEnabled = false, float drawGizmosDuration = 0)
+        public List<PawnColliderHelper> TraceActionTargets(Matrix4x4 fanMatrix, float fanRadius, float fanAngle, float fanHeight, float minRadius, int maxTargetNum = -1, PawnStatusController.StatusParam[] debuffParams = null, bool sendDamageImmediately = false, bool drawGizmosEnabled = false, float drawGizmosDuration = 0)
         {
             Debug.Assert(CheckActionRunning() && currActionContext.isTraceRunning, $"Brain: {gameObject}, CheckActionRunning(): {CheckActionRunning()}, currActionContext.traceRunning: {currActionContext.isTraceRunning}");
 
@@ -847,7 +865,21 @@ namespace Game
             if (sendDamageImmediately)
             {
                 foreach (var r in results)
+                {
                     __pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__pawnBrain, r.pawnBrain, currActionContext.actionData, r.pawnCollider, currActionContext.insufficientStamina));
+
+                    //* Debuff 할당
+                    if (debuffParams != null && debuffParams.Length > 0)
+                    {
+                        foreach (var p in debuffParams)
+                        {
+                            if (p.isExtern && r.pawnBrain.TryGetComponent<PawnActionController>(out var receiverActionCtrler))
+                                r.pawnBrain.PawnStatusCtrler.AddExternStatus(receiverActionCtrler, p);
+                            else
+                                r.pawnBrain.PawnStatusCtrler.AddStatus(p);
+                        }
+                    }
+                }
             }
 
             Array.Clear(__traceTempColliders, 0, __traceTempColliders.Length);

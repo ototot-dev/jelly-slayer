@@ -53,8 +53,9 @@ namespace Game
         public PawnStatusController StatusCtrler { get; private set; }
         public PawnSensorController SensorCtrler { get; private set; }
         public PawnActionDataSelector ActionDataSelector { get; private set; }
-        PawnMovementEx __pawnMovement;
-        PawnAnimController __pawnAnimCtrler;
+        protected PawnMovementEx __pawnMovement;
+        protected PawnAnimController __pawnAnimCtrler;
+        protected PawnActionController __pawnActionCtrler;
         
         protected override void AwakeInternal()
         {
@@ -66,6 +67,7 @@ namespace Game
             ActionDataSelector = GetComponent<PawnActionDataSelector>();
             __pawnMovement = GetComponent<PawnMovementEx>();
             __pawnAnimCtrler = GetComponent<PawnAnimController>();
+            __pawnActionCtrler = GetComponent<PawnActionController>();
         }
 
         protected override void StartInternal()

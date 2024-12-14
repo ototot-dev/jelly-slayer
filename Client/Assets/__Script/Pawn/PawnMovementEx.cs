@@ -25,8 +25,8 @@ namespace Game
             if (!freezeMovement)
             {
                 var canMove1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsGroggy && !__pawnBrain.PawnBB.IsDown;
-                var canMove2 = canMove1 && !CheckReachToDestination() && (__actionCtrler == null || !__actionCtrler.CheckActionRunning());
-                var canMove3 = canMove2 && (__buffCtrler == null || !__buffCtrler.CheckStatus(PawnStatus.Staggered));
+                var canMove2 = canMove1 && !CheckReachToDestination() && (__pawnActionCtrler == null || !__pawnActionCtrler.CheckActionRunning());
+                var canMove3 = canMove2 && (__pawnStatusCtrler == null || (!__pawnStatusCtrler.CheckStatus(PawnStatus.Staggered) && !__pawnStatusCtrler.CheckStatus(PawnStatus.CanNotMove)));
 
                 if (IsMovingToDestination)
                     moveVec = canMove3 ? (destination - capsule.position).Vector2D().normalized : Vector3.zero;
@@ -39,11 +39,11 @@ namespace Game
 
         protected override void OnUpdateHandler()
         {   
-            var isHomingRunning = __actionCtrler != null && __actionCtrler.currActionContext.homingRotationDisposable != null;
+            var isHomingRunning = __pawnActionCtrler != null && __pawnActionCtrler.currActionContext.homingRotationDisposable != null;
             if (!isHomingRunning && !freezeRotation)
             {
                 var canRotate1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsGroggy && !__pawnBrain.PawnBB.IsDown;
-                var canRotate2 = canRotate1 && (__actionCtrler == null || !__actionCtrler.CheckActionRunning());
+                var canRotate2 = canRotate1 && (__pawnActionCtrler == null || !__pawnActionCtrler.CheckActionRunning());
                 
                 if (IsMovingToDestination)
                     faceVec = canRotate2 ? (destination - capsule.position).Vector2D().normalized : Vector3.zero;

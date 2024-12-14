@@ -33,17 +33,12 @@ namespace Game
         }
 
         public JellyHumanoidBlackboard JellyHumanoidBB { get; private set; }
-        PawnMovementEx __pawnMovement;
-        PawnActionController __pawnActionCtrler;
         protected float __decisionCoolTime;
 
         protected override void AwakeInternal()
         {
             base.AwakeInternal();
-            
             JellyHumanoidBB = GetComponent<JellyHumanoidBlackboard>();
-            __pawnMovement = GetComponent<PawnMovementEx>();
-            __pawnActionCtrler = GetComponent<PawnActionController>();
         }
 
         protected override void StartInternal()

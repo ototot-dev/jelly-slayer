@@ -30,8 +30,8 @@ namespace Game
         void Awake()
         {
             __pawnBrain = GetComponent<PawnBrainController>();
-            __actionCtrler = GetComponent<PawnActionController>();
-            __buffCtrler = GetComponent<PawnStatusController>();
+            __pawnActionCtrler = GetComponent<PawnActionController>();
+            __pawnStatusCtrler = GetComponent<PawnStatusController>();
             __ecmMovement = capsuleCollider.GetComponent<ECM2.CharacterMovement>();
 
             AwakeInternal();
@@ -39,8 +39,8 @@ namespace Game
 
         protected virtual void AwakeInternal() {}
         protected PawnBrainController __pawnBrain;
-        protected PawnActionController __actionCtrler;
-        protected PawnStatusController __buffCtrler;
+        protected PawnActionController __pawnActionCtrler;
+        protected PawnStatusController __pawnStatusCtrler;
         protected ECM2.CharacterMovement __ecmMovement;
 
         void Start()

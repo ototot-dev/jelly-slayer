@@ -54,8 +54,8 @@ namespace Game
                 moveSpeed = __brain.BB.jumpSpeed;
 
                 var canJump1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsGroggy && !__pawnBrain.PawnBB.IsDown;
-                var canJump2 = __actionCtrler == null || (!__actionCtrler.CheckActionPending() && !__actionCtrler.CheckActionRunning());
-                var canJump3 = __buffCtrler == null || !__buffCtrler.CheckStatus(PawnStatus.Staggered);
+                var canJump2 = __pawnActionCtrler == null || (!__pawnActionCtrler.CheckActionPending() && !__pawnActionCtrler.CheckActionRunning());
+                var canJump3 = __pawnStatusCtrler == null || !__pawnStatusCtrler.CheckStatus(PawnStatus.Staggered);
 
                 if (__brain.BB.IsJumping)
                 {
@@ -113,7 +113,7 @@ namespace Game
             if (!freezeRotation)
             {
                 var canRotate1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsGroggy && !__pawnBrain.PawnBB.IsDown;
-                var canRotate2 = __actionCtrler == null || !__actionCtrler.CheckActionRunning();
+                var canRotate2 = __pawnActionCtrler == null || !__pawnActionCtrler.CheckActionRunning();
                 var canRotate3 = __brain.BB.IsJumping;
 
                 faceVec = canRotate1 && canRotate2 && canRotate3 ? (destination - capsule.position).Vector2D().normalized : Vector3.zero;

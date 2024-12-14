@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using NodeCanvas.StateMachines;
 using UniRx;
-using Unity.Linq;
 using UnityEngine;
 
 namespace Game

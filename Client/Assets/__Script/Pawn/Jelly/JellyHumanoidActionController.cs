@@ -15,14 +15,14 @@ namespace Game
             if (!base.CanRootMotion(rootMotionVec))
                 return false;
 
-            if (__brain.StatusCtrler.CheckStatus(PawnStatus.Staggered))
+            if (__humanoidBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered))
                 return false;
 
-            if (__brain.PawnBB.TargetBrain != null && __brain.SensorCtrler.TouchingColliders.Contains(__brain.PawnBB.TargetBrain.coreColliderHelper.pawnCollider))
+            if (__humanoidBrain.PawnBB.TargetBrain != null && __humanoidBrain.SensorCtrler.TouchingColliders.Contains(__humanoidBrain.PawnBB.TargetBrain.coreColliderHelper.pawnCollider))
             {
                 //* RootMotion으로 목표물을 밀지 않도록 목묘물의 TouchingColliders와 접축할 정도로 가깝다면 rootMotionVec가 목표물에서 멀어지는 방향일때만 적용해준다.
-                var newDistance = (__brain.PawnBB.TargetBrain.coreColliderHelper.transform.position - __brain.coreColliderHelper.transform.position + rootMotionVec).Vector2D().sqrMagnitude;
-                return newDistance > (__brain.PawnBB.TargetBrain.coreColliderHelper.transform.position - __brain.coreColliderHelper.transform.position).Vector2D().sqrMagnitude;
+                var newDistance = (__humanoidBrain.PawnBB.TargetBrain.coreColliderHelper.transform.position - __humanoidBrain.coreColliderHelper.transform.position + rootMotionVec).Vector2D().sqrMagnitude;
+                return newDistance > (__humanoidBrain.PawnBB.TargetBrain.coreColliderHelper.transform.position - __humanoidBrain.coreColliderHelper.transform.position).Vector2D().sqrMagnitude;
             }
             else
             {
@@ -32,7 +32,7 @@ namespace Game
 
         public override IDisposable StartOnHitAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
         {
-            Debug.Assert(damageContext.receiverBrain == __brain);
+            Debug.Assert(damageContext.receiverBrain == __humanoidBrain);
 
             if (damageContext.actionResult == ActionResults.Damaged)
             {
@@ -69,20 +69,20 @@ namespace Game
             {
                 __pawnAnimCtrler.mainAnimator.SetInteger("HitType", 2);
                 __pawnAnimCtrler.mainAnimator.SetTrigger("OnHit");
-                __brain.PawnStatusCtrler.AddStatus(PawnStatus.Guardbreak, duration: 1.0f);
+                __humanoidBrain.PawnStatusCtrler.AddStatus(PawnStatus.Guardbreak, duration: 1.0f);
             }
 
-            var knockBackVec = __brain.JellyBB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+            var knockBackVec = __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
             if (damageContext.actionResult == ActionResults.Missed || damageContext.actionResult == ActionResults.Blocked)
             {
-                Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.2f / __brain.JellyBB.pawnData_Movement.knockBackSpeed)))
+                Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.2f / __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed)))
                     .DoOnCancel(() => __pawnMovement.Freeze())
                     .DoOnCompleted(() => __pawnMovement.Freeze())
                     .Subscribe(_ => __pawnMovement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity)).AddTo(this);
             }
             else
             {            
-                Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.JellyBB.pawnData_Movement.knockBackSpeed)))
+                Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed)))
                     .DoOnCancel(() => __pawnMovement.Freeze())
                     .DoOnCompleted(() => __pawnMovement.Freeze())
                     .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity)).AddTo(this);
@@ -93,15 +93,15 @@ namespace Game
 
         public override IDisposable StartOnBlockedAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
         {
-            Debug.Assert(damageContext.senderBrain == __brain);
+            Debug.Assert(damageContext.senderBrain == __humanoidBrain);
             Debug.Assert(damageContext.receiverActionData != null);
             Debug.Assert(!isAddictiveAction);
 
             __pawnAnimCtrler.mainAnimator.SetTrigger("OnHit");
             __pawnAnimCtrler.mainAnimator.SetInteger("HitType", 3);
 
-            var knockBackVec = __brain.JellyBB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-            Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverActionData.knockBackDistance / __brain.JellyBB.pawnData_Movement.knockBackSpeed)))
+            var knockBackVec = __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+            Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverActionData.knockBackDistance / __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed)))
                 .DoOnCancel(() => __pawnMovement.Freeze())
                 .DoOnCompleted(() => __pawnMovement.Freeze())
                 .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity)).AddTo(this);
@@ -111,7 +111,7 @@ namespace Game
 
         public override IDisposable StartOnParriedAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
         {
-            Debug.Assert(damageContext.senderBrain == __brain);
+            Debug.Assert(damageContext.senderBrain == __humanoidBrain);
 
             __Logger.LogF(gameObject, nameof(StartOnParriedAction), "-", "Distance", damageContext.senderBrain.coreColliderHelper.GetDistanceBetween(damageContext.receiverBrain.coreColliderHelper));
             __pawnAnimCtrler.mainAnimator.SetTrigger("OnParried");
@@ -127,8 +127,8 @@ namespace Game
             if (knockBackDistance <= 0f)
                 __Logger.WarningF(gameObject, nameof(StartOnParriedAction), "knockBackDistance is zero", "knockBackDistance", knockBackDistance);
 
-            var knockBackVec = __brain.JellyBB.pawnData_Movement.knockBackSpeed * damageContext.receiverBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-            Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(knockBackDistance / __brain.JellyBB.pawnData_Movement.knockBackSpeed)))
+            var knockBackVec = __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed * damageContext.receiverBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+            Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(knockBackDistance / __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed)))
                 .DoOnCancel(() => __pawnMovement.Freeze())
                 .DoOnCompleted(() => __pawnMovement.Freeze())
                 .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity)).AddTo(this);
@@ -138,7 +138,7 @@ namespace Game
 
         public override IDisposable StartOnKnockDownAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
         {
-            Debug.Assert(damageContext.receiverBrain == __brain);
+            Debug.Assert(damageContext.receiverBrain == __humanoidBrain);
             return null;
         }
 
@@ -148,7 +148,7 @@ namespace Game
 
             if (damageContext.actionResult == ActionResults.GuardParried || damageContext.actionResult == ActionResults.KickParried)
             {
-                Debug.Assert(__brain == damageContext.senderBrain);
+                Debug.Assert(__humanoidBrain == damageContext.senderBrain);
 
                 var knockBackDistance = 0f;
                 if (damageContext.actionResult == ActionResults.KickParried)
@@ -158,8 +158,8 @@ namespace Game
                 else
                     Debug.Assert(false);
 
-                var knockBackVec = __brain.JellyBB.pawnData_Movement.knockBackSpeed * damageContext.receiverBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-                Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(knockBackDistance / __brain.JellyBB.pawnData_Movement.knockBackSpeed)))
+                var knockBackVec = __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed * damageContext.receiverBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(knockBackDistance / __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed)))
                     .DoOnCancel(() =>
                     {
                         __pawnMovement.Freeze();
@@ -186,17 +186,13 @@ namespace Game
             return null;
         }
 
-        JellyHumanoidBrain __brain;
-        PawnMovementEx __pawnMovement;
-        PawnAnimController __pawnAnimCtrler;
+        protected JellyHumanoidBrain __humanoidBrain;
 
         protected override void AwakeInternal()
         {
             base.AwakeInternal();
             
-            __brain = GetComponent<JellyHumanoidBrain>();
-            __pawnMovement = GetComponent<PawnMovementEx>();
-            __pawnAnimCtrler = GetComponent<PawnAnimController>();
+            __humanoidBrain = GetComponent<JellyHumanoidBrain>();
         }
 
         protected override void StartInternal()
@@ -208,7 +204,7 @@ namespace Game
             //     __pawnAnimCtrler.mainAnimator.SetBool("IsGuarding", v);
             // }).AddTo(this);
 
-            __brain.JellyBB.common.isDown.Skip(1).Subscribe(v =>
+            __humanoidBrain.JellyBB.common.isDown.Skip(1).Subscribe(v =>
             {
                 if (v)
                 {
@@ -218,20 +214,20 @@ namespace Game
                 else
                 {
                     //* 일어나는 모션동안은 무적
-                    __brain.PawnStatusCtrler.AddStatus(PawnStatus.Invincible, 1f, 1f);
+                    __humanoidBrain.PawnStatusCtrler.AddStatus(PawnStatus.Invincible, 1f, 1f);
                     __pawnAnimCtrler.mainAnimator.SetBool("IsDown", false);
-                    __brain.InvalidateDecision(2f);
+                    __humanoidBrain.InvalidateDecision(2f);
                 }
             }).AddTo(this);
 
-            __brain.JellyBB.common.isGroggy.Skip(1).Where(v => !v).Subscribe(v =>
+            __humanoidBrain.JellyBB.common.isGroggy.Skip(1).Where(v => !v).Subscribe(v =>
             {
-                if (!__brain.PawnStatusCtrler.CheckStatus(PawnStatus.KnockDown))
+                if (!__humanoidBrain.PawnStatusCtrler.CheckStatus(PawnStatus.KnockDown))
                 {
                     //* 일어나는 모션동안은 무적
-                    __brain.PawnStatusCtrler.AddStatus(PawnStatus.Invincible, 1f, 1f);
+                    __humanoidBrain.PawnStatusCtrler.AddStatus(PawnStatus.Invincible, 1f, 1f);
                     __pawnAnimCtrler.mainAnimator.SetBool("IsGroggy", false);
-                    __brain.InvalidateDecision(1f);
+                    __humanoidBrain.InvalidateDecision(1f);
                 }
             }).AddTo(this);
         }

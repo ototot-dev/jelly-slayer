@@ -63,33 +63,33 @@ namespace Game
         /// </summary>
         void Awake()
         {
-            __brain = GetComponent<HeroBrain>();
+            __heroBrain = GetComponent<HeroBrain>();
         }
 
-        HeroBrain __brain;
+        HeroBrain __heroBrain;
 
         void Start()
         {
-            __brain.onUpdate += () =>
+            __heroBrain.onUpdate += () =>
             {
                 //* guardRunning 값에 따른 ShieldMesh 외형 및 Anim 처리
                 if (ShieldMesh != null)
                 {
                     if (ShieldMesh.transform.localScale == Vector3.one)
                     {
-                        if (__brain.BB.IsGuarding && !__brain.ActionCtrler.CheckActionRunning())
+                        if (__heroBrain.BB.IsGuarding && !__heroBrain.ActionCtrler.CheckActionRunning())
                         {
-                            __brain.AnimCtrler.mainAnimator.SetBool("bGuarding", true);
-                            __brain.AnimCtrler.mainAnimator.SetTrigger("toGuard");
+                            __heroBrain.AnimCtrler.mainAnimator.SetBool("bGuarding", true);
+                            __heroBrain.AnimCtrler.mainAnimator.SetTrigger("toGuard");
 
                             ShieldMesh.transform.localScale = Vector3.one * 2.5f;
                         }
                     }
                     else
                     {
-                        if (!__brain.BB.IsGuarding || __brain.ActionCtrler.CheckActionRunning())
+                        if (!__heroBrain.BB.IsGuarding || __heroBrain.ActionCtrler.CheckActionRunning())
                         {
-                            __brain.AnimCtrler.mainAnimator.SetBool("bGuarding", false);
+                            __heroBrain.AnimCtrler.mainAnimator.SetBool("bGuarding", false);
                             ShieldMesh.transform.localScale = Vector3.one;
                         }
                     }
@@ -147,7 +147,7 @@ namespace Game
             var projectile = objProj.GetComponent<HeroSwordProjectile>();
 
             projectile.executeBurst = executeBurst;
-            projectile.Go(__brain, 5, 1);
+            projectile.Go(__heroBrain, 5, 1);
 
             return projectile;
         }
@@ -163,7 +163,7 @@ namespace Game
             var projectile = objProj.GetComponent<HeroHammerProjectile>();
 
             projectile.executeBurst = executeBurst;
-            projectile.Go(__brain, 5, 1);
+            projectile.Go(__heroBrain, 5, 1);
 
             return projectile;
         }
@@ -180,7 +180,7 @@ namespace Game
             var projectile = objProj.GetComponent<HeroSpikeProjectile>();
 
             projectile.executeBurst = executeBurst;
-            projectile.Go(__brain, 0, 0.6f);
+            projectile.Go(__heroBrain, 0, 0.6f);
 
             return projectile;
         }
@@ -202,7 +202,7 @@ namespace Game
             projectile.targetPoint = targetPoint;
             projectile.splitCount = splitCount;
             projectile.executeBurst = executeBurst;
-            projectile.Go(__brain, projectile.forwardSpeed, 0.5f);
+            projectile.Go(__heroBrain, projectile.forwardSpeed, 0.5f);
 
             return projectile;
         }
@@ -218,7 +218,7 @@ namespace Game
             var projectile = Instantiate(objRes, transform.position, Quaternion.LookRotation(transform.forward)).GetComponent<HeroBombProjectile>();
 
             projectile.transform.rotation *= Quaternion.Euler(projectile.impulsePitch, 0, 0);
-            projectile.Pop(__brain, projectile.impulse, 1.6f);
+            projectile.Pop(__heroBrain, projectile.impulse, 1.6f);
 
             return projectile;
         }
