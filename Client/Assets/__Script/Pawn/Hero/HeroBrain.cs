@@ -154,7 +154,12 @@ namespace Game
                     var rate = StatusCtrler.GetStrength(PawnStatus.HPRegen);
                     if (timeDist >= 1f)
                     {
-                        PawnHP.heartPoint.Value = PawnHP.heartPoint.Value + (rate * BB.stat.maxHeartPoint.Value);
+                        var hpAdd = rate * BB.stat.maxHeartPoint.Value;
+                        PawnHP.heartPoint.Value += hpAdd;
+                        Debug.Log("<color=green>HP Regen : " + (100 * rate) + "%, " + hpAdd + "</green>");
+
+                        var viewVec = GameContext.Instance.MainCamera.transform.forward;
+                        EffectManager.Instance.Show("HealSingle", GetWorldPosition() + Vector3.up - viewVec, Quaternion.identity, Vector3.one, 1f);
                     }
                 }
             };
