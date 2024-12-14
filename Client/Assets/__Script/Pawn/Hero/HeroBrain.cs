@@ -144,8 +144,19 @@ namespace Game
                     return;
 
                 //* 1초마다 SoundSource를 발생시켜 주변의 어그로를 끔
-                if (Time.time - PawnSoundSourceGen.LastGenerateTimeStamp > 1f)
+                var timeDist = Time.time - PawnSoundSourceGen.LastGenerateTimeStamp;
+                if (timeDist >= 1f)
                     PawnSoundSourceGen.GenerateSoundSource(coreColliderHelper.pawnCollider, 1f, 1f);
+
+                // 1초마다 체력 재생
+                if (StatusCtrler.CheckStatus(PawnStatus.HPRegen))
+                {
+                    var rate = StatusCtrler.GetStrength(PawnStatus.HPRegen);
+                    if (timeDist >= 1f)
+                    {
+                        PawnHP.heartPoint.Value = PawnHP.heartPoint.Value + (rate * BB.stat.maxHeartPoint.Value);
+                    }
+                }
             };
         }
 
