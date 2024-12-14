@@ -112,7 +112,7 @@ namespace Game
 
                     Observable.Timer(TimeSpan.FromSeconds(0.5f)).Subscribe(_ => 
                     {
-                        if (!__brain.BB.IsGuarding)
+                        if (!__brain.BB.IsGuarding && !__brain.BB.IsCharging)
                             __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", false);
                     }).AddTo(this);
 
