@@ -1,5 +1,4 @@
-﻿using NodeCanvas.Tasks.Actions;
-using System;
+﻿using System;
 using System.Linq;
 using UniRx;
 using UnityEngine;
@@ -286,12 +285,23 @@ namespace Game
                 Quaternion.identity, Vector3.one, 1f);
             SoundManager.Instance.Play(SoundID.JUMP);
         }
+
         public void OnParry()
         {
-            var actionData = DatasheetManager.Instance.GetActionData(MyHeroBrain.PawnBB.common.pawnId, "ActiveParry");
-            Debug.Assert(actionData != null);
+            if (MyHeroBrain == null)
+                return;
 
-            MyHeroBrain.ActionCtrler.SetPendingAction("ActiveParry");
+            var canAction1 = MyHeroBrain.BB.IsSpawnFinished && !MyHeroBrain.BB.IsDead && !MyHeroBrain.BB.IsGroggy && !MyHeroBrain.BB.IsRolling;
+            var canAction2 = canAction1 && (!MyHeroBrain.ActionCtrler.CheckActionRunning() || MyHeroBrain.ActionCtrler.CanInterruptAction()) && !MyHeroBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
+
+            if (canAction2)
+            {
+
+                if (MyHeroBrain.ActionCtrler.CheckActionRunning())
+                    MyHeroBrain.ActionCtrler.CancelAction(false);
+
+                MyHeroBrain.ActionCtrler.SetPendingAction("Kick");
+            }
         }
 
         IDisposable __chargingAttackDisposable;
@@ -437,7 +447,7 @@ namespace Game
                     if (MyHeroBrain.ActionCtrler.CheckActionRunning())
                         MyHeroBrain.ActionCtrler.CancelAction(false);
 
-                    MyHeroBrain.ActionCtrler.SetPendingAction("Kick");
+                    MyHeroBrain.ActionCtrler.SetPendingAction("SpecialKick");
                 }
             }
         }

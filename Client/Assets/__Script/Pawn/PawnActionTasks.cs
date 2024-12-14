@@ -376,7 +376,8 @@ namespace Game.NodeCanvasExtension
                 })
                 .Subscribe(_ =>
                 {
-                    __pawnActionCtrler.currActionContext.manualAdvanceSpeed = 0;
+                    if (endActionWhenReachToTarget)
+                        __pawnActionCtrler.currActionContext.manualAdvanceSpeed = 0;
 
                     if (__pawnActionCtrler.currActionContext.actionData == null || __capturedActionInstanceId != __pawnActionCtrler.currActionContext.actionInstanceId)
                     {
