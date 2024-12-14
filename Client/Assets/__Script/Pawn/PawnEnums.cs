@@ -29,7 +29,6 @@ namespace Game
         MoveSpeedUp,
         ActionSpeedUp,
         HPRegen,            // 체력 회복
-
         __DEBUFF__SEPERATOR__,
         Groggy,             //* 그로기
         Staggered,          //* 경직
@@ -46,6 +45,13 @@ namespace Game
         Bind,               // 끈에 묶임
     }
 
+    [UGS(typeof(HitTypes))]
+    public enum HitTypes
+    {
+        None = 0,
+        Kick,
+        Slash,
+    }
 
     [UGS(typeof(ActionResults))]
     public enum ActionResults

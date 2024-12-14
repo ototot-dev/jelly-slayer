@@ -11,8 +11,8 @@ namespace Game
     {
         public float LastJumpTimeStamp => __jumpTimeStamp;
         public float LastRollingTimeStamp => __rollingTimeStamp;
-        public float ImpulsePowerOnJump => Mathf.Sqrt(2 * __heroBrain.BB.body.jumpHeight * Physics.gravity.magnitude);
-        public float EstimatedJumpDuration => Mathf.Sqrt(8 * __heroBrain.BB.body.jumpHeight / Physics.gravity.magnitude);
+        public float ImpulsePowerOnJump => Mathf.Sqrt(2 * __heroBrain.BB.body.jumpHeight * gravity.magnitude);
+        public float EstimatedJumpDuration => Mathf.Sqrt(8 * __heroBrain.BB.body.jumpHeight / gravity.magnitude);
         public void LegAnimatorStepEvent(LegsAnimator.Leg leg, float power, bool isRight, Vector3 position, Quaternion rotation, LegsAnimator.EStepType type) {}
 
         public void StartJumping()

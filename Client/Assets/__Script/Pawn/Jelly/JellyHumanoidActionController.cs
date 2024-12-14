@@ -184,7 +184,10 @@ namespace Game
 
                 if (damageContext.senderActionData.knockBackDistance > 0f)
                 {
-                    var knockBackVec = __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                    var knockBackVec = damageContext.senderActionData.actionName == "SpecialKick" ?
+                        __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed * (damageContext.receiverBrain.GetWorldPosition() - damageContext.senderBrain.GetWorldPosition()).Vector2D().normalized :
+                        __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                        
                     Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed)))
                         .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity))
                         .AddTo(this);

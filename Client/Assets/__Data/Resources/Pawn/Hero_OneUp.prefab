@@ -201,7 +201,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 091c5c1b3b28e41cd8852f3aa563fd24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bodyHitColliderHelper: {fileID: 0}
+  bodyHitColliderHelper: {fileID: 2023143863012937403}
   parryHitColliderHelper: {fileID: 1104606249163493149}
   staggerFx: {fileID: 7902684546752631038, guid: 1a4146f5a4768c24d907b77fd5275c06, type: 3}
   fxAttachPoint: {fileID: 6667022547613719956}
@@ -275,10 +275,13 @@ MonoBehaviour:
     staminaRecoverTimeThreshold: 2
     stanceReduceSpeed: 0
     stanceReduceTimeThreshold: 0
+  target:
+    targetPawnHP:
+      value: {fileID: 0}
   body:
     walkSpeed: 1
-    runSpeed: 1
-    sprintSpeed: 0.1
+    runSpeed: 2
+    sprintSpeed: 3
     guardSpeed: 0.2
     rollingDistance: 2
     rollingDuration: 0.5
@@ -313,8 +316,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coreColliderHelper: {fileID: 4575544682901093454}
   owner: {fileID: 0}
-  targetPawnHP:
-    value: {fileID: 0}
   tickInterval: 0.1
   tickEnabled: 1
   updateEnabled: 1
@@ -386,6 +387,7 @@ MonoBehaviour:
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"MagicPillarBlastYellow":{"_value":5,"_name":"MagicPillarBlastYellow","_id":"7fef883a-e638-41a3-b1f9-cefe9eae4ba5","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"SlashRoundRed":{"_value":6,"_name":"SlashRoundRed","_id":"e2d28471-6969-499f-904b-985050c2c1a2","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"Stun":{"_value":7,"_name":"Stun","_id":"7284c0b8-c87e-48fd-927e-be90c524c981","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"FireBigMuzzle":{"_value":8,"_name":"FireBigMuzzle","_id":"653e1fc0-257a-4564-b365-b4af93d95d2d","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}}}'
   _objectReferences:
   - {fileID: 0}
@@ -396,6 +398,7 @@ MonoBehaviour:
   - {fileID: 484316541744064046, guid: 01428f06eefd7b341b077152a3c814f4, type: 3}
   - {fileID: 6209972863228401158, guid: 346845f5ec84256469525d334ac20d56, type: 3}
   - {fileID: 7902684546752631038, guid: 1a4146f5a4768c24d907b77fd5275c06, type: 3}
+  - {fileID: 2202656761801617370, guid: fc1950b06ee498a4487038512551051d, type: 3}
   _serializedVariables:
   - _json: '{"_value":1,"_name":"SlashRoundYellow","_id":"e3b84ea2-99ac-47d4-b800-c0e4e7d37ec2","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
       UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
@@ -432,6 +435,11 @@ MonoBehaviour:
     _references:
     - {fileID: 0}
     - {fileID: 7902684546752631038, guid: 1a4146f5a4768c24d907b77fd5275c06, type: 3}
+  - _json: '{"_value":1,"_name":"FireBigMuzzle","_id":"653e1fc0-257a-4564-b365-b4af93d95d2d","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
+    _references:
+    - {fileID: 0}
+    - {fileID: 2202656761801617370, guid: fc1950b06ee498a4487038512551051d, type: 3}
 --- !u!1 &1101305529287299696
 GameObject:
   m_ObjectHideFlags: 0

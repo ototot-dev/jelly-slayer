@@ -116,7 +116,7 @@ namespace Game
                 mainAnimator.SetFloat("MoveY", animMoveVec.z / __brain.Movement.moveSpeed);
 
                 legAnimator.User_SetIsMoving(__brain.Movement.CurrVelocity.sqrMagnitude > 0);
-                legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround && !__brain.BB.IsRolling && !__brain.BB.IsDown && !__brain.BB.IsDead && (!__brain.ActionCtrler.CheckActionRunning() || __brain.ActionCtrler.currActionContext.legAnimGlueEnabled));
+                legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround && !__brain.BB.IsRolling && !__brain.BB.IsJumping && !__brain.BB.IsDown && !__brain.BB.IsDead && (!__brain.ActionCtrler.CheckActionRunning() || __brain.ActionCtrler.currActionContext.legAnimGlueEnabled));
                 legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude > 0 ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.5f : 0.4f, 1);
             };
         }

@@ -100,10 +100,10 @@ namespace Game
                 else
                 {
                     MyHeroBrain.Movement.faceVec = lookVec.Value;
-                    if (MyHeroBrain.SensorCtrler.ListeningColliders.Count > 0 && MyHeroBrain.SensorCtrler.ListeningColliders.FirstOrDefault() != null)
-                        MyHeroBrain.AnimCtrler.HeadLookAt.position = MyHeroBrain.SensorCtrler.ListeningColliders.FirstOrDefault().transform.position + Vector3.up;
-
                     cursorCtrler.cursor.position = MyHeroBrain.Movement.capsule.position + lookVec.Value;
+                    
+                    // if (MyHeroBrain.SensorCtrler.ListeningColliders.Count > 0 && MyHeroBrain.SensorCtrler.ListeningColliders.FirstOrDefault() != null)
+                    //     MyHeroBrain.AnimCtrler.HeadLookAt.position = MyHeroBrain.SensorCtrler.ListeningColliders.FirstOrDefault().transform.position + Vector3.up;
                 }
             }
         }
