@@ -29,6 +29,10 @@ public class UIGame : MonoBehaviour
     {
         Debug.Log("OnPawnSpawned : " + pawn.name);
 
+        //* Hp 출력안하는 Pawn
+        if (pawn is HeroBrain || pawn is DroneBotBrain)
+            return;
+
         bool isStamina = (pawn.PawnBB.stat.maxStamina.Value > 0);
         _hpBarManager.Create(pawn, isStamina);
     }

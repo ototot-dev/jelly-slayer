@@ -139,6 +139,18 @@ namespace Game
                     //* 스테미너 회복 후 액션 수행 가능으로 변경
                     if (BB.stat.stamina.Value == BB.stat.maxStamina.Value && PawnStatusCtrler.CheckStatus(Game.PawnStatus.CanNotAction))
                         PawnStatusCtrler.RemoveStatus(Game.PawnStatus.CanNotAction);
+
+                    //* 회전 방향 갱신
+                    if (BB.CurrDecision == Decisions.Spacing && GameContext.Instance.playerCtrler.ConrolledBrain != null)
+                    {
+                        if (GameContext.Instance.playerCtrler.ConrolledBrain.BB.TargetBrain != null)
+                            Movement.faceVec = (GameContext.Instance.playerCtrler.ConrolledBrain.BB.TargetBrain.GetWorldPosition() - GameContext.Instance.playerCtrler.ConrolledBrain.GetWorldPosition()).Vector2D().normalized;
+                        else
+                            Movement.faceVec = GameContext.Instance.playerCtrler.ConrolledBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                    }
+
+                    var speedAlpha = Mathf.Clamp01(((GameContext.Instance.playerCtrler.ConrolledBrain.GetWorldPosition() - GetWorldPosition()).Vector2D().magnitude - BB.action.minSpacingDistance) / BB.action.maxSpacingDistance);
+                    Movement.moveSpeed = Mathf.Lerp(BB.body.normalSpeed, BB.body.boostSpeed, speedAlpha);
                 }
 
                 BB.stat.ReduceStance(PawnHP.LastDamageTimeStamp, Time.deltaTime);
@@ -148,7 +160,6 @@ namespace Game
 
         void DamageReceiverHandler(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
-
             if (damageContext.receiverBrain.PawnBB.IsDead)
                 return;
             
@@ -207,6 +218,12 @@ namespace Game
             }
         }
 
+        public override void InvalidateDecision(float decisionCoolTime = 0)
+        {
+            __decisionCoolTime = decisionCoolTime;
+            BB.decision.currDecision.Value = Decisions.None;
+        }
+
         public override void OnDecisionFinishedHandler() 
         { 
             InvalidateDecision(0.2f); 
@@ -259,9 +276,9 @@ namespace Game
                         var distance = Mathf.Max(0f, distanceVec.magnitude - targetCapsuleRadius);
                         
                         if (BB.CurrDecision == Decisions.Spacing && distance > BB.SpacingOutDistance)
-                            InvalidateDecision(1f);
+                            InvalidateDecision(0.1f);
                         else if (BB.CurrDecision == Decisions.Approach && distance <= BB.SpacingInDistance)
-                            InvalidateDecision(1f);
+                            InvalidateDecision(0.1f);
                     }
                     else
                     {

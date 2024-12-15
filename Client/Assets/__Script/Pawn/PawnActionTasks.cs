@@ -226,6 +226,7 @@ namespace Game.NodeCanvasExtension
         public BBParameter<float> maxDistance = 1;
         public BBParameter<float> outDistance = 1;
         public BBParameter<float> duration = -1;
+        public bool shouldRotateToTarget = true;
         public bool notifyDecisionFinished = false;
         PawnBrainController __targetBrain;
         PawnBrainController __pawnBrain;
@@ -240,7 +241,7 @@ namespace Game.NodeCanvasExtension
         protected override void OnExecute()
         {
             __targetBrain = target.value.GetComponent<PawnBrainController>();
-            __targetCapsuleRadius = __targetBrain.coreColliderHelper.GetCapsuleCollider() != null ? __targetBrain.coreColliderHelper.GetCapsuleCollider().radius : 0f;
+            __targetCapsuleRadius = (__targetBrain != null && __targetBrain.coreColliderHelper.GetCapsuleCollider() != null) ? __targetBrain.coreColliderHelper.GetCapsuleCollider().radius : 0f;
             __pawnBrain = agent.GetComponent<PawnBrainController>();
             __pawnMovable = __pawnBrain as IPawnMovable;
             __strafeMoveVec = Vector3.zero;
@@ -258,7 +259,7 @@ namespace Game.NodeCanvasExtension
 
             if (isDurationExpired && __moveStrafeDisposable == null)
                 EndAction(true);
-            else if (__targetBrain != null && (__targetBrain.PawnBB.IsDead || __targetBrain.coreColliderHelper.GetApproachDistance(__pawnBrain.coreColliderHelper.transform.position) > outDistance.value))
+            else if (__targetBrain != null && (__targetBrain.PawnBB.IsDead || __targetBrain.coreColliderHelper.GetApproachDistance(__pawnBrain.GetWorldPosition()) > outDistance.value))
                 EndAction(true);
         }
 
@@ -290,12 +291,17 @@ namespace Game.NodeCanvasExtension
                 {
                     if (__strafeMoveVec != Vector3.zero)
                     {
-                        var newDestination = __pawnBrain.coreColliderHelper.transform.position + __minApproachDistance * 2f * (__pawnBrain.coreColliderHelper.transform.rotation * __strafeMoveVec).Vector2D().normalized;
-                        newDestination = __targetBrain.coreColliderHelper.transform.position + (spacingDistance + __targetBrain.coreColliderHelper.GetRadius()) * (newDestination - __targetBrain.coreColliderHelper.transform.position).Vector2D().normalized;
+                        var newDestination = __pawnBrain.GetWorldPosition() + __minApproachDistance * 2f * (__pawnBrain.GetWorldRotation() * __strafeMoveVec).Vector2D().normalized;
+                        if (__targetBrain != null)
+                            newDestination = __targetBrain.GetWorldPosition() + (spacingDistance + __targetCapsuleRadius) * (newDestination - __targetBrain.GetWorldPosition()).Vector2D().normalized;
+                        else
+                            newDestination = target.value.position + spacingDistance * (newDestination - target.value.position).Vector2D().normalized;
+
                         __pawnMovable.SetDestination(newDestination);
                     }
                     
-                    __pawnMovable.SetFaceVector((__targetBrain.coreColliderHelper.transform.position - __pawnBrain.coreColliderHelper.transform.position).Vector2D().normalized);
+                    if (shouldRotateToTarget)
+                        __pawnMovable.SetFaceVector(((__targetBrain != null ? __targetBrain.GetWorldPosition() : target.value.position) - __pawnBrain.GetWorldPosition()).Vector2D().normalized);
                 }).AddTo(agent);
         }
 

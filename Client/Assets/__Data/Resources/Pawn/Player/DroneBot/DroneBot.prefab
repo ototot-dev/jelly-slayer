@@ -66681,10 +66681,10 @@ MonoBehaviour:
   freezeRotation: 0
   rootMotionEnabled: 1
   rootMotionMultiplier: 1
-  moveSpeed: 2
+  moveSpeed: 4
   moveAccel: 5
   moveBrake: 10
-  rotateSpeed: 720
+  rotateSpeed: 360
   gravity: {x: 0, y: 0, z: 0}
   moveVec: {x: 0, y: 0, z: 0}
   faceVec: {x: 0, y: 0, z: 1}
@@ -66817,17 +66817,22 @@ MonoBehaviour:
   target:
     targetPawnHP:
       value: {fileID: 0}
+  body:
+    normalSpeed: 2
+    boostSpeed: 4
   decision:
     currDecision:
       value: -1
+    currSpot:
+      value: {fileID: 0}
     aggressiveLevel:
       value: 0
   action:
     spacingInDistance: 3
-    spacingOutDistance: 4
-    minSpacingDistance: 2
-    maxSpacingDistance: 3
-    minApproachDistance: 1
+    spacingOutDistance: 100
+    minSpacingDistance: 0.2
+    maxSpacingDistance: 1
+    minApproachDistance: 0.1
     holdPositionRate: 1
     moveAroundRate: 1
 --- !u!114 &6890239069593880897
