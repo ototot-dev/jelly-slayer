@@ -18513,6 +18513,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84284de0ebe794b9fa73582f96e89856, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  host: {fileID: 5773660180996915832}
+  spots:
+  - {fileID: 6132712717376109933}
+  - {fileID: 2089961859844078718}
 --- !u!1 &8867396402939727795
 GameObject:
   m_ObjectHideFlags: 0
