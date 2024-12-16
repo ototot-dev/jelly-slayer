@@ -170,23 +170,26 @@ namespace Game
             if (damageContext.receiverBrain.PawnBB.IsDead)
                 return;
 
-            if (damageContext.receiverPenalty.Item1 == Game.PawnStatus.None)
+            // 슈퍼 아머면 Hit 애니 무시
+            if (ActionCtrler.GetSuperArmorLevel() == PawnActionController.SuperArmorLevels.None)
             {
-                ActionCtrler.StartAddictiveAction(damageContext, "!OnHit");
-            }
-            else
-            {
-                if (ActionCtrler.CheckActionRunning())
-                    ActionCtrler.CancelAction(false);
-
-                switch (damageContext.receiverPenalty.Item1)
+                if (damageContext.receiverPenalty.Item1 == Game.PawnStatus.None)
                 {
-                    case Game.PawnStatus.Staggered: ActionCtrler.StartAction(damageContext, "!OnHit", string.Empty); break;
-                    case Game.PawnStatus.KnockDown: ActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty); break;
-                    case Game.PawnStatus.Groggy: ActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty); break;
+                    ActionCtrler.StartAddictiveAction(damageContext, "!OnHit");
+                }
+                else
+                {
+                    if (ActionCtrler.CheckActionRunning())
+                        ActionCtrler.CancelAction(false);
+
+                    switch (damageContext.receiverPenalty.Item1)
+                    {
+                        case Game.PawnStatus.Staggered: ActionCtrler.StartAction(damageContext, "!OnHit", string.Empty); break;
+                        case Game.PawnStatus.KnockDown: ActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty); break;
+                        case Game.PawnStatus.Groggy: ActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty); break;
+                    }
                 }
             }
-            
             if (damageContext.finalDamage > 0)
                 GameManager.Instance.PawnDamaged(ref damageContext);
         }
