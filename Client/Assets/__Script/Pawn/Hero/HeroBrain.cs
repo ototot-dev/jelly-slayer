@@ -171,7 +171,7 @@ namespace Game
                 return;
 
             // 슈퍼 아머면 Hit 애니 무시
-            if (ActionCtrler.GetSuperArmorLevel() == PawnActionController.SuperArmorLevels.None)
+            //if (ActionCtrler.GetSuperArmorLevel() == PawnActionController.SuperArmorLevels.None)
             {
                 if (damageContext.receiverPenalty.Item1 == Game.PawnStatus.None)
                 {
