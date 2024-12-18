@@ -16,7 +16,7 @@ namespace Game
         public Animator mainAnimator;
         public LegsAnimator legAnimator;
         public RigBuilder rigBuilder;
-        public  Dictionary<Rigidbody, Tuple<Vector3, Quaternion>> capturedPhysicsBodyTransforms = new();
+        public Dictionary<Rigidbody, Tuple<Vector3, Quaternion>> capturedPhysicsBodyTransforms = new();
         Dictionary<string, ObservableStateMachineTriggerEx> __observableStateMachineTriggersCached = new();
         
         public ObservableStateMachineTriggerEx FindObservableStateMachineTriggerEx(string stateName)

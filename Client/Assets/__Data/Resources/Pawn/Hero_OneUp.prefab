@@ -176,21 +176,18 @@ MonoBehaviour:
   mainAnimator: {fileID: 3244703593152202959}
   legAnimator: {fileID: 3673634840836888687}
   rigBuilder: {fileID: 8157329558261335758}
+  ragdollAnimator: {fileID: 1508909516796287826}
   spineOverrideTransform: {fileID: 7333061147978076615}
   shieldMeshSlot: {fileID: 3556273806665314536}
   weaponMeshSlot: {fileID: 5806174125005292053}
   HeadLookAt: {fileID: 3872346485875650652}
   hipBone: {fileID: 3244703593161533285}
-  hipBoneOffset: 0
   animLayerBlendSpeed: 10
   legAnimGlueBlendSpeed: 1
   blockAdditiveAnimClips:
   - {fileID: -1905609392677946133, guid: f0ff99e8eab4a414f9d77bc4eec20c58, type: 3}
   - {fileID: 8952413660455403669, guid: b96a3e38fca3f1f4ab5c7baf1321adad, type: 3}
   - {fileID: -1322499967654159940, guid: bda0f2cfce46d2a4ea7240385b97e185, type: 3}
-  _animControllers:
-  - {fileID: 9100000, guid: 96f39dd9e39524e91a1faa7df1f2b44d, type: 2}
-  - {fileID: 9100000, guid: b0a53207096461842807c69fcb6b5bd7, type: 2}
 --- !u!114 &7401026273244081378
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -304,6 +301,12 @@ MonoBehaviour:
       value: 0
     chargingLevel:
       value: 0
+    testIsAir:
+      value: 0
+    testHanging:
+      value: 0
+    testDroneBotBrain:
+      value: {fileID: 0}
 --- !u!114 &8791414763947496166
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -472,8 +475,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 459012276261514446}
   - {fileID: 8819654574563920222}
+  - {fileID: 459012276261514446}
   m_Father: {fileID: 3244703593161533231}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &18808741469499199
@@ -4379,7 +4382,7 @@ Transform:
   m_GameObject: {fileID: 3244703593161571087}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.02, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5377,9 +5380,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   handler:
-    _Editor_SelectedChain: 4
-    _Editor_ChainCategory: 1
-    _EditorCategory: 1
+    _Editor_SelectedChain: 0
+    _Editor_ChainCategory: 2
+    _EditorCategory: 3
     _EditorMainCategory: 1
     _EditorMotionCategory: 2
     m_hemi: {fileID: -2508796484986968503, guid: 44d994eaad14fdf49a2dd378b4d62094, type: 3}
@@ -5532,8 +5535,8 @@ MonoBehaviour:
     MaxDepenetrationVelocity: 0
     ProjectionMode: 0
     PreProcessing: 0
-    RagdollBlend: 0
-    animatingMode: 1
+    RagdollBlend: 1
+    animatingMode: 0
     UseReconstruction: 0
     UnitySolverIterations: 12
     Calibrate: 1
@@ -18544,7 +18547,7 @@ MonoBehaviour:
   _useFlatBaseForGroundChecks: 0
   _collisionLayers:
     serializedVersion: 2
-    m_Bits: 12872
+    m_Bits: 8776
   _triggerInteraction: 1
   _advanced:
     minMoveDistance: 0

@@ -6,6 +6,10 @@ namespace Game
 {
     public class DroneBotAnimController : PawnAnimController
     {
+        [Header("Component")]
+        public Transform leftHand;
+        public Transform rightHand;
+
         void Awake()
         {
             __brain = GetComponent<DroneBotBrain>();

@@ -66707,6 +66707,8 @@ MonoBehaviour:
   mainAnimator: {fileID: 681538142487681436}
   legAnimator: {fileID: 0}
   rigBuilder: {fileID: 0}
+  leftHand: {fileID: 5988580521898645832}
+  rightHand: {fileID: 1824209911909775786}
 --- !u!114 &7964531593209544771
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72032,7 +72034,7 @@ MonoBehaviour:
   _useFlatBaseForGroundChecks: 0
   _collisionLayers:
     serializedVersion: 2
-    m_Bits: 12872
+    m_Bits: 8776
   _triggerInteraction: 1
   _advanced:
     minMoveDistance: 0

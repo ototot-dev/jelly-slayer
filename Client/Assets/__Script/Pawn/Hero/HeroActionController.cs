@@ -77,9 +77,10 @@ namespace Game
                 {
                     __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0);
                     __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
+                    
+                    //* 경직 지속 시간과 맞춰주기 위해서 'AnimSpeed' 값을 조정함
+                    __brain.AnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1f / damageContext.receiverPenalty.Item2);
                 }
-                //* 경직 지속 시간과 맞춰주기 위해서 'AnimSpeed' 값을 조정함
-                __brain.AnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1f / damageContext.receiverPenalty.Item2);
 
                 if (damageContext.actionResult == ActionResults.Damaged)
                 {

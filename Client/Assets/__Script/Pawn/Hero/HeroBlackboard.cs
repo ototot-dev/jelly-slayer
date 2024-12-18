@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using FIMSpace.FProceduralAnimation;
 using MainTable;
 using UniRx;
 using UnityEngine;
@@ -40,6 +41,11 @@ namespace Game
             public BoolReactiveProperty isAutoGuardEnabled = new(true);
             public BoolReactiveProperty isCharging = new();
             public IntReactiveProperty chargingLevel = new();
+
+
+            public BoolReactiveProperty testIsAir = new();
+            public BoolReactiveProperty testHanging = new();
+            public ReactiveProperty<DroneBotBrain> testDroneBotBrain = new();
         }
 
         public Action action = new();
@@ -56,6 +62,21 @@ namespace Game
             body.guardSpeed = pawnData_Movement.guardSpeed;
             body.sprintSpeed = pawnData_Movement.sprintSpeed;
             // body.jumpHeight = pawnData_Movement.jumpHeight;
+
+            action.testIsAir.Skip(1).Subscribe(v =>
+            {
+                GetComponent<HeroBrain>().AnimCtrler.mainAnimator.SetTrigger("OnAir");
+                // GetComponent<HeroBrain>().AnimCtrler.mainAnimator.SetBool("IsAir", v);
+
+            }).AddTo(this);
+
+            Observable.EveryFixedUpdate().Where(_ => action.testHanging.Value && action.testDroneBotBrain.Value != null).Subscribe(_ =>
+            {
+                var leftDummyBone = GetComponent<HeroBrain>().AnimCtrler.ragdollAnimator.GetRagdollHandler.User_GetBoneSetupByBoneID(ERagdollBoneID.LeftHand).PhysicalDummyBone;
+                var rightDummyBone = GetComponent<HeroBrain>().AnimCtrler.ragdollAnimator.GetRagdollHandler.User_GetBoneSetupByBoneID(ERagdollBoneID.RightHand).PhysicalDummyBone;
+                leftDummyBone.GetComponent<Rigidbody>().MovePosition(leftDummyBone.transform.position.LerpSpeed(action.testDroneBotBrain.Value.AnimCtrler.leftHand.position, 1f, Time.fixedDeltaTime));
+                rightDummyBone.GetComponent<Rigidbody>().MovePosition(rightDummyBone.transform.position.LerpSpeed(action.testDroneBotBrain.Value.AnimCtrler.rightHand.position, 1f, Time.fixedDeltaTime));
+            }).AddTo(this);
         }
 
         public MainTable.PawnData_Movement pawnData_Movement;

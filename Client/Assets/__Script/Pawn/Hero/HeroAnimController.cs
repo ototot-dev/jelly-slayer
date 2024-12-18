@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FIMSpace.FProceduralAnimation;
 using UniRx;
 using UnityEditor;
 using UnityEngine;
@@ -9,16 +10,18 @@ namespace Game
 {
     public class HeroAnimController : PawnAnimController
     {
+        [Header("Component")]
+        public RagdollAnimator2 ragdollAnimator;
         public OverrideTransform spineOverrideTransform;
         public Transform shieldMeshSlot;
         public Transform weaponMeshSlot;
         public Transform HeadLookAt;
         public Transform hipBone;
-        public float hipBoneOffset;
+
+        [Header("Parameter")]
         public float animLayerBlendSpeed = 1;
         public float legAnimGlueBlendSpeed = 1;
         public AnimationClip[] blockAdditiveAnimClips;
-        public RuntimeAnimatorController[] _animControllers;
 
         void Awake()
         {
