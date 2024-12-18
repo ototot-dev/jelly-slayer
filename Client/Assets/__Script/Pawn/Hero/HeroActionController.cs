@@ -42,7 +42,7 @@ namespace Game
 
         public override bool CanBlockAction(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
-            if (__brain.BB.IsRolling || __brain.BB.IsJumping || (!__brain.BB.IsGuarding && !__brain.BB.IsAutoGuardEnabled))
+            if (__brain.BB.IsCharging || __brain.BB.IsRolling || __brain.BB.IsJumping || (!__brain.BB.IsGuarding && !__brain.BB.IsAutoGuardEnabled))
                 return false;
             if (__brain.ActionCtrler.CheckActionRunning() || __brain.StatusCtrler.CheckStatus(PawnStatus.Staggered) || __brain.StatusCtrler.CheckStatus(PawnStatus.CanNotGuard))
                 return false;
@@ -72,16 +72,15 @@ namespace Game
                     __brain.AnimCtrler.mainAnimator.SetFloat("HitX", 0f);
                     __brain.AnimCtrler.mainAnimator.SetFloat("HitY", hitVec.z > 0f ? 1f : -1f);
                 }
+                __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0);
+                __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
 
                 if (GetSuperArmorLevel() != SuperArmorLevels.CanNotStarggerOnDamaged)
                 {
-                    __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0);
-                    __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
-                    
                     //* 경직 지속 시간과 맞춰주기 위해서 'AnimSpeed' 값을 조정함
                     __brain.AnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1f / damageContext.receiverPenalty.Item2);
                 }
-
+                
                 if (damageContext.actionResult == ActionResults.Damaged)
                 {
                     SoundManager.Instance.Play(SoundID.HIT_FLESH);
