@@ -70,6 +70,7 @@ namespace Game
 
         [Header("Component")]
         public Transform droneBotAttachPoint;
+        //public Highlighters.HighlighterSettings _highlighters;
 
         public HeroBlackboard BB { get; private set; }
         public HeroMovement Movement { get; private set; }
@@ -106,6 +107,9 @@ namespace Game
                 if ((actionContext.actionData?.actionName ?? string.Empty) == "DrinkPotion")
                     Movement.moveSpeed = BB.body.walkSpeed;
 
+                if (StatusCtrler.CheckStatus(PawnStatus.IncPoise) == true) {
+                    StatusCtrler.AddStatus(PawnStatus.IncPoise, 50, 1);
+                }
             };
 
             ActionCtrler.onActionCanceled += (actionContext, _) =>
@@ -140,6 +144,25 @@ namespace Game
                 BB.stat.RecoverStamina(Mathf.Max(timeStampA, timeStampB), Time.deltaTime);
                 BB.stat.ReduceStance(PawnHP.LastDamageTimeStamp, Time.deltaTime);
             };
+
+            StatusCtrler.onStatusActive += (statusContext) =>
+            {
+                if (statusContext == PawnStatus.IncPoise)
+                {
+                    BB.stat.poise = BB.pawnData.poise + StatusCtrler.GetStrength(PawnStatus.IncPoise);
+                }
+            };
+            StatusCtrler.onStatusDeactive += (statusContext) =>
+            {
+                if (statusContext == PawnStatus.IncPoise)
+                {
+                    BB.stat.poise = BB.pawnData.poise;
+                }
+            };
+            BB.action.isCharging.Subscribe(v => 
+            {
+                StatusCtrler.AddStatus(PawnStatus.IncPoise, 50);
+            });
 
             onTick += (_) =>
             {
