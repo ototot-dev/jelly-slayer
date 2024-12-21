@@ -49,10 +49,10 @@ namespace Game
         }
         public void UpdateTarget()
         {
-            if (__playerCtrler.ConrolledBrain == null)
+            if (__playerCtrler.heroBrain == null)
                 return;
 
-            var heroBrain = __playerCtrler.ConrolledBrain;
+            var heroBrain = __playerCtrler.heroBrain;
             var curTarget = heroBrain.BB.TargetBrain;
 
             // If Target is Dead....
@@ -64,7 +64,7 @@ namespace Game
                 return;
             }
             // If the target is null, find a target.
-            var newTarget = FindTarget(__playerCtrler.ConrolledBrain);
+            var newTarget = FindTarget(__playerCtrler.heroBrain);
             if (heroBrain.BB.TargetPawn == null)
             {
                 if (newTarget != null)

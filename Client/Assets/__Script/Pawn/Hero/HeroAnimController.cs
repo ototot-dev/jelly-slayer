@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using FIMSpace.BonesStimulation;
 using FIMSpace.FProceduralAnimation;
+using NodeCanvas.Framework.Internal;
 using UniRx;
 using UnityEditor;
 using UnityEngine;
@@ -13,6 +15,10 @@ namespace Game
         [Header("Component")]
         public RagdollAnimator2 ragdollAnimator;
         public OverrideTransform spineOverrideTransform;
+        public TwoBoneIKConstraint leftArmTwoBoneIK;
+        public TwoBoneIKConstraint rightArmTwoBoneIK;
+        public BonesStimulator leftLegBoneSimulator;
+        public BonesStimulator rightLegBoneSimulator;
         public Transform shieldMeshSlot;
         public Transform weaponMeshSlot;
         public Transform HeadLookAt;
@@ -76,10 +82,15 @@ namespace Game
                     __brain.Movement.AddRootMotion(2f * mainAnimator.deltaPosition, Quaternion.identity);
                 }
 
-                if (__brain.ActionCtrler.CheckActionRunning() || mainAnimator.GetBool("IsGuarding") || __watchingStateNames.Contains("DrinkPotion") || __watchingStateNames.Contains("GuardParry"))
+                if (__brain.BB.IsHanging || __brain.ActionCtrler.CheckActionRunning() || mainAnimator.GetBool("IsGuarding") || __watchingStateNames.Contains("DrinkPotion") || __watchingStateNames.Contains("GuardParry"))
                     spineOverrideTransform.weight = 0f;
                 else
                     spineOverrideTransform.weight = 1f;
+
+                leftArmTwoBoneIK.weight = leftArmTwoBoneIK.weight.LerpSpeed(__brain.BB.IsHanging ? 1f : 0f, 2f, Time.deltaTime);
+                rightArmTwoBoneIK.weight = leftArmTwoBoneIK.weight.LerpSpeed(__brain.BB.IsHanging ? 1f : 0f, 2f, Time.deltaTime);
+                leftLegBoneSimulator.StimulatorAmount = leftLegBoneSimulator.StimulatorAmount.LerpSpeed(__brain.BB.IsHanging ? 0.4f : 0f, 2f, Time.deltaTime);
+                rightLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount.LerpSpeed(__brain.BB.IsHanging ? 0.5f : 0f, 2f, Time.deltaTime);
 
                 if (__brain.StatusCtrler.CheckStatus(PawnStatus.Staggered) || __brain.StatusCtrler.CheckStatus(PawnStatus.CanNotGuard))
                 {
@@ -93,7 +104,7 @@ namespace Game
                 }
 
                 mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
-                mainAnimator.SetLayerWeight(2, __brain.BB.IsJumping ? 0f : 1f);
+                mainAnimator.SetLayerWeight(2, __brain.BB.IsJumping || __brain.BB.IsHanging ? 0f : 1f);
 
                 if (__watchingStateNames.Contains("GuardParry"))
                     mainAnimator.SetLayerWeight(3, 1f);

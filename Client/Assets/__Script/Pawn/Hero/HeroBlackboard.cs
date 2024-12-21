@@ -10,6 +10,7 @@ namespace Game
     public class HeroBlackboard : PawnBlackboard
     {
         public bool IsJumping => action.isJumping.Value;
+        public bool IsHanging => action.hangingBrain.Value != null;
         public bool IsRolling => action.isRolling.Value;
         public bool IsGuarding => action.isGuarding.Value;
         public bool IsGuardBroken => action.isGuardbroken.Value;
@@ -35,6 +36,8 @@ namespace Game
         public class Action
         {
             public BoolReactiveProperty isJumping = new();
+            public BoolReactiveProperty isHanging = new();
+            public ReactiveProperty<DroneBotBrain> hangingBrain = new();
             public BoolReactiveProperty isRolling = new();
             public BoolReactiveProperty isGuarding = new();
             public BoolReactiveProperty isGuardbroken = new();

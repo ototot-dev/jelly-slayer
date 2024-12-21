@@ -68,6 +68,9 @@ namespace Game
         [Header("Chain")]
         public ChainController _chainCtrl;
 
+        [Header("Component")]
+        public Transform droneBotAttachPoint;
+
         public HeroBlackboard BB { get; private set; }
         public HeroMovement Movement { get; private set; }
         public HeroAnimController AnimCtrler { get; private set; }

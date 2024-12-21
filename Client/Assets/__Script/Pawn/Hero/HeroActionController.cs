@@ -240,7 +240,7 @@ namespace Game
                         Quaternion.identity, Vector3.one, 1f);
                     SoundManager.Instance.Play(SoundID.JUMP);
                 }
-                else
+                else if (__brain.Movement.IsOnGround)
                 {
                     EffectManager.Instance.Show("JumpCloudSmall", __brain.GetWorldPosition() + 
                         Time.deltaTime * __brain.Movement.moveSpeed * __brain.Movement.moveVec + 

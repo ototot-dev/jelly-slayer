@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using Packets;
 using UniRx;
-using Unity.Linq;
 using UnityEngine;
 
 namespace Game
@@ -19,8 +16,8 @@ namespace Game
 
 #region ISpawnable/IMovable 구현
         Vector3 IPawnSpawnable.GetSpawnPosition() => transform.position;
-        void IPawnSpawnable.OnStartSpawnHandler() { Movement.capsule.gameObject.layer = LayerMask.NameToLayer("PawnOverlapped"); }
-        void IPawnSpawnable.OnFinishSpawnHandler() { Movement.capsule.gameObject.layer = LayerMask.NameToLayer("Pawn"); }
+        void IPawnSpawnable.OnStartSpawnHandler() { }
+        void IPawnSpawnable.OnFinishSpawnHandler() { }
         void IPawnSpawnable.OnDespawnedHandler() { }
         void IPawnSpawnable.OnDeadHandler() 
         { 
@@ -53,6 +50,8 @@ namespace Game
         {
             None = -1,
             Idle,
+            Catch,
+            Hanging,
             Spacing,
             Approach,
             Max
@@ -80,6 +79,7 @@ namespace Game
         }
 
         protected float __decisionCoolTime;
+
 
         protected override void StartInternal()
         {
@@ -139,18 +139,10 @@ namespace Game
                     //* 스테미너 회복 후 액션 수행 가능으로 변경
                     if (BB.stat.stamina.Value == BB.stat.maxStamina.Value && PawnStatusCtrler.CheckStatus(Game.PawnStatus.CanNotAction))
                         PawnStatusCtrler.RemoveStatus(Game.PawnStatus.CanNotAction);
-
-                    //* 회전 방향 갱신
-                    if (BB.CurrDecision == Decisions.Spacing && GameContext.Instance.playerCtrler.ConrolledBrain != null)
-                    {
-                        if (GameContext.Instance.playerCtrler.ConrolledBrain.BB.TargetBrain != null)
-                            Movement.faceVec = (GameContext.Instance.playerCtrler.ConrolledBrain.BB.TargetBrain.GetWorldPosition() - GameContext.Instance.playerCtrler.ConrolledBrain.GetWorldPosition()).Vector2D().normalized;
-                        else
-                            Movement.faceVec = GameContext.Instance.playerCtrler.ConrolledBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-                    }
-
-                    var speedAlpha = Mathf.Clamp01(((GameContext.Instance.playerCtrler.ConrolledBrain.GetWorldPosition() - GetWorldPosition()).Vector2D().magnitude - BB.action.minSpacingDistance) / BB.action.maxSpacingDistance);
-                    Movement.moveSpeed = Mathf.Lerp(BB.body.normalSpeed, BB.body.boostSpeed, speedAlpha);
+                    
+                    //* Catch 단계가 완료됨을 확인 후에 Hanging 시작
+                    if (BB.CurrDecision == Decisions.Catch && Movement.CheckCatchingDurationExpired())
+                        GameContext.Instance.playerCtrler.heroBrain.Movement.StartHanging();
                 }
 
                 BB.stat.ReduceStance(PawnHP.LastDamageTimeStamp, Time.deltaTime);
@@ -184,7 +176,6 @@ namespace Game
         }
         void DamageSenderHandler(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
-
             if (damageContext.senderBrain.PawnBB.IsDead)
                 return;
 
@@ -267,6 +258,14 @@ namespace Game
                 {
                     InvalidateDecision(0.1f);
                 }
+                else if (BB.CurrDecision == Decisions.Catch)
+                {   
+                    ;
+                }
+                else if (BB.CurrDecision == Decisions.Hanging)
+                {   
+                    ;
+                }
                 else
                 {
                     if (BB.CurrDecision == Decisions.Spacing || BB.CurrDecision == Decisions.Approach)
@@ -316,6 +315,9 @@ namespace Game
         protected virtual Decisions MakeDecision()
         {
             Debug.Assert(BB.TargetPawn != null);
+            //* Catch, Hanging 2개의 상태는 MakeDecision() 함수에 의해서 갱신될 수 없음
+            Debug.Assert(BB.CurrDecision != Decisions.Catch && BB.CurrDecision != Decisions.Hanging);
+
             return BB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position) < BB.SpacingInDistance ? Decisions.Spacing : Decisions.Approach;
         }
         

@@ -68,6 +68,8 @@ namespace Game
                     }
                     else if (ActionCtrler.CurrActionName == "Counter")
                     {
+                        ActionDataSelector.BoostSelection(__combo1ActionData, BB.action.comboAttackRateBoostAfterCounterAttack);
+
                         //* 반격 후에 1타 공격
                         if (ActionDataSelector.EvaluateSelection(__combo1ActionData, -1f, 1f))
                         {
@@ -129,7 +131,6 @@ namespace Game
                 if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && ActionDataSelector.EvaluateSelection(__counterActionData, -1f, 1f) && CheckTargetVisibility())
                 {
                     ActionDataSelector.ResetSelection(__counterActionData);
-                    ActionDataSelector.BoostSelection(__combo1ActionData, BB.action.comboAttackRateBoostAfterCounterAttack);
                     ActionCtrler.SetPendingAction("Counter");
                 }
                 else

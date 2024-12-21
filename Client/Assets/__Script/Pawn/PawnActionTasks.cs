@@ -48,6 +48,38 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    public class FreePosition : ActionTask
+    {
+        public BBParameter<float> duration = -1;
+        public bool notifyDecisionFinished = false;
+        PawnBrainController __pawnBrain;
+        float __executeTimeStamp;
+
+        protected override void OnExecute()
+        {
+            __pawnBrain = agent.GetComponent<PawnBrainController>();
+            Debug.Assert(__pawnBrain != null);
+            
+            __executeTimeStamp = Time.time;
+        }
+
+        protected override void OnUpdate()
+        {
+            base.OnUpdate();
+
+            if (duration.value > 0 && Time.time - __executeTimeStamp > duration.value)
+                EndAction(true);
+        }
+
+        protected override void OnStop(bool interrupted)
+        {
+            base.OnStop(interrupted);
+
+            if (!interrupted && notifyDecisionFinished)
+                __pawnBrain.OnDecisionFinishedHandler();
+        }
+    }
+
     public class HoldPosition : ActionTask
     {
         public BBParameter<Transform> lookAt;
@@ -168,6 +200,8 @@ namespace Game.NodeCanvasExtension
         public BBParameter<Transform> target;
         public BBParameter<float> approachDistance;
         public BBParameter<float> duration = -1;
+        public bool shouldRotateToTarget = true;
+        public bool ignoreTargetRadius;
         public bool stopOnReachToDestination;
         public bool notifyDecisionFinished;
 
@@ -189,7 +223,10 @@ namespace Game.NodeCanvasExtension
             __targetCapsuleRadius = __targetBrain != null && __targetBrain.coreColliderHelper.GetCapsuleCollider() != null ? __targetBrain.coreColliderHelper.GetCapsuleCollider().radius : 0f;
             __pawnBrain = agent.GetComponent<PawnBrainController>();
             __pawnActionCtrler = __pawnBrain.GetComponent<PawnActionController>();
+
+            Debug.Assert(__pawnBrain is IPawnMovable);
             __pawnMovable = __pawnBrain as IPawnMovable;
+            __pawnMovable.FreezeRotation(!shouldRotateToTarget);
             __executeTimeStamp = Time.time;
         }
 
@@ -197,7 +234,7 @@ namespace Game.NodeCanvasExtension
         {
             base.OnUpdate();
 
-            __pawnMovable.SetMinApproachDistance(approachDistance.value + __targetCapsuleRadius);
+            __pawnMovable.SetMinApproachDistance(approachDistance.value + (ignoreTargetRadius ? 0f : __targetCapsuleRadius));
             if (__pawnActionCtrler == null || !__pawnActionCtrler.CheckActionRunning())
                 __pawnMovable.SetDestination(__targetBrain != null ? __targetBrain.coreColliderHelper.transform.position : target.value.position);
 
@@ -211,8 +248,11 @@ namespace Game.NodeCanvasExtension
         {
             base.OnStop(interrupted);
             
-            if(__pawnMovable != null)
+            if (__pawnMovable != null)
+            {
                 __pawnMovable.Stop();
+                __pawnMovable.FreezeRotation(false);
+            }
 
             if (!interrupted && notifyDecisionFinished && __pawnBrain != null)
                 __pawnBrain.OnDecisionFinishedHandler();

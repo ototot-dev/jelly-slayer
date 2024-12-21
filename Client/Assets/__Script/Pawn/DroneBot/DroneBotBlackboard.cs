@@ -9,8 +9,10 @@ namespace Game
     {
         public DroneBotBrain.Decisions CurrDecision => decision.currDecision.Value;
         public Transform CurrSpot => decision.currSpot.Value;
+        public bool IsHanging => GameContext.Instance.HeroBrain.BB.IsHanging && GameContext.Instance.HeroBrain.BB.action.hangingBrain.Value;
         public float AggressiveLevel => decision.aggressiveLevel.Value;
         public bool IsInCombat => decision.aggressiveLevel.Value >= 0f;
+        public float CatchingDuration => action.catchingDuration;
         public float SpacingInDistance => action.spacingInDistance;
         public float SpacingOutDistance => action.spacingOutDistance;
         public float MinSpacingDistance => action.minSpacingDistance;
@@ -24,6 +26,9 @@ namespace Game
         {
             public float normalSpeed = 1f;
             public float boostSpeed = 1f;
+            public float catchSpeed = 1f;
+            public float flyHeight = 1f;
+            public float flyHeightAdjustSpeed = 1f;
         }
 
         public Body body = new();
@@ -41,6 +46,7 @@ namespace Game
         [Serializable]
         public class Action
         {
+            public float catchingDuration = 1f;
             public float spacingInDistance = 1f;
             public float spacingOutDistance = 1f;
             public float minSpacingDistance = 1f;
