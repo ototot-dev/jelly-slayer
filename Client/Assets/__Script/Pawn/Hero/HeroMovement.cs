@@ -11,8 +11,8 @@ namespace Game
     {
         public float LastJumpTimeStamp => __jumpTimeStamp;
         public float LastRollingTimeStamp => __rollingTimeStamp;
-        public float ImpulsePowerOnJump => Mathf.Sqrt(2 * __heroBrain.BB.body.jumpHeight * gravity.magnitude);
-        public float EstimatedJumpDuration => Mathf.Sqrt(8 * __heroBrain.BB.body.jumpHeight / gravity.magnitude);
+        public float ImpulsePowerOnJump => Mathf.Sqrt(2 * __brain.BB.body.jumpHeight * gravity.magnitude);
+        public float EstimatedJumpDuration => Mathf.Sqrt(8 * __brain.BB.body.jumpHeight / gravity.magnitude);
         public void LegAnimatorStepEvent(LegsAnimator.Leg leg, float power, bool isRight, Vector3 position, Quaternion rotation, LegsAnimator.EStepType type) {}
 
         public void StartJumping()
@@ -21,17 +21,17 @@ namespace Game
             __jumpTimeStamp = Time.time;
             __ecmMovement.velocity.y = ImpulsePowerOnJump;
             __ecmMovement.PauseGroundConstraint();
-            __heroBrain.AnimCtrler.mainAnimator.SetTrigger("OnJump");
-            __heroBrain.AnimCtrler.mainAnimator.SetBool("IsJumping", true);
-            __heroBrain.BB.action.isJumping.Value = true;
+            __brain.AnimCtrler.mainAnimator.SetTrigger("OnJump");
+            __brain.AnimCtrler.mainAnimator.SetBool("IsJumping", true);
+            __brain.BB.action.isJumping.Value = true;
         }
 
         public void FinishJumping()
         {
             __landingTimeStamp = Time.time;
-            __heroBrain.AnimCtrler.mainAnimator.SetBool("IsJumping", false);
-            __heroBrain.AnimCtrler.legAnimator.User_AddImpulse(new ImpulseExecutor(0.2f * Vector3.down, Vector3.zero, 0.2f));
-            __heroBrain.BB.action.isJumping.Value = false;
+            __brain.AnimCtrler.mainAnimator.SetBool("IsJumping", false);
+            __brain.AnimCtrler.legAnimator.User_AddImpulse(new ImpulseExecutor(0.2f * Vector3.down, Vector3.zero, 0.2f));
+            __brain.BB.action.isJumping.Value = false;
         }
 
         public void PrepareHanging(DroneBotBrain hangingBrain)
@@ -47,20 +47,21 @@ namespace Game
 
             //* Decision 값을 'Hanging'으로 직접 변경함
             __reservedHangingBrain.BB.decision.currDecision.Value = DroneBotBrain.Decisions.Hanging;
-            __heroBrain.BB.action.hangingBrain.Value = __reservedHangingBrain;
+            __brain.BB.action.hangingBrain.Value = __reservedHangingBrain;
             __reservedHangingBrain = null;
 
             //* 점프가 혹 종료되는 상황은 발생하면 안됨
-            Debug.Assert(__heroBrain.BB.IsJumping);
-            __heroBrain.BB.action.isJumping.Value = false;
-            __heroBrain.AnimCtrler.mainAnimator.SetTrigger("OnHanging");
-            __heroBrain.AnimCtrler.mainAnimator.SetBool("IsHanding", true);
+            Debug.Assert(__brain.BB.IsJumping);
+            __brain.BB.action.isJumping.Value = false;
+            __brain.AnimCtrler.mainAnimator.SetTrigger("OnHanging");
+            __brain.AnimCtrler.mainAnimator.SetBool("IsHanding", true);
 
             //* HangingAttachPoint까지 남은 거리를 부드럽게 Lerp 처리함
+            __hangingLerpDisposable?.Dispose();
             __hangingLerpDisposable = Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.1f)))
                 .DoOnCancel(() => __hangingLerpDisposable = null)
                 .DoOnCompleted(() => __hangingLerpDisposable = null)
-                .Subscribe(_ => __ecmMovement.SetPosition(capsule.transform.position.LerpSpeed(__heroBrain.BB.action.hangingBrain.Value.AnimCtrler.hangingPoint.position, moveSpeed, Time.deltaTime))).AddTo(this);
+                .Subscribe(_ => __ecmMovement.SetPosition(capsule.transform.position.LerpSpeed(__brain.BB.action.hangingBrain.Value.AnimCtrler.hangingPoint.position, moveSpeed, Time.deltaTime))).AddTo(this);
         }
 
         DroneBotBrain __reservedHangingBrain;
@@ -68,55 +69,55 @@ namespace Game
 
         public void FinishHanging()
         {
-            Debug.Assert(__heroBrain.BB.action.hangingBrain.Value != null);
+            Debug.Assert(__brain.BB.action.hangingBrain.Value != null);
             
-            __heroBrain.BB.action.hangingBrain.Value.InvalidateDecision(0.1f);
-            __heroBrain.BB.action.hangingBrain.Value = null;
-            __heroBrain.AnimCtrler.mainAnimator.SetBool("IsHanding", false);
+            __brain.BB.action.hangingBrain.Value.InvalidateDecision(0.1f);
+            __brain.BB.action.hangingBrain.Value = null;
+            __brain.AnimCtrler.mainAnimator.SetBool("IsHanding", false);
         }
 
         public void StartRolling(float duration)
         {
-            if (__heroBrain.BB.IsRolling)
+            if (__brain.BB.IsRolling)
                 return;
 
             var rollingXZ = Vector3.zero;
-            if (__heroBrain.Movement.moveVec == Vector3.zero)
+            if (__brain.Movement.moveVec == Vector3.zero)
             {
                 rollingXZ = Vector3.back;
                 __rollingVec = -capsule.forward.Vector2D().normalized;
             }
             else
             {
-                rollingXZ = capsule.InverseTransformDirection(__heroBrain.Movement.moveVec);
-                __rollingVec = __heroBrain.Movement.moveVec.Vector2D().normalized;
+                rollingXZ = capsule.InverseTransformDirection(__brain.Movement.moveVec);
+                __rollingVec = __brain.Movement.moveVec.Vector2D().normalized;
             }
 
             __rollingTimeStamp = Time.time;
-            __rollingSpeed = __heroBrain.BB.body.rollingDistance / duration;
+            __rollingSpeed = __brain.BB.body.rollingDistance / duration;
             __rollingDuration = duration;
 
             if (Mathf.Abs(rollingXZ.x) > Mathf.Abs(rollingXZ.z))
             {
-                __heroBrain.AnimCtrler.mainAnimator.SetFloat("RollingX", rollingXZ.x > 0f ? 1f : -1f);
-                __heroBrain.AnimCtrler.mainAnimator.SetFloat("RollingY", 0);
+                __brain.AnimCtrler.mainAnimator.SetFloat("RollingX", rollingXZ.x > 0f ? 1f : -1f);
+                __brain.AnimCtrler.mainAnimator.SetFloat("RollingY", 0);
             }
             else
             {
-                __heroBrain.AnimCtrler.mainAnimator.SetFloat("RollingX", 0);
-                __heroBrain.AnimCtrler.mainAnimator.SetFloat("RollingY", rollingXZ.z > 0f ? 1f : -1f);
+                __brain.AnimCtrler.mainAnimator.SetFloat("RollingX", 0);
+                __brain.AnimCtrler.mainAnimator.SetFloat("RollingY", rollingXZ.z > 0f ? 1f : -1f);
             }
-            __heroBrain.AnimCtrler.mainAnimator.SetBool("IsRolling", true);
-            __heroBrain.AnimCtrler.mainAnimator.SetTrigger("OnRolling");
-            __heroBrain.BB.action.isRolling.Value = true;
+            __brain.AnimCtrler.mainAnimator.SetBool("IsRolling", true);
+            __brain.AnimCtrler.mainAnimator.SetTrigger("OnRolling");
+            __brain.BB.action.isRolling.Value = true;
         }
 
         public void FinishRolling()
         {
-            if (__heroBrain.BB.IsRolling)
+            if (__brain.BB.IsRolling)
             {
-                __heroBrain.AnimCtrler.mainAnimator.SetBool("IsRolling", false);
-                __heroBrain.BB.action.isRolling.Value = false;
+                __brain.AnimCtrler.mainAnimator.SetBool("IsRolling", false);
+                __brain.BB.action.isRolling.Value = false;
             }
         }
 
@@ -128,12 +129,12 @@ namespace Game
         float __rollingDuration;
         float __rollingSpeed;
         Vector3 __rollingVec;
-        HeroBrain __heroBrain;
+        HeroBrain __brain;
 
         protected override void AwakeInternal()
         {
             base.AwakeInternal();
-            __heroBrain = GetComponent<HeroBrain>();
+            __brain = GetComponent<HeroBrain>();
         }
 
         protected override void OnFixedUpdateHandler()
@@ -141,12 +142,12 @@ namespace Game
             if (!__ecmMovement.enabled)
                 return;
 
-            if (__heroBrain.BB.IsJumping)
+            if (__brain.BB.IsJumping)
             {
                 if (__prevCapsulePositionY > capsule.position.y && Time.time - __jumpTimeStamp > 2f * Time.fixedDeltaTime)
                     __isFalling = true;
                 __prevCapsulePositionY = capsule.position.y;
-
+                
                 if (__isFalling && __ecmMovement.isGrounded)
                 {
                     FinishJumping();
@@ -158,13 +159,12 @@ namespace Game
                 }
 
                 ResetRootMotion();
-
             }
-            else if (__heroBrain.BB.IsHanging)
+            else if (__brain.BB.IsHanging)
             {
                 ;
             }
-            else if (__heroBrain.BB.IsRolling)
+            else if (__brain.BB.IsRolling)
             {
                 if (Time.time - __rollingTimeStamp <= __rollingDuration)
                     AddRootMotion(__rollingSpeed * Time.fixedDeltaTime * __rollingVec, Quaternion.identity);
@@ -217,15 +217,16 @@ namespace Game
             if (!__ecmMovement.enabled)
                 return;
                 
-            if (__heroBrain.BB.IsHanging)
+            if (__brain.BB.IsHanging)
             {
+                //* hangingPoint로 위치값 및 회전값을 맞춰줌
                 if (__hangingLerpDisposable == null)
-                    __ecmMovement.SetPositionAndRotation(__heroBrain.BB.action.hangingBrain.Value.AnimCtrler.hangingPoint.position, __heroBrain.BB.action.hangingBrain.Value.AnimCtrler.hangingPoint.rotation);
+                    __ecmMovement.SetPositionAndRotation(__brain.BB.action.hangingBrain.Value.AnimCtrler.hangingPoint.position, __brain.BB.action.hangingBrain.Value.AnimCtrler.hangingPoint.rotation);
             }
             else
             {
                 var canRotate1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsGroggy && !__pawnBrain.PawnBB.IsDown;
-                var canRotate2 = canRotate1 && !__heroBrain.BB.IsRolling && !__heroBrain.BB.IsJumping;
+                var canRotate2 = canRotate1 && !__brain.BB.IsRolling && !__brain.BB.IsJumping;
                 var canRotate3 = canRotate2 && (!__pawnActionCtrler.CheckActionRunning() || __pawnActionCtrler.currActionContext.movementEnabled) && !__pawnStatusCtrler.CheckStatus(PawnStatus.Staggered);
 
                 if (canRotate3)

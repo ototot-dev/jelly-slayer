@@ -8,8 +8,6 @@ namespace Game
 {
     public class DroneBotMovement : PawnMovementEx
     {
-        //* IsHanging 상태인 경우엔 HeroMovement 쪽에서 이동 제어를 하기 위해 '__ecmMovement'를 외부로 노출시킴
-        public ECM2.CharacterMovement GetCharacterMovement() => __ecmMovement;
         public bool CheckCatchingDurationExpired() => Time.time - __catchingStartTimeStamp > __brain.BB.CatchingDuration;
 
         protected override void AwakeInternal()

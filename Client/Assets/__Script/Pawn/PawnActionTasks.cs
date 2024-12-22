@@ -27,27 +27,6 @@ namespace Game.NodeCanvasExtension
         }
     }
 
-    public class ModifyTransform : ActionTask
-    {
-        public BBParameter<Transform> target;
-        public BBParameter<Vector3> position;
-        public BBParameter<Vector3> pitchYawRoll;
-        public bool changePosition = true;
-        public bool changeRotation = true;
-
-        protected override void OnExecute()
-        {
-            if (changePosition && changeRotation)
-                target.value.SetLocalPositionAndRotation(position.value, Quaternion.Euler(pitchYawRoll.value.x, pitchYawRoll.value.y, pitchYawRoll.value.z));
-            else if (changePosition)
-                target.value.position = position.value;
-            else    
-                target.value.rotation = Quaternion.Euler(pitchYawRoll.value.x, pitchYawRoll.value.y, pitchYawRoll.value.z);
-
-            EndAction(true);
-        }
-    }
-
     public class FreePosition : ActionTask
     {
         public BBParameter<float> duration = -1;
@@ -463,6 +442,41 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    public class FallingRootMotion : ActionTask
+    {
+        public BBParameter<float> fallingSpeed;
+        public BBParameter<float> duration;
+        PawnActionController __pawnActionCtrler;
+        IPawnMovable __pawnMovable;
+        IDisposable __rootMotionDisposable;
+        int __capturedActionInstanceId;
+        float __manualAdvanceSpeedCached;
+        
+        protected override void OnExecute()
+        {
+            __pawnActionCtrler = agent.GetComponent<PawnActionController>();
+            __pawnMovable = agent.GetComponent<PawnBrainController>() as IPawnMovable;
+
+            Debug.Assert(__pawnActionCtrler != null);
+            Debug.Assert(__pawnMovable != null);
+
+            __capturedActionInstanceId =  __pawnActionCtrler.currActionContext.actionInstanceId;
+
+            var executeTimeStamp = Time.time;
+            Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(duration.value)))
+                .TakeWhile(_ => !__pawnMovable.IsOnGround() && __pawnActionCtrler.currActionContext.actionData != null && __capturedActionInstanceId == __pawnActionCtrler.currActionContext.actionInstanceId)
+                .Subscribe(_ =>
+                {
+                    var rootMotionVec = Time.deltaTime * fallingSpeed.value * Vector3.down;
+                    if (__pawnActionCtrler.CanRootMotion(rootMotionVec))
+                        __pawnMovable.AddRootMotion(rootMotionVec, Quaternion.identity);
+                }).AddTo(agent);
+
+            EndAction(true);
+        }
+    }
+
+
     public class StartPendingAction : ActionTask
     {
         public BBParameter<string> actionName;
@@ -493,6 +507,32 @@ namespace Game.NodeCanvasExtension
             {
                 EndAction(false);
             }
+        }
+    }
+
+    public class StartJumping : ActionTask
+    {
+        protected override void OnExecute()
+        {
+            if (agent.TryGetComponent<HeroMovement>(out var movement))
+                movement.StartJumping();
+            else
+                Debug.Assert(false);
+
+            EndAction(true);
+        }
+    }
+
+    public class FinishJumping : ActionTask
+    {
+        protected override void OnExecute()
+        {
+            if (agent.TryGetComponent<HeroMovement>(out var movement))
+                movement.FinishJumping();
+            else
+                Debug.Assert(false);
+
+            EndAction(true);
         }
     }
 
@@ -695,6 +735,28 @@ namespace Game.NodeCanvasExtension
             
             __stateExitDisposable?.Dispose();
             __stateExitDisposable = null;
+        }
+    }
+
+    public class WaitGroundHit : ActionTask
+    {
+        PawnMovement __pawnMovement;
+        PawnActionController __pawnActionCtrler;
+        int __capturedActionInstanceId;
+
+        protected override void OnExecute()
+        {
+            __pawnMovement = agent.GetComponent<PawnMovement>();
+            __pawnActionCtrler = agent.GetComponent<PawnActionController>();
+            __capturedActionInstanceId =  __pawnActionCtrler.currActionContext.actionInstanceId;
+        }
+
+        protected override void OnUpdate()
+        {
+            if (__pawnActionCtrler.currActionContext.actionData == null || __capturedActionInstanceId != __pawnActionCtrler.currActionContext.actionInstanceId)
+                EndAction(false);
+            else if (__pawnMovement.IsOnGround)
+                EndAction(true);
         }
     }
 
@@ -1114,6 +1176,48 @@ namespace Game.NodeCanvasExtension
         protected override void OnExecute()
         {
             animator.value.SetFloat(paramId.value, newValue.value);
+            EndAction(true);
+        }
+    }
+
+    public class SetAnimSpeedMultiplier : ActionTask
+    {
+        protected override string info => $"Set AnimSpeedMultiplier <b>{newValue.value}</b>";
+        public BBParameter<float> newValue;
+        
+        protected override void OnExecute()
+        {
+            if (agent.TryGetComponent<PawnActionController>(out var actionCtrler) && actionCtrler.CheckActionRunning())
+            {
+                actionCtrler.currActionContext.actionSpeed = (actionCtrler.currActionContext.actionData?.actionSpeed ?? 1f) * newValue.value;
+
+                if (agent.TryGetComponent<PawnAnimController>(out var animCtrler))
+                    animCtrler.mainAnimator.SetFloat("AnimSpeed", actionCtrler.currActionContext.actionSpeed);
+                else
+                    Debug.Assert(false);
+            }
+
+            EndAction(true);
+        }
+    }
+
+    public class ModifyTransform : ActionTask
+    {
+        public BBParameter<Transform> target;
+        public BBParameter<Vector3> position;
+        public BBParameter<Vector3> pitchYawRoll;
+        public bool changePosition = true;
+        public bool changeRotation = true;
+
+        protected override void OnExecute()
+        {
+            if (changePosition && changeRotation)
+                target.value.SetLocalPositionAndRotation(position.value, Quaternion.Euler(pitchYawRoll.value.x, pitchYawRoll.value.y, pitchYawRoll.value.z));
+            else if (changePosition)
+                target.value.position = position.value;
+            else    
+                target.value.rotation = Quaternion.Euler(pitchYawRoll.value.x, pitchYawRoll.value.y, pitchYawRoll.value.z);
+
             EndAction(true);
         }
     }

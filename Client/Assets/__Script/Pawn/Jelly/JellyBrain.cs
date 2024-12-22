@@ -22,6 +22,7 @@ namespace Game
         bool IPawnMovable.CheckReachToDestination() { return __pawnMovement.CheckReachToDestination(); }
         bool IPawnMovable.IsJumping() { return false; }
         bool IPawnMovable.IsRolling() { return false; }
+        bool IPawnMovable.IsOnGround() { return __pawnMovement.IsOnGround; }
         Vector3 IPawnMovable.GetDestination() { return __pawnMovement.destination; }
         float IPawnMovable.GetEstimateTimeToDestination() { return __pawnMovement.EstimateTimeToDestination(); }
         float IPawnMovable.GetDefaultMinApproachDistance() { return __pawnMovement.GetDefaultMinApproachDistance(); }

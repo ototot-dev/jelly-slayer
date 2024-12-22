@@ -1,9 +1,7 @@
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
-using static FIMSpace.FProceduralAnimation.LegsAnimator;
 
 namespace Game
 {
@@ -39,6 +37,7 @@ namespace Game
         void IPawnSpawnable.OnLifeTimeOutHandler() {}
         bool IPawnMovable.IsJumping() { return BB.IsJumping; }
         bool IPawnMovable.IsRolling() { return BB.IsRolling; }
+        bool IPawnMovable.IsOnGround() { return Movement.IsOnGround; }
         bool IPawnMovable.CheckReachToDestination() { return false; }
         Vector3 IPawnMovable.GetDestination() { return Movement.capsule.position + Movement.moveVec; }
         float IPawnMovable.GetEstimateTimeToDestination() { return 0; }
@@ -68,8 +67,6 @@ namespace Game
         [Header("Chain")]
         public ChainController _chainCtrl;
 
-        [Header("Component")]
-        public Transform droneBotAttachPoint;
         //public Highlighters.HighlighterSettings _highlighters;
 
         public HeroBlackboard BB { get; private set; }

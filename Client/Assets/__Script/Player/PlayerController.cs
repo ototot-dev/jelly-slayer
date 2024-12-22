@@ -470,7 +470,6 @@ namespace Game
 
                 if (canAction2)
                 {
-
                     if (heroBrain.ActionCtrler.CheckActionRunning())
                         heroBrain.ActionCtrler.CancelAction(false);
 

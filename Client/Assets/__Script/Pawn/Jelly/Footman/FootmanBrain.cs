@@ -28,6 +28,7 @@ namespace Game
         void IPawnSpawnable.OnLifeTimeOutHandler() { PawnHP.Die("TimeOut"); }
         bool IPawnMovable.IsJumping() { return false; }
         bool IPawnMovable.IsRolling() { return false; }
+        bool IPawnMovable.IsOnGround() { return Movement.IsOnGround; }
         bool IPawnMovable.CheckReachToDestination() { return Movement.CheckReachToDestination(); }
         Vector3 IPawnMovable.GetDestination() { return Movement.destination; }
         float IPawnMovable.GetEstimateTimeToDestination() { return Movement.EstimateTimeToDestination(); }

@@ -200,6 +200,19 @@ namespace Game
             return null;
         }
 
+        public float testImpulseStrength = 1f;
+
+        public override IDisposable StartActionDisposable(ref PawnHeartPointDispatcher.DamageContext damageContext, string actionName)
+        {
+            if (actionName == "SpecialKick")
+            {   
+                if (__brain.BB.IsJumping)
+                    __brain.Movement.FinishJumping();
+            }
+            
+            return base.StartActionDisposable(ref damageContext, actionName);
+        }
+
         HeroBrain __brain;
         EffectInstance __staggerFxInstance;
 

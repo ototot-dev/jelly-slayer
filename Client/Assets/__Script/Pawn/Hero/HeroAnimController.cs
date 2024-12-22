@@ -87,10 +87,18 @@ namespace Game
                 else
                     spineOverrideTransform.weight = 1f;
 
-                leftArmTwoBoneIK.weight = leftArmTwoBoneIK.weight.LerpSpeed(__brain.BB.IsHanging ? 1f : 0f, 2f, Time.deltaTime);
-                rightArmTwoBoneIK.weight = leftArmTwoBoneIK.weight.LerpSpeed(__brain.BB.IsHanging ? 1f : 0f, 2f, Time.deltaTime);
-                leftLegBoneSimulator.StimulatorAmount = leftLegBoneSimulator.StimulatorAmount.LerpSpeed(__brain.BB.IsHanging ? 0.4f : 0f, 2f, Time.deltaTime);
-                rightLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount.LerpSpeed(__brain.BB.IsHanging ? 0.5f : 0f, 2f, Time.deltaTime);
+                if (__brain.ActionCtrler.CheckActionRunning())
+                {
+                    leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
+                    leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
+                }
+                else
+                {
+                    leftArmTwoBoneIK.weight = leftArmTwoBoneIK.weight.LerpSpeed(__brain.BB.IsHanging ? 1f : 0f, 4f, Time.deltaTime);
+                    rightArmTwoBoneIK.weight = leftArmTwoBoneIK.weight.LerpSpeed(__brain.BB.IsHanging ? 1f : 0f, 4f, Time.deltaTime);
+                    leftLegBoneSimulator.StimulatorAmount = leftLegBoneSimulator.StimulatorAmount.LerpSpeed(__brain.BB.IsHanging ? 0.4f : 0f, 1f, Time.deltaTime);
+                    rightLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount.LerpSpeed(__brain.BB.IsHanging ? 0.5f : 0f, 1f, Time.deltaTime);
+                }
 
                 if (__brain.StatusCtrler.CheckStatus(PawnStatus.Staggered) || __brain.StatusCtrler.CheckStatus(PawnStatus.CanNotGuard))
                 {
@@ -122,7 +130,7 @@ namespace Game
                 mainAnimator.SetFloat("MoveY", animMoveVec.z / __brain.Movement.moveSpeed);
 
                 legAnimator.User_SetIsMoving(__brain.Movement.CurrVelocity.sqrMagnitude > 0);
-                legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround && !__brain.BB.IsRolling && !__brain.BB.IsJumping && !__brain.BB.IsDown && !__brain.BB.IsDead && (!__brain.ActionCtrler.CheckActionRunning() || __brain.ActionCtrler.currActionContext.legAnimGlueEnabled));
+                legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround && !__brain.BB.IsRolling && !__brain.BB.IsJumping && !__brain.BB.IsHanging && !__brain.BB.IsDown && !__brain.BB.IsDead && (!__brain.ActionCtrler.CheckActionRunning() || __brain.ActionCtrler.currActionContext.legAnimGlueEnabled));
                 legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude > 0 ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.5f : 0.4f, 1);
             };
         }

@@ -26,6 +26,7 @@ namespace Game
         public Vector3 faceVec = Vector3.forward;
         public Vector3 CurrVelocity => __ecmMovement.velocity;
         public bool IsOnGround => __ecmMovement.isOnGround;
+        public ECM2.CharacterMovement GetCharacterMovement() => __ecmMovement;
         
         void Awake()
         {

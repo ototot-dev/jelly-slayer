@@ -18,6 +18,7 @@ namespace Game
     {
         bool IsJumping();
         bool IsRolling();
+        bool IsOnGround();
         Vector3 GetDestination();
         bool CheckReachToDestination();
         float GetEstimateTimeToDestination();
