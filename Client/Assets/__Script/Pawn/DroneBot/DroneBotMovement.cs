@@ -1,5 +1,3 @@
-using System;
-using DG.Tweening;
 using ParadoxNotion.Animation;
 using UniRx;
 using UnityEngine;

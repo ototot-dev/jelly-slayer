@@ -133,7 +133,6 @@ namespace Game
         public SuperArmorLevels GetSuperArmorLevel() => (SuperArmorLevels)(currActionContext.actionData?.superArmorLevel?? 0);
         public bool CheckSuperArmorLevel(SuperArmorLevels compareLevel) { return (currActionContext.actionData?.superArmorLevel?? 0) >= (int)compareLevel; }
         public bool CheckPendingActionHasPreMotion() => !string.IsNullOrEmpty(PendingActionData.Item2);
-        public float EvaluateRootMotion(float deltaTime) => currActionContext.rootMotionCurve == null ? 0f : deltaTime * currActionContext.rootMotionMultiplier * currActionContext.rootMotionCurve.Evaluate(currActionContext.manualAdvanceEnabled ? currActionContext.manualAdvanceTime : Time.time - (currActionContext.preMotionTimeStamp > 0f ? currActionContext.preMotionTimeStamp : currActionContext.startTimeStamp));
         public float LastActionTimeStamp => CheckActionRunning() ? Time.time : prevActionContext.finishTimeStamp;
         public string PreMotionName => currActionContext.preMotionName;
         public string CurrActionName => currActionContext.actionName;
@@ -145,7 +144,7 @@ namespace Game
         public  Tuple<string, string, float> PendingActionData { get; protected set; } = new(string.Empty, string.Empty, 0);
 
         //* Item1: Strength, Item2: Duration
-        protected Dictionary<PawnStatus, Tuple<float, float>> __buffContainer = new();
+        protected Dictionary<PawnStatus, Tuple<float, float>> __statusContainer = new();
 
         public Action<ActionContext, PawnHeartPointDispatcher.DamageContext> onActionStart;
         public Action<ActionContext, PawnHeartPointDispatcher.DamageContext> onAddictiveActionStart;
@@ -162,7 +161,7 @@ namespace Game
 #endif
 
 #region IBuffContainer
-        Dictionary<PawnStatus, Tuple<float, float>> IStatusContainer.GetStatusTable() => __buffContainer;
+        Dictionary<PawnStatus, Tuple<float, float>> IStatusContainer.GetStatusTable() => __statusContainer;
 
         bool IStatusContainer.AddStatus(PawnStatus buff, float strength, float duration)
         {
@@ -191,9 +190,19 @@ namespace Game
         }
 
 #if UNITY_EDITOR
-        Dictionary<PawnStatus, Tuple<float, float>>.Enumerator IStatusContainer.GetStatusEnumerator() => __buffContainer.GetEnumerator();
+        Dictionary<PawnStatus, Tuple<float, float>>.Enumerator IStatusContainer.GetStatusEnumerator() => __statusContainer.GetEnumerator();
 #endif
 #endregion
+
+        public virtual float GetRootMotionMultiplier()
+        {
+            if (currActionContext.rootMotionCurve == null)
+                return currActionContext.rootMotionMultiplier;
+            else if (currActionContext.manualAdvanceEnabled)
+                return currActionContext.rootMotionMultiplier * currActionContext.rootMotionCurve.Evaluate(currActionContext.manualAdvanceTime);
+            else
+                return currActionContext.rootMotionMultiplier * currActionContext.rootMotionCurve.Evaluate(Time.time - (currActionContext.preMotionTimeStamp > 0f ? currActionContext.preMotionTimeStamp : currActionContext.startTimeStamp));
+        }
 
         public virtual bool CanRootMotion(Vector3 rootMotionVec) { return currActionContext.rootMotionEnabled; }
         public virtual bool CanBlockAction(ref PawnHeartPointDispatcher.DamageContext damageContext) { return false; }
@@ -417,9 +426,6 @@ namespace Game
 
                 __Logger.LogR(gameObject, "onActionStart", "actionName", currActionContext.actionName, "actionInstanceId", currActionContext.actionInstanceId);
 
-                if (__pawnMovement != null)
-                    __pawnMovement.rootMotionMultiplier = rootMotionMultiplier;
-
                 if (__pawnAnimCtrler != null && __pawnAnimCtrler.mainAnimator != null)
                 {
                     __pawnAnimCtrler.mainAnimator.SetFloat("AnimSpeed", actionSpeedMultiplier);
@@ -466,9 +472,6 @@ namespace Game
 
                 __Logger.LogR(gameObject, "onActionStart", nameof(currActionContext.actionName), currActionContext.actionName, "actionInstanceId", currActionContext.actionInstanceId);
 
-                if (__pawnMovement != null)
-                    __pawnMovement.rootMotionMultiplier = rootMotionMultiplier;
-
                 if (__pawnAnimCtrler != null && __pawnAnimCtrler.mainAnimator != null)
                 {
                     __pawnAnimCtrler.mainAnimator.SetFloat("AnimSpeed", actionData.actionSpeed * actionSpeedMultiplier);
@@ -495,9 +498,6 @@ namespace Game
 
             __Logger.LogF(gameObject, nameof(StartAddictiveAction), "onAddictiveActionStart is invoked.", "actionName", actionName);
             onAddictiveActionStart?.Invoke(new ActionContext(actionName, 1f, Time.time), damageContext);
-
-            if (__pawnMovement != null)
-                __pawnMovement.rootMotionMultiplier = rootMotionMultiplier;
 
             if (__pawnAnimCtrler != null && __pawnAnimCtrler.mainAnimator != null)
             {
@@ -560,13 +560,10 @@ namespace Game
             if (string.IsNullOrEmpty(currActionContext.actionName))
                 return;
 
-            __buffContainer.Clear();
+            __statusContainer.Clear();
 
             if (__traceCollider != null)
                 FinishTraceActionTargets();
-
-            if (__pawnMovement != null)
-                __pawnMovement.rootMotionMultiplier = 1f;
 
             if (__pawnAnimCtrler != null && __pawnAnimCtrler.mainAnimator != null)
             {

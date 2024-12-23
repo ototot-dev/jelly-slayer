@@ -479,6 +479,7 @@ namespace Game.NodeCanvasExtension
 
     public class StartPendingAction : ActionTask
     {
+        protected override string info => $"Start Action <b>{actionName.value}</b>";
         public BBParameter<string> actionName;
         public BBParameter<bool> manualAdvanceEnabled;
         public BBParameter<float> animSpeedMultiplier = 1;
@@ -486,7 +487,6 @@ namespace Game.NodeCanvasExtension
         public BBParameter<int> animClipFps = -1;
         public BBParameter<float> rootMotionMultiplier = 1;
         public BBParameter<AnimationCurve> rootMotionCurve;
-        protected override string info => $"Start Action <b>{actionName.value}</b>";
 
         protected override void OnExecute()
         {
@@ -512,10 +512,12 @@ namespace Game.NodeCanvasExtension
 
     public class StartJumping : ActionTask
     {
+        public BBParameter<float> jumpHeight;
+
         protected override void OnExecute()
         {
             if (agent.TryGetComponent<HeroMovement>(out var movement))
-                movement.StartJumping();
+                movement.StartJumping(jumpHeight.value);
             else
                 Debug.Assert(false);
 

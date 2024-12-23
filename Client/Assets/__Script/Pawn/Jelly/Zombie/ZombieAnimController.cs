@@ -72,12 +72,12 @@ namespace Game
                 if (__brain.ActionCtrler.CheckActionRunning())
                 {
                     __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation);
-                    if (__brain.ActionCtrler.currActionContext.rootMotionCurve != null)
-                    {
-                        var rootMotionVec = Mathf.Max(0f, __brain.ActionCtrler.EvaluateRootMotion(Time.deltaTime)) * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
-                        if (__brain.ActionCtrler.CanRootMotion(rootMotionVec))
-                            __brain.Movement.AddRootMotion(rootMotionVec, Quaternion.identity);
-                    }
+                    // if (__brain.ActionCtrler.currActionContext.rootMotionCurve != null)
+                    // {
+                    //     var rootMotionVec = Mathf.Max(0f, __brain.ActionCtrler.EvaluateRootMotion(Time.deltaTime)) * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                    //     if (__brain.ActionCtrler.CanRootMotion(rootMotionVec))
+                    //         __brain.Movement.AddRootMotion(rootMotionVec, Quaternion.identity);
+                    // }
                 }
 
                 mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);

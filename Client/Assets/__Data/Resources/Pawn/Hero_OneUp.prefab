@@ -153,7 +153,6 @@ MonoBehaviour:
   freezeMovement: 0
   freezeRotation: 1
   rootMotionEnabled: 1
-  rootMotionMultiplier: 1
   moveSpeed: 1
   moveAccel: 20
   moveBrake: 20
@@ -176,12 +175,19 @@ MonoBehaviour:
   mainAnimator: {fileID: 3244703593152202959}
   legAnimator: {fileID: 3673634840836888687}
   rigBuilder: {fileID: 8157329558261335758}
+  sourceTest: {fileID: 3244703593161533229}
+  targetTest: {fileID: 0}
   ragdollAnimator: {fileID: 1508909516796287826}
   spineOverrideTransform: {fileID: 7333061147978076615}
+  leftArmTwoBoneIK: {fileID: 5332639391261278618}
+  rightArmTwoBoneIK: {fileID: 6119620665079175868}
+  leftLegBoneSimulator: {fileID: 6616178964254524924}
+  rightLegBoneSimulator: {fileID: 1877122226104639493}
   shieldMeshSlot: {fileID: 3556273806665314536}
   weaponMeshSlot: {fileID: 5806174125005292053}
   HeadLookAt: {fileID: 3872346485875650652}
   hipBone: {fileID: 3244703593161533285}
+  guardParryRootMotionMultiplier: 1
   animLayerBlendSpeed: 10
   legAnimGlueBlendSpeed: 1
   blockAdditiveAnimClips:
@@ -207,6 +213,7 @@ MonoBehaviour:
   shieldMesh: {fileID: 4082651064568185550}
   kickActionCollider: {fileID: 515486780858504094}
   swordActionCollider: {fileID: 0}
+  testImpulseStrength: 1
 --- !u!114 &4268522763273999486
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -341,7 +348,6 @@ MonoBehaviour:
   - {fileID: 5206738947422469673}
   - {fileID: 8179485229091800959}
   _chainCtrl: {fileID: 7371286568505109311}
-  droneBotAttachPoint: {fileID: 0}
   _isBind: 0
   _bindLIst: []
 --- !u!114 &4592272242371362991
@@ -367,7 +373,7 @@ MonoBehaviour:
     _version: 3.31
     _category: 
     _comments: 
-    _translation: {x: -185, y: -285}
+    _translation: {x: -127, y: -272}
     _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 0
@@ -398,6 +404,7 @@ MonoBehaviour:
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"SlashRoundRed":{"_value":6,"_name":"SlashRoundRed","_id":"e2d28471-6969-499f-904b-985050c2c1a2","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"Stun":{"_value":7,"_name":"Stun","_id":"7284c0b8-c87e-48fd-927e-be90c524c981","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"FireBigMuzzle":{"_value":8,"_name":"FireBigMuzzle","_id":"653e1fc0-257a-4564-b365-b4af93d95d2d","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"NukeExplosion":{"_value":9,"_name":"NukeExplosion","_id":"bb6533af-e7a5-41e2-8002-8ce241afdfc2","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}}}'
   _objectReferences:
   - {fileID: 0}
@@ -409,6 +416,7 @@ MonoBehaviour:
   - {fileID: 6209972863228401158, guid: 346845f5ec84256469525d334ac20d56, type: 3}
   - {fileID: 7902684546752631038, guid: 1a4146f5a4768c24d907b77fd5275c06, type: 3}
   - {fileID: 2202656761801617370, guid: fc1950b06ee498a4487038512551051d, type: 3}
+  - {fileID: 6019855409510650258, guid: 4dde32030b4070945b4db2b6444e5ada, type: 3}
   _serializedVariables:
   - _json: '{"_value":1,"_name":"SlashRoundYellow","_id":"e3b84ea2-99ac-47d4-b800-c0e4e7d37ec2","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
       UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
@@ -450,6 +458,11 @@ MonoBehaviour:
     _references:
     - {fileID: 0}
     - {fileID: 2202656761801617370, guid: fc1950b06ee498a4487038512551051d, type: 3}
+  - _json: '{"_value":1,"_name":"NukeExplosion","_id":"bb6533af-e7a5-41e2-8002-8ce241afdfc2","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
+    _references:
+    - {fileID: 0}
+    - {fileID: 6019855409510650258, guid: 4dde32030b4070945b4db2b6444e5ada, type: 3}
 --- !u!1 &1101305529287299696
 GameObject:
   m_ObjectHideFlags: 0
@@ -1952,7 +1965,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3244703593161570961}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.9991418, y: 0.028465442, z: 0.0284566, w: 0.009782798}
+  m_LocalRotation: {x: 0.9991418, y: -0.028465442, z: -0.028456658, w: -0.009782765}
   m_LocalPosition: {x: 0.07712238, y: -0.030646443, z: 0.002282024}
   m_LocalScale: {x: 0.9999394, y: 0.9999998, z: 0.99999416}
   m_ConstrainProportionsScale: 0
@@ -2041,7 +2054,7 @@ MonoBehaviour:
   FadeOutDistance: 0
   DistanceFrom: {fileID: 0}
   AutoHelperOffset: 1
-  HelperOffset: {x: 0.0058687245, y: 0.1875344, z: 0.35283113}
+  HelperOffset: {x: 0.024534637, y: 0.15442248, z: 0.22878632}
   GravityEffectForce: {x: 0, y: 0, z: 0}
   GravityHeavyness: 2
   _editor_Title: ' Bones Stimulator'
@@ -2261,7 +2274,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3244703593161570963}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.015853517, y: -0.01569481, z: 0.016918609, w: -0.999608}
+  m_LocalRotation: {x: 0.015853519, y: 0.01569481, z: -0.016918553, w: 0.999608}
   m_LocalPosition: {x: -0.000000007392373, y: 0.3528287, z: 9.313226e-10}
   m_LocalScale: {x: 0.99999994, y: 1.0000001, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2404,7 +2417,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3244703593161570969}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.5231581, y: 0.03199872, z: -0.020622415, w: 0.85138506}
+  m_LocalRotation: {x: -0.5231579, y: 0.031998765, z: -0.020622391, w: 0.8513851}
   m_LocalPosition: {x: -0.0000000048894435, y: 0.41531307, z: 0.0000000037252903}
   m_LocalScale: {x: 0.9999999, y: 1.0000001, z: 0.99999994}
   m_ConstrainProportionsScale: 0
@@ -2600,7 +2613,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3244703593161570979}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.5231538, y: -0.03200194, z: 0.020628737, w: 0.85138744}
+  m_LocalRotation: {x: -0.5231538, y: -0.03200201, z: 0.020628678, w: 0.85138744}
   m_LocalPosition: {x: 0.0000000022700988, y: 0.4153126, z: -0.0000000017462298}
   m_LocalScale: {x: 1, y: 1, z: 0.99999994}
   m_ConstrainProportionsScale: 0
@@ -3000,7 +3013,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3244703593161571003}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.9991413, y: -0.028465994, z: -0.028472599, w: 0.009782569}
+  m_LocalRotation: {x: 0.9991413, y: 0.02846604, z: 0.028472614, w: -0.009782509}
   m_LocalPosition: {x: -0.07712237, y: -0.030646265, z: 0.0022820313}
   m_LocalScale: {x: 1.0000458, y: 1.0000002, z: 1.0000044}
   m_ConstrainProportionsScale: 0
@@ -3089,7 +3102,7 @@ MonoBehaviour:
   FadeOutDistance: 0
   DistanceFrom: {fileID: 0}
   AutoHelperOffset: 1
-  HelperOffset: {x: -0.005859472, y: 0.18753822, z: 0.3528282}
+  HelperOffset: {x: -0.020980377, y: 0.13098517, z: 0.24033172}
   GravityEffectForce: {x: 0, y: 0, z: 0}
   GravityHeavyness: 2
   _editor_Title: ' Bones Stimulator'
@@ -3309,7 +3322,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3244703593161571005}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.015851641, y: 0.015695412, z: -0.01691704, w: -0.99960804}
+  m_LocalRotation: {x: 0.015851643, y: -0.015695248, z: 0.016917037, w: 0.99960804}
   m_LocalPosition: {x: 0.0000000016880222, y: 0.35282928, z: -9.313226e-10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4945,7 +4958,7 @@ Transform:
   m_GameObject: {fileID: 3244703593161571087}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.06572008, y: 0, z: 0.14011224}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5850,7 +5863,7 @@ MonoBehaviour:
   baseTransform: {fileID: 0}
   Hips: {fileID: 3244703593161533285}
   ScaleReferenceMode: 1
-  finalScaleReference: 0.76814175
+  finalScaleReference: 0.7681418
   finalScaleReferenceSqrt: 0.1
   customScaleReferenceValue: 0.5
   DelayedInitialization: 0
@@ -7331,7 +7344,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3244703593161571141}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071067, y: -0, z: -0, w: 0.7071068}
+  m_LocalRotation: {x: 0.7071067, y: 0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0.00026762113, y: 0, z: 0.90548676}
   m_LocalScale: {x: 1, y: 0.99999994, z: 0.99999994}
   m_ConstrainProportionsScale: 0
@@ -7969,7 +7982,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3244703593964844033}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.05298893, y: -0.01764109, z: -0.99744916, w: 0.04445361}
+  m_LocalRotation: {x: 0.052990574, y: -0.055707254, z: -0.022027131, w: 0.99679667}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.030000022, y: 0.030000031, z: 0.030000018}
   m_ConstrainProportionsScale: 0
@@ -18880,7 +18893,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aeda7bfbf984f2a4da5ab4b8967b115d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Weight: 1
+  m_Weight: 0
   m_Data:
     m_Root: {fileID: 3244703593161533111}
     m_Mid: {fileID: 3244703593161533109}
@@ -18981,7 +18994,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8355230675568729793
 Transform:
   m_ObjectHideFlags: 0
@@ -19517,7 +19530,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4775739823284966377
 Transform:
   m_ObjectHideFlags: 0
@@ -19685,7 +19698,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aeda7bfbf984f2a4da5ab4b8967b115d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Weight: 1
+  m_Weight: 0
   m_Data:
     m_Root: {fileID: 3244703593161533249}
     m_Mid: {fileID: 3244703593161533279}
@@ -19714,7 +19727,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8107878055655250686
 Transform:
   m_ObjectHideFlags: 0
@@ -19937,7 +19950,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7458116363945034531
 Transform:
   m_ObjectHideFlags: 0

@@ -11,15 +11,13 @@ namespace Game
     {
         public float LastJumpTimeStamp => __jumpTimeStamp;
         public float LastRollingTimeStamp => __rollingTimeStamp;
-        public float ImpulsePowerOnJump => Mathf.Sqrt(2 * __brain.BB.body.jumpHeight * gravity.magnitude);
-        public float EstimatedJumpDuration => Mathf.Sqrt(8 * __brain.BB.body.jumpHeight / gravity.magnitude);
         public void LegAnimatorStepEvent(LegsAnimator.Leg leg, float power, bool isRight, Vector3 position, Quaternion rotation, LegsAnimator.EStepType type) {}
 
-        public void StartJumping()
+        public void StartJumping(float jumpHeight)
         {
             __isFalling = false;
             __jumpTimeStamp = Time.time;
-            __ecmMovement.velocity.y = ImpulsePowerOnJump;
+            __ecmMovement.velocity.y = GetVerticalImpulseOnJump(jumpHeight);
             __ecmMovement.PauseGroundConstraint();
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnJump");
             __brain.AnimCtrler.mainAnimator.SetBool("IsJumping", true);

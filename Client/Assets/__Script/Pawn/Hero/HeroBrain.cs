@@ -44,13 +44,15 @@ namespace Game
         float IPawnMovable.GetDefaultMinApproachDistance() { return 0; }
         bool IPawnMovable.GetFreezeMovement() { return Movement.freezeMovement; }
         bool IPawnMovable.GetFreezeRotation() { return Movement.freezeRotation; }
-        void IPawnMovable.AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation) { Movement.AddRootMotion(deltaPosition, deltaRotation); }
         void IPawnMovable.ReserveDestination(Vector3 destination) {}
         float IPawnMovable.SetDestination(UnityEngine.Vector3 destination) { return 0; }
         void IPawnMovable.SetMinApproachDistance(float distance) {}
         void IPawnMovable.SetFaceVector(Vector3 faceVec) { Movement.faceVec = faceVec; }
         void IPawnMovable.FreezeMovement(bool newValue) {}
         void IPawnMovable.FreezeRotation(bool newValue) {}
+        void IPawnMovable.AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation) { Movement.AddRootMotion(deltaPosition, deltaRotation); }
+        void IPawnMovable.StartJump(float jumpHeight) {}
+        void IPawnMovable.FinishJump() {}
         void IPawnMovable.Teleport(Vector3 destination) { Movement.Teleport(destination); }
         void IPawnMovable.MoveTo(Vector3 destination) { Debug.Assert(false); }
         void IPawnMovable.FaceTo(Vector3 lookAt) { Movement.FaceTo(lookAt); }

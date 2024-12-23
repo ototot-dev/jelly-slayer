@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using FIMSpace.BonesStimulation;
 using FIMSpace.FProceduralAnimation;
-using NodeCanvas.Framework.Internal;
 using UniRx;
 using UnityEditor;
 using UnityEngine;
@@ -12,6 +11,10 @@ namespace Game
 {
     public class HeroAnimController : PawnAnimController
     {
+        [Header("Test")]
+        public Transform sourceTest;
+        public Transform targetTest;
+
         [Header("Component")]
         public RagdollAnimator2 ragdollAnimator;
         public OverrideTransform spineOverrideTransform;
@@ -25,8 +28,9 @@ namespace Game
         public Transform hipBone;
 
         [Header("Parameter")]
-        public float animLayerBlendSpeed = 1;
-        public float legAnimGlueBlendSpeed = 1;
+        public float guardParryRootMotionMultiplier = 1f;
+        public float animLayerBlendSpeed = 1f;
+        public float legAnimGlueBlendSpeed = 1f;
         public AnimationClip[] blockAdditiveAnimClips;
 
         void Awake()
@@ -65,22 +69,10 @@ namespace Game
 
             __brain.onUpdate += () =>
             {
-                if (__brain.ActionCtrler.CheckActionRunning())
-                {
-                    if (__brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
-                        __brain.Movement.AddRootMotion(__brain.ActionCtrler.currActionContext.rootMotionMultiplier * mainAnimator.deltaPosition, mainAnimator.deltaRotation);
-
-                    if (__brain.ActionCtrler.currActionContext.rootMotionCurve != null)
-                    {
-                        var rootMotionVec = __brain.ActionCtrler.EvaluateRootMotion(Time.deltaTime) * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
-                        if (__brain.ActionCtrler.CanRootMotion(rootMotionVec))
-                            __brain.Movement.AddRootMotion(__brain.ActionCtrler.EvaluateRootMotion(Time.deltaTime) * __brain.coreColliderHelper.transform.forward.Vector2D().normalized, Quaternion.identity);
-                    }
-                }
+                if (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
+                    __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition, mainAnimator.deltaRotation);
                 else if (__watchingStateNames.Contains("GuardParry"))
-                {
-                    __brain.Movement.AddRootMotion(2f * mainAnimator.deltaPosition, Quaternion.identity);
-                }
+                    __brain.Movement.AddRootMotion(guardParryRootMotionMultiplier * mainAnimator.deltaPosition, Quaternion.identity);
 
                 if (__brain.BB.IsHanging || __brain.ActionCtrler.CheckActionRunning() || mainAnimator.GetBool("IsGuarding") || __watchingStateNames.Contains("DrinkPotion") || __watchingStateNames.Contains("GuardParry"))
                     spineOverrideTransform.weight = 0f;

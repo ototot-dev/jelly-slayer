@@ -10,9 +10,9 @@ namespace Game
     public class SpiderBrain : PawnBrainController, IPawnSpawnable, IPawnMovable
     {
         Vector3 IPawnSpawnable.GetSpawnPosition() => Vector3.zero;
-        void IPawnSpawnable.OnStartSpawnHandler() { }
-        void IPawnSpawnable.OnFinishSpawnHandler() { }
-        void IPawnSpawnable.OnDespawnedHandler() { }
+        void IPawnSpawnable.OnStartSpawnHandler() {}
+        void IPawnSpawnable.OnFinishSpawnHandler() {}
+        void IPawnSpawnable.OnDespawnedHandler() {}
         void IPawnSpawnable.OnDeadHandler() { AnimCtrler.bodyAnimator.SetTrigger("OnDead"); Movement.SetMovementEnabled(false); }
         void IPawnSpawnable.OnLifeTimeOutHandler() { PawnHP.Die("TimeOut"); }
         bool IPawnMovable.CheckReachToDestination() { return Movement.CheckReachToDestination(); }
@@ -31,6 +31,8 @@ namespace Game
         void IPawnMovable.FreezeMovement(bool newValue) { Movement.freezeMovement = newValue; }
         void IPawnMovable.FreezeRotation(bool newValue) { Movement.freezeRotation = newValue; }
         void IPawnMovable.AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation) { Movement.AddRootMotion(deltaPosition, deltaRotation); }
+        void IPawnMovable.StartJump(float jumpHeight) {}
+        void IPawnMovable.FinishJump() {}
         void IPawnMovable.Teleport(Vector3 destination) { Movement.Teleport(destination); }
         void IPawnMovable.MoveTo(Vector3 destination) { Movement.destination = destination; }
         void IPawnMovable.FaceTo(Vector3 direction) { Movement.FaceTo(direction); }
@@ -215,7 +217,7 @@ namespace Game
             Debug.Assert(BB.TargetPawn != null);
 
 
-                return Decisions.Approach;
+            return Decisions.Approach;
 
             // if (BB.decision.aggressiveLevel.Value == 1)
             // {

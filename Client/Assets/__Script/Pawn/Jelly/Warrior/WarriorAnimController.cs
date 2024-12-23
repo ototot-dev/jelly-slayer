@@ -40,12 +40,12 @@ namespace Game
                     if (__brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
                         __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation);
 
-                    if (__brain.ActionCtrler.currActionContext.rootMotionCurve != null)
-                    {
-                        var rootMotionVec = __brain.ActionCtrler.EvaluateRootMotion(Time.deltaTime) * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
-                        if (__brain.ActionCtrler.CanRootMotion(rootMotionVec))
-                            __brain.Movement.AddRootMotion(__brain.ActionCtrler.EvaluateRootMotion(Time.deltaTime) * __brain.coreColliderHelper.transform.forward.Vector2D().normalized, Quaternion.identity);
-                    }
+                    // if (__brain.ActionCtrler.currActionContext.rootMotionCurve != null)
+                    // {
+                    //     var rootMotionVec = __brain.ActionCtrler.EvaluateRootMotion(Time.deltaTime) * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                    //     if (__brain.ActionCtrler.CanRootMotion(rootMotionVec))
+                    //         __brain.Movement.AddRootMotion(__brain.ActionCtrler.EvaluateRootMotion(Time.deltaTime) * __brain.coreColliderHelper.transform.forward.Vector2D().normalized, Quaternion.identity);
+                    // }
                 }
 
                 mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation * Quaternion.Euler(0, bodyOffsetYaw, 0));

@@ -18,7 +18,9 @@ namespace Game
         [Range(0.1f, 1f)]
         public float zoom = 1f;
         public float zoomSpeed = 1f;
-
+        public float yawAngleOnGrouned = 40f;
+        public float yawAngleOnHanging = 50f;
+        public float yawAngleSpeed = 360f;
         public Quaternion SpriteLookRotation => cameraTransform != null ? Quaternion.LookRotation(cameraTransform.forward, Vector3.up) : Quaternion.identity;
 
         public void Shake(float strength, float duration)
@@ -31,6 +33,7 @@ namespace Game
         float __shakeStrength;
         float __shakeDuration;
         float __shakeTimeStamp;
+        IDisposable __zoomDisposable;
 
         public void InterpolateZoom(float targetZoom, float duration, float waitingTime = 0)
         {
@@ -64,21 +67,49 @@ namespace Game
                 });
         }
 
-
+        bool __prevIsHanging;
+        // float __isHanging
+        float __currYawInterpSpeed;
         Vector3 __currFocusPoint;
-        IDisposable __zoomDisposable;
 
         void LateUpdate()
         {
             if (cameraTransform == null || GameContext.Instance.playerCtrler == null || GameContext.Instance.playerCtrler.heroBrain == null)
                 return;
 
+            //* 줌 처리
+            pixelCameraManager.ViewCameraZoom = pixelCameraManager.ViewCameraZoom.LerpSpeed(zoom, zoomSpeed, Time.deltaTime);
+
             //* 점프 동작과 같이 y축 변화량이 큰 경우엔 카메라가 대상을 따라가는 y축 속도를 살짝 줄여줌
-            var interpY = __currFocusPoint.y.LerpSpeed(GameContext.Instance.playerCtrler.heroBrain.coreColliderHelper.transform.position.y, 4f, Time.deltaTime);
-            __currFocusPoint = GameContext.Instance.playerCtrler.heroBrain.coreColliderHelper.transform.position;
+            var interpY = __currFocusPoint.y.LerpSpeed(GameContext.Instance.playerCtrler.heroBrain.GetWorldPosition().y, 4f, Time.deltaTime);
+            __currFocusPoint = GameContext.Instance.playerCtrler.heroBrain.GetWorldPosition();
             __currFocusPoint.y = interpY;
 
-            pixelCameraManager.ViewCameraZoom = pixelCameraManager.ViewCameraZoom.LerpSpeed(zoom, zoomSpeed, Time.deltaTime);
+            //* 고도 처리
+            var currEulerAngles = cameraTransform.rotation.eulerAngles;
+            if (GameContext.Instance.playerCtrler.heroBrain.BB.IsHanging)
+            {
+                if (!__prevIsHanging)
+                {
+                    __prevIsHanging = true;
+                    __currYawInterpSpeed = 0f;
+                }
+
+                __currYawInterpSpeed = __currYawInterpSpeed.LerpSpeed(yawAngleSpeed, 100f, Time.deltaTime);
+                cameraTransform.rotation = Quaternion.Euler(currEulerAngles.x.LerpSpeed(yawAngleOnHanging, __currYawInterpSpeed, Time.deltaTime), currEulerAngles.y, currEulerAngles.z);
+            }
+            else if (GameContext.Instance.playerCtrler.heroBrain.Movement.IsOnGround)
+            {
+                if (__prevIsHanging)
+                {
+                    __prevIsHanging = false;
+                    __currYawInterpSpeed = 0f;
+                }
+
+                __currYawInterpSpeed = __currYawInterpSpeed.LerpSpeed(yawAngleSpeed, 100f, Time.deltaTime);
+                cameraTransform.rotation = Quaternion.Euler(currEulerAngles.x.LerpSpeed(yawAngleOnGrouned, __currYawInterpSpeed, Time.deltaTime), currEulerAngles.y, currEulerAngles.z);
+            }
+
             cameraTransform.position = __currFocusPoint - 10f * cameraTransform.transform.forward;
 
             if ((Time.time - __shakeTimeStamp) < __shakeDuration)

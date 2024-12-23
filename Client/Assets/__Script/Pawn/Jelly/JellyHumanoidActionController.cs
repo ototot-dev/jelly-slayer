@@ -78,7 +78,7 @@ namespace Game
                 Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.2f / __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed)))
                     .DoOnCancel(() => __pawnMovement.Freeze())
                     .DoOnCompleted(() => __pawnMovement.Freeze())
-                    .Subscribe(_ => __pawnMovement.AddRootMotion(Time.deltaTime * knockBackVec, Quaternion.identity)).AddTo(this);
+                    .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity)).AddTo(this);
             }
             else
             {            

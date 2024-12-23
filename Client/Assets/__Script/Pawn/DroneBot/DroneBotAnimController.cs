@@ -26,18 +26,8 @@ namespace Game
         {
             __brain.onUpdate += () =>
             {   
-                if (__brain.ActionCtrler.CheckActionRunning())
-                {
-                    if (__brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
-                        __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation);
-
-                    if (__brain.ActionCtrler.currActionContext.rootMotionCurve != null)
-                    {
-                        var rootMotionVec = __brain.ActionCtrler.EvaluateRootMotion(Time.deltaTime) * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
-                        if (__brain.ActionCtrler.CanRootMotion(rootMotionVec))
-                            __brain.Movement.AddRootMotion(__brain.ActionCtrler.EvaluateRootMotion(Time.deltaTime) * __brain.coreColliderHelper.transform.forward.Vector2D().normalized, Quaternion.identity);
-                    }
-                }
+                if (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
+                    __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition, mainAnimator.deltaRotation);
                 
                 // mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position + __animatorOffsetY * Vector3.up, __brain.coreColliderHelper.transform.rotation);
                 mainAnimator.SetLayerWeight(1, Mathf.Clamp01(mainAnimator.GetLayerWeight(1) + ((__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CurrActionName != "!OnHit") ? 10f : -10f) * Time.deltaTime));

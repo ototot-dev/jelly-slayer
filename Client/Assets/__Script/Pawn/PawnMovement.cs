@@ -16,7 +16,6 @@ namespace Game
         public bool freezeMovement = false;
         public bool freezeRotation = false;
         public bool rootMotionEnabled = true;
-        public float rootMotionMultiplier = 1f;
         public float moveSpeed = 1f;
         public float moveAccel = 1f;
         public float moveBrake = 0f;
@@ -27,6 +26,8 @@ namespace Game
         public Vector3 CurrVelocity => __ecmMovement.velocity;
         public bool IsOnGround => __ecmMovement.isOnGround;
         public ECM2.CharacterMovement GetCharacterMovement() => __ecmMovement;
+        public float GetVerticalImpulseOnJump(float jumpHeight) => Mathf.Sqrt(2f * jumpHeight * gravity.magnitude);
+        public float GetEstimatedJumpingDuration(float jumpHeight) => 4f * GetVerticalImpulseOnJump(jumpHeight);
         
         void Awake()
         {
@@ -150,7 +151,7 @@ namespace Game
         {
             __rootMotionPosition += position;
             __rootMotionRotation *= rotation;
-            // __Logger.LogF(gameObject, nameof(AddRootMotion), "-", "position", position, "__rootMotionPosition", __rootMotionPosition);
+            __Logger.LogF(gameObject, nameof(AddRootMotion), "-", "position", position, "__rootMotionPosition", __rootMotionPosition);
         }
 
         public void ResetRootMotion()
@@ -161,8 +162,7 @@ namespace Game
 
         public Vector3 GetRootMotionVelocity(float deltaTime)
         {
-            Debug.Assert(deltaTime > 0f);
-            return rootMotionMultiplier / deltaTime * __rootMotionPosition;
+            return __rootMotionPosition / deltaTime;
         }
 
         public void SetMovementEnabled(bool newValue, float delayTime = 0)

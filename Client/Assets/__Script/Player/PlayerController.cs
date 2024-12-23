@@ -164,15 +164,18 @@ namespace Game
                         
                     if (heroBrain.BB.IsHanging)
                     {
+                        //* 점프 방향을 셋팅해줌
+                        heroBrain.Movement.GetCharacterMovement().velocity = heroBrain.BB.action.hangingBrain.Value.Movement.CurrVelocity;
                         heroBrain.Movement.FinishHanging();
                         heroBrain.InvalidateDecision(0f);
                     }
                     else
                     {
+                        //* 재귀적으로 Haning이 일어나지 않도록 'IsHanging'이 falsed인 경우에만 __jumpExecutedTimeStamp 값을 갱신해서 __jumpHangingDisposable이 동작하도록 한다
                         __jumpExecutedTimeStamp = Time.time;
                     }
 
-                    heroBrain.Movement.StartJumping();
+                    heroBrain.Movement.StartJumping(heroBrain.BB.body.jumpHeight);
                     heroBrain.BB.action.isJumping.Value = true;
                     heroBrain.BB.stat.ReduceStamina(jumpStaminaCost);
                 }
