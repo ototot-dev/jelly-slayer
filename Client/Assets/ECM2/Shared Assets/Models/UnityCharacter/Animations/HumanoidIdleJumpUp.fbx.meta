@@ -1,5 +1,9 @@
 fileFormatVersion: 2
 guid: 0d9d26e2162aa4d11ab075b34c029673
+labels:
+- ObiCloth
+- ObiRope
+- ObiSoftbody
 ModelImporter:
   serializedVersion: 19301
   internalIDToNameTable:
@@ -2161,9 +2165,9 @@ ModelImporter:
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0
-      keepOriginalPositionY: 0
+      keepOriginalPositionY: 1
       keepOriginalPositionXZ: 0
-      heightFromFeet: 1
+      heightFromFeet: 0
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
@@ -2467,7 +2471,7 @@ ModelImporter:
         weight: 0
       maskType: 0
       maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 56
+      additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
     lODScreenPercentages: []
@@ -3385,8 +3389,8 @@ ModelImporter:
   assetBundleVariant: 
 AssetOrigin:
   serializedVersion: 1
-  productId: 193614
-  packageName: Easy Character Movement 2
-  packageVersion: 1.4.2
+  productId: 55579
+  packageName: Obi Rope
+  packageVersion: 7.0.4
   assetPath: Assets/ECM2/Shared Assets/Models/UnityCharacter/Animations/HumanoidIdleJumpUp.fbx
-  uploadId: 708441
+  uploadId: 715639
