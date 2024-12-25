@@ -9,10 +9,12 @@ public class HPBarManager : MonoBehaviour
     public static HPBarManager Instance { 
         get { return _instance; } 
     }
-    public Camera _camera;
     public RectTransform _rtCanvas;
     public GameObject _prefHPBar;
+
+    [Header("Camera")]
     public CameraController _cameraController;
+    public Camera _camera;
 
     public Dictionary<PawnBrainController, HPBarPanel> _dicPanel = new();
 

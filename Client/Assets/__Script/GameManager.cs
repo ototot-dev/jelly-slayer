@@ -1,7 +1,7 @@
 using Game;
-using System.Collections;
-using System.Collections.Generic;
+using NodeCanvas.Tasks.Actions;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoSingleton<GameManager>
 {
@@ -17,8 +17,15 @@ public class GameManager : MonoSingleton<GameManager>
 
     // Start is called before the first frame update
     void Start()
-{
-        
+    {
+        var objRes = Resources.Load("Background/Prefabs/FS_Test-Container");
+        GameObject.Instantiate(objRes);
+
+        var objPlane = GameObject.Find("Plane");
+        if(objPlane != null)
+        {
+            objPlane.SetActive(false);
+        }
     }
     public void Spawn(PawnBrainController pawn) 
     { 
