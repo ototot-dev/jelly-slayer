@@ -102,7 +102,8 @@ namespace Game
         }
 
         public void Freeze()
-        {
+        {   
+            //* RootMotion에 의해서 축첟된 velocity값을 리셋함
             __ecmMovement.velocity = Vector3.zero;
             __ecmMovement.ClearAccumulatedForces();
             __freezeMovementFoeOneFrame = true;

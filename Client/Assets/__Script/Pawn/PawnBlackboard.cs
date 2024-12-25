@@ -15,10 +15,6 @@ namespace Game
         public bool IsGroggy => common.isGroggy.Value;
         public bool IsDown => common.isDown.Value;
         public bool IsDead => common.isDead.Value;
-        // public bool IsThrowing => common.isThrowing.Value;
-        // public bool IsGrabbed => common.isGrabbed.Value;
-        // public bool IsBind => common.isBind.Value;
-        // public bool IsGuardbreak => common.isGuardbreak.Value;
         public float LifeTime => common.lifeTime.Value;
         public PawnBrainController TargetBrain => target.targetPawnHP.Value != null ? target.targetPawnHP.Value.PawnBrain : null;
         public PawnColliderHelper TargetColliderHelper => target.targetPawnHP.Value != null && target.targetPawnHP.Value.PawnBrain != null ? target.targetPawnHP.Value.PawnBrain.coreColliderHelper : null;
@@ -38,10 +34,6 @@ namespace Game
             public BoolReactiveProperty isDown = new();
             public BoolReactiveProperty isGroggy = new();
             public FloatReactiveProperty lifeTime = new(60);
-            // public BoolReactiveProperty isThrowing = new();     // 잡기
-            // public BoolReactiveProperty isGrabbed = new();      // 잡힌 상태
-            // public BoolReactiveProperty isBind = new();         // 묶인 상태
-            // public BoolReactiveProperty isGuardbreak = new();   // 가드 깨진 상태
         }
 
         public Common common = new();

@@ -175,7 +175,7 @@ namespace Game
                         __jumpExecutedTimeStamp = Time.time;
                     }
 
-                    heroBrain.Movement.StartJumping(heroBrain.BB.body.jumpHeight);
+                    heroBrain.Movement.StartJump(heroBrain.BB.body.jumpHeight);
                     heroBrain.BB.action.isJumping.Value = true;
                     heroBrain.BB.stat.ReduceStamina(jumpStaminaCost);
                 }

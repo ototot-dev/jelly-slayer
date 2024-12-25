@@ -64,6 +64,15 @@ namespace Game
                 }
             }
             GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            {
+                if (GUILayout.Button("Glide"))
+                    ((target as PawnActionDataSelector).GetComponent<PawnBrainController>() as IPawnMovable).StartJump(1f);
+                if (GUILayout.Button("Land"))
+                    ((target as PawnActionDataSelector).GetComponent<PawnBrainController>() as IPawnMovable).FinishJump();
+            }
+            GUILayout.EndHorizontal();
         }
     }
 }

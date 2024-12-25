@@ -586,7 +586,7 @@ namespace Game
 
 #if UNITY_EDITOR
             __actionFinishPosition = __pawnBrain.coreColliderHelper.transform.position;
-            // __Logger.LogR(gameObject, nameof(FinishAction), "distance", (__actionFinishPosition - __actionStartPosition).Vector2D().magnitude);
+            __Logger.LogR(gameObject, nameof(FinishAction), "distance", (__actionFinishPosition - __actionStartPosition).Vector2D().magnitude);
 #endif
         }
 

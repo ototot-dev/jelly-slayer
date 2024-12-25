@@ -1,12 +1,13 @@
 using System;
-using System.Linq;
 using UniRx;
-using UnityEngine;
 
 namespace Game
 {
     public class SoldierBlackboard : JellyHumanoidBlackboard
     {
+        public override bool IsJumping => action.isJumping.Value;
+        public override bool IsGliding => action.isGliding.Value;
+        public override bool IsFalling => action.isFalling.Value;
         public override bool IsGuarding => action.isGuarding.Value;
         public override float SpacingInDistance => action.spacingInDistance;
         public override float SpacingOutDistance => action.spacingOutDistance;
@@ -20,11 +21,20 @@ namespace Game
         public class Body
         {
             public float walkSpeed = 1f;
+            public float jumpHeight = 1f;
+            public float glidingDuration = 1f;
+            public float glidingAmplitude = 1f;
+            public float glidingFrequency = 1f;
         }
+
+        public Body body = new();
 
         [Serializable]
         public class Action
         {
+            public BoolReactiveProperty isJumping = new();
+            public BoolReactiveProperty isGliding = new();
+            public BoolReactiveProperty isFalling = new();
             public BoolReactiveProperty isGuarding = new();
             public float spacingInDistance = 1f;
             public float spacingOutDistance = 1f;

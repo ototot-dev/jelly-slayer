@@ -7,6 +7,9 @@ namespace Game
 {
     public class JellyHumanoidBlackboard : JellyBlackboard
     {
+        public virtual bool IsJumping => false;
+        public virtual bool IsGliding => false;
+        public virtual bool IsFalling => false;
         public virtual bool IsGuarding => false;
         public virtual float SpacingInDistance => 0f;
         public virtual float SpacingOutDistance => 0f;

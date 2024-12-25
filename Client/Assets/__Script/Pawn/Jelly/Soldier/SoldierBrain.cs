@@ -1,6 +1,5 @@
-using System.Linq;
-using MainTable;
 using UniRx;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 
 namespace Game
@@ -104,6 +103,9 @@ namespace Game
                         {
                             ActionDataSelector.ResetSelection(__leapActionData);
                             ActionCtrler.SetPendingAction(__leapActionData.actionName);
+
+                            //* 'Leap' 액션의 루트모션 이동거리인 7m 기준으로 목표점까지의 이동 거리를 조절해준다.
+                            ActionCtrler.leapRootMotionMultiplier = Mathf.Clamp01((BB.TargetBrain.GetWorldPosition() - GetWorldPosition()).Magnitude2D() / 7f);
                         }
                         else
                         {
@@ -117,6 +119,12 @@ namespace Game
                     }
                 }
             };
+
+            BB.action.isFalling.Subscribe(v =>
+            {
+                //* 착지 동작 완료까지 이동을 금지함
+                if (!v) PawnStatusCtrler.AddStatus(PawnStatus.CanNotMove, 0.5f);
+            }).AddTo(this);
         }
 
         protected override void DamageReceiverHandler(ref PawnHeartPointDispatcher.DamageContext damageContext)
@@ -138,6 +146,16 @@ namespace Game
                     ActionDataSelector.BoostSelection(__counterActionData, BB.action.counterAttackRateStep);
                 }
             }
+        }
+
+        protected override void StartJumpInternal(float jumpHeight)
+        {
+            Movement.StartJump(BB.body.jumpHeight);
+        }
+
+        protected override void FinishJumpInternal()
+        {
+            Movement.StartFalling();
         }
     }
 }

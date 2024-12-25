@@ -11,10 +11,6 @@ namespace Game
 {
     public class HeroAnimController : PawnAnimController
     {
-        [Header("Test")]
-        public Transform sourceTest;
-        public Transform targetTest;
-
         [Header("Component")]
         public RagdollAnimator2 ragdollAnimator;
         public OverrideTransform spineOverrideTransform;

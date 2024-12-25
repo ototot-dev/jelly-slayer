@@ -207,7 +207,7 @@ namespace Game
             if (actionName == "SpecialKick")
             {   
                 if (__brain.BB.IsJumping)
-                    __brain.Movement.FinishJumping();
+                    __brain.Movement.FinishJump();
             }
             
             return base.StartActionDisposable(ref damageContext, actionName);

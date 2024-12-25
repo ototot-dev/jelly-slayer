@@ -12,7 +12,19 @@ namespace Game
         public Transform counterActionCollider;
         public XWeaponTrail sworldWeaponTrailA;
         public XWeaponTrail sworldWeaponTrailB;
-        
+
+        [Header("Component")]
+        public float leapRootMotionDistance = 7f;
+        public float leapRootMotionMultiplier = 1f;
+
+        public override float GetRootMotionMultiplier()
+        {
+            if (CurrActionName == "Leap")
+                return leapRootMotionMultiplier * currActionContext.rootMotionMultiplier;
+            else
+                return base.GetRootMotionMultiplier();
+        }
+
         public override bool CanBlockAction(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
             if (__brain.BB.IsGroggy)

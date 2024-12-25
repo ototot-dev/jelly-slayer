@@ -13,7 +13,7 @@ namespace Game
         public float LastRollingTimeStamp => __rollingTimeStamp;
         public void LegAnimatorStepEvent(LegsAnimator.Leg leg, float power, bool isRight, Vector3 position, Quaternion rotation, LegsAnimator.EStepType type) {}
 
-        public void StartJumping(float jumpHeight)
+        public void StartJump(float jumpHeight)
         {
             __isFalling = false;
             __jumpTimeStamp = Time.time;
@@ -24,7 +24,7 @@ namespace Game
             __brain.BB.action.isJumping.Value = true;
         }
 
-        public void FinishJumping()
+        public void FinishJump()
         {
             __landingTimeStamp = Time.time;
             __brain.AnimCtrler.mainAnimator.SetBool("IsJumping", false);
@@ -148,7 +148,7 @@ namespace Game
                 
                 if (__isFalling && __ecmMovement.isGrounded)
                 {
-                    FinishJumping();
+                    FinishJump();
                 }
                 else
                 {

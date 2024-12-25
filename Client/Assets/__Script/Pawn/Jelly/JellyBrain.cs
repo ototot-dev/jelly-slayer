@@ -12,7 +12,7 @@ namespace Game
         Vector3 IPawnSpawnable.GetSpawnPosition() => transform.position;
         void IPawnSpawnable.OnStartSpawnHandler() { __pawnMovement.capsule.gameObject.layer = LayerMask.NameToLayer("PawnOverlapped"); }
         void IPawnSpawnable.OnFinishSpawnHandler() { __pawnMovement.capsule.gameObject.layer = LayerMask.NameToLayer("Pawn"); }
-        void IPawnSpawnable.OnDespawnedHandler() { }
+        void IPawnSpawnable.OnDespawnedHandler() {}
         void IPawnSpawnable.OnDeadHandler() 
         { 
             __pawnAnimCtrler.mainAnimator.SetTrigger("OnDead"); 
@@ -35,8 +35,8 @@ namespace Game
         void IPawnMovable.FreezeMovement(bool newValue) { __pawnMovement.freezeMovement = newValue; }
         void IPawnMovable.FreezeRotation(bool newValue) { __pawnMovement.freezeRotation = newValue; }
         void IPawnMovable.AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation) { __pawnMovement.AddRootMotion(deltaPosition, deltaRotation); }
-        void IPawnMovable.StartJump(float jumpHeight) {}
-        void IPawnMovable.FinishJump() {}
+        void IPawnMovable.StartJump(float jumpHeight) { StartJumpInternal(jumpHeight); }
+        void IPawnMovable.FinishJump() { FinishJumpInternal(); }
         void IPawnMovable.Teleport(Vector3 destination) { __pawnMovement.Teleport(destination); }
         void IPawnMovable.MoveTo(Vector3 destination) { __pawnMovement.destination = destination; }
         void IPawnMovable.FaceTo(Vector3 direction) { __pawnMovement.FaceTo(direction); }
@@ -89,5 +89,7 @@ namespace Game
 
         protected virtual void DamageReceiverHandler(ref PawnHeartPointDispatcher.DamageContext damageContext) {}
         protected virtual void DamageSenderHandler(ref PawnHeartPointDispatcher.DamageContext damageContext) {}
+        protected virtual void StartJumpInternal(float jumpHeight) {}
+        protected virtual void FinishJumpInternal() {}
     }
 }
