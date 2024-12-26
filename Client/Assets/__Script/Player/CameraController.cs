@@ -87,7 +87,7 @@ namespace Game
 
             //* 고도 처리
             var currEulerAngles = cameraTransform.rotation.eulerAngles;
-            if (GameContext.Instance.playerCtrler.heroBrain.BB.IsHanging)
+            if (GameContext.Instance.playerCtrler.heroBrain.Movement.ReservedHangingBrain != null || GameContext.Instance.playerCtrler.heroBrain.BB.IsHanging)
             {
                 if (!__prevIsHanging)
                 {

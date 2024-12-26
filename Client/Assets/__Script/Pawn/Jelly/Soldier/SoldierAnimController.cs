@@ -1,8 +1,8 @@
 using System.Linq;
+using DG.Tweening;
 using FIMSpace.BonesStimulation;
 using FIMSpace.FEyes;
 using UniRx;
-using Unity.Burst.Intrinsics;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
@@ -81,23 +81,34 @@ namespace Game
                     shieldMeshRenderer.material.SetFloat("_Alpha", 0.3f);
                 }
             };
-            
-            __brain.BB.action.isGliding.Subscribe(v =>
+
+            __brain.BB.action.isJumping.Subscribe(v =>
             {
-                //* 발바닥에서 발사하는 Frame 이펙트 출력 제어
+                //* 발바닥에서 발사하는 Frame 이펙트 On
                 if (v)
                 {
                     leftLegFrameFx.transform.parent.GetComponent<MeshRenderer>().enabled = true;
                     rightLegFrameFx.transform.parent.GetComponent<MeshRenderer>().enabled = true;
-                    leftLegFrameFx.Play();
-                    rightLegFrameFx.Play();
+                    leftLegFrameFx.transform.parent.DOScale(2f * Vector3.one, 0.5f).OnComplete(() => leftLegFrameFx.Play());
+                    rightLegFrameFx.transform.parent.DOScale(2f * Vector3.one, 0.5f).OnComplete(() => rightLegFrameFx.Play());
                 }
-                else
+            }).AddTo(this);
+            
+            __brain.BB.action.isGliding.Subscribe(v =>
+            {
+                //* 발바닥에서 발사하는 Frame 이펙트 Off
+                if (!v)
                 {
-                    leftLegFrameFx.transform.parent.GetComponent<MeshRenderer>().enabled = false;
-                    rightLegFrameFx.transform.parent.GetComponent<MeshRenderer>().enabled = false;
-                    leftLegFrameFx.Stop();
-                    rightLegFrameFx.Stop();
+                    leftLegFrameFx.transform.parent.DOScale(Vector3.zero, 0.2f).OnComplete(() => 
+                    {
+                        leftLegFrameFx.transform.parent.GetComponent<MeshRenderer>().enabled = false;
+                        leftLegFrameFx.Stop();
+                    });
+                    rightLegFrameFx.transform.parent.DOScale(Vector3.zero, 0.2f).OnComplete(() => 
+                    {
+                        rightLegFrameFx.transform.parent.GetComponent<MeshRenderer>().enabled = false;
+                        rightLegFrameFx.Stop();
+                    });
                 }
             }).AddTo(this);
 

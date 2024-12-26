@@ -1,6 +1,8 @@
 using FIMSpace.BonesStimulation;
 using FIMSpace.FEyes;
 using Retween.Rx;
+using UniRx;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 
 namespace Game
@@ -12,6 +14,7 @@ namespace Game
         public Transform rightHand;
         public Transform hangingPoint;
         public TweenSelector tweenSelector;
+        public ParticleSystem[] steamFx;
 
         void Awake()
         {
@@ -24,6 +27,17 @@ namespace Game
 
         void Start()
         {
+            __brain.BB.decision.currDecision.Subscribe(v =>
+            {
+                foreach (var f in steamFx)
+                {
+                    if (v == DroneBotBrain.Decisions.Hanging)
+                        f.Play();
+                    else
+                        f.Stop();
+                }
+            }).AddTo(this);
+
             __brain.onUpdate += () =>
             {   
                 if (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))

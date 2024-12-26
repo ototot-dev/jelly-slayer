@@ -36564,7 +36564,7 @@ MonoBehaviour:
   transition:
     loop: 0
     easing: 24
-    duration: 1
+    duration: 2
     isRollback: 0
     easingCurve:
       serializedVersion: 2
@@ -67151,7 +67151,6 @@ MonoBehaviour:
   freezeMovement: 0
   freezeRotation: 0
   rootMotionEnabled: 1
-  rootMotionMultiplier: 1
   moveSpeed: 4
   moveAccel: 5
   moveBrake: 10
@@ -67162,7 +67161,6 @@ MonoBehaviour:
   destination: {x: 0, y: 0, z: 0}
   minApproachDistance: 1
   drawGizmosEnabled: 0
-  flyHeight: 4
   testHeight: 2
 --- !u!114 &3616433649530575527
 MonoBehaviour:
@@ -67182,7 +67180,12 @@ MonoBehaviour:
   leftHand: {fileID: 5988580521898645832}
   rightHand: {fileID: 1824209911909775786}
   hangingPoint: {fileID: 7363935143626021191}
-  hangingPoint2: {fileID: 0}
+  tweenSelector: {fileID: 582346474767780100}
+  steamFx:
+  - {fileID: 5437205209476920642}
+  - {fileID: 4499334727213680249}
+  - {fileID: 7424610367579399693}
+  - {fileID: 5651818076894115164}
 --- !u!114 &7964531593209544771
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67296,7 +67299,8 @@ MonoBehaviour:
   body:
     normalSpeed: 2
     boostSpeed: 4
-    catchSpeed: 16
+    flyHeight: 4
+    flyHeightAdjustSpeed: 3
   decision:
     currDecision:
       value: -1

@@ -34,19 +34,19 @@ namespace Game
 
         public void PrepareHanging(DroneBotBrain hangingBrain)
         {
-            __reservedHangingBrain = hangingBrain;
+            ReservedHangingBrain = hangingBrain;
             //* Decision 값을 'Catch'로 직접 변경함
-            __reservedHangingBrain.BB.decision.currDecision.Value = DroneBotBrain.Decisions.Catch;
+            ReservedHangingBrain.BB.decision.currDecision.Value = DroneBotBrain.Decisions.Catch;
         }
 
         public void StartHanging()
         {
-            Debug.Assert(__reservedHangingBrain != null);
+            Debug.Assert(ReservedHangingBrain != null);
 
             //* Decision 값을 'Hanging'으로 직접 변경함
-            __reservedHangingBrain.BB.decision.currDecision.Value = DroneBotBrain.Decisions.Hanging;
-            __brain.BB.action.hangingBrain.Value = __reservedHangingBrain;
-            __reservedHangingBrain = null;
+            ReservedHangingBrain.BB.decision.currDecision.Value = DroneBotBrain.Decisions.Hanging;
+            __brain.BB.action.hangingBrain.Value = ReservedHangingBrain;
+            ReservedHangingBrain = null;
 
             //* 점프가 혹 종료되는 상황은 발생하면 안됨
             Debug.Assert(__brain.BB.IsJumping);
@@ -62,7 +62,7 @@ namespace Game
                 .Subscribe(_ => __ecmMovement.SetPosition(capsule.transform.position.LerpSpeed(__brain.BB.action.hangingBrain.Value.AnimCtrler.hangingPoint.position, moveSpeed, Time.deltaTime))).AddTo(this);
         }
 
-        DroneBotBrain __reservedHangingBrain;
+        public DroneBotBrain ReservedHangingBrain { get; private set; }
         IDisposable __hangingLerpDisposable;
 
         public void FinishHanging()
