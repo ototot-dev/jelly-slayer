@@ -69,6 +69,10 @@ namespace Game
         [Header("Chain")]
         public ChainController _chainCtrl;
 
+        [Header("Component")]
+        public DroneBotFormationController droneBotFormationCtrler;
+
+
         //public Highlighters.HighlighterSettings _highlighters;
 
         public HeroBlackboard BB { get; private set; }
@@ -291,6 +295,7 @@ namespace Game
 
         void EquipWeaponToBone(WeaponType weaponType, WeaponBone weaponBone) 
         {
+            return;
             var controller = GetWeaponController(weaponType);
             var bone = GetWeaponBone(weaponBone);
             if (weaponBone == WeaponBone.RIGHTHAND)
@@ -303,6 +308,7 @@ namespace Game
 
         public void ChangeWeapon(WeaponSetType weaponSetType) 
         {
+            return;
             // if(_weaponSetType == weaponSetType) 
             //     return;
 

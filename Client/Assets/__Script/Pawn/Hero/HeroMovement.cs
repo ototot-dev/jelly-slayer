@@ -9,6 +9,8 @@ namespace Game
     [TooltipAttribute("이동, 점프, 대시 등의 처리")]
     public class HeroMovement : PawnMovement, LegsAnimator.ILegStepReceiver
     {
+        [Header("Paramter")]
+        public float ziplineOffsetY = 0.5f;
         public float LastJumpTimeStamp => __jumpTimeStamp;
         public float LastRollingTimeStamp => __rollingTimeStamp;
         public void LegAnimatorStepEvent(LegsAnimator.Leg leg, float power, bool isRight, Vector3 position, Quaternion rotation, LegsAnimator.EStepType type) {}
@@ -43,16 +45,14 @@ namespace Game
         {
             Debug.Assert(ReservedHangingBrain != null);
 
-            //* Decision 값을 'Hanging'으로 직접 변경함
-            ReservedHangingBrain.BB.decision.currDecision.Value = DroneBotBrain.Decisions.Hanging;
             __brain.BB.action.hangingBrain.Value = ReservedHangingBrain;
             ReservedHangingBrain = null;
 
-            //* 점프가 혹 종료되는 상황은 발생하면 안됨
+            //* 점프가 종료되는 상황은 발생하면 안됨
             Debug.Assert(__brain.BB.IsJumping);
             __brain.BB.action.isJumping.Value = false;
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnHanging");
-            __brain.AnimCtrler.mainAnimator.SetBool("IsHanding", true);
+            __brain.AnimCtrler.mainAnimator.SetBool("IsHanging", true);
 
             //* HangingAttachPoint까지 남은 거리를 부드럽게 Lerp 처리함
             __hangingLerpDisposable?.Dispose();
@@ -68,10 +68,35 @@ namespace Game
         public void FinishHanging()
         {
             Debug.Assert(__brain.BB.action.hangingBrain.Value != null);
-            
+
             __brain.BB.action.hangingBrain.Value.InvalidateDecision(0.1f);
             __brain.BB.action.hangingBrain.Value = null;
+            __brain.AnimCtrler.mainAnimator.SetBool("IsHanging", false);
+        }
+
+        public void StartZipRiding(Transform startPoint, Transform endPoint, float duration)
+        {
+            __zipRidingStartPoint = startPoint;
+            __zipRidingEndPoint = endPoint;
+            __zipRidingDuration = duration;
+            __zipRidingTimeStamp = Time.time;
+            __isZipRidingActionPending = false;
+            __brain.BB.action.isZipRiding.Value = true;
+
+            ziplineOffsetY = startPoint.transform.position.y - capsule.transform.position.y;
+
+            //* IsJumping, IsHanging 파라메터 값은 True값으로 고정되어져 있어야함
+            Debug.Assert(__brain.AnimCtrler.mainAnimator.GetBool("IsJumping"));
+            Debug.Assert(__brain.AnimCtrler.mainAnimator.GetBool("IsHanging"));
+        }
+
+        public void FinishZipRiding()
+        {
+            __brain.BB.action.isZipRiding.Value = false;
+            __brain.AnimCtrler.mainAnimator.SetBool("IsJumping", false);
             __brain.AnimCtrler.mainAnimator.SetBool("IsHanding", false);
+
+            __brain.ActionCtrler.SetPendingAction("Leaping");
         }
 
         public void StartRolling(float duration)
@@ -123,6 +148,11 @@ namespace Game
         float __jumpTimeStamp;
         float __landingTimeStamp;
         float __prevCapsulePositionY;
+        Transform __zipRidingStartPoint;
+        Transform __zipRidingEndPoint;
+        float __zipRidingDuration;
+        float __zipRidingTimeStamp;
+        bool __isZipRidingActionPending;
         float __rollingTimeStamp;
         float __rollingDuration;
         float __rollingSpeed;
@@ -145,7 +175,7 @@ namespace Game
                 if (__prevCapsulePositionY > capsule.position.y && Time.time - __jumpTimeStamp > 2f * Time.fixedDeltaTime)
                     __isFalling = true;
                 __prevCapsulePositionY = capsule.position.y;
-                
+
                 if (__isFalling && __ecmMovement.isGrounded)
                 {
                     FinishJump();
@@ -162,6 +192,26 @@ namespace Game
             {
                 ;
             }
+            else if (__brain.BB.IsZipRiding)
+            {
+                var alpha = (Time.time - __zipRidingTimeStamp) / __zipRidingDuration;
+                if (alpha >= 1f || __ecmMovement.isGrounded)
+                {
+                    FinishZipRiding();
+                }
+                else
+                {
+                    if (!__isZipRidingActionPending && __brain.coreColliderHelper.GetDistanceBetween(__brain.BB.TargetColliderHelper) < 3f)
+                    {
+                        __brain.ActionCtrler.SetPendingAction("Leaping");
+                        __isZipRidingActionPending = true;
+                    }
+
+                    var newPosition = Vector3.Lerp(__zipRidingStartPoint.position, __zipRidingEndPoint.position, alpha);
+                    __ecmMovement.SetPosition(newPosition + ziplineOffsetY * Vector3.down);
+                    __ecmMovement.SetRotation(Quaternion.LookRotation((__zipRidingEndPoint.position - __zipRidingStartPoint.position).Vector2D().normalized));
+                }
+            }
             else if (__brain.BB.IsRolling)
             {
                 if (Time.time - __rollingTimeStamp <= __rollingDuration)
@@ -173,7 +223,7 @@ namespace Game
                     __ecmMovement.Move(GetRootMotionVelocity(Time.fixedDeltaTime), Time.fixedDeltaTime);
                 else
                     __ecmMovement.SimpleMove(moveSpeed * moveVec, moveSpeed, moveAccel, moveBrake, 1f, 1f, gravity, false, Time.fixedDeltaTime);
-                
+
                 __ecmMovement.rotation *= __rootMotionRotation;
                 ResetRootMotion();
             }
@@ -214,7 +264,7 @@ namespace Game
         {
             if (!__ecmMovement.enabled)
                 return;
-                
+
             if (__brain.BB.IsHanging)
             {
                 //* hangingPoint로 위치값 및 회전값을 맞춰줌

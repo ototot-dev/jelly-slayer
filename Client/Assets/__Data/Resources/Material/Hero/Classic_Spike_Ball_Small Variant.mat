@@ -25,8 +25,6 @@ Material:
   m_Parent: {fileID: 2100000, guid: a6b095f99f8ad8240a38459a5c69be6b, type: 2}
   m_ModifiedSerializedProperties: 2
   m_ValidKeywords:
-  - _METALLICSPECGLOSSMAP
-  - _NORMALMAP
   - _RECEIVE_SHADOWS_OFF
   m_InvalidKeywords: []
   m_LightmapFlags: 4

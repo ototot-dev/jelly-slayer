@@ -66,7 +66,7 @@ namespace Game
             __brain.onUpdate += () =>
             {
                 if (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
-                    __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition, mainAnimator.deltaRotation);
+                    __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation);
                 else if (__watchingStateNames.Contains("GuardParry"))
                     __brain.Movement.AddRootMotion(guardParryRootMotionMultiplier * mainAnimator.deltaPosition, Quaternion.identity);
 
@@ -82,10 +82,10 @@ namespace Game
                 }
                 else
                 {
-                    leftArmTwoBoneIK.weight = leftArmTwoBoneIK.weight.LerpSpeed(__brain.BB.IsHanging ? 1f : 0f, 4f, Time.deltaTime);
-                    rightArmTwoBoneIK.weight = leftArmTwoBoneIK.weight.LerpSpeed(__brain.BB.IsHanging ? 1f : 0f, 4f, Time.deltaTime);
-                    leftLegBoneSimulator.StimulatorAmount = leftLegBoneSimulator.StimulatorAmount.LerpSpeed(__brain.BB.IsHanging ? 0.4f : 0f, 1f, Time.deltaTime);
-                    rightLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount.LerpSpeed(__brain.BB.IsHanging ? 0.5f : 0f, 1f, Time.deltaTime);
+                    leftArmTwoBoneIK.weight = leftArmTwoBoneIK.weight.LerpSpeed(__brain.BB.IsHanging || __brain.BB.IsZipRiding ? 1f : 0f, 4f, Time.deltaTime);
+                    rightArmTwoBoneIK.weight = leftArmTwoBoneIK.weight.LerpSpeed(__brain.BB.IsHanging || __brain.BB.IsZipRiding ? 1f : 0f, 4f, Time.deltaTime);
+                    leftLegBoneSimulator.StimulatorAmount = leftLegBoneSimulator.StimulatorAmount.LerpSpeed(__brain.BB.IsHanging || __brain.BB.IsZipRiding ? 0.4f : 0f, 1f, Time.deltaTime);
+                    rightLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount.LerpSpeed(__brain.BB.IsHanging || __brain.BB.IsZipRiding ? 0.5f : 0f, 1f, Time.deltaTime);
                 }
 
                 if (__brain.StatusCtrler.CheckStatus(PawnStatus.Staggered) || __brain.StatusCtrler.CheckStatus(PawnStatus.CanNotGuard))
@@ -99,14 +99,19 @@ namespace Game
                     shieldMeshSlot.localEulerAngles = new Vector3(0f, 0f, -60f);
                 }
 
-                mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
-                mainAnimator.SetLayerWeight(2, __brain.BB.IsJumping || __brain.BB.IsHanging ? 0f : 1f);
-
-                if (__watchingStateNames.Contains("GuardParry"))
-                    mainAnimator.SetLayerWeight(3, 1f);
-                else if (__watchingStateNames.Contains("DrinkPotion"))
-                    mainAnimator.SetLayerWeight(3, 0f);
+                if (__watchingStateNames.Contains("DrinkPotion"))
+                    mainAnimator.SetLayerWeight(1, 1f);
                 else
+                    mainAnimator.SetLayerWeight(1, 0f);
+
+                mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
+                mainAnimator.SetLayerWeight(2, __brain.BB.IsJumping || __brain.BB.IsHanging || __brain.BB.IsZipRiding ? 0f : 1f);
+
+                if (__watchingStateNames.Contains("DrinkPotion"))
+                    mainAnimator.SetLayerWeight(3, 0f);
+                else if (__watchingStateNames.Contains("GuardParry"))
+                    mainAnimator.SetLayerWeight(3, 1f);
+                else 
                     mainAnimator.SetLayerWeight(3, Mathf.Clamp01(mainAnimator.GetLayerWeight(3) + ((__brain.BB.IsRolling || __brain.ActionCtrler.CheckActionRunning()) ? animLayerBlendSpeed : -animLayerBlendSpeed) * Time.deltaTime));
 
                 mainAnimator.SetFloat("MoveSpeed", __brain.Movement.freezeRotation ? -1 : __brain.Movement.CurrVelocity.Vector2D().magnitude / __brain.BB.body.walkSpeed);
@@ -118,7 +123,7 @@ namespace Game
                 mainAnimator.SetFloat("MoveY", animMoveVec.z / __brain.Movement.moveSpeed);
 
                 legAnimator.User_SetIsMoving(__brain.Movement.CurrVelocity.sqrMagnitude > 0);
-                legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround && !__brain.BB.IsRolling && !__brain.BB.IsJumping && !__brain.BB.IsHanging && !__brain.BB.IsDown && !__brain.BB.IsDead && (!__brain.ActionCtrler.CheckActionRunning() || __brain.ActionCtrler.currActionContext.legAnimGlueEnabled));
+                legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround && !__brain.BB.IsRolling && !__brain.BB.IsJumping && !__brain.BB.IsHanging && !__brain.BB.IsZipRiding && !__brain.BB.IsDown && !__brain.BB.IsDead && (!__brain.ActionCtrler.CheckActionRunning() || __brain.ActionCtrler.currActionContext.legAnimGlueEnabled));
                 legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude > 0 ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.5f : 0.4f, 1);
             };
         }

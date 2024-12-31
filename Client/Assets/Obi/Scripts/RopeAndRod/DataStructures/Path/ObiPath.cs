@@ -271,7 +271,7 @@ namespace Obi
             return m_Names[index];
         }
 
-        public void AddControlPoint(Vector3 position, Vector3 inTangentVector, Vector3 outTangentVector, Vector3 normal, float mass, float rotationalMass, float thickness, int filter, Color color, string name)
+        public void     AddControlPoint(Vector3 position, Vector3 inTangentVector, Vector3 outTangentVector, Vector3 normal, float mass, float rotationalMass, float thickness, int filter, Color color, string name)
         {
             InsertControlPoint(ControlPointCount, position, inTangentVector, outTangentVector, normal,  mass, rotationalMass, thickness, filter, color, name);
         }

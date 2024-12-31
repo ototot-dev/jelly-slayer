@@ -44,6 +44,8 @@ GameObject:
   - component: {fileID: 2631676355314689051}
   - component: {fileID: 168326260960991395}
   - component: {fileID: 3491578883216556144}
+  - component: {fileID: 1913970846515973815}
+  - component: {fileID: 2880847717563360587}
   m_Layer: 6
   m_Name: Capsule
   m_TagString: Untagged
@@ -70,6 +72,7 @@ Transform:
   - {fileID: 2869710111818139488}
   - {fileID: 7979756587045458682}
   - {fileID: 8100486106525040855}
+  - {fileID: 1291023932344901000}
   - {fileID: 5781964363949412845}
   m_Father: {fileID: 791442315315432696}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -178,6 +181,32 @@ MonoBehaviour:
     impartPlatformRotation: 0
     impartPlatformVelocity: 0
   _minSlopeLimit: 0.7069833
+--- !u!114 &1913970846515973815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 482121057316969072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62359d80fdc0e4315ab6331b78ec5b90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kinematicForParticles: 0
+--- !u!114 &2880847717563360587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 482121057316969072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62359d80fdc0e4315ab6331b78ec5b90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kinematicForParticles: 0
 --- !u!1 &858553045467599790
 GameObject:
   m_ObjectHideFlags: 0
@@ -352,7 +381,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c85dc7178e1a05343985cc8b5e251ff0, type: 2}
+  - {fileID: 2100000, guid: 775b469180b7b38468e702d0478872aa, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6040,7 +6069,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c85dc7178e1a05343985cc8b5e251ff0, type: 2}
+  - {fileID: 2100000, guid: 775b469180b7b38468e702d0478872aa, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7068,7 +7097,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c85dc7178e1a05343985cc8b5e251ff0, type: 2}
+  - {fileID: 2100000, guid: 775b469180b7b38468e702d0478872aa, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7182,8 +7211,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pawnRigidbody: {fileID: 0}
-  pawnCollider: {fileID: 3317346212697241151}
-  pawnBrain: {fileID: 8683783354359918731}
+  pawnCollider: {fileID: 0}
+  pawnBrain: {fileID: 0}
   sensorTrigger: 0
 --- !u!1 &3421797364788679163
 GameObject:
@@ -7240,7 +7269,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c85dc7178e1a05343985cc8b5e251ff0, type: 2}
+  - {fileID: 2100000, guid: 775b469180b7b38468e702d0478872aa, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7337,7 +7366,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c85dc7178e1a05343985cc8b5e251ff0, type: 2}
+  - {fileID: 2100000, guid: 775b469180b7b38468e702d0478872aa, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7557,7 +7586,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c85dc7178e1a05343985cc8b5e251ff0, type: 2}
+  - {fileID: 2100000, guid: 775b469180b7b38468e702d0478872aa, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7772,7 +7801,7 @@ MonoBehaviour:
   FadeOutDistance: 0
   DistanceFrom: {fileID: 0}
   AutoHelperOffset: 1
-  HelperOffset: {x: 0.24140045, y: -0.3467363, z: 0.025778841}
+  HelperOffset: {x: 0.24140045, y: -0.3467363, z: 0.02577886}
   GravityEffectForce: {x: 0, y: 0, z: 0}
   GravityHeavyness: 2
   _editor_Title: ' Bones Stimulator'
@@ -13243,7 +13272,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c85dc7178e1a05343985cc8b5e251ff0, type: 2}
+  - {fileID: 2100000, guid: 775b469180b7b38468e702d0478872aa, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -13503,7 +13532,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pawnRigidbody: {fileID: 0}
-  pawnCollider: {fileID: 3431064498782373626}
+  pawnCollider: {fileID: 0}
   pawnBrain: {fileID: 0}
   sensorTrigger: 0
 --- !u!1 &6631120178942801634
@@ -13570,6 +13599,95 @@ Transform:
   - {fileID: 6341947184674742915}
   m_Father: {fileID: 5160285286187788264}
   m_LocalEulerAnglesHint: {x: 180, y: -90, z: 90}
+--- !u!1 &7734655950861763455
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1291023932344901000}
+  - component: {fileID: 7876550681891980300}
+  - component: {fileID: 1249195374694539203}
+  - component: {fileID: 2174257693202699210}
+  m_Layer: 0
+  m_Name: HookingPointCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1291023932344901000
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7734655950861763455}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 1.7, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6920421996920446943}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!135 &7876550681891980300
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7734655950861763455}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.4
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1249195374694539203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7734655950861763455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6757b231cedd544c583ef8aeaf773b2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thickness: 0
+  inverted: 0
+  material: {fileID: 0}
+  filter: 1
+  m_SourceCollider: {fileID: 7876550681891980300}
+  m_DistanceField: {fileID: 0}
+--- !u!114 &2174257693202699210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7734655950861763455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c93af81a158ff4ebbb764993c3a8ac91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pawnRigidbody: {fileID: 0}
+  pawnCollider: {fileID: 0}
+  pawnBrain: {fileID: 0}
+  sensorTrigger: 0
 --- !u!1 &7765617443197052476
 GameObject:
   m_ObjectHideFlags: 0
@@ -13660,7 +13778,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c85dc7178e1a05343985cc8b5e251ff0, type: 2}
+  - {fileID: 2100000, guid: 775b469180b7b38468e702d0478872aa, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -14498,6 +14616,7 @@ MonoBehaviour:
   rigBuilder: {fileID: 0}
   jellyMeshSlot: {fileID: 2931156903486719907}
   shieldMeshSlot: {fileID: 7227580124499256317}
+  spine2_Bone: {fileID: 6595016664912986295}
   eyeTarget: {fileID: 2628180316295316148}
   shieldMeshRenderer: {fileID: 1458070737609187091}
   eyeAnimator: {fileID: 8650522791528342824}
@@ -14539,7 +14658,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bodyHitColliderHelper: {fileID: 7827817497564531622}
   parryHitColliderHelper: {fileID: 0}
-  counterActionCollider: {fileID: 8100486106525040855}
+  hookingPointColliderHelper: {fileID: 2174257693202699210}
+  counterActionCollider: {fileID: 1010624364731835310}
   sworldWeaponTrailA: {fileID: 2531984228082749242}
   sworldWeaponTrailB: {fileID: 722672261472128924}
   leapRootMotionDistance: 7
@@ -14593,6 +14713,8 @@ MonoBehaviour:
       value: 0
     lifeTime:
       value: -1
+    targetPawnHP:
+      value: {fileID: 0}
   stat:
     maxHeartPoint:
       value: 1
@@ -14788,7 +14910,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c85dc7178e1a05343985cc8b5e251ff0, type: 2}
+  - {fileID: 2100000, guid: 775b469180b7b38468e702d0478872aa, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -15039,7 +15161,7 @@ PrefabInstance:
     - target: {fileID: 329474253560269599, guid: 8254fab5a3409428fb5891b6a289d274, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 6a8ee1f8b7c552441b7e5e93c757d015, type: 2}
+      objectReference: {fileID: 2100000, guid: fe9bd16ee79734312b5d1648685f02c1, type: 2}
     - target: {fileID: 576472111840901586, guid: 8254fab5a3409428fb5891b6a289d274, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -15083,11 +15205,11 @@ PrefabInstance:
     - target: {fileID: 2320939327958034807, guid: 8254fab5a3409428fb5891b6a289d274, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: bac0969f9c2521542974994e097d3e83, type: 2}
+      objectReference: {fileID: 2100000, guid: c0f7534fac188d24cbbc51a82b406437, type: 2}
     - target: {fileID: 2519698909649996828, guid: 8254fab5a3409428fb5891b6a289d274, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: bac0969f9c2521542974994e097d3e83, type: 2}
+      objectReference: {fileID: 2100000, guid: c0f7534fac188d24cbbc51a82b406437, type: 2}
     - target: {fileID: 6560422389468422904, guid: 8254fab5a3409428fb5891b6a289d274, type: 3}
       propertyPath: m_Name
       value: JellyMesh

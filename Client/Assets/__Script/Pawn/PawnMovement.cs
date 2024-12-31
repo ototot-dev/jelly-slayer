@@ -152,7 +152,7 @@ namespace Game
         {
             __rootMotionPosition += position;
             __rootMotionRotation *= rotation;
-            __Logger.LogF(gameObject, nameof(AddRootMotion), "-", "position", position, "__rootMotionPosition", __rootMotionPosition);
+            // __Logger.LogF(gameObject, nameof(AddRootMotion), "-", "position", position, "__rootMotionPosition", __rootMotionPosition);
         }
 
         public void ResetRootMotion()

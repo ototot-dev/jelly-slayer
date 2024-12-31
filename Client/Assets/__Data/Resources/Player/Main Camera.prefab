@@ -103,7 +103,7 @@ MonoBehaviour:
   priority: 0
   blendDistance: 0
   weight: 1
-  sharedProfile: {fileID: 11400000, guid: f2c67dd9a0ebf4212a0bef984053e107, type: 2}
+  sharedProfile: {fileID: 11400000, guid: ab09877e2e707104187f6f83e2f62510, type: 2}
 --- !u!81 &5719270858607906525
 AudioListener:
   m_ObjectHideFlags: 0
@@ -124,9 +124,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78d245eed303c474796e569206cd48bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  focusPoint: {x: 0, y: 0, z: 0}
-  zoom: 15
-  zoomBlendSpeed: 5
+  viewCamera: {fileID: 0}
+  cameraTransform: {fileID: 0}
+  pixelCameraManager: {fileID: 0}
+  zoom: 1
+  zoomSpeed: 1
+  yawAngleOnGrouned: 40
+  yawAngleOnHanging: 50
+  yawAngleSpeed: 360
 --- !u!114 &5719270858607906522
 MonoBehaviour:
   m_ObjectHideFlags: 0

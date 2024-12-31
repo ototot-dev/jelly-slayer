@@ -1,4 +1,6 @@
 using System;
+using FIMSpace.Generating.Rules.Modelling;
+using NodeCanvas.Framework.Internal;
 using UniRx;
 using UnityEngine;
 
@@ -13,6 +15,7 @@ namespace Game
         public ParticleSystem plasmaExplosionFx;
         public ParticleSystem smallExplisionFx;
         public ParticleSystem smokeFx;
+        public RopeHookController ropeHookCtrler;
 
         public override bool CanRootMotion(Vector3 rootMotionVec)
         {
@@ -106,6 +109,52 @@ namespace Game
                     if (CurrActionName == "!OnParried")
                         FinishAction();
                 }).AddTo(this);
+        }
+
+        public override IDisposable StartActionDisposable(ref PawnHeartPointDispatcher.DamageContext damageContext, string actionName)
+        {
+            if (actionName == "RopeHook")
+            {
+                Debug.Assert(__brain.BB.HostBrain.BB.TargetBrain != null);
+
+                var targetColliderHelper = GameContext.Instance.HeroBrain.BB.TargetBrain.GetHookingColliderHelper();
+                if (ropeHookCtrler.LaunchHook(targetColliderHelper.pawnCollider))
+                {
+                    __brain.BB.target.targetPawnHP.Value = targetColliderHelper.pawnBrain.PawnHP;
+                    __brain.BB.decision.currDecision.Value = DroneBotBrain.Decisions.Hooking;
+                }
+
+                return null;
+            }
+            else if (actionName == "Assault")
+            {
+                Debug.Assert(__brain.BB.HostBrain.BB.TargetBrain != null);
+                
+                Vector3 assaultStartPosition = __brain.GetWorldPosition();
+                float assaultTimeStamp = Time.time;
+                float assaultDuration = 0.2f;
+
+                return Observable.EveryUpdate().Select(_ => (Time.time - assaultTimeStamp) / assaultDuration).TakeWhile(a => a < 1f)
+                    .DoOnCancel(() =>
+                    {
+                        __brain.BB.HostBrain.Movement.FinishHanging();
+                        __brain.BB.HostBrain.Movement.StartJump(1f);
+                    })
+                    .DoOnCompleted(() =>
+                    {
+                        __brain.BB.HostBrain.Movement.FinishHanging();
+                        __brain.BB.HostBrain.Movement.StartJump(1f);
+                    })
+                    .Subscribe(a =>
+                    {
+                        var alpha = ParadoxNotion.Animation.Easing.Ease(ParadoxNotion.Animation.EaseType.ExponentialIn, 0, 1f, a);
+                        var targetPosition = __brain.BB.HostBrain.BB.TargetBrain.GetWorldPosition() + __brain.BB.HostBrain.Movement.capsuleCollider.height * Vector3.up;
+                        __brain.Movement.GetCharacterMovement().SetPosition(Vector3.Lerp(assaultStartPosition, targetPosition, alpha));
+                        __brain.Movement.GetCharacterMovement().SetRotation(Quaternion.LookRotation((targetPosition - __brain.GetWorldPosition()).Vector2D().normalized));
+                    }).AddTo(this);
+            }
+            
+            return base.StartActionDisposable(ref damageContext, actionName);
         }
 
         protected override void AwakeInternal()

@@ -9,13 +9,15 @@ namespace Game
     public class SoldierActionController : JellyHumanoidActionController
     {
         [Header("Component")]
-        public Transform counterActionCollider;
+        public PawnColliderHelper hookingPointColliderHelper;
+        public PawnColliderHelper counterActionColliderHelper;
         public XWeaponTrail sworldWeaponTrailA;
         public XWeaponTrail sworldWeaponTrailB;
 
-        [Header("Component")]
+        [Header("Parameter")]
         public float leapRootMotionDistance = 7f;
         public float leapRootMotionMultiplier = 1f;
+        public CapsuleCollider CounterActionCollider => counterActionColliderHelper.pawnCollider as CapsuleCollider;
 
         public override float GetRootMotionMultiplier()
         {

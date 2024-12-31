@@ -27,8 +27,12 @@ namespace Game
         public bool IsSoundSensorTriggerable => (sensorTrigger & SensorFilters.Sound) > 0;
         public Vector3 GetCenter() => __capsuleCollider != null ? __capsuleCollider.transform.localToWorldMatrix.MultiplyPoint(__capsuleCollider.center) : pawnCollider.transform.position;
         public float GetRadius() => __capsuleCollider != null ? __capsuleCollider.radius : 0f;
+
+        //* sourcePosition에서 자신까지의 거리 (자신의 Collider Raidus 값을 뺀 거리)
         public float GetApproachDistance(Vector3 sourcePosition) => Mathf.Max(0f, (transform.position - sourcePosition).Vector2D().magnitude - GetRadius());
-        public float GetDistanceBetween(PawnColliderHelper otherColliderHelper) => Mathf.Max(0f, (transform.position - otherColliderHelper.transform.position).Vector2D().magnitude - GetRadius() - otherColliderHelper.GetRadius());
+
+        //* 목표점까지 거리에서 자신과 상대 Collider의 Radius 값을 뺀 거리
+        public float GetDistanceBetween(PawnColliderHelper otherColliderHelper) => Mathf.Max(0f, (otherColliderHelper.transform.position - transform.position).Vector2D().magnitude - GetRadius() - otherColliderHelper.GetRadius());
 
         void Awake()
         {

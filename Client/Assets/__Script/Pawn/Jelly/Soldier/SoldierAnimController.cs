@@ -13,6 +13,7 @@ namespace Game
         [Header("Component")]
         public Transform jellyMeshSlot;
         public Transform shieldMeshSlot;
+        public Transform spine2_Bone;
         public Transform eyeTarget;
         public MeshRenderer shieldMeshRenderer;
         public FEyesAnimator eyeAnimator;
@@ -213,6 +214,8 @@ namespace Game
                     eyeTarget.position = __brain.BB.TargetBrain.coreColliderHelper.transform.position + Vector3.up;
                 else
                     eyeTarget.position = __brain.coreColliderHelper.transform.position + __brain.coreColliderHelper.transform.forward + Vector3.up;
+
+                __brain.ActionCtrler.hookingPointColliderHelper.transform.position = spine2_Bone.transform.position;
             };
 
             __brain.PawnHP.onDead += (_) =>

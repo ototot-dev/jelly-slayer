@@ -8,11 +8,15 @@ namespace Game
     public class  DroneBotBlackboard : PawnBlackboard
     {
         public DroneBotBrain.Decisions CurrDecision => decision.currDecision.Value;
-        public Transform CurrSpot => decision.currSpot.Value;
-        public bool IsHanging => decision.currDecision.Value == DroneBotBrain.Decisions.Hanging;
+        public HeroBrain HostBrain => body.hostBrain.Value;
+        public PawnColliderHelper HostColliderHelper => HostBrain != null ? body.hostBrain.Value.coreColliderHelper : null;
+        public Transform HostCore => HostBrain != null ? body.hostBrain.Value.coreColliderHelper.transform : null;
+        public Transform FormationSpot => body.formationSpot.Value;
+        public bool IsHanging => HostBrain != null && HostBrain.BB.action.hangingBrain.Value == __pawnBrain;
         public float AggressiveLevel => decision.aggressiveLevel.Value;
         public bool IsInCombat => decision.aggressiveLevel.Value >= 0f;
         public float CatchingDuration => action.catchingDuration;
+        public float HookingDistance => action.hookingDistance;
         public float SpacingInDistance => action.spacingInDistance;
         public float SpacingOutDistance => action.spacingOutDistance;
         public float MinSpacingDistance => action.minSpacingDistance;
@@ -28,6 +32,8 @@ namespace Game
             public float boostSpeed = 1f;
             public float flyHeight = 1f;
             public float flyHeightAdjustSpeed = 1f;
+            public ReactiveProperty<HeroBrain> hostBrain = new();
+            public ReactiveProperty<Transform> formationSpot = new();
         }
 
         public Body body = new();
@@ -36,7 +42,6 @@ namespace Game
         public class Decision
         {
             public ReactiveProperty<DroneBotBrain.Decisions> currDecision = new(DroneBotBrain.Decisions.None);
-            public ReactiveProperty<Transform> currSpot = new();
             public FloatReactiveProperty aggressiveLevel = new(0);
         }
 
@@ -46,6 +51,7 @@ namespace Game
         public class Action
         {
             public float catchingDuration = 1f;
+            public float hookingDistance = 1f;
             public float spacingInDistance = 1f;
             public float spacingOutDistance = 1f;
             public float minSpacingDistance = 1f;
