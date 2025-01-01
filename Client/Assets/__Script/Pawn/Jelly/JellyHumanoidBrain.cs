@@ -69,13 +69,14 @@ namespace Game
                     InvalidateDecision(0.2f);
             };
 
-            __pawnActionCtrler.onActionStart += (actionContext, _) =>
+            __pawnActionCtrler.onActionStart += (actionContext, damageContext) =>
             {
                 if ((actionContext.actionData?.staminaCost ?? 0) > 0)
                     JellyBB.stat.ReduceStamina(actionContext.actionData.staminaCost);
 
-                //* 액션 수행 중에 현재 이동 제어를 끔
-                InvalidateDecision(0.2f);
+                //* 리액션 수행 중에 현재 이동 제어를 끔
+                if (actionContext.actionName.StartsWith("!") && damageContext.receiverPenalty.Item1 != PawnStatus.None)
+                    InvalidateDecision(damageContext.receiverPenalty.Item2);
             };
 
             onUpdate += () => 

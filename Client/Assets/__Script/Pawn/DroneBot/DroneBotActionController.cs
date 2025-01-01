@@ -15,6 +15,7 @@ namespace Game
         public ParticleSystem plasmaExplosionFx;
         public ParticleSystem smallExplisionFx;
         public ParticleSystem smokeFx;
+        public GameObject orbSmallYellowFx;
         public RopeHookController ropeHookCtrler;
 
         public override bool CanRootMotion(Vector3 rootMotionVec)
@@ -164,6 +165,7 @@ namespace Game
         }
 
         DroneBotBrain __brain;
+        EffectInstance __hookingPointFx;
 
         protected override void StartInternal()
         {
@@ -173,6 +175,30 @@ namespace Game
             {
                 if (damageContext.senderBrain == this && CheckActionRunning() && CurrActionName == "Bumping")
                     currActionContext.rootMotionEnabled = false;
+            };
+
+            ropeHookCtrler.onRopeHooked += (_) =>
+            {
+                __hookingPointFx = EffectManager.Instance.ShowLooping(orbSmallYellowFx, ropeHookCtrler.hookingCollider.transform.position, Quaternion.identity, Vector3.one);
+
+                Observable.EveryLateUpdate().TakeWhile(_ => __hookingPointFx != null).Subscribe(_ =>
+                {
+                    Debug.Assert(ropeHookCtrler.hookingCollider != null);
+
+                    __hookingPointFx.transform.position = ropeHookCtrler.hookingCollider.transform.position;
+                    __hookingPointFx.transform.position += (ropeHookCtrler.SourceCollider.transform.position - ropeHookCtrler.hookingCollider.transform.position).normalized * ropeHookCtrler.hookingCollider.GetComponent<PawnColliderHelper>().GetRadius();
+                    __hookingPointFx.transform.position -= GameContext.Instance.cameraCtrler.viewCamera.transform.forward;
+
+                }).AddTo(this);
+            };
+
+            ropeHookCtrler.onRopeReleased += (_) =>
+            {
+                if (__hookingPointFx != null)
+                {
+                    __hookingPointFx.Stop();
+                    __hookingPointFx = null;
+                }
             };
         }
 

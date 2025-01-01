@@ -32,6 +32,7 @@ namespace Game
         void Awake()
         {
             __brain = GetComponent<HeroBrain>();
+            
 #if UNITY_EDITOR
             //* Block 애님의 Additive Ref-Pose를 셋팅
             foreach (var c in blockAdditiveAnimClips)
@@ -66,9 +67,17 @@ namespace Game
             __brain.onUpdate += () =>
             {
                 if (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
-                    __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation);
+                {
+                    //* 평면 방향 RootMotion에 대한 Constraints가 존재하면 값을 0으로 변경해준다.
+                    if (__brain.ActionCtrler.CheckRootMotionConstraint(RootMotionConstraints.FreezePositionX, RootMotionConstraints.FreezePositionZ))
+                        __brain.Movement.AddRootMotion(mainAnimator.deltaPosition.AdjustXZ(0f, 0f), mainAnimator.deltaRotation);
+                    else
+                        __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation);
+                }
                 else if (__watchingStateNames.Contains("GuardParry"))
+                {
                     __brain.Movement.AddRootMotion(guardParryRootMotionMultiplier * mainAnimator.deltaPosition, Quaternion.identity);
+                }
 
                 if (__brain.BB.IsHanging || __brain.ActionCtrler.CheckActionRunning() || mainAnimator.GetBool("IsGuarding") || __watchingStateNames.Contains("DrinkPotion") || __watchingStateNames.Contains("GuardParry"))
                     spineOverrideTransform.weight = 0f;

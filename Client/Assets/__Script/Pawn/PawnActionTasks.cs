@@ -487,6 +487,7 @@ namespace Game.NodeCanvasExtension
         public BBParameter<int> animClipFps = -1;
         public BBParameter<float> rootMotionMultiplier = 1;
         public BBParameter<AnimationCurve> rootMotionCurve;
+        public BBParameter<RootMotionConstraints[]> rootMotionConstraints;
 
         protected override void OnExecute()
         {
@@ -495,7 +496,14 @@ namespace Game.NodeCanvasExtension
 
             if (actionCtrler.PendingActionData.Item1 == actionName.value)
             {
-                EndAction(actionCtrler.StartAction(actionName.value, string.Empty,animSpeedMultiplier.value, rootMotionMultiplier.value, rootMotionCurve.value, manualAdvanceEnabled.value));
+                var rootMotionConstrainSum = 0;
+                if (!rootMotionConstraints.isNoneOrNull && rootMotionConstraints.value.Length > 0)
+                {
+                    foreach (var c in rootMotionConstraints.value)
+                        rootMotionConstrainSum |= (int)c;
+                }
+
+                EndAction(actionCtrler.StartAction(actionName.value, string.Empty,animSpeedMultiplier.value, rootMotionMultiplier.value, rootMotionConstrainSum, rootMotionCurve.value, manualAdvanceEnabled.value));
                 actionCtrler.ClearPendingAction();
 
                 if (animClipLength.value > 0)
@@ -550,7 +558,7 @@ namespace Game.NodeCanvasExtension
 
         protected override void OnExecute()
         {
-            EndAction(agent.GetComponent<PawnActionController>().StartAction(actionName.value, string.Empty, actionSpeed.value, rootMotionMultiplier.value, rootMotionCurve.value, manualAdvanceEnabled.value));
+            EndAction(agent.GetComponent<PawnActionController>().StartAction(actionName.value, string.Empty, actionSpeed.value, rootMotionMultiplier.value, 0, rootMotionCurve.value, manualAdvanceEnabled.value));
         }
     }
 

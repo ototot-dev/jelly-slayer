@@ -148,10 +148,10 @@ namespace Game
         protected Quaternion __rootMotionRotation = Quaternion.identity;
         IDisposable __setMovementEnabledDisposable;
 
-        public void AddRootMotion(Vector3 position, Quaternion rotation)
+        public void AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation)
         {
-            __rootMotionPosition += position;
-            __rootMotionRotation *= rotation;
+            __rootMotionPosition += deltaPosition;
+            __rootMotionRotation *= deltaRotation;
             // __Logger.LogF(gameObject, nameof(AddRootMotion), "-", "position", position, "__rootMotionPosition", __rootMotionPosition);
         }
 

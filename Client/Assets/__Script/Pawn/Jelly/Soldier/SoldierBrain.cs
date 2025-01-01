@@ -1,5 +1,4 @@
 using UniRx;
-using Unity.Burst.Intrinsics;
 using UnityEngine;
 
 namespace Game

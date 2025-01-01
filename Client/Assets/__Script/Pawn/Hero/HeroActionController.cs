@@ -166,7 +166,7 @@ namespace Game
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
             __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 3);
 
-            var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.GetWorldTransform().forward.Vector2D().normalized;
+            var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.receiverBrain.GetWorldTransform().forward.Vector2D().normalized;
             Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
                 .DoOnCancel(() =>
                 {

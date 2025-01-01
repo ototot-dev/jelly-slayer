@@ -182,8 +182,19 @@ namespace Game
                 }
                 else
                 {
-                    __ecmMovement.velocity += Time.fixedDeltaTime * gravity;
-                    __ecmMovement.Move(Time.fixedDeltaTime);
+                    if (__rootMotionPosition.sqrMagnitude > 0f)
+                    {
+                        var rootMotionVelocity = GetRootMotionVelocity(Time.fixedDeltaTime);
+                        //* 평면 방향 성분은 없어야 함 (점프 방향으로 자연스럽게 이동하도록 강제함)
+                        Debug.Assert(rootMotionVelocity.x == 0f && rootMotionVelocity.z == 0f);
+
+                        __ecmMovement.Move(__ecmMovement.velocity.AdjustY(rootMotionVelocity.y), Time.fixedDeltaTime);
+                    }
+                    else
+                    {
+                        __ecmMovement.velocity += Time.fixedDeltaTime * gravity;
+                        __ecmMovement.Move(Time.fixedDeltaTime);
+                    }
                 }
 
                 ResetRootMotion();

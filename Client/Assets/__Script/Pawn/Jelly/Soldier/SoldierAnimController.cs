@@ -13,7 +13,7 @@ namespace Game
         [Header("Component")]
         public Transform jellyMeshSlot;
         public Transform shieldMeshSlot;
-        public Transform spine2_Bone;
+        public Transform hookingPoint;
         public Transform eyeTarget;
         public MeshRenderer shieldMeshRenderer;
         public FEyesAnimator eyeAnimator;
@@ -21,8 +21,7 @@ namespace Game
         public BonesStimulator rightArmBoneSimulator;
         public BonesStimulator leftLegBoneSimulator;
         public BonesStimulator rightLegBoneSimulator;
-        public ParticleSystem leftLegFrameFx;
-        public ParticleSystem rightLegFrameFx;
+        public ParticleSystem jetFrameFx;
         public JellySpringMassSystem springMassSystem;
 
         [Header("Parameter")]
@@ -57,9 +56,9 @@ namespace Game
 
         void Start()
         {
-            __brain.StatusCtrler.onStatusActive += (buff) =>
+            __brain.StatusCtrler.onStatusActive += (status) =>
             {
-                if (buff == PawnStatus.Staggered || buff == PawnStatus.Groggy)
+                if ((status == PawnStatus.Staggered && __brain.StatusCtrler.GetStrength(PawnStatus.Staggered) > 0f) || status == PawnStatus.Groggy)
                 {
                     leftArmBoneSimulator.GravityEffectForce = rightArmBoneSimulator.GravityEffectForce = 9.8f * Vector3.down;
                     leftArmBoneSimulator.GravityHeavyness = 4f;
@@ -67,7 +66,7 @@ namespace Game
                     armBoneSimulatorTargetWeight = 1f;
                     shieldMeshRenderer.material.SetFloat("_Alpha", 0.03f);
                 }
-                else if (buff == PawnStatus.KnockDown)
+                else if (status == PawnStatus.KnockDown)
                 {
                     armBoneSimulatorTargetWeight = 0f;
                     shieldMeshRenderer.material.SetFloat("_Alpha", 0.3f);
@@ -88,10 +87,8 @@ namespace Game
                 //* 발바닥에서 발사하는 Frame 이펙트 On
                 if (v)
                 {
-                    leftLegFrameFx.transform.parent.GetComponent<MeshRenderer>().enabled = true;
-                    rightLegFrameFx.transform.parent.GetComponent<MeshRenderer>().enabled = true;
-                    leftLegFrameFx.transform.parent.DOScale(2f * Vector3.one, 0.5f).OnComplete(() => leftLegFrameFx.Play());
-                    rightLegFrameFx.transform.parent.DOScale(2f * Vector3.one, 0.5f).OnComplete(() => rightLegFrameFx.Play());
+                    jetFrameFx.transform.parent.GetComponent<MeshRenderer>().enabled = true;
+                    jetFrameFx.transform.parent.DOScale(2f * Vector3.one, 0.5f).OnComplete(() => jetFrameFx.Play());
                 }
             }).AddTo(this);
             
@@ -100,15 +97,10 @@ namespace Game
                 //* 발바닥에서 발사하는 Frame 이펙트 Off
                 if (!v)
                 {
-                    leftLegFrameFx.transform.parent.DOScale(Vector3.zero, 0.2f).OnComplete(() => 
+                    jetFrameFx.transform.parent.DOScale(Vector3.zero, 0.2f).OnComplete(() => 
                     {
-                        leftLegFrameFx.transform.parent.GetComponent<MeshRenderer>().enabled = false;
-                        leftLegFrameFx.Stop();
-                    });
-                    rightLegFrameFx.transform.parent.DOScale(Vector3.zero, 0.2f).OnComplete(() => 
-                    {
-                        rightLegFrameFx.transform.parent.GetComponent<MeshRenderer>().enabled = false;
-                        rightLegFrameFx.Stop();
+                        jetFrameFx.transform.parent.GetComponent<MeshRenderer>().enabled = false;
+                        jetFrameFx.Stop();
                     });
                 }
             }).AddTo(this);
@@ -121,7 +113,7 @@ namespace Game
                         __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition, mainAnimator.deltaRotation);
 
                     mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
-                    mainAnimator.SetLayerWeight((int)LayerIndices.Action, Mathf.Clamp01(mainAnimator.GetLayerWeight(1) + (__brain.ActionCtrler.CheckActionRunning() ? actionLayerBlendSpeed : -actionLayerBlendSpeed) * Time.deltaTime));
+                    mainAnimator.SetLayerWeight((int)LayerIndices.Action, Mathf.Clamp01(mainAnimator.GetLayerWeight((int)LayerIndices.Action) + (__brain.ActionCtrler.CheckActionRunning() ? actionLayerBlendSpeed : -actionLayerBlendSpeed) * Time.deltaTime));
                     mainAnimator.SetLayerWeight((int)LayerIndices.Addictive, 1f);
                     mainAnimator.SetBool("IsMoving", __brain.Movement.CurrVelocity.sqrMagnitude > 0);
                     mainAnimator.SetBool("IsMovingStrafe", __brain.Movement.freezeRotation);
@@ -215,7 +207,7 @@ namespace Game
                 else
                     eyeTarget.position = __brain.coreColliderHelper.transform.position + __brain.coreColliderHelper.transform.forward + Vector3.up;
 
-                __brain.ActionCtrler.hookingPointColliderHelper.transform.position = spine2_Bone.transform.position;
+                __brain.ActionCtrler.hookingPointColliderHelper.transform.position = hookingPoint.transform.position;
             };
 
             __brain.PawnHP.onDead += (_) =>
