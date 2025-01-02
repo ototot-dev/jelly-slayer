@@ -27,10 +27,33 @@ namespace Game
         public float hookingLength;
         public Vector3 hookingOffsetPoint;
         public Collider hookingCollider;
-        public Collider SourceCollider => obiCollider.sourceCollider;
         public Action<Collider> onRopeHooked;
         public Action<Collider> onRopeReleased;
+        public Collider SourceCollider => obiCollider.sourceCollider;
 
+        public Vector3 GetFirstParticlePosition()
+        {
+            if ( __obiRope.elements == null || __obiRope.elements.Count <= 0 || __obiRope.solver.positions.count <= 0)
+                return SourceCollider.transform.position;
+
+            // first particle in the rope is the first particle of the first element:
+            int index = __obiRope.elements[0].particle1;
+            return obiSolver.transform.localToWorldMatrix.MultiplyPoint(__obiRope.solver.positions[index]);
+        }
+
+        public Vector3 GetLastParticlePosition()
+        {
+            if ( __obiRope.elements == null || __obiRope.elements.Count <= 0)
+                return SourceCollider.transform.position;
+            
+            // last particle in the rope is the second particle of the last element:
+            int index = __obiRope.elements[__obiRope.elements.Count - 1].particle2;
+            if (index >= __obiRope.solver.positions.count)
+                return SourceCollider.transform.position;
+            
+            return obiSolver.transform.localToWorldMatrix.MultiplyPoint(__obiRope.solver.positions[index]);
+        }
+        
         Vector3 __hitPoint;
         ObiRope __obiRope;
         ObiRopeCursor __obiRopeCursor;
@@ -149,22 +172,25 @@ namespace Game
 
             // while the last particle hasn't reached the hit, extend the rope:
             Vector3 origin;
+            Vector3 destination;
             Vector3 direction;
+            float distanceLeft = 0f;
 
             while (true)
             {
                 // calculate rope origin in solver space:
                 origin = obiSolver.transform.InverseTransformPoint(__obiRope.transform.position);
+                destination = obiSolver.transform.InverseTransformPoint(__hitPoint);
 
                 // update direction and distance to hook point:
-                direction = hookingOffsetPoint - origin;
+                direction = destination - origin;
                 float distance = direction.magnitude;
                 direction.Normalize();
 
                 LayParticlesInStraightLine(origin, direction);
-
+                
                 // increase length:
-                float distanceLeft = distance - __obiRopeCursor.ChangeLength(hookShootSpeed * Time.deltaTime);
+                distanceLeft = distance - __obiRopeCursor.ChangeLength(hookShootSpeed * Time.deltaTime);
 
                 // if we have exceeded the desired length, correct it and break the loop:
                 if (distanceLeft < 0)

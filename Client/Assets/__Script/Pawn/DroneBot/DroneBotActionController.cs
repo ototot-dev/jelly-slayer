@@ -1,6 +1,4 @@
 using System;
-using FIMSpace.Generating.Rules.Modelling;
-using NodeCanvas.Framework.Internal;
 using UniRx;
 using UnityEngine;
 
@@ -114,7 +112,7 @@ namespace Game
 
         public override IDisposable StartActionDisposable(ref PawnHeartPointDispatcher.DamageContext damageContext, string actionName)
         {
-            if (actionName == "RopeHook")
+            if (actionName == "Hook")
             {
                 Debug.Assert(__brain.BB.HostBrain.BB.TargetBrain != null);
 
@@ -124,6 +122,36 @@ namespace Game
                     __brain.BB.target.targetPawnHP.Value = targetColliderHelper.pawnBrain.PawnHP;
                     __brain.BB.decision.currDecision.Value = DroneBotBrain.Decisions.Hooking;
                 }
+
+                __hookingPointFx = EffectManager.Instance.ShowLooping(orbSmallYellowFx, ropeHookCtrler.hookingCollider.transform.position, Quaternion.identity, Vector3.one);
+                __hookingPointFxUpdateDisposable = Observable.EveryUpdate()
+                    .DoOnCancel(() => 
+                    {
+                        __hookingPointFx.Stop();
+                        __hookingPointFx = null;
+                    })
+                    .DoOnCompleted(() =>
+                    {
+                        __hookingPointFx.Stop();
+                        __hookingPointFx = null;
+                    })
+                    .Subscribe(_ =>
+                    {
+                        Debug.Assert(ropeHookCtrler.hookingCollider != null);
+
+                        // __hookingPointFx.transform.position = ropeHookCtrler.hookingCollider.transform.position;
+                        __hookingPointFx.transform.position = ropeHookCtrler.GetLastParticlePosition();
+                        //* 카메라 쪽으로 위치를 당겨서 겹쳐서 안보이게 되는 경우를 완화함
+                        __hookingPointFx.transform.position -= GameContext.Instance.cameraCtrler.viewCamera.transform.forward;
+                    }).AddTo(this);
+
+                return null;
+            }
+            else if (actionName == "Unhook")
+            {
+                ropeHookCtrler.DetachHook();
+                __brain.BB.target.targetPawnHP.Value = null;
+                __brain.InvalidateDecision(0.1f);
 
                 return null;
             }
@@ -166,6 +194,7 @@ namespace Game
 
         DroneBotBrain __brain;
         EffectInstance __hookingPointFx;
+        IDisposable __hookingPointFxUpdateDisposable;
 
         protected override void StartInternal()
         {
@@ -177,27 +206,12 @@ namespace Game
                     currActionContext.rootMotionEnabled = false;
             };
 
-            ropeHookCtrler.onRopeHooked += (_) =>
-            {
-                __hookingPointFx = EffectManager.Instance.ShowLooping(orbSmallYellowFx, ropeHookCtrler.hookingCollider.transform.position, Quaternion.identity, Vector3.one);
-
-                Observable.EveryLateUpdate().TakeWhile(_ => __hookingPointFx != null).Subscribe(_ =>
-                {
-                    Debug.Assert(ropeHookCtrler.hookingCollider != null);
-
-                    __hookingPointFx.transform.position = ropeHookCtrler.hookingCollider.transform.position;
-                    __hookingPointFx.transform.position += (ropeHookCtrler.SourceCollider.transform.position - ropeHookCtrler.hookingCollider.transform.position).normalized * ropeHookCtrler.hookingCollider.GetComponent<PawnColliderHelper>().GetRadius();
-                    __hookingPointFx.transform.position -= GameContext.Instance.cameraCtrler.viewCamera.transform.forward;
-
-                }).AddTo(this);
-            };
-
             ropeHookCtrler.onRopeReleased += (_) =>
             {
-                if (__hookingPointFx != null)
+                if (__hookingPointFxUpdateDisposable != null)
                 {
-                    __hookingPointFx.Stop();
-                    __hookingPointFx = null;
+                    __hookingPointFxUpdateDisposable.Dispose();
+                    __hookingPointFxUpdateDisposable = null;
                 }
             };
         }
