@@ -1,5 +1,4 @@
 using UniRx;
-using Unity.Burst.Intrinsics;
 using UnityEngine;
 
 namespace Game
@@ -13,6 +12,7 @@ namespace Game
         [Header("Debug")]
         public bool debugActionDisabled;
 
+        public override PawnColliderHelper GetHookingColliderHelper() => ActionCtrler.hookingPointColliderHelper;
         public SoldierBlackboard BB { get; private set; }
         public SoldierMovement Movement { get; private set; }
         public SoldierAnimController AnimCtrler { get; private set; }
@@ -120,10 +120,10 @@ namespace Game
                 }
             };
 
-            BB.action.isFalling.Subscribe(v =>
+            BB.action.isFalling.Skip(1).Subscribe(v =>
             {
                 //* 착지 동작 완료까지 이동을 금지함
-                if (!v) PawnStatusCtrler.AddStatus(PawnStatus.CanNotMove, 0.5f);
+                if (!v) PawnStatusCtrler.AddStatus(PawnStatus.CanNotMove, 1f, 0.5f);
             }).AddTo(this);
         }
 

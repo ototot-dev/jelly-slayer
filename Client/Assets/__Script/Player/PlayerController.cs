@@ -11,12 +11,11 @@ namespace Game
         [Header("Component")]
         public CursorController cursorCtrler;
         public KeyboardController keyboardCtrler;
+        public DroneBotFormationController droneBotFormationCtrler;
         public HeroBrain heroBrain;
-        public DroneBotBrain droneBotBrain;
         public GameObject HeroPawn => heroBrain != null ? heroBrain.gameObject : null;
-        public GameObject DroneBot => droneBotBrain != null ? droneBotBrain.gameObject : null;
 
-        [Header("Property")]
+        [Header("Parameter")]
         public StringReactiveProperty playerName = new();
         public ReactiveProperty<Vector2> moveVec = new();
         public ReactiveProperty<Vector3> lookVec = new();
@@ -56,13 +55,12 @@ namespace Game
             return true;
         }
 
-        public void UnpossessPawn(bool recoverBrain = false)
+        public void UnpossessPawn()
         {
             transform.SetParent(null, true);
             onUnpossessed?.Invoke(heroBrain);
 
             Debug.Log($"1?? {HeroPawn.name} is unpossessed by {gameObject.name}.");
-
             heroBrain = null;
         }
 
@@ -146,8 +144,9 @@ namespace Game
             __jumpHangingDisposable ??= Observable.EveryUpdate().Where(_ => __jumpExecutedTimeStamp > __jumpReleasedTimeStamp).Subscribe(_ =>
             {
                 //* Catch 판정은 0.1초로 셋팅
-                if (droneBotBrain != null && droneBotBrain.BB.CurrDecision != DroneBotBrain.Decisions.Catch && droneBotBrain.BB.CurrDecision != DroneBotBrain.Decisions.Hanging && Time.time - __jumpExecutedTimeStamp > 0.1f)
-                    heroBrain.Movement.PrepareHanging(droneBotBrain);
+                var droneBot = heroBrain.droneBotFormationCtrler.PickDroneBot();
+                if (!heroBrain.BB.IsHanging && droneBot != null && droneBot.BB.CurrDecision != DroneBotBrain.Decisions.Catch && Time.time - __jumpExecutedTimeStamp > 0.1f)
+                    heroBrain.Movement.PrepareHanging(droneBot);
             }).AddTo(this);
 
             float jumpStaminaCost = 10;
@@ -167,17 +166,16 @@ namespace Game
                         //* 점프 방향을 셋팅해줌
                         heroBrain.Movement.GetCharacterMovement().velocity = heroBrain.BB.action.hangingBrain.Value.Movement.CurrVelocity;
                         heroBrain.Movement.FinishHanging();
-                        heroBrain.InvalidateDecision(0f);
+                        heroBrain.Movement.StartJump(heroBrain.BB.body.jumpHeight);
                     }
                     else
                     {
                         //* 재귀적으로 Haning이 일어나지 않도록 'IsHanging'이 falsed인 경우에만 __jumpExecutedTimeStamp 값을 갱신해서 __jumpHangingDisposable이 동작하도록 한다
                         __jumpExecutedTimeStamp = Time.time;
-                    }
 
-                    heroBrain.Movement.StartJump(heroBrain.BB.body.jumpHeight);
-                    heroBrain.BB.action.isJumping.Value = true;
-                    heroBrain.BB.stat.ReduceStamina(jumpStaminaCost);
+                        heroBrain.Movement.StartJump(heroBrain.BB.body.jumpHeight);
+                        heroBrain.BB.stat.ReduceStamina(jumpStaminaCost);
+                    }
                 }
             }
             else

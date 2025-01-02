@@ -166,7 +166,7 @@ namespace Game
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
             __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 3);
 
-            var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.GetWorldTransform().forward.Vector2D().normalized;
+            var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.receiverBrain.GetWorldTransform().forward.Vector2D().normalized;
             Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
                 .DoOnCancel(() =>
                 {
@@ -204,10 +204,27 @@ namespace Game
 
         public override IDisposable StartActionDisposable(ref PawnHeartPointDispatcher.DamageContext damageContext, string actionName)
         {
-            if (actionName == "SpecialKick")
-            {   
-                if (__brain.BB.IsJumping)
-                    __brain.Movement.FinishJump();
+            if (actionName == "Assault")
+            {
+                // float assaultTimeStamp = Time.time;
+                // float assaultDuration = 0.2f;
+                // float 
+
+                // Observable.EveryFixedUpdate().Subscribe(_ =>
+                // {
+                //     var alpha = (Time.time - __zipRidingTimeStamp) / __zipRidingDuration;
+                //     if (alpha >= 1f || __ecmMovement.isGrounded)
+                //     {
+                //         FinishZipRiding();
+                //     }
+                //     else
+                //     {
+
+                //         var newPosition = Vector3.Lerp(__zipRidingStartPoint.position, __zipRidingEndPoint.position, alpha);
+                //         __ecmMovement.SetPosition(newPosition + ziplineOffsetY * Vector3.down);
+                //         __ecmMovement.SetRotation(Quaternion.LookRotation((__zipRidingEndPoint.position - __zipRidingStartPoint.position).Vector2D().normalized));
+                //     }
+                // }).AddTo(this);
             }
             
             return base.StartActionDisposable(ref damageContext, actionName);

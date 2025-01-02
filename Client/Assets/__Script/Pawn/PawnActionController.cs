@@ -6,26 +6,12 @@ using UnityEngine;
 
 namespace Game
 {
-    public enum ActionType 
-    {
-        None,
-        Knockback,
-    }
-
     public class PawnActionController : MonoBehaviour, IStatusContainer
     {
         [Header("Component")]
         public PawnColliderHelper bodyHitColliderHelper;
         public PawnColliderHelper parryHitColliderHelper;
         
-        public enum SuperArmorLevels : int
-        {
-            None = 0,
-            CanNotStraggerOnBlacked,    //* 블럭킹에 의해서 Action이 캔슬되지 않음
-            CanNotStarggerOnDamaged,    //* 데미지에 의해서 Action이 캔슬되지 않음
-            Max,
-        }
-
         public struct ActionContext
         {
             public MainTable.ActionData actionData;
@@ -34,6 +20,7 @@ namespace Game
             public string actionName;
             public float actionSpeed;
             public float rootMotionMultiplier;
+            public int rootMotionConstraint;
             public AnimationCurve rootMotionCurve;
             public bool insufficientStamina;
             public bool actionCanceled;
@@ -58,7 +45,7 @@ namespace Game
             static int __actionInstanceIdCounter;
 
             //* 일반적인 Action 초기화
-            public ActionContext(MainTable.ActionData actionData, string preMotionName, float actionSpeedMultiplier, float rootMotionMultiplier, AnimationCurve rootMotionCurve, bool manualAdvacneEnabled, float startTimeStamp)
+            public ActionContext(MainTable.ActionData actionData, string preMotionName, float actionSpeedMultiplier, float rootMotionMultiplier, int rootMotionConstraint, AnimationCurve rootMotionCurve, bool manualAdvacneEnabled, float startTimeStamp)
             {
                 Debug.Assert(actionData != null);
                 this.actionData = actionData;
@@ -67,6 +54,7 @@ namespace Game
                 actionName = actionData.actionName;
                 actionSpeed = actionData.actionSpeed * actionSpeedMultiplier;
                 this.rootMotionMultiplier = rootMotionMultiplier;
+                this.rootMotionConstraint = rootMotionConstraint;
                 this.rootMotionCurve = rootMotionCurve;
                 insufficientStamina = false;
                 actionCanceled = false;
@@ -91,13 +79,14 @@ namespace Game
             }
 
             //* 리액션 및 Addictivie 액션 초기화
-            public ActionContext(string actionName, float actionSpeed, float startTimeStamp)
+            public ActionContext(string actionName, float actionSpeedMultiplier, float startTimeStamp)
             {
                 actionData = null;
                 actionInstanceId = ++__actionInstanceIdCounter;
                 preMotionName = string.Empty;
                 this.actionName = actionName;
-                this.actionSpeed = actionSpeed;
+                actionSpeed = actionSpeedMultiplier;
+                rootMotionConstraint = 0;
                 rootMotionMultiplier = 1;
                 rootMotionCurve = null;
                 insufficientStamina = false;
@@ -204,6 +193,16 @@ namespace Game
                 return currActionContext.rootMotionMultiplier * currActionContext.rootMotionCurve.Evaluate(Time.time - (currActionContext.preMotionTimeStamp > 0f ? currActionContext.preMotionTimeStamp : currActionContext.startTimeStamp));
         }
 
+        public virtual bool CheckRootMotionConstraint(params RootMotionConstraints[] constraints) 
+        {
+            foreach (var c in constraints)
+            {
+                if ((currActionContext.rootMotionConstraint & (int)c) > 0)
+                    return true;
+            }
+
+            return false;
+        }
         public virtual bool CanRootMotion(Vector3 rootMotionVec) { return currActionContext.rootMotionEnabled; }
         public virtual bool CanBlockAction(ref PawnHeartPointDispatcher.DamageContext damageContext) { return false; }
         public virtual bool CanParryAction(ref PawnHeartPointDispatcher.DamageContext damageContext) { return false; }
@@ -406,12 +405,12 @@ namespace Game
             };
         }
 
-        public bool StartAction(string actionName, string preMotionName, float actionSpeedMultiplier = 1, float rootMotionMultiplier = 1, AnimationCurve rootMotionCurve = null, bool manualAdvacneEnabled = false)
+        public bool StartAction(string actionName, string preMotionName, float actionSpeedMultiplier = 1, float rootMotionMultiplier = 1, int rootMotionConstraint = 0, AnimationCurve rootMotionCurve = null, bool manualAdvacneEnabled = false)
         {
-            return StartAction(new PawnHeartPointDispatcher.DamageContext(), actionName, preMotionName, actionSpeedMultiplier, rootMotionMultiplier, rootMotionCurve, manualAdvacneEnabled);
+            return StartAction(new PawnHeartPointDispatcher.DamageContext(), actionName, preMotionName, actionSpeedMultiplier, rootMotionMultiplier, rootMotionConstraint, rootMotionCurve, manualAdvacneEnabled);
         }
 
-        public bool StartAction(PawnHeartPointDispatcher.DamageContext damageContext, string actionName, string preMotionName, float actionSpeedMultiplier = 1, float rootMotionMultiplier = 1, AnimationCurve rootMotionCurve = null, bool manualAdvacneEnabled = false)
+        public bool StartAction(PawnHeartPointDispatcher.DamageContext damageContext, string actionName, string preMotionName, float actionSpeedMultiplier = 1, float rootMotionMultiplier = 1, int rootMotionConstraint = 0, AnimationCurve rootMotionCurve = null, bool manualAdvacneEnabled = false)
         {
             if (CheckActionRunning())
             {
@@ -454,7 +453,7 @@ namespace Game
                     return false;
                 }
 
-                currActionContext = new(actionData, preMotionName, actionSpeedMultiplier, rootMotionMultiplier, rootMotionCurve, manualAdvacneEnabled, Time.time);
+                currActionContext = new(actionData, preMotionName, actionSpeedMultiplier, rootMotionMultiplier, rootMotionConstraint, rootMotionCurve, manualAdvacneEnabled, Time.time);
                 if (actionData.staminaCost > 0)
                 {
                     if (__pawnBrain.PawnBB.stat.stamina.Value < actionData.staminaCost)

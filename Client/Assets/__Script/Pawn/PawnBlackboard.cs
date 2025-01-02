@@ -17,7 +17,7 @@ namespace Game
         public bool IsDead => common.isDead.Value;
         public float LifeTime => common.lifeTime.Value;
         public PawnBrainController TargetBrain => target.targetPawnHP.Value != null ? target.targetPawnHP.Value.PawnBrain : null;
-        public PawnColliderHelper TargetColliderHelper => target.targetPawnHP.Value != null && target.targetPawnHP.Value.PawnBrain != null ? target.targetPawnHP.Value.PawnBrain.coreColliderHelper : null;
+        public PawnColliderHelper TargetColliderHelper => TargetBrain != null ? TargetBrain.coreColliderHelper : null;
         public Transform TargetCore => TargetBrain != null ? TargetBrain.coreColliderHelper.transform : null;
         public GameObject TargetPawn => target.targetPawnHP.Value != null ? target.targetPawnHP.Value.gameObject : null;
 
@@ -34,6 +34,7 @@ namespace Game
             public BoolReactiveProperty isDown = new();
             public BoolReactiveProperty isGroggy = new();
             public FloatReactiveProperty lifeTime = new(60);
+            public ReactiveProperty<PawnHeartPointDispatcher> targetPawnHP = new();
         }
 
         public Common common = new();

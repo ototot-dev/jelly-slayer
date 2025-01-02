@@ -75,7 +75,7 @@ namespace Game
             var knockBackVec = __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
             if (damageContext.actionResult == ActionResults.Missed || damageContext.actionResult == ActionResults.Blocked)
             {
-                Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.2f / __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed)))
+                Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(1f / __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed)))
                     .DoOnCancel(() => __pawnMovement.Freeze())
                     .DoOnCompleted(() => __pawnMovement.Freeze())
                     .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity)).AddTo(this);

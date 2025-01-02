@@ -13,6 +13,8 @@ namespace Game
         public ParticleSystem plasmaExplosionFx;
         public ParticleSystem smallExplisionFx;
         public ParticleSystem smokeFx;
+        public GameObject orbSmallYellowFx;
+        public RopeHookController ropeHookCtrler;
 
         public override bool CanRootMotion(Vector3 rootMotionVec)
         {
@@ -108,6 +110,82 @@ namespace Game
                 }).AddTo(this);
         }
 
+        public override IDisposable StartActionDisposable(ref PawnHeartPointDispatcher.DamageContext damageContext, string actionName)
+        {
+            if (actionName == "Hook")
+            {
+                Debug.Assert(__brain.BB.HostBrain.BB.TargetBrain != null);
+
+                var targetColliderHelper = GameContext.Instance.HeroBrain.BB.TargetBrain.GetHookingColliderHelper();
+                if (ropeHookCtrler.LaunchHook(targetColliderHelper.pawnCollider))
+                {
+                    __brain.BB.target.targetPawnHP.Value = targetColliderHelper.pawnBrain.PawnHP;
+                    __brain.BB.decision.currDecision.Value = DroneBotBrain.Decisions.Hooking;
+                }
+
+                __hookingPointFx = EffectManager.Instance.ShowLooping(orbSmallYellowFx, ropeHookCtrler.hookingCollider.transform.position, Quaternion.identity, Vector3.one);
+                __hookingPointFxUpdateDisposable = Observable.EveryUpdate()
+                    .DoOnCancel(() => 
+                    {
+                        __hookingPointFx.Stop();
+                        __hookingPointFx = null;
+                    })
+                    .DoOnCompleted(() =>
+                    {
+                        __hookingPointFx.Stop();
+                        __hookingPointFx = null;
+                    })
+                    .Subscribe(_ =>
+                    {
+                        Debug.Assert(ropeHookCtrler.hookingCollider != null);
+
+                        // __hookingPointFx.transform.position = ropeHookCtrler.hookingCollider.transform.position;
+                        __hookingPointFx.transform.position = ropeHookCtrler.GetLastParticlePosition();
+                        //* 카메라 쪽으로 위치를 당겨서 겹쳐서 안보이게 되는 경우를 완화함
+                        __hookingPointFx.transform.position -= GameContext.Instance.cameraCtrler.viewCamera.transform.forward;
+                    }).AddTo(this);
+
+                return null;
+            }
+            else if (actionName == "Unhook")
+            {
+                ropeHookCtrler.DetachHook();
+                __brain.BB.target.targetPawnHP.Value = null;
+                __brain.InvalidateDecision(0.1f);
+
+                return null;
+            }
+            else if (actionName == "Assault")
+            {
+                Debug.Assert(__brain.BB.HostBrain.BB.TargetBrain != null);
+                
+                Vector3 assaultStartPosition = __brain.GetWorldPosition();
+                float assaultTimeStamp = Time.time;
+                float assaultDuration = 0.2f;
+
+                return Observable.EveryUpdate().Select(_ => (Time.time - assaultTimeStamp) / assaultDuration).TakeWhile(a => a < 1f)
+                    .DoOnCancel(() =>
+                    {
+                        __brain.BB.HostBrain.Movement.FinishHanging();
+                        __brain.BB.HostBrain.Movement.StartJump(1f);
+                    })
+                    .DoOnCompleted(() =>
+                    {
+                        __brain.BB.HostBrain.Movement.FinishHanging();
+                        __brain.BB.HostBrain.Movement.StartJump(1f);
+                    })
+                    .Subscribe(a =>
+                    {
+                        var alpha = ParadoxNotion.Animation.Easing.Ease(ParadoxNotion.Animation.EaseType.ExponentialIn, 0, 1f, a);
+                        var targetPosition = __brain.BB.HostBrain.BB.TargetBrain.GetWorldPosition() + __brain.BB.HostBrain.Movement.capsuleCollider.height * Vector3.up;
+                        __brain.Movement.GetCharacterMovement().SetPosition(Vector3.Lerp(assaultStartPosition, targetPosition, alpha));
+                        __brain.Movement.GetCharacterMovement().SetRotation(Quaternion.LookRotation((targetPosition - __brain.GetWorldPosition()).Vector2D().normalized));
+                    }).AddTo(this);
+            }
+            
+            return base.StartActionDisposable(ref damageContext, actionName);
+        }
+
         protected override void AwakeInternal()
         {
             base.AwakeInternal();
@@ -115,6 +193,8 @@ namespace Game
         }
 
         DroneBotBrain __brain;
+        EffectInstance __hookingPointFx;
+        IDisposable __hookingPointFxUpdateDisposable;
 
         protected override void StartInternal()
         {
@@ -124,6 +204,15 @@ namespace Game
             {
                 if (damageContext.senderBrain == this && CheckActionRunning() && CurrActionName == "Bumping")
                     currActionContext.rootMotionEnabled = false;
+            };
+
+            ropeHookCtrler.onRopeReleased += (_) =>
+            {
+                if (__hookingPointFxUpdateDisposable != null)
+                {
+                    __hookingPointFxUpdateDisposable.Dispose();
+                    __hookingPointFxUpdateDisposable = null;
+                }
             };
         }
 

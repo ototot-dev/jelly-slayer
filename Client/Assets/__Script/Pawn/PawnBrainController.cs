@@ -17,6 +17,7 @@ namespace Game
         public virtual Vector3 GetWorldPosition() => coreColliderHelper != null ? coreColliderHelper.transform.position : transform.position;
         public virtual Quaternion GetWorldRotation() => coreColliderHelper != null ? coreColliderHelper.transform.rotation : transform.rotation;
         public virtual Transform GetWorldTransform() => coreColliderHelper != null ? coreColliderHelper.transform : transform;
+        public virtual PawnColliderHelper GetHookingColliderHelper() => null;
 
         [Header("Component")]
         public PawnColliderHelper coreColliderHelper;

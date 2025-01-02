@@ -8,9 +8,10 @@ namespace Game
     {
         public bool IsJumping => action.isJumping.Value;
         public bool IsHanging => action.hangingBrain.Value != null;
+        public bool IsZipRiding => action.isZipRiding.Value;
         public bool IsRolling => action.isRolling.Value;
         public bool IsGuarding => action.isGuarding.Value;
-        public bool IsGuardBroken => action.isGuardbroken.Value;
+        public bool IsGuardBroken => action.isGuardBroken.Value;
         public bool IsAutoGuardEnabled => action.isAutoGuardEnabled.Value;
         public bool IsCharging => action.isCharging.Value;
 
@@ -33,11 +34,11 @@ namespace Game
         public class Action
         {
             public BoolReactiveProperty isJumping = new();
-            public BoolReactiveProperty isHanging = new();
             public ReactiveProperty<DroneBotBrain> hangingBrain = new();
+            public BoolReactiveProperty isZipRiding = new();
             public BoolReactiveProperty isRolling = new();
             public BoolReactiveProperty isGuarding = new();
-            public BoolReactiveProperty isGuardbroken = new();
+            public BoolReactiveProperty isGuardBroken = new();
             public BoolReactiveProperty isAutoGuardEnabled = new(true);
             public BoolReactiveProperty isCharging = new();
             public IntReactiveProperty chargingLevel = new();
@@ -50,7 +51,7 @@ namespace Game
             base.AwakeInternal();
 
             stat.staminaRecoverSpeed = pawnData.staminaRecoverSpeed;
-            stat.staminaRecoverTimeThreshold = pawnData.staminaRecoverTime;;
+            stat.staminaRecoverTimeThreshold = pawnData.staminaRecoverTime;
 
             pawnData_Movement = MainTable.PawnData_Movement.PawnData_MovementList.First(d => d.pawnId == common.pawnId);
             body.walkSpeed = pawnData_Movement.moveSpeed;

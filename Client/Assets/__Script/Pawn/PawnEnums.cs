@@ -66,6 +66,24 @@ namespace Game
         KickParried,
     }
 
+    public enum RootMotionConstraints : int
+    {
+        None = 0,
+        FreezePositionX = 0x01,
+        FreezePositionY = 0x02,
+        FreezePositionZ = 0x04,
+        FreezeRotationPitch = 0x10,
+        FreezeRotationYaw = 0x20,
+        FreezeRotationRoll = 0x40,
+    }
+
+    public enum SuperArmorLevels : int
+    {
+        None = 0,
+        CanNotStraggerOnBlacked,    //* 블럭킹에 의해서 Action이 캔슬되지 않음
+        CanNotStarggerOnDamaged,    //* 데미지에 의해서 Action이 캔슬되지 않음
+        Max,
+    }
 
     [UGS(typeof(ActionId))]
     public enum ActionId

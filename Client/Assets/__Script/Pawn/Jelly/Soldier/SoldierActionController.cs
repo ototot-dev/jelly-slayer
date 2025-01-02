@@ -9,13 +9,15 @@ namespace Game
     public class SoldierActionController : JellyHumanoidActionController
     {
         [Header("Component")]
-        public Transform counterActionCollider;
+        public PawnColliderHelper hookingPointColliderHelper;
+        public PawnColliderHelper counterActionColliderHelper;
         public XWeaponTrail sworldWeaponTrailA;
         public XWeaponTrail sworldWeaponTrailB;
 
-        [Header("Component")]
+        [Header("Parameter")]
         public float leapRootMotionDistance = 7f;
         public float leapRootMotionMultiplier = 1f;
+        public CapsuleCollider CounterActionCollider => counterActionColliderHelper.pawnCollider as CapsuleCollider;
 
         public override float GetRootMotionMultiplier()
         {
@@ -54,6 +56,10 @@ namespace Game
             }
             else if (damageContext.actionResult == ActionResults.Blocked)
             {
+                __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", true);
+                __brain.AnimCtrler.mainAnimator.SetTrigger("OnGuard");
+                Observable.Timer(TimeSpan.FromSeconds(0.5f)).Subscribe(_ => __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", false)).AddTo(this);
+                
                 SoundManager.Instance.Play(SoundID.HIT_BLOCK);
                 EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);
                 EffectManager.Instance.Show("BlockAttack", __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);

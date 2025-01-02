@@ -281,12 +281,12 @@ namespace Game
                             Debug.Assert(damageContext.receiverActionData != null);
 
                             //* 'Block' 판정인 경우엔 Sender에게 경직 발생
-                            if (senderActionCtrler == null || !senderActionCtrler.CheckSuperArmorLevel(PawnActionController.SuperArmorLevels.CanNotStraggerOnBlacked))
+                            if (senderActionCtrler == null || !senderActionCtrler.CheckSuperArmorLevel(SuperArmorLevels.CanNotStraggerOnBlacked))
                                 damageContext.senderPenalty = new(PawnStatus.Staggered, damageContext.receiverActionData.staggerDuration);
                             else
                                 __Logger.LogF(gameObject, nameof(ProcessDamageContext), "receiverActionCtrler.CheckSuperArmorLevel(CanNotStraggerOnBlacked) returns true. PawnStatus.Staggered is ignored.");
                             
-                            //* Receiver도 약한 경직 발생함
+                            //* Receiver도 'Block' 반동에 의한 약한 경직 발생함
                             if (damageContext.receiverBrain.PawnBB.pawnData.guardStaggerDuration > 0f)
                                 damageContext.receiverPenalty = new(PawnStatus.Staggered, damageContext.receiverBrain.PawnBB.pawnData.guardStaggerDuration);
                         }
@@ -356,7 +356,7 @@ namespace Game
 
                         if (damageContext.receiverPenalty.Item1 == PawnStatus.None && damageContext.receiverBrain.PawnBB.stat.poise - damageContext.senderActionData.stagger <= 0) //* 경직 처리
                         {
-                            if (!receiverActionCtrler.CheckSuperArmorLevel(PawnActionController.SuperArmorLevels.CanNotStarggerOnDamaged))
+                            if (!receiverActionCtrler.CheckSuperArmorLevel(SuperArmorLevels.CanNotStarggerOnDamaged))
                                 damageContext.receiverPenalty = new(PawnStatus.Staggered, damageContext.senderActionData.staggerDuration);
                             else
                                 __Logger.LogF(gameObject, nameof(ProcessDamageContext), "receiverActionCtrler.CheckSuperArmorLevel(CanNotStarggerOnDamaged) returns true. PawnStatus.Staggered is ignored.");
@@ -384,7 +384,9 @@ namespace Game
                 if (damageContext.receiverPenalty.Item1 != PawnStatus.None)
                 {
                     __Logger.LogF(gameObject, nameof(ProcessDamageContext), "receiverPenalty is added.", "PawnStatus", damageContext.receiverPenalty.Item1, "duration", damageContext.receiverPenalty.Item2, "receiverBrain", damageContext.receiverBrain);
-                    damageContext.receiverBrain.PawnStatusCtrler.AddStatus(damageContext.receiverPenalty.Item1, 1f, damageContext.receiverPenalty.Item2);
+
+                    //* 'Block' 판정인 경우엔 strength 값에 0을 대입하여 구분이 될 수 있도록 함
+                    damageContext.receiverBrain.PawnStatusCtrler.AddStatus(damageContext.receiverPenalty.Item1, damageContext.actionResult == ActionResults.Blocked ? 0f : 1f, damageContext.receiverPenalty.Item2);
 
                     //* Groggy 상태에서 KnockDown이 발생하면 Groggy는 종료시킴
                     if (damageContext.receiverPenalty.Item1 == PawnStatus.KnockDown && damageContext.receiverBrain.PawnStatusCtrler.CheckStatus(PawnStatus.Groggy))
