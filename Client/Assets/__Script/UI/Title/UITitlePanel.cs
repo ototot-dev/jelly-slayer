@@ -11,16 +11,17 @@ public class UITitlePanel : MonoBehaviour
     {
         InitManager.Initialize();
     }
-    public void OnClickStart()
+    public void OnClickGameStart()
     {
         SceneManager.LoadScene("BattleTest");
     }
+    public void OnClickTutorial()
+    {
+        SceneManager.LoadScene("BattleTest");
+    }
+
     public void OnClickGameExit()
     {
         Application.Quit();
-    }    
-    // Update is called once per frame
-    void Update()
-    {
     }
 }

@@ -6,9 +6,13 @@ using UnityEngine.SceneManagement;
 
 public class UIGamePanel : MonoBehaviour
 {
+    [Header("Panel")]
+    [SerializeField] GameObject _menuObj;
+
     [Header("Player")]
     public Slider _playerHpSlider;
     public Slider _playerSpSlider;
+    public Slider _playerRageSlider;
 
     [Header("Enemy")]
     public Slider _enemyHPSlider;
@@ -28,7 +32,7 @@ public class UIGamePanel : MonoBehaviour
     }
     public void OnClickMenu() 
     {
-        SceneManager.LoadScene("Title");
+        _menuObj.SetActive(true);
     }
 
     // Update is called once per frame
