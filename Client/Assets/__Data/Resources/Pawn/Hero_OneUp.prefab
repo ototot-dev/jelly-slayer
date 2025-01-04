@@ -160,6 +160,7 @@ MonoBehaviour:
   gravity: {x: 0, y: -19.81, z: 0}
   moveVec: {x: 0, y: 0, z: 0}
   faceVec: {x: 0, y: 0, z: 1}
+  ziplineOffsetY: 0.5
 --- !u!114 &2118029493424771570
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -175,8 +176,6 @@ MonoBehaviour:
   mainAnimator: {fileID: 3244703593152202959}
   legAnimator: {fileID: 3673634840836888687}
   rigBuilder: {fileID: 8157329558261335758}
-  sourceTest: {fileID: 3244703593161533229}
-  targetTest: {fileID: 0}
   ragdollAnimator: {fileID: 1508909516796287826}
   spineOverrideTransform: {fileID: 7333061147978076615}
   leftArmTwoBoneIK: {fileID: 5332639391261278618}
@@ -243,6 +242,8 @@ MonoBehaviour:
       value: 0
     lifeTime:
       value: -1
+    targetPawnHP:
+      value: {fileID: 0}
   stat:
     maxHeartPoint:
       value: 1
@@ -296,15 +297,15 @@ MonoBehaviour:
   action:
     isJumping:
       value: 0
-    isHanging:
-      value: 0
     hangingBrain:
       value: {fileID: 0}
+    isZipRiding:
+      value: 0
     isRolling:
       value: 0
     isGuarding:
       value: 0
-    isGuardbroken:
+    isGuardBroken:
       value: 0
     isAutoGuardEnabled:
       value: 1
@@ -312,12 +313,6 @@ MonoBehaviour:
       value: 0
     chargingLevel:
       value: 0
-    testIsAir:
-      value: 0
-    testHanging:
-      value: 0
-    testDroneBotBrain:
-      value: {fileID: 0}
 --- !u!114 &8791414763947496166
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -348,6 +343,7 @@ MonoBehaviour:
   - {fileID: 5206738947422469673}
   - {fileID: 8179485229091800959}
   _chainCtrl: {fileID: 7371286568505109311}
+  droneBotFormationCtrler: {fileID: 0}
   _isBind: 0
   _bindLIst: []
 --- !u!114 &4592272242371362991
@@ -4888,7 +4884,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3244703593161571083}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 52d00ae35ee1d4b1ab4023f79795a186, type: 3}
   m_Name: 
