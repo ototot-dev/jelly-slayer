@@ -5,9 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoSingleton<GameManager>
 {
-
-    // 주석
-    
+    // 주석    
     public delegate void OnPawnSpawned(PawnBrainController pawn);
     public OnPawnSpawned _delPawnSpawned;
 
@@ -15,11 +13,16 @@ public class GameManager : MonoSingleton<GameManager>
     public OnPawnDamaged _delPawnDamaged;
 
 
+    public Vector3 _vInitPos;
+
+
     // Start is called before the first frame update
     void Start()
     {
-        var objRes = Resources.Load("Background/Prefabs/FS_Test-Container");
-        GameObject.Instantiate(objRes);
+        var objRes = Resources.Load("Background/Prefabs/Map/FS_Test_Mission2");
+        GameObject objBack = (GameObject)GameObject.Instantiate(objRes);
+        objBack.transform.position = _vInitPos; // new Vector3(-10.5f, 0, -7.5f);
+        objBack.transform.eulerAngles = new Vector3(0, 10, 0);
 
         var objPlane = GameObject.Find("Plane");
         if(objPlane != null)
