@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using FIMSpace.BonesStimulation;
-using FIMSpace.FProceduralAnimation;
 using UniRx;
 using UnityEditor;
 using UnityEngine;
@@ -12,7 +11,6 @@ namespace Game
     public class HeroAnimController : PawnAnimController
     {
         [Header("Component")]
-        public RagdollAnimator2 ragdollAnimator;
         public OverrideTransform spineOverrideTransform;
         public TwoBoneIKConstraint leftArmTwoBoneIK;
         public TwoBoneIKConstraint rightArmTwoBoneIK;
@@ -70,9 +68,9 @@ namespace Game
                 {
                     //* 평면 방향 RootMotion에 대한 Constraints가 존재하면 값을 0으로 변경해준다.
                     if (__brain.ActionCtrler.CheckRootMotionConstraint(RootMotionConstraints.FreezePositionX, RootMotionConstraints.FreezePositionZ))
-                        __brain.Movement.AddRootMotion(mainAnimator.deltaPosition.AdjustXZ(0f, 0f), mainAnimator.deltaRotation);
+                        __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition.AdjustXZ(0f, 0f), mainAnimator.deltaRotation);
                     else
-                        __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation);
+                        __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition, mainAnimator.deltaRotation);
                 }
                 else if (__watchingStateNames.Contains("GuardParry"))
                 {
@@ -91,10 +89,10 @@ namespace Game
                 }
                 else
                 {
-                    leftArmTwoBoneIK.weight = leftArmTwoBoneIK.weight.LerpSpeed(__brain.BB.IsHanging || __brain.BB.IsZipRiding ? 1f : 0f, 4f, Time.deltaTime);
-                    rightArmTwoBoneIK.weight = leftArmTwoBoneIK.weight.LerpSpeed(__brain.BB.IsHanging || __brain.BB.IsZipRiding ? 1f : 0f, 4f, Time.deltaTime);
-                    leftLegBoneSimulator.StimulatorAmount = leftLegBoneSimulator.StimulatorAmount.LerpSpeed(__brain.BB.IsHanging || __brain.BB.IsZipRiding ? 0.4f : 0f, 1f, Time.deltaTime);
-                    rightLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount.LerpSpeed(__brain.BB.IsHanging || __brain.BB.IsZipRiding ? 0.5f : 0f, 1f, Time.deltaTime);
+                    leftArmTwoBoneIK.weight = leftArmTwoBoneIK.weight.LerpSpeed(__brain.BB.IsHanging ? 1f : 0f, 4f, Time.deltaTime);
+                    rightArmTwoBoneIK.weight = leftArmTwoBoneIK.weight.LerpSpeed(__brain.BB.IsHanging ? 1f : 0f, 4f, Time.deltaTime);
+                    leftLegBoneSimulator.StimulatorAmount = leftLegBoneSimulator.StimulatorAmount.LerpSpeed(__brain.BB.IsHanging ? 0.4f : 0f, 1f, Time.deltaTime);
+                    rightLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount.LerpSpeed(__brain.BB.IsHanging ? 0.5f : 0f, 1f, Time.deltaTime);
                 }
 
                 if (__brain.StatusCtrler.CheckStatus(PawnStatus.Staggered) || __brain.StatusCtrler.CheckStatus(PawnStatus.CanNotGuard))
@@ -114,7 +112,7 @@ namespace Game
                     mainAnimator.SetLayerWeight(1, 0f);
 
                 mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
-                mainAnimator.SetLayerWeight(2, __brain.BB.IsJumping || __brain.BB.IsHanging || __brain.BB.IsZipRiding ? 0f : 1f);
+                mainAnimator.SetLayerWeight(2, __brain.BB.IsJumping || __brain.BB.IsHanging ? 0f : 1f);
 
                 if (__watchingStateNames.Contains("DrinkPotion"))
                     mainAnimator.SetLayerWeight(3, 0f);
@@ -132,7 +130,7 @@ namespace Game
                 mainAnimator.SetFloat("MoveY", animMoveVec.z / __brain.Movement.moveSpeed);
 
                 legAnimator.User_SetIsMoving(__brain.Movement.CurrVelocity.sqrMagnitude > 0);
-                legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround && !__brain.BB.IsRolling && !__brain.BB.IsJumping && !__brain.BB.IsHanging && !__brain.BB.IsZipRiding && !__brain.BB.IsDown && !__brain.BB.IsDead && (!__brain.ActionCtrler.CheckActionRunning() || __brain.ActionCtrler.currActionContext.legAnimGlueEnabled));
+                legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround && !__brain.BB.IsRolling && !__brain.BB.IsJumping && !__brain.BB.IsHanging && !__brain.BB.IsDown && !__brain.BB.IsDead && (!__brain.ActionCtrler.CheckActionRunning() || __brain.ActionCtrler.currActionContext.legAnimGlueEnabled));
                 legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude > 0 ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.5f : 0.4f, 1);
             };
         }

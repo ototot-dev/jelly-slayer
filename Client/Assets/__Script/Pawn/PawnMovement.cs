@@ -94,9 +94,10 @@ namespace Game
                 __ecmMovement.RotateTowards(faceVec, rotateSpeed * Time.deltaTime);
         }
 
-        public void Teleport(Vector3 destination)
+        public void Teleport(Vector3 destination, bool stickToGround = true)
         {
-            __ecmMovement.SetPosition(TerrainManager.GetTerrainPoint(destination));
+            if (stickToGround)
+                __ecmMovement.SetPosition(TerrainManager.GetTerrainPoint(destination));
             __ecmMovement.velocity = Vector3.zero;
             __ecmMovement.ClearAccumulatedForces();
         }

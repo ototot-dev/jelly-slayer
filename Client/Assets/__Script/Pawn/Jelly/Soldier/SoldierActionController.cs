@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using NUnit.Framework.Constraints;
 using UniRx;
 using UnityEngine;
 using XftWeapon;
@@ -11,6 +12,7 @@ namespace Game
         [Header("Component")]
         public PawnColliderHelper hookingPointColliderHelper;
         public PawnColliderHelper counterActionColliderHelper;
+        public BoxCollider shieldCollider;
         public XWeaponTrail sworldWeaponTrailA;
         public XWeaponTrail sworldWeaponTrailB;
 
@@ -18,6 +20,7 @@ namespace Game
         public float leapRootMotionDistance = 7f;
         public float leapRootMotionMultiplier = 1f;
         public CapsuleCollider CounterActionCollider => counterActionColliderHelper.pawnCollider as CapsuleCollider;
+        public Vector3 GetShieldCenter() => shieldCollider.transform.position + shieldCollider.center;
 
         public override float GetRootMotionMultiplier()
         {
@@ -29,6 +32,8 @@ namespace Game
 
         public override bool CanBlockAction(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
+            return false;
+
             if (__brain.BB.IsGroggy)
                 return false;
             else if (__brain.ActionCtrler.CheckActionRunning() || __brain.StatusCtrler.CheckStatus(PawnStatus.Staggered) || __brain.StatusCtrler.CheckStatus(PawnStatus.CanNotGuard))
@@ -45,9 +50,14 @@ namespace Game
 
             if (damageContext.actionResult == ActionResults.Damaged)
             {
+                if (damageContext.senderActionData.actionName.StartsWith("Kick"))
+                    EffectManager.Instance.Show(__brain.BB.graphics.onKickHitFx, __brain.hitColliderHelper.GetCenter(), Quaternion.identity, Vector3.one, 1f);
+                else if (damageContext.senderActionData.actionName.StartsWith("Heavy"))
+                    EffectManager.Instance.Show(__brain.BB.graphics.onBigHitFx, __brain.hitColliderHelper.GetCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.hitColliderHelper.GetCenter()) * Quaternion.Euler(90f, 0f, 0f), Vector3.one, 1f);
+                else
+                    EffectManager.Instance.Show(__brain.BB.graphics.onHitFx, __brain.hitColliderHelper.GetCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.hitColliderHelper.GetCenter()) * Quaternion.Euler(90f, 0f, 0f), Vector3.one, 1f);
+
                 SoundManager.Instance.Play(SoundID.HIT_FLESH);
-                EffectManager.Instance.Show("@Hit 23 cube", damageContext.hitPoint, Quaternion.identity, Vector3.one, 1);
-                EffectManager.Instance.Show("@BloodFX_impact_col", damageContext.hitPoint, Quaternion.identity, 1.5f * Vector3.one, 3);
             }
             else if (damageContext.actionResult == ActionResults.Missed)
             {
@@ -58,16 +68,16 @@ namespace Game
             {
                 __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", true);
                 __brain.AnimCtrler.mainAnimator.SetTrigger("OnGuard");
-                Observable.Timer(TimeSpan.FromSeconds(0.5f)).Subscribe(_ => __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", false)).AddTo(this);
                 
+                Observable.Timer(TimeSpan.FromSeconds(0.5f)).Subscribe(_ => __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", false)).AddTo(this);
+                Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onBlockedFx, GetShieldCenter(), Quaternion.identity, Vector3.one, 1f)).AddTo(this);
                 SoundManager.Instance.Play(SoundID.HIT_BLOCK);
-                EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);
-                EffectManager.Instance.Show("BlockAttack", __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);
+
             }
             else if (damageContext.actionResult == ActionResults.GuardBreak) 
             {
+                Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onGuardBreakFx, GetShieldCenter(), Quaternion.identity, Vector3.one, 1f)).AddTo(this);
                 SoundManager.Instance.Play(SoundID.GUARD_BREAK);
-                EffectManager.Instance.Show("SwordHitRed", __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);
             }
 
             return base.StartOnHitAction(ref damageContext, isAddictiveAction);

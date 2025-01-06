@@ -41,7 +41,7 @@ namespace Game
             // yield return new WaitForSeconds(0.5f);
 
             //* 영웅 생성
-            GameContext.Instance.playerCtrler.SpawnHero(Resources.Load<GameObject>("Pawn/Hero"), true).transform.position = TerrainManager.GetTerrainPoint(Vector3.zero);
+            GameContext.Instance.playerCtrler.SpawnHeroPawn(Resources.Load<GameObject>("Pawn/Hero"), true).transform.position = TerrainManager.GetTerrainPoint(Vector3.zero);
             yield return new WaitForSeconds(0.1f);
 
             isLoadingCompleted.Value = true;

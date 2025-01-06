@@ -34,6 +34,16 @@ namespace Game
         //* 목표점까지 거리에서 자신과 상대 Collider의 Radius 값을 뺀 거리
         public float GetDistanceBetween(PawnColliderHelper otherColliderHelper) => Mathf.Max(0f, (otherColliderHelper.transform.position - transform.position).Vector2D().magnitude - GetRadius() - otherColliderHelper.GetRadius());
 
+        //* deltaVec만큼 움직였을 때 거리이 변화값
+        public float GetDistanceDelta(PawnColliderHelper otherColliderHelper, Vector3 deltaVec)
+        {
+            var distanceVec = otherColliderHelper.transform.position - transform.position;
+            return (distanceVec + deltaVec).Magnitude2D() - distanceVec.Magnitude2D();
+        }
+
+        //* Center 위치에서 senderPosition을 바라보는 방향으로 pawnCollider의 표면과 교차하는 한 점을 HitPoint로 리턴함
+        public Vector3 GetHitPoint(Vector3 senderPosition) => GetCenter() + GetRadius() * (senderPosition - pawnCollider.transform.position).Vector2D().normalized;
+
         void Awake()
         {
             if (pawnCollider == null)

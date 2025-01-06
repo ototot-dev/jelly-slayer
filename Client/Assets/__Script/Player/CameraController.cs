@@ -74,20 +74,20 @@ namespace Game
 
         void LateUpdate()
         {
-            if (cameraTransform == null || GameContext.Instance.playerCtrler == null || GameContext.Instance.playerCtrler.heroBrain == null)
+            if (cameraTransform == null || GameContext.Instance.playerCtrler == null || GameContext.Instance.playerCtrler.possessedBrain == null)
                 return;
 
             //* 줌 처리
             pixelCameraManager.ViewCameraZoom = pixelCameraManager.ViewCameraZoom.LerpSpeed(zoom, zoomSpeed, Time.deltaTime);
 
             //* 점프 동작과 같이 y축 변화량이 큰 경우엔 카메라가 대상을 따라가는 y축 속도를 살짝 줄여줌
-            var interpY = __currFocusPoint.y.LerpSpeed(GameContext.Instance.playerCtrler.heroBrain.GetWorldPosition().y, 4f, Time.deltaTime);
-            __currFocusPoint = GameContext.Instance.playerCtrler.heroBrain.GetWorldPosition();
+            var interpY = __currFocusPoint.y.LerpSpeed(GameContext.Instance.playerCtrler.possessedBrain.GetWorldPosition().y, 4f, Time.deltaTime);
+            __currFocusPoint = GameContext.Instance.playerCtrler.possessedBrain.GetWorldPosition();
             __currFocusPoint.y = interpY;
 
             //* 고도 처리
             var currEulerAngles = cameraTransform.rotation.eulerAngles;
-            if (GameContext.Instance.playerCtrler.heroBrain.Movement.ReservedHangingBrain != null || GameContext.Instance.playerCtrler.heroBrain.BB.IsHanging)
+            if (GameContext.Instance.playerCtrler.possessedBrain.Movement.ReservedHangingBrain != null || GameContext.Instance.playerCtrler.possessedBrain.BB.IsHanging)
             {
                 if (!__prevIsHanging)
                 {
@@ -98,7 +98,7 @@ namespace Game
                 __currYawInterpSpeed = __currYawInterpSpeed.LerpSpeed(yawAngleSpeed, 100f, Time.deltaTime);
                 cameraTransform.rotation = Quaternion.Euler(currEulerAngles.x.LerpSpeed(yawAngleOnHanging, __currYawInterpSpeed, Time.deltaTime), currEulerAngles.y, currEulerAngles.z);
             }
-            else if (GameContext.Instance.playerCtrler.heroBrain.Movement.IsOnGround)
+            else if (GameContext.Instance.playerCtrler.possessedBrain.Movement.IsOnGround)
             {
                 if (__prevIsHanging)
                 {

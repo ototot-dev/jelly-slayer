@@ -7,11 +7,7 @@ using UnityEngine;
 namespace Game
 {
     public class PawnActionController : MonoBehaviour, IStatusContainer
-    {
-        [Header("Component")]
-        public PawnColliderHelper bodyHitColliderHelper;
-        public PawnColliderHelper parryHitColliderHelper;
-        
+    {   
         public struct ActionContext
         {
             public MainTable.ActionData actionData;
@@ -203,6 +199,8 @@ namespace Game
 
             return false;
         }
+
+        public virtual bool CheckKnockBackRunning() { return false; }
         public virtual bool CanRootMotion(Vector3 rootMotionVec) { return currActionContext.rootMotionEnabled; }
         public virtual bool CanBlockAction(ref PawnHeartPointDispatcher.DamageContext damageContext) { return false; }
         public virtual bool CanParryAction(ref PawnHeartPointDispatcher.DamageContext damageContext) { return false; }

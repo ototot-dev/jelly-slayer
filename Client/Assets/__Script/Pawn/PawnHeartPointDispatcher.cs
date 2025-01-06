@@ -103,7 +103,7 @@ namespace Game
             public DamageContext(PawnBrainController senderBrain, PawnBrainController receiverBrain, MainTable.ActionData actionData, Collider hitCollider, bool insufficientStamina)
             {
                 timeStamp = Time.time;
-                hitPoint = receiverBrain.coreColliderHelper.pawnCollider.bounds.center;
+                hitPoint = receiverBrain.hitColliderHelper.GetHitPoint(senderBrain.GetWorldPosition());
                 this.hitCollider = hitCollider;
                 this.insufficientStamina = insufficientStamina;
                 this.senderActionData = actionData;
@@ -120,7 +120,7 @@ namespace Game
             public DamageContext(PawnBrainController senderBrain, string actionName, float finalDamage, PawnStatus penalty = PawnStatus.None, float penaltyDuration = -1)
             {
                 timeStamp = Time.time;
-                hitPoint = senderBrain.coreColliderHelper.pawnCollider.bounds.center;
+                hitPoint = senderBrain.hitColliderHelper.GetCenter();
                 hitCollider = null;
                 insufficientStamina = false;
                 senderActionData = null;
@@ -194,7 +194,7 @@ namespace Game
             {
                 if (!canNotParry && receiverActionCtrler.CanParryAction(ref damageContext))
                 {
-                    if (damageContext.hitCollider == receiverActionCtrler.parryHitColliderHelper.pawnCollider)
+                    if (damageContext.hitCollider == damageContext.receiverBrain.parryColliderHelper.pawnCollider)
                     {
                         damageContext.actionResult = ActionResults.KickParried;
                         damageContext.receiverActionData = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "Kick");

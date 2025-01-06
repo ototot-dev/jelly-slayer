@@ -6,7 +6,14 @@ namespace Game
 {
     public class DroneBotMovement : PawnMovementEx
     {
-        public bool CheckCatchingDurationExpired() => Time.time - __catchingStartTimeStamp > __brain.BB.CatchingDuration;
+        public bool CheckPrepareHangingDone() => Time.time - __catchStartTimeStamp > prepareHangingDuration;
+
+        //* Hanging 상태에서 HostBrain의 위치값을 기준으로 자신의 현재 위치를 계산하기 위한 Offset 값
+        //* (HostBrain.GetWorldPosition() + GetHangingPointOffsetVector() => DroneBot의 현재 위치)
+        public Vector3 GetHangingPointOffsetVector() => __brain.Movement.capsule.transform.position - __brain.AnimCtrler.hangingAttachPoint.position;
+
+        [Header("Parameter")]
+        public float prepareHangingDuration;
 
         protected override void AwakeInternal()
         {
@@ -17,7 +24,7 @@ namespace Game
         DroneBotBrain __brain;
         float __moveAccelCached;
         float __moveBrakeCached;
-        float __catchingStartTimeStamp;
+        float __catchStartTimeStamp;
         Vector3 __catchingStartPosition;
         Quaternion __catchingStartRotation;
 
@@ -36,7 +43,7 @@ namespace Game
             {
                 if (v == DroneBotBrain.Decisions.Catch)
                 {
-                    __catchingStartTimeStamp = Time.time;
+                    __catchStartTimeStamp = Time.time;
                     __catchingStartPosition = capsule.transform.position;
                     __catchingStartRotation = capsule.transform.rotation;
                     // __brain.AnimCtrler.tweenSelector.query.activeClasses.Clear();
@@ -64,7 +71,7 @@ namespace Game
             {
                 if (__brain.BB.IsHanging)
                 {
-                    var hostMovement = GameContext.Instance.playerCtrler.heroBrain.Movement;
+                    var hostMovement = GameContext.Instance.playerCtrler.possessedBrain.Movement;
 
                     //* hangerMovement이 값을 주입해서 이동함
                     __ecmMovement.SimpleMove(hostMovement.moveSpeed * hostMovement.moveVec, hostMovement.moveSpeed, hostMovement.moveAccel, hostMovement.moveBrake, 1f, 1f, Vector3.zero, false, Time.deltaTime);
@@ -76,11 +83,10 @@ namespace Game
                 }
                 else
                 {
-                    var catchingElapsedTime = Time.time - __catchingStartTimeStamp;
-                    var offsetVec = capsule.transform.position - __brain.AnimCtrler.hangingPoint.position;
-                    var alpha = Easing.Ease(EaseType.CubicInOut, 0f, 1f, catchingElapsedTime / __brain.BB.CatchingDuration);
-                    var lerpPosition = Vector3.Lerp(__catchingStartPosition, GameContext.Instance.playerCtrler.heroBrain.GetWorldPosition() + offsetVec, alpha);
-                    var lerpRotation = Quaternion.Lerp(__catchingStartRotation, GameContext.Instance.playerCtrler.heroBrain.GetWorldRotation(), alpha);
+                    var catchingElapsedTime = Time.time - __catchStartTimeStamp;
+                    var alpha = Easing.Ease(EaseType.CubicInOut, 0f, 1f, catchingElapsedTime / prepareHangingDuration);
+                    var lerpPosition = Vector3.Lerp(__catchingStartPosition, __brain.BB.HostBrain.GetWorldPosition() + GetHangingPointOffsetVector(), alpha);
+                    var lerpRotation = Quaternion.Lerp(__catchingStartRotation, __brain.BB.HostBrain.GetWorldRotation(), alpha);
 
                     //* Catch 위치로 강제 이동함
                     __ecmMovement.SetPositionAndRotation(lerpPosition, lerpRotation);
@@ -90,7 +96,7 @@ namespace Game
             {
                 if (__brain.BB.CurrDecision == DroneBotBrain.Decisions.Spacing || __brain.BB.CurrDecision == DroneBotBrain.Decisions.Approach)
                 {
-                    var speedAlpha = Mathf.Clamp01(((__brain.BB.HostBrain.GetWorldPosition() - capsule.transform.position).Vector2D().magnitude - __brain.BB.action.minSpacingDistance) / __brain.BB.action.maxSpacingDistance);
+                    var speedAlpha = Mathf.Clamp01(((__brain.BB.HostBrain.GetWorldPosition() - capsule.transform.position).Vector2D().magnitude - __brain.BB.MinSpacingDistance) / __brain.BB.MaxSpacingDistance);
                     moveSpeed = Mathf.Lerp(__brain.BB.body.normalSpeed, __brain.BB.body.boostSpeed, speedAlpha);
                     moveAccel = __moveAccelCached;
                     moveBrake = __moveBrakeCached;

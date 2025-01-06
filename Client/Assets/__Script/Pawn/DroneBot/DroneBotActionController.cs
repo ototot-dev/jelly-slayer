@@ -7,7 +7,8 @@ namespace Game
     public class DroneBotActionController : PawnActionController
     {
         [Header("Component")]
-        public CapsuleCollider hitBox;
+        public PawnColliderHelper hitColliderHelper;
+        public PawnColliderHelper assaultActionColliderHelper;
         public Transform emitPointL;
         public Transform emitPointR;
         public ParticleSystem plasmaExplosionFx;
@@ -25,16 +26,15 @@ namespace Game
 
             if (__brain.BB.TargetBrain != null && __brain.SensorCtrler.TouchingColliders.Contains(__brain.BB.TargetBrain.coreColliderHelper.pawnCollider))
             {
-                //* RootMotion으로 목표물을 밀지 않도록 목묘물의 TouchingColliders와 접축할 정도로 가깝다면 rootMotionVec가 목표물에서 멀어지는 방향일때만 적용해준다.
-                var newDistance = (__brain.BB.TargetBrain.coreColliderHelper.transform.position - __brain.coreColliderHelper.transform.position + rootMotionVec).Vector2D().sqrMagnitude;
-                return newDistance > (__brain.BB.TargetBrain.coreColliderHelper.transform.position - __brain.coreColliderHelper.transform.position).Vector2D().sqrMagnitude;
+                //* RootMotion으로 목표물을 밀지 않도록 목표물의 TouchingColliders와 접축할 정도로 가깝다면 rootMotionVec가 목표물에서 멀어지는 방향일때만 적용해준다.
+                return __brain.coreColliderHelper.GetDistanceDelta(__brain.BB.TargetBrain.coreColliderHelper, rootMotionVec) > 0f;
             }
             else
             {
                 return true;
             }
         }
-        
+
         public override IDisposable StartOnHitAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
         {
             Debug.Assert(damageContext.receiverBrain == __brain);
@@ -125,7 +125,7 @@ namespace Game
 
                 __hookingPointFx = EffectManager.Instance.ShowLooping(orbSmallYellowFx, ropeHookCtrler.hookingCollider.transform.position, Quaternion.identity, Vector3.one);
                 __hookingPointFxUpdateDisposable = Observable.EveryUpdate()
-                    .DoOnCancel(() => 
+                    .DoOnCancel(() =>
                     {
                         __hookingPointFx.Stop();
                         __hookingPointFx = null;
@@ -158,32 +158,104 @@ namespace Game
             else if (actionName == "Assault")
             {
                 Debug.Assert(__brain.BB.HostBrain.BB.TargetBrain != null);
-                
-                Vector3 assaultStartPosition = __brain.GetWorldPosition();
-                float assaultTimeStamp = Time.time;
-                float assaultDuration = 0.2f;
 
-                return Observable.EveryUpdate().Select(_ => (Time.time - assaultTimeStamp) / assaultDuration).TakeWhile(a => a < 1f)
-                    .DoOnCancel(() =>
-                    {
-                        __brain.BB.HostBrain.Movement.FinishHanging();
-                        __brain.BB.HostBrain.Movement.StartJump(1f);
-                    })
-                    .DoOnCompleted(() =>
-                    {
-                        __brain.BB.HostBrain.Movement.FinishHanging();
-                        __brain.BB.HostBrain.Movement.StartJump(1f);
-                    })
-                    .Subscribe(a =>
-                    {
-                        var alpha = ParadoxNotion.Animation.Easing.Ease(ParadoxNotion.Animation.EaseType.ExponentialIn, 0, 1f, a);
-                        var targetPosition = __brain.BB.HostBrain.BB.TargetBrain.GetWorldPosition() + __brain.BB.HostBrain.Movement.capsuleCollider.height * Vector3.up;
-                        __brain.Movement.GetCharacterMovement().SetPosition(Vector3.Lerp(assaultStartPosition, targetPosition, alpha));
-                        __brain.Movement.GetCharacterMovement().SetRotation(Quaternion.LookRotation((targetPosition - __brain.GetWorldPosition()).Vector2D().normalized));
-                    }).AddTo(this);
+                __assaultActionTargetBrain = __brain.BB.HostBrain.BB.TargetBrain;
+
+                if (__brain.BB.IsHanging)
+                {
+                    __assaultActionLayerMaskCached = __brain.BB.HostBrain.Movement.GetCharacterMovement().collisionLayers;
+
+                    //* Assault 액션 중에는 뚫는 것을 허용하도록 레이어값 변경
+                    __brain.BB.HostBrain.Movement.capsule.gameObject.layer = LayerMask.NameToLayer("PawnOverlapped");
+                    __brain.BB.HostBrain.Movement.GetCharacterMovement().collisionLayers = LayerMask.GetMask("Terrain", "Obstacle");
+
+                    __brain.BB.resource.jetBoostFx.Play(true);
+                    __brain.BB.resource.orbBlueFx.Play(true);
+
+                    //* Hanging 상태라면 바로 Assault 액션을 수행함
+                    AssaultActionObservable(__brain.GetWorldPosition(), Time.time, 0.2f).Subscribe().AddTo(this);
+                }
+                else
+                {
+                    Debug.Assert(!__brain.BB.HostBrain.BB.IsJumping);
+
+                    //* Hanging 상태가 아니라면 강제로 Hanging 상태로 변경시킴 
+                    __brain.BB.HostBrain.Movement.StartJump(1f);
+                    __brain.BB.HostBrain.Movement.PrepareHanging(__brain, 0.1f);
+
+                    __assaultActionLayerMaskCached = __brain.BB.HostBrain.Movement.GetCharacterMovement().collisionLayers;
+
+                    //* Assault 액션 중에는 뚫는 것을 허용하도록 레이어값 변경
+                    __brain.BB.HostBrain.Movement.capsule.gameObject.layer = LayerMask.NameToLayer("PawnOverlapped");
+                    __brain.BB.HostBrain.Movement.GetCharacterMovement().collisionLayers = LayerMask.GetMask("Terrain", "Obstacle");
+
+                    var startPosition = __brain.BB.HostBrain.GetWorldPosition().AdjustY(__brain.Movement.GetHangingPointOffsetVector().y + 0.5f);
+                    var teleportFx = EffectManager.Instance.Show(__brain.BB.resource.protonExplosionFx, __brain.GetWorldPosition(), __brain.GetWorldRotation(), 0.5f * Vector3.one, 0.1f);
+
+                    return Observable.Timer(TimeSpan.FromSeconds(0.1f)).Do(_ =>
+                        {
+                            __brain.BB.resource.jetBoostFx.Play(true);
+                            __brain.BB.resource.orbBlueFx.Play(true);
+                        })
+                        .ContinueWith(AssaultActionObservable(startPosition, Time.time + 0.1f, 0.2f)).Subscribe().AddTo(this);
+                }
+
             }
-            
+
             return base.StartActionDisposable(ref damageContext, actionName);
+        }
+
+        IObservable<float> AssaultActionObservable(Vector3 startPosition, float startTimeStamp, float duration)
+        {
+            return Observable.EveryLateUpdate().Select(_ => (Time.time - startTimeStamp) / duration).TakeWhile(v => v < 1.2f)
+                .DoOnCancel(() =>
+                {
+                    __brain.BB.resource.jetBoostFx.Stop(true);
+                    __brain.BB.resource.orbBlueFx.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
+                    __brain.BB.HostBrain.Movement.FinishHanging();
+                    __brain.BB.HostBrain.Movement.StartJump(1f);
+                    __brain.BB.HostBrain.BB.action.isJumping.Take(2).Skip(1).Subscribe(v =>
+                    {
+                        Debug.Assert(!v);
+                        //* Capsule의 Layer를 원래대로 복구함
+                        __brain.BB.HostBrain.Movement.capsule.gameObject.layer = LayerMask.NameToLayer("Pawn");
+                        __brain.BB.HostBrain.Movement.GetCharacterMovement().collisionLayers = __assaultActionLayerMaskCached;
+                    }).AddTo(this);
+                })
+                .DoOnCompleted(() =>
+                {
+                    __brain.BB.resource.jetBoostFx.Stop(true);
+                    __brain.BB.resource.orbBlueFx.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                    
+                    var assaultActionData = DatasheetManager.Instance.GetActionData(__brain.BB.HostBrain.BB.common.pawnId, "Assault");
+                    Debug.Assert(assaultActionData != null);
+
+                    __brain.BB.HostBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__brain.BB.HostBrain, __assaultActionTargetBrain, assaultActionData, null, false));
+                    __brain.BB.HostBrain.Movement.FinishHanging();
+                    __brain.BB.HostBrain.Movement.StartJump(1f);
+                    __brain.BB.HostBrain.BB.action.isJumping.Take(2).Skip(1).Subscribe(v =>
+                    {
+                        Debug.Assert(!v);
+                        //* Capsule의 Layer를 원래대로 복구함
+                        __brain.BB.HostBrain.Movement.capsule.gameObject.layer = LayerMask.NameToLayer("Pawn");
+                        __brain.BB.HostBrain.Movement.GetCharacterMovement().collisionLayers = __assaultActionLayerMaskCached;
+                    }).AddTo(this);
+                })
+                .Do(v =>
+                {
+                    if (__brain.BB.IsHanging)
+                    {
+                        var alpha = ParadoxNotion.Animation.Easing.Ease(ParadoxNotion.Animation.EaseType.ExponentialIn, 0, 1f, v);
+                        var targetPosition = __assaultActionTargetBrain.GetWorldPosition() + __brain.BB.HostBrain.Movement.capsuleCollider.height * Vector3.up;
+
+                        //* 겹치 상태에서 뚫고 가지않도록 접근 최소 거리를 추가함
+                        targetPosition -= __assaultActionTargetBrain.hitColliderHelper.GetRadius() * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
+
+                        __brain.Movement.GetCharacterMovement().SetPosition(Vector3.Lerp(startPosition, targetPosition, alpha));
+                        __brain.Movement.GetCharacterMovement().SetRotation(Quaternion.LookRotation((targetPosition - __brain.GetWorldPosition()).Vector2D().normalized));
+                    }
+                });
         }
 
         protected override void AwakeInternal()
@@ -195,6 +267,8 @@ namespace Game
         DroneBotBrain __brain;
         EffectInstance __hookingPointFx;
         IDisposable __hookingPointFxUpdateDisposable;
+        PawnBrainController __assaultActionTargetBrain;
+        LayerMask __assaultActionLayerMaskCached;
 
         protected override void StartInternal()
         {
@@ -231,4 +305,4 @@ namespace Game
             base.EmitProjectile(emitSource, emitPoint, emitNum);
         }
     }
-}  
+}

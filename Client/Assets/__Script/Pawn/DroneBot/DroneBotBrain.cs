@@ -21,7 +21,7 @@ namespace Game
         void IPawnSpawnable.OnFinishSpawnHandler() 
         { 
             if (GameContext.Instance.HeroBrain.droneBotFormationCtrler.AssignDroneBot(this))
-                BB.body.hostBrain.Value = GameContext.Instance.HeroBrain;
+                BB.decision.hostBrain.Value = GameContext.Instance.HeroBrain;
         }
         void IPawnSpawnable.OnDespawnedHandler() { }
         void IPawnSpawnable.OnDeadHandler() 
@@ -111,12 +111,9 @@ namespace Game
                 if (!BB.IsSpawnFinished)
                     return;
 
-                if (!ActionCtrler.CheckActionRunning())
-                {   
-                    //* Catch 단계가 완료됨을 확인 후에 Hanging 시작
-                    if (!BB.IsHanging && BB.CurrDecision == Decisions.Catch && Movement.CheckCatchingDurationExpired())
-                        GameContext.Instance.playerCtrler.heroBrain.Movement.StartHanging();
-                }
+                //* Catch 단계가 완료됨을 확인 후에 Hanging 시작
+                if (!BB.IsHanging && BB.CurrDecision == Decisions.Catch && Movement.CheckPrepareHangingDone())
+                    GameContext.Instance.playerCtrler.possessedBrain.Movement.StartHanging(Movement.prepareHangingDuration > 0.1f);
             };
         }
 

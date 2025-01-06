@@ -1,5 +1,6 @@
 using System;
 using UniRx;
+using UnityEngine;
 
 namespace Game
 {
@@ -51,5 +52,20 @@ namespace Game
         }
 
         public Action action = new();
+
+        [Serializable]
+        public class Graphics
+        {
+            public GameObject onHitFx;
+            public GameObject onBigHitFx;
+            public GameObject onKickHitFx;
+            public GameObject onBleedingFx;
+            public GameObject onSmokeFx;
+            public GameObject onMissedFx;
+            public GameObject onBlockedFx;
+            public GameObject onGuardBreakFx;
+        }
+
+        public Graphics graphics = new();
     }
 }

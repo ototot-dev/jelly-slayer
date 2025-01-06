@@ -25,7 +25,7 @@ namespace Game
             if (!freezeMovement)
             {
                 var canMove1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsGroggy && !__pawnBrain.PawnBB.IsDown;
-                var canMove2 = canMove1 && !CheckReachToDestination() && (__pawnActionCtrler == null || !__pawnActionCtrler.CheckActionRunning());
+                var canMove2 = canMove1 && !CheckReachToDestination() && (__pawnActionCtrler == null || (!__pawnActionCtrler.CheckActionRunning() && !__pawnActionCtrler.CheckKnockBackRunning()));
                 var canMove3 = canMove2 && (__pawnStatusCtrler == null || (!__pawnStatusCtrler.CheckStatus(PawnStatus.Staggered) && !__pawnStatusCtrler.CheckStatus(PawnStatus.CanNotMove)));
 
                 if (IsMovingToDestination)

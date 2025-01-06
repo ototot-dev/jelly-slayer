@@ -10,9 +10,11 @@ namespace Game
     public class HeroMovement : PawnMovement, LegsAnimator.ILegStepReceiver
     {
         [Header("Paramter")]
-        public float ziplineOffsetY = 0.5f;
         public float LastJumpTimeStamp => __jumpTimeStamp;
+        public float LastLandingTimeStamp => __landingTimeStamp;
         public float LastRollingTimeStamp => __rollingTimeStamp;
+        public float LastStartHangingTimeStamp => __startHangingTimeStamp;
+        public float LastFinishHangingTimeStamp => __finishHangingTimeStamp;
         public void LegAnimatorStepEvent(LegsAnimator.Leg leg, float power, bool isRight, Vector3 position, Quaternion rotation, LegsAnimator.EStepType type) {}
 
         public void StartJump(float jumpHeight)
@@ -34,14 +36,15 @@ namespace Game
             __brain.BB.action.isJumping.Value = false;
         }
 
-        public void PrepareHanging(DroneBotBrain hangingBrain)
+        public void PrepareHanging(DroneBotBrain hangingBrain, float duration)
         {
             ReservedHangingBrain = hangingBrain;
             //* Decision 값을 'Catch'로 직접 변경함
             ReservedHangingBrain.BB.decision.currDecision.Value = DroneBotBrain.Decisions.Catch;
+            ReservedHangingBrain.Movement.prepareHangingDuration = duration;
         }
 
-        public void StartHanging()
+        public void StartHanging(bool smoothApproachToAttachPoint = true)
         {
             Debug.Assert(ReservedHangingBrain != null);
 
@@ -54,49 +57,30 @@ namespace Game
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnHanging");
             __brain.AnimCtrler.mainAnimator.SetBool("IsHanging", true);
 
-            //* HangingAttachPoint까지 남은 거리를 부드럽게 Lerp 처리함
-            __hangingLerpDisposable?.Dispose();
-            __hangingLerpDisposable = Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.1f)))
-                .DoOnCancel(() => __hangingLerpDisposable = null)
-                .DoOnCompleted(() => __hangingLerpDisposable = null)
-                .Subscribe(_ => __ecmMovement.SetPosition(capsule.transform.position.LerpSpeed(__brain.BB.action.hangingBrain.Value.AnimCtrler.hangingPoint.position, moveSpeed, Time.deltaTime))).AddTo(this);
+            if (smoothApproachToAttachPoint)
+            {
+                //* HangingAttachPoint까지 남은 거리를 부드럽게 Lerp 처리함
+                __hangingLerpDisposable?.Dispose();
+                __hangingLerpDisposable = Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.1f)))
+                    .DoOnCancel(() => __hangingLerpDisposable = null)
+                    .DoOnCompleted(() => __hangingLerpDisposable = null)
+                    .Subscribe(_ => __ecmMovement.SetPosition(capsule.transform.position.LerpSpeed(__brain.BB.action.hangingBrain.Value.AnimCtrler.hangingAttachPoint.position, moveSpeed, Time.deltaTime))).AddTo(this);
+            }
         }
 
         public DroneBotBrain ReservedHangingBrain { get; private set; }
         IDisposable __hangingLerpDisposable;
+        float __startHangingTimeStamp;
+        float __finishHangingTimeStamp;
 
         public void FinishHanging()
         {
             Debug.Assert(__brain.BB.action.hangingBrain.Value != null);
-
+            
+            __finishHangingTimeStamp = Time.time;
             __brain.BB.action.hangingBrain.Value.InvalidateDecision(0.1f);
             __brain.BB.action.hangingBrain.Value = null;
             __brain.AnimCtrler.mainAnimator.SetBool("IsHanging", false);
-        }
-
-        public void StartZipRiding(Transform startPoint, Transform endPoint, float duration)
-        {
-            __zipRidingStartPoint = startPoint;
-            __zipRidingEndPoint = endPoint;
-            __zipRidingDuration = duration;
-            __zipRidingTimeStamp = Time.time;
-            __isZipRidingActionPending = false;
-            __brain.BB.action.isZipRiding.Value = true;
-
-            ziplineOffsetY = startPoint.transform.position.y - capsule.transform.position.y;
-
-            //* IsJumping, IsHanging 파라메터 값은 True값으로 고정되어져 있어야함
-            Debug.Assert(__brain.AnimCtrler.mainAnimator.GetBool("IsJumping"));
-            Debug.Assert(__brain.AnimCtrler.mainAnimator.GetBool("IsHanging"));
-        }
-
-        public void FinishZipRiding()
-        {
-            __brain.BB.action.isZipRiding.Value = false;
-            __brain.AnimCtrler.mainAnimator.SetBool("IsJumping", false);
-            __brain.AnimCtrler.mainAnimator.SetBool("IsHanding", false);
-
-            __brain.ActionCtrler.SetPendingAction("Leaping");
         }
 
         public void StartRolling(float duration)
@@ -148,11 +132,6 @@ namespace Game
         float __jumpTimeStamp;
         float __landingTimeStamp;
         float __prevCapsulePositionY;
-        Transform __zipRidingStartPoint;
-        Transform __zipRidingEndPoint;
-        float __zipRidingDuration;
-        float __zipRidingTimeStamp;
-        bool __isZipRidingActionPending;
         float __rollingTimeStamp;
         float __rollingDuration;
         float __rollingSpeed;
@@ -163,6 +142,40 @@ namespace Game
         {
             base.AwakeInternal();
             __brain = GetComponent<HeroBrain>();
+        }
+
+        protected override void StartInternal()
+        {
+            base.StartInternal();
+
+            __brain.onLateUpdate += () =>
+            {
+                if (!__ecmMovement.enabled)
+                    return;
+
+                if (__brain.BB.IsHanging)
+                {
+                    //* hangingPoint로 위치값 및 회전값을 맞춰줌
+                    if (__hangingLerpDisposable == null)
+                        __ecmMovement.SetPositionAndRotation(__brain.BB.action.hangingBrain.Value.AnimCtrler.hangingAttachPoint.position, __brain.BB.action.hangingBrain.Value.AnimCtrler.hangingAttachPoint.rotation);
+                }
+            };
+        }
+
+        protected override void OnUpdateHandler()
+        {
+            if (!__ecmMovement.enabled)
+                return;
+
+            if (!__brain.BB.IsHanging)
+            {
+                var canRotate1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsGroggy && !__pawnBrain.PawnBB.IsDown;
+                var canRotate2 = canRotate1 && !__brain.BB.IsRolling && !__brain.BB.IsJumping;
+                var canRotate3 = canRotate2 && (!__pawnActionCtrler.CheckActionRunning() || __pawnActionCtrler.currActionContext.movementEnabled) && !__pawnStatusCtrler.CheckStatus(PawnStatus.Staggered);
+
+                if (canRotate3)
+                    __ecmMovement.RotateTowards(faceVec, rotateSpeed);
+            }
         }
 
         protected override void OnFixedUpdateHandler()
@@ -202,26 +215,6 @@ namespace Game
             else if (__brain.BB.IsHanging)
             {
                 ;
-            }
-            else if (__brain.BB.IsZipRiding)
-            {
-                var alpha = (Time.time - __zipRidingTimeStamp) / __zipRidingDuration;
-                if (alpha >= 1f || __ecmMovement.isGrounded)
-                {
-                    FinishZipRiding();
-                }
-                else
-                {
-                    if (!__isZipRidingActionPending && __brain.coreColliderHelper.GetDistanceBetween(__brain.BB.TargetColliderHelper) < 3f)
-                    {
-                        __brain.ActionCtrler.SetPendingAction("Leaping");
-                        __isZipRidingActionPending = true;
-                    }
-
-                    var newPosition = Vector3.Lerp(__zipRidingStartPoint.position, __zipRidingEndPoint.position, alpha);
-                    __ecmMovement.SetPosition(newPosition + ziplineOffsetY * Vector3.down);
-                    __ecmMovement.SetRotation(Quaternion.LookRotation((__zipRidingEndPoint.position - __zipRidingStartPoint.position).Vector2D().normalized));
-                }
             }
             else if (__brain.BB.IsRolling)
             {
@@ -268,28 +261,6 @@ namespace Game
 
                 __ecmMovement.rotation *= __rootMotionRotation;
                 ResetRootMotion();
-            }
-        }
-
-        protected override void OnUpdateHandler()
-        {
-            if (!__ecmMovement.enabled)
-                return;
-
-            if (__brain.BB.IsHanging)
-            {
-                //* hangingPoint로 위치값 및 회전값을 맞춰줌
-                if (__hangingLerpDisposable == null)
-                    __ecmMovement.SetPositionAndRotation(__brain.BB.action.hangingBrain.Value.AnimCtrler.hangingPoint.position, __brain.BB.action.hangingBrain.Value.AnimCtrler.hangingPoint.rotation);
-            }
-            else
-            {
-                var canRotate1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsGroggy && !__pawnBrain.PawnBB.IsDown;
-                var canRotate2 = canRotate1 && !__brain.BB.IsRolling && !__brain.BB.IsJumping;
-                var canRotate3 = canRotate2 && (!__pawnActionCtrler.CheckActionRunning() || __pawnActionCtrler.currActionContext.movementEnabled) && !__pawnStatusCtrler.CheckStatus(PawnStatus.Staggered);
-
-                if (canRotate3)
-                    __ecmMovement.RotateTowards(faceVec, rotateSpeed);
             }
         }
     }

@@ -115,7 +115,7 @@ namespace Game
                     mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
                     mainAnimator.SetLayerWeight((int)LayerIndices.Action, Mathf.Clamp01(mainAnimator.GetLayerWeight((int)LayerIndices.Action) + (__brain.ActionCtrler.CheckActionRunning() ? actionLayerBlendSpeed : -actionLayerBlendSpeed) * Time.deltaTime));
                     mainAnimator.SetLayerWeight((int)LayerIndices.Addictive, 1f);
-                    mainAnimator.SetBool("IsMoving", __brain.Movement.CurrVelocity.sqrMagnitude > 0);
+                    mainAnimator.SetBool("IsMoving", __brain.Movement.CurrVelocity.sqrMagnitude > 0 && !__brain.ActionCtrler.CheckKnockBackRunning());
                     mainAnimator.SetBool("IsMovingStrafe", __brain.Movement.freezeRotation);
                     mainAnimator.SetFloat("MoveSpeed", __brain.Movement.CurrVelocity.magnitude);
                     mainAnimator.SetFloat("MoveAnimSpeed", 1f);
@@ -190,12 +190,12 @@ namespace Game
                     {
                         legAnimator.LegsAnimatorBlend = 1f;
 
-                        if (__brain.BB.IsGuarding)
+                        if (__brain.BB.IsGuarding || __brain.ActionCtrler.CheckKnockBackRunning())
                             legAnimator.MainGlueBlend = 1f;
                         else
                             legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude > 0 && !__brain.ActionCtrler.CheckActionRunning() ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.8f : 0.9f, 1);
 
-                        legAnimator.User_SetIsMoving(__brain.Movement.CurrVelocity.sqrMagnitude > 0 && !__brain.ActionCtrler.CheckActionRunning());
+                        legAnimator.User_SetIsMoving(__brain.Movement.CurrVelocity.sqrMagnitude > 0 && !__brain.ActionCtrler.CheckActionRunning() && !__brain.ActionCtrler.CheckKnockBackRunning());
                         legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround);
                     }
                 };

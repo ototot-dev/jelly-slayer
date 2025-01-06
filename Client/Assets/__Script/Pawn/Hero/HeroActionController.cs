@@ -22,11 +22,8 @@ namespace Game
 
             if (__brain.BB.TargetBrain != null && __brain.SensorCtrler.TouchingColliders.Contains(__brain.BB.TargetBrain.coreColliderHelper.pawnCollider))
             {
-                var currDistance = (__brain.BB.TargetBrain.coreColliderHelper.transform.position - __brain.coreColliderHelper.transform.position).Vector2D().sqrMagnitude;
-                var newDistance = (__brain.BB.TargetBrain.coreColliderHelper.transform.position - (__brain.coreColliderHelper.transform.position + rootMotionVec)).Vector2D().sqrMagnitude;
-
                 //* RootMotion으로 목표물을 밀지 않도록 목묘물의 TouchingColliders와 접축할 정도로 가깝다면 rootMotionVec가 목표물에서 멀어지는 방향일때만 적용해준다.
-                return newDistance > currDistance;
+                return __brain.coreColliderHelper.GetDistanceDelta(__brain.BB.TargetBrain.coreColliderHelper, rootMotionVec) > 0f;
             }
             else
             {
@@ -299,9 +296,9 @@ namespace Game
                 }
             };
 
-            onActiveParryEnabled += (_) => parryHitColliderHelper.pawnCollider.enabled = currActionContext.activeParryEnabled;
-            onActionCanceled += (_, __) => parryHitColliderHelper.pawnCollider.enabled = false;
-            onActionFinished += (_) => parryHitColliderHelper.pawnCollider.enabled = false;
+            onActiveParryEnabled += (_) => __brain.parryColliderHelper.pawnCollider.enabled = currActionContext.activeParryEnabled;
+            onActionCanceled += (_, __) => __brain.parryColliderHelper.pawnCollider.enabled = false;
+            onActionFinished += (_) => __brain.parryColliderHelper.pawnCollider.enabled = false;
 
             onEmitProjectile += OnEmitProjectile;
         }

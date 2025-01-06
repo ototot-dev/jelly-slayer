@@ -8,7 +8,6 @@ namespace Game
     {
         public bool IsJumping => action.isJumping.Value;
         public bool IsHanging => action.hangingBrain.Value != null;
-        public bool IsZipRiding => action.isZipRiding.Value;
         public bool IsRolling => action.isRolling.Value;
         public bool IsGuarding => action.isGuarding.Value;
         public bool IsGuardBroken => action.isGuardBroken.Value;
@@ -35,7 +34,6 @@ namespace Game
         {
             public BoolReactiveProperty isJumping = new();
             public ReactiveProperty<DroneBotBrain> hangingBrain = new();
-            public BoolReactiveProperty isZipRiding = new();
             public BoolReactiveProperty isRolling = new();
             public BoolReactiveProperty isGuarding = new();
             public BoolReactiveProperty isGuardBroken = new();

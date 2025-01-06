@@ -34,6 +34,7 @@ namespace Game
         Groggy,             //* 그로기
         Staggered,          //* 경직
         KnockDown,          //* 다운
+        KnockBack,          //* 넉백
         Guardbreak,         //* 가드 뚫림
         CanNotRoll, 
         CanNotJump,
@@ -50,6 +51,7 @@ namespace Game
     public enum HitTypes
     {
         None = 0,
+        Hit,
         Kick,
         Slash,
     }

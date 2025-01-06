@@ -23,7 +23,7 @@ namespace Game
                 if (!__assignedDroneBotBrains.ContainsKey(i))
                 {
                     __assignedDroneBotBrains.Add(i, droneBotBrain);
-                    droneBotBrain.BB.body.formationSpot.Value = spots[i];
+                    droneBotBrain.BB.decision.formationSpot.Value = spots[i];
                     return true;
                 }
             } 
@@ -41,7 +41,7 @@ namespace Game
                 if (spots[i] == droneBotBrain.BB.FormationSpot)
                 {
                     __assignedDroneBotBrains.Remove(i);
-                    droneBotBrain.BB.body.formationSpot.Value = null;
+                    droneBotBrain.BB.decision.formationSpot.Value = null;
                     return;
                 }
             }

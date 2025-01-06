@@ -8,7 +8,7 @@ namespace Game
         [Header("Component")]
         public Transform leftHand;
         public Transform rightHand;
-        public Transform hangingPoint;
+        public Transform hangingAttachPoint;
         public TweenSelector tweenSelector;
         public ParticleSystem[] steamFx;
 

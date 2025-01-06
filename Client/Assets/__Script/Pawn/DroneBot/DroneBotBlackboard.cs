@@ -8,22 +8,21 @@ namespace Game
     public class  DroneBotBlackboard : PawnBlackboard
     {
         public DroneBotBrain.Decisions CurrDecision => decision.currDecision.Value;
-        public HeroBrain HostBrain => body.hostBrain.Value;
-        public PawnColliderHelper HostColliderHelper => HostBrain != null ? body.hostBrain.Value.coreColliderHelper : null;
-        public Transform HostCore => HostBrain != null ? body.hostBrain.Value.coreColliderHelper.transform : null;
-        public Transform FormationSpot => body.formationSpot.Value;
+        public HeroBrain HostBrain => decision.hostBrain.Value;
+        public PawnColliderHelper HostColliderHelper => HostBrain != null ? decision.hostBrain.Value.coreColliderHelper : null;
+        public Transform HostCore => HostBrain != null ? decision.hostBrain.Value.coreColliderHelper.transform : null;
+        public Transform FormationSpot => decision.formationSpot.Value;
         public bool IsHanging => HostBrain != null && HostBrain.BB.action.hangingBrain.Value == __pawnBrain;
-        public float AggressiveLevel => decision.aggressiveLevel.Value;
         public bool IsInCombat => decision.aggressiveLevel.Value >= 0f;
-        public float CatchingDuration => action.catchingDuration;
-        public float HookingDistance => action.hookingDistance;
-        public float SpacingInDistance => action.spacingInDistance;
-        public float SpacingOutDistance => action.spacingOutDistance;
-        public float MinSpacingDistance => action.minSpacingDistance;
-        public float MaxSpacingDistance => action.maxSpacingDistance;
-        public float MinApproachDistance => action.minApproachDistance;
-        public float HoldPositionRate => action.holdPositionRate;
-        public float MoveAroundRate => action.moveAroundRate;
+        public float AggressiveLevel => decision.aggressiveLevel.Value;
+        public float HookingDistance => body.hookingDistance;
+        public float SpacingInDistance => body.spacingInDistance;
+        public float SpacingOutDistance => body.spacingOutDistance;
+        public float MinSpacingDistance => body.minSpacingDistance;
+        public float MaxSpacingDistance => body.maxSpacingDistance;
+        public float MinApproachDistance => body.minApproachDistance;
+        public float HoldPositionRate => body.holdPositionRate;
+        public float MoveAroundRate => body.moveAroundRate;
 
         [Serializable]
         public class Body
@@ -32,25 +31,6 @@ namespace Game
             public float boostSpeed = 1f;
             public float flyHeight = 1f;
             public float flyHeightAdjustSpeed = 1f;
-            public ReactiveProperty<HeroBrain> hostBrain = new();
-            public ReactiveProperty<Transform> formationSpot = new();
-        }
-
-        public Body body = new();
-
-        [Serializable]
-        public class Decision
-        {
-            public ReactiveProperty<DroneBotBrain.Decisions> currDecision = new(DroneBotBrain.Decisions.None);
-            public FloatReactiveProperty aggressiveLevel = new(0);
-        }
-
-        public Decision decision = new();
-        
-        [Serializable]
-        public class Action
-        {
-            public float catchingDuration = 1f;
             public float hookingDistance = 1f;
             public float spacingInDistance = 1f;
             public float spacingOutDistance = 1f;
@@ -61,6 +41,28 @@ namespace Game
             public float moveAroundRate = 1f;
         }
 
-        public Action action = new();
+        public Body body = new();
+
+        [Serializable]
+        public class Decision
+        {
+            public ReactiveProperty<DroneBotBrain.Decisions> currDecision = new(DroneBotBrain.Decisions.None);
+            public FloatReactiveProperty aggressiveLevel = new(0);
+            public ReactiveProperty<HeroBrain> hostBrain = new();
+            public ReactiveProperty<Transform> formationSpot = new();
+        }
+
+        public Decision decision = new();
+
+        [Serializable]
+        public class Resource
+        {
+            public GameObject protonExplosionFx;
+            public ParticleSystem jetBoostFx;
+            public ParticleSystem orbBlueFx;
+        }
+
+        public Resource resource = new();
+ 
     }
 }
