@@ -29,6 +29,10 @@ public class UIGamePanel : MonoBehaviour
         {
             _heroBrain = FindAnyObjectByType<HeroBrain>();
         }
+        if (_menuObj == null) 
+        {
+            _menuObj = GameObject.Find("GameMenu");
+        }
     }
     public void OnClickMenu() 
     {
