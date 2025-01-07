@@ -60,7 +60,6 @@ namespace Game
             public GameObject onBigHitFx;
             public GameObject onKickHitFx;
             public GameObject onBleedingFx;
-            public GameObject onSmokeFx;
             public GameObject onMissedFx;
             public GameObject onBlockedFx;
             public GameObject onGuardBreakFx;

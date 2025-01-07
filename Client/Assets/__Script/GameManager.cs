@@ -19,6 +19,8 @@ public class GameManager : MonoSingleton<GameManager>
     // Start is called before the first frame update
     void Start()
     {
+        return;
+        
         var objRes = Resources.Load("Background/Prefabs/Map/FS_Test_Mission2");
         GameObject objBack = (GameObject)GameObject.Instantiate(objRes);
         objBack.transform.position = _vInitPos; // new Vector3(-10.5f, 0, -7.5f);

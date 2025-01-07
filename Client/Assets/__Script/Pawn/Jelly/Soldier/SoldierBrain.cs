@@ -105,7 +105,7 @@ namespace Game
                             ActionCtrler.SetPendingAction(__leapActionData.actionName);
 
                             //* 'Leap' 액션의 루트모션 이동거리인 7m 기준으로 목표점까지의 이동 거리를 조절해준다.
-                            ActionCtrler.leapRootMotionMultiplier = Mathf.Clamp01((BB.TargetBrain.GetWorldPosition() - GetWorldPosition()).Magnitude2D() / 7f);
+                            ActionCtrler.leapRootMotionMultiplier = Mathf.Clamp01((BB.TargetBrain.GetWorldPosition() - GetWorldPosition()).Magnitude2D() / ActionCtrler.leapRootMotionDistance);
                         }
                         else
                         {

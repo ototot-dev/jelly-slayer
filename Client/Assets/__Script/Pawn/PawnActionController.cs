@@ -116,6 +116,7 @@ namespace Game
         public bool CheckMovementEnabled() { Debug.Assert(CheckActionRunning()); return currActionContext.movementEnabled; }
         public bool CanInterruptAction() { Debug.Assert(CheckActionRunning()); return currActionContext.interruptEnabled; }
         public SuperArmorLevels GetSuperArmorLevel() => (SuperArmorLevels)(currActionContext.actionData?.superArmorLevel?? 0);
+
         public bool CheckSuperArmorLevel(SuperArmorLevels compareLevel) { return (currActionContext.actionData?.superArmorLevel?? 0) >= (int)compareLevel; }
         public bool CheckPendingActionHasPreMotion() => !string.IsNullOrEmpty(PendingActionData.Item2);
         public float LastActionTimeStamp => CheckActionRunning() ? Time.time : prevActionContext.finishTimeStamp;

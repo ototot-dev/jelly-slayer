@@ -160,7 +160,6 @@ MonoBehaviour:
   gravity: {x: 0, y: -19.81, z: 0}
   moveVec: {x: 0, y: 0, z: 0}
   faceVec: {x: 0, y: 0, z: 1}
-  ziplineOffsetY: 0.5
 --- !u!114 &2118029493424771570
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -174,8 +173,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainAnimator: {fileID: 3244703593152202959}
-  legAnimator: {fileID: 3673634840836888687}
   rigBuilder: {fileID: 8157329558261335758}
+  legAnimator: {fileID: 3673634840836888687}
   ragdollAnimator: {fileID: 1508909516796287826}
   spineOverrideTransform: {fileID: 7333061147978076615}
   leftArmTwoBoneIK: {fileID: 5332639391261278618}
@@ -205,8 +204,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 091c5c1b3b28e41cd8852f3aa563fd24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bodyHitColliderHelper: {fileID: 2023143863012937403}
-  parryHitColliderHelper: {fileID: 1104606249163493149}
   staggerFx: {fileID: 7902684546752631038, guid: 1a4146f5a4768c24d907b77fd5275c06, type: 3}
   fxAttachPoint: {fileID: 6667022547613719956}
   shieldMesh: {fileID: 4082651064568185550}
@@ -299,8 +296,6 @@ MonoBehaviour:
       value: 0
     hangingBrain:
       value: {fileID: 0}
-    isZipRiding:
-      value: 0
     isRolling:
       value: 0
     isGuarding:
@@ -326,6 +321,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coreColliderHelper: {fileID: 4575544682901093454}
+  hitColliderHelper: {fileID: 2023143863012937403}
+  parryColliderHelper: {fileID: 1104606249163493149}
   owner: {fileID: 0}
   tickInterval: 0.1
   tickEnabled: 1
@@ -343,7 +340,7 @@ MonoBehaviour:
   - {fileID: 5206738947422469673}
   - {fileID: 8179485229091800959}
   _chainCtrl: {fileID: 7371286568505109311}
-  droneBotFormationCtrler: {fileID: 0}
+  droneBotFormationCtrler: {fileID: 8483556658682726615}
   _isBind: 0
   _bindLIst: []
 --- !u!114 &4592272242371362991
@@ -5859,7 +5856,7 @@ MonoBehaviour:
   baseTransform: {fileID: 0}
   Hips: {fileID: 3244703593161533285}
   ScaleReferenceMode: 1
-  finalScaleReference: 0.7681418
+  finalScaleReference: 0.76814187
   finalScaleReferenceSqrt: 0.1
   customScaleReferenceValue: 0.5
   DelayedInitialization: 0

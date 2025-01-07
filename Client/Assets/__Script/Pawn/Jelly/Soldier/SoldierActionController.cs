@@ -22,18 +22,8 @@ namespace Game
         public CapsuleCollider CounterActionCollider => counterActionColliderHelper.pawnCollider as CapsuleCollider;
         public Vector3 GetShieldCenter() => shieldCollider.transform.position + shieldCollider.center;
 
-        public override float GetRootMotionMultiplier()
-        {
-            if (CurrActionName == "Leap")
-                return leapRootMotionMultiplier * currActionContext.rootMotionMultiplier;
-            else
-                return base.GetRootMotionMultiplier();
-        }
-
         public override bool CanBlockAction(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
-            return false;
-
             if (__brain.BB.IsGroggy)
                 return false;
             else if (__brain.ActionCtrler.CheckActionRunning() || __brain.StatusCtrler.CheckStatus(PawnStatus.Staggered) || __brain.StatusCtrler.CheckStatus(PawnStatus.CanNotGuard))
