@@ -36,7 +36,7 @@ public class UIGamePanel : MonoBehaviour
     }
     public void OnClickMenu() 
     {
-        _menuObj.SetActive(true);
+        _menuObj?.SetActive(true);
     }
 
     // Update is called once per frame
