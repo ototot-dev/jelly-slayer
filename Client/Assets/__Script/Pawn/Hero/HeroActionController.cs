@@ -87,7 +87,7 @@ namespace Game
                 else
                 {
                     SoundManager.Instance.Play(SoundID.HIT_BLOCK);
-                    EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);
+                    EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.BB.graphics.forceShieldRenderer.transform.position, Quaternion.identity, Vector3.one, 1f);
                 }
 
                 var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
@@ -116,8 +116,8 @@ namespace Game
                     }).AddTo(this);
 
                     SoundManager.Instance.Play(SoundID.HIT_BLOCK);
-                    EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);
-                    EffectManager.Instance.Show("BlockAttack", __brain.AnimCtrler.shieldMeshSlot.position, Quaternion.identity, Vector3.one, 1f);
+                    EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.BB.graphics.forceShieldRenderer.transform.position, Quaternion.identity, Vector3.one, 1f);
+                    EffectManager.Instance.Show("BlockAttack", __brain.BB.graphics.forceShieldRenderer.transform.position, Quaternion.identity, Vector3.one, 1f);
                 }
                 else if (damageContext.actionResult == ActionResults.GuardParried)
                 {

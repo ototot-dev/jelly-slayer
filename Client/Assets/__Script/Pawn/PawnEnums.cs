@@ -11,6 +11,7 @@ namespace Game
         Soldier,
         Worker,
         Alien,
+        Etasphera42,
         Zombie,
         Footman,
         Warrior,

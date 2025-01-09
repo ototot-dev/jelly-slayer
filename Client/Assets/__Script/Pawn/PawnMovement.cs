@@ -11,6 +11,7 @@ namespace Game
         public Transform capsule;
         public Rigidbody capsuleRigidBody;
         public CapsuleCollider capsuleCollider;
+        public Collider[] ignoredColliders;
         
         [Header("Movement")]
         public bool freezeMovement = false;
@@ -35,6 +36,10 @@ namespace Game
             __pawnActionCtrler = GetComponent<PawnActionController>();
             __pawnStatusCtrler = GetComponent<PawnStatusController>();
             __ecmMovement = capsuleCollider.GetComponent<ECM2.CharacterMovement>();
+
+            //* 자기 자신에게 속한 충돌체는 __ecmMovement와 충돌하지 않도록 등록해줌
+            foreach (var c in ignoredColliders)
+                __ecmMovement.IgnoreCollision(c);
 
             AwakeInternal();
         }

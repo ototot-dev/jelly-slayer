@@ -16,8 +16,8 @@ namespace Game
         public TwoBoneIKConstraint rightArmTwoBoneIK;
         public BonesStimulator leftLegBoneSimulator;
         public BonesStimulator rightLegBoneSimulator;
-        public Transform shieldMeshSlot;
         public Transform weaponMeshSlot;
+        public Transform shieldMeshSlot;
         public Transform HeadLookAt;
         public Transform hipBone;
 
@@ -48,7 +48,7 @@ namespace Game
                 if (!v.Item1 && !v.Item2)
                 {
                     mainAnimator.SetBool("IsGuarding", false);
-                    shieldMeshSlot.localEulerAngles = Vector3.zero;
+                    __brain.BB.graphics.forceShieldRenderer.transform.localScale = Vector3.one;
                 }
             }).AddTo(this);
 
@@ -96,14 +96,19 @@ namespace Game
                 }
 
                 if (__brain.StatusCtrler.CheckStatus(PawnStatus.Staggered) || __brain.StatusCtrler.CheckStatus(PawnStatus.CanNotGuard))
-                {
                     mainAnimator.SetBool("IsGuarding", false);
-                    shieldMeshSlot.localEulerAngles = Vector3.zero;
-                }
-                else if (__brain.BB.IsGuarding || __brain.BB.IsCharging)
-                {
+                else if (__brain.BB.IsGuarding)
                     mainAnimator.SetBool("IsGuarding", true);
-                    shieldMeshSlot.localEulerAngles = new Vector3(0f, 0f, -60f);
+
+                if (mainAnimator.GetBool("IsGuarding"))
+                {
+                    shieldMeshSlot.transform.localEulerAngles = new Vector3(0f, -45f, -90f);
+                    __brain.BB.graphics.forceShieldRenderer.transform.localScale = 2f * Vector3.one;
+                }
+                else
+                {
+                    shieldMeshSlot.transform.localEulerAngles = new Vector3(0f, -90f, -90f);
+                    __brain.BB.graphics.forceShieldRenderer.transform.localScale = Vector3.one;
                 }
 
                 if (__watchingStateNames.Contains("DrinkPotion"))

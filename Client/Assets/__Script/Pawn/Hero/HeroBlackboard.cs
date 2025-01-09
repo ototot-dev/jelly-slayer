@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using UniRx;
+using UnityEngine;
 
 namespace Game
 {
@@ -43,6 +44,14 @@ namespace Game
         }
 
         public Action action = new();
+
+        [Serializable]
+        public class Graphics
+        {
+            public MeshRenderer forceShieldRenderer;
+        }
+
+        public Graphics graphics = new();
 
         protected override void AwakeInternal()
         {
