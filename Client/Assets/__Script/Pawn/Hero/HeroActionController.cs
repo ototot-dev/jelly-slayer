@@ -9,9 +9,8 @@ namespace Game
     public class HeroActionController : PawnActionController
     {
         [Header("Component")]
-        public GameObject staggerFx;
         public Transform fxAttachPoint;
-        public MeshRenderer shieldMesh;
+        public MeshRenderer forceFieldMeshRenderer;
         public Collider kickActionCollider;
         public Collider swordActionCollider;
 
@@ -127,8 +126,15 @@ namespace Game
                     var hitPoint = senderHelper.GetCenter() + senderHelper.GetRadius() * 
                         (__brain.coreColliderHelper.GetCenter() - senderHelper.GetCenter()).Vector2D().normalized;
 
-                    EffectManager.Instance.Show("Hit 26 blue crystal", hitPoint, Quaternion.identity, 3f * Vector3.one, 1f);
-                    EffectManager.Instance.Show("BasicSparkExplosion", hitPoint, Quaternion.identity, 1f * Vector3.one, 1f);
+                    Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ =>
+                    {
+                        EffectManager.Instance.Show(__brain.BB.graphics.onGuardParriedFx, __brain.BB.graphics.forceShieldRenderer.transform.position, Quaternion.identity, 0.8f * Vector3.one);
+                        // forceFieldMeshRenderer.transform.position;
+
+                    });
+
+                    // EffectManager.Instance.Show("Hit 26 blue crystal", hitPoint, Quaternion.identity, 3f * Vector3.one, 1f);
+                    // EffectManager.Instance.Show("BasicSparkExplosion", hitPoint, Quaternion.identity, 1f * Vector3.one, 1f);
                     SoundManager.Instance.Play(SoundID.HIT_PARRYING);
                 }
                 else if (damageContext.actionResult == ActionResults.KickParried)

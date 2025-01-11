@@ -49,6 +49,7 @@ namespace Game
         public class Graphics
         {
             public MeshRenderer forceShieldRenderer;
+            public GameObject onGuardParriedFx;
         }
 
         public Graphics graphics = new();

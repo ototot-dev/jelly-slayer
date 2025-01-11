@@ -1296,7 +1296,7 @@ PrefabInstance:
     - target: {fileID: 9205371885998440386, guid: e96cffa9d00b6b545adfeb26165952cc, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 983652645}
+      objectReference: {fileID: 1060563150}
     - target: {fileID: 9205371885998440386, guid: e96cffa9d00b6b545adfeb26165952cc, type: 3}
       propertyPath: orthographic size
       value: 4.2
@@ -1429,17 +1429,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8683783354359918731, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
-      propertyPath: debugActionDisabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8861700421523015734, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
       propertyPath: m_Name
       value: JellySoldier
       objectReference: {fileID: 0}
     - target: {fileID: 8861700421523015734, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1985,7 +1981,17 @@ MonoBehaviour:
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0
   m_ScrollDeltaPerTick: 6
---- !u!84 &983652645
+--- !u!1 &1045658120 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2950721467135193009, guid: 1e58610f1fe57e244beb8a433828b16c, type: 3}
+  m_PrefabInstance: {fileID: 5445789605086663051}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &1045658121 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 4526772425194120465, guid: 1e58610f1fe57e244beb8a433828b16c, type: 3}
+  m_PrefabInstance: {fileID: 5445789605086663051}
+  m_PrefabAsset: {fileID: 0}
+--- !u!84 &1060563150
 RenderTexture:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2022,16 +2028,6 @@ RenderTexture:
   m_Dimension: 2
   m_VolumeDepth: 1
   m_ShadowSamplingMode: 2
---- !u!1 &1045658120 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2950721467135193009, guid: 1e58610f1fe57e244beb8a433828b16c, type: 3}
-  m_PrefabInstance: {fileID: 5445789605086663051}
-  m_PrefabAsset: {fileID: 0}
---- !u!224 &1045658121 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 4526772425194120465, guid: 1e58610f1fe57e244beb8a433828b16c, type: 3}
-  m_PrefabInstance: {fileID: 5445789605086663051}
-  m_PrefabAsset: {fileID: 0}
 --- !u!20 &1147463903 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 1798342755243477739, guid: e96cffa9d00b6b545adfeb26165952cc, type: 3}
@@ -2073,6 +2069,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 255523815498730483, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 371904334398193260, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 371904334398193260, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
@@ -2170,6 +2174,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5947494458222356936, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7707226506227217703, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7707226506227217703, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8027404189754438666, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
@@ -3147,6 +3159,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4268522763273999486, guid: 31be19a0e23ac441d906c3c6f7481852, type: 3}
+      propertyPath: graphics.onGuardParriedFx
+      value: 
+      objectReference: {fileID: 8290359115699195188, guid: e7b0059f09cb15241973d434a922f01a, type: 3}
     - target: {fileID: 4268522763273999486, guid: 31be19a0e23ac441d906c3c6f7481852, type: 3}
       propertyPath: graphics.forceShieldRenderer
       value: 

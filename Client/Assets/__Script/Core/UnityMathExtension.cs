@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Game
@@ -378,9 +379,9 @@ namespace Game
             return vec;
         }
 
-        public static bool FloatApproximately(float a, float b, float epsilon = 0.001f)
+        public static bool CheckOverlappedWithFan(this BoxCollider collider, float fanAngle, float fanRadius, float fanHeight, Matrix4x4 fanWorldToLocal)
         {
-            return Mathf.Abs(a - b) < epsilon;
+            return false;
         }
 
         public static bool CheckOverlappedWithFan(this CapsuleCollider collider, float fanAngle, float fanRadius, float fanHeight, Matrix4x4 fanWorldToLocal)
@@ -419,7 +420,7 @@ namespace Game
             if (heightDistance > sphereRadius)
                 return false;
 
-            if (heightDistance > 0)
+            if (heightDistance > 0f)
                 sphereRadius = Mathf.Sqrt(sphereRadius * sphereRadius - heightDistance * heightDistance);
 
             var shortestPoint2D = sphereCenter2D;
@@ -427,9 +428,9 @@ namespace Game
             if (sphereCenter2D_sqrMagnitude > fanRadius * fanRadius)
                 shortestPoint2D -= sphereRadius * shortestPoint2D_norm;
 
-            var edgeVec0 = Quaternion.Euler(0, 0.5f * fanAngle, 0) * Vector3.forward;
+            var edgeVec0 = Quaternion.Euler(0f, 0.5f * fanAngle, 0f) * Vector3.forward;
             var projection0 = Vector3.Project(sphereCenter2D, edgeVec0);
-            if (Vector3.Dot(edgeVec0, projection0) < 0)
+            if (Vector3.Dot(edgeVec0, projection0) < 0f)
                 projection0 = Vector3.zero;
             else if (projection0.sqrMagnitude > fanRadius * fanRadius)
                 projection0 = fanRadius * edgeVec0;
@@ -438,14 +439,14 @@ namespace Game
 
             var edgeVec1 = edgeVec0.AdjustX(-edgeVec0.x);
             var projection1 = Vector3.Project(sphereCenter2D, edgeVec1);
-            if (Vector3.Dot(edgeVec1, projection1) < 0)
+            if (Vector3.Dot(edgeVec1, projection1) < 0f)
                 projection1 = Vector3.zero;
-            else if (projection0.sqrMagnitude > fanRadius * fanRadius)
+            else if (projection1.sqrMagnitude > fanRadius * fanRadius)
                 projection1 = fanRadius * edgeVec1;
             if ((projection1 - sphereCenter2D).sqrMagnitude <= sphereRadius * sphereRadius)
                 return true;
 
-            if (fanAngle >= 360)
+            if (fanAngle >= 360f)
                 return shortestPoint2D.sqrMagnitude < fanRadius * fanRadius;
             else
                 return shortestPoint2D.sqrMagnitude < fanRadius * fanRadius && Vector3.Dot(Vector3.forward, shortestPoint2D_norm) >= Mathf.Cos(Mathf.Deg2Rad * 0.5f * fanAngle);
@@ -453,7 +454,7 @@ namespace Game
 
         public static bool CheckOverlappedWithFan(this SphereCollider collider, float fanAngle, float fanRadius, float fanHeight, Matrix4x4 fanWorldToLocal)
         {
-            return CheckOverlappedWithFan(collider.transform.position + collider.center, collider.radius, fanAngle, fanRadius, fanHeight, fanWorldToLocal);
+            return CheckOverlappedWithFan(collider.transform.position + collider.center, collider.radius * Mathf.Max(collider.transform.lossyScale.x, collider.transform.lossyScale.y, collider.transform.lossyScale.z), fanAngle, fanRadius, fanHeight, fanWorldToLocal);
         }
     }
 }

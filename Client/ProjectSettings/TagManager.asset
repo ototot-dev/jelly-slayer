@@ -24,7 +24,7 @@ TagManager:
   - Projectile
   - ProjectileSensor
   - HitBox
-  - HitBoxPawn
+  - HitBoxBlocking
   - PhysicsBody
   - Obstacle
   - 

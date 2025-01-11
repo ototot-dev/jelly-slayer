@@ -60,7 +60,7 @@ namespace Game
                 __brain.AnimCtrler.mainAnimator.SetTrigger("OnGuard");
                 
                 Observable.Timer(TimeSpan.FromSeconds(0.5f)).Subscribe(_ => __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", false)).AddTo(this);
-                Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onBlockedFx, GetShieldCenter(), Quaternion.identity, Vector3.one, 1f)).AddTo(this);
+                Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onBlockedFx, GetShieldCenter(), Quaternion.identity, 0.8f * Vector3.one, 1f)).AddTo(this);
                 SoundManager.Instance.Play(SoundID.HIT_BLOCK);
 
             }

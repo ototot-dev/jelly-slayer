@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 168326260960991395}
   - component: {fileID: 3491578883216556144}
   - component: {fileID: 1913970846515973815}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -211,10 +211,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
+  m_Radius: 1
+  m_Height: 2.5
   m_Direction: 1
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Center: {x: 0, y: 1.25, z: 0}
 --- !u!114 &168326260960991395
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -245,9 +245,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _planeConstraint: 0
   _rootTransform: {fileID: 0}
-  _rootTransformOffset: {x: 0, y: 0, z: 0}
-  _radius: 0.5
-  _height: 2
+  _rootTransformOffset: {x: 0, y: 1.25, z: 0}
+  _radius: 1
+  _height: 2.5
   _slopeLimit: 45
   _stepOffset: 0.45
   _perchOffset: 0.5
@@ -257,7 +257,7 @@ MonoBehaviour:
   _useFlatBaseForGroundChecks: 0
   _collisionLayers:
     serializedVersion: 2
-    m_Bits: 12872
+    m_Bits: 28744
   _triggerInteraction: 1
   _advanced:
     minMoveDistance: 0
@@ -1135,7 +1135,7 @@ GameObject:
   - component: {fileID: 3735996293672512473}
   - component: {fileID: 1458070737609187091}
   - component: {fileID: 2054856965174851545}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: SM_Prop_Shield_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3906,7 +3906,7 @@ GameObject:
   - component: {fileID: 7979756587045458682}
   - component: {fileID: 3317346212697241151}
   - component: {fileID: 7827817497564531622}
-  m_Layer: 11
+  m_Layer: 12
   m_Name: HitBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3947,10 +3947,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.3
-  m_Height: 2.2
+  m_Radius: 0.4
+  m_Height: 2.4
   m_Direction: 1
-  m_Center: {x: 0, y: 1.1, z: 0}
+  m_Center: {x: 0, y: 1.2, z: 0}
 --- !u!114 &7827817497564531622
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20147,6 +20147,8 @@ MonoBehaviour:
   capsule: {fileID: 6920421996920446943}
   capsuleRigidBody: {fileID: 7402423699649128735}
   capsuleCollider: {fileID: 2631676355314689051}
+  ignoredColliders:
+  - {fileID: 0}
   freezeMovement: 0
   freezeRotation: 0
   rootMotionEnabled: 1
@@ -20245,7 +20247,7 @@ MonoBehaviour:
   updateEnabled: 1
   lateUpdateEnabled: 1
   fixedUpdateEnabled: 1
-  debugActionDisabled: 1
+  debugActionDisabled: 0
 --- !u!114 &1626602440402030822
 MonoBehaviour:
   m_ObjectHideFlags: 0
