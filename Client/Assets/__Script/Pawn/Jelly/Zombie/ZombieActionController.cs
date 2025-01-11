@@ -128,7 +128,7 @@ namespace Game
 
             var knockBackDistance = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "!OnBlock")?.knockBackDistance ?? 0f;
             if (knockBackDistance <= 0f)
-                __Logger.WarningF(gameObject, nameof(StartOnBlockedAction), "knockBackDistance is invalid.", "knockBackDistance", knockBackDistance);
+                __Logger.WarningR2(gameObject, nameof(StartOnBlockedAction), "knockBackDistance is invalid.", "knockBackDistance", knockBackDistance);
 
             var knockBackVec = knockBackDistance / 0.2f * -damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
             Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.2f)))
@@ -161,7 +161,7 @@ namespace Game
             var parryActionName = damageContext.actionResult == ActionResults.KickParried ? "Kick" : "GuardParry";
             var knockBackDistance = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, parryActionName)?.knockBackDistance ?? 0f;
             if (knockBackDistance <= 0f)
-                __Logger.WarningF(gameObject, nameof(StartOnBlockedAction), "knockBackDistance is invalid.", "knockBackDistance", knockBackDistance);
+                __Logger.WarningR2(gameObject, nameof(StartOnBlockedAction), "knockBackDistance is invalid.", "knockBackDistance", knockBackDistance);
 
             var knockBackVec = knockBackDistance / 0.2f * -damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
             Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.2f)))

@@ -63,6 +63,7 @@ namespace Game
             public GameObject onMissedFx;
             public GameObject onBlockedFx;
             public GameObject onGuardBreakFx;
+            public Transform BlockingFxAttachPoint;
         }
 
         public Graphics graphics = new();

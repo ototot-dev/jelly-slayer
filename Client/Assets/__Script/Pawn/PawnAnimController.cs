@@ -13,6 +13,7 @@ namespace Game
         [Header("Component")]
         public Animator mainAnimator;
         public RigBuilder rigBuilder;
+        public Rig rigSetup;
         public LegsAnimator legAnimator;
         public RagdollAnimator2 ragdollAnimator;
         Dictionary<string, ObservableStateMachineTriggerEx> __observableStateMachineTriggersCached = new();

@@ -114,28 +114,21 @@ namespace Game
                             __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", false);
                     }).AddTo(this);
 
-                    SoundManager.Instance.Play(SoundID.HIT_BLOCK);
-                    EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.BB.graphics.forceShieldRenderer.transform.position, Quaternion.identity, Vector3.one, 1f);
-                    EffectManager.Instance.Show("BlockAttack", __brain.BB.graphics.forceShieldRenderer.transform.position, Quaternion.identity, Vector3.one, 1f);
+                    Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ =>
+                    {
+                        EffectManager.Instance.Show(__brain.BB.graphics.onBlockFx, __brain.BB.graphics.forceShieldRenderer.transform.position + 0.1f * __brain.BB.graphics.forceShieldRenderer.transform.forward, Quaternion.identity, 0.5f * Vector3.one);
+                        SoundManager.Instance.Play(SoundID.HIT_BLOCK);
+                    });
                 }
                 else if (damageContext.actionResult == ActionResults.GuardParried)
                 {
                     __brain.AnimCtrler.mainAnimator.SetTrigger("OnGuardParry");
 
-                    var senderHelper = damageContext.senderBrain.coreColliderHelper;
-                    var hitPoint = senderHelper.GetCenter() + senderHelper.GetRadius() * 
-                        (__brain.coreColliderHelper.GetCenter() - senderHelper.GetCenter()).Vector2D().normalized;
-
                     Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ =>
                     {
-                        EffectManager.Instance.Show(__brain.BB.graphics.onGuardParriedFx, __brain.BB.graphics.forceShieldRenderer.transform.position, Quaternion.identity, 0.8f * Vector3.one);
-                        // forceFieldMeshRenderer.transform.position;
-
+                        EffectManager.Instance.Show(__brain.BB.graphics.onGuardParriedFx, __brain.BB.graphics.forceShieldRenderer.transform.position + 0.5f * __brain.coreColliderHelper.transform.forward, Quaternion.identity, 0.8f * Vector3.one);
+                        SoundManager.Instance.Play(SoundID.HIT_PARRYING);
                     });
-
-                    // EffectManager.Instance.Show("Hit 26 blue crystal", hitPoint, Quaternion.identity, 3f * Vector3.one, 1f);
-                    // EffectManager.Instance.Show("BasicSparkExplosion", hitPoint, Quaternion.identity, 1f * Vector3.one, 1f);
-                    SoundManager.Instance.Play(SoundID.HIT_PARRYING);
                 }
                 else if (damageContext.actionResult == ActionResults.KickParried)
                 {
@@ -193,7 +186,7 @@ namespace Game
             Debug.Assert(damageContext.receiverBrain == __brain);
             Debug.Assert(!isAddictiveAction);
 
-            var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+            var knockBackVec = -__brain.BB.pawnData_Movement.knockBackSpeed * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
             Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
                 .DoOnCancel(() => __brain.Movement.Freeze())
                 .DoOnCompleted(() => __brain.Movement.Freeze())

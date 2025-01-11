@@ -220,7 +220,7 @@ namespace Game
         public void SetPendingAction(string actionName, string preMotionName)
         {
             if (!string.IsNullOrEmpty(PendingActionData.Item1))
-                __Logger.WarningF(gameObject, nameof(PendingActionData), "__pendingAction is not empty value!!", "actionName", PendingActionData.Item1);
+                __Logger.WarningR2(gameObject, nameof(PendingActionData), "__pendingAction is not empty value!!", "actionName", PendingActionData.Item1);
 
             PendingActionData = new(actionName, preMotionName, Time.time);
         }
@@ -413,7 +413,7 @@ namespace Game
         {
             if (CheckActionRunning())
             {
-                __Logger.LogR(gameObject, "CheckActionRunning() returns false", nameof(actionName), actionName, nameof(CurrActionName), CurrActionName);
+                __Logger.LogR1(gameObject, "CheckActionRunning() returns false", nameof(actionName), actionName, nameof(CurrActionName), CurrActionName);
                 return false;
             }
 
@@ -422,7 +422,7 @@ namespace Game
                 currActionContext = new(actionName, actionSpeedMultiplier, Time.time);
                 onActionStart?.Invoke(currActionContext, damageContext);
 
-                __Logger.LogR(gameObject, "onActionStart", "actionName", currActionContext.actionName, "actionInstanceId", currActionContext.actionInstanceId);
+                __Logger.LogR1(gameObject, "onActionStart", "actionName", currActionContext.actionName, "actionInstanceId", currActionContext.actionInstanceId);
 
                 if (__pawnAnimCtrler != null && __pawnAnimCtrler.mainAnimator != null)
                 {
@@ -448,7 +448,7 @@ namespace Game
                 var actionData = DatasheetManager.Instance.GetActionData(__pawnBrain.PawnBB.common.pawnId, actionName);
                 if (actionData == null)
                 {
-                    __Logger.LogR(gameObject, "GetActionData() returns null", nameof(actionName), actionName, nameof(__pawnBrain.PawnBB.common.pawnId), __pawnBrain.PawnBB.common.pawnId);
+                    __Logger.LogR1(gameObject, "GetActionData() returns null", nameof(actionName), actionName, nameof(__pawnBrain.PawnBB.common.pawnId), __pawnBrain.PawnBB.common.pawnId);
                     return false;
                 }
 
@@ -457,7 +457,7 @@ namespace Game
                 {
                     if (__pawnBrain.PawnBB.stat.stamina.Value < actionData.staminaCost)
                     {
-                        __Logger.LogR(gameObject, "Stamina is too low.", "stat.stamina", __pawnBrain.PawnBB.stat.stamina.Value, "staminaCost", actionData.staminaCost);
+                        __Logger.LogR1(gameObject, "Stamina is too low.", "stat.stamina", __pawnBrain.PawnBB.stat.stamina.Value, "staminaCost", actionData.staminaCost);
                         currActionContext.insufficientStamina = true;
                     }
                     else
@@ -468,7 +468,7 @@ namespace Game
 
                 onActionStart?.Invoke(currActionContext, damageContext);
 
-                __Logger.LogR(gameObject, "onActionStart", nameof(currActionContext.actionName), currActionContext.actionName, "actionInstanceId", currActionContext.actionInstanceId);
+                __Logger.LogR1(gameObject, "onActionStart", nameof(currActionContext.actionName), currActionContext.actionName, "actionInstanceId", currActionContext.actionInstanceId);
 
                 if (__pawnAnimCtrler != null && __pawnAnimCtrler.mainAnimator != null)
                 {
@@ -490,11 +490,11 @@ namespace Game
         {
             if (!actionName.StartsWith('!'))
             {
-                __Logger.WarningF(gameObject, nameof(StartAddictiveAction), "actionName.StartsWith('!') is false.", "actionName", actionName);
+                __Logger.WarningR2(gameObject, nameof(StartAddictiveAction), "actionName.StartsWith('!') is false.", "actionName", actionName);
                 return false;
             }
 
-            __Logger.LogF(gameObject, nameof(StartAddictiveAction), "onAddictiveActionStart is invoked.", "actionName", actionName);
+            __Logger.LogR2(gameObject, nameof(StartAddictiveAction), "onAddictiveActionStart is invoked.", "actionName", actionName);
             onAddictiveActionStart?.Invoke(new ActionContext(actionName, 1f, Time.time), damageContext);
 
             if (__pawnAnimCtrler != null && __pawnAnimCtrler.mainAnimator != null)
@@ -527,7 +527,7 @@ namespace Game
 
         public void CancelAction(bool rewindAction, float rewindSpeed = 1, float rewindDuration = 1)
         {
-            __Logger.LogR(gameObject, nameof(CancelAction), "actionName", currActionContext.actionName);
+            __Logger.LogR1(gameObject, nameof(CancelAction), "actionName", currActionContext.actionName);
 
             currActionContext.actionCanceled = true;
             currActionContext.actionDisposable?.Dispose();
@@ -553,7 +553,7 @@ namespace Game
 
         public void FinishAction()
         {
-            __Logger.LogR(gameObject, nameof(FinishAction), "actionName", currActionContext.actionName);
+            __Logger.LogR1(gameObject, nameof(FinishAction), "actionName", currActionContext.actionName);
 
             if (string.IsNullOrEmpty(currActionContext.actionName))
                 return;
@@ -584,7 +584,7 @@ namespace Game
 
 #if UNITY_EDITOR
             __actionFinishPosition = __pawnBrain.coreColliderHelper.transform.position;
-            __Logger.LogR(gameObject, nameof(FinishAction), "distance", (__actionFinishPosition - __actionStartPosition).Vector2D().magnitude);
+            __Logger.LogR1(gameObject, nameof(FinishAction), "distance", (__actionFinishPosition - __actionStartPosition).Vector2D().magnitude);
 #endif
         }
 
@@ -592,7 +592,7 @@ namespace Game
         {
             if (!CheckActionRunning())
             {
-                __Logger.WarningF(gameObject, nameof(SetMovementEnabled), "CheckActionRunning() return false.");
+                __Logger.WarningR2(gameObject, nameof(SetMovementEnabled), "CheckActionRunning() return false.");
                 return;
             }
 
@@ -603,7 +603,7 @@ namespace Game
         {
             if (!CheckActionRunning())
             {
-                __Logger.WarningF(gameObject, nameof(SetRootMotionEnabled), "CheckActionRunning() return false.");
+                __Logger.WarningR2(gameObject, nameof(SetRootMotionEnabled), "CheckActionRunning() return false.");
                 return;
             }
 
@@ -614,7 +614,7 @@ namespace Game
         {
             if (!CheckActionRunning())
             {
-                __Logger.WarningF(gameObject, nameof(SetLegAnimGlueEnabled), "CheckActionRunning() return false.");
+                __Logger.WarningR2(gameObject, nameof(SetLegAnimGlueEnabled), "CheckActionRunning() return false.");
                 return;
             }
 
@@ -625,7 +625,7 @@ namespace Game
         {
             if (!CheckActionRunning())
             {
-                __Logger.WarningF(gameObject, nameof(SetInterruptEnabled), "CheckActionRunning() return false.");
+                __Logger.WarningR2(gameObject, nameof(SetInterruptEnabled), "CheckActionRunning() return false.");
                 return;
             }
 
@@ -636,7 +636,7 @@ namespace Game
         {
             if (!CheckActionRunning())
             {
-                __Logger.WarningF(gameObject, nameof(SetSuperArmorEnabled), "CheckActionRunning() return false.");
+                __Logger.WarningR2(gameObject, nameof(SetSuperArmorEnabled), "CheckActionRunning() return false.");
                 return;
             }
 
@@ -647,7 +647,7 @@ namespace Game
         {
             if (!CheckActionRunning())
             {
-                __Logger.WarningF(gameObject, nameof(SetActiveParryingEnabled), "CheckActionRunning() return false.");
+                __Logger.WarningR2(gameObject, nameof(SetActiveParryingEnabled), "CheckActionRunning() return false.");
                 return;
             }
 
@@ -662,7 +662,7 @@ namespace Game
         {
             if (!CheckActionRunning())
             {
-                __Logger.WarningF(gameObject, nameof(SetTraceRunning), "CheckActionRunning() return false.");
+                __Logger.WarningR2(gameObject, nameof(SetTraceRunning), "CheckActionRunning() return false.");
                 return;
             }
 

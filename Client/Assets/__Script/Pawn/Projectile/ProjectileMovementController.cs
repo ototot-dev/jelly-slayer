@@ -132,7 +132,7 @@ namespace Game
 
         public virtual void Stop(bool destroyAfterStopped, bool destroyImmediately = false)
         {
-            __Logger.WarningF(gameObject, nameof(Stop), "debugging~", "destroyAfterStopped", destroyAfterStopped, "destroyImmediately", destroyImmediately);
+            __Logger.WarningR2(gameObject, nameof(Stop), "debugging~", "destroyAfterStopped", destroyAfterStopped, "destroyImmediately", destroyImmediately);
 
             if (sensorCollider != null)
                 sensorCollider.enabled = false;

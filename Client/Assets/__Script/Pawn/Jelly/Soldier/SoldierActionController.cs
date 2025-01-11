@@ -1,6 +1,4 @@
 using System;
-using System.Linq;
-using NUnit.Framework.Constraints;
 using UniRx;
 using UnityEngine;
 using XftWeapon;
@@ -20,7 +18,6 @@ namespace Game
         public float leapRootMotionDistance = 7f;
         public float leapRootMotionMultiplier = 1f;
         public CapsuleCollider CounterActionCollider => counterActionColliderHelper.pawnCollider as CapsuleCollider;
-        public Vector3 GetShieldCenter() => shieldCollider.transform.position + shieldCollider.center;
 
         public override bool CanBlockAction(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
@@ -60,13 +57,13 @@ namespace Game
                 __brain.AnimCtrler.mainAnimator.SetTrigger("OnGuard");
                 
                 Observable.Timer(TimeSpan.FromSeconds(0.5f)).Subscribe(_ => __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", false)).AddTo(this);
-                Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onBlockedFx, GetShieldCenter(), Quaternion.identity, 0.8f * Vector3.one, 1f)).AddTo(this);
+                Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onBlockedFx, __brain.BB.graphics.BlockingFxAttachPoint.transform.position, Quaternion.identity, 0.8f * Vector3.one, 1f)).AddTo(this);
                 SoundManager.Instance.Play(SoundID.HIT_BLOCK);
 
             }
             else if (damageContext.actionResult == ActionResults.GuardBreak) 
             {
-                Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onGuardBreakFx, GetShieldCenter(), Quaternion.identity, Vector3.one, 1f)).AddTo(this);
+                Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onGuardBreakFx, __brain.BB.graphics.BlockingFxAttachPoint.transform.position, Quaternion.identity, Vector3.one, 1f)).AddTo(this);
                 SoundManager.Instance.Play(SoundID.GUARD_BREAK);
             }
 

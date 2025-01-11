@@ -1021,7 +1021,7 @@ namespace Game.NodeCanvasExtension
 
         int TraceSampleInternal()
         {   
-            __Logger.LogF(__pawnBrain.gameObject, nameof(TraceSampleInternal), "=>", "__sampleNum", __sampleIndex);
+            __Logger.LogR1(__pawnBrain.gameObject, nameof(TraceSampleInternal), "__sampleNum", __sampleIndex);
 
             if (traceDirection.value == 0 || __sampleNum == 1)
             {

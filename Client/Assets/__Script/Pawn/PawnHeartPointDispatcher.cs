@@ -175,14 +175,14 @@ namespace Game
             var cannotHitOnJump = (damageContext.senderActionData?.cannotHitOnJump ?? 1) > 0;
             if (cannotHitOnJump && damageContext.receiverBrain is IPawnMovable receiverMovable && receiverMovable.IsJumping())
             {
-                __Logger.LogF(gameObject, nameof(CalcFinalDamage), "No damage. IsJumping() is true.", "sender", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
+                __Logger.LogR2(gameObject, nameof(CalcFinalDamage), "No damage. IsJumping() is true.", "sender", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
                 return;
             }
 
             var cannotAvoidOnRolling = (damageContext.senderActionData?.cannotAvoidOnRolling ?? 0) > 0;
             if (!cannotAvoidOnRolling && damageContext.receiverBrain.TryGetComponent<PawnStatusController>(out var receiverBuffCtrler) && receiverBuffCtrler.CheckStatus(PawnStatus.InvincibleDodge))
             {
-                __Logger.LogF(gameObject, nameof(ProcessDamageContext), "No damage. CheckBuff(PawnStatus.InvincibleDodge) is true.",  "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
+                __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "No damage. CheckBuff(PawnStatus.InvincibleDodge) is true.",  "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
                 return;
             }
 
@@ -219,7 +219,7 @@ namespace Game
 
                 damageContext.senderBrain.PawnBB.stat.stance.Value += damageContext.receiverActionData.groggyAccum;
 
-                __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.ActiveParried", "stance", damageContext.senderBrain.PawnBB.stat.stance.Value, "maxStance", damageContext.senderBrain.PawnBB.stat.maxStance.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
+                __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "ActionResults.ActiveParried", "stance", damageContext.senderBrain.PawnBB.stat.stance.Value, "maxStance", damageContext.senderBrain.PawnBB.stat.maxStance.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
 
                 if (damageContext.senderBrain.PawnBB.stat.stance.Value >= damageContext.senderBrain.PawnBB.stat.maxStance.Value)
                 {
@@ -239,7 +239,7 @@ namespace Game
 
                 damageContext.senderBrain.PawnBB.stat.stance.Value += damageContext.receiverActionData.groggyAccum;
 
-                __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.GuardParried", "stance", damageContext.senderBrain.PawnBB.stat.stance.Value, "maxStance", damageContext.senderBrain.PawnBB.stat.maxStance.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
+                __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "ActionResults.GuardParried", "stance", damageContext.senderBrain.PawnBB.stat.stance.Value, "maxStance", damageContext.senderBrain.PawnBB.stat.maxStance.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
 
                 if (damageContext.senderBrain.PawnBB.stat.stance.Value >= damageContext.senderBrain.PawnBB.stat.maxStance.Value)
                 {
@@ -254,7 +254,7 @@ namespace Game
             }
             else if (damageContext.actionResult == ActionResults.Blocked)
             {
-                __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.Blocked", "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
+                __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "ActionResults.Blocked", "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
 
                 if (damageContext.insufficientStamina)
                 {
@@ -267,7 +267,7 @@ namespace Game
 
                     if (damageContext.receiverBrain.PawnBB.stat.guardStrength <= damageContext.senderActionData.guardBreak)
                     {
-                        __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.GuardBreak", "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
+                        __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "ActionResults.GuardBreak", "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
                         damageContext.actionResult = ActionResults.GuardBreak;
 
                         //* 'BreakGuard'인 경우 'Staggered' 디버프를 받게 되며, 'Staggered' 지속 시간은 피격 경직 시간과 동일하게 적용함
@@ -284,7 +284,7 @@ namespace Game
                             if (senderActionCtrler == null || !senderActionCtrler.CheckSuperArmorLevel(SuperArmorLevels.CanNotStraggerOnBlacked))
                                 damageContext.senderPenalty = new(PawnStatus.Staggered, damageContext.receiverActionData.staggerDuration);
                             else
-                                __Logger.LogF(gameObject, nameof(ProcessDamageContext), "receiverActionCtrler.CheckSuperArmorLevel(CanNotStraggerOnBlacked) returns true. PawnStatus.Staggered is ignored.");
+                                __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "receiverActionCtrler.CheckSuperArmorLevel(CanNotStraggerOnBlacked) returns true. PawnStatus.Staggered is ignored.");
                             
                             //* Receiver도 'Block' 반동에 의한 약한 경직 발생함
                             if (damageContext.receiverBrain.PawnBB.pawnData.guardStaggerDuration > 0f)
@@ -295,7 +295,7 @@ namespace Game
             }
             else if (damageContext.finalDamage > 0 || CalcFinalDamage(ref damageContext) > 0)
             {
-                __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged", "finalDamage", damageContext.finalDamage, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
+                __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged", "finalDamage", damageContext.finalDamage, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
 
                 damageContext.actionResult = ActionResults.Damaged;
 
@@ -317,7 +317,7 @@ namespace Game
                         {
                             damageContext.receiverBrain.PawnBB.stat.stance.Value += damageContext.senderActionData.groggyAccum;
 
-                            __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged", "stat.stance", damageContext.senderBrain.PawnBB.stat.stance.Value, "stat.maxStance", damageContext.senderBrain.PawnBB.stat.maxStance.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
+                            __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged", "stat.stance", damageContext.senderBrain.PawnBB.stat.stance.Value, "stat.maxStance", damageContext.senderBrain.PawnBB.stat.maxStance.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
 
                             if (damageContext.receiverBrain.PawnBB.stat.stance.Value >= damageContext.receiverBrain.PawnBB.stat.maxStance.Value)
                             {
@@ -333,7 +333,7 @@ namespace Game
                             damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value += damageContext.senderActionData.groggyHit;
                             Debug.Assert(damageContext.receiverPenalty.Item1 == PawnStatus.None);
 
-                            __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged", "stat.groggyHitCount", damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value, "stat.maxGroggyHitCount", damageContext.receiverBrain.PawnBB.stat.maxGroggyHitCount.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
+                            __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged", "stat.groggyHitCount", damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value, "stat.maxGroggyHitCount", damageContext.receiverBrain.PawnBB.stat.maxGroggyHitCount.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
 
                             if (damageContext.receiverPenalty.Item1 == PawnStatus.None && damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value >= damageContext.receiverBrain.PawnBB.stat.maxGroggyHitCount.Value)
                             {
@@ -345,7 +345,7 @@ namespace Game
                         {
                             damageContext.receiverBrain.PawnBB.stat.knockDown.Value += damageContext.senderActionData.knockDownAccum;
 
-                            __Logger.LogF(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged", "stat.knockDown", damageContext.receiverBrain.PawnBB.stat.knockDown.Value, "stat.maxKnockDown", damageContext.receiverBrain.PawnBB.stat.maxKnockDown.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
+                            __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged", "stat.knockDown", damageContext.receiverBrain.PawnBB.stat.knockDown.Value, "stat.maxKnockDown", damageContext.receiverBrain.PawnBB.stat.maxKnockDown.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
 
                             if (damageContext.receiverPenalty.Item1 == PawnStatus.None && damageContext.receiverBrain.PawnBB.stat.knockDown.Value >= damageContext.receiverBrain.PawnBB.stat.maxKnockDown.Value)
                             {
@@ -359,7 +359,7 @@ namespace Game
                             if (!receiverActionCtrler.CheckSuperArmorLevel(SuperArmorLevels.CanNotStarggerOnDamaged))
                                 damageContext.receiverPenalty = new(PawnStatus.Staggered, damageContext.senderActionData.staggerDuration);
                             else
-                                __Logger.LogF(gameObject, nameof(ProcessDamageContext), "receiverActionCtrler.CheckSuperArmorLevel(CanNotStarggerOnDamaged) returns true. PawnStatus.Staggered is ignored.");
+                                __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "receiverActionCtrler.CheckSuperArmorLevel(CanNotStarggerOnDamaged) returns true. PawnStatus.Staggered is ignored.");
                         }
                     }
                 }
@@ -374,7 +374,7 @@ namespace Game
 
             if (damageContext.receiverBrain.PawnHP.heartPoint.Value <= 0)
             {
-                __Logger.LogF(gameObject, nameof(ProcessDamageContext), "receiverBrain.PawnHP.heartPoint is below 0. receiverBrain is now dead.");
+                __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "receiverBrain.PawnHP.heartPoint is below 0. receiverBrain is now dead.");
                 damageContext.receiverBrain.PawnBB.common.isDead.Value = true;
                 damageContext.receiverBrain.PawnHP.onDamaged?.Invoke(damageContext);
                 damageContext.receiverBrain.PawnHP.onDead?.Invoke(damageContext);
@@ -383,7 +383,7 @@ namespace Game
             {
                 if (damageContext.receiverPenalty.Item1 != PawnStatus.None)
                 {
-                    __Logger.LogF(gameObject, nameof(ProcessDamageContext), "receiverPenalty is added.", "PawnStatus", damageContext.receiverPenalty.Item1, "duration", damageContext.receiverPenalty.Item2, "receiverBrain", damageContext.receiverBrain);
+                    __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "receiverPenalty is added.", "PawnStatus", damageContext.receiverPenalty.Item1, "duration", damageContext.receiverPenalty.Item2, "receiverBrain", damageContext.receiverBrain);
 
                     //* 'Block' 판정인 경우엔 strength 값에 0을 대입하여 구분이 될 수 있도록 함
                     damageContext.receiverBrain.PawnStatusCtrler.AddStatus(damageContext.receiverPenalty.Item1, damageContext.actionResult == ActionResults.Blocked ? 0f : 1f, damageContext.receiverPenalty.Item2);
@@ -399,7 +399,7 @@ namespace Game
             {
                 if (damageContext.senderPenalty.Item1 != PawnStatus.None)
                 {
-                    __Logger.LogF(gameObject, nameof(ProcessDamageContext), "senderPenalty is added.", "PawnStatus", damageContext.senderPenalty.Item1, "duration", damageContext.senderPenalty.Item2, "senderBrain", damageContext.senderBrain);
+                    __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "senderPenalty is added.", "PawnStatus", damageContext.senderPenalty.Item1, "duration", damageContext.senderPenalty.Item2, "senderBrain", damageContext.senderBrain);
                     damageContext.senderBrain.PawnStatusCtrler.AddStatus(damageContext.senderPenalty.Item1, 1f, damageContext.senderPenalty.Item2);
                 }
                 damageContext.senderBrain.PawnHP.onDamaged?.Invoke(damageContext);
@@ -425,18 +425,18 @@ namespace Game
 
             if (damageContext.receiverBrain.TryGetComponent<PawnStatusController>(out var receiverBuffCtrler) && receiverBuffCtrler.CheckStatus(PawnStatus.Invincible))
             {
-                __Logger.LogF(gameObject, nameof(CalcFinalDamage), "No damage. CheckBuff(PawnStatus.Invincible) is true.", "receiverBrain", damageContext.receiverBrain);
+                __Logger.LogR2(gameObject, nameof(CalcFinalDamage), "No damage. CheckBuff(PawnStatus.Invincible) is true.", "receiverBrain", damageContext.receiverBrain);
                 return 0f;
             }
             
             if (damageContext.insufficientStamina)
             {
                 damageContext.finalDamage = Mathf.Max(1f, damageContext.finalDamage * 0.1f);
-                __Logger.LogF(gameObject, nameof(CalcFinalDamage), "damageContext.finalDamage is reduced. (insufficientStamina is true)", "finalDamage", damageContext.finalDamage);
+                __Logger.LogR2(gameObject, nameof(CalcFinalDamage), "damageContext.finalDamage is reduced. (insufficientStamina is true)", "finalDamage", damageContext.finalDamage);
             }
             else
             {
-                __Logger.LogF(gameObject, nameof(CalcFinalDamage), "damageContext.finalDamage calculation done.", "finalDamage", damageContext.finalDamage);
+                __Logger.LogR2(gameObject, nameof(CalcFinalDamage), "damageContext.finalDamage calculation done.", "finalDamage", damageContext.finalDamage);
             }
 
             return damageContext.finalDamage;

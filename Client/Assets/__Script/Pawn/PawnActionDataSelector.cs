@@ -74,7 +74,7 @@ namespace Game
         {
             var ret = DatasheetManager.Instance.GetActionData(__pawnBrain.PawnBB.common.pawnId, actionName);
             if (ret == null)
-                __Logger.WarningF(gameObject, nameof(BoostSelection), "DatasheetManager.Instance.GetActionData() return false", "pawnId", __pawnBrain.PawnBB.common.pawnId, "actionName", actionName);
+                __Logger.WarningR2(gameObject, nameof(BoostSelection), "DatasheetManager.Instance.GetActionData() return false", "pawnId", __pawnBrain.PawnBB.common.pawnId, "actionName", actionName);
 
             return ret;
         }
@@ -99,7 +99,7 @@ namespace Game
             if (SelectionStates.TryGetValue(actionData, out var state))
                 state.currRate += deltaRate;
             else
-                __Logger.WarningF(gameObject, nameof(BoostSelection), "SourceActionStates.TryGetValue() return false", "actionName", actionData.actionName);
+                __Logger.WarningR2(gameObject, nameof(BoostSelection), "SourceActionStates.TryGetValue() return false", "actionName", actionData.actionName);
         }
         
         public void ResetSelection(string actionName) => ResetSelection(GetActionData(actionName));
@@ -115,7 +115,7 @@ namespace Game
             }
             else
             {
-                __Logger.WarningF(gameObject, nameof(ResetSelection), "SourceActionStates.TryGetValue() return false", "actionName", actionData.actionName);
+                __Logger.WarningR2(gameObject, nameof(ResetSelection), "SourceActionStates.TryGetValue() return false", "actionName", actionData.actionName);
             }
         }
 
@@ -138,7 +138,7 @@ namespace Game
             }
             else
             {
-                __Logger.WarningF(gameObject, nameof(EvaluateSelection), "SourceActionStates.TryGetValue() return false", "actionName", actionData.actionName);
+                __Logger.WarningR2(gameObject, nameof(EvaluateSelection), "SourceActionStates.TryGetValue() return false", "actionName", actionData.actionName);
                 return false;
             }
         }
