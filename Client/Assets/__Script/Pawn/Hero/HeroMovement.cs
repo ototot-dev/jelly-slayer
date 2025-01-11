@@ -3,6 +3,7 @@ using FIMSpace.FProceduralAnimation;
 using static FIMSpace.FProceduralAnimation.LegsAnimator;
 using UniRx;
 using System;
+using FIMSpace.Generating.Rules.Modelling;
 
 namespace Game
 {
@@ -169,7 +170,7 @@ namespace Game
 
             if (!__brain.BB.IsHanging)
             {
-                var canRotate1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsGroggy && !__pawnBrain.PawnBB.IsDown;
+                var canRotate1 = __brain.PawnBB.IsSpawnFinished && !__brain.PawnBB.IsDead && !__brain.PawnBB.IsGroggy && !__brain.AnimCtrler.CheckWatchingState("OnDown");
                 var canRotate2 = canRotate1 && !__brain.BB.IsRolling && !__brain.BB.IsJumping;
                 var canRotate3 = canRotate2 && (!__pawnActionCtrler.CheckActionRunning() || __pawnActionCtrler.currActionContext.movementEnabled) && !__pawnStatusCtrler.CheckStatus(PawnStatus.Staggered);
 
@@ -240,7 +241,7 @@ namespace Game
             {
                 if (!freezeMovement)
                 {
-                    var canMove1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsGroggy && !__pawnBrain.PawnBB.IsDown;
+                    var canMove1 = __brain.PawnBB.IsSpawnFinished && !__brain.PawnBB.IsDead && !__brain.PawnBB.IsGroggy && !__brain.AnimCtrler.CheckWatchingState("OnDown");
                     var canMove2 = canMove1 && (!__pawnActionCtrler.CheckActionRunning() || __pawnActionCtrler.currActionContext.movementEnabled) && !__pawnStatusCtrler.CheckStatus(PawnStatus.Staggered);
                     moveVec = canMove2 ? moveVec : Vector3.zero;
                 }

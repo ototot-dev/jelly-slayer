@@ -27,6 +27,17 @@ namespace Game
         public float legAnimGlueBlendSpeed = 1f;
         public AnimationClip[] blockAdditiveAnimClips;
 
+        //* Animator 레이어 인덱스 값 
+        enum LayerIndices : int
+        {
+            Base = 0,
+            Upper,
+            Arms,
+            Action,
+            Addictive,
+            Max,
+        }
+
         void Awake()
         {
             __brain = GetComponent<HeroBrain>();
@@ -40,6 +51,7 @@ namespace Game
 
         HeroBrain __brain;
         HashSet<string> __watchingStateNames = new();
+        public bool CheckWatchingState(string stateName) => __watchingStateNames.Contains(stateName);
 
         void Start()
         {
@@ -58,12 +70,43 @@ namespace Game
             FindObservableStateMachineTriggerEx("DrinkPotion").OnStateExitAsObservable().Subscribe(s => __watchingStateNames.Remove("DrinkPotion")).AddTo(this);
             FindObservableStateMachineTriggerEx("GuardParry").OnStateEnterAsObservable().Subscribe(s => __watchingStateNames.Add("GuardParry")).AddTo(this);
             FindObservableStateMachineTriggerEx("GuardParry").OnStateExitAsObservable().Subscribe(s => __watchingStateNames.Remove("GuardParry")).AddTo(this);
+            FindObservableStateMachineTriggerEx("OnDown (Start)").OnStateEnterAsObservable().Subscribe(s => 
+            {
+                __watchingStateNames.Add("OnDown");
+                legAnimator.User_FadeToDisabled(0.1f);
+                rigSetup.weight = 0f;
+            }).AddTo(this);
+            FindObservableStateMachineTriggerEx("OnDown (End)").OnStateExitAsObservable().Subscribe(s => 
+            {
+                __watchingStateNames.Remove("OnDown");
+                legAnimator.User_FadeEnabled(0.1f);
+                rigSetup.weight = 1f;
+            }).AddTo(this);
 
-            mainAnimator.SetLayerWeight(1, 0f);
             spineOverrideTransform.weight = 1f;
 
             __brain.onUpdate += () =>
             {
+                //* Down, Dead 상태에선 별도의 Animation 처리를 모두 끈다.
+                if (__watchingStateNames.Contains("OnDown") || __watchingStateNames.Contains("OnDead"))
+                {
+                    spineOverrideTransform.weight = 0f;
+                    leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
+                    leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
+                    legAnimator.User_SetIsMoving(false);
+                    legAnimator.User_SetIsGrounded(false);
+                    legAnimator.MainGlueBlend = 0f;
+
+                    mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
+                    mainAnimator.SetLayerWeight((int)LayerIndices.Arms, 0f);
+                    mainAnimator.SetLayerWeight((int)LayerIndices.Upper, 0f);
+                    mainAnimator.SetLayerWeight((int)LayerIndices.Action, 1f);
+                    mainAnimator.SetBool("IsGuarding", false);
+                    mainAnimator.SetBool("IsMoving", false);
+                     
+                    return;
+                }
+
                 if (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
                 {
                     //* 평면 방향 RootMotion에 대한 Constraints가 존재하면 값을 0으로 변경해준다.
@@ -111,20 +154,16 @@ namespace Game
                     __brain.BB.graphics.forceShieldRenderer.transform.localScale = Vector3.one;
                 }
 
-                if (__watchingStateNames.Contains("DrinkPotion"))
-                    mainAnimator.SetLayerWeight(1, 1f);
-                else
-                    mainAnimator.SetLayerWeight(1, 0f);
-
                 mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
-                mainAnimator.SetLayerWeight(2, __brain.BB.IsJumping || __brain.BB.IsHanging ? 0f : 1f);
+                mainAnimator.SetLayerWeight((int)LayerIndices.Arms, __brain.BB.IsJumping || __brain.BB.IsHanging ? 0f : 1f);
+                mainAnimator.SetLayerWeight((int)LayerIndices.Upper, __watchingStateNames.Contains("DrinkPotion") ? 1f : 0f);
 
                 if (__watchingStateNames.Contains("DrinkPotion"))
-                    mainAnimator.SetLayerWeight(3, 0f);
-                else if (__watchingStateNames.Contains("GuardParry"))
-                    mainAnimator.SetLayerWeight(3, 1f);
+                    mainAnimator.SetLayerWeight((int)LayerIndices.Action, 0f);
+                else if (__brain.BB.IsRolling || __watchingStateNames.Contains("GuardParry"))
+                    mainAnimator.SetLayerWeight((int)LayerIndices.Action, 1f);
                 else 
-                    mainAnimator.SetLayerWeight(3, Mathf.Clamp01(mainAnimator.GetLayerWeight(3) + ((__brain.BB.IsRolling || __brain.ActionCtrler.CheckActionRunning()) ? animLayerBlendSpeed : -animLayerBlendSpeed) * Time.deltaTime));
+                    mainAnimator.SetLayerWeight((int)LayerIndices.Action, Mathf.Clamp01(mainAnimator.GetLayerWeight((int)LayerIndices.Action) + (__brain.ActionCtrler.CheckActionRunning() ? animLayerBlendSpeed : -animLayerBlendSpeed) * Time.deltaTime));
 
                 mainAnimator.SetFloat("MoveSpeed", __brain.Movement.freezeRotation ? -1 : __brain.Movement.CurrVelocity.Vector2D().magnitude / __brain.BB.body.walkSpeed);
                 mainAnimator.SetFloat("MoveAnimSpeed", __brain.Movement.freezeRotation ? (__brain.BB.IsGuarding ? 0.8f : 1.2f) : 1);
@@ -135,8 +174,8 @@ namespace Game
                 mainAnimator.SetFloat("MoveY", animMoveVec.z / __brain.Movement.moveSpeed);
 
                 legAnimator.User_SetIsMoving(__brain.Movement.CurrVelocity.sqrMagnitude > 0);
-                legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround && !__brain.BB.IsRolling && !__brain.BB.IsJumping && !__brain.BB.IsHanging && !__brain.BB.IsDown && !__brain.BB.IsDead && (!__brain.ActionCtrler.CheckActionRunning() || __brain.ActionCtrler.currActionContext.legAnimGlueEnabled));
-                legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude > 0 ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.5f : 0.4f, 1);
+                legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround && !__brain.BB.IsRolling && !__brain.BB.IsJumping && !__brain.BB.IsHanging && (!__brain.ActionCtrler.CheckActionRunning() || __brain.ActionCtrler.currActionContext.legAnimGlueEnabled));
+                legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude > 0 ? -1f : 1f) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.8f : 0.7f, 1);
             };
         }
 

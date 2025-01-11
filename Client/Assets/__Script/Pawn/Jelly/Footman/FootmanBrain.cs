@@ -316,7 +316,7 @@ namespace Game
                 return false;
 
             if (!BB.TargetBrain.PawnBB.IsSpawnFinished)
-                __Logger.ErrorR(gameObject, "BB.WatchingPawnBrain.PawnBB.IsSpawnFinished is false", nameof(BB.TargetPawn), BB.TargetPawn);
+                __Logger.ErrorR1(gameObject, "BB.WatchingPawnBrain.PawnBB.IsSpawnFinished is false", nameof(BB.TargetPawn), BB.TargetPawn);
 
             Debug.Assert(BB.TargetBrain.PawnBB.IsSpawnFinished);
             return SensorCtrler.ListeningColliders.Contains(BB.TargetBrain.coreColliderHelper.pawnCollider);
@@ -335,12 +335,12 @@ namespace Game
 
                 if (colliderHelper != null)
                 {
-                    __Logger.LogF(gameObject, nameof(NextTargetBrain), "return...", nameof(colliderHelper.pawnBrain), colliderHelper.pawnBrain);
+                    __Logger.LogR2(gameObject, nameof(NextTargetBrain), "return...", nameof(colliderHelper.pawnBrain), colliderHelper.pawnBrain);
                     return colliderHelper.pawnBrain;
                 }
             }
 
-            __Logger.LogF(gameObject, nameof(NextTargetBrain), "return... null");
+            __Logger.LogR2(gameObject, nameof(NextTargetBrain), "return... null");
             return null;
         }
     }

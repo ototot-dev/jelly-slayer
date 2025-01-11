@@ -50,6 +50,7 @@ namespace Game
         {
             public MeshRenderer forceShieldRenderer;
             public GameObject onGuardParriedFx;
+            public GameObject onBlockFx;
         }
 
         public Graphics graphics = new();

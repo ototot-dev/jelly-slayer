@@ -51,7 +51,7 @@ namespace Game
             targetBrain.OnPossessedHandler();
             onPossessed?.Invoke(targetBrain);
 
-            __Logger.LogR(gameObject, nameof(Possess), nameof(targetBrain), targetBrain.name);
+            __Logger.LogR1(gameObject, nameof(Possess), nameof(targetBrain), targetBrain.name);
             return true;
         }
 
@@ -349,7 +349,7 @@ namespace Game
                     possessedBrain.BB.action.isCharging.Value = false;
                     possessedBrain.BB.action.chargingLevel.Value = 0;
 
-                    __Logger.LogF(gameObject, nameof(OnAttack), "Charging canceled.", "CurrActionName", possessedBrain.ActionCtrler.CurrActionName);
+                    __Logger.LogR2(gameObject, nameof(OnAttack), "Charging canceled.", "CurrActionName", possessedBrain.ActionCtrler.CurrActionName);
                 }
                 else
                 {
