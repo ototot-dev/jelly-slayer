@@ -22,6 +22,14 @@ namespace Game
         public Action<HeroBrain> onPossessed;
         public Action<HeroBrain> onUnpossessed;
 
+        [Header("Enable")]
+        public bool _isEnable_NormalAttack = true;
+        public bool _isEnable_SpecialAttack = true;
+        public bool _isEnable_Roll = true;
+        public bool _isEnable_Jump = true;
+        public bool _isEnable_Guard = true;
+        public bool _isEnable_Parry = true;
+
         public GameObject SpawnHeroPawn(GameObject heroPrefab, bool possessImmediately = false)
         {
             var spawnPosition = possessedBrain != null ? possessedBrain.GetWorldPosition() : transform.position;
@@ -119,6 +127,8 @@ namespace Game
         }
         public void OnGuard(InputValue value)
         {
+            if (_isEnable_Guard == false)
+                return;
             if (possessedBrain == null)
                 return;
 
@@ -141,6 +151,9 @@ namespace Game
 
         public void OnJump(InputValue value)
         {
+            if (_isEnable_Jump == false)
+                return;
+
             __jumpHangingDisposable ??= Observable.EveryUpdate().Where(_ => __jumpExecutedTimeStamp > __jumpReleasedTimeStamp).Subscribe(_ =>
             {
                 //* Catch 판정은 0.1초로 셋팅
@@ -267,6 +280,9 @@ namespace Game
 
         public void OnRoll()
         {
+            if (_isEnable_Roll == false)
+                return;
+
             var actionData = DatasheetManager.Instance.GetActionData(possessedBrain.PawnBB.common.pawnId, "Rolling");
             Debug.Assert(actionData != null);
 
@@ -316,6 +332,8 @@ namespace Game
 
         public void OnParry()
         {
+            if (_isEnable_Parry == false)
+                return;
             if (possessedBrain == null)
                 return;
 
@@ -338,6 +356,8 @@ namespace Game
 
         public void OnAttack(InputValue value)
         {
+            if(_isEnable_NormalAttack == false)
+                return;
             if (possessedBrain == null)
                 return;
 
@@ -465,6 +485,8 @@ namespace Game
 
         public void OnSpecialAttack(InputValue value)
         {
+            if (_isEnable_SpecialAttack == false)
+                return;
             if (possessedBrain == null)
                 return;
 
