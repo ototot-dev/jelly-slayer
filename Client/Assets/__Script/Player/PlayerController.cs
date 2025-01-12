@@ -23,6 +23,8 @@ namespace Game
         public Action<HeroBrain> onUnpossessed;
 
         [Header("Enable")]
+        public bool _isEnable_Move = true;
+        public bool _isEnable_Look = true;
         public bool _isEnable_NormalAttack = true;
         public bool _isEnable_SpecialAttack = true;
         public bool _isEnable_Roll = true;
@@ -117,12 +119,17 @@ namespace Game
 
         public void OnMove(InputValue value)
         {
+            if (_isEnable_Move == false)
+                return;
             moveVec.Value = value.Get<Vector2>();
         }
 
         public void OnLook(InputValue value)
         {
-            if (GameContext.Instance.cameraCtrler != null && GameContext.Instance.cameraCtrler.TryGetPickingPointOnTerrain(value.Get<Vector2>(), out var pickingPoint))
+            if (_isEnable_Look == false)
+                return;
+            if (GameContext.Instance.cameraCtrler != null && 
+                GameContext.Instance.cameraCtrler.TryGetPickingPointOnTerrain(value.Get<Vector2>(), out var pickingPoint))
                 lookVec.Value = (pickingPoint - possessedBrain.Movement.capsule.transform.position).Vector2D().normalized;
         }
         public void OnGuard(InputValue value)
