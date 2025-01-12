@@ -412,6 +412,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_01 (2995)
       objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -472,6 +476,10 @@ PrefabInstance:
     - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1675)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
@@ -1436,6 +1444,43 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4257637930872383694, guid: 6dd6fd0e88885e1479194342b8d0221e, type: 3}
   m_PrefabInstance: {fileID: 1876188739}
   m_PrefabAsset: {fileID: 0}
+--- !u!84 &117677028
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 640
+  m_Height: 360
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 94
+  m_ColorFormat: 4
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 1
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 0
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!4 &119090153 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2513109410118053051, guid: 4d9a4da9dbbdcb047b89517e1b5b3687, type: 3}
@@ -1496,6 +1541,10 @@ PrefabInstance:
     - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1692)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
@@ -1862,6 +1911,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1666)
       objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
@@ -2076,6 +2129,10 @@ PrefabInstance:
     - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1678)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
@@ -2388,6 +2445,10 @@ PrefabInstance:
     - target: {fileID: 1682284030833330305, guid: f9e3988fea3fa1c439f7ae24e7297153, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Pillar_01 (92)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1682284030833330305, guid: f9e3988fea3fa1c439f7ae24e7297153, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 2023097843968004667, guid: f9e3988fea3fa1c439f7ae24e7297153, type: 3}
       propertyPath: m_RootOrder
@@ -3396,6 +3457,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Pillar_01 (93)
       objectReference: {fileID: 0}
+    - target: {fileID: 1682284030833330305, guid: f9e3988fea3fa1c439f7ae24e7297153, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     - target: {fileID: 2023097843968004667, guid: f9e3988fea3fa1c439f7ae24e7297153, type: 3}
       propertyPath: m_RootOrder
       value: 91
@@ -3646,6 +3711,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1664)
       objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
@@ -3718,6 +3787,10 @@ PrefabInstance:
     - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_01 (2930)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3926,6 +3999,10 @@ PrefabInstance:
     - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1661)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
@@ -4198,6 +4275,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_01 (2942)
       objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4285,6 +4366,10 @@ PrefabInstance:
     - target: {fileID: 393605886059855711, guid: 153a24c3a6d444e49994d08d4df3ac65, type: 3}
       propertyPath: m_Name
       value: SM_Prop_Server_01 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 393605886059855711, guid: 153a24c3a6d444e49994d08d4df3ac65, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 1026133362813298149, guid: 153a24c3a6d444e49994d08d4df3ac65, type: 3}
       propertyPath: m_RootOrder
@@ -4405,6 +4490,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1922)
       objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -4473,6 +4562,10 @@ PrefabInstance:
     - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1491)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
@@ -4623,6 +4716,10 @@ PrefabInstance:
     - target: {fileID: 774030464581570556, guid: e2aa7cd9c4d1d1746be56005e108cf88, type: 3}
       propertyPath: m_Name
       value: SM_Prop_Crate_06 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 774030464581570556, guid: e2aa7cd9c4d1d1746be56005e108cf88, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 1278200870673624617, guid: e2aa7cd9c4d1d1746be56005e108cf88, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -4861,6 +4958,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_01 (2968)
       objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4930,6 +5031,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_01 (3061)
       objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4960,6 +5065,10 @@ PrefabInstance:
     - target: {fileID: 1682284030833330305, guid: f9e3988fea3fa1c439f7ae24e7297153, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Pillar_01 (19)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1682284030833330305, guid: f9e3988fea3fa1c439f7ae24e7297153, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 2023097843968004667, guid: f9e3988fea3fa1c439f7ae24e7297153, type: 3}
       propertyPath: m_RootOrder
@@ -5167,6 +5276,10 @@ PrefabInstance:
     - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_01 (2965)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5705,6 +5818,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_01 (2929)
       objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5765,6 +5882,10 @@ PrefabInstance:
     - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1679)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
@@ -5945,6 +6066,10 @@ PrefabInstance:
     - target: {fileID: 88576192301421321, guid: b40a718ceec2e354aba9376e98dcc8bb, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Wall_Window_Old_Single_01 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 88576192301421321, guid: b40a718ceec2e354aba9376e98dcc8bb, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 752522522500434355, guid: b40a718ceec2e354aba9376e98dcc8bb, type: 3}
       propertyPath: m_RootOrder
@@ -6207,6 +6332,10 @@ PrefabInstance:
     - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_01 (2912)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6836,7 +6965,7 @@ PrefabInstance:
     - target: {fileID: 9205371885998440386, guid: e96cffa9d00b6b545adfeb26165952cc, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 787817852}
+      objectReference: {fileID: 117677028}
     - target: {fileID: 9205371885998440386, guid: e96cffa9d00b6b545adfeb26165952cc, type: 3}
       propertyPath: orthographic size
       value: 4.2
@@ -7686,6 +7815,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1671)
       objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
@@ -8084,6 +8217,10 @@ PrefabInstance:
     - target: {fileID: 393605886059855711, guid: 153a24c3a6d444e49994d08d4df3ac65, type: 3}
       propertyPath: m_Name
       value: SM_Prop_Server_01 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 393605886059855711, guid: 153a24c3a6d444e49994d08d4df3ac65, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 1026133362813298149, guid: 153a24c3a6d444e49994d08d4df3ac65, type: 3}
       propertyPath: m_RootOrder
@@ -8484,43 +8621,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: acb255941e0d26b4fbd5c0fcff18ddfc, type: 3}
---- !u!84 &787817852
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 640
-  m_Height: 360
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 94
-  m_ColorFormat: 4
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 1
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 0
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1001 &789813555
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8594,6 +8694,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 66bd2d0519f7e03458844550e8c312fd, type: 2}
+    - target: {fileID: 5598688684461110559, guid: c7a86ff177d83794fb72487de38f642b, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     - target: {fileID: 7195633409705593474, guid: c7a86ff177d83794fb72487de38f642b, type: 3}
       propertyPath: m_RootOrder
       value: 62
@@ -8719,6 +8823,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Pillar_Half_01
       objectReference: {fileID: 0}
+    - target: {fileID: 4449761991496997852, guid: b4ab5685df293bc439815c54b70667ae, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8812,6 +8920,10 @@ PrefabInstance:
     - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_01 (2918)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9182,6 +9294,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_01 (2888)
       objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -9274,6 +9390,10 @@ PrefabInstance:
     - target: {fileID: 88576192301421321, guid: b40a718ceec2e354aba9376e98dcc8bb, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Wall_Window_Old_Single_01 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 88576192301421321, guid: b40a718ceec2e354aba9376e98dcc8bb, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 752522522500434355, guid: b40a718ceec2e354aba9376e98dcc8bb, type: 3}
       propertyPath: m_RootOrder
@@ -9427,6 +9547,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Prop_Cardboard_Box_03
       objectReference: {fileID: 0}
+    - target: {fileID: 4006362203072125434, guid: 32cc54641bc63334a9b8c021c90f7daf, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     - target: {fileID: 4382747489319125824, guid: 32cc54641bc63334a9b8c021c90f7daf, type: 3}
       propertyPath: m_RootOrder
       value: 85
@@ -9548,6 +9672,10 @@ PrefabInstance:
     - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1672)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
@@ -9675,6 +9803,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1652)
       objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
@@ -9695,6 +9827,10 @@ PrefabInstance:
     - target: {fileID: 7181774181410594205, guid: 6f86b15f69b35864ca73163591c34a84, type: 3}
       propertyPath: m_Name
       value: SM_Prop_Crate_08
+      objectReference: {fileID: 0}
+    - target: {fileID: 7181774181410594205, guid: 6f86b15f69b35864ca73163591c34a84, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 7557349402285475623, guid: 6f86b15f69b35864ca73163591c34a84, type: 3}
       propertyPath: m_RootOrder
@@ -10053,6 +10189,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1488)
       objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
@@ -10217,6 +10357,10 @@ PrefabInstance:
     - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1669)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
@@ -10525,6 +10669,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_01 (2923)
       objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -10607,6 +10755,10 @@ PrefabInstance:
     - target: {fileID: 88576192301421321, guid: b40a718ceec2e354aba9376e98dcc8bb, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Wall_Window_Old_Single_01 (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 88576192301421321, guid: b40a718ceec2e354aba9376e98dcc8bb, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 752522522500434355, guid: b40a718ceec2e354aba9376e98dcc8bb, type: 3}
       propertyPath: m_RootOrder
@@ -11079,6 +11231,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1484)
       objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
@@ -11153,6 +11309,10 @@ PrefabInstance:
     - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1696)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -11291,6 +11451,10 @@ PrefabInstance:
     - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_01 (2966)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -11560,6 +11724,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Wall_Window_Old_Single_01 (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 88576192301421321, guid: b40a718ceec2e354aba9376e98dcc8bb, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     - target: {fileID: 752522522500434355, guid: b40a718ceec2e354aba9376e98dcc8bb, type: 3}
       propertyPath: m_RootOrder
       value: 30
@@ -11809,6 +11977,10 @@ PrefabInstance:
     - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1492)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
@@ -12148,6 +12320,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1667)
       objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
@@ -12271,6 +12447,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Prop_Crate_01 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 8358503991919283765, guid: 233e65bb2eeb6a44c839d9655ff33910, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     - target: {fileID: 8697734787755463823, guid: 233e65bb2eeb6a44c839d9655ff33910, type: 3}
       propertyPath: m_RootOrder
       value: 79
@@ -12391,6 +12571,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1621)
       objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
@@ -12415,6 +12599,10 @@ PrefabInstance:
     - target: {fileID: 1682284030833330305, guid: f9e3988fea3fa1c439f7ae24e7297153, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Pillar_01 (25)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1682284030833330305, guid: f9e3988fea3fa1c439f7ae24e7297153, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 2023097843968004667, guid: f9e3988fea3fa1c439f7ae24e7297153, type: 3}
       propertyPath: m_RootOrder
@@ -12569,6 +12757,10 @@ PrefabInstance:
     - target: {fileID: 1682284030833330305, guid: f9e3988fea3fa1c439f7ae24e7297153, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Pillar_01 (195)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1682284030833330305, guid: f9e3988fea3fa1c439f7ae24e7297153, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 2023097843968004667, guid: f9e3988fea3fa1c439f7ae24e7297153, type: 3}
       propertyPath: m_RootOrder
@@ -12922,6 +13114,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_01 (3058)
       objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -12955,6 +13151,10 @@ PrefabInstance:
     - target: {fileID: 1283517060965307179, guid: 8e245b9bcb1a089459b0d7eb6999ae97, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Wall_Shop_02 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1283517060965307179, guid: 8e245b9bcb1a089459b0d7eb6999ae97, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 1910695417655183761, guid: 8e245b9bcb1a089459b0d7eb6999ae97, type: 3}
       propertyPath: m_RootOrder
@@ -12999,6 +13199,10 @@ PrefabInstance:
     - target: {fileID: 1910695417655183761, guid: 8e245b9bcb1a089459b0d7eb6999ae97, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5997866806681471454, guid: 8e245b9bcb1a089459b0d7eb6999ae97, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 7811940846837185753, guid: 8e245b9bcb1a089459b0d7eb6999ae97, type: 3}
       propertyPath: m_LocalPosition.y
@@ -13157,6 +13361,10 @@ PrefabInstance:
     - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1674)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
@@ -13472,6 +13680,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1486)
       objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
@@ -13621,6 +13833,10 @@ PrefabInstance:
     - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_01 (2931)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -13806,6 +14022,10 @@ PrefabInstance:
     - target: {fileID: 1682284030833330305, guid: f9e3988fea3fa1c439f7ae24e7297153, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Pillar_01 (26)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1682284030833330305, guid: f9e3988fea3fa1c439f7ae24e7297153, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 2023097843968004667, guid: f9e3988fea3fa1c439f7ae24e7297153, type: 3}
       propertyPath: m_RootOrder
@@ -13994,6 +14214,10 @@ PrefabInstance:
     - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_01 (3065)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -14258,6 +14482,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Prop_Cardboard_Box_01 (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 8344280781752101020, guid: 865ebd1afbd90b24493c51b4db684e4c, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     - target: {fileID: 8684918676983624230, guid: 865ebd1afbd90b24493c51b4db684e4c, type: 3}
       propertyPath: m_RootOrder
       value: 86
@@ -14375,6 +14603,10 @@ PrefabInstance:
     - target: {fileID: 6739082487018960004, guid: f362356734b11764d93a75aa915c98be, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_Half_02
+      objectReference: {fileID: 0}
+    - target: {fileID: 6739082487018960004, guid: f362356734b11764d93a75aa915c98be, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -14653,6 +14885,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Prop_Crate_05 (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 7282105571074116195, guid: 081f53350f26aee46b86364bac36a6ca, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     - target: {fileID: 7945735968583340249, guid: 081f53350f26aee46b86364bac36a6ca, type: 3}
       propertyPath: m_RootOrder
       value: 19
@@ -14855,6 +15091,10 @@ PrefabInstance:
     - target: {fileID: 9147307243620008135, guid: 83843ecb41b9a6549b0d99ed8737af1c, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_Half_01 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9147307243620008135, guid: 83843ecb41b9a6549b0d99ed8737af1c, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -15509,6 +15749,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1487)
       objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
@@ -15634,6 +15878,10 @@ PrefabInstance:
     - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1653)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
@@ -15899,6 +16147,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1670)
       objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
@@ -15923,6 +16175,10 @@ PrefabInstance:
     - target: {fileID: 1682284030833330305, guid: f9e3988fea3fa1c439f7ae24e7297153, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Pillar_01 (17)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1682284030833330305, guid: f9e3988fea3fa1c439f7ae24e7297153, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 2023097843968004667, guid: f9e3988fea3fa1c439f7ae24e7297153, type: 3}
       propertyPath: m_RootOrder
@@ -16049,6 +16305,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Env_Junk_Pile_05 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 7564561716290234210, guid: 370b90268b6436248bc4458fb790d66b, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -16124,6 +16384,10 @@ PrefabInstance:
       value: SM_Bld_Base_Wall_01 (3064)
       objectReference: {fileID: 0}
     - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
@@ -16148,6 +16412,10 @@ PrefabInstance:
     - target: {fileID: 88576192301421321, guid: b40a718ceec2e354aba9376e98dcc8bb, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Wall_Window_Old_Single_01 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 88576192301421321, guid: b40a718ceec2e354aba9376e98dcc8bb, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 752522522500434355, guid: b40a718ceec2e354aba9376e98dcc8bb, type: 3}
       propertyPath: m_RootOrder
@@ -16346,6 +16614,10 @@ PrefabInstance:
     - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_01 (3063)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -16696,6 +16968,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Wall_Quater_01 (120)
       objectReference: {fileID: 0}
+    - target: {fileID: 3496563744801117560, guid: beae9415e013ec14a9d638bc14274a54, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     - target: {fileID: 4309270429875376066, guid: beae9415e013ec14a9d638bc14274a54, type: 3}
       propertyPath: m_RootOrder
       value: 59
@@ -16800,6 +17076,10 @@ PrefabInstance:
     - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1489)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
@@ -17044,6 +17324,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_01 (2944)
       objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -17200,6 +17484,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_01 (2901)
       objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -17260,6 +17548,10 @@ PrefabInstance:
     - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1662)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
@@ -17335,6 +17627,10 @@ PrefabInstance:
     - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1691)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
@@ -17549,6 +17845,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_01 (2963)
       objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -17718,6 +18018,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_Half_01 (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 9147307243620008135, guid: 83843ecb41b9a6549b0d99ed8737af1c, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -17779,6 +18083,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1663)
       objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
@@ -17803,6 +18111,10 @@ PrefabInstance:
     - target: {fileID: 1682284030833330305, guid: f9e3988fea3fa1c439f7ae24e7297153, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Pillar_01 (10)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1682284030833330305, guid: f9e3988fea3fa1c439f7ae24e7297153, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 2023097843968004667, guid: f9e3988fea3fa1c439f7ae24e7297153, type: 3}
       propertyPath: m_RootOrder
@@ -17961,6 +18273,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Wall_Window_Old_Single_01
       objectReference: {fileID: 0}
+    - target: {fileID: 88576192301421321, guid: b40a718ceec2e354aba9376e98dcc8bb, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     - target: {fileID: 752522522500434355, guid: b40a718ceec2e354aba9376e98dcc8bb, type: 3}
       propertyPath: m_RootOrder
       value: 45
@@ -18078,6 +18394,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1677)
       objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
@@ -18150,6 +18470,10 @@ PrefabInstance:
     - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_01 (3060)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -19118,6 +19442,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_01 (2940)
       objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -19191,6 +19519,10 @@ PrefabInstance:
     - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_01 (2900)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -19342,6 +19674,10 @@ PrefabInstance:
     - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_01 (3062)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
       propertyPath: m_IsActive
@@ -20055,6 +20391,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Wall_01 (2921)
       objectReference: {fileID: 0}
+    - target: {fileID: 6405730378633534765, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -20340,6 +20680,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Bld_Base_Floor_Combined_01 (1665)
       objectReference: {fileID: 0}
+    - target: {fileID: 8024127888688535950, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8384455372806191195, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
@@ -20564,6 +20908,10 @@ PrefabInstance:
     - target: {fileID: 7564561716290234210, guid: 370b90268b6436248bc4458fb790d66b, type: 3}
       propertyPath: m_Name
       value: SM_Env_Junk_Pile_05
+      objectReference: {fileID: 0}
+    - target: {fileID: 7564561716290234210, guid: 370b90268b6436248bc4458fb790d66b, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
