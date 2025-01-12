@@ -56,6 +56,7 @@ namespace Game
         [Serializable]
         public class Graphics
         {
+            [Header("Prefab")]
             public GameObject onHitFx;
             public GameObject onBigHitFx;
             public GameObject onKickHitFx;
@@ -63,9 +64,25 @@ namespace Game
             public GameObject onMissedFx;
             public GameObject onBlockedFx;
             public GameObject onGuardBreakFx;
+
+            [Header("Attached")]
             public Transform BlockingFxAttachPoint;
         }
 
         public Graphics graphics = new();
+
+        [Serializable]
+        public class Audios
+        {
+            public AudioClip onHitAudioClip;
+            public AudioClip onBigHitAudioClip;
+            public AudioClip onKickHitAudioClip;
+            public AudioClip onBleedingAudioClip;
+            public AudioClip onMissedAudioClip;
+            public AudioClip onBlockedAudioClip;
+            public AudioClip onGuardBreakAudioClip;
+        }
+
+        public Audios audios = new();
     }
 }

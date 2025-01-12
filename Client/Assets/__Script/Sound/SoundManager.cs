@@ -91,16 +91,17 @@ public class SoundManager : MonoSingleton<SoundManager>
     public SoundObject PlayWithClip(AudioClip i_clip, bool i_isLoop = false, bool i_isSFX = true, float i_volumeRate = 1.0f)
     {
         //Debug.Log("SoundPlay : " + i_sfxType + ", " + i_isLoop);
-        SoundObject sound = CreateSoundObject();
+        SoundObject sound = CreateEmptySoundObject();
+		sound.name = i_clip.name;
 
-        if (sound._trRoot.parent == null)
-            sound._trRoot.SetParent(_trRoot);
+        // if (sound._trRoot.parent == null)
+        //     sound._trRoot.SetParent(_trRoot);
 
         float volume = (i_isSFX == true) ? _volumeSFX : _volumeBGM;
         volume *= i_volumeRate;
         sound.Volume = volume;
         sound.SetLoop(i_isLoop);
-        sound._lifeTime = 20.0f;
+        sound._lifeTime = i_clip.length;
         sound.PlayWithClip(i_clip);
 
 #if UNITY_EDITOR
@@ -114,6 +115,14 @@ public class SoundManager : MonoSingleton<SoundManager>
         GameObject obj = GameObject.Instantiate(prefObj);
 
         return obj.GetComponent<SoundObject>();
+    }
+    public static SoundObject CreateEmptySoundObject() 
+    {
+		var soundObj = new GameObject().AddComponent<SoundObject>();
+		soundObj._source = soundObj.gameObject.AddComponent<AudioSource>();
+		soundObj._trRoot = soundObj.transform;
+
+		return soundObj;
     }
 	public void PlayClickSound()
 	{

@@ -1727,6 +1727,21 @@ namespace Game.NodeCanvasExtension
             EndAction(true);
         }
     }
+
+    public class PlaySoundClip : ActionTask 
+    {
+        protected override string info => soundClip.isNoneOrNull ? base.info : $"Play SoundClip <b>{soundClip.value}</b>";
+        public BBParameter<AudioClip> soundClip;
+        public BBParameter<SoundType> soundType;
+        public BBParameter<float> volumeRate;
+        public BBParameter<bool> isLooping;
+
+        protected override void OnExecute()
+        {
+            SoundManager.Instance.PlayWithClip(soundClip.value, isLooping.value, soundType.value == SoundType.SFX, volumeRate.value);
+            EndAction(true);
+        }
+    }
     
     public class CameraAction : ActionTask
     {

@@ -1134,7 +1134,7 @@ GameObject:
   - component: {fileID: 321786650567484540}
   - component: {fileID: 3735996293672512473}
   - component: {fileID: 1458070737609187091}
-  - component: {fileID: 2054856965174851545}
+  - component: {fileID: 7398242047268905765}
   m_Layer: 12
   m_Name: SM_Prop_Shield_01
   m_TagString: Untagged
@@ -1154,7 +1154,8 @@ Transform:
   m_LocalPosition: {x: 0.252, y: -0.395, z: 0.549}
   m_LocalScale: {x: 1.1999998, y: 1.1999996, z: 1.2000002}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 827300965817690329}
   m_Father: {fileID: 8534932836949947065}
   m_LocalEulerAnglesHint: {x: 17.93, y: -56.838, z: 23.771}
 --- !u!33 &3735996293672512473
@@ -1210,8 +1211,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &2054856965174851545
-BoxCollider:
+--- !u!136 &7398242047268905765
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1228,9 +1229,11 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.5894725, y: 1.0206949, z: 0.168611}
-  m_Center: {x: 0.0000003948751, y: 0.51034707, z: -0.000000084005706}
+  serializedVersion: 2
+  m_Radius: 0.29473624
+  m_Height: 1.0206949
+  m_Direction: 1
+  m_Center: {x: 0.0000003948751, y: 0.51034707, z: -0.18}
 --- !u!1 &1115307538362855896
 GameObject:
   m_ObjectHideFlags: 0
@@ -3567,6 +3570,37 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &2958284405313336860
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 827300965817690329}
+  m_Layer: 12
+  m_Name: Blocking_Fx_Attach_Point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &827300965817690329
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2958284405313336860}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.562, z: 0.077}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 321786650567484540}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3014768024694059783
 GameObject:
   m_ObjectHideFlags: 0
@@ -20148,7 +20182,7 @@ MonoBehaviour:
   capsuleRigidBody: {fileID: 7402423699649128735}
   capsuleCollider: {fileID: 2631676355314689051}
   ignoredColliders:
-  - {fileID: 0}
+  - {fileID: 7398242047268905765}
   freezeMovement: 0
   freezeRotation: 0
   rootMotionEnabled: 1
@@ -20176,6 +20210,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainAnimator: {fileID: 4785506863144016345}
   rigBuilder: {fileID: 1840178354047977812}
+  rigSetup: {fileID: 0}
   legAnimator: {fileID: 1265836189428614339}
   ragdollAnimator: {fileID: 0}
   jellyMeshSlot: {fileID: 2931156903486719907}
@@ -20221,7 +20256,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hookingPointColliderHelper: {fileID: 2174257693202699210}
   counterActionColliderHelper: {fileID: 1010624364731835310}
-  shieldCollider: {fileID: 2054856965174851545}
+  shieldCollider: {fileID: 0}
   sworldWeaponTrailA: {fileID: 2531984228082749242}
   sworldWeaponTrailB: {fileID: 722672261472128924}
   leapRootMotionDistance: 7
@@ -20360,6 +20395,15 @@ MonoBehaviour:
     onMissedFx: {fileID: 8338894570034044190, guid: 727c6a11e51e81140a330e6639938e26, type: 3}
     onBlockedFx: {fileID: 4961553964636584268, guid: d7027452566465c47aeacb4cdcf40015, type: 3}
     onGuardBreakFx: {fileID: 8905666514069622321, guid: a84cbbb54404c3d499340f02e684aab0, type: 3}
+    BlockingFxAttachPoint: {fileID: 827300965817690329}
+  audios:
+    onHitAudioClip: {fileID: 8300000, guid: bba0a0725054ad0419aecf461293c8e9, type: 3}
+    onBigHitAudioClip: {fileID: 8300000, guid: bba0a0725054ad0419aecf461293c8e9, type: 3}
+    onKickHitAudioClip: {fileID: 8300000, guid: 9cb0b1ad621027a478ebeb3ce2f31faa, type: 3}
+    onBleedingAudioClip: {fileID: 8300000, guid: bba0a0725054ad0419aecf461293c8e9, type: 3}
+    onMissedAudioClip: {fileID: 8300000, guid: b47bb87ddf4afcc49ba83a4999cf050e, type: 3}
+    onBlockedAudioClip: {fileID: 8300000, guid: b47bb87ddf4afcc49ba83a4999cf050e, type: 3}
+    onGuardBreakAudioClip: {fileID: 8300000, guid: 93fc0b243c8d39441a33d29e6146b688, type: 3}
 --- !u!114 &8593737910688562853
 MonoBehaviour:
   m_ObjectHideFlags: 0
