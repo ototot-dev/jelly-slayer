@@ -14,6 +14,7 @@ public enum TutorialStatus
     DisableInput, // ÀÔ·Â Disable
     ActiveTarget, // °´Ã¼ Active
     SetMode,
+    ActiveTargetAttack, 
 }
 
 public enum TutorialAction 
@@ -34,6 +35,7 @@ public enum TutorialMode
     None,
     NormalAttack,
     SpecialAttack,
+    Guard,
 }
 
 [System.Serializable]
@@ -69,6 +71,9 @@ public class TutorialManager : MonoBehaviour
 
     public int _normalHitCount = 0;
     public int _specialHitCount = 0;
+    public int _guardCount = 0;
+
+    public HeroBrain _heroBrain;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -87,6 +92,8 @@ public class TutorialManager : MonoBehaviour
         _playerCtrler._isEnable_Parry = false;
         _playerCtrler._isEnable_Roll = false;
         _playerCtrler._isEnable_SpecialAttack = false;
+
+        _heroBrain = _playerCtrler.possessedBrain;
 
         LoadXML();
 
@@ -201,23 +208,19 @@ public class TutorialManager : MonoBehaviour
                     SetMode(item._mode);
                     break;
                 case TutorialStatus.ActiveTarget:
-                    if (item._targetIndex >= 0 && item._targetIndex < _targetObj.Length)
                     {
                         var index = item._targetIndex;
-                        var obj = _targetObj[index];
-                        obj.SetActive(true);
-
-                        switch (index) 
+                        if (index >= 0 && index < _targetObj.Length)
                         {
-                            case 1:
-                                {
-                                    //var brain = obj.GetComponent<SoldierBrain>();
-                                    //brain.JellyBB.decision.aggressiveLevel.Value = -1f;
-                                    //brain.InvalidateDecision(0.5f);
-                                }
-                                break;
+                            var obj = _targetObj[index];
+                            obj.SetActive(true);
+
+                            EnableSoldierAttack(item._targetIndex, false);
                         }
+                        break;
                     }
+                case TutorialStatus.ActiveTargetAttack:
+                    EnableSoldierAttack(item._targetIndex, true);
                     break;
             }
             _delActivateItem?.Invoke(item);
@@ -237,6 +240,17 @@ public class TutorialManager : MonoBehaviour
         {
             _delTutorialEnd?.Invoke();
         }
+    }
+    void EnableSoldierAttack(int index, bool isEnable) 
+    {
+        if (index < 0 || index >= _targetObj.Length)
+            return;
+        if (index != 1)
+            return;
+
+        var obj = _targetObj[index];
+        var brain = obj.GetComponent<SoldierBrain>();
+        brain.debugActionDisabled = !isEnable;
     }
     void SetMode(TutorialMode mode) 
     {
@@ -286,11 +300,27 @@ public class TutorialManager : MonoBehaviour
                 break;
             case TutorialMode.SpecialAttack:
                 {
-                    _specialHitCount++;
-                    if (_specialHitCount >= 1)
+                    if (damageContext.actionResult == ActionResults.GuardBreak)
                     {
-                        SetMode(TutorialMode.None);
-                        GoNext();
+                        _specialHitCount++;
+                        if (_specialHitCount >= 1)
+                        {
+                            SetMode(TutorialMode.None);
+                            GoNext();
+                        }
+                    }
+                }
+                break;
+            case TutorialMode.Guard:
+                {
+                    if (damageContext.actionResult == ActionResults.Blocked && damageContext.receiverBrain == _heroBrain)
+                    {
+                        _guardCount++;
+                        if (_guardCount >= 3)
+                        {
+                            SetMode(TutorialMode.None);
+                            GoNext();
+                        }
                     }
                 }
                 break;

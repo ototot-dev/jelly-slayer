@@ -12,13 +12,18 @@
 	<item>
 		<status>Text</status>
 		<name>주인공</name>
-		<text>난 이미 전투의 전문가야. 빠르게 시작해.</text>
+		<text>난 이미 전투의 전문가야. 기초적인 건 필요없다구.</text>
 	</item>
 	<item>
 		<status>Text</status>
 		<name>시스템</name>
 		<text>과정은 일반 병사가 학습하는 기본 프로토콜부터 시작합니다. 이후 전문 암살자까지 성장할 수 있도록 구성되어 있습니다.</text>
 	</item>
+	<item>
+		<status>Text</status>
+		<name>주인공</name>
+		<text>사람 말을 안듣는 군...</text>
+	</item>	
 	<item>
 		<status>Text</status>
 		<name>시스템</name>
@@ -70,12 +75,12 @@
 	<item>
 		<status>Text</status>
 		<name>시스템</name>
-		<text>훌륭합니다. 이제 적이 가드를 할 겁니다. 적의 가드는 모으기 공격으로 부술 수 있습니다.</text>
+		<text>훌륭합니다. 방금처럼 적이 가드할 경우 대미지를 줄 수 없습니다만, 적의 가드는 모으기 공격으로 부술 수 있습니다.</text>
 	</item>
 	<item>
 		<status>Text</status>
 		<name>시스템</name>
-		<text>이제 모으기 공격을 적중시키세요.</text>
+		<text>이제 모으기 공격을 적중시켜서 적의 가드를 깨뜨리세요.</text>
 	</item>
 	<item>
 		<status>SetMode</status>
@@ -95,6 +100,15 @@
 		<status>Text</status>
 		<name>시스템</name>
 		<text>적이 공격을 시도할 경우 적을 바라보면 자동으로 가드가 됩니다. 적의 공격을 3번 가드하세요.</text>
+	</item>
+	<item>
+		<status>SetMode</status>
+		<mode>Guard</mode>
+		<activatenext_onstart>True</activatenext_onstart>
+	</item>
+	<item>
+		<status>ActiveTargetAttack</status>
+		<targetindex>1</targetindex>
 	</item>
 	<item>
 		<status>Text</status>

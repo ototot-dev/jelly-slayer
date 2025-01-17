@@ -219,8 +219,8 @@ namespace Game
                     }
                 }
             }
-            if (damageContext.finalDamage > 0)
-                GameManager.Instance.PawnDamaged(ref damageContext);
+            //if (damageContext.finalDamage > 0)
+            GameManager.Instance.PawnDamaged(ref damageContext);
         }
 
         void DamageSenderHandler(ref PawnHeartPointDispatcher.DamageContext damageContext)
@@ -282,6 +282,11 @@ namespace Game
         void ResetToMainWeapon() 
         {
             ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
+        }
+        public void SetTarget(PawnBrainController newBrain) 
+        {
+            BB.target.targetPawnHP.Value = newBrain.PawnHP;
+            Movement.freezeRotation = true;
         }
 
         WeaponController GetWeaponController(WeaponType weaponType)
