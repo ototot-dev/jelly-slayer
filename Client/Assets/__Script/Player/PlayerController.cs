@@ -335,6 +335,8 @@ namespace Game
             EffectManager.Instance.Show("FX_Cartoony_Jump_Up_01", possessedBrain.GetWorldPosition(),
                 Quaternion.identity, Vector3.one, 1f);
             SoundManager.Instance.Play(SoundID.JUMP);
+
+            GameManager.Instance.PawnRolled();
         }
 
         public void OnParry()

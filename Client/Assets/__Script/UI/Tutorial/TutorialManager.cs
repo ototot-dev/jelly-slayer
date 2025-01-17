@@ -36,6 +36,8 @@ public enum TutorialMode
     NormalAttack,
     SpecialAttack,
     Guard,
+    Roll,
+    Parry,
 }
 
 [System.Serializable]
@@ -72,6 +74,7 @@ public class TutorialManager : MonoBehaviour
     public int _normalHitCount = 0;
     public int _specialHitCount = 0;
     public int _guardCount = 0;
+    public int _rollCount = 0;
 
     public HeroBrain _heroBrain;
 
@@ -79,6 +82,7 @@ public class TutorialManager : MonoBehaviour
     void Start()
     {
         GameManager.Instance._delPawnDamaged += OnPawnDamaged;
+        GameManager.Instance._delPawnRolled += OnPawnRolled;
 
         if (_playerCtrler == null)
         {
@@ -101,7 +105,7 @@ public class TutorialManager : MonoBehaviour
     }
     private void OnDestroy()
     {
-        GameManager.Instance._delPawnDamaged -= OnPawnDamaged;
+        //GameManager.Instance._delPawnDamaged -= OnPawnDamaged;
     }
     void LoadXML()
     {
@@ -251,6 +255,12 @@ public class TutorialManager : MonoBehaviour
         var obj = _targetObj[index];
         var brain = obj.GetComponent<SoldierBrain>();
         brain.debugActionDisabled = !isEnable;
+
+        if (_heroBrain == null)
+        {
+            _heroBrain = _playerCtrler.possessedBrain;
+        }
+        _heroBrain.SetTarget(brain);
     }
     void SetMode(TutorialMode mode) 
     {
@@ -283,7 +293,7 @@ public class TutorialManager : MonoBehaviour
     {
         ActivateItem(_curItem + 1);
     }
-    public void OnPawnDamaged(ref PawnHeartPointDispatcher.DamageContext damageContext) 
+    void OnPawnDamaged(ref PawnHeartPointDispatcher.DamageContext damageContext) 
     {
         //if(damageContext.senderActionData)
         switch (_mode) 
@@ -327,6 +337,22 @@ public class TutorialManager : MonoBehaviour
         }
         
     }
+    void OnPawnRolled()
+    {        
+        switch (_mode)
+        {
+            case TutorialMode.Roll:
+                {
+                    _rollCount++;
+                    if (_rollCount >= 3)
+                    {
+                        SetMode(TutorialMode.None);
+                        GoNext();
+                    }
+                }
+                break;
+        }
+    }
 
     // Update is called once per frame
     void Update()
@@ -335,14 +361,11 @@ public class TutorialManager : MonoBehaviour
         {
             return;
         }
-
-        switch (_mode) 
+# if UNITY_EDITOR
+        if(Input.GetKeyDown(KeyCode.N))
         {
-            case TutorialMode.NormalAttack:
-                {
-                    
-                }
-                break;
+            GoNext();
         }
+#endif
     }
 }
