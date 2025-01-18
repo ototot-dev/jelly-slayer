@@ -9,6 +9,10 @@ public class UITutorialPanel : MonoBehaviour
     [SerializeField] GameObject _panelObj;
     [SerializeField] Text _text;
 
+    [SerializeField] RawImage[] _portrait;
+
+    [SerializeField] RenderTexture _renderTex;
+
     int _curCursor = 0;
     string _fullText;
 
@@ -39,6 +43,9 @@ public class UITutorialPanel : MonoBehaviour
             _panelObj.SetActive(true);
             _fullText = item._text;
             _delayRate = item._delayRate;
+
+            _portrait[0].gameObject.SetActive(item._isShowPortraitL);
+            _portrait[1].gameObject.SetActive(item._isShowPortraitR);
 
             _coroutine = StartCoroutine(TypeTextWithRichText());
         }

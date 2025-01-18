@@ -57,6 +57,9 @@ public class TutorialItem
 
     public float _delayRate = 1;
     public string _text;
+
+    public bool _isShowPortraitL = false;
+    public bool _isShowPortraitR = false;
 }
 
 public class TutorialManager : MonoBehaviour
