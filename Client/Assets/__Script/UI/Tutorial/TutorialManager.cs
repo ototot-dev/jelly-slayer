@@ -5,6 +5,7 @@ using System.Xml;
 using System;
 using System.Linq;
 using NodeCanvas.StateMachines;
+using System.Collections;
 
 public enum TutorialStatus 
 { 
@@ -38,6 +39,7 @@ public enum TutorialMode
     Guard,
     Roll,
     Parry,
+    Jump,
 }
 
 [System.Serializable]
@@ -48,10 +50,12 @@ public class TutorialItem
     public TutorialStatus _status;
     public TutorialAction _action;
     public TutorialMode _mode;
+
     public bool _isActivateNextOnStart = false;
     public float _nextActivateTime = 0;
     public int _targetIndex = 0;
 
+    public float _delayRate = 1;
     public string _text;
 }
 
@@ -60,10 +64,26 @@ public class TutorialManager : MonoBehaviour
     public PlayerController _playerCtrler;
 
     public TutorialMode _mode = TutorialMode.None;
-    public List<TutorialItem> _list = new();
-    int _curItem = -1;
+
+    [Serializable]
+    public class Count
+    {
+        public int _normalHit = 0;
+        public int _specialHit = 0;
+        public int _guard = 0;
+        public int _roll = 0;
+        public int _jump = 0;
+        public int _parry = 0;
+    }
+    public Count _count = new ();
+
+    [Space(10)]
+    public HeroBrain _heroBrain;
 
     public GameObject[] _targetObj;
+
+    public List<TutorialItem> _list = new();
+    int _curItem = -1;
 
     public delegate void OnActivateItem(TutorialItem item);
     public OnActivateItem _delActivateItem;
@@ -71,18 +91,12 @@ public class TutorialManager : MonoBehaviour
     public delegate void OnTutorialEnd();
     public OnTutorialEnd _delTutorialEnd;
 
-    public int _normalHitCount = 0;
-    public int _specialHitCount = 0;
-    public int _guardCount = 0;
-    public int _rollCount = 0;
-
-    public HeroBrain _heroBrain;
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         GameManager.Instance._delPawnDamaged += OnPawnDamaged;
         GameManager.Instance._delPawnRolled += OnPawnRolled;
+        GameManager.Instance._delPawnJumped += OnPawnJumped;
 
         if (_playerCtrler == null)
         {
@@ -97,15 +111,26 @@ public class TutorialManager : MonoBehaviour
         _playerCtrler._isEnable_Roll = false;
         _playerCtrler._isEnable_SpecialAttack = false;
 
-        _heroBrain = _playerCtrler.possessedBrain;
+        _playerCtrler.lookVec.Value = new Vector3(-1, 0, -1);
 
         LoadXML();
+
+        StartCoroutine(GetHeroBrain());
 
         ActivateItem(0);
     }
     private void OnDestroy()
     {
         //GameManager.Instance._delPawnDamaged -= OnPawnDamaged;
+    }
+    IEnumerator GetHeroBrain() 
+    {
+        while (_heroBrain == null)
+        {
+            _heroBrain = _playerCtrler.possessedBrain;
+
+            yield return new WaitForEndOfFrame();
+        }
     }
     void LoadXML()
     {
@@ -300,8 +325,8 @@ public class TutorialManager : MonoBehaviour
         {
             case TutorialMode.NormalAttack:
                 {
-                    _normalHitCount++;
-                    if (_normalHitCount >= 3)
+                    _count._normalHit++;
+                    if (_count._normalHit >= 3)
                     {
                         SetMode(TutorialMode.None);
                         GoNext();
@@ -312,8 +337,8 @@ public class TutorialManager : MonoBehaviour
                 {
                     if (damageContext.actionResult == ActionResults.GuardBreak)
                     {
-                        _specialHitCount++;
-                        if (_specialHitCount >= 1)
+                        _count._specialHit++;
+                        if (_count._specialHit >= 1)
                         {
                             SetMode(TutorialMode.None);
                             GoNext();
@@ -325,8 +350,21 @@ public class TutorialManager : MonoBehaviour
                 {
                     if (damageContext.actionResult == ActionResults.Blocked && damageContext.receiverBrain == _heroBrain)
                     {
-                        _guardCount++;
-                        if (_guardCount >= 3)
+                        _count._guard++;
+                        if (_count._guard >= 3)
+                        {
+                            SetMode(TutorialMode.None);
+                            GoNext();
+                        }
+                    }
+                }
+                break;
+            case TutorialMode.Parry:
+                {
+                    if (damageContext.actionResult == ActionResults.Blocked && damageContext.receiverBrain == _heroBrain)
+                    {
+                        _count._parry++;
+                        if (_count._parry >= 3)
                         {
                             SetMode(TutorialMode.None);
                             GoNext();
@@ -339,18 +377,26 @@ public class TutorialManager : MonoBehaviour
     }
     void OnPawnRolled()
     {        
-        switch (_mode)
+        if (_mode == TutorialMode.Roll)
         {
-            case TutorialMode.Roll:
-                {
-                    _rollCount++;
-                    if (_rollCount >= 3)
-                    {
-                        SetMode(TutorialMode.None);
-                        GoNext();
-                    }
-                }
-                break;
+            _count._roll++;
+            if (_count._roll >= 3)
+            {
+                SetMode(TutorialMode.None);
+                GoNext();
+            }
+        }
+    }
+    void OnPawnJumped() 
+    {
+        if (_mode == TutorialMode.Jump)
+        {
+            _count._jump++;
+            if (_count._jump >= 3)
+            {
+                SetMode(TutorialMode.None);
+                GoNext();
+            }
         }
     }
 
@@ -364,6 +410,10 @@ public class TutorialManager : MonoBehaviour
 # if UNITY_EDITOR
         if(Input.GetKeyDown(KeyCode.N))
         {
+            if (_mode != TutorialMode.None)
+            {
+                _mode = TutorialMode.None;
+            }
             GoNext();
         }
 #endif

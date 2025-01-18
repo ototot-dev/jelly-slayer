@@ -7,7 +7,7 @@
 	<item>
 		<status>Text</status>
 		<name>시스템</name>
-		<text>전투 튜토리얼 룸에 오신 것을 환영합니다. 여기서는 여기서는 전투에 대한 기본 지식과 기술을 알려드리겠습니다.</text>
+		<text>전투 튜토리얼 룸에 오신 것을 환영합니다. 여기서는 전투에 대한 기본 지식과 기술을 알려드리겠습니다.</text>
 	</item>
 	<item>
 		<status>Text</status>
@@ -44,6 +44,53 @@
 		<action>Move</action>
 	</item>
 	<item>
+		<status>Text</status>
+		<name>시스템</name>
+		<text>훌륭합니다. 정확히 도착하셨네요.</text>
+	</item>
+	<!--  점프 -->
+	<item>
+		<status>Text</status>
+		<name>시스템</name>
+		<text>점프를 하면 바닥에 깔리는 공격을 회피할 수 있습니다. 점프 키를 눌러 3번 점프해보세요.</text>
+	</item>
+	<item>
+		<status>SetMode</status>
+		<mode>Jump</mode>
+		<activatenext_onstart>True</activatenext_onstart>
+	</item>
+	<item>
+		<status>EnableInput</status>
+		<action>Jump</action>
+	</item>
+	<item>
+		<status>Text</status>
+		<name>시스템</name>
+		<text>훌륭합니다. 이제 회피 이동을 배워보겠습니다.</text>
+	</item>	
+	<!-- 구르기 -->
+	<item>
+		<status>Text</status>
+		<name>시스템</name>
+		<text>구르기 키를 누르면 빠르게 이동하거나 적의 공격을 회피 할 수 있습니다. 3번 구르기를 성공하세요.</text>
+	</item>
+	<item>
+		<status>SetMode</status>
+		<mode>Roll</mode>
+		<activatenext_onstart>True</activatenext_onstart>
+	</item>
+	<item>
+		<status>EnableInput</status>
+		<action>Roll</action>
+	</item>
+	<item>
+		<status>Text</status>
+		<name>시스템</name>
+		<text>훌륭합니다. 구르기를 마스터 하셨네요. 이제 전투를 배워봅시다.</text>
+	</item>
+
+	<!-- 솔저 출현 -->
+	<item>
 		<status>ActiveTarget</status>
 		<targetindex>1</targetindex>
 		<activatenext_onstart>True</activatenext_onstart>
@@ -72,6 +119,7 @@
 		<status>EnableInput</status>
 		<action>NormalAttack</action>
 	</item>
+	<!-- 차지 공격 -->
 	<item>
 		<status>Text</status>
 		<name>시스템</name>
@@ -94,7 +142,13 @@
 	<item>
 		<status>Text</status>
 		<name>시스템</name>
-		<text>훌륭합니다. 이제 가드 프로토콜을 시작하겠습니다.</text>
+		<text>훌륭합니다. 방금처럼 모으기 공격을 적중 시키면 적의 가드를 무너뜨릴 수 있습니다.</text>
+	</item>
+	<!-- 가드 -->
+	<item>
+		<status>Text</status>
+		<name>시스템</name>
+		<text>이제 가드 프로토콜을 시작하겠습니다.</text>
 	</item>
 	<item>
 		<status>Text</status>
@@ -118,30 +172,15 @@
 	<item>
 		<status>Text</status>
 		<name>시스템</name>
-		<text>구르기 키를 누르면 빠르게 이동하거나 적의 공격을 회피 할 수 있습니다. 3번 구르기를 성공하세요.</text>
+		<text>적의 공격을 타이밍 가드하면 패링할 수 있습니다. 적의 공격을 3번 패링해 보세요.</text>
 	</item>
 	<item>
 		<status>SetMode</status>
-		<mode>Roll</mode>
+		<mode>Parry</mode>
 		<activatenext_onstart>True</activatenext_onstart>
 	</item>
 	<item>
 		<status>EnableInput</status>
-		<action>Roll</action>
-	</item>
-	<item>
-		<status>Text</status>
-		<name>시스템</name>
-		<text>훌륭합니다. 이제 구르기를 마스터 하셨네요.</text>
-	</item>	
-	<item>
-		<status>Text</status>
-		<name>시스템</name>
-		<text>적의 공격을 타이밍 가드하면 패링할 수 있습니다. 적의 공격을 3번 패링해 보세요.</text>
-	</item>
-	<item>
-		<status>Text</status>
-		<name>시스템</name>
-		<text>점프를 하면 바닥에 깔리는 공격을 회피할 수 있습니다. 점프 키를 눌러 3번 점프해보세요.</text>
+		<action>Parry</action>
 	</item>
 </tutorial>

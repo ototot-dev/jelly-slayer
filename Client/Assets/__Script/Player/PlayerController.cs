@@ -196,6 +196,7 @@ namespace Game
                         possessedBrain.Movement.StartJump(possessedBrain.BB.body.jumpHeight);
                         possessedBrain.BB.stat.ReduceStamina(jumpStaminaCost);
                     }
+                    GameManager.Instance.PawnJumped();
                 }
             }
             else
