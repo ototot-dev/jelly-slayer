@@ -58,8 +58,14 @@ public class TutorialItem
     public float _delayRate = 1;
     public string _text;
 
-    public bool _isShowPortraitL = false;
-    public bool _isShowPortraitR = false;
+    public bool _isShowPicL = false;
+    public bool _isShowPicR = false;
+
+    public EMOTION _emotionL;
+    public EMOTION _emotionR;
+
+    public float _closeEyeL = 0;
+    public float _closeEyeR = 0;
 }
 
 public class TutorialManager : MonoBehaviour
@@ -166,6 +172,15 @@ public class TutorialManager : MonoBehaviour
 
             item._targetIndex = ParseInt(node["targetindex"]);
 
+            item._isShowPicL = ParseBool(node["showpic_l"]);
+            item._isShowPicR = ParseBool(node["showpic_r"]);
+
+            item._emotionL = ParseEmotion(node["emotion_l"]);
+            item._emotionR = ParseEmotion(node["emotion_r"]);
+
+            item._closeEyeL = ParseFloat(node["closeeye_l"]);
+            item._closeEyeR = ParseFloat(node["closeeye_r"]);
+
             _list.Add(item);
         }
     }
@@ -220,6 +235,14 @@ public class TutorialManager : MonoBehaviour
             return TutorialMode.None;
         }
         return (TutorialMode)Enum.Parse(typeof(TutorialMode), element.InnerText);
+    }
+    EMOTION ParseEmotion(XmlElement element)
+    {
+        if (element == null || element.InnerText.Length <= 0)
+        {
+            return EMOTION.None;
+        }
+        return (EMOTION)Enum.Parse(typeof(EMOTION), element.InnerText);
     }
     void ActivateItem(int itemIndex)
     {

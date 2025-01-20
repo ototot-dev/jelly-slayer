@@ -2,12 +2,22 @@ using UnityEngine;
 
 public enum EMOTION 
 {
-    NONE,
-    ANGRY,
-    FUN,
-    JOY,
-    SORROW,
-    SUPRISE,
+    None,
+    Angry,
+    Fun,
+    Joy,
+    Sorrow,
+    Surprise,
+}
+
+public enum MOUTH 
+{
+    None,
+    A,
+    I,
+    U,
+    E,
+    O,
 }
 
 public class SocialAvatar : MonoBehaviour
@@ -18,10 +28,11 @@ public class SocialAvatar : MonoBehaviour
     public Animator _anim;
     public Transform _lookTarget;
 
-    public EMOTION _emotion = EMOTION.NONE;
+    public EMOTION _emotion = EMOTION.None;
+    public MOUTH _mouth = MOUTH.None;
 
-    public int _currentID = 1;
-    public int _currentIDTemp = 1;
+    public int _emotionStart = 0;
+    public int _mouthStart = 0;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -29,7 +40,7 @@ public class SocialAvatar : MonoBehaviour
     {
         _skinnedMesh = _skinnedMeshRenderer.sharedMesh;
 
-        SetEmotion(EMOTION.ANGRY);
+        //SetEmotion(EMOTION.ANGRY);
     }
     void OnAnimatorIK(int layerIndex)
     {
@@ -59,7 +70,45 @@ public class SocialAvatar : MonoBehaviour
             */
         }
     }
-    void SetEmotion(EMOTION emotion) 
+    public void CloseEye(float value) 
+    {
+        _skinnedMeshRenderer.SetBlendShapeWeight(14, value);
+    }
+    public void SetMouth(MOUTH mouth) 
+    {
+        if (_mouth == mouth)
+            return;
+
+        _mouth = mouth;
+        float value = Random.Range(40.0f, 70.0f);
+        switch(mouth) 
+        {
+            case MOUTH.None:
+                {
+                    for (int ia = 0; ia < 5; ia++)
+                    {
+                        _skinnedMeshRenderer.SetBlendShapeWeight(_mouthStart + ia, 0);
+                    }
+                }
+                break;
+            case MOUTH.A:
+                _skinnedMeshRenderer.SetBlendShapeWeight(_mouthStart, value);
+                break;
+            case MOUTH.I:
+                _skinnedMeshRenderer.SetBlendShapeWeight(_mouthStart+1, value);
+                break;
+            case MOUTH.U:
+                _skinnedMeshRenderer.SetBlendShapeWeight(_mouthStart+2, value);
+                break;
+            case MOUTH.E:
+                _skinnedMeshRenderer.SetBlendShapeWeight(_mouthStart+3, value);
+                break;
+            case MOUTH.O:
+                _skinnedMeshRenderer.SetBlendShapeWeight(_mouthStart+4, value);
+                break;
+        }
+    }
+    public void SetEmotion(EMOTION emotion) 
     {
         if (_emotion == emotion)
             return;
@@ -67,28 +116,28 @@ public class SocialAvatar : MonoBehaviour
         _emotion = emotion;
         switch(_emotion)
         {
-            case EMOTION.NONE:
+            case EMOTION.None:
                 {
                     for (int ia = 0; ia < 5; ia++)
                     {
-                        _skinnedMeshRenderer.SetBlendShapeWeight(27 + ia, 0);
+                        _skinnedMeshRenderer.SetBlendShapeWeight(_emotionStart + ia, 0);
                     }
                 }
                 break;
-            case EMOTION.ANGRY:
-                _skinnedMeshRenderer.SetBlendShapeWeight(27, 100);
+            case EMOTION.Angry:
+                _skinnedMeshRenderer.SetBlendShapeWeight(_emotionStart, 100);
                 break;
-            case EMOTION.FUN:
-                _skinnedMeshRenderer.SetBlendShapeWeight(28, 100);
+            case EMOTION.Fun:
+                _skinnedMeshRenderer.SetBlendShapeWeight(_emotionStart+1, 100);
                 break;
-            case EMOTION.JOY:
-                _skinnedMeshRenderer.SetBlendShapeWeight(29, 100);
+            case EMOTION.Joy:
+                _skinnedMeshRenderer.SetBlendShapeWeight(_emotionStart+2, 100);
                 break;
-            case EMOTION.SORROW:
-                _skinnedMeshRenderer.SetBlendShapeWeight(30, 100);
+            case EMOTION.Sorrow:
+                _skinnedMeshRenderer.SetBlendShapeWeight(_emotionStart+3, 100);
                 break;
-            case EMOTION.SUPRISE:
-                _skinnedMeshRenderer.SetBlendShapeWeight(31, 100);
+            case EMOTION.Surprise:
+                _skinnedMeshRenderer.SetBlendShapeWeight(_emotionStart+4, 100);
                 break;
         }
     }
