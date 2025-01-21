@@ -5,10 +5,12 @@ public class TutorialEventObject : MonoBehaviour
     [SerializeField] TutorialManager _manager;
     [SerializeField] BoxCollider _boxCollider;
 
+    float _scale = 0;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        transform.localScale = _scale * Vector3.one;
     }
     public void OnTriggerEnter(Collider other)
     {
@@ -22,6 +24,14 @@ public class TutorialEventObject : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (_scale < 1.0f)
+        {
+            _scale += 3.0f * Time.deltaTime;
+            if(_scale > 1.0f) 
+            {
+                _scale = 1.0f;
+            }
+            transform.localScale = _scale * Vector3.one;
+        }
     }
 }

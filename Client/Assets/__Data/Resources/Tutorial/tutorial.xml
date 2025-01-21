@@ -15,6 +15,7 @@
 		<name>주인공</name>
 		<showpic_l>true</showpic_l>
 		<emotion_l>Angry</emotion_l>
+		<trigger_l>refuse</trigger_l>		
 		<text>난 이미 전투의 전문가야. 기초적인 건 필요없다구.</text>
 	</item>
 	<item>
@@ -28,7 +29,8 @@
 		<name>주인공</name>
 		<showpic_l>true</showpic_l>
 		<closeeye_l>50</closeeye_l>
-		<text>사람 말을 안듣는 군...</text>
+		<trigger_l>idle</trigger_l>
+		<text>이 깡통이... 사람 말을 안듣네...</text>
 	</item>	
 	<item>
 		<status>Text</status>
@@ -77,7 +79,7 @@
 		<name>시스템</name>
 		<showpic_r>true</showpic_r>
 		<text>훌륭합니다. 이제 회피 이동을 배워보겠습니다.</text>
-	</item>	
+	</item>
 	<!-- 구르기 -->
 	<item>
 		<status>Text</status>
@@ -112,6 +114,7 @@
 		<name>주인공</name>
 		<showpic_l>true</showpic_l>
 		<emotion_l>Surprise</emotion_l>
+		<trigger_l>surprise</trigger_l>
 		<text>히익!… 저게 뭐야?</text>
 	</item>
 	<item>
@@ -140,7 +143,16 @@
 		<status>Text</status>
 		<name>시스템</name>
 		<showpic_r>true</showpic_r>
+		<trigger_l>battle_idle</trigger_l>
 		<text>훌륭합니다. 방금처럼 적이 가드할 경우 대미지를 줄 수 없습니다만, 적의 가드는 모으기 공격으로 부술 수 있습니다.</text>
+	</item>
+	<item>
+		<status>Text</status>
+		<name>주인공</name>
+		<showpic_l>true</showpic_l>
+		<emotion_l>Angry</emotion_l>
+		<trigger_l>battle_idle</trigger_l>
+		<text>그걸 먼저 말했어야지....</text>
 	</item>
 	<item>
 		<status>Text</status>

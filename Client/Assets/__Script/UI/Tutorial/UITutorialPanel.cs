@@ -8,6 +8,8 @@ public class UITutorialPanel : MonoBehaviour
     [SerializeField] TutorialManager _manager;
 
     [SerializeField] GameObject _panelObj;
+
+    [SerializeField] Text _name;
     [SerializeField] Text _text;
 
     [SerializeField] RawImage[] _portrait;
@@ -63,6 +65,8 @@ public class UITutorialPanel : MonoBehaviour
                 _coroutine = null;
             }
             _panelObj.SetActive(true);
+
+            _name.text = item._name;
             _fullText = item._text;
             _delayRate = item._delayRate;
 
@@ -75,12 +79,16 @@ public class UITutorialPanel : MonoBehaviour
                 _avatar[0].SetEmotion(item._emotionL);
                 _avatar[0].CloseEye(item._closeEyeL);
             }
+            _avatar[0].SetTrigger(item._triggerL);
+
             if (item._isShowPicR)
             {
                 _talkIndex = 1;
                 _avatar[1].SetEmotion(item._emotionR);
                 _avatar[1].CloseEye(item._closeEyeR);
             }
+            _avatar[1].SetTrigger(item._triggerR);
+
             _coroutine = StartCoroutine(TypeTextWithRichText());
         }
         else 

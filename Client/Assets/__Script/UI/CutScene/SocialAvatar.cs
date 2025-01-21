@@ -1,3 +1,6 @@
+using DG.Tweening;
+using FlowCanvas.Nodes;
+using System.Collections;
 using UnityEngine;
 
 public enum EMOTION 
@@ -34,53 +37,50 @@ public class SocialAvatar : MonoBehaviour
     public int _emotionStart = 0;
     public int _mouthStart = 0;
 
+    //float[] _emotionValue = { 0, 0, 0, 0, 0 };
+    //float[] _emotionTarget = { 0, 0, 0, 0, 0 };
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        _skinnedMesh = _skinnedMeshRenderer.sharedMesh;
-
+        if (_skinnedMeshRenderer != null)
+        {
+            _skinnedMesh = _skinnedMeshRenderer.sharedMesh;
+        }
         //SetEmotion(EMOTION.ANGRY);
     }
     void OnAnimatorIK(int layerIndex)
     {
         if (_anim)
         {
-            _anim.SetLookAtWeight(1.0f); // 1.0은 완전히 바라봄
+            _anim.SetLookAtWeight(0.5f, 0.5f); // 1.0은 완전히 바라봄
             _anim.SetLookAtPosition(_lookTarget.position);
-            //_anim.SetIKPositionWeight
-            /*
-            // 오른손 IK 설정
-            if (rightHandTarget != null)
-            {
-                _anim.SetIKPositionWeight(AvatarIKGoal.RightHand, 1.0f);
-                _anim.SetIKRotationWeight(AvatarIKGoal.RightHand, 1.0f);
-                _anim.SetIKPosition(AvatarIKGoal.RightHand, rightHandTarget.position);
-                _anim.SetIKRotation(AvatarIKGoal.RightHand, rightHandTarget.rotation);
-            }
-
-            // 왼손 IK 설정
-            if (leftHandTarget != null)
-            {
-                animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 1.0f);
-                animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, 1.0f);
-                animator.SetIKPosition(AvatarIKGoal.LeftHand, leftHandTarget.position);
-                animator.SetIKRotation(AvatarIKGoal.LeftHand, leftHandTarget.rotation);
-            }
-            */
         }
+    }
+    public void SetTrigger(string trigger) 
+    {
+        if (trigger == null || trigger == "")
+            return;
+
+        Debug.Log("settrigger ; " + trigger);
+        _anim.SetTrigger(trigger);
     }
     public void CloseEye(float value) 
     {
+        if (_skinnedMeshRenderer == null)
+            return;
+
         _skinnedMeshRenderer.SetBlendShapeWeight(14, value);
     }
     public void SetMouth(MOUTH mouth) 
     {
+        if (_skinnedMeshRenderer == null)
+            return;
         if (_mouth == mouth)
             return;
 
         _mouth = mouth;
-        float value = Random.Range(40.0f, 70.0f);
+        float value = UnityEngine.Random.Range(40.0f, 70.0f);
         switch(mouth) 
         {
             case MOUTH.None:
@@ -108,8 +108,19 @@ public class SocialAvatar : MonoBehaviour
                 break;
         }
     }
+    void SetEmotionWeight(int setIndex, float setValue) 
+    {
+        for (int ia = 0; ia < 5; ia++)
+        {
+            int index = _emotionStart + ia;
+            float value = (setIndex == index) ? setValue : 0;
+            _skinnedMeshRenderer.SetBlendShapeWeight(index, value);
+        }
+    }
     public void SetEmotion(EMOTION emotion) 
     {
+        if (_skinnedMeshRenderer == null)
+            return;
         if (_emotion == emotion)
             return;
 
@@ -117,28 +128,52 @@ public class SocialAvatar : MonoBehaviour
         switch(_emotion)
         {
             case EMOTION.None:
-                {
-                    for (int ia = 0; ia < 5; ia++)
-                    {
-                        _skinnedMeshRenderer.SetBlendShapeWeight(_emotionStart + ia, 0);
-                    }
-                }
+                SetEmotionWeight(-1, 0);
                 break;
             case EMOTION.Angry:
-                _skinnedMeshRenderer.SetBlendShapeWeight(_emotionStart, 100);
+                SetEmotionWeight(_emotionStart, 100);
                 break;
             case EMOTION.Fun:
-                _skinnedMeshRenderer.SetBlendShapeWeight(_emotionStart+1, 100);
+                SetEmotionWeight(_emotionStart+1, 100);
                 break;
             case EMOTION.Joy:
-                _skinnedMeshRenderer.SetBlendShapeWeight(_emotionStart+2, 100);
+                SetEmotionWeight(_emotionStart+2, 100);
                 break;
             case EMOTION.Sorrow:
-                _skinnedMeshRenderer.SetBlendShapeWeight(_emotionStart+3, 100);
+                SetEmotionWeight(_emotionStart+3, 100);
                 break;
             case EMOTION.Surprise:
-                _skinnedMeshRenderer.SetBlendShapeWeight(_emotionStart+4, 100);
+                SetEmotionWeight(_emotionStart+4, 100);
+                //_skinnedMeshRenderer.SetBlendShapeWeight(_emotionStart+4, value);
                 break;
         }
     }
+    /*
+    IEnumerator TimerCoroutine(int emotionIndex, int blendIndex)
+    {
+        float time = 0;
+        float duration = 1.0f;
+        _emotionTarget[emotionIndex] = 100;
+        float curValue = _emotionValue[emotionIndex];
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+
+            // 비율 계산
+            float t = time / duration;
+
+            // 값 서서히 변화
+            curValue = Mathf.Lerp(curValue, 100, t);
+            _skinnedMeshRenderer.SetBlendShapeWeight(blendIndex, curValue);
+            //Debug.Log($"Current Value: {curValue}");
+
+            yield return null; // 다음 프레임 대기
+        }
+        // 최종 값 설정
+        _emotionValue[emotionIndex] = _emotionTarget[emotionIndex];
+        _skinnedMeshRenderer.SetBlendShapeWeight(blendIndex, _emotionValue[emotionIndex]);
+        //Debug.Log($"Final Value: {currentValue}");
+    }
+    */
 }

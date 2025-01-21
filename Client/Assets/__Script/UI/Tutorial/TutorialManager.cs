@@ -61,6 +61,9 @@ public class TutorialItem
     public bool _isShowPicL = false;
     public bool _isShowPicR = false;
 
+    public string _triggerL;
+    public string _triggerR;
+
     public EMOTION _emotionL;
     public EMOTION _emotionR;
 
@@ -180,6 +183,9 @@ public class TutorialManager : MonoBehaviour
 
             item._closeEyeL = ParseFloat(node["closeeye_l"]);
             item._closeEyeR = ParseFloat(node["closeeye_r"]);
+
+            item._triggerL = ParseString(node["trigger_l"]);
+            item._triggerR = ParseString(node["trigger_r"]);
 
             _list.Add(item);
         }
