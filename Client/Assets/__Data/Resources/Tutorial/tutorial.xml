@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tutorial>
+	<item>
+		<status>None</status>
+		<activatenext_aftertime>3</activatenext_aftertime>
+	</item>
+	<item>
+		<status>Text</status>
+		<name>시스템</name>
+		<showpic_r>true</showpic_r>
+		<text>전투 튜토리얼 룸에 오신 것을 환영합니다. 여기서는 전투에 대한 기본 지식과 기술을 알려드리겠습니다.</text>
+	</item>
+	<item>
+		<status>Text</status>
+		<name>주인공</name>
+		<showpic_l>true</showpic_l>
+		<emotion_l>Angry</emotion_l>
+		<trigger_l>refuse</trigger_l>		
+		<text>난 이미 전투의 전문가야. 기초적인 건 필요없다구.</text>
+	</item>
+	<item>
+		<status>Text</status>
+		<name>시스템</name>
+		<showpic_r>true</showpic_r>
+		<text>과정은 일반 병사가 학습하는 기본 프로토콜부터 시작합니다. 이후 전문 암살자까지 성장할 수 있도록 구성되어 있습니다.</text>
+	</item>
+	<item>
+		<status>Text</status>
+		<name>주인공</name>
+		<showpic_l>true</showpic_l>
+		<closeeye_l>50</closeeye_l>
+		<trigger_l>idle</trigger_l>
+		<text>이 깡통이... 사람 말을 안듣네...</text>
+	</item>	
+	<item>
+		<status>Text</status>
+		<name>시스템</name>
+		<showpic_r>true</showpic_r>
+		<text>기본 프로토콜을 시작합니다. 이동 키를 눌러 사각 표시까지 이동해 보세요.</text>
+	</item>
+	<item>
+		<status>ActiveTarget</status>
+		<targetindex>0</targetindex>
+		<activatenext_onstart>True</activatenext_onstart>
+	</item>	
+	<item>
+		<status>EnableInput</status>
+		<action>Look</action>
+		<activatenext_onstart>True</activatenext_onstart>
+	</item>
+	<item>
+		<status>EnableInput</status>
+		<action>Move</action>
+	</item>
+	<item>
+		<status>Text</status>
+		<name>시스템</name>
+		<showpic_r>true</showpic_r>
+		<text>훌륭합니다. 정확히 도착하셨네요.</text>
+	</item>
+	<!--  점프 -->
+	<item>
+		<status>Text</status>
+		<name>시스템</name>
+		<showpic_r>true</showpic_r>
+		<text>점프를 하면 바닥에 깔리는 공격을 회피할 수 있습니다. 점프 키를 눌러 3번 점프해보세요.</text>
+	</item>
+	<item>
+		<status>SetMode</status>
+		<mode>Jump</mode>
+		<activatenext_onstart>True</activatenext_onstart>
+	</item>
+	<item>
+		<status>EnableInput</status>
+		<action>Jump</action>
+	</item>
+	<item>
+		<status>Text</status>
+		<name>시스템</name>
+		<showpic_r>true</showpic_r>
+		<text>훌륭합니다. 이제 회피 이동을 배워보겠습니다.</text>
+	</item>
+	<!-- 구르기 -->
+	<item>
+		<status>Text</status>
+		<name>시스템</name>
+		<showpic_r>true</showpic_r>
+		<text>구르기 키를 누르면 빠르게 이동하거나 적의 공격을 회피 할 수 있습니다. 3번 구르기를 성공하세요.</text>
+	</item>
+	<item>
+		<status>SetMode</status>
+		<mode>Roll</mode>
+		<activatenext_onstart>True</activatenext_onstart>
+	</item>
+	<item>
+		<status>EnableInput</status>
+		<action>Roll</action>
+	</item>
+	<item>
+		<status>Text</status>
+		<name>시스템</name>
+		<showpic_r>true</showpic_r>
+		<text>훌륭합니다. 구르기를 마스터 하셨네요. 이제 전투를 배워봅시다.</text>
+	</item>
+
+	<!-- 솔저 출현 -->
+	<item>
+		<status>ActiveTarget</status>
+		<targetindex>1</targetindex>
+		<activatenext_onstart>True</activatenext_onstart>
+	</item>
+	<item>
+		<status>Text</status>
+		<name>주인공</name>
+		<showpic_l>true</showpic_l>
+		<emotion_l>Surprise</emotion_l>
+		<trigger_l>surprise</trigger_l>
+		<text>히익!… 저게 뭐야?</text>
+	</item>
+	<item>
+		<status>Text</status>
+		<name>시스템</name>
+		<showpic_r>true</showpic_r>
+		<text>당신의 교육을 도와줄 타겟입니다. 강력한 안드로이드 이지만 안전하게 통제되어 있으니 안심하셔도 됩니다.</text>
+	</item>
+	<item>
+		<status>Text</status>
+		<name>시스템</name>
+		<showpic_r>true</showpic_r>
+		<text>공격 키를 눌러 적을 3번 타격하세요.</text>
+	</item>
+	<item>
+		<status>SetMode</status>
+		<mode>NormalAttack</mode>
+		<activatenext_onstart>True</activatenext_onstart>
+	</item>
+	<item>
+		<status>EnableInput</status>
+		<action>NormalAttack</action>
+	</item>
+	<!-- 차지 공격 -->
+	<item>
+		<status>Text</status>
+		<name>시스템</name>
+		<showpic_r>true</showpic_r>
+		<trigger_l>battle_idle</trigger_l>
+		<text>훌륭합니다. 방금처럼 적이 가드할 경우 대미지를 줄 수 없습니다만, 적의 가드는 모으기 공격으로 부술 수 있습니다.</text>
+	</item>
+	<item>
+		<status>Text</status>
+		<name>주인공</name>
+		<showpic_l>true</showpic_l>
+		<emotion_l>Angry</emotion_l>
+		<trigger_l>battle_idle</trigger_l>
+		<text>그걸 먼저 말했어야지....</text>
+	</item>
+	<item>
+		<status>Text</status>
+		<name>시스템</name>
+		<showpic_r>true</showpic_r>
+		<text>이제 모으기 공격을 적중시켜서 적의 가드를 깨뜨리세요.</text>
+	</item>
+	<item>
+		<status>SetMode</status>
+		<mode>SpecialAttack</mode>
+		<activatenext_onstart>True</activatenext_onstart>
+	</item>
+	<item>
+		<status>EnableInput</status>
+		<action>SpecialAttack</action>
+	</item>
+	<item>
+		<status>Text</status>
+		<name>시스템</name>
+		<showpic_r>true</showpic_r>
+		<text>훌륭합니다. 방금처럼 모으기 공격을 적중 시키면 적의 가드를 무너뜨릴 수 있습니다.</text>
+	</item>
+	<!-- 가드 -->
+	<item>
+		<status>Text</status>
+		<name>시스템</name>
+		<showpic_r>true</showpic_r>
+		<text>이제 가드 프로토콜을 시작하겠습니다.</text>
+	</item>
+	<item>
+		<status>Text</status>
+		<name>시스템</name>
+		<showpic_r>true</showpic_r>
+		<text>적이 공격을 시도할 경우 적을 바라보면 자동으로 가드가 됩니다. 적의 공격을 3번 가드하세요.</text>
+	</item>
+	<item>
+		<status>SetMode</status>
+		<mode>Guard</mode>
+		<activatenext_onstart>True</activatenext_onstart>
+	</item>
+	<item>
+		<status>ActiveTargetAttack</status>
+		<targetindex>1</targetindex>
+	</item>
+	<item>
+		<status>Text</status>
+		<name>시스템</name>
+		<showpic_r>true</showpic_r>
+		<text>전투에 관한 기본 프로토콜을 완수했습니다. 이제부터 심화 과정을 시작하겠습니다.</text>
+	</item>
+	<item>
+		<status>Text</status>
+		<name>시스템</name>
+		<showpic_r>true</showpic_r>
+		<text>적의 공격을 타이밍 가드하면 패링할 수 있습니다. 적의 공격을 3번 패링해 보세요.</text>
+	</item>
+	<item>
+		<status>SetMode</status>
+		<mode>Parry</mode>
+		<activatenext_onstart>True</activatenext_onstart>
+	</item>
+	<item>
+		<status>EnableInput</status>
+		<action>Parry</action>
+	</item>
+</tutorial>

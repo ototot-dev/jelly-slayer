@@ -12,9 +12,13 @@ public class GameManager : MonoSingleton<GameManager>
     public delegate void OnPawnDamaged(ref PawnHeartPointDispatcher.DamageContext damageContext);
     public OnPawnDamaged _delPawnDamaged;
 
+    public delegate void OnPawnRolled();
+    public OnPawnRolled _delPawnRolled;
+
+    public delegate void OnPawnJumped();
+    public OnPawnJumped _delPawnJumped;
 
     public Vector3 _vInitPos;
-
 
     // Start is called before the first frame update
     void Start()
@@ -42,5 +46,13 @@ public class GameManager : MonoSingleton<GameManager>
             //return;
 
         _delPawnDamaged?.Invoke(ref damageContext);
+    }
+    public void PawnRolled() 
+    {
+        _delPawnRolled?.Invoke();
+    }
+    public void PawnJumped()
+    {
+        _delPawnJumped?.Invoke();
     }
 }

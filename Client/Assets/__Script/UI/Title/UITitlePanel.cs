@@ -46,7 +46,7 @@ public class UITitlePanel : MonoBehaviour
         switch (_cursorIndex)
         {
             case 0: SceneManager.LoadScene("BattleTest"); break;
-            case 1: SceneManager.LoadScene("BattleTest"); break;
+            case 1: SceneManager.LoadScene("Tutorial"); break;
             case 2: Application.Quit(); break;
         }
     }
