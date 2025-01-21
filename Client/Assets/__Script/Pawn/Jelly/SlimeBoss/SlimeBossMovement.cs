@@ -101,7 +101,7 @@ namespace Game
                     __ecmMovement.velocity += GetVerticalImpulseOnJump() * Vector3.up;
 
                     //* HitBox를 Trace할 수 있도록 'PawnOverlapped'로 Layer를 변경함
-                    capsule.gameObject.layer = LayerMask.NameToLayer("PawnOverlapped");
+                    capsule.gameObject.layer = LayerMask.NameToLayer("Default");
                 }
 
                 if (__impluseTimeStamp > 0f)
@@ -140,7 +140,7 @@ namespace Game
                     __ecmMovement.velocity += GetVerticalImpulseOnJump() * Vector3.up;
 
                     //* Smashing 중에는 다른 Pawn의 Capsule Collider를 밀치지 못하도록 'PawnOverlapped'로 Layer를 변경함
-                    capsule.gameObject.layer = LayerMask.NameToLayer("PawnOverlapped");
+                    capsule.gameObject.layer = LayerMask.NameToLayer("Default");
                 }
 
                 if (__impluseTimeStamp > 0f)

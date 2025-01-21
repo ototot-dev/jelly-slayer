@@ -7,7 +7,7 @@ namespace Game
         
 #region IPawnSpawnable / IPawnMovable 구현
         Vector3 IPawnSpawnable.GetSpawnPosition() => transform.position;
-        void IPawnSpawnable.OnStartSpawnHandler() { __pawnMovement.capsule.gameObject.layer = LayerMask.NameToLayer("PawnOverlapped"); }
+        void IPawnSpawnable.OnStartSpawnHandler() { __pawnMovement.capsule.gameObject.layer = LayerMask.NameToLayer("Default"); }
         void IPawnSpawnable.OnFinishSpawnHandler() { __pawnMovement.capsule.gameObject.layer = LayerMask.NameToLayer("Pawn"); }
         void IPawnSpawnable.OnDespawnedHandler() {}
         void IPawnSpawnable.OnDeadHandler() 

@@ -166,7 +166,7 @@ namespace Game
                     __assaultActionLayerMaskCached = __brain.BB.HostBrain.Movement.GetCharacterMovement().collisionLayers;
 
                     //* Assault 액션 중에는 뚫는 것을 허용하도록 레이어값 변경
-                    __brain.BB.HostBrain.Movement.capsule.gameObject.layer = LayerMask.NameToLayer("PawnOverlapped");
+                    __brain.BB.HostBrain.Movement.capsule.gameObject.layer = LayerMask.NameToLayer("Default");
                     __brain.BB.HostBrain.Movement.GetCharacterMovement().collisionLayers = LayerMask.GetMask("Terrain", "Obstacle");
 
                     __brain.BB.resource.jetBoostFx.Play(true);
@@ -186,7 +186,7 @@ namespace Game
                     __assaultActionLayerMaskCached = __brain.BB.HostBrain.Movement.GetCharacterMovement().collisionLayers;
 
                     //* Assault 액션 중에는 뚫는 것을 허용하도록 레이어값 변경
-                    __brain.BB.HostBrain.Movement.capsule.gameObject.layer = LayerMask.NameToLayer("PawnOverlapped");
+                    __brain.BB.HostBrain.Movement.capsule.gameObject.layer = LayerMask.NameToLayer("Default");
                     __brain.BB.HostBrain.Movement.GetCharacterMovement().collisionLayers = LayerMask.GetMask("Terrain", "Obstacle");
 
                     var startPosition = __brain.BB.HostBrain.GetWorldPosition().AdjustY(__brain.Movement.GetHangingPointOffsetVector().y + 0.5f);
