@@ -40,6 +40,14 @@ namespace Game
         void Stop();
     }
 
+    public interface IPawnTargetable
+    {
+        PawnColliderHelper StartTargeting();
+        PawnColliderHelper NextTargeting();
+        PawnColliderHelper CurrTargeting();
+        void StopTargeting();
+    }
+
     public interface IStatusContainer
     {
         Dictionary<PawnStatus, Tuple<float, float>> GetStatusTable();

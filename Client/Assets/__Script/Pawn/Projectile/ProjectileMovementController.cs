@@ -8,30 +8,31 @@ namespace Game
 {
     public class ProjectileMovement : MonoBehaviour
     {
+        [Header("Component")]
+        public Collider BodyCollider;
+        public Collider sensorCollider;
+
         [Header("Parameter")]
         public Vector3 velocity;
-        public Vector3 gravity = new Vector3(0, -30, 0);
+        public Vector3 gravity = new(0, -30, 0);
         public bool gravityEnabled;
-        public float lifeTime = 1;
+        public LayerMask sensorLayerMask;
         public float sensorEnabledTime = 0.1f;
         public float despawnWaitingTime = 0.1f;
+        public float lifeTime = 1;
+        public bool isLifeTimeOut;
         public bool destroyWhenLifeTimeOut = true;
         public bool updateEnabled = true;
         public bool fixedUpdateEnabled = false;
 
-        [Header("Component")]
-        public Rigidbody rigidBody;
-        public Collider rigidBodyCollider;
-        public Collider sensorCollider;
-
         [Header("Emitter")]
-        public ReactiveProperty<PawnBrainController> emitter = new();
+        public ReactiveProperty<PawnBrainController> emitterBrain = new();
 
-        [Header("Life-Time")]
-        public bool isLifeTimeOut;
+        public Action onStartMove;
+        public Action onStopMove;
         public Action onLifeTimeOut;
         public Action<Collider> onHitSomething;
-        public bool IsPendingDestroy { get; private set; }
+        public bool IsDespawnPending { get; private set; }
 
         void Awake()
         {
@@ -40,36 +41,58 @@ namespace Game
 
         protected virtual void AwakeInternal()
         {
-            if (rigidBody != null) 
-                rigidBody.isKinematic = true;
-            if (rigidBodyCollider != null) 
-                rigidBodyCollider.enabled = false;
-            if (sensorCollider != null) 
+            if (BodyCollider != null) 
+            {
+                __rigidBody = BodyCollider.GetComponent<Rigidbody>();
+                __rigidBody.isKinematic = true;
+                BodyCollider.enabled = false;
+            }
+
+            if (sensorCollider != null)
+            {
                 sensorCollider.enabled = false;
+                __sensorBoxCollider = sensorCollider as BoxCollider;
+                __sensorSphereCollider = sensorCollider as SphereCollider;
+                __sensorCapsuleCollider = sensorCollider as CapsuleCollider;
+            }
         }
 
-        void Start()
-        {
-            StartInternal();
+        void Start() 
+        { 
+            StartInternal(); 
         }
 
-        protected virtual void StartInternal()
-        {
-            if (updateEnabled)
-                Observable.EveryUpdate().TakeWhile(_ => !IsPendingDestroy).Subscribe(_ => OnUpdateHandler()).AddTo(this);
-            if (fixedUpdateEnabled)
-                Observable.EveryFixedUpdate().TakeWhile(_ => !IsPendingDestroy).Subscribe(_ => OnFixedUpdateHandler()).AddTo(this);
-        }
+        protected virtual void StartInternal() {}
 
         protected virtual void OnUpdateHandler()
         {
-            if (Time.time > __moveStartTimeStamp && (rigidBody == null || rigidBody.isKinematic))
-                transform.position += Time.deltaTime * velocity.Vector2D();
+            if (Time.time > __moveStartTimeStamp && (__rigidBody == null || __rigidBody.isKinematic))
+                transform.position += Time.deltaTime * velocity;
 
             if (Time.time - __moveStartTimeStamp > sensorEnabledTime && sensorCollider != null && !sensorCollider.enabled)
             {
-                sensorCollider.enabled = true;
-                __sensorDisposable = sensorCollider.OnTriggerEnterAsObservable().Subscribe(c => onHitSomething?.Invoke(c)).AddTo(this);
+                if (__sensorBoxCollider != null)
+                {
+                    var currPosition = sensorCollider.transform.position + __sensorBoxCollider.center;
+                    __traceCount = Physics.BoxCastNonAlloc(__lastTracedPosition, 0.5f * Vector3.Scale(__sensorBoxCollider.size, sensorCollider.transform.lossyScale), (currPosition - __lastTracedPosition).normalized, __traceHitsNonAlloc, sensorCollider.transform.rotation, (currPosition - __lastTracedPosition).magnitude, sensorLayerMask);
+                    __lastTracedPosition = currPosition;
+                }
+                else if (__sensorSphereCollider != null)
+                {
+                    var currPosition = sensorCollider.transform.position + __sensorSphereCollider.center;
+                    __traceCount = Physics.SphereCastNonAlloc(__lastTracedPosition, __sensorSphereCollider.radius * Mathf.Max(sensorCollider.transform.lossyScale.x, sensorCollider.transform.lossyScale.y, sensorCollider.transform.lossyScale.z), (currPosition- __lastTracedPosition).normalized, __traceHitsNonAlloc, (currPosition - __lastTracedPosition).magnitude, sensorLayerMask);
+                    __lastTracedPosition = currPosition;
+                }
+                else if (__sensorCapsuleCollider != null)
+                {
+                    var halfHeight = Mathf.Max(0, 0.5f * __sensorCapsuleCollider.height * sensorCollider.transform.lossyScale.y - __sensorCapsuleCollider.radius * Mathf.Max(sensorCollider.transform.lossyScale.x, sensorCollider.transform.lossyScale.y, sensorCollider.transform.lossyScale.z));
+                    var currPosition = sensorCollider.transform.position + __sensorCapsuleCollider.center;
+                    __traceCount = Physics.CapsuleCastNonAlloc(currPosition - halfHeight * sensorCollider.transform.up, currPosition + halfHeight * sensorCollider.transform.up, __sensorCapsuleCollider.radius, (currPosition - __lastTracedPosition).normalized, __traceHitsNonAlloc, (currPosition - __lastTracedPosition).magnitude, sensorLayerMask);
+                    __lastTracedPosition = currPosition;
+                }
+
+                for (int i = 0; i < __traceCount; i++)
+                    onHitSomething?.Invoke(__traceHitsNonAlloc[i].collider);
             }
 
             if (!isLifeTimeOut && lifeTime > 0 && lifeTime < Time.time - __moveStartTimeStamp)
@@ -80,28 +103,41 @@ namespace Game
             }
         }
 
-        protected virtual void OnFixedUpdateHandler()
-        {
-        }
-
+        protected virtual void OnFixedUpdateHandler() {}
+        protected Rigidbody __rigidBody;
+        protected BoxCollider __sensorBoxCollider;
+        protected SphereCollider __sensorSphereCollider;
+        protected CapsuleCollider __sensorCapsuleCollider;
         protected IDisposable __sensorDisposable;
         protected float __moveStartTimeStamp;
+        protected Vector3 __lastTracedPosition;
+        protected int __traceCount;
+        protected static RaycastHit[] __traceHitsNonAlloc = new RaycastHit[48];
 
         public void Pop(PawnBrainController emitter, Vector3 position, Vector3 impulse, Vector3 scale)
         {
+            isLifeTimeOut = false;
+            IsDespawnPending = false;
             __moveStartTimeStamp = Time.time;
 
-            rigidBody.isKinematic = false;
-            rigidBody.useGravity = true;
-            rigidBodyCollider.enabled = true;
+            __rigidBody.isKinematic = false;
+            __rigidBody.useGravity = true;
+            BodyCollider.enabled = true;
             transform.position = position;
             transform.localScale = scale;
-            this.emitter.Value = emitter;
+            this.emitterBrain.Value = emitter;
+
+            onStartMove?.Invoke();
 
             Observable.NextFrame(FrameCountType.FixedUpdate).Subscribe(_ =>
             {
-                rigidBody.linearVelocity = impulse;
+                __rigidBody.linearVelocity = impulse;
             }).AddTo(this);
+
+            if (updateEnabled)
+                Observable.EveryUpdate().TakeWhile(_ => !IsDespawnPending).Subscribe(_ => OnUpdateHandler()).AddTo(this);
+            if (fixedUpdateEnabled)
+                Observable.EveryFixedUpdate().TakeWhile(_ => !IsDespawnPending).Subscribe(_ => OnFixedUpdateHandler()).AddTo(this);
         }
 
         public void Pop(PawnBrainController emitter, float impulse, float scale = 1)
@@ -112,17 +148,31 @@ namespace Game
         public void Go(PawnBrainController emitter, Vector3 position, Vector3 velocity, Vector3 scale)
         {
             //! Physics 시뮬레이션 상태면 안됨
-            Debug.Assert(rigidBody == null || rigidBody.isKinematic);
+            Debug.Assert(__rigidBody == null || __rigidBody.isKinematic);
 
+            isLifeTimeOut = false;
+            IsDespawnPending = false;
             __moveStartTimeStamp = Time.time;
+            __lastTracedPosition = sensorCollider.transform.position;
+
+            if ( __sensorBoxCollider != null) __lastTracedPosition += __sensorBoxCollider.center;
+            else if ( __sensorSphereCollider != null) __lastTracedPosition += __sensorSphereCollider.center;
+            else if ( __sensorCapsuleCollider != null) __lastTracedPosition += __sensorCapsuleCollider.center;
 
             if (velocity != Vector3.zero)
                 transform.rotation = Quaternion.LookRotation(velocity.normalized, Vector3.up);
 
             transform.position = position;
             transform.localScale = scale;
-            this.emitter.Value = emitter;
+            this.emitterBrain.Value = emitter;
             this.velocity = velocity;
+
+            onStartMove?.Invoke();
+
+            if (updateEnabled)
+                Observable.EveryUpdate().TakeWhile(_ => !IsDespawnPending).Subscribe(_ => OnUpdateHandler()).AddTo(this);
+            if (fixedUpdateEnabled)
+                Observable.EveryFixedUpdate().TakeWhile(_ => !IsDespawnPending).Subscribe(_ => OnFixedUpdateHandler()).AddTo(this);
         }
 
         public void Go(PawnBrainController emitter, float speed, float scale = 1)
@@ -132,7 +182,7 @@ namespace Game
 
         public virtual void Stop(bool destroyAfterStopped, bool destroyImmediately = false)
         {
-            __Logger.WarningR2(gameObject, nameof(Stop), "debugging~", "destroyAfterStopped", destroyAfterStopped, "destroyImmediately", destroyImmediately);
+            onStopMove?.Invoke();
 
             if (sensorCollider != null)
                 sensorCollider.enabled = false;
@@ -149,9 +199,9 @@ namespace Game
                     Destroy(gameObject, despawnWaitingTime);
                 else
                     Destroy(gameObject);
-
-                IsPendingDestroy = true;
             }
+
+            IsDespawnPending = true;
         }
     }
 }

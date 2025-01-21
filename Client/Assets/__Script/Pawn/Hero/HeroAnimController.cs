@@ -84,6 +84,7 @@ namespace Game
                 __watchingStateNames.Add("OnDown");
                 legAnimator.User_FadeToDisabled(0.1f);
             }).AddTo(this);
+            
             FindObservableStateMachineTriggerEx("OnDown (End)").OnStateExitAsObservable().Subscribe(s => 
             {
                 __watchingStateNames.Remove("OnDown");

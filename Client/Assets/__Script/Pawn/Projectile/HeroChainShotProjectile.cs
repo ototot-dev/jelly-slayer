@@ -31,10 +31,10 @@ namespace Game
             sensorCollider.OnTriggerEnterAsObservable().Subscribe(t =>
             {
                 Debug.Log("sensor OnTriggerEnterAsObservable");
-                if (_isBind == false && t.gameObject != rigidBody.gameObject) 
+                if (_isBind == false && t.gameObject != __rigidBody.gameObject) 
                 {
                     var helper = t.GetComponent<PawnColliderHelper>();
-                    if(helper != null && helper.pawnBrain != null && helper.pawnBrain != emitterBrain)
+                    if(helper != null && helper.pawnBrain != null && helper.pawnBrain != heroBrain)
                     {
                         _isBind = true;
                         _targetBrain = helper.pawnBrain;
@@ -44,7 +44,7 @@ namespace Game
 
                         // ���� �Ÿ� ����
                         var posTarget = transform.position;
-                        var posSource = emitterBrain.GetWorldPosition();
+                        var posSource = heroBrain.GetWorldPosition();
                         _bindVec = posTarget - posSource;
 
                         _bindRot = transform.rotation;
@@ -61,7 +61,7 @@ namespace Game
             if (_isBind == true)
             {
                 var posTarget = _targetBrain.GetWorldPosition();
-                var posSource = emitterBrain.GetWorldPosition();
+                var posSource = heroBrain.GetWorldPosition();
 
                 var vDist = (posTarget - posSource);
 

@@ -97,12 +97,12 @@ namespace Game
             {
                 if (possessedBrain.BB.TargetBrain != null)
                 {
-                    possessedBrain.Movement.faceVec = (possessedBrain.BB.TargetBrain.GetWorldPosition() - possessedBrain.Movement.capsule.position).Vector2D().normalized;
-                    possessedBrain.AnimCtrler.HeadLookAt.position = possessedBrain.BB.TargetBrain.coreColliderHelper.transform.position + Vector3.up;
+                    possessedBrain.AnimCtrler.HeadLookAt.position = possessedBrain.BB.TargetColliderHelper.GetWorldCenter();
+                    possessedBrain.Movement.faceVec = (possessedBrain.AnimCtrler.HeadLookAt.position - possessedBrain.Movement.capsule.position).Vector2D().normalized;
 
-                    var targetCapsule = possessedBrain.BB.TargetBrain.coreColliderHelper.GetCapsuleCollider();
+                    var targetCapsule = possessedBrain.BB.TargetColliderHelper.GetCapsuleCollider();
                     if (targetCapsule != null)
-                        cursorCtrler.cursor.position = targetCapsule.transform.position + (targetCapsule.radius * 2f + targetCapsule.height) * Vector3.up;
+                        cursorCtrler.cursor.position = possessedBrain.AnimCtrler.HeadLookAt.position + (targetCapsule.radius + targetCapsule.height * 0.5f) * Vector3.up;
                 }
                 else
                 {
@@ -219,7 +219,7 @@ namespace Game
             if (possessedBrain.BB.TargetPawn == null)
             {
                 var newTarget = possessedBrain.PawnSensorCtrler.ListeningColliders.Select(c => c.GetComponent<PawnColliderHelper>())
-                    .Where(h => h != null && h.pawnBrain != null && !h.pawnBrain.PawnBB.IsDead)
+                    .Where(h => h != null && h.pawnBrain != null && !h.pawnBrain.PawnBB.IsDead && h.pawnBrain is IPawnTargetable)
                     .OrderBy(p => (p.transform.position - possessedBrain.GetWorldPosition()).sqrMagnitude)
                     .FirstOrDefault();
 
@@ -227,12 +227,17 @@ namespace Game
                 {
                     possessedBrain.BB.target.targetPawnHP.Value = newTarget.pawnBrain.PawnHP;
                     possessedBrain.Movement.freezeRotation = true;
+                    (possessedBrain.BB.TargetBrain as IPawnTargetable).StartTargeting();
                 }
             }
             else
             {
+                //* 내부 타겟팅 순회
+                if ((possessedBrain.BB.TargetBrain as IPawnTargetable).NextTargeting() != null)
+                    return;
+
                 var colliderHelpers = possessedBrain.PawnSensorCtrler.ListeningColliders.Select(c => c.GetComponent<PawnColliderHelper>())
-                        .Where(h => h != null && h.pawnBrain != null && !h.pawnBrain.PawnBB.IsDead)
+                        .Where(h => h != null && h.pawnBrain != null && !h.pawnBrain.PawnBB.IsDead && h.pawnBrain is IPawnTargetable)
                         .ToArray();
 
                 for (int i = 0; i < colliderHelpers.Length; i++)
@@ -240,6 +245,7 @@ namespace Game
                     if (colliderHelpers[i].pawnBrain == possessedBrain.BB.TargetBrain)
                     {
                         possessedBrain.BB.target.targetPawnHP.Value = (i + 1 < colliderHelpers.Length ? colliderHelpers[i + 1] : colliderHelpers[0]).pawnBrain.PawnHP;
+                        (possessedBrain.BB.TargetBrain as IPawnTargetable).StartTargeting();
                         return;
                     }
                 }
@@ -251,7 +257,7 @@ namespace Game
             if (possessedBrain.BB.TargetPawn == null)
             {
                 var newTarget = possessedBrain.PawnSensorCtrler.ListeningColliders.Select(c => c.GetComponent<PawnColliderHelper>())
-                    .Where(h => h != null && h.pawnBrain != null && !h.pawnBrain.PawnBB.IsDead)
+                    .Where(h => h != null && h.pawnBrain != null && !h.pawnBrain.PawnBB.IsDead && h.pawnBrain is IPawnTargetable)
                     .OrderBy(p => (p.transform.position - possessedBrain.GetWorldPosition()).sqrMagnitude)
                     .FirstOrDefault();
 
@@ -264,7 +270,7 @@ namespace Game
             else
             {
                 var colliderHelpers = possessedBrain.PawnSensorCtrler.ListeningColliders.Select(c => c.GetComponent<PawnColliderHelper>())
-                        .Where(h => h != null && h.pawnBrain != null && !h.pawnBrain.PawnBB.IsDead)
+                        .Where(h => h != null && h.pawnBrain != null && !h.pawnBrain.PawnBB.IsDead && h.pawnBrain is IPawnTargetable)
                         .ToArray();
 
                 for (int i = colliderHelpers.Length - 1; i >= 0; i--)

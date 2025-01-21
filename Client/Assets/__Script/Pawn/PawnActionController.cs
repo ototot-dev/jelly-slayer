@@ -284,9 +284,9 @@ namespace Game
                     var deltaVec = currPosition - __prevTracePosition;
 
                     if (__traceCount == 0)
-                        hitCount = Physics.BoxCastNonAlloc(__prevTracePosition, halfExtent, __traceBoxCollider.transform.right, __traceTempHits, __traceBoxCollider.transform.rotation, 0.1f, __traceLayerMask);
+                        hitCount = Physics.BoxCastNonAlloc(__prevTracePosition, halfExtent, __traceBoxCollider.transform.right, __tempHitsNonAlloc, __traceBoxCollider.transform.rotation, 0.1f, __traceLayerMask);
                     else
-                        hitCount = Physics.BoxCastNonAlloc(__prevTracePosition, halfExtent, deltaVec.normalized, __traceTempHits, interpRotation, deltaVec.magnitude, __traceLayerMask);
+                        hitCount = Physics.BoxCastNonAlloc(__prevTracePosition, halfExtent, deltaVec.normalized, __tempHitsNonAlloc, interpRotation, deltaVec.magnitude, __traceLayerMask);
 
                     if (__traceDrawGizmosEnabled)
                     {
@@ -313,9 +313,9 @@ namespace Game
                     var deltaVec = currPosition - __prevTracePosition;
 
                     if (__traceCount == 0)
-                        hitCount = Physics.SphereCastNonAlloc(__prevTracePosition, __traceSphereCollider.radius, __traceSphereCollider.transform.forward, __traceTempHits, 0.1f, __traceLayerMask);
+                        hitCount = Physics.SphereCastNonAlloc(__prevTracePosition, __traceSphereCollider.radius, __traceSphereCollider.transform.forward, __tempHitsNonAlloc, 0.1f, __traceLayerMask);
                     else
-                        hitCount = Physics.SphereCastNonAlloc(__prevTracePosition, __traceSphereCollider.radius, deltaVec.normalized, __traceTempHits, deltaVec.magnitude, __traceLayerMask);
+                        hitCount = Physics.SphereCastNonAlloc(__prevTracePosition, __traceSphereCollider.radius, deltaVec.normalized, __tempHitsNonAlloc, deltaVec.magnitude, __traceLayerMask);
 
                     if (__traceDrawGizmosEnabled)
                     {
@@ -343,9 +343,9 @@ namespace Game
                     var deltaVec = currPosition - __prevTracePosition;
 
                     if (__traceCount == 0)
-                        hitCount = Physics.CapsuleCastNonAlloc(point1, point2, __traceCapsuleCollider.radius, __traceCapsuleCollider.transform.up, __traceTempHits, 0.1f, __traceLayerMask);
+                        hitCount = Physics.CapsuleCastNonAlloc(point1, point2, __traceCapsuleCollider.radius, __traceCapsuleCollider.transform.up, __tempHitsNonAlloc, 0.1f, __traceLayerMask);
                     else
-                        hitCount = Physics.CapsuleCastNonAlloc(point1, point2, __traceCapsuleCollider.radius, deltaVec.normalized, __traceTempHits, deltaVec.magnitude, __traceLayerMask);
+                        hitCount = Physics.CapsuleCastNonAlloc(point1, point2, __traceCapsuleCollider.radius, deltaVec.normalized, __tempHitsNonAlloc, deltaVec.magnitude, __traceLayerMask);
 
                     if (__traceDrawGizmosEnabled)
                     {
@@ -371,7 +371,7 @@ namespace Game
 
                 for (int i = 0; i < hitCount; i++)
                 {
-                    if (!__traceTempHits[i].collider.TryGetComponent<PawnColliderHelper>(out var hitColliderHelper) || hitColliderHelper.pawnBrain == null || hitColliderHelper.pawnBrain == __pawnBrain)
+                    if (!__tempHitsNonAlloc[i].collider.TryGetComponent<PawnColliderHelper>(out var hitColliderHelper) || hitColliderHelper.pawnBrain == null || hitColliderHelper.pawnBrain == __pawnBrain)
                         continue;
                     if (__tracePawnNames.Count > 0 && !__tracePawnNames.Contains(hitColliderHelper.pawnBrain.PawnBB.common.pawnName))
                         continue;
@@ -400,7 +400,7 @@ namespace Game
                     }
                 }
 
-                Array.Clear(__traceTempHits, 0, __traceTempHits.Length);
+                Array.Clear(__tempHitsNonAlloc, 0, __tempHitsNonAlloc.Length);
             };
         }
 
@@ -669,8 +669,8 @@ namespace Game
             currActionContext.isTraceRunning = newValue;
         }
         
-        static readonly RaycastHit[] __traceTempHits = new RaycastHit[16];
-        static readonly Collider[] __traceTempColliders = new Collider[16];
+        static readonly RaycastHit[] __tempHitsNonAlloc = new RaycastHit[16];
+        static readonly Collider[] __tempCollidersNonAlloc = new Collider[16];
         int __traceLayerMask;
         int __traceCount = 0;
         float __traceSampleInterval = 0;
@@ -756,8 +756,8 @@ namespace Game
 
             var fanCenter = __pawnBrain.coreColliderHelper.pawnCollider.bounds.center + __pawnBrain.coreColliderHelper.transform.rotation * fanMatrix.GetPosition();
             var overlappedCount = __traceLayerNames != null ?
-                Physics.OverlapCapsuleNonAlloc(fanCenter + 0.5f * fanHeight * Vector3.up, fanCenter + 0.5f * fanHeight * Vector3.down, fanRadius, __traceTempColliders, LayerMask.GetMask(__traceLayerNames.ToArray())) :
-                Physics.OverlapCapsuleNonAlloc(fanCenter + 0.5f * fanHeight * Vector3.up, fanCenter + 0.5f * fanHeight * Vector3.down, fanRadius, __traceTempColliders);
+                Physics.OverlapCapsuleNonAlloc(fanCenter + 0.5f * fanHeight * Vector3.up, fanCenter + 0.5f * fanHeight * Vector3.down, fanRadius, __tempCollidersNonAlloc, LayerMask.GetMask(__traceLayerNames.ToArray())) :
+                Physics.OverlapCapsuleNonAlloc(fanCenter + 0.5f * fanHeight * Vector3.up, fanCenter + 0.5f * fanHeight * Vector3.down, fanRadius, __tempCollidersNonAlloc);
 
             var localToWorld = __pawnBrain.coreColliderHelper.transform.localToWorldMatrix * fanMatrix;
             var worldToLocal = localToWorld.inverse;
@@ -768,7 +768,7 @@ namespace Game
 
             if (overlappedCount > 0)
             {
-                foreach (var c in __traceTempColliders)
+                foreach (var c in __tempCollidersNonAlloc)
                 {
                     if (c == null)
                         continue;
@@ -877,7 +877,7 @@ namespace Game
                 }
             }
 
-            Array.Clear(__traceTempColliders, 0, __traceTempColliders.Length);
+            Array.Clear(__tempCollidersNonAlloc, 0, __tempCollidersNonAlloc.Length);
             return results;
         }
 
@@ -901,7 +901,7 @@ namespace Game
             __tracePawnNames.Clear();
         }
 
-        public virtual void EmitProjectile(GameObject emitSource, Transform emitPoint, int emitNum)
+        public virtual void EmitProjectile(GameObject emitSource, Transform emitPoint, int emitIndex)
         {
             if (emitSource == null) 
             {
@@ -909,7 +909,7 @@ namespace Game
                 return;
             }
 
-            onEmitProjectile?.Invoke(currActionContext, emitSource.GetComponent<ProjectileMovement>(), emitPoint, emitNum);
+            onEmitProjectile?.Invoke(currActionContext, emitSource.GetComponent<ProjectileMovement>(), emitPoint, emitIndex);
         }
     }
 }

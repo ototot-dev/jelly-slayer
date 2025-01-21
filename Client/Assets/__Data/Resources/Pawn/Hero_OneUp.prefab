@@ -84,7 +84,7 @@ GameObject:
   - component: {fileID: 8791414763947496166}
   - component: {fileID: 4592272242371362991}
   - component: {fileID: 6873228617776499816}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hero_OneUp
   m_TagString: Hero
   m_Icon: {fileID: 0}
@@ -206,6 +206,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainAnimator: {fileID: 3244703593152202959}
   rigBuilder: {fileID: 8157329558261335758}
+  rigSetup: {fileID: 18808741469499199}
   legAnimator: {fileID: 3673634840836888687}
   ragdollAnimator: {fileID: 1508909516796287826}
   spineOverrideTransform: {fileID: 7333061147978076615}
@@ -213,8 +214,8 @@ MonoBehaviour:
   rightArmTwoBoneIK: {fileID: 6119620665079175868}
   leftLegBoneSimulator: {fileID: 6616178964254524924}
   rightLegBoneSimulator: {fileID: 1877122226104639493}
-  shieldMeshSlot: {fileID: 0}
   weaponMeshSlot: {fileID: 5806174125005292053}
+  shieldMeshSlot: {fileID: 3452488443664082073}
   HeadLookAt: {fileID: 3872346485875650652}
   hipBone: {fileID: 3244703593161533285}
   guardParryRootMotionMultiplier: 1
@@ -236,9 +237,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 091c5c1b3b28e41cd8852f3aa563fd24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  staggerFx: {fileID: 7902684546752631038, guid: 1a4146f5a4768c24d907b77fd5275c06, type: 3}
   fxAttachPoint: {fileID: 6667022547613719956}
-  shieldMesh: {fileID: 0}
+  forceFieldMeshRenderer: {fileID: 0}
   kickActionCollider: {fileID: 515486780858504094}
   swordActionCollider: {fileID: 0}
   testImpulseStrength: 1
@@ -340,6 +340,10 @@ MonoBehaviour:
       value: 0
     chargingLevel:
       value: 0
+  graphics:
+    forceShieldRenderer: {fileID: 409659756734369044}
+    onGuardParriedFx: {fileID: 8290359115699195188, guid: e7b0059f09cb15241973d434a922f01a, type: 3}
+    onBlockFx: {fileID: 2866177464396845944, guid: 6b2b519e0ec0572459f5bb22f05fed59, type: 3}
 --- !u!114 &8791414763947496166
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -353,8 +357,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coreColliderHelper: {fileID: 4575544682901093454}
-  hitColliderHelper: {fileID: 2023143863012937403}
+  bodyHitColliderHelper: {fileID: 0}
   parryColliderHelper: {fileID: 1104606249163493149}
+  visibilityChecker: {fileID: 1411842691130928027}
   owner: {fileID: 0}
   tickInterval: 0.1
   tickEnabled: 1
@@ -5505,7 +5510,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     AlignWithDesiredMoveDirection: 0
-  UseHips: 1
+  UseHips: 0
   HipsHeightStepBlend: 1
   HipsHeightStepSpeed: 0.87
   HipsAdjustStyle: 0
@@ -5589,8 +5594,8 @@ MonoBehaviour:
     BoneFeet: {fileID: 0}
     FeetSensitivity: 0.5
     InverseHint: 0
-    AnkleToHeel: {x: 0.0046651876, y: 0.05368928, z: 0.09360129}
-    AnkleToFeetEnd: {x: 0.0033413097, y: 0.1536572, z: 0.03632608}
+    AnkleToHeel: {x: 0.004665296, y: 0.053689256, z: 0.09360124}
+    AnkleToFeetEnd: {x: 0.0033414448, y: 0.15365735, z: 0.03632608}
     AnkleRight: {x: 0.9990007, y: -0.011514958, z: -0.04318472}
     AnkleUp: {x: -0.04319198, y: -0.49709105, z: -0.8666224}
     AnkleForward: {x: -0.01148762, y: 0.8676217, z: -0.49709177}
@@ -5620,8 +5625,8 @@ MonoBehaviour:
     BoneFeet: {fileID: 0}
     FeetSensitivity: 0.5
     InverseHint: 0
-    AnkleToHeel: {x: -0.0046635224, y: 0.053688794, z: 0.09360181}
-    AnkleToFeetEnd: {x: -0.003336657, y: 0.1536581, z: 0.03632678}
+    AnkleToHeel: {x: -0.0046635983, y: 0.05368896, z: 0.093602195}
+    AnkleToFeetEnd: {x: -0.0033367258, y: 0.1536584, z: 0.036327012}
     AnkleRight: {x: 0.9990009, y: 0.011482423, z: 0.043191507}
     AnkleUp: {x: 0.043181766, y: -0.49708563, z: -0.86662585}
     AnkleForward: {x: 0.011518877, y: 0.8676249, z: -0.49708474}
@@ -5850,8 +5855,8 @@ MonoBehaviour:
   _Editor_OnValidateTrigger: 1
   _EditorAllowAutoUpdateFeetParams: 1
   _EditorCategory: 1
-  _EditorSetupCategory: 0
-  _EditorMotionCategory: 2
+  _EditorSetupCategory: 1
+  _EditorMotionCategory: 1
   _EditorExtraCategory: 0
   IKHintMode: 6
   LimitLegStretch: 0.99
@@ -5948,7 +5953,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3244703593161571087}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 104179351ca7dd24a8f5bd7beecf8d06, type: 3}
   m_Name: 
@@ -18999,7 +19004,7 @@ GameObject:
   - component: {fileID: 6673541937507687907}
   - component: {fileID: 5557626094041119168}
   - component: {fileID: 2023143863012937403}
-  m_Layer: 11
+  m_Layer: 12
   m_Name: HitBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19040,7 +19045,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.3
+  m_Radius: 0.2
   m_Height: 1.6
   m_Direction: 1
   m_Center: {x: 0, y: 0.8, z: 0}
@@ -19368,6 +19373,68 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1097579612682551057}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7098943545281459442
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2810075489990057581}
+  - component: {fileID: 5385694548742849321}
+  - component: {fileID: 1411842691130928027}
+  m_Layer: 0
+  m_Name: VisibilityChecker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2810075489990057581
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7098943545281459442}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5773660180996915832}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &5385694548742849321
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7098943545281459442}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!135 &1411842691130928027
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7098943545281459442}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 2
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1 &7600030847904851378
 GameObject:
   m_ObjectHideFlags: 0
@@ -19409,6 +19476,7 @@ Transform:
   - {fileID: 5887700154971376602}
   - {fileID: 463780701322609585}
   - {fileID: 6667022547613719956}
+  - {fileID: 2810075489990057581}
   m_Father: {fileID: 3758835991799220657}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &155878440203396063
@@ -19503,7 +19571,7 @@ MonoBehaviour:
   _useFlatBaseForGroundChecks: 0
   _collisionLayers:
     serializedVersion: 2
-    m_Bits: 28744
+    m_Bits: 28808
   _triggerInteraction: 1
   _advanced:
     minMoveDistance: 0

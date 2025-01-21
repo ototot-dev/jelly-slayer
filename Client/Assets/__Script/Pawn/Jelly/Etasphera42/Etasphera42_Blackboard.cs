@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public class Etasphera42Blackboard : JellyQuadWalkBlackboard
+    public class Etasphera42_Blackboard : JellyQuadWalkBlackboard
     {
         public override bool IsJumping => action.isJumping.Value;
         public override bool IsGliding => action.isGliding.Value;
@@ -17,7 +17,6 @@ namespace Game
         public override float MinApproachDistance => action.minApproachDistance;
         public float HoldPositionRate => action.holdPositionRate;
         public float MoveAroundRate => action.moveAroundRate;
-
         [Serializable]
         public class Body
         {
@@ -49,6 +48,13 @@ namespace Game
             public float comboAttackRateStep;  //* Idle 상태에서 콤보 1타 발생 확률 증가
             public float counterAttackRateStep; //* 블럭 후 반격 발생 확률 증가
             public float leapRateStep; //* 타켓과 거리가 떨어졌을 때 Leap 발생 확률 증가
+
+            public GameObject bulletPrefab;
+
+            public float turretHighPitch = 1f;
+            public float turretLowPitch = 1f;
+            public float turretPitchSpeed = 1f;
+            public float turretPitchRecoverSpeed = 1f;
         }
 
         public Action action = new();
@@ -63,6 +69,12 @@ namespace Game
             public GameObject onMissedFx;
             public GameObject onBlockedFx;
             public GameObject onGuardBreakFx;
+            public Material hitColor;
+            public SkinnedMeshRenderer[] body_meshRenderers;
+            public SkinnedMeshRenderer[] leftLeg1_meshRenderes;
+            public SkinnedMeshRenderer[] leftLeg2_meshRenderes;
+            public SkinnedMeshRenderer[] rightLeg1_meshRenderes;
+            public SkinnedMeshRenderer[] rightLeg2_meshRenderes;
         }
 
         public Graphics graphics = new();

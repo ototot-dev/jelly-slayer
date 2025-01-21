@@ -155,6 +155,7 @@ namespace Game
                     BB.stat.poise = BB.pawnData.poise + StatusCtrler.GetStrength(PawnStatus.IncPoise);
                 }
             };
+            
             StatusCtrler.onStatusDeactive += (statusContext) =>
             {
                 if (statusContext == PawnStatus.IncPoise)
@@ -162,6 +163,7 @@ namespace Game
                     BB.stat.poise = BB.pawnData.poise;
                 }
             };
+
             BB.action.isCharging.Subscribe(v => 
             {
                 StatusCtrler.AddStatus(PawnStatus.IncPoise, 50);

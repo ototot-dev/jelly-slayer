@@ -144,7 +144,7 @@ namespace Game
                     eyeAnimator.transform.position = eyeSocket.position;
 
                 if (!__brain.BB.IsDead && __brain.BB.TargetBrain != null)
-                    lookAt.position = __brain.BB.TargetBrain.coreColliderHelper.GetCenter();
+                    lookAt.position = __brain.BB.TargetBrain.coreColliderHelper.GetWorldCenter();
                 else
                     lookAt.position = __brain.Movement.IsMovingToDestination ? __brain.Movement.destination : __brain.coreColliderHelper.transform.position + __brain.SensorCtrler.visionLen * __brain.coreColliderHelper.transform.forward;
             };

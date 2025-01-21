@@ -25,7 +25,7 @@ namespace Game
         public bool IsVisionSensorTriggerable => (sensorTrigger & SensorFilters.Vision) > 0;
         public bool IsTouchSensorTriggerable => (sensorTrigger & SensorFilters.Touch) > 0;
         public bool IsSoundSensorTriggerable => (sensorTrigger & SensorFilters.Sound) > 0;
-        public Vector3 GetCenter() => __capsuleCollider != null ? __capsuleCollider.transform.localToWorldMatrix.MultiplyPoint(__capsuleCollider.center) : pawnCollider.transform.position;
+        public Vector3 GetWorldCenter() => __capsuleCollider != null ? __capsuleCollider.transform.localToWorldMatrix.MultiplyPoint(__capsuleCollider.center) : pawnCollider.transform.position;
         public float GetRadius() => __capsuleCollider != null ? __capsuleCollider.radius : 0f;
 
         //* sourcePosition에서 자신까지의 거리 (자신의 Collider Raidus 값을 뺀 거리)
@@ -42,7 +42,7 @@ namespace Game
         }
 
         //* Center 위치에서 senderPosition을 바라보는 방향으로 pawnCollider의 표면과 교차하는 한 점을 HitPoint로 리턴함
-        public Vector3 GetHitPoint(Vector3 senderPosition) => GetCenter() + GetRadius() * (senderPosition - pawnCollider.transform.position).Vector2D().normalized;
+        public Vector3 GetHitPoint(Vector3 senderPosition) => GetWorldCenter() + GetRadius() * (senderPosition - pawnCollider.transform.position).Vector2D().normalized;
 
         void Awake()
         {

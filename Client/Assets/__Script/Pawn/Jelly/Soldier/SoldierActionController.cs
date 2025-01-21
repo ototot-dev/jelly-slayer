@@ -39,17 +39,17 @@ namespace Game
             {
                 if (damageContext.senderActionData.actionName.StartsWith("Kick"))
                 {
-                    EffectManager.Instance.Show(__brain.BB.graphics.onKickHitFx, __brain.hitColliderHelper.GetCenter(), Quaternion.identity, Vector3.one, 1f);
+                    EffectManager.Instance.Show(__brain.BB.graphics.onKickHitFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.identity, Vector3.one, 1f);
                     SoundManager.Instance.PlayWithClip(__brain.BB.audios.onKickHitAudioClip);
                 }
                 else if (damageContext.senderActionData.actionName.StartsWith("Heavy"))
                 {
-                    EffectManager.Instance.Show(__brain.BB.graphics.onBigHitFx, __brain.hitColliderHelper.GetCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.hitColliderHelper.GetCenter()) * Quaternion.Euler(90f, 0f, 0f), Vector3.one, 1f);
+                    EffectManager.Instance.Show(__brain.BB.graphics.onBigHitFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()) * Quaternion.Euler(90f, 0f, 0f), Vector3.one, 1f);
                     SoundManager.Instance.PlayWithClip(__brain.BB.audios.onBigHitAudioClip);
                 }
                 else
                 {
-                    EffectManager.Instance.Show(__brain.BB.graphics.onHitFx, __brain.hitColliderHelper.GetCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.hitColliderHelper.GetCenter()) * Quaternion.Euler(90f, 0f, 0f), Vector3.one, 1f);
+                    EffectManager.Instance.Show(__brain.BB.graphics.onHitFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()) * Quaternion.Euler(90f, 0f, 0f), Vector3.one, 1f);
                     SoundManager.Instance.PlayWithClip(__brain.BB.audios.onHitAudioClip);
                 }
             }
@@ -83,7 +83,7 @@ namespace Game
 
             if (damageContext.actionResult == ActionResults.Damaged)
             {
-                EffectManager.Instance.Show(__brain.BB.graphics.onBigHitFx, __brain.hitColliderHelper.GetCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.hitColliderHelper.GetCenter()) * Quaternion.Euler(90f, 0f, 0f), Vector3.one, 1f);
+                EffectManager.Instance.Show(__brain.BB.graphics.onBigHitFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()) * Quaternion.Euler(90f, 0f, 0f), Vector3.one, 1f);
                 SoundManager.Instance.PlayWithClip(__brain.BB.audios.onBigHitAudioClip);
             }
 

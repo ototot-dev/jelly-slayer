@@ -61,9 +61,9 @@ namespace Game
         {
             base.StartInternal();
 
-            emitter.Subscribe(v =>
+            emitterBrain.Subscribe(v =>
             {
-                emitterBrain = emitter.Value.GetComponent<HeroBrain>();
+                heroBrain = emitterBrain.Value.GetComponent<HeroBrain>();
                 __startPoint = transform.position;
                 __endPoint = transform.position + transform.forward.Vector2D().normalized * spikeDistance;
             });
@@ -73,7 +73,7 @@ namespace Game
 
             onHitSomething += (obj) =>
             {
-                if (obj == emitter.Value || __currHitCount >= maxHitCount)
+                if (obj == emitterBrain.Value || __currHitCount >= maxHitCount)
                     return;
 
                 // var hitBrain = obj.GetComponent<JellySlimeBrain>();

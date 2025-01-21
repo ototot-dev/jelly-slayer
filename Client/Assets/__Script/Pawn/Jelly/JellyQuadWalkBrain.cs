@@ -1,6 +1,5 @@
 using System.Linq;
 using UniRx;
-using Unity.Linq;
 using UnityEngine;
 
 namespace Game
@@ -276,6 +275,7 @@ namespace Game
 
             return null;
         }
+        
         protected virtual bool CheckTargetVisibility()
         {   
             Debug.Assert(JellyBB.TargetPawn != null);

@@ -132,8 +132,8 @@ namespace Game
                 }
                 else if (damageContext.actionResult == ActionResults.KickParried)
                 {
-                    var hitPoint = damageContext.senderBrain.coreColliderHelper.GetCenter() + 
-                        damageContext.senderBrain.coreColliderHelper.GetRadius() * (__brain.coreColliderHelper.GetCenter() - damageContext.senderBrain.coreColliderHelper.GetCenter()).Vector2D().normalized;
+                    var hitPoint = damageContext.senderBrain.coreColliderHelper.GetWorldCenter() + 
+                        damageContext.senderBrain.coreColliderHelper.GetRadius() * (__brain.coreColliderHelper.GetWorldCenter() - damageContext.senderBrain.coreColliderHelper.GetWorldCenter()).Vector2D().normalized;
 
                     EffectManager.Instance.Show("Hit 26 blue crystal", hitPoint, Quaternion.identity, 2f * Vector3.one, 1f);
                     SoundManager.Instance.Play(SoundID.HIT_PARRYING);
@@ -310,7 +310,7 @@ namespace Game
 
             var chainProj = obj.GetComponent<HeroChainShotProjectile>();
             var pos = (trRoot.position + Vector3.up) + trRoot.forward;
-            chainProj.emitterBrain = __brain;
+            chainProj.heroBrain = __brain;
             chainProj.Go(null, pos, 10.0f * trRoot.forward, Vector3.one);
         }
 

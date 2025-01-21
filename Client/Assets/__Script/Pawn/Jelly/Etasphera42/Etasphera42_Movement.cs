@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public class Etasphera42Movement : PawnMovementEx
+    public class Etasphera42_Movement : PawnMovementEx
     {
         public void StartJump(float jumpHeight)
         {
@@ -55,12 +55,12 @@ namespace Game
         float __jumpImpulseTimeStamp;
         float __glidingTimeStamp;
         float __landingTimeStamp;
-        Etasphera42Brain __brain;
+        Etasphera42_Brain __brain;
 
         protected override void AwakeInternal()
         {
             base.AwakeInternal();
-            __brain = GetComponent<Etasphera42Brain>();
+            __brain = GetComponent<Etasphera42_Brain>();
         }
 
         protected override void OnFixedUpdateHandler()

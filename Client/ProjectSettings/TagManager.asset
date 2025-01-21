@@ -11,6 +11,8 @@ TagManager:
   - DropItem
   - Jelly
   - Hero
+  - Missile
+  - DropItemMesh
   layers:
   - Default
   - TransparentFX
@@ -19,14 +21,14 @@ TagManager:
   - Water
   - UI
   - Pawn
-  - PawnOverlapped
+  - PhysicsBody
   - PawnSensor
   - Projectile
   - ProjectileSensor
   - HitBox
   - HitBoxBlocking
-  - PhysicsBody
   - Obstacle
+  - Ceil
   - 
   - 
   - 

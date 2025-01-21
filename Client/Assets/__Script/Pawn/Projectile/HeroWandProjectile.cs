@@ -71,9 +71,9 @@ namespace Game
         {
             base.StartInternal();
 
-            emitter.Where(v => v != null).Subscribe(v =>
+            emitterBrain.Where(v => v != null).Subscribe(v =>
             {
-                emitterBrain = v.GetComponent<HeroBrain>();
+                heroBrain = v.GetComponent<HeroBrain>();
             }).AddTo(this);
 
             if (targetPoint == null)

@@ -12,21 +12,21 @@ namespace Game
         public float brakePower = 1f;
         public float brakeEnabledTime = 0.1f;
         public float explosionRange = 1f;
-        public SlimeMiniBrain emitterBrain;
+        public SlimeMiniBrain miniBrain;
         public ActionData actionData;
 
         protected override void StartInternal()
         {
             base.StartInternal();
 
-            emitter.Where(v => v != null).Subscribe(v => 
+            emitterBrain.Where(v => v != null).Subscribe(v => 
             {
-                emitterBrain = v.GetComponent<SlimeMiniBrain>();
-                actionData = emitterBrain.ActionCtrler.currActionContext.actionData;
+                miniBrain = v.GetComponent<SlimeMiniBrain>();
+                actionData = miniBrain.ActionCtrler.currActionContext.actionData;
             }).AddTo(this);
 
             //* Terrain 디텍션 코드
-            rigidBodyCollider.OnCollisionEnterAsObservable().Subscribe(c =>
+            BodyCollider.OnCollisionEnterAsObservable().Subscribe(c =>
             {
                 if ((c.gameObject.layer & LayerMask.NameToLayer("Terrain")) > 0)
                     __isGrounded = true;
@@ -34,7 +34,7 @@ namespace Game
 
             sensorCollider.OnTriggerEnterAsObservable().Subscribe(t => 
             {
-                if (t.gameObject != rigidBody.gameObject)
+                if (t.gameObject != __rigidBody.gameObject)
                     Explode();
             }).AddTo(this);
 
@@ -45,18 +45,18 @@ namespace Game
 
         void Explode()
         {
-            Debug.Assert(emitter.Value != null);
+            Debug.Assert(base.emitterBrain.Value != null);
 
-            foreach (var c in Physics.OverlapSphere(rigidBody.transform.position, explosionRange, LayerMask.GetMask("HitBox")))
+            foreach (var c in Physics.OverlapSphere(__rigidBody.transform.position, explosionRange, LayerMask.GetMask("HitBox")))
             {
-                if (c == null || c == emitter.Value)
+                if (c == null || c == base.emitterBrain.Value)
                     continue;
 
-                if (c.TryGetComponent<PawnColliderHelper>(out var hitColliderHelper) && hitColliderHelper.pawnBrain != null && hitColliderHelper.pawnBrain != emitterBrain && hitColliderHelper.pawnBrain.PawnBB.common.pawnName == "Hero")
-                    emitterBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, emitter.Value, hitColliderHelper.pawnBrain, actionData, hitColliderHelper.pawnCollider, false));
+                if (c.TryGetComponent<PawnColliderHelper>(out var hitColliderHelper) && hitColliderHelper.pawnBrain != null && hitColliderHelper.pawnBrain != miniBrain && hitColliderHelper.pawnBrain.PawnBB.common.pawnName == "Hero")
+                    miniBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, base.emitterBrain.Value, hitColliderHelper.pawnBrain, actionData, hitColliderHelper.pawnCollider, false));
             }
 
-            EffectManager.Instance.Show("CFXR Explosion 2", rigidBodyCollider.transform.position + Vector3.up * 0.2f, Quaternion.identity, 0.5f * Vector3.one);
+            EffectManager.Instance.Show("CFXR Explosion 2", BodyCollider.transform.position + Vector3.up * 0.2f, Quaternion.identity, 0.5f * Vector3.one);
 
             Stop(true);
         }
@@ -65,10 +65,10 @@ namespace Game
         {
             base.OnUpdateHandler();
 
-            if ((Time.time - __moveStartTimeStamp) > sensorEnabledTime && !rigidBodyCollider.enabled)
-                rigidBodyCollider.enabled = true;
+            if ((Time.time - __moveStartTimeStamp) > sensorEnabledTime && !BodyCollider.enabled)
+                BodyCollider.enabled = true;
 
-            if (!IsPendingDestroy && rigidBodyCollider.enabled && __isGrounded && rigidBody.linearVelocity.sqrMagnitude < 0.1f)
+            if (!IsDespawnPending && BodyCollider.enabled && __isGrounded && __rigidBody.linearVelocity.sqrMagnitude < 0.1f)
                 Explode();
         }
     }

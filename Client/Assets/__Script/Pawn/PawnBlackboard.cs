@@ -16,10 +16,10 @@ namespace Game
         public bool IsDown => common.isDown.Value;
         public bool IsDead => common.isDead.Value;
         public float LifeTime => common.lifeTime.Value;
-        public PawnBrainController TargetBrain => target.targetPawnHP.Value != null ? target.targetPawnHP.Value.PawnBrain : null;
-        public PawnColliderHelper TargetColliderHelper => TargetBrain != null ? TargetBrain.coreColliderHelper : null;
         public Transform TargetCore => TargetBrain != null ? TargetBrain.coreColliderHelper.transform : null;
         public GameObject TargetPawn => target.targetPawnHP.Value != null ? target.targetPawnHP.Value.gameObject : null;
+        public PawnBrainController TargetBrain => target.targetPawnHP.Value != null ? target.targetPawnHP.Value.PawnBrain : null;
+        public PawnColliderHelper TargetColliderHelper => TargetBrain != null ? (TargetBrain is IPawnTargetable targetable ? targetable.CurrTargeting() : TargetBrain.coreColliderHelper) : null;
 
         [Serializable]
         public class Common

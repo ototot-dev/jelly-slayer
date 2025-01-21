@@ -21,8 +21,9 @@ namespace Game
 
         [Header("Component")]
         public PawnColliderHelper coreColliderHelper;
-        public PawnColliderHelper hitColliderHelper;
+        public PawnColliderHelper bodyHitColliderHelper;
         public PawnColliderHelper parryColliderHelper;
+        public SphereCollider visibilityChecker;
         public PlayerController owner;
 
         [Header("Update")]
@@ -62,6 +63,9 @@ namespace Game
 
         protected virtual void StartInternal()
         {
+            if (visibilityChecker != null)
+                LevelVisibilityManager.Instance.RegisterChecker(visibilityChecker);
+
             //* 지형 위로 y값 보정
             var hit = TerrainManager.GetTerrainHitPoint(transform.position);
             if (hit.collider != null)
@@ -94,7 +98,12 @@ namespace Game
                 Observable.Timer(TimeSpan.FromSeconds(PawnBB.common.despawnWaitingTime)).Where(_ => PawnBB.IsDead).Subscribe(_ =>
                 {
                     (this as IPawnSpawnable)?.OnDespawnedHandler();
-                    if (FSM != null) FSM.enabled = false;
+
+                    if (FSM != null) 
+                        FSM.enabled = false;
+                    if (visibilityChecker != null)
+                        LevelVisibilityManager.Instance.UnregisterChecker(visibilityChecker);
+                        
                     Destroy(gameObject, 0.1f);
                 }).AddTo(this);
             }).AddTo(this);

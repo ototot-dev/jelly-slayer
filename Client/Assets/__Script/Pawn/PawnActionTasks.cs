@@ -46,7 +46,7 @@ namespace Game.NodeCanvasExtension
         {
             base.OnUpdate();
 
-            if (duration.value > 0 && Time.time - __executeTimeStamp > duration.value)
+            if (duration.value > 0 && (Time.time - __executeTimeStamp) > duration.value)
                 EndAction(true);
         }
 
@@ -87,7 +87,7 @@ namespace Game.NodeCanvasExtension
             if (!lookAt.isNoneOrNull)
                 __pawnMovable.SetDestination(lookAt.value.position);
 
-            if (duration.value > 0 && Time.time - __executeTimeStamp > duration.value)
+            if (duration.value > 0 && (Time.time - __executeTimeStamp) > duration.value)
                 EndAction(true);
         }
 
@@ -129,6 +129,8 @@ namespace Game.NodeCanvasExtension
 
         protected override void OnStop(bool interrupted)
         {
+            base.OnStop(interrupted);
+
             if (interrupted && __moveDisposable != null)
                 __moveDisposable.Dispose();
         }
@@ -169,6 +171,8 @@ namespace Game.NodeCanvasExtension
 
         protected override void OnStop(bool interrupted)
         {
+            base.OnStop(interrupted);
+
             if (interrupted && __moveDisposable != null)
                 __moveDisposable.Dispose();
         }
@@ -1111,18 +1115,50 @@ namespace Game.NodeCanvasExtension
 
     public class EmitProjectile : ActionTask
     {
-        protected override string info => emitSource.isNoneOrNull ? base.info : $"Emit '{emitSource.name}' x <b>{emitNum.value}</b>";
-        public BBParameter<GameObject> emitSource;
+        protected override string info => sourcePrefab.isNoneOrNull ? base.info : $"Emit '{sourcePrefab.name}' x <b>{emitNum.value}</b>";
+        public BBParameter<GameObject> sourcePrefab;
         public BBParameter<Transform> emitPoint;
         public BBParameter<int> emitNum = 1;
+        public BBParameter<float> emitInterval = -1f;
+        public bool runInParallel;
+
+        PawnActionController __pawnActionCtrler;
+        int __capturedActionInstanceId;
+        int __emitCount;
 
         protected override void OnExecute()
         {
-            var actionCtrler = agent.GetComponent<PawnActionController>();
-            Debug.Assert(actionCtrler != null);
+            __pawnActionCtrler = agent.GetComponent<PawnActionController>();
+            Debug.Assert(__pawnActionCtrler != null);
 
-            actionCtrler.EmitProjectile(emitSource.value, emitPoint.value, emitNum.value);
-            EndAction(true);
+            __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;
+            __pawnActionCtrler.EmitProjectile(sourcePrefab.value, emitPoint.value, emitNum.value);
+            __emitCount = 1;
+
+            if (emitNum.value == 1 || emitInterval.value <= 0f)
+            {
+                EndAction(true);
+            }
+            else
+            {
+                Observable.Interval(TimeSpan.FromSeconds(emitInterval.value))
+                    .TakeWhile(_ => __pawnActionCtrler.CheckActionRunning() && __pawnActionCtrler.currActionContext.actionInstanceId == __capturedActionInstanceId).
+                    Take(emitNum.value - 1)
+                    .DoOnCancel(() =>
+                    {
+                        if (!runInParallel)
+                            EndAction(false);
+                    })
+                    .DoOnCompleted(() =>
+                    {
+                        if (!runInParallel)
+                            EndAction(true);
+                    })
+                    .Subscribe(_ => __pawnActionCtrler.EmitProjectile(sourcePrefab.value, emitPoint.value, __emitCount)).AddTo(agent);
+                
+                if (runInParallel)
+                    EndAction(true);
+            }
         }
     }
 
@@ -1187,6 +1223,34 @@ namespace Game.NodeCanvasExtension
         {
             animator.value.SetFloat(paramId.value, newValue.value);
             EndAction(true);
+        }
+    }
+        public class FadeAnimFloat : ActionTask
+    {
+        protected override string info => $"Fade <b>{paramId.value}</b> Param to <b>{targetValue.value}</b>";
+        public BBParameter<Animator> animator;
+        public BBParameter<string> paramId;
+        public BBParameter<float> targetValue;
+        public BBParameter<float> duration;
+        float __currValue;
+        float __fadeSpeed;
+        
+        protected override void OnExecute()
+        {
+            __currValue = animator.value.GetFloat(paramId.value);
+            __fadeSpeed = (targetValue.value - __currValue) / duration.value;
+        }
+
+        protected override void OnUpdate()
+        {
+            base.OnUpdate();
+
+            __currValue += __fadeSpeed * Time.deltaTime;
+            __currValue = __fadeSpeed > 0f ? Mathf.Min(targetValue.value, __currValue) : Mathf.Max(targetValue.value, __currValue);
+            animator.value.SetFloat(paramId.value, __currValue);
+
+            if (__currValue == targetValue.value)
+                EndAction(true);
         }
     }
 
@@ -1590,7 +1654,7 @@ namespace Game.NodeCanvasExtension
 
         protected override void OnExecute()
         {
-            if (agent.TryGetComponent<PawnActionController>(out var __pawnActionCtrler))
+            if (agent.TryGetComponent<PawnActionController>(out __pawnActionCtrler))
             {
                 if (!localToWorld.isNoneOrNull)
                 {
@@ -1657,7 +1721,7 @@ namespace Game.NodeCanvasExtension
 
         protected override void OnExecute()
         {
-            if (agent.TryGetComponent<PawnActionController>(out var __pawnActionCtrler))
+            if (agent.TryGetComponent<PawnActionController>(out __pawnActionCtrler))
             {
                 if (!startPoint.isNoneOrNull)
                     trailFx.value.PointStart = startPoint.value;

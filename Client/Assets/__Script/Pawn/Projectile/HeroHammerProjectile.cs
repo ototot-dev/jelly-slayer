@@ -21,9 +21,9 @@ namespace Game
         {
             base.StartInternal();
 
-            emitter.Where(v => v != null).Subscribe(v =>
+            emitterBrain.Where(v => v != null).Subscribe(v =>
             {
-                emitterBrain = v.GetComponent<HeroBrain>();
+                heroBrain = v.GetComponent<HeroBrain>();
             });
         }
         
@@ -31,7 +31,7 @@ namespace Game
         {
             base.OnUpdateHandler();
 
-            if (emitter.Value != null && !IsPendingDestroy)
+            if (emitterBrain.Value != null && !IsDespawnPending)
             {
                 velocity += gravity * Time.deltaTime;
                 transform.position += velocity * Time.deltaTime;

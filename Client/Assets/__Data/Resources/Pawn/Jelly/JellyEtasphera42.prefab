@@ -89,6 +89,60 @@ MonoBehaviour:
   pawnCollider: {fileID: 0}
   pawnBrain: {fileID: 0}
   sensorTrigger: 0
+--- !u!1 &114600999164548887
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6943539566958223554}
+  - component: {fileID: 2660969228096778703}
+  m_Layer: 0
+  m_Name: LaserBeamRedStatic
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &6943539566958223554
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 114600999164548887}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3050505489214289573}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2660969228096778703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 114600999164548887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb9855b25e492c347b6309d1cbce6e7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  beamLineRendererPrefab: {fileID: 1007036860295384550, guid: bb840a2a3fd13af4fb4c118ca89b471c, type: 3}
+  beamStartPrefab: {fileID: 5735960021299629528, guid: 0bfbdfbc57529fa4c80e3d3ef5448371, type: 3}
+  beamEndPrefab: {fileID: 6241897050121758077, guid: 12956160fe78be149bf84c53072da0df, type: 3}
+  beamCollides: 1
+  beamLength: 25
+  beamEndOffset: 0
+  textureScrollSpeed: 5
+  textureLengthScale: 1
+  widthMultiplier: 1.5
+  pulseSpeed: 10
 --- !u!1 &176031445017308860
 GameObject:
   m_ObjectHideFlags: 0
@@ -375,7 +429,7 @@ GameObject:
   - component: {fileID: 8665171759262140082}
   - component: {fileID: 2304260753377672933}
   - component: {fileID: 2644497925866717800}
-  - component: {fileID: 8411044579372762143}
+  - component: {fileID: 3646221343829188111}
   m_Layer: 6
   m_Name: Capsule
   m_TagString: Untagged
@@ -449,10 +503,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
+  m_Radius: 1.5
+  m_Height: 3
   m_Direction: 1
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Center: {x: 0, y: 1.5, z: 0}
 --- !u!114 &2304260753377672933
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -484,8 +538,8 @@ MonoBehaviour:
   _planeConstraint: 0
   _rootTransform: {fileID: 0}
   _rootTransformOffset: {x: 0, y: 0, z: 0}
-  _radius: 0.5
-  _height: 2
+  _radius: 1.5
+  _height: 3
   _slopeLimit: 45
   _stepOffset: 0.45
   _perchOffset: 0.5
@@ -495,7 +549,7 @@ MonoBehaviour:
   _useFlatBaseForGroundChecks: 0
   _collisionLayers:
     serializedVersion: 2
-    m_Bits: 29256
+    m_Bits: 28808
   _triggerInteraction: 1
   _advanced:
     minMoveDistance: 0
@@ -508,7 +562,7 @@ MonoBehaviour:
     impartPlatformRotation: 0
     impartPlatformVelocity: 0
   _minSlopeLimit: 0.7069833
---- !u!114 &8411044579372762143
+--- !u!114 &3646221343829188111
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1238,6 +1292,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6088542940374841421}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2155207286887910100
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1812363836777562092}
+  m_Layer: 0
+  m_Name: weapon_emit_l
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1812363836777562092
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2155207286887910100}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.7071068, y: -4.3297806e-17, z: 0.7071068, w: 4.3297806e-17}
+  m_LocalPosition: {x: 0.009, y: -0.027, z: 0.0002}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3439287706527452368}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &2175625462159794931
 GameObject:
   m_ObjectHideFlags: 0
@@ -1282,7 +1367,7 @@ GameObject:
   - component: {fileID: 2710579819581327130}
   - component: {fileID: 1798167167811104726}
   m_Layer: 12
-  m_Name: HitBox
+  m_Name: HitBox_1_l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1477,6 +1562,7 @@ Transform:
   m_Children:
   - {fileID: 613748868942507566}
   - {fileID: 7676734294187934607}
+  - {fileID: 261505263638445532}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6445146605582286079
@@ -1583,13 +1669,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainAnimator: {fileID: 7498190539181379592}
   rigBuilder: {fileID: 1917175744757451349}
+  rigSetup: {fileID: 8281578325541756555}
   legAnimator: {fileID: 3225162821244140032}
-  ragdollAnimator: {fileID: 0}
+  ragdollAnimator: {fileID: 930042796054025970}
   hookingPoint: {fileID: 328034680823836016}
+  leftTurret: {fileID: 6867323671951482987}
+  rightTurret: {fileID: 7905140381537322585}
   bodyOverrideTransform: {fileID: 165406809007291021}
   rigBlendWeight: 1
   rigBlendSpeed: 1
   legAnimGlueBlendSpeed: 1
+  ragDollAnimBlendSpeed: 1
   actionLayerBlendSpeed: 1
 --- !u!114 &5432987289010494906
 MonoBehaviour:
@@ -1619,14 +1709,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coreColliderHelper: {fileID: 2304260753377672933}
-  hitColliderHelper: {fileID: 7762583263965785145}
+  bodyHitColliderHelper: {fileID: 7762583263965785145}
   parryColliderHelper: {fileID: 0}
+  visibilityChecker: {fileID: 0}
   owner: {fileID: 0}
   tickInterval: 0.1
   tickEnabled: 1
   updateEnabled: 1
   lateUpdateEnabled: 1
   fixedUpdateEnabled: 1
+  leftLeg1_colliderHelper: {fileID: 1798167167811104726}
+  leftLeg2_colliderHelper: {fileID: 7901147414094264253}
+  rightLeg1_colliderHelper: {fileID: 1953545904694058999}
+  rightLeg2_colliderHelper: {fileID: 3804915358910090961}
   debugActionDisabled: 0
 --- !u!114 &2127815980358740746
 MonoBehaviour:
@@ -1648,7 +1743,7 @@ MonoBehaviour:
     isSpawnFinished:
       value: 0
     isInvincible:
-      value: 0
+      value: 1
     isDead:
       value: 0
     isDown:
@@ -1732,14 +1827,67 @@ MonoBehaviour:
     comboAttackRateStep: 0
     counterAttackRateStep: 0
     leapRateStep: 0
+    bulletPrefab: {fileID: 5195597221496436211, guid: 41c245f423d1f47dc8a1f148fb6d93ce, type: 3}
+    turretHighPitch: 1
+    turretLowPitch: 45
+    turretPitchSpeed: 90
+    turretPitchRecoverSpeed: 180
   graphics:
-    onHitFx: {fileID: 0}
-    onBigHitFx: {fileID: 0}
-    onKickHitFx: {fileID: 0}
-    onBleedingFx: {fileID: 0}
-    onMissedFx: {fileID: 0}
-    onBlockedFx: {fileID: 0}
-    onGuardBreakFx: {fileID: 0}
+    onHitFx: {fileID: 3011233550371498735, guid: 24e37d54f259141abb7ebbc527b8bf4e, type: 3}
+    onBigHitFx: {fileID: 3011233550371498735, guid: 24e37d54f259141abb7ebbc527b8bf4e, type: 3}
+    onKickHitFx: {fileID: 3011233550371498735, guid: 24e37d54f259141abb7ebbc527b8bf4e, type: 3}
+    onBleedingFx: {fileID: 3011233550371498735, guid: 8502543f66322458a81956cdd59fe959, type: 3}
+    onMissedFx: {fileID: 8338894570034044190, guid: 727c6a11e51e81140a330e6639938e26, type: 3}
+    onBlockedFx: {fileID: 4961553964636584268, guid: d7027452566465c47aeacb4cdcf40015, type: 3}
+    onGuardBreakFx: {fileID: 8905666514069622321, guid: a84cbbb54404c3d499340f02e684aab0, type: 3}
+    hitColor: {fileID: 2100000, guid: a352a16cd87054b82af9135444ad0122, type: 2}
+    body_meshRenderers:
+    - {fileID: 6339278072063373808}
+    - {fileID: 163073324543339050}
+    - {fileID: 7647725921070533942}
+    - {fileID: 8452630591967100307}
+    - {fileID: 1479502978047932859}
+    - {fileID: 9135030349826749603}
+    - {fileID: 8492818171790452189}
+    - {fileID: 8049876378374248503}
+    - {fileID: 7303007523931762681}
+    - {fileID: 3074750670098769266}
+    - {fileID: 5492826334146235466}
+    - {fileID: 5992563804271853469}
+    - {fileID: 9005921112286235286}
+    - {fileID: 6019581918049045325}
+    - {fileID: 4445091609313804057}
+    - {fileID: 5864933754866757583}
+    - {fileID: 1209310177089467246}
+    - {fileID: 7944832280326335643}
+    leftLeg1_meshRenderes:
+    - {fileID: 7454140475204996884}
+    - {fileID: 4042686975490941647}
+    - {fileID: 7344493278807926642}
+    - {fileID: 6311325658188789301}
+    - {fileID: 8413225750751664422}
+    - {fileID: 2849101148393381125}
+    leftLeg2_meshRenderes:
+    - {fileID: 7305741806954845226}
+    - {fileID: 9162470416132896360}
+    - {fileID: 179965775700264082}
+    - {fileID: 9199123451032030243}
+    - {fileID: 4964208454073354859}
+    - {fileID: 1780277503150583886}
+    rightLeg1_meshRenderes:
+    - {fileID: 4940421041382524461}
+    - {fileID: 8246269595740454304}
+    - {fileID: 1379447009529779338}
+    - {fileID: 4773131289752575305}
+    - {fileID: 27222239515328976}
+    - {fileID: 9094933874063454230}
+    rightLeg2_meshRenderes:
+    - {fileID: 2008775137299199903}
+    - {fileID: 1640563933373123649}
+    - {fileID: 170962516780794834}
+    - {fileID: 3930799030225362276}
+    - {fileID: 7582083278417983294}
+    - {fileID: 4329359356516953012}
 --- !u!114 &2909659972003230112
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1757,6 +1905,9 @@ MonoBehaviour:
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"MagicPillarBlastRed":{"_value":2,"_name":"MagicPillarBlastRed","_id":"3b4d98d4-d3a3-4c3d-a537-4a0f468b9cdb","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"GroundSlam":{"_value":3,"_name":"GroundSlam","_id":"3ea2abb1-ff32-453f-9778-983376e1d10e","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"BodySlam":{"_value":4,"_name":"BodySlam","_id":"df6ef16a-add9-47aa-b731-e0971a94ba21","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"Bullet":{"_value":5,"_name":"Bullet","_id":"b4b1c665-d528-4f5b-9391-88cf5e3ae8ca","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"weapon_emit_r":{"_value":6,"_name":"weapon_emit_r","_id":"42ce7270-e0e0-47de-b83e-0f92dc692e93","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Transform,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"weapon_emit_l":{"_value":7,"_name":"weapon_emit_l","_id":"bee3cf50-f733-4c4b-8167-73034be3d7ec","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Transform,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}}}'
   _objectReferences:
   - {fileID: 0}
@@ -1764,6 +1915,9 @@ MonoBehaviour:
   - {fileID: 5629602492193098048, guid: 265bf097dd85fb144b689a6ac2211310, type: 3}
   - {fileID: 5741126187209887343, guid: 8d8c1676b1e5dca46b3c777afd3f7e39, type: 3}
   - {fileID: 1541482542063588452, guid: 6103ef73125cad74a80cf8dd0703772c, type: 3}
+  - {fileID: 5195597221496436211, guid: 41c245f423d1f47dc8a1f148fb6d93ce, type: 3}
+  - {fileID: 5988263372065376072}
+  - {fileID: 1812363836777562092}
   _serializedVariables:
   - _json: '{"_value":1,"_name":"SlashRoundRed","_id":"812c51af-1b2b-4c18-aa17-0d3fd55b1286","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
       UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
@@ -1785,6 +1939,21 @@ MonoBehaviour:
     _references:
     - {fileID: 0}
     - {fileID: 1541482542063588452, guid: 6103ef73125cad74a80cf8dd0703772c, type: 3}
+  - _json: '{"_value":1,"_name":"Bullet","_id":"b4b1c665-d528-4f5b-9391-88cf5e3ae8ca","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
+    _references:
+    - {fileID: 0}
+    - {fileID: 5195597221496436211, guid: 41c245f423d1f47dc8a1f148fb6d93ce, type: 3}
+  - _json: '{"_value":1,"_name":"weapon_emit_r","_id":"42ce7270-e0e0-47de-b83e-0f92dc692e93","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Transform,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
+    _references:
+    - {fileID: 0}
+    - {fileID: 5988263372065376072}
+  - _json: '{"_value":1,"_name":"weapon_emit_l","_id":"bee3cf50-f733-4c4b-8167-73034be3d7ec","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Transform,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
+    _references:
+    - {fileID: 0}
+    - {fileID: 1812363836777562092}
 --- !u!114 &937681607665347987
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1798,20 +1967,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _serializedExposedParameters: []
-  _boundGraphSerialization: '{"type":"NodeCanvas.StateMachines.FSM","nodes":[{"_actionList":{"executionMode":1,"actions":[]},"_name":"Spawning","_position":{"x":727.0,"y":170.0},"$type":"NodeCanvas.StateMachines.ActionState","$id":"0"},{"_nestedBT":{"_value":1},"_name":"Idle","_position":{"x":931.0,"y":260.0},"$type":"NodeCanvas.StateMachines.NestedBTState","$id":"1"},{"_nestedBT":{"_value":2},"_name":"Combat","_position":{"x":686.0,"y":409.0},"$type":"NodeCanvas.StateMachines.NestedBTState","$id":"2"},{"_position":{"x":720.0,"y":720.0},"$type":"NodeCanvas.StateMachines.AnyState","$id":"3"},{"_actionList":{"executionMode":1,"actions":[]},"_name":"Dead","_position":{"x":537.0,"y":586.0},"$type":"NodeCanvas.StateMachines.ActionState","$id":"4"},{"_subTree":{"_value":3},"_position":{"x":880.0,"y":554.0},"$type":"NodeCanvas.StateMachines.ConcurrentSubTree"}],"connections":[{"_condition":{"valueA":{"_name":"IsSpawnFinished","_targetVariableID":"4318f709-1cb7-4a61-9817-57d1a6d4b48a"},"valueB":{"_value":true},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsInCombat","_targetVariableID":"c31ce944-71f9-45ab-b4e0-e827ca49694c"},"valueB":{"_value":true},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsInCombat","_targetVariableID":"c31ce944-71f9-45ab-b4e0-e827ca49694c"},"valueB":{},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"2"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsDead","_targetVariableID":"2723ff6f-40d8-406a-8ac6-eac0cecfc330"},"valueB":{"_value":true},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"3"},"_targetNode":{"$ref":"4"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsDead","_targetVariableID":"2723ff6f-40d8-406a-8ac6-eac0cecfc330"},"valueB":{},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"4"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.StateMachines.FSMConnection"}],"canvasGroups":[],"localBlackboard":{"_variables":{"IsSpawnFinished":{"_propertyPath":"Game.Etasphera42Blackboard.IsSpawnFinished","_name":"IsSpawnFinished","_id":"4318f709-1cb7-4a61-9817-57d1a6d4b48a","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
-    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},"IsInCombat":{"_propertyPath":"Game.Etasphera42Blackboard.IsInCombat","_name":"IsInCombat","_id":"c31ce944-71f9-45ab-b4e0-e827ca49694c","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
-    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},"IsDead":{"_propertyPath":"Game.Etasphera42Blackboard.IsDead","_name":"IsDead","_id":"2723ff6f-40d8-406a-8ac6-eac0cecfc330","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
+  _boundGraphSerialization: '{"type":"NodeCanvas.StateMachines.FSM","nodes":[{"_actionList":{"executionMode":1,"actions":[]},"_name":"Spawning","_position":{"x":727.0,"y":170.0},"$type":"NodeCanvas.StateMachines.ActionState","$id":"0"},{"_nestedBT":{"_value":1},"_name":"Idle","_position":{"x":931.0,"y":260.0},"$type":"NodeCanvas.StateMachines.NestedBTState","$id":"1"},{"_nestedBT":{"_value":2},"_name":"Combat","_position":{"x":686.0,"y":409.0},"$type":"NodeCanvas.StateMachines.NestedBTState","$id":"2"},{"_position":{"x":720.0,"y":720.0},"$type":"NodeCanvas.StateMachines.AnyState","$id":"3"},{"_actionList":{"executionMode":1,"actions":[]},"_name":"Dead","_position":{"x":537.0,"y":586.0},"$type":"NodeCanvas.StateMachines.ActionState","$id":"4"},{"_subTree":{"_value":3},"_position":{"x":880.0,"y":554.0},"$type":"NodeCanvas.StateMachines.ConcurrentSubTree"}],"connections":[{"_condition":{"valueA":{"_name":"IsSpawnFinished","_targetVariableID":"4318f709-1cb7-4a61-9817-57d1a6d4b48a"},"valueB":{"_value":true},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsInCombat","_targetVariableID":"12ff2cb7-5b98-4161-ac10-0c651d6bb0a2"},"valueB":{"_value":true},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsInCombat","_targetVariableID":"12ff2cb7-5b98-4161-ac10-0c651d6bb0a2"},"valueB":{},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"2"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsDead","_targetVariableID":"83965d84-21b8-4612-ad77-b44fb495cd65"},"valueB":{"_value":true},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"3"},"_targetNode":{"$ref":"4"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsDead","_targetVariableID":"83965d84-21b8-4612-ad77-b44fb495cd65"},"valueB":{},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"4"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.StateMachines.FSMConnection"}],"canvasGroups":[],"localBlackboard":{"_variables":{"IsSpawnFinished":{"_propertyPath":"Game.Etasphera42_Blackboard.IsSpawnFinished","_name":"IsSpawnFinished","_id":"4318f709-1cb7-4a61-9817-57d1a6d4b48a","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},"IsInCombat":{"_propertyPath":"Game.Etasphera42_Blackboard.IsInCombat","_name":"IsInCombat","_id":"12ff2cb7-5b98-4161-ac10-0c651d6bb0a2","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},"IsDead":{"_propertyPath":"Game.Etasphera42_Blackboard.IsDead","_name":"IsDead","_id":"83965d84-21b8-4612-ad77-b44fb495cd65","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
     mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"}}}}'
   _boundGraphObjectReferences:
   - {fileID: 0}
   - {fileID: 11400000, guid: f849d7e86c0ec420cb56fb80a2b38633, type: 2}
-  - {fileID: 11400000, guid: cdb1030a60eba4f1aab17ee4474264a0, type: 2}
   - {fileID: 11400000, guid: 159d9b68ffc9241f29d9a6a3cf0aa862, type: 2}
+  - {fileID: 11400000, guid: cdb1030a60eba4f1aab17ee4474264a0, type: 2}
   _boundGraphSource:
     _version: 3.31
     _category: 
     _comments: 
-    _translation: {x: -414, y: 23}
+    _translation: {x: -548, y: -115}
     _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 0
@@ -2212,8 +2381,8 @@ GameObject:
   - component: {fileID: 328034680823836016}
   - component: {fileID: 6265075139313283564}
   - component: {fileID: 6218050639543008072}
-  m_Layer: 11
-  m_Name: HitBox
+  m_Layer: 12
+  m_Name: HitBox_body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2574,7 +2743,7 @@ GameObject:
   - component: {fileID: 7393646485382270007}
   - component: {fileID: 1953545904694058999}
   m_Layer: 12
-  m_Name: HitBox
+  m_Name: HitBox_1_r
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2695,6 +2864,38 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6088542940374841421}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4204048085755931116
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3050505489214289573}
+  m_Layer: 0
+  m_Name: turret_c_emit
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3050505489214289573
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4204048085755931116}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6943539566958223554}
+  m_Father: {fileID: 1933611931588148143}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4227596807245320052
 GameObject:
@@ -3825,6 +4026,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6088542940374841421}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5926150083969543899
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 261505263638445532}
+  m_Layer: 0
+  m_Name: Ragdoll
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &261505263638445532
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5926150083969543899}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4813937049273337529}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5942191920903713011
 GameObject:
   m_ObjectHideFlags: 0
@@ -3836,8 +4068,8 @@ GameObject:
   - component: {fileID: 2304811991855260189}
   - component: {fileID: 8450061863475572429}
   - component: {fileID: 7762583263965785145}
-  m_Layer: 11
-  m_Name: HitBox
+  m_Layer: 12
+  m_Name: HitBox_pelves
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3852,7 +4084,7 @@ Transform:
   m_GameObject: {fileID: 5942191920903713011}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.105, z: 0}
+  m_LocalPosition: {x: 0, y: 0.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4486,6 +4718,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6088542940374841421}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7231046255262746208
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5988263372065376072}
+  m_Layer: 0
+  m_Name: weapon_emit_r
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5988263372065376072
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7231046255262746208}
+  serializedVersion: 2
+  m_LocalRotation: {x: 4.3297806e-17, y: 0.7071068, z: 4.3297806e-17, w: 0.7071068}
+  m_LocalPosition: {x: -0.009085894, y: 0.0267, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2167398789990987086}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &7241260882602538686
 GameObject:
   m_ObjectHideFlags: 0
@@ -4585,7 +4848,7 @@ GameObject:
   - component: {fileID: 5587952786733198955}
   - component: {fileID: 7901147414094264253}
   m_Layer: 12
-  m_Name: HitBox
+  m_Name: HitBox_2_l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4657,7 +4920,7 @@ GameObject:
   - component: {fileID: 1208853211296605014}
   - component: {fileID: 3804915358910090961}
   m_Layer: 12
-  m_Name: HitBox
+  m_Name: HitBox_2_r
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5874,6 +6137,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8009783250677705363, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 328034680823836016}
+    - targetCorrespondingSourceObject: {fileID: 7112357381109042849, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3050505489214289573}
+    - targetCorrespondingSourceObject: {fileID: 6330784981178825182, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1812363836777562092}
+    - targetCorrespondingSourceObject: {fileID: 7382982137879937088, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5988263372065376072}
     - targetCorrespondingSourceObject: {fileID: 1614387215046243574, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7646113456989740390}
@@ -5892,8 +6164,31 @@ PrefabInstance:
       addedObject: {fileID: 3225162821244140032}
     - targetCorrespondingSourceObject: {fileID: 4548520643414304793, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 930042796054025970}
+    - targetCorrespondingSourceObject: {fileID: 4548520643414304793, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 1917175744757451349}
   m_SourcePrefab: {fileID: 100100000, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+--- !u!137 &27222239515328976 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8647206984042951902, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &163073324543339050 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8800843769132490532, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &170962516780794834 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8808718803245807324, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &179965775700264082 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8799725254830387612, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &828109287939019623 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8295546499453675113, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
@@ -5904,9 +6199,49 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8451353529715039000, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
   m_PrefabInstance: {fileID: 8674419503912023310}
   m_PrefabAsset: {fileID: 0}
+--- !u!137 &1209310177089467246 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7541822549463385696, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &1379447009529779338 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7729721961069814148, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &1479502978047932859 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7848079299533376693, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &1640563933373123649 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7973005906136840527, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1678098808252260253 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8009783250677705363, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &1780277503150583886 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 6977600160839599424, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1933611931588148143 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7112357381109042849, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &2008775137299199903 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7170048143491302033, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2167398789990987086 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7382982137879937088, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
   m_PrefabInstance: {fileID: 8674419503912023310}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &2401599500194317526 stripped
@@ -5929,9 +6264,59 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6723460002408781599, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
   m_PrefabInstance: {fileID: 8674419503912023310}
   m_PrefabAsset: {fileID: 0}
+--- !u!137 &2849101148393381125 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 6911812608106457099, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &3074750670098769266 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 5965598136708943996, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &3439287706527452368 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6330784981178825182, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3780470821464199476 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5482944232517739578, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &3930799030225362276 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 5687125420255553642, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &4042686975490941647 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4646370073858611137, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &4329359356516953012 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4932923673470410426, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &4445091609313804057 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 5030971377722755607, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &4773131289752575305 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4205283474466433095, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &4940421041382524461 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4390548213705077539, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &4964208454073354859 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4361124764403498853, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
   m_PrefabInstance: {fileID: 8674419503912023310}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &5151605573365062935 stripped
@@ -6528,6 +6913,1198 @@ MonoBehaviour:
   LegsAnimatorBlend: 1
   _Editor_DefaultModuleOnStart: {fileID: 11400000, guid: 7d9bd86d54a7a594cb1793f9533e2e00, type: 2}
   _Editor_LegHelperModule: {fileID: 11400000, guid: 0645fbea8059aec47aa6ae9d2c93c1d4, type: 2}
+--- !u!114 &930042796054025970
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5151605573365062935}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 104179351ca7dd24a8f5bd7beecf8d06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handler:
+    _Editor_SelectedChain: 4
+    _Editor_ChainCategory: 1
+    _EditorCategory: 3
+    _EditorMainCategory: 1
+    _EditorMotionCategory: 0
+    m_hemi: {fileID: -2508796484986968503, guid: 44d994eaad14fdf49a2dd378b4d62094, type: 3}
+    m_cyli: {fileID: 2534964839176971238, guid: 2ea99bbc50a9266448416f21d645a771, type: 3}
+    m_sphere: {fileID: 4711208715938537054, guid: b43618aedd7473a4eb1aaa5e80012a1d, type: 3}
+    m_box: {fileID: -5495902117074765545, guid: 556fd6baa0902304189e57acd1d60fa6, type: 3}
+    _EditorBoneScenePreviews: []
+    StoredReferenceTPose:
+      BonePoses:
+      - SourceBone: {fileID: 6091034960188388484}
+        localPosition: {x: -0, y: 0.78865, z: 0}
+        rootSpacePosition: {x: 0, y: 0.78865, z: 0}
+        localRotation: {x: -0.5, y: 0.5, z: -0.5, w: 0.5}
+        rootSpaceRotation: {x: -0.5, y: 0.5, z: -0.5, w: 0.5}
+      - SourceBone: {fileID: 1678098808252260253}
+        localPosition: {x: -0.168021, y: 3.8451193e-18, z: 3.7308155e-17}
+        rootSpacePosition: {x: 0, y: 0.956671, z: 0}
+        localRotation: {x: 0, y: -0, z: -0, w: 1}
+        rootSpaceRotation: {x: -0.5, y: 0.5, z: -0.5, w: 0.5}
+      - SourceBone: {fileID: 328034680823836016}
+        localPosition: {x: -0.388, y: 0.263, z: 0}
+        rootSpacePosition: {x: 0, y: 1.344671, z: -0.263}
+        localRotation: {x: 0, y: 0, z: 0, w: 1}
+        rootSpaceRotation: {x: -0.5, y: 0.5, z: -0.5, w: 0.5}
+      - SourceBone: {fileID: 828109287939019623}
+        localPosition: {x: -0.0000050000003, y: -0.2663, z: 0.39868197}
+        rootSpacePosition: {x: 0.39868197, y: 0.788655, z: 0.26630005}
+        localRotation: {x: -0.28928038, y: -0.25051352, z: -0.6047976, w: 0.6984123}
+        rootSpaceRotation: {x: -0.92150193, y: 0.06619078, z: -0.38170797, w: 0.027423918}
+      - SourceBone: {fileID: 8813032584186760290}
+        localPosition: {x: 0.28337407, y: 0.0000005581713, z: -0.0000002934506}
+        rootSpacePosition: {x: 0.59699696, y: 0.748153, z: 0.46462202}
+        localRotation: {x: -1.1102572e-16, y: 0.000008027203, z: 0.3917338, w: 0.92007864}
+        rootSpaceRotation: {x: -0.82192194, y: 0.42188436, z: -0.34046587, w: 0.17475954}
+      - SourceBone: {fileID: 2679428110549131793}
+        localPosition: {x: 0.36318377, y: 0.000000067858835, z: 0.00000022879128}
+        rootSpacePosition: {x: 0.74669904, y: 0.453062, z: 0.6143321}
+        localRotation: {x: 2.7755607e-16, y: -0.0000037882576, z: 0.2850093, w: 0.95852476}
+        rootSpaceRotation: {x: -0.6675929, y: 0.63864136, z: -0.27653378, w: 0.26454896}
+      - SourceBone: {fileID: 6614765618991466814}
+        localPosition: {x: -0.000004, y: 0.2663, z: 0.39868197}
+        rootSpacePosition: {x: 0.39868197, y: 0.788654, z: -0.26630005}
+        localRotation: {x: 0.69841474, y: 0.60479116, z: 0.25052765, w: -0.28927565}
+        rootSpaceRotation: {x: 0.9215046, y: -0.06618579, z: -0.3817013, w: 0.027437806}
+      - SourceBone: {fileID: 2531213048723238789}
+        localPosition: {x: 0.28337464, y: -0.00000093058406, z: 0.000000026901597}
+        rootSpacePosition: {x: 0.59700096, y: 0.748153, z: -0.464619}
+        localRotation: {x: 0.000012860698, y: -0.000011025178, z: 0.39173293, w: 0.920079}
+        rootSpaceRotation: {x: 0.82192606, y: -0.421885, z: -0.34045637, w: 0.17475732}
+      - SourceBone: {fileID: 3780470821464199476}
+        localPosition: {x: 0.3631834, y: 0.00000081076064, z: -0.0000006800838}
+        rootSpacePosition: {x: 0.74670696, y: 0.45306194, z: -0.614324}
+        localRotation: {x: -4.7184383e-16, y: 0.000005907337, z: 0.2850095, w: 0.9585247}
+        rootSpaceRotation: {x: 0.6675971, y: -0.63864297, z: -0.27652353, w: 0.26454502}
+      - SourceBone: {fileID: 2401599500194317526}
+        localPosition: {x: -0.0000045180996, y: -0.26629996, z: -0.39868194}
+        rootSpacePosition: {x: -0.39868197, y: 0.7886545, z: 0.26630005}
+        localRotation: {x: 0.25051352, y: -0.28928038, z: 0.6984123, w: 0.6047976}
+        rootSpaceRotation: {x: 0.027423918, y: 0.381708, z: 0.06619078, w: 0.92150193}
+      - SourceBone: {fileID: 7928250736539206136}
+        localPosition: {x: -0.28337404, y: 0, z: -3.5527136e-17}
+        rootSpacePosition: {x: -0.5969972, y: 0.7481531, z: 0.46462187}
+        localRotation: {x: 2.775407e-17, y: 0.000008027203, z: 0.3917338, w: 0.92007864}
+        rootSpaceRotation: {x: 0.17475954, y: 0.3404659, z: 0.42188436, w: 0.82192194}
+      - SourceBone: {fileID: 8426360325391210671}
+        localPosition: {x: -0.36318377, y: 0, z: 1.5987211e-16}
+        rootSpacePosition: {x: -0.7466991, y: 0.45306215, z: 0.6143321}
+        localRotation: {x: -2.0816612e-16, y: -0.0000037882576, z: 0.2850093, w: 0.95852476}
+        rootSpaceRotation: {x: 0.26454893, y: 0.2765338, z: 0.63864136, w: 0.6675929}
+      - SourceBone: {fileID: 948157076810362390}
+        localPosition: {x: -0.00000448, y: 0.26629996, z: -0.39868194}
+        rootSpacePosition: {x: -0.39868197, y: 0.7886545, z: -0.26630005}
+        localRotation: {x: -0.60479116, y: 0.69841474, z: -0.28927565, w: -0.25052765}
+        rootSpaceRotation: {x: 0.027437791, y: 0.38170135, z: -0.0661858, w: -0.9215046}
+      - SourceBone: {fileID: 5390188019688287631}
+        localPosition: {x: -0.28337422, y: 2.842171e-16, z: -3.5527136e-17}
+        rootSpacePosition: {x: -0.5970006, y: 0.7481526, z: -0.46461853}
+        localRotation: {x: 0.000012860698, y: -0.000011025178, z: 0.39173293, w: 0.920079}
+        rootSpaceRotation: {x: 0.17475733, y: 0.34045637, z: -0.421885, w: -0.821926}
+      - SourceBone: {fileID: 2464120821165536457}
+        localPosition: {x: -0.36318332, y: -2.842171e-16, z: 1.2434498e-16}
+        rootSpacePosition: {x: -0.7467065, y: 0.45306206, z: -0.61432445}
+        localRotation: {x: -2.9143137e-16, y: 0.0000059073363, z: 0.2850095, w: 0.9585247}
+        rootSpaceRotation: {x: 0.26454502, y: 0.27652353, z: -0.63864297, w: -0.6675972}
+      - SourceBone: {fileID: 4813937049273337529}
+        localPosition: {x: 1.29, y: 0, z: -3.05}
+        rootSpacePosition: {x: 0, y: 0, z: 0}
+        localRotation: {x: 0, y: 0, z: 0, w: 1}
+        rootSpaceRotation: {x: 0, y: 0, z: 0, w: 1}
+      - SourceBone: {fileID: 7676734294187934607}
+        localPosition: {x: 0, y: 0, z: 0}
+        rootSpacePosition: {x: 0, y: 0, z: 0}
+        localRotation: {x: 0, y: 0, z: 0, w: 1}
+        rootSpaceRotation: {x: 0, y: 0, z: 0, w: 1}
+      - SourceBone: {fileID: 5491573866019456941}
+        localPosition: {x: 0, y: 0, z: 0}
+        rootSpacePosition: {x: 0, y: 0, z: 0}
+        localRotation: {x: -0, y: -0, z: -0, w: 1}
+        rootSpaceRotation: {x: 0, y: 0, z: 0, w: 1}
+      - SourceBone: {fileID: 8515734148203809849}
+        localPosition: {x: -0, y: 0, z: 0}
+        rootSpacePosition: {x: 0, y: 0, z: 0}
+        localRotation: {x: 0, y: -0, z: -0, w: 1}
+        rootSpaceRotation: {x: 0, y: 0, z: 0, w: 1}
+      LastBaseTransform: {fileID: 5491573866019456941}
+    UseExtraFeatures: 1
+    ExtraFeatures:
+    - CustomName: 
+      enabled: 1
+      FeatureReference: {fileID: 11400000, guid: fec516eb5421cbb4aa744a2e99ff15ef, type: 2}
+      customStringList: []
+      customObjectList: []
+      customEventsList: []
+      variables: []
+    IsHumanoid: 0
+    dummyContainer: {fileID: 0}
+    skeletonFillExtraBonesList: []
+    MusclesPower: 1
+    SpringsValue: 1500
+    SpringsOnFall: 0
+    DampingValue: 40
+    DampingValueOnFall: 0
+    HardMatching: 0
+    HardMatchPositions: 0
+    HardMatchPositionsOnFall: 0
+    PositionHardMatchingMultiplier: 1
+    HardMatchingOnFalling: 0
+    MotionInfluence: 1
+    AnchorBoneSpring: 1
+    MakeAnchorKinematicOnMaxSpring: 0
+    UnaffectedMovement: 0
+    AutoUnstuck: 0
+    LockAnchorRotation: 1
+    AnchorJointLimits: 0
+    FallOnZeroAnchor: 1
+    BaseTransform: {fileID: 0}
+    Mecanim: {fileID: 7498190539181379592}
+    RagdollLogic: 0
+    RagdollSizeMultiplier: 1
+    RagdollThicknessMultiplier: 1
+    ReferenceMass: 50
+    RigidbodiesInterpolation: 1
+    RigidbodiesDetectionMode: 0
+    RigidbodyDragValue: 0
+    RigidbodyAngularDragValue: 0.2
+    JointContactDistance: 0
+    JointBounciness: 0
+    JointLimitSpring: 0
+    JointLimitDamper: 0
+    ConnectedMassMultiply: 0.5
+    MassMultiplyOnFalling: 1
+    CollidersPhysicMaterial: {fileID: 0}
+    PhysicMaterialOnFall: {fileID: 0}
+    MaxAngularVelocity: 50
+    MaxVelocity: 0
+    NoGravityOnStanding: 0
+    MaxDepenetrationVelocity: 0
+    ProjectionMode: 0
+    PreProcessing: 0
+    RagdollBlend: 1
+    animatingMode: 1
+    UseReconstruction: 0
+    UnitySolverIterations: 12
+    Calibrate: 1
+    AnimatePhysics: 0
+    ApplyPositions: 0
+    OptimizeOnZeroBlend: 1
+    HideDummyInSceneView: 0
+    IgnoreBoundedColliders: 1
+    RagdollDummyLayer: 13
+    UnscaledTime: 0
+    FadeInAnimation: 0.1
+    IgnoreSourceSkeletonColliders: 1
+    WaitForInit: 1
+    AnimationMatchLimits: 1
+    TargetParentForRagdollDummy: {fileID: 261505263638445532}
+    BoundedCollidersIgnoreScaleup: 1.2
+    UnityVelocitySolverIterations: 0
+    DisableMecanimOnSleep: 1
+    chains:
+    - ChainName: Core
+      ChainType: 2
+      BoneSetups:
+      - SourceBone: {fileID: 6091034960188388484}
+        PhysicalDummyBone: {fileID: 0}
+        BoundedIgnoreScale: 1
+        BoneID: 0
+        colliders:
+        - ColliderType: 2
+          ColliderCenter: {x: 0.01203029, y: 0.08978155, z: 0.0077867787}
+          ColliderSizeMultiply: 1
+          CapsuleDirection: 0
+          ColliderRadius: 0.123333335
+          ColliderLength: 0.24666667
+          ColliderBoxSize: {x: 0.33, y: 1.18, z: 0.43}
+          ColliderMesh: {fileID: 0}
+          OtherReference: {fileID: 0}
+          RotationCorrection: {x: 0, y: 0, z: 0}
+          ColliderExtraTransform: {fileID: 0}
+        MassMultiplier: 0.26
+        ForceMultiplier: 1
+        MusclesBoost: 0
+        MainAxis: 2
+        TargetMainAxis: {x: 1, y: 0, z: 0}
+        InverseMainAxis: 1
+        MainAxisLowLimit: -35
+        MainAxisHighLimit: 35
+        SecondaryAxis: 0
+        TargetSecondaryAxis: {x: 0, y: 1, z: 0}
+        InverseSecondaryAxis: 1
+        SecondaryAxisAngleLimit: 20
+        ThirdAxisAngleLimit: 20
+        OverrideMaterial: {fileID: 0}
+        UseIndividualParameters: 0
+        OverrideInterpolation: 1
+        OverrideDetectionMode: 0
+        OverrideDragValue: 0
+        OverrideAngularDrag: 0.2
+        OverrideSpringPower: 0
+        OverrideSpringDamp: 0
+        HardMatchingMultiply: 1
+        HardMatchOverride: 0
+        ConnectionMassOverride: 0
+        DisableCollisionEvents: 0
+        ForceLimitsAllTheTime: 0
+        ForceKinematicOnStanding: 0
+        AllowConfigurablePosition: 0
+        LinearSpringLimit: 10000
+        LinearSpringDamping: 5
+        BoneBlendMultiplier: 1
+        LocalRight: {x: 1, y: 0, z: 0}
+        LocalUp: {x: 0, y: 1, z: 0}
+        LocalForward: {x: 0, y: 0, z: 1}
+        ToBase: {x: 0, y: 0, z: 0}
+        _EditorCollFoldout: 0
+        _EditorCollPosSliders: 0
+        _EditorBoxCollSliders: 0
+        _EditorMeshCollSliders: 0
+        _EditorRadiusSliders: 1
+        _EditorMaxSliderValue: 0.5
+        _EditorMainAxisPreview: 1
+        _EditorSecondAxisPreview: 0
+        _EditorThirdPreview: 0
+        StoredReferencePose:
+          LocalSpacePosition: {x: 0, y: 0, z: 0}
+          LocalSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+          RootSpacePosition: {x: 0, y: 0, z: 0}
+          RootSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+      - SourceBone: {fileID: 1678098808252260253}
+        PhysicalDummyBone: {fileID: 0}
+        BoundedIgnoreScale: 1
+        BoneID: 7
+        colliders:
+        - ColliderType: 2
+          ColliderCenter: {x: -0.37319967, y: 0.1874219, z: 0.000000028212867}
+          ColliderSizeMultiply: 1
+          CapsuleDirection: 0
+          ColliderRadius: 0.123333335
+          ColliderLength: 0.4687355
+          ColliderBoxSize: {x: 0.74, y: 1.05, z: 0.61}
+          ColliderMesh: {fileID: 0}
+          OtherReference: {fileID: 0}
+          RotationCorrection: {x: 0, y: 0, z: 0}
+          ColliderExtraTransform: {fileID: 0}
+        MassMultiplier: 0.24
+        ForceMultiplier: 1
+        MusclesBoost: 0
+        MainAxis: 2
+        TargetMainAxis: {x: 1, y: 0, z: 0}
+        InverseMainAxis: 1
+        MainAxisLowLimit: -22
+        MainAxisHighLimit: 70
+        SecondaryAxis: 0
+        TargetSecondaryAxis: {x: 0, y: 1, z: 0}
+        InverseSecondaryAxis: 1
+        SecondaryAxisAngleLimit: 30
+        ThirdAxisAngleLimit: 20
+        OverrideMaterial: {fileID: 0}
+        UseIndividualParameters: 0
+        OverrideInterpolation: 1
+        OverrideDetectionMode: 0
+        OverrideDragValue: 0
+        OverrideAngularDrag: 0.2
+        OverrideSpringPower: 0
+        OverrideSpringDamp: 0
+        HardMatchingMultiply: 1
+        HardMatchOverride: 0
+        ConnectionMassOverride: 0
+        DisableCollisionEvents: 0
+        ForceLimitsAllTheTime: 0
+        ForceKinematicOnStanding: 0
+        AllowConfigurablePosition: 0
+        LinearSpringLimit: 10000
+        LinearSpringDamping: 5
+        BoneBlendMultiplier: 1
+        LocalRight: {x: 1, y: 0, z: 0}
+        LocalUp: {x: 0, y: 1, z: 0}
+        LocalForward: {x: 0, y: 0, z: 1}
+        ToBase: {x: 0, y: 0, z: 0}
+        _EditorCollFoldout: 1
+        _EditorCollPosSliders: 0
+        _EditorBoxCollSliders: 0
+        _EditorMeshCollSliders: 0
+        _EditorRadiusSliders: 1
+        _EditorMaxSliderValue: 0.5
+        _EditorMainAxisPreview: 1
+        _EditorSecondAxisPreview: 0
+        _EditorThirdPreview: 0
+        StoredReferencePose:
+          LocalSpacePosition: {x: 0, y: 0, z: 0}
+          LocalSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+          RootSpacePosition: {x: 0, y: 0, z: 0}
+          RootSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+      ChainThicknessMultiplier: 1
+      ChainScaleMultiplier: 1
+      MassMultiplier: 0.5
+      MusclesForce: 1
+      AxisLimitRange: 1
+      UnlimitedRotations: 0
+      ConnectedMassScale: 1
+      ConnectedMassOverride: 0
+      Detach: 1
+      ChainBlend: 1
+      OverrideBlend: 0
+      AlternativeTensors: 0
+      AlternativeTensorsOnFall: 0
+      HardMatchMultiply: 1
+    - ChainName: Right Leg 1
+      ChainType: 32
+      BoneSetups:
+      - SourceBone: {fileID: 828109287939019623}
+        PhysicalDummyBone: {fileID: 0}
+        BoundedIgnoreScale: 1
+        BoneID: 2
+        colliders:
+        - ColliderType: 0
+          ColliderCenter: {x: 0.08351413, y: 0.008401372, z: -0.011702251}
+          ColliderSizeMultiply: 1
+          CapsuleDirection: 0
+          ColliderRadius: 0.056666665
+          ColliderLength: 0.40075698
+          ColliderBoxSize: {x: 0.40075698, y: 0.08499999, z: 0.08499999}
+          ColliderMesh: {fileID: 0}
+          OtherReference: {fileID: 0}
+          RotationCorrection: {x: 0, y: 0, z: 0}
+          ColliderExtraTransform: {fileID: 0}
+        MassMultiplier: 0.16
+        ForceMultiplier: 1
+        MusclesBoost: 0
+        MainAxis: 1
+        TargetMainAxis: {x: 1, y: 0, z: 0}
+        InverseMainAxis: 1
+        MainAxisLowLimit: -45
+        MainAxisHighLimit: 45
+        SecondaryAxis: 2
+        TargetSecondaryAxis: {x: 0, y: 1, z: 0}
+        InverseSecondaryAxis: 0
+        SecondaryAxisAngleLimit: 80
+        ThirdAxisAngleLimit: 3
+        OverrideMaterial: {fileID: 0}
+        UseIndividualParameters: 0
+        OverrideInterpolation: 1
+        OverrideDetectionMode: 0
+        OverrideDragValue: 0
+        OverrideAngularDrag: 0.2
+        OverrideSpringPower: 0
+        OverrideSpringDamp: 0
+        HardMatchingMultiply: 1
+        HardMatchOverride: 0
+        ConnectionMassOverride: 0
+        DisableCollisionEvents: 0
+        ForceLimitsAllTheTime: 0
+        ForceKinematicOnStanding: 0
+        AllowConfigurablePosition: 0
+        LinearSpringLimit: 10000
+        LinearSpringDamping: 5
+        BoneBlendMultiplier: 1
+        LocalRight: {x: 1, y: 0, z: 0}
+        LocalUp: {x: 0, y: 1, z: 0}
+        LocalForward: {x: 0, y: 0, z: 1}
+        ToBase: {x: 0, y: 0, z: 0}
+        _EditorCollFoldout: 0
+        _EditorCollPosSliders: 0
+        _EditorBoxCollSliders: 0
+        _EditorMeshCollSliders: 0
+        _EditorRadiusSliders: 1
+        _EditorMaxSliderValue: 0.5
+        _EditorMainAxisPreview: 1
+        _EditorSecondAxisPreview: 0
+        _EditorThirdPreview: 0
+        StoredReferencePose:
+          LocalSpacePosition: {x: 0, y: 0, z: 0}
+          LocalSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+          RootSpacePosition: {x: 0, y: 0, z: 0}
+          RootSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+      - SourceBone: {fileID: 8813032584186760290}
+        PhysicalDummyBone: {fileID: 0}
+        BoundedIgnoreScale: 1
+        BoneID: 4
+        colliders:
+        - ColliderType: 0
+          ColliderCenter: {x: 0.18159196, y: -0.000000044703484, z: 0.00000008497784}
+          ColliderSizeMultiply: 1
+          CapsuleDirection: 0
+          ColliderRadius: 0.1
+          ColliderLength: 0.36318386
+          ColliderBoxSize: {x: 0.36318386, y: 0.08499999, z: 0.08499999}
+          ColliderMesh: {fileID: 0}
+          OtherReference: {fileID: 0}
+          RotationCorrection: {x: 0, y: 0, z: 0}
+          ColliderExtraTransform: {fileID: 0}
+        MassMultiplier: 0.08
+        ForceMultiplier: 1
+        MusclesBoost: 0
+        MainAxis: 2
+        TargetMainAxis: {x: 1, y: 0, z: 0}
+        InverseMainAxis: 1
+        MainAxisLowLimit: -60
+        MainAxisHighLimit: 60
+        SecondaryAxis: 0
+        TargetSecondaryAxis: {x: 0, y: 1, z: 0}
+        InverseSecondaryAxis: 0
+        SecondaryAxisAngleLimit: 3
+        ThirdAxisAngleLimit: 3
+        OverrideMaterial: {fileID: 0}
+        UseIndividualParameters: 0
+        OverrideInterpolation: 1
+        OverrideDetectionMode: 0
+        OverrideDragValue: 0
+        OverrideAngularDrag: 0.2
+        OverrideSpringPower: 0
+        OverrideSpringDamp: 0
+        HardMatchingMultiply: 1
+        HardMatchOverride: 0
+        ConnectionMassOverride: 0
+        DisableCollisionEvents: 0
+        ForceLimitsAllTheTime: 0
+        ForceKinematicOnStanding: 0
+        AllowConfigurablePosition: 0
+        LinearSpringLimit: 10000
+        LinearSpringDamping: 5
+        BoneBlendMultiplier: 1
+        LocalRight: {x: 1, y: 0, z: 0}
+        LocalUp: {x: 0, y: 1, z: 0}
+        LocalForward: {x: 0, y: 0, z: 1}
+        ToBase: {x: 0, y: 0, z: 0}
+        _EditorCollFoldout: 1
+        _EditorCollPosSliders: 0
+        _EditorBoxCollSliders: 0
+        _EditorMeshCollSliders: 0
+        _EditorRadiusSliders: 1
+        _EditorMaxSliderValue: 0.5
+        _EditorMainAxisPreview: 1
+        _EditorSecondAxisPreview: 0
+        _EditorThirdPreview: 0
+        StoredReferencePose:
+          LocalSpacePosition: {x: 0, y: 0, z: 0}
+          LocalSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+          RootSpacePosition: {x: 0, y: 0, z: 0}
+          RootSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+      - SourceBone: {fileID: 2679428110549131793}
+        PhysicalDummyBone: {fileID: 0}
+        BoundedIgnoreScale: 1
+        BoneID: 6
+        colliders:
+        - ColliderType: 0
+          ColliderCenter: {x: 0.2257992, y: -0.00000011597784, z: -0.00000028731964}
+          ColliderSizeMultiply: 1
+          CapsuleDirection: 0
+          ColliderRadius: 0.124
+          ColliderLength: 0.466
+          ColliderBoxSize: {x: 0.36729258, y: 0.08499999, z: 0.08499999}
+          ColliderMesh: {fileID: 0}
+          OtherReference: {fileID: 0}
+          RotationCorrection: {x: 0, y: 0, z: 0}
+          ColliderExtraTransform: {fileID: 0}
+        MassMultiplier: 0.0448
+        ForceMultiplier: 1
+        MusclesBoost: 0
+        MainAxis: 2
+        TargetMainAxis: {x: 1, y: 0, z: 0}
+        InverseMainAxis: 1
+        MainAxisLowLimit: -60
+        MainAxisHighLimit: 60
+        SecondaryAxis: 0
+        TargetSecondaryAxis: {x: 0, y: 1, z: 0}
+        InverseSecondaryAxis: 0
+        SecondaryAxisAngleLimit: 3
+        ThirdAxisAngleLimit: 3
+        OverrideMaterial: {fileID: 0}
+        UseIndividualParameters: 0
+        OverrideInterpolation: 1
+        OverrideDetectionMode: 0
+        OverrideDragValue: 0
+        OverrideAngularDrag: 0.2
+        OverrideSpringPower: 0
+        OverrideSpringDamp: 0
+        HardMatchingMultiply: 1
+        HardMatchOverride: 0
+        ConnectionMassOverride: 0
+        DisableCollisionEvents: 0
+        ForceLimitsAllTheTime: 0
+        ForceKinematicOnStanding: 0
+        AllowConfigurablePosition: 0
+        LinearSpringLimit: 10000
+        LinearSpringDamping: 5
+        BoneBlendMultiplier: 1
+        LocalRight: {x: 1, y: 0, z: 0}
+        LocalUp: {x: 0, y: 1, z: 0}
+        LocalForward: {x: 0, y: 0, z: 1}
+        ToBase: {x: 0, y: 0, z: 0}
+        _EditorCollFoldout: 0
+        _EditorCollPosSliders: 0
+        _EditorBoxCollSliders: 0
+        _EditorMeshCollSliders: 0
+        _EditorRadiusSliders: 1
+        _EditorMaxSliderValue: 0.5
+        _EditorMainAxisPreview: 0
+        _EditorSecondAxisPreview: 0
+        _EditorThirdPreview: 1
+        StoredReferencePose:
+          LocalSpacePosition: {x: 0, y: 0, z: 0}
+          LocalSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+          RootSpacePosition: {x: 0, y: 0, z: 0}
+          RootSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+      ChainThicknessMultiplier: 1
+      ChainScaleMultiplier: 1
+      MassMultiplier: 0.5
+      MusclesForce: 1
+      AxisLimitRange: 1
+      UnlimitedRotations: 0
+      ConnectedMassScale: 1
+      ConnectedMassOverride: 0
+      Detach: 1
+      ChainBlend: 1
+      OverrideBlend: 0
+      AlternativeTensors: 0
+      AlternativeTensorsOnFall: 0
+      HardMatchMultiply: 1
+    - ChainName: Right Leg 2
+      ChainType: 32
+      BoneSetups:
+      - SourceBone: {fileID: 6614765618991466814}
+        PhysicalDummyBone: {fileID: 0}
+        BoundedIgnoreScale: 1
+        BoneID: 2
+        colliders:
+        - ColliderType: 0
+          ColliderCenter: {x: 0.08351408, y: 0.008400321, z: 0.0117013715}
+          ColliderSizeMultiply: 1
+          CapsuleDirection: 0
+          ColliderRadius: 0.05666667
+          ColliderLength: 0.40075776
+          ColliderBoxSize: {x: 0.40075776, y: 0.085, z: 0.085}
+          ColliderMesh: {fileID: 0}
+          OtherReference: {fileID: 0}
+          RotationCorrection: {x: 0, y: 0, z: 0}
+          ColliderExtraTransform: {fileID: 0}
+        MassMultiplier: 0.16
+        ForceMultiplier: 1
+        MusclesBoost: 0
+        MainAxis: 1
+        TargetMainAxis: {x: 1, y: 0, z: 0}
+        InverseMainAxis: 1
+        MainAxisLowLimit: -45
+        MainAxisHighLimit: 45
+        SecondaryAxis: 2
+        TargetSecondaryAxis: {x: 0, y: 1, z: 0}
+        InverseSecondaryAxis: 0
+        SecondaryAxisAngleLimit: 60
+        ThirdAxisAngleLimit: 3
+        OverrideMaterial: {fileID: 0}
+        UseIndividualParameters: 0
+        OverrideInterpolation: 1
+        OverrideDetectionMode: 0
+        OverrideDragValue: 0
+        OverrideAngularDrag: 0.2
+        OverrideSpringPower: 0
+        OverrideSpringDamp: 0
+        HardMatchingMultiply: 1
+        HardMatchOverride: 0
+        ConnectionMassOverride: 0
+        DisableCollisionEvents: 0
+        ForceLimitsAllTheTime: 0
+        ForceKinematicOnStanding: 0
+        AllowConfigurablePosition: 0
+        LinearSpringLimit: 10000
+        LinearSpringDamping: 5
+        BoneBlendMultiplier: 1
+        LocalRight: {x: 1, y: 0, z: 0}
+        LocalUp: {x: 0, y: 1, z: 0}
+        LocalForward: {x: 0, y: 0, z: 1}
+        ToBase: {x: 0, y: 0, z: 0}
+        _EditorCollFoldout: 0
+        _EditorCollPosSliders: 0
+        _EditorBoxCollSliders: 0
+        _EditorMeshCollSliders: 0
+        _EditorRadiusSliders: 1
+        _EditorMaxSliderValue: 0.5
+        _EditorMainAxisPreview: 0
+        _EditorSecondAxisPreview: 0
+        _EditorThirdPreview: 1
+        StoredReferencePose:
+          LocalSpacePosition: {x: 0, y: 0, z: 0}
+          LocalSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+          RootSpacePosition: {x: 0, y: 0, z: 0}
+          RootSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+      - SourceBone: {fileID: 2531213048723238789}
+        PhysicalDummyBone: {fileID: 0}
+        BoundedIgnoreScale: 1
+        BoneID: 4
+        colliders:
+        - ColliderType: 0
+          ColliderCenter: {x: 0.18159169, y: 0.00000037252903, z: -0.00000044455783}
+          ColliderSizeMultiply: 1
+          CapsuleDirection: 0
+          ColliderRadius: 0.1
+          ColliderLength: 0.36318344
+          ColliderBoxSize: {x: 0.36318344, y: 0.085, z: 0.085}
+          ColliderMesh: {fileID: 0}
+          OtherReference: {fileID: 0}
+          RotationCorrection: {x: 0, y: 0, z: 0}
+          ColliderExtraTransform: {fileID: 0}
+        MassMultiplier: 0.08
+        ForceMultiplier: 1
+        MusclesBoost: 0
+        MainAxis: 2
+        TargetMainAxis: {x: 1, y: 0, z: 0}
+        InverseMainAxis: 1
+        MainAxisLowLimit: -60
+        MainAxisHighLimit: 60
+        SecondaryAxis: 1
+        TargetSecondaryAxis: {x: 0, y: 1, z: 0}
+        InverseSecondaryAxis: 0
+        SecondaryAxisAngleLimit: 3
+        ThirdAxisAngleLimit: 3
+        OverrideMaterial: {fileID: 0}
+        UseIndividualParameters: 0
+        OverrideInterpolation: 1
+        OverrideDetectionMode: 0
+        OverrideDragValue: 0
+        OverrideAngularDrag: 0.2
+        OverrideSpringPower: 0
+        OverrideSpringDamp: 0
+        HardMatchingMultiply: 1
+        HardMatchOverride: 0
+        ConnectionMassOverride: 0
+        DisableCollisionEvents: 0
+        ForceLimitsAllTheTime: 0
+        ForceKinematicOnStanding: 0
+        AllowConfigurablePosition: 0
+        LinearSpringLimit: 10000
+        LinearSpringDamping: 5
+        BoneBlendMultiplier: 1
+        LocalRight: {x: 1, y: 0, z: 0}
+        LocalUp: {x: 0, y: 1, z: 0}
+        LocalForward: {x: 0, y: 0, z: 1}
+        ToBase: {x: 0, y: 0, z: 0}
+        _EditorCollFoldout: 0
+        _EditorCollPosSliders: 0
+        _EditorBoxCollSliders: 0
+        _EditorMeshCollSliders: 0
+        _EditorRadiusSliders: 1
+        _EditorMaxSliderValue: 0.5
+        _EditorMainAxisPreview: 0
+        _EditorSecondAxisPreview: 1
+        _EditorThirdPreview: 0
+        StoredReferencePose:
+          LocalSpacePosition: {x: 0, y: 0, z: 0}
+          LocalSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+          RootSpacePosition: {x: 0, y: 0, z: 0}
+          RootSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+      - SourceBone: {fileID: 3780470821464199476}
+        PhysicalDummyBone: {fileID: 0}
+        BoundedIgnoreScale: 1
+        BoneID: 6
+        colliders:
+        - ColliderType: 0
+          ColliderCenter: {x: 0.22782406, y: -0.000000009976432, z: 0.00000058437604}
+          ColliderSizeMultiply: 1
+          CapsuleDirection: 0
+          ColliderRadius: 0.124
+          ColliderLength: 0.466
+          ColliderBoxSize: {x: 0.36729252, y: 0.084999986, z: 0.084999986}
+          ColliderMesh: {fileID: 0}
+          OtherReference: {fileID: 0}
+          RotationCorrection: {x: 0, y: 0, z: 0}
+          ColliderExtraTransform: {fileID: 0}
+        MassMultiplier: 0.0448
+        ForceMultiplier: 1
+        MusclesBoost: 0
+        MainAxis: 2
+        TargetMainAxis: {x: 1, y: 0, z: 0}
+        InverseMainAxis: 1
+        MainAxisLowLimit: -60
+        MainAxisHighLimit: 60
+        SecondaryAxis: 1
+        TargetSecondaryAxis: {x: 0, y: 1, z: 0}
+        InverseSecondaryAxis: 0
+        SecondaryAxisAngleLimit: 3
+        ThirdAxisAngleLimit: 3
+        OverrideMaterial: {fileID: 0}
+        UseIndividualParameters: 0
+        OverrideInterpolation: 1
+        OverrideDetectionMode: 0
+        OverrideDragValue: 0
+        OverrideAngularDrag: 0.2
+        OverrideSpringPower: 0
+        OverrideSpringDamp: 0
+        HardMatchingMultiply: 1
+        HardMatchOverride: 0
+        ConnectionMassOverride: 0
+        DisableCollisionEvents: 0
+        ForceLimitsAllTheTime: 0
+        ForceKinematicOnStanding: 0
+        AllowConfigurablePosition: 0
+        LinearSpringLimit: 10000
+        LinearSpringDamping: 5
+        BoneBlendMultiplier: 1
+        LocalRight: {x: 1, y: 0, z: 0}
+        LocalUp: {x: 0, y: 1, z: 0}
+        LocalForward: {x: 0, y: 0, z: 1}
+        ToBase: {x: 0, y: 0, z: 0}
+        _EditorCollFoldout: 1
+        _EditorCollPosSliders: 0
+        _EditorBoxCollSliders: 0
+        _EditorMeshCollSliders: 0
+        _EditorRadiusSliders: 1
+        _EditorMaxSliderValue: 0.5
+        _EditorMainAxisPreview: 1
+        _EditorSecondAxisPreview: 0
+        _EditorThirdPreview: 0
+        StoredReferencePose:
+          LocalSpacePosition: {x: 0, y: 0, z: 0}
+          LocalSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+          RootSpacePosition: {x: 0, y: 0, z: 0}
+          RootSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+      ChainThicknessMultiplier: 1
+      ChainScaleMultiplier: 1
+      MassMultiplier: 0.5
+      MusclesForce: 1
+      AxisLimitRange: 1
+      UnlimitedRotations: 0
+      ConnectedMassScale: 1
+      ConnectedMassOverride: 0
+      Detach: 1
+      ChainBlend: 1
+      OverrideBlend: 0
+      AlternativeTensors: 0
+      AlternativeTensorsOnFall: 0
+      HardMatchMultiply: 1
+    - ChainName: Left Leg 1
+      ChainType: 16
+      BoneSetups:
+      - SourceBone: {fileID: 2401599500194317526}
+        PhysicalDummyBone: {fileID: 0}
+        BoundedIgnoreScale: 1
+        BoneID: 1
+        colliders:
+        - ColliderType: 0
+          ColliderCenter: {x: -0.08351411, y: -0.008400895, z: 0.011702251}
+          ColliderSizeMultiply: 1
+          CapsuleDirection: 0
+          ColliderRadius: 0.056666665
+          ColliderLength: 0.40075698
+          ColliderBoxSize: {x: 0.40075698, y: 0.08499999, z: 0.08499999}
+          ColliderMesh: {fileID: 0}
+          OtherReference: {fileID: 0}
+          RotationCorrection: {x: 0, y: 0, z: 0}
+          ColliderExtraTransform: {fileID: 0}
+        MassMultiplier: 0.16
+        ForceMultiplier: 1
+        MusclesBoost: 0
+        MainAxis: 1
+        TargetMainAxis: {x: 1, y: 0, z: 0}
+        InverseMainAxis: 1
+        MainAxisLowLimit: -45
+        MainAxisHighLimit: 45
+        SecondaryAxis: 2
+        TargetSecondaryAxis: {x: 0, y: 1, z: 0}
+        InverseSecondaryAxis: 0
+        SecondaryAxisAngleLimit: 80
+        ThirdAxisAngleLimit: 3
+        OverrideMaterial: {fileID: 0}
+        UseIndividualParameters: 0
+        OverrideInterpolation: 1
+        OverrideDetectionMode: 0
+        OverrideDragValue: 0
+        OverrideAngularDrag: 0.2
+        OverrideSpringPower: 0
+        OverrideSpringDamp: 0
+        HardMatchingMultiply: 1
+        HardMatchOverride: 0
+        ConnectionMassOverride: 0
+        DisableCollisionEvents: 0
+        ForceLimitsAllTheTime: 0
+        ForceKinematicOnStanding: 0
+        AllowConfigurablePosition: 0
+        LinearSpringLimit: 10000
+        LinearSpringDamping: 5
+        BoneBlendMultiplier: 1
+        LocalRight: {x: 1, y: 0, z: 0}
+        LocalUp: {x: 0, y: 1, z: 0}
+        LocalForward: {x: 0, y: 0, z: 1}
+        ToBase: {x: 0, y: 0, z: 0}
+        _EditorCollFoldout: 0
+        _EditorCollPosSliders: 0
+        _EditorBoxCollSliders: 0
+        _EditorMeshCollSliders: 0
+        _EditorRadiusSliders: 1
+        _EditorMaxSliderValue: 0.5
+        _EditorMainAxisPreview: 0
+        _EditorSecondAxisPreview: 1
+        _EditorThirdPreview: 0
+        StoredReferencePose:
+          LocalSpacePosition: {x: 0, y: 0, z: 0}
+          LocalSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+          RootSpacePosition: {x: 0, y: 0, z: 0}
+          RootSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+      - SourceBone: {fileID: 7928250736539206136}
+        PhysicalDummyBone: {fileID: 0}
+        BoundedIgnoreScale: 1
+        BoneID: 3
+        colliders:
+        - ColliderType: 0
+          ColliderCenter: {x: -0.18159208, y: 0.00000010430813, z: 0.00000032768008}
+          ColliderSizeMultiply: 1
+          CapsuleDirection: 0
+          ColliderRadius: 0.1
+          ColliderLength: 0.36318386
+          ColliderBoxSize: {x: 0.36318386, y: 0.08499999, z: 0.08499999}
+          ColliderMesh: {fileID: 0}
+          OtherReference: {fileID: 0}
+          RotationCorrection: {x: 0, y: 0, z: 0}
+          ColliderExtraTransform: {fileID: 0}
+        MassMultiplier: 0.08
+        ForceMultiplier: 1
+        MusclesBoost: 0
+        MainAxis: 2
+        TargetMainAxis: {x: 1, y: 0, z: 0}
+        InverseMainAxis: 1
+        MainAxisLowLimit: -60
+        MainAxisHighLimit: 60
+        SecondaryAxis: 0
+        TargetSecondaryAxis: {x: 0, y: 1, z: 0}
+        InverseSecondaryAxis: 0
+        SecondaryAxisAngleLimit: 3
+        ThirdAxisAngleLimit: 3
+        OverrideMaterial: {fileID: 0}
+        UseIndividualParameters: 0
+        OverrideInterpolation: 1
+        OverrideDetectionMode: 0
+        OverrideDragValue: 0
+        OverrideAngularDrag: 0.2
+        OverrideSpringPower: 0
+        OverrideSpringDamp: 0
+        HardMatchingMultiply: 1
+        HardMatchOverride: 0
+        ConnectionMassOverride: 0
+        DisableCollisionEvents: 0
+        ForceLimitsAllTheTime: 0
+        ForceKinematicOnStanding: 0
+        AllowConfigurablePosition: 0
+        LinearSpringLimit: 10000
+        LinearSpringDamping: 5
+        BoneBlendMultiplier: 1
+        LocalRight: {x: 1, y: 0, z: 0}
+        LocalUp: {x: 0, y: 1, z: 0}
+        LocalForward: {x: 0, y: 0, z: 1}
+        ToBase: {x: 0, y: 0, z: 0}
+        _EditorCollFoldout: 1
+        _EditorCollPosSliders: 0
+        _EditorBoxCollSliders: 0
+        _EditorMeshCollSliders: 0
+        _EditorRadiusSliders: 1
+        _EditorMaxSliderValue: 0.5
+        _EditorMainAxisPreview: 1
+        _EditorSecondAxisPreview: 0
+        _EditorThirdPreview: 0
+        StoredReferencePose:
+          LocalSpacePosition: {x: 0, y: 0, z: 0}
+          LocalSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+          RootSpacePosition: {x: 0, y: 0, z: 0}
+          RootSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+      - SourceBone: {fileID: 8426360325391210671}
+        PhysicalDummyBone: {fileID: 0}
+        BoundedIgnoreScale: 1
+        BoneID: 5
+        colliders:
+        - ColliderType: 0
+          ColliderCenter: {x: -0.22579949, y: 0.00000032782555, z: 0.00000039678991}
+          ColliderSizeMultiply: 1
+          CapsuleDirection: 0
+          ColliderRadius: 0.124
+          ColliderLength: 0.466
+          ColliderBoxSize: {x: 0.36729258, y: 0.08499999, z: 0.08499999}
+          ColliderMesh: {fileID: 0}
+          OtherReference: {fileID: 0}
+          RotationCorrection: {x: 0, y: 0, z: 0}
+          ColliderExtraTransform: {fileID: 0}
+        MassMultiplier: 0.0448
+        ForceMultiplier: 1
+        MusclesBoost: 0
+        MainAxis: 2
+        TargetMainAxis: {x: 1, y: 0, z: 0}
+        InverseMainAxis: 1
+        MainAxisLowLimit: -60
+        MainAxisHighLimit: 60
+        SecondaryAxis: 0
+        TargetSecondaryAxis: {x: 0, y: 1, z: 0}
+        InverseSecondaryAxis: 0
+        SecondaryAxisAngleLimit: 3
+        ThirdAxisAngleLimit: 3
+        OverrideMaterial: {fileID: 0}
+        UseIndividualParameters: 0
+        OverrideInterpolation: 1
+        OverrideDetectionMode: 0
+        OverrideDragValue: 0
+        OverrideAngularDrag: 0.2
+        OverrideSpringPower: 0
+        OverrideSpringDamp: 0
+        HardMatchingMultiply: 1
+        HardMatchOverride: 0
+        ConnectionMassOverride: 0
+        DisableCollisionEvents: 0
+        ForceLimitsAllTheTime: 0
+        ForceKinematicOnStanding: 0
+        AllowConfigurablePosition: 0
+        LinearSpringLimit: 10000
+        LinearSpringDamping: 5
+        BoneBlendMultiplier: 1
+        LocalRight: {x: 1, y: 0, z: 0}
+        LocalUp: {x: 0, y: 1, z: 0}
+        LocalForward: {x: 0, y: 0, z: 1}
+        ToBase: {x: 0, y: 0, z: 0}
+        _EditorCollFoldout: 0
+        _EditorCollPosSliders: 0
+        _EditorBoxCollSliders: 0
+        _EditorMeshCollSliders: 0
+        _EditorRadiusSliders: 1
+        _EditorMaxSliderValue: 0.5
+        _EditorMainAxisPreview: 1
+        _EditorSecondAxisPreview: 0
+        _EditorThirdPreview: 0
+        StoredReferencePose:
+          LocalSpacePosition: {x: 0, y: 0, z: 0}
+          LocalSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+          RootSpacePosition: {x: 0, y: 0, z: 0}
+          RootSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+      ChainThicknessMultiplier: 1
+      ChainScaleMultiplier: 1
+      MassMultiplier: 0.5
+      MusclesForce: 1
+      AxisLimitRange: 1
+      UnlimitedRotations: 0
+      ConnectedMassScale: 1
+      ConnectedMassOverride: 0
+      Detach: 1
+      ChainBlend: 1
+      OverrideBlend: 0
+      AlternativeTensors: 0
+      AlternativeTensorsOnFall: 0
+      HardMatchMultiply: 1
+    - ChainName: Left Leg 2
+      ChainType: 16
+      BoneSetups:
+      - SourceBone: {fileID: 948157076810362390}
+        PhysicalDummyBone: {fileID: 0}
+        BoundedIgnoreScale: 1
+        BoneID: 1
+        colliders:
+        - ColliderType: 0
+          ColliderCenter: {x: -0.083514184, y: -0.008400787, z: -0.011701368}
+          ColliderSizeMultiply: 1
+          CapsuleDirection: 0
+          ColliderRadius: 0.05666667
+          ColliderLength: 0.40075776
+          ColliderBoxSize: {x: 0.40075776, y: 0.085, z: 0.085}
+          ColliderMesh: {fileID: 0}
+          OtherReference: {fileID: 0}
+          RotationCorrection: {x: 0, y: 0, z: 0}
+          ColliderExtraTransform: {fileID: 0}
+        MassMultiplier: 0.16
+        ForceMultiplier: 1
+        MusclesBoost: 0
+        MainAxis: 1
+        TargetMainAxis: {x: 1, y: 0, z: 0}
+        InverseMainAxis: 1
+        MainAxisLowLimit: -45
+        MainAxisHighLimit: 45
+        SecondaryAxis: 2
+        TargetSecondaryAxis: {x: 0, y: 1, z: 0}
+        InverseSecondaryAxis: 0
+        SecondaryAxisAngleLimit: 60
+        ThirdAxisAngleLimit: 3
+        OverrideMaterial: {fileID: 0}
+        UseIndividualParameters: 0
+        OverrideInterpolation: 1
+        OverrideDetectionMode: 0
+        OverrideDragValue: 0
+        OverrideAngularDrag: 0.2
+        OverrideSpringPower: 0
+        OverrideSpringDamp: 0
+        HardMatchingMultiply: 1
+        HardMatchOverride: 0
+        ConnectionMassOverride: 0
+        DisableCollisionEvents: 0
+        ForceLimitsAllTheTime: 0
+        ForceKinematicOnStanding: 0
+        AllowConfigurablePosition: 0
+        LinearSpringLimit: 10000
+        LinearSpringDamping: 5
+        BoneBlendMultiplier: 1
+        LocalRight: {x: 1, y: 0, z: 0}
+        LocalUp: {x: 0, y: 1, z: 0}
+        LocalForward: {x: 0, y: 0, z: 1}
+        ToBase: {x: 0, y: 0, z: 0}
+        _EditorCollFoldout: 1
+        _EditorCollPosSliders: 0
+        _EditorBoxCollSliders: 0
+        _EditorMeshCollSliders: 0
+        _EditorRadiusSliders: 1
+        _EditorMaxSliderValue: 0.5
+        _EditorMainAxisPreview: 1
+        _EditorSecondAxisPreview: 0
+        _EditorThirdPreview: 0
+        StoredReferencePose:
+          LocalSpacePosition: {x: 0, y: 0, z: 0}
+          LocalSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+          RootSpacePosition: {x: 0, y: 0, z: 0}
+          RootSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+      - SourceBone: {fileID: 5390188019688287631}
+        PhysicalDummyBone: {fileID: 0}
+        BoundedIgnoreScale: 1
+        BoneID: 3
+        colliders:
+        - ColliderType: 0
+          ColliderCenter: {x: -0.18159176, y: 0.000000346452, z: 0.00000038784538}
+          ColliderSizeMultiply: 1
+          CapsuleDirection: 0
+          ColliderRadius: 0.1
+          ColliderLength: 0.36318344
+          ColliderBoxSize: {x: 0.36318344, y: 0.085, z: 0.085}
+          ColliderMesh: {fileID: 0}
+          OtherReference: {fileID: 0}
+          RotationCorrection: {x: 0, y: 0, z: 0}
+          ColliderExtraTransform: {fileID: 0}
+        MassMultiplier: 0.08
+        ForceMultiplier: 1
+        MusclesBoost: 0
+        MainAxis: 2
+        TargetMainAxis: {x: 1, y: 0, z: 0}
+        InverseMainAxis: 1
+        MainAxisLowLimit: -60
+        MainAxisHighLimit: 60
+        SecondaryAxis: 1
+        TargetSecondaryAxis: {x: 0, y: 1, z: 0}
+        InverseSecondaryAxis: 0
+        SecondaryAxisAngleLimit: 3
+        ThirdAxisAngleLimit: 3
+        OverrideMaterial: {fileID: 0}
+        UseIndividualParameters: 0
+        OverrideInterpolation: 1
+        OverrideDetectionMode: 0
+        OverrideDragValue: 0
+        OverrideAngularDrag: 0.2
+        OverrideSpringPower: 0
+        OverrideSpringDamp: 0
+        HardMatchingMultiply: 1
+        HardMatchOverride: 0
+        ConnectionMassOverride: 0
+        DisableCollisionEvents: 0
+        ForceLimitsAllTheTime: 0
+        ForceKinematicOnStanding: 0
+        AllowConfigurablePosition: 0
+        LinearSpringLimit: 10000
+        LinearSpringDamping: 5
+        BoneBlendMultiplier: 1
+        LocalRight: {x: 1, y: 0, z: 0}
+        LocalUp: {x: 0, y: 1, z: 0}
+        LocalForward: {x: 0, y: 0, z: 1}
+        ToBase: {x: 0, y: 0, z: 0}
+        _EditorCollFoldout: 0
+        _EditorCollPosSliders: 0
+        _EditorBoxCollSliders: 0
+        _EditorMeshCollSliders: 0
+        _EditorRadiusSliders: 1
+        _EditorMaxSliderValue: 0.5
+        _EditorMainAxisPreview: 1
+        _EditorSecondAxisPreview: 0
+        _EditorThirdPreview: 0
+        StoredReferencePose:
+          LocalSpacePosition: {x: 0, y: 0, z: 0}
+          LocalSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+          RootSpacePosition: {x: 0, y: 0, z: 0}
+          RootSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+      - SourceBone: {fileID: 2464120821165536457}
+        PhysicalDummyBone: {fileID: 0}
+        BoundedIgnoreScale: 1
+        BoneID: 5
+        colliders:
+        - ColliderType: 0
+          ColliderCenter: {x: -0.22782427, y: 0.0000000949949, z: -0.000000010950544}
+          ColliderSizeMultiply: 1
+          CapsuleDirection: 0
+          ColliderRadius: 0.124
+          ColliderLength: 0.466
+          ColliderBoxSize: {x: 0.36729252, y: 0.084999986, z: 0.084999986}
+          ColliderMesh: {fileID: 0}
+          OtherReference: {fileID: 0}
+          RotationCorrection: {x: 0, y: 0, z: 0}
+          ColliderExtraTransform: {fileID: 0}
+        MassMultiplier: 0.0448
+        ForceMultiplier: 1
+        MusclesBoost: 0
+        MainAxis: 2
+        TargetMainAxis: {x: 1, y: 0, z: 0}
+        InverseMainAxis: 1
+        MainAxisLowLimit: -60
+        MainAxisHighLimit: 60
+        SecondaryAxis: 1
+        TargetSecondaryAxis: {x: 0, y: 1, z: 0}
+        InverseSecondaryAxis: 0
+        SecondaryAxisAngleLimit: 3
+        ThirdAxisAngleLimit: 3
+        OverrideMaterial: {fileID: 0}
+        UseIndividualParameters: 0
+        OverrideInterpolation: 1
+        OverrideDetectionMode: 0
+        OverrideDragValue: 0
+        OverrideAngularDrag: 0.2
+        OverrideSpringPower: 0
+        OverrideSpringDamp: 0
+        HardMatchingMultiply: 1
+        HardMatchOverride: 0
+        ConnectionMassOverride: 0
+        DisableCollisionEvents: 0
+        ForceLimitsAllTheTime: 0
+        ForceKinematicOnStanding: 0
+        AllowConfigurablePosition: 0
+        LinearSpringLimit: 10000
+        LinearSpringDamping: 5
+        BoneBlendMultiplier: 1
+        LocalRight: {x: 1, y: 0, z: 0}
+        LocalUp: {x: 0, y: 1, z: 0}
+        LocalForward: {x: 0, y: 0, z: 1}
+        ToBase: {x: 0, y: 0, z: 0}
+        _EditorCollFoldout: 0
+        _EditorCollPosSliders: 0
+        _EditorBoxCollSliders: 0
+        _EditorMeshCollSliders: 0
+        _EditorRadiusSliders: 1
+        _EditorMaxSliderValue: 0.5
+        _EditorMainAxisPreview: 1
+        _EditorSecondAxisPreview: 0
+        _EditorThirdPreview: 0
+        StoredReferencePose:
+          LocalSpacePosition: {x: 0, y: 0, z: 0}
+          LocalSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+          RootSpacePosition: {x: 0, y: 0, z: 0}
+          RootSpaceRotation: {x: 0, y: 0, z: 0, w: 0}
+      ChainThicknessMultiplier: 1
+      ChainScaleMultiplier: 1
+      MassMultiplier: 0.5
+      MusclesForce: 1
+      AxisLimitRange: 1
+      UnlimitedRotations: 0
+      ConnectedMassScale: 1
+      ConnectedMassOverride: 0
+      Detach: 1
+      ChainBlend: 1
+      OverrideBlend: 0
+      AlternativeTensors: 0
+      AlternativeTensorsOnFall: 0
+      HardMatchMultiply: 1
+    parentObject: {fileID: 5151605573365062935}
 --- !u!114 &1917175744757451349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6554,9 +8131,39 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3770717684661875363, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
   m_PrefabInstance: {fileID: 8674419503912023310}
   m_PrefabAsset: {fileID: 0}
+--- !u!137 &5492826334146235466 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 3772832205011155268, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &5864933754866757583 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2956002622703835841, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &5992563804271853469 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 3118856626301946515, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &6019581918049045325 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 3163887903055609411, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6091034960188388484 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3235289403209728394, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &6311325658188789301 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 3456494757373788987, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &6339278072063373808 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 3429518903517627646, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
   m_PrefabInstance: {fileID: 8674419503912023310}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &6614765618991466814 stripped
@@ -6564,9 +8171,49 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2570962599517715504, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
   m_PrefabInstance: {fileID: 8674419503912023310}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &6867323671951482987 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2822658463298606437, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &7303007523931762681 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2105648545033902839, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &7305741806954845226 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2090391382763430180, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &7344493278807926642 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2129458447680426620, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &7454140475204996884 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2239370731594054170, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
 --- !u!95 &7498190539181379592 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 1184259806789936390, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &7582083278417983294 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 1250102963379962416, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &7647725921070533942 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 1316058934721755192, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7905140381537322585 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1573174499799839575, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
   m_PrefabInstance: {fileID: 8674419503912023310}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &7928250736539206136 stripped
@@ -6574,13 +8221,73 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1614387215046243574, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
   m_PrefabInstance: {fileID: 8674419503912023310}
   m_PrefabAsset: {fileID: 0}
+--- !u!137 &7944832280326335643 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 1594287779646085525, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &8049876378374248503 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 1717944582532721977, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &8246269595740454304 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 725387497002223790, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &8413225750751664422 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 909853202082278440, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8426360325391210671 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 905725479322267041, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
   m_PrefabInstance: {fileID: 8674419503912023310}
   m_PrefabAsset: {fileID: 0}
+--- !u!137 &8452630591967100307 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 949270137551784093, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &8492818171790452189 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 990008744507609299, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8515734148203809849 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1030283637687286071, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8813032584186760290 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 157508225212643692, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &9005921112286235286 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 331805246804623256, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &9094933874063454230 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 456562030944273688, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &9135030349826749603 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 479526846446207405, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &9162470416132896360 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 524133723059585894, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
+  m_PrefabInstance: {fileID: 8674419503912023310}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &9199123451032030243 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 560804386618456365, guid: ec9ae3819da3b10479e38ed90ad08fc8, type: 3}
   m_PrefabInstance: {fileID: 8674419503912023310}
   m_PrefabAsset: {fileID: 0}

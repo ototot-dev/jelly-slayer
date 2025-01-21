@@ -103,7 +103,7 @@ namespace Game
             public DamageContext(PawnBrainController senderBrain, PawnBrainController receiverBrain, MainTable.ActionData actionData, Collider hitCollider, bool insufficientStamina)
             {
                 timeStamp = Time.time;
-                hitPoint = receiverBrain.hitColliderHelper.GetHitPoint(senderBrain.GetWorldPosition());
+                hitPoint = hitCollider.TryGetComponent<PawnColliderHelper>(out var hitCollierHelper) ?  hitCollierHelper.GetHitPoint(senderBrain.GetWorldPosition()) : receiverBrain.bodyHitColliderHelper.GetHitPoint(senderBrain.GetWorldPosition());
                 this.hitCollider = hitCollider;
                 this.insufficientStamina = insufficientStamina;
                 this.senderActionData = actionData;
@@ -120,7 +120,7 @@ namespace Game
             public DamageContext(PawnBrainController senderBrain, string actionName, float finalDamage, PawnStatus penalty = PawnStatus.None, float penaltyDuration = -1)
             {
                 timeStamp = Time.time;
-                hitPoint = senderBrain.hitColliderHelper.GetCenter();
+                hitPoint = senderBrain.bodyHitColliderHelper.GetWorldCenter();
                 hitCollider = null;
                 insufficientStamina = false;
                 senderActionData = null;

@@ -61,7 +61,7 @@ namespace Game
             // meshRenderer.material.SetFloat("__tintStartTime", Time.timeSinceLevelLoad);
             // meshRenderer.material.SetFloat("__tintFrequency", 2);
 
-            emitter.Where(v => v != null).Subscribe(v => emitterBrain = v.GetComponent<HeroBrain>()).AddTo(this);
+            emitterBrain.Where(v => v != null).Subscribe(v => heroBrain = v.GetComponent<HeroBrain>()).AddTo(this);
 
             onHitSomething += (obj) =>
             {
@@ -85,11 +85,11 @@ namespace Game
         /// </summary>
         void Explode()
         {
-            Debug.Assert(emitter.Value != null);
+            Debug.Assert(emitterBrain.Value != null);
 
             foreach (var c in Physics.OverlapSphere(transform.position, explosionRange, LayerMask.GetMask("Jelly")))
             {
-                if (c == null || c == emitter.Value)
+                if (c == null || c == emitterBrain.Value)
                     continue;
 
                 // if (c.TryGetComponent<JellySlimeBrain>(out var jellyBrain))
@@ -123,8 +123,8 @@ namespace Game
         {
             base.OnUpdateHandler();
 
-            if ((Time.time - __moveStartTimeStamp) > sensorEnabledTime && !rigidBodyCollider.enabled)
-                rigidBodyCollider.enabled = true;
+            if ((Time.time - __moveStartTimeStamp) > sensorEnabledTime && !BodyCollider.enabled)
+                BodyCollider.enabled = true;
 
             if (spriteRenderer != null && GameContext.Instance.cameraCtrler != null)
             {
@@ -142,8 +142,8 @@ namespace Game
 
             if (Time.time - __moveStartTimeStamp > brakingEnabledTime)
             {
-                var velocity2D = rigidBody.linearVelocity.Vector2D();
-                rigidBody.linearVelocity = velocity2D.normalized * Mathf.Max(0, velocity2D.magnitude - brakeScale * Time.deltaTime) + Vector3.up * rigidBody.linearVelocity.y;
+                var velocity2D = __rigidBody.linearVelocity.Vector2D();
+                __rigidBody.linearVelocity = velocity2D.normalized * Mathf.Max(0, velocity2D.magnitude - brakeScale * Time.deltaTime) + Vector3.up * __rigidBody.linearVelocity.y;
             }
         }
 

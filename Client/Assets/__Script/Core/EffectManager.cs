@@ -201,21 +201,21 @@ namespace Game
             return instance;
         }
 
-        EffectInstance GetInstance(string effectName, Vector3 position, Quaternion rotation, Vector3 scale, ParticleSystemScalingMode scalingMode)
+        EffectInstance GetInstance(string sourceName, Vector3 position, Quaternion rotation, Vector3 scale, ParticleSystemScalingMode scalingMode)
         {
-            if (!__instancePoolA.ContainsKey(effectName))
-                __instancePoolA.Add(effectName, new());
+            if (!__instancePoolA.ContainsKey(sourceName))
+                __instancePoolA.Add(sourceName, new());
 
             EffectInstance instance;
-            if (__instancePoolA[effectName].Count > 0)
+            if (__instancePoolA[sourceName].Count > 0)
             {
-                instance = __instancePoolA[effectName].First();
-                __instancePoolA[effectName].Remove(instance);
+                instance = __instancePoolA[sourceName].First();
+                __instancePoolA[sourceName].Remove(instance);
             }
             else
             {
-                instance = Instantiate(Resources.Load<GameObject>($"FX/{effectName}"), position, rotation).AddComponent<EffectInstance>();
-                instance.sourceName = effectName;
+                instance = Instantiate(Resources.Load<GameObject>($"FX/{sourceName}"), position, rotation).AddComponent<EffectInstance>();
+                instance.sourceName = sourceName;
 
                 //* (성능 이슈로 인해서..) Light는 기본적으로 끔
                 foreach (var d in instance.gameObject.DescendantsAndSelf())

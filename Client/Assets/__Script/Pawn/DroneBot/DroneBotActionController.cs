@@ -250,7 +250,7 @@ namespace Game
                         var targetPosition = __assaultActionTargetBrain.GetWorldPosition() + __brain.BB.HostBrain.Movement.capsuleCollider.height * Vector3.up;
 
                         //* 겹치 상태에서 뚫고 가지않도록 접근 최소 거리를 추가함
-                        targetPosition -= __assaultActionTargetBrain.hitColliderHelper.GetRadius() * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                        targetPosition -= __assaultActionTargetBrain.bodyHitColliderHelper.GetRadius() * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
 
                         __brain.Movement.GetCharacterMovement().SetPosition(Vector3.Lerp(startPosition, targetPosition, alpha));
                         __brain.Movement.GetCharacterMovement().SetRotation(Quaternion.LookRotation((targetPosition - __brain.GetWorldPosition()).Vector2D().normalized));
@@ -292,14 +292,14 @@ namespace Game
 
         public override void EmitProjectile(GameObject emitSource, Transform emitPoint, int emitNum)
         {
-            if (Instantiate(emitSource, emitPoint.position, emitPoint.rotation).TryGetComponent<DroneBotBullet>(out var bullet))
-                bullet.Go(__brain, 16f);
+            // if (Instantiate(emitSource, emitPoint.position, emitPoint.rotation).TryGetComponent<DroneBotBullet>(out var bullet))
+            //     bullet.Go(__brain, 16f);
 
-            Observable.Interval(TimeSpan.FromSeconds(0.2888f)).Take(emitNum - 1).Subscribe(_ =>
-            {
-                if (Instantiate(emitSource, emitPoint.position, emitPoint.rotation).TryGetComponent<DroneBotBullet>(out var bullet))
-                    bullet.Go(__brain, 16f);
-            }).AddTo(this);
+            // Observable.Interval(TimeSpan.FromSeconds(0.2888f)).Take(emitNum - 1).Subscribe(_ =>
+            // {
+            //     if (Instantiate(emitSource, emitPoint.position, emitPoint.rotation).TryGetComponent<DroneBotBullet>(out var bullet))
+            //         bullet.Go(__brain, 16f);
+            // }).AddTo(this);
 
             //* onEmitProjectile 호출은 제일 나중에 함
             base.EmitProjectile(emitSource, emitPoint, emitNum);

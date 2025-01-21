@@ -1,6 +1,3 @@
-using System.Linq;
-using UniRx;
-using Unity.Linq;
 using UnityEngine;
 
 namespace Game
@@ -8,7 +5,7 @@ namespace Game
     public class JellyBrain : PawnBrainController, IPawnSpawnable, IPawnMovable
     {
         
-#region ISpawnable/IMovable 구현
+#region IPawnSpawnable / IPawnMovable 구현
         Vector3 IPawnSpawnable.GetSpawnPosition() => transform.position;
         void IPawnSpawnable.OnStartSpawnHandler() { __pawnMovement.capsule.gameObject.layer = LayerMask.NameToLayer("PawnOverlapped"); }
         void IPawnSpawnable.OnFinishSpawnHandler() { __pawnMovement.capsule.gameObject.layer = LayerMask.NameToLayer("Pawn"); }
