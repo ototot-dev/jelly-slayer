@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using PampelGames.BloodFactory;
 using UniRx;
 using UnityEngine;
 
@@ -51,6 +52,7 @@ namespace Game
             public MeshRenderer forceShieldRenderer;
             public GameObject onGuardParriedFx;
             public GameObject onBlockFx;
+            public GameObject onBleedFx;
         }
 
         public Graphics graphics = new();

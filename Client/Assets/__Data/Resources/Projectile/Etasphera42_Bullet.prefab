@@ -14937,8 +14937,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40ce3f9d5d35d48d1ba4533a99930c14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rigidBody: {fileID: 0}
-  rigidBodyCollider: {fileID: 0}
+  BodyCollider: {fileID: 0}
   sensorCollider: {fileID: 4243780375534275362}
   velocity: {x: 0, y: 0, z: 0}
   gravity: {x: 0, y: 0, z: 0}
@@ -14953,6 +14952,8 @@ MonoBehaviour:
   destroyWhenLifeTimeOut: 0
   updateEnabled: 1
   fixedUpdateEnabled: 0
+  sourceName: 
+  sourcePrefab: {fileID: 0}
   emitterBrain:
     value: {fileID: 0}
   bulletMissileFx: {fileID: 8223906092269073355}

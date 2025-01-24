@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using PampelGames.BloodFactory;
 using UniRx;
 using Unity.Linq;
 using UnityEngine;
@@ -12,18 +13,18 @@ namespace Game
         public string sourceName;
         public GameObject sourcePrefab;
 
-        void OnParticleCollision(GameObject other)
-        {
-            __collisionEvents ??= new();
+        // void OnParticleCollision(GameObject other)
+        // {
+        //     __collisionEvents ??= new();
 
-            int eventNum = __particleSystem.GetCollisionEvents(other, __collisionEvents);
-            for (int i = 0; i < eventNum; i++)
-                onCollisionEvent?.Invoke(__collisionEvents[i]);
-        }
+        //     int eventNum = __particleSystem.GetCollisionEvents(other, __collisionEvents);
+        //     for (int i = 0; i < eventNum; i++)
+        //         onCollisionEvent?.Invoke(__collisionEvents[i]);
+        // }
 
         ParticleSystemScalingMode __defaultScaleMode;
-        List<ParticleCollisionEvent> __collisionEvents;
-        public Action<ParticleCollisionEvent> onCollisionEvent;
+        // List<ParticleCollisionEvent> __collisionEvents;
+        // public Action<ParticleCollisionEvent> onCollisionEvent;
 
         public void PlayLooping(float playRate = 1f)
         {
@@ -38,6 +39,11 @@ namespace Game
 
                 //* 음수면 재생 시간은 무한대, 즉 Looping임을 뜻함
                 LifeTime = -1f;
+            }
+            else if (__bloodFactory != null || TryGetComponent<BloodFactory>(out __bloodFactory))
+            {
+                //* BloodFactory는 루핑 지원하지 않음
+                Debug.Assert(false);
             }
         }
 
@@ -55,10 +61,18 @@ namespace Game
                 LifeTime = duration > 0 ? duration : Mathf.Max(0.1f, mainModule.duration * 0.99f);
                 Observable.Timer(TimeSpan.FromSeconds(LifeTime)).Subscribe(_ => Stop(releaseInstance)).AddTo(this);
             }
+            else if (__bloodFactory != null || TryGetComponent<BloodFactory>(out __bloodFactory))
+            {
+                __bloodFactory.Execute();
+
+                LifeTime = duration > 0 ? duration : Mathf.Max(0.1f, __bloodFactory.bloodParticles.Max(p => p.duration) * 2f);
+                Observable.Timer(TimeSpan.FromSeconds(LifeTime)).Subscribe(_ => Stop(releaseInstance)).AddTo(this);
+            }
         }
 
         public float LifeTime { get; private set; }
         ParticleSystem __particleSystem;
+        BloodFactory __bloodFactory;
         IDisposable __stopDiposable;
 
         public void Stop(bool releaseInstance = true)
@@ -66,6 +80,21 @@ namespace Game
             if (__particleSystem != null || TryGetComponent<ParticleSystem>(out __particleSystem))
             {
                 __particleSystem.Stop();
+
+                if (releaseInstance)
+                {
+                    Debug.Assert(__stopDiposable == null);
+                    __stopDiposable = Observable.Timer(TimeSpan.FromSeconds(1f)).Subscribe(_ =>
+                    {
+                        EffectManager.Instance.ReleaseInstance(this);
+                        __stopDiposable = null;
+                    }).AddTo(this);
+                }
+            }
+            else if (__bloodFactory != null || TryGetComponent<BloodFactory>(out __bloodFactory))
+            {
+                foreach (var p in __bloodFactory.bloodParticles) p.particle.Stop();
+                foreach (var p in __bloodFactory.particles) p.Stop();
 
                 if (releaseInstance)
                 {
@@ -131,7 +160,7 @@ namespace Game
             var instance = GetInstance(effectName, position, rotation, scale, scalingMode);
             if (waitingTime > 0)
             {
-                instance.gameObject.SetActive(false);
+                // instance.gameObject.SetActive(false);
                 Observable.Timer(TimeSpan.FromSeconds(waitingTime)).Subscribe(_ =>
                 {
                     instance.gameObject.SetActive(true);
@@ -140,6 +169,7 @@ namespace Game
             }
             else
             {
+                instance.gameObject.SetActive(true);
                 instance.PlayLooping();
             }
 
@@ -151,7 +181,7 @@ namespace Game
             var instance = GetInstance(effectName, position, rotation, scale, scalingMode);
             if (waitingTime > 0f)
             {
-                instance.gameObject.SetActive(false);
+                // instance.gameObject.SetActive(false);
                 Observable.Timer(TimeSpan.FromSeconds(waitingTime)).Subscribe(_ => 
                 { 
                     instance.gameObject.SetActive(true); 
@@ -160,6 +190,7 @@ namespace Game
             }
             else
             {
+                instance.gameObject.SetActive(true);
                 instance.Play(duration);
             }
 
@@ -186,7 +217,7 @@ namespace Game
             var instance = GetInstance(sourcePrefab, position, rotation, scale, scalingMode);
             if (waitingTime > 0f)
             {
-                instance.gameObject.SetActive(false);
+                // instance.gameObject.SetActive(false);
                 Observable.Timer(TimeSpan.FromSeconds(waitingTime)).Subscribe(_ =>
                 {
                     instance.gameObject.SetActive(true);
@@ -195,6 +226,7 @@ namespace Game
             }
             else
             {
+                instance.gameObject.SetActive(true);
                 instance.Play(duration);
             }
 
@@ -259,7 +291,7 @@ namespace Game
 
             instance.transform.SetPositionAndRotation(position, rotation);
             instance.SetScale(scale, scalingMode);
-            instance.gameObject.SetActive(true);
+            // instance.gameObject.SetActive(true);
 
             return instance;
         }

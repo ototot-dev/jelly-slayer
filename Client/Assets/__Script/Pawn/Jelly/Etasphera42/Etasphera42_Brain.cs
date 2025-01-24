@@ -85,12 +85,14 @@ namespace Game
         }
 
         MainTable.ActionData __muzzleFireActionData;
+        MainTable.ActionData __torchFireActionData;
 
         protected override void StartInternal()
         {
             base.StartInternal();
             
             __muzzleFireActionData ??= ActionDataSelector.GetActionData("MuzzleFire");
+            __torchFireActionData ??= ActionDataSelector.GetActionData("TorchFire");
 
             onTick += (deltaTick) =>
             {
@@ -102,13 +104,18 @@ namespace Game
                 if (debugActionDisabled)
                     return;
                 
-                if (ActionDataSelector.CheckExecutable(__muzzleFireActionData))
+                if (!ActionCtrler.CheckActionRunning() && !ActionCtrler.CheckActionPending() && (ActionDataSelector.CheckExecutable(__muzzleFireActionData) || ActionDataSelector.CheckExecutable(__torchFireActionData)))
                 {
                     var distanceConstraint = BB.TargetBrain != null ? coreColliderHelper.GetApproachDistance(BB.TargetBrain.GetWorldPosition()) : -1f;
                     if (ActionDataSelector.EvaluateSelection(__muzzleFireActionData, distanceConstraint, 1f) && CheckTargetVisibility())
                     {
                         ActionDataSelector.ResetSelection(__muzzleFireActionData);
                         ActionCtrler.SetPendingAction(__muzzleFireActionData.actionName);
+                    }
+                    else if (ActionDataSelector.EvaluateSelection(__torchFireActionData, distanceConstraint, 1f) && CheckTargetVisibility())
+                    {
+                        ActionDataSelector.ResetSelection(__torchFireActionData);
+                        ActionCtrler.SetPendingAction(__torchFireActionData.actionName);
                     }
                 }
             };

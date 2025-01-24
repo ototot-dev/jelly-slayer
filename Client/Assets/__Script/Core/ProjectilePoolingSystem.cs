@@ -31,6 +31,7 @@ namespace Game
 
         public void ReturnProjectile(ProjectileMovement projectile, GameObject sourcePrefab)
         {
+            projectile.emitterBrain.Value = null;
             projectile.gameObject.SetActive(false);
             projectile.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
 

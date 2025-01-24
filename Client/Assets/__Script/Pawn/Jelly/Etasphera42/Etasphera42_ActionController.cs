@@ -162,6 +162,8 @@ namespace Game
         {
             if (sourcePrefab == __brain.BB.action.bulletPrefab)
                 ProjectilePoolingSystem.Instance.GetProjectile<Etasphera42_Bullet>(sourcePrefab, emitPoint.position + UnityEngine.Random.Range(-0.2f, 0.2f) * Vector3.right, emitPoint.rotation).Go(__brain, 20f, 0.5f);
+            else if (sourcePrefab == __brain.BB.action.framePrefab)
+                ProjectilePoolingSystem.Instance.GetProjectile<Etasphera42_Frame>(sourcePrefab, emitPoint.position + UnityEngine.Random.Range(-0.2f, 0.2f) * Vector3.right, emitPoint.rotation).Go(__brain, 20f, 1f);
         }
     }
 }

@@ -1,5 +1,4 @@
 using System;
-using ECM2;
 using UniRx;
 using UnityEngine;
 
@@ -67,7 +66,7 @@ namespace Game
 
             if (IsPushForceRunning)
             {
-                __ecmMovement.Move(__pushForceVec * __pushForceMagnitude, __pushForceMagnitude);
+                __ecmMovement.Move(__pushForceVec * __pushForceMagnitude, Time.fixedDeltaTime);
             }
             else
             {

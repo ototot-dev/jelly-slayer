@@ -25,6 +25,13 @@ namespace Game
             public float glidingDuration = 1f;
             public float glidingAmplitude = 1f;
             public float glidingFrequency = 1f;
+
+            public float turretBodyRotateSpeed = 90f;
+            public float leftTurretRotateSpeed = 90f;
+            public float rightTurretRotateSpeed = 90f;
+            public float centerTurretRotateSpeed = 90f;
+            public float topTurret1_RotateSpeed = 90f;
+            public float topTurret2_RotateSpeed = 90f;
         }
 
         public Body body = new();
@@ -50,6 +57,7 @@ namespace Game
             public float leapRateStep; //* 타켓과 거리가 떨어졌을 때 Leap 발생 확률 증가
 
             public GameObject bulletPrefab;
+            public GameObject framePrefab;
 
             public float turretHighPitch = 1f;
             public float turretLowPitch = 1f;

@@ -1,28 +1,15 @@
 using System;
 using System.Linq;
+using MainTable;
 using UniRx;
 using UnityEngine;
 
 namespace Game
 {
-    public class Etasphera42_Bullet : ProjectileMovement
+    public class Etasphera42_Frame : ProjectileMovement
     {
-        [Header("Component")]
-        public ParticleSystem bulletMissileFx;
-        public ParticleSystem bulletExplosionFx;
-
         [Header("Parameter")]
-        public MainTable.ActionData actionData;
-
-        protected override void AwakeInternal()
-        {
-            base.AwakeInternal();
-
-            onStartMove += () =>
-            {
-                bulletMissileFx.Play();
-            };
-        }
+        public ActionData actionData;
 
         protected override void StartInternal()
         {
@@ -32,7 +19,7 @@ namespace Game
             {
                 if (v.TryGetComponent<PawnActionController>(out var actionCtrler))
                 {
-                    sourcePrefab = (v as Etasphera42_Brain).BB.action.bulletPrefab;
+                    sourcePrefab = (v as Etasphera42_Brain).BB.action.framePrefab;
                     actionData = actionCtrler.currActionContext.actionData;
                     Debug.Assert(actionData != null);
                 }
@@ -40,8 +27,6 @@ namespace Game
 
             onStopMove += () =>
             {
-                bulletMissileFx.Stop();
-
                 Observable.Timer(TimeSpan.FromSeconds(despawnWaitingTime)).Subscribe(_ =>
                 {
                     Debug.Assert(IsDespawnPending);
@@ -58,13 +43,11 @@ namespace Game
                         if (colliderHelper.pawnBrain.PawnBB.common.pawnId == PawnId.Hero)
                             emitterBrain.Value.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, emitterBrain.Value, colliderHelper.pawnBrain, actionData, collider, false));
 
-                        bulletExplosionFx.Play();
                         Stop(false);
                     }
                 }
                 else
                 {
-                    bulletExplosionFx.Play();
                     Stop(false);
                 }
             };

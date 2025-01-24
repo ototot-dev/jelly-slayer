@@ -1142,8 +1142,8 @@ namespace Game.NodeCanvasExtension
             else
             {
                 Observable.Interval(TimeSpan.FromSeconds(emitInterval.value))
-                    .TakeWhile(_ => __pawnActionCtrler.CheckActionRunning() && __pawnActionCtrler.currActionContext.actionInstanceId == __capturedActionInstanceId).
-                    Take(emitNum.value - 1)
+                    .TakeWhile(_ => __pawnActionCtrler.CheckActionRunning() && __pawnActionCtrler.currActionContext.actionInstanceId == __capturedActionInstanceId)
+                    .Take(emitNum.value - 1)
                     .DoOnCancel(() =>
                     {
                         if (!runInParallel)
@@ -1701,6 +1701,81 @@ namespace Game.NodeCanvasExtension
                         .TakeWhile(_ => __pawnActionCtrler.CheckActionRunning() && __pawnActionCtrler.currActionContext.actionInstanceId == __capturedActionInstanceId)
                         .DoOnCancel(() => __fxInstance?.gameObject.SetActive(false))
                         .Subscribe().AddTo(agent);
+                }
+            }
+
+            EndAction(true);
+        }
+    }
+
+    public class ShowFX_Attached : ActionTask
+    {
+        protected override string info => $"Show FX <b>{(fxAttached.isNoneOrNull ? string.Empty : fxAttached)}</b>";
+        public BBParameter<Transform> fxAttached;
+        public BBParameter<float> duration = -1f;
+        public BBParameter<float> playRate = 1f;
+        public BBParameter<string[]> childNameToBeHidden;
+        public bool stopWhenActionCanceled = true;
+        public bool deactivateWhenStopped = true;
+        PawnActionController __pawnActionCtrler;
+        ParticleSystem __particleSystem;
+        int __capturedActionInstanceId;
+
+        protected override void OnExecute()
+        {
+            if (agent.TryGetComponent<PawnActionController>(out __pawnActionCtrler))
+            {
+                fxAttached.value.gameObject.SetActive(true);
+                if (fxAttached.value.TryGetComponent<ParticleSystem>(out __particleSystem))
+                    __particleSystem.Play();
+
+                if (!childNameToBeHidden.isNoneOrNull && childNameToBeHidden.value.Length > 0)
+                {
+                    for (int i = 0; i < fxAttached.value.transform.childCount; i++)
+                    {
+                        var child = fxAttached.value.transform.GetChild(i);
+                        child.gameObject.SetActive(true);
+
+                        for (int j = 0; j < childNameToBeHidden.value.Length; j++)
+                        {
+                            if (childNameToBeHidden.value[j] == child.name)
+                            {
+                                child.gameObject.SetActive(false);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;
+                if (stopWhenActionCanceled)
+                {
+                    Observable.Timer(TimeSpan.FromSeconds(duration.value))
+                        .TakeWhile(_ => __pawnActionCtrler.CheckActionRunning() && __pawnActionCtrler.currActionContext.actionInstanceId == __capturedActionInstanceId)
+                        .DoOnCancel(() => 
+                        {
+                            if (__particleSystem != null) __particleSystem.Stop();
+                            if (deactivateWhenStopped) fxAttached.value.gameObject.SetActive(false);
+                        })
+                        .Subscribe(_ => 
+                        {
+                            if (__particleSystem != null) __particleSystem.Stop();
+                            if (deactivateWhenStopped) fxAttached.value.gameObject.SetActive(false);
+                        }).AddTo(agent);
+                }
+                else
+                {
+                    Observable.Timer(TimeSpan.FromSeconds(duration.value))
+                        .DoOnCancel(() => 
+                        {
+                            if (__particleSystem != null) __particleSystem.Stop();
+                            if (deactivateWhenStopped) fxAttached.value.gameObject.SetActive(false);
+                        })
+                        .Subscribe(_ => 
+                        {
+                            if (__particleSystem != null) __particleSystem.Stop();
+                            if (deactivateWhenStopped) fxAttached.value.gameObject.SetActive(false);
+                        }).AddTo(agent);
                 }
             }
 

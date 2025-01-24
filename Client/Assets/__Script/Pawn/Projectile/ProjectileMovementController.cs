@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using UniRx;
 using UniRx.Triggers;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Game
@@ -22,8 +23,14 @@ namespace Game
         public float lifeTime = 1;
         public bool isLifeTimeOut;
         public bool destroyWhenLifeTimeOut = true;
+        public float maxTravelDistance = -1f;
+        public bool destoryWhenMaxTravelDistanceReached = false;
         public bool updateEnabled = true;
         public bool fixedUpdateEnabled = false;
+
+        [Header("Pooling")]
+        public string sourceName;
+        public GameObject sourcePrefab;
 
         [Header("Emitter")]
         public ReactiveProperty<PawnBrainController> emitterBrain = new();
@@ -66,7 +73,10 @@ namespace Game
 
         protected virtual void OnUpdateHandler()
         {
-            if (Time.time > __moveStartTimeStamp && (__rigidBody == null || __rigidBody.isKinematic))
+            var canMove1 = Time.time > __moveStartTimeStamp && (__rigidBody == null || __rigidBody.isKinematic);
+            var canMove2 = canMove1 && (maxTravelDistance <= 0f || (transform.position - __emittedPosition).magnitude < maxTravelDistance);
+
+            if (canMove2)
                 transform.position += Time.deltaTime * velocity;
 
             if (Time.time - __moveStartTimeStamp > sensorEnabledTime && sensorCollider != null && !sensorCollider.enabled)
@@ -110,29 +120,28 @@ namespace Game
         protected CapsuleCollider __sensorCapsuleCollider;
         protected IDisposable __sensorDisposable;
         protected float __moveStartTimeStamp;
+        protected Vector3 __emittedPosition;
         protected Vector3 __lastTracedPosition;
         protected int __traceCount;
         protected static RaycastHit[] __traceHitsNonAlloc = new RaycastHit[48];
 
         public void Pop(PawnBrainController emitter, Vector3 position, Vector3 impulse, Vector3 scale)
         {
-            isLifeTimeOut = false;
-            IsDespawnPending = false;
             __moveStartTimeStamp = Time.time;
-
+            __emittedPosition = position;
             __rigidBody.isKinematic = false;
             __rigidBody.useGravity = true;
             BodyCollider.enabled = true;
             transform.position = position;
+            transform.rotation = Quaternion.identity;
             transform.localScale = scale;
-            this.emitterBrain.Value = emitter;
 
+            isLifeTimeOut = false;
+            IsDespawnPending = false;
+            emitterBrain.Value = emitter;
+
+            Observable.NextFrame(FrameCountType.FixedUpdate).Subscribe(_ => __rigidBody.linearVelocity = impulse).AddTo(this);
             onStartMove?.Invoke();
-
-            Observable.NextFrame(FrameCountType.FixedUpdate).Subscribe(_ =>
-            {
-                __rigidBody.linearVelocity = impulse;
-            }).AddTo(this);
 
             if (updateEnabled)
                 Observable.EveryUpdate().TakeWhile(_ => !IsDespawnPending).Subscribe(_ => OnUpdateHandler()).AddTo(this);
@@ -153,6 +162,7 @@ namespace Game
             isLifeTimeOut = false;
             IsDespawnPending = false;
             __moveStartTimeStamp = Time.time;
+            __emittedPosition = position;
             __lastTracedPosition = sensorCollider.transform.position;
 
             if ( __sensorBoxCollider != null) __lastTracedPosition += __sensorBoxCollider.center;
@@ -164,7 +174,7 @@ namespace Game
 
             transform.position = position;
             transform.localScale = scale;
-            this.emitterBrain.Value = emitter;
+            emitterBrain.Value = emitter;
             this.velocity = velocity;
 
             onStartMove?.Invoke();

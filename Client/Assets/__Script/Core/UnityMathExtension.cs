@@ -6,61 +6,30 @@ namespace Game
     public static class UnityMathExtension
     {
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vec"></param>
-        /// <returns></returns>
         public static float MaxElem(this Vector3 vec)
         {
             return Mathf.Max(Mathf.Max(vec.x, vec.y), vec.z);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vec"></param>
-        /// <returns></returns>
         public static float MaxAbsElem(this Vector3 vec)
         {
             return Mathf.Max(Mathf.Max(Mathf.Abs(vec.x), Mathf.Abs(vec.y)), Mathf.Abs(vec.z));
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vec"></param>
-        /// <returns></returns>
         public static float Magnitude2D(this Vector3 vec)
         {
             return new Vector3(vec.x, 0, vec.z).magnitude;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vec"></param>
-        /// <returns></returns>
         public static float SqrMagnitude2D(this Vector3 vec)
         {
             return new Vector3(vec.x, 0, vec.z).sqrMagnitude;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vec"></param>
-        /// <returns></returns>
         public static Vector3 Abs(this Vector3 vec)
         {
             return new Vector3(Mathf.Abs(vec.x), Mathf.Abs(vec.y), Mathf.Abs(vec.z));
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vec"></param>
-        /// <returns></returns>
         public static Vector3 AbsRef(this ref Vector3 vec)
         {
             vec = new Vector3(Mathf.Abs(vec.x), Mathf.Abs(vec.y), Mathf.Abs(vec.z));
@@ -68,21 +37,11 @@ namespace Game
             return vec;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vec"></param>
-        /// <returns></returns>
         public static Vector3 Vector2D(this Vector3 vec)
         {
             return new Vector3(vec.x, 0, vec.z);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vec"></param>
-        /// <returns></returns>
         public static Vector3 VectorRef2D(this ref Vector3 vec)
         {
             vec = new Vector3(vec.x, 0, vec.z);
@@ -90,49 +49,24 @@ namespace Game
             return vec;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vec"></param>
-        /// <param name="x"></param>
-        /// <returns></returns>
         public static Vector3 AdjustX(this Vector3 vec, float x)
         {
             vec.x = x;
             return vec;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vec"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
         public static Vector3 AdjustY(this Vector3 vec, float y)
         {
             vec.y = y;
             return vec;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vec"></param>
-        /// <param name="z"></param>
-        /// <returns></returns>
         public static Vector3 AdjustZ(this Vector3 vec, float z)
         {
             vec.z = z;
             return vec;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vec"></param>
-        /// <param name="x"></param>
-        /// <param name="z"></param>
-        /// <returns></returns>
         public static Vector3 AdjustXZ(this Vector3 vec, float x, float z)
         {
             vec.x = x;
@@ -141,26 +75,12 @@ namespace Game
             return vec;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="color"></param>
-        /// <param name="alpha"></param>
-        /// <returns></returns>
         public static Color AdjustAlpha(this Color color, float alpha)
         {
             color.a = alpha;
             return color;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        /// <param name="speed"></param>
-        /// <param name="deltaTime"></param>
-        /// <returns></returns>
         public static float LerpSpeed(this float start, float end, float speed, float deltaTime)
         {
             if (end > start)
@@ -169,28 +89,11 @@ namespace Game
                 return Mathf.Max(end, start - speed * deltaTime);
         }
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vec"></param>
-        /// <param name="target"></param>
-        /// <param name="speed"></param>
-        /// <param name="deltaTime"></param>
-        /// <returns></returns>
         public static Vector3 LerpSpeed(this Vector3 vec, Vector3 target, float speed, float deltaTime)
         {
             return vec.LerpRefSpeed(target, speed, deltaTime);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vec"></param>
-        /// <param name="target"></param>
-        /// <param name="speed"></param>
-        /// <param name="deltaTime"></param>
-        /// <returns></returns>
         public static Vector3 LerpRefSpeed(this ref Vector3 vec, Vector3 target, float speed, float deltaTime)
         {
             var newVec = vec + (target - vec).normalized * speed * deltaTime;
@@ -213,14 +116,6 @@ namespace Game
             return vec;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vec"></param>
-        /// <param name="x"></param>
-        /// <param name="speed"></param>
-        /// <param name="deltaTime"></param>
-        /// <returns></returns>
         public static Vector3 LerpRefSpeedX(this ref Vector3 vec, float x, float speed, float deltaTime)
         {
             if (x > vec.x)
@@ -231,14 +126,6 @@ namespace Game
             return vec;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vec"></param>
-        /// <param name="y"></param>
-        /// <param name="speed"></param>
-        /// <param name="deltaTime"></param>
-        /// <returns></returns>
         public static Vector3 LerpRefSpeedY(this ref Vector3 vec, float y, float speed, float deltaTime)
         {
             if (y > vec.y)
@@ -249,14 +136,6 @@ namespace Game
             return vec;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vec"></param>
-        /// <param name="z"></param>
-        /// <param name="speed"></param>
-        /// <param name="deltaTime"></param>
-        /// <returns></returns>
         public static Vector3 LerpRefSpeedZ(this ref Vector3 vec, float z, float speed, float deltaTime)
         {
             if (z > vec.z)
@@ -267,15 +146,6 @@ namespace Game
             return vec;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vec"></param>
-        /// <param name="x"></param>
-        /// <param name="z"></param>
-        /// <param name="speed"></param>
-        /// <param name="deltaTime"></param>
-        /// <returns></returns>
         public static Vector3 LerpRefSpeedXZ(this ref Vector3 vec, float x, float z, float speed, float deltaTime)
         {
             if (x > vec.x)
@@ -291,36 +161,30 @@ namespace Game
             return vec;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vec"></param>
-        /// <returns></returns>
+        public static Quaternion LerpAngleSpeed(this Quaternion rot, Quaternion target, float speed, float deltaTime)
+        {
+            var delta = Quaternion.Angle(rot, target);
+            return Mathf.Approximately(delta, 0f) ? target : Quaternion.Lerp(rot, target, Mathf.Clamp01(speed * deltaTime / delta));
+        }
+
+        public static Quaternion LerpRefAngleSpeed(this ref Quaternion rot, Quaternion target, float speed, float deltaTime)
+        {
+            var delta = Quaternion.Angle(rot, target);
+            rot = Mathf.Approximately(delta, 0f) ? target : Quaternion.Lerp(rot, target, Mathf.Clamp01(speed * deltaTime / delta));
+            return rot;
+        }
+
         public static Vector3 Random(this Vector3 vec)
         {
             var rangeVec = vec.Abs();
             return new Vector3(UnityEngine.Random.Range(-rangeVec.x, rangeVec.x), UnityEngine.Random.Range(-rangeVec.y, rangeVec.y), UnityEngine.Random.Range(-rangeVec.z, rangeVec.z));
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vec"></param>
-        /// <param name="min"></param>
-        /// <param name="max"></param>
-        /// <returns></returns>
         public static Vector3 Random(this Vector3 vec, float min, float max)
         {
             return new Vector3(UnityEngine.Random.Range(min, max), UnityEngine.Random.Range(min, max), UnityEngine.Random.Range(min, max));
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vec"></param>
-        /// <param name="min"></param>
-        /// <param name="max"></param>
-        /// <returns></returns>
         public static Vector3 RandomRef(this ref Vector3 vec, float min, float max)
         {
             vec = new Vector3(UnityEngine.Random.Range(min, max), UnityEngine.Random.Range(min, max), UnityEngine.Random.Range(min, max));
@@ -328,25 +192,11 @@ namespace Game
             return vec;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vec"></param>
-        /// <param name="min"></param>
-        /// <param name="max"></param>
-        /// <returns></returns>
         public static Vector3 RandomX(this Vector3 vec, float min, float max)
         {
             return new Vector3(UnityEngine.Random.Range(min, max), vec.y, vec.z);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vec"></param>
-        /// <param name="min"></param>
-        /// <param name="max"></param>
-        /// <returns></returns>
         public static Vector3 RandomY(this Vector3 vec, float min, float max)
         {
             return new Vector3(vec.x, UnityEngine.Random.Range(min, max), vec.z);

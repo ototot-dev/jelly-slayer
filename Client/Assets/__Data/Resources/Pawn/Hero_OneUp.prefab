@@ -84,7 +84,7 @@ GameObject:
   - component: {fileID: 8791414763947496166}
   - component: {fileID: 4592272242371362991}
   - component: {fileID: 6873228617776499816}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Hero_OneUp
   m_TagString: Hero
   m_Icon: {fileID: 0}
@@ -1952,7 +1952,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3244703593161533105}
   - component: {fileID: 1877122226104639493}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: Right leg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2261,7 +2261,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3244703593161533107}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: Right knee
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2297,7 +2297,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3244703593161533109}
   - component: {fileID: 3244703594544184780}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: Right elbow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2352,7 +2352,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3244703593161533111}
   - component: {fileID: 3244703594777624946}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: Right arm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2548,7 +2548,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3244703593161533249}
   - component: {fileID: 3244703593073861415}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: Left arm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3000,7 +3000,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3244703593161533275}
   - component: {fileID: 6616178964254524924}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: Left leg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3104,7 +3104,7 @@ MonoBehaviour:
   FadeOutDistance: 0
   DistanceFrom: {fileID: 0}
   AutoHelperOffset: 1
-  HelperOffset: {x: -0.005859483, y: 0.18753828, z: 0.35282826}
+  HelperOffset: {x: -0.005859481, y: 0.18753827, z: 0.35282823}
   GravityEffectForce: {x: 0, y: 0, z: 0}
   GravityHeavyness: 2
   _editor_Title: ' Bones Stimulator'
@@ -3309,7 +3309,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3244703593161533277}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: Left knee
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3345,7 +3345,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3244703593161533279}
   - component: {fileID: 3244703594768668196}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: Left elbow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4374,7 +4374,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3244703593161533085}
   - component: {fileID: 3244703594276470682}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: Spine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4897,6 +4897,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoSwitch: 1
   duration: 1
+  blinkRate: 3
 --- !u!1 &3244703593161571085
 GameObject:
   m_ObjectHideFlags: 0
@@ -7331,7 +7332,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3244703593161533285}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: Hips
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7366,7 +7367,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3244703593161533287}
   - component: {fileID: 3244703593965341192}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18913,7 +18914,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6667022547613719956}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: FxAttachPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
