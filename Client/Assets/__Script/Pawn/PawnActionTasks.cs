@@ -346,141 +346,6 @@ namespace Game.NodeCanvasExtension
         }
     }
 
-    public class ImpluseRootMotion : ActionTask
-    {
-        public BBParameter<float> impulseStrength;
-        public BBParameter<float> duration;
-        public BBParameter<ParadoxNotion.Animation.EaseType> accelEase;
-        public BBParameter<float> accelDuration = -1f;
-        public BBParameter<ParadoxNotion.Animation.EaseType> breakEase;
-        public BBParameter<float> breakDuration = -1f;
-        public BBParameter<PawnColliderHelper> targetColliderHelper;
-        public bool endActionWhenReachToTarget;
-        PawnBrainController __pawnBrain;
-        PawnActionController __pawnActionCtrler;
-        IPawnMovable __pawnMovable;
-        IDisposable __rootMotionDisposable;
-        int __capturedActionInstanceId;
-        float __manualAdvanceSpeedCached;
-        
-        protected override void OnExecute()
-        {
-            __pawnBrain = agent.GetComponent<PawnBrainController>();
-            __pawnActionCtrler = agent.GetComponent<PawnActionController>();
-            __pawnMovable = __pawnBrain as IPawnMovable;
-
-            Debug.Assert(__pawnBrain != null && __pawnMovable as IPawnMovable != null);
-            Debug.Assert(__pawnActionCtrler != null);
-
-            __capturedActionInstanceId =  __pawnActionCtrler.currActionContext.actionInstanceId;
-            if (endActionWhenReachToTarget)
-            {
-                __pawnActionCtrler.WaitAction();
-                __manualAdvanceSpeedCached = __pawnActionCtrler.currActionContext.manualAdvanceSpeed;
-                __pawnActionCtrler.currActionContext.manualAdvanceSpeed = 0;
-            }
-
-            var executeTimeStamp = Time.time;
-
-            __pawnActionCtrler.currActionContext.impulseRootMotionDisposable?.Dispose();
-            __pawnActionCtrler.currActionContext.impulseRootMotionDisposable = __rootMotionDisposable = Observable.EveryUpdate()
-                .TakeUntil(Observable.Timer(TimeSpan.FromSeconds(duration.value + Mathf.Max(0f, accelDuration.value) + Mathf.Max(0f, breakDuration.value))))
-                .DoOnCancel(() => 
-                {
-                    __rootMotionDisposable = __pawnActionCtrler.currActionContext.impulseRootMotionDisposable = null;
-                    if (endActionWhenReachToTarget)
-                    {
-                        __pawnActionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
-                        EndAction(true);
-                    }
-                })
-                .DoOnCompleted(() =>
-                {
-                    __rootMotionDisposable = __pawnActionCtrler.currActionContext.impulseRootMotionDisposable = null;
-                    if (endActionWhenReachToTarget)
-                    {
-                        __pawnActionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
-                        EndAction(true);
-                    }
-                })
-                .Subscribe(_ =>
-                {
-                    if (endActionWhenReachToTarget)
-                        __pawnActionCtrler.currActionContext.manualAdvanceSpeed = 0;
-
-                    if (__pawnActionCtrler.currActionContext.actionData == null || __capturedActionInstanceId != __pawnActionCtrler.currActionContext.actionInstanceId)
-                    {
-                        Debug.Assert(__rootMotionDisposable != null && __rootMotionDisposable == __pawnActionCtrler.currActionContext.impulseRootMotionDisposable);
-                        __rootMotionDisposable.Dispose();
-                        __rootMotionDisposable = __pawnActionCtrler.currActionContext.impulseRootMotionDisposable = null;
-
-                        return;
-                    }
-                    else if (endActionWhenReachToTarget)
-                    {
-                        //* Target과 최소 접근 거리에 도달헀으면 RootMotion 적용 안함
-                        if (!targetColliderHelper.isNoneOrNull && targetColliderHelper.value.GetDistanceBetween(__pawnBrain.coreColliderHelper) <= 0.2f)
-                        {
-                            Debug.Assert(__rootMotionDisposable != null && __rootMotionDisposable == __pawnActionCtrler.currActionContext.impulseRootMotionDisposable);
-                            __rootMotionDisposable.Dispose();
-                            __rootMotionDisposable = __pawnActionCtrler.currActionContext.impulseRootMotionDisposable = null;
-
-                            return;
-                        }
-                    }
-
-                    var impulse = impulseStrength.value;
-                    var deltaTime = Time.time - executeTimeStamp;
-                    if (deltaTime < accelDuration.value)
-                        impulse = impulseStrength.value * ParadoxNotion.Animation.Easing.Ease(accelEase.value, 0f, 1f, deltaTime / accelDuration.value);
-                    else if (deltaTime > duration.value + Mathf.Max(0f, accelDuration.value))
-                        impulse = impulseStrength.value * ParadoxNotion.Animation.Easing.Ease(breakEase.value, 0, 1f, 1f - (deltaTime - duration.value - Mathf.Max(0f, accelDuration.value)) / breakDuration.value);
-
-                    var rootMotionVec = Time.deltaTime * impulse * __pawnBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-                    if (__pawnActionCtrler.CanRootMotion(rootMotionVec))
-                        __pawnMovable.AddRootMotion(rootMotionVec, Quaternion.identity);
-                }).AddTo(agent);
-
-            if (!endActionWhenReachToTarget)
-                EndAction(true);
-        }
-    }
-
-    public class FallingRootMotion : ActionTask
-    {
-        public BBParameter<float> fallingSpeed;
-        public BBParameter<float> duration;
-        PawnActionController __pawnActionCtrler;
-        IPawnMovable __pawnMovable;
-        IDisposable __rootMotionDisposable;
-        int __capturedActionInstanceId;
-        float __manualAdvanceSpeedCached;
-        
-        protected override void OnExecute()
-        {
-            __pawnActionCtrler = agent.GetComponent<PawnActionController>();
-            __pawnMovable = agent.GetComponent<PawnBrainController>() as IPawnMovable;
-
-            Debug.Assert(__pawnActionCtrler != null);
-            Debug.Assert(__pawnMovable != null);
-
-            __capturedActionInstanceId =  __pawnActionCtrler.currActionContext.actionInstanceId;
-
-            var executeTimeStamp = Time.time;
-            Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(duration.value)))
-                .TakeWhile(_ => !__pawnMovable.IsOnGround() && __pawnActionCtrler.currActionContext.actionData != null && __capturedActionInstanceId == __pawnActionCtrler.currActionContext.actionInstanceId)
-                .Subscribe(_ =>
-                {
-                    var rootMotionVec = Time.deltaTime * fallingSpeed.value * Vector3.down;
-                    if (__pawnActionCtrler.CanRootMotion(rootMotionVec))
-                        __pawnMovable.AddRootMotion(rootMotionVec, Quaternion.identity);
-                }).AddTo(agent);
-
-            EndAction(true);
-        }
-    }
-
-
     public class StartPendingAction : ActionTask
     {
         protected override string info => $"Start Action <b>{actionName.value}</b>";
@@ -614,7 +479,7 @@ namespace Game.NodeCanvasExtension
 
         protected override void OnUpdate()
         {
-            if (__pawnActionCtrler.currActionContext.actionData == null || __capturedActionInstanceId != __pawnActionCtrler.currActionContext.actionInstanceId)
+            if (!__pawnActionCtrler.CheckActionRunning() || __capturedActionInstanceId != __pawnActionCtrler.currActionContext.actionInstanceId)
             {
                 EndAction(false);
                 return;
@@ -668,7 +533,7 @@ namespace Game.NodeCanvasExtension
 
         protected override void OnUpdate()
         {
-            if (__pawnActionCtrler.currActionContext.actionData == null || __capturedActionInstanceId != __pawnActionCtrler.currActionContext.actionInstanceId)
+            if (!__pawnActionCtrler.CheckActionRunning() || __capturedActionInstanceId != __pawnActionCtrler.currActionContext.actionInstanceId)
             {
                 EndAction(false);
                 return;
@@ -739,7 +604,7 @@ namespace Game.NodeCanvasExtension
 
         protected override void OnUpdate()
         {
-            if (__pawnActionCtrler.currActionContext.actionData == null || __capturedActionInstanceId != __pawnActionCtrler.currActionContext.actionInstanceId)
+            if (!__pawnActionCtrler.CheckActionRunning() || __capturedActionInstanceId != __pawnActionCtrler.currActionContext.actionInstanceId)
                 EndAction(false);
         }
 
@@ -767,7 +632,7 @@ namespace Game.NodeCanvasExtension
 
         protected override void OnUpdate()
         {
-            if (__pawnActionCtrler.currActionContext.actionData == null || __capturedActionInstanceId != __pawnActionCtrler.currActionContext.actionInstanceId)
+            if (!__pawnActionCtrler.CheckActionRunning() || __capturedActionInstanceId != __pawnActionCtrler.currActionContext.actionInstanceId)
                 EndAction(false);
             else if (__pawnMovement.IsOnGround)
                 EndAction(true);
@@ -805,7 +670,7 @@ namespace Game.NodeCanvasExtension
         {
             __pawnActionCtrler.currActionContext.manualAdvanceSpeed = 0;
 
-            if (__pawnActionCtrler.currActionContext.actionData == null || __capturedActionInstanceId != __pawnActionCtrler.currActionContext.actionInstanceId)
+            if (!__pawnActionCtrler.CheckActionRunning() || __capturedActionInstanceId != __pawnActionCtrler.currActionContext.actionInstanceId)
             {
                 EndAction(false);
             }
@@ -827,6 +692,224 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    public class ImpluseRootMotion : ActionTask
+    {
+        public BBParameter<float> impulseStrength;
+        public BBParameter<float> impulseSpeed;
+        public BBParameter<float> minApproachDistance = 0.1f;
+        public BBParameter<float> duration;
+        public BBParameter<ParadoxNotion.Animation.EaseType> accelEase;
+        public BBParameter<float> accelDuration = -1f;
+        public BBParameter<ParadoxNotion.Animation.EaseType> breakEase;
+        public BBParameter<float> breakDuration = -1f;
+        public BBParameter<PawnColliderHelper> targetColliderHelper;
+        public bool endActionWhenReachToTarget;
+        PawnBrainController __pawnBrain;
+        PawnActionController __pawnActionCtrler;
+        IPawnMovable __pawnMovable;
+        IDisposable __rootMotionDisposable;
+        int __capturedActionInstanceId;
+        float __manualAdvanceSpeedCached;
+        
+        protected override void OnExecute()
+        {
+            __pawnBrain = agent.GetComponent<PawnBrainController>();
+            __pawnActionCtrler = agent.GetComponent<PawnActionController>();
+            __pawnMovable = __pawnBrain as IPawnMovable;
+
+            Debug.Assert(__pawnBrain != null && __pawnMovable as IPawnMovable != null);
+            Debug.Assert(__pawnActionCtrler != null);
+
+            __capturedActionInstanceId =  __pawnActionCtrler.currActionContext.actionInstanceId;
+            if (endActionWhenReachToTarget)
+            {
+                __pawnActionCtrler.WaitAction();
+                __manualAdvanceSpeedCached = __pawnActionCtrler.currActionContext.manualAdvanceSpeed;
+                __pawnActionCtrler.currActionContext.manualAdvanceSpeed = 0;
+            }
+
+            var executeTimeStamp = Time.time;
+
+            __pawnActionCtrler.currActionContext.rootMotionDisposable?.Dispose();
+            __pawnActionCtrler.currActionContext.rootMotionDisposable = __rootMotionDisposable = Observable.EveryUpdate()
+                .TakeUntil(Observable.Timer(TimeSpan.FromSeconds(duration.value + Mathf.Max(0f, accelDuration.value) + Mathf.Max(0f, breakDuration.value))))
+                .DoOnCancel(() => 
+                {
+                    __rootMotionDisposable = __pawnActionCtrler.currActionContext.rootMotionDisposable = null;
+                    if (endActionWhenReachToTarget)
+                    {
+                        __pawnActionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
+                        EndAction(true);
+                    }
+                })
+                .DoOnCompleted(() =>
+                {
+                    __rootMotionDisposable = __pawnActionCtrler.currActionContext.rootMotionDisposable = null;
+                    if (endActionWhenReachToTarget)
+                    {
+                        __pawnActionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
+                        EndAction(true);
+                    }
+                })
+                .Subscribe(_ =>
+                {
+                    if (endActionWhenReachToTarget)
+                        __pawnActionCtrler.currActionContext.manualAdvanceSpeed = 0;
+
+                    if (!__pawnActionCtrler.CheckActionRunning() || __capturedActionInstanceId != __pawnActionCtrler.currActionContext.actionInstanceId)
+                    {
+                        Debug.Assert(__rootMotionDisposable != null && __rootMotionDisposable == __pawnActionCtrler.currActionContext.rootMotionDisposable);
+                        __rootMotionDisposable.Dispose();
+                        __rootMotionDisposable = __pawnActionCtrler.currActionContext.rootMotionDisposable = null;
+
+                        return;
+                    }
+                    else if (endActionWhenReachToTarget)
+                    {
+                        //* Target과 최소 접근 거리에 도달헀으면 RootMotion 적용 안함
+                        if (!targetColliderHelper.isNoneOrNull && targetColliderHelper.value.GetDistanceBetween(__pawnBrain.coreColliderHelper) <= minApproachDistance.value)
+                        {
+                            Debug.Assert(__rootMotionDisposable != null && __rootMotionDisposable == __pawnActionCtrler.currActionContext.rootMotionDisposable);
+                            __rootMotionDisposable.Dispose();
+                            __rootMotionDisposable = __pawnActionCtrler.currActionContext.rootMotionDisposable = null;
+
+                            return;
+                        }
+                    }
+
+                    var rootMotionSpeed = impulseSpeed.value;
+                    var deltaTime = Time.time - executeTimeStamp;
+                    if (deltaTime < accelDuration.value)
+                        rootMotionSpeed = impulseSpeed.value * ParadoxNotion.Animation.Easing.Ease(accelEase.value, 0f, 1f, deltaTime / accelDuration.value);
+                    else if (deltaTime > duration.value + Mathf.Max(0f, breakDuration.value))
+                        rootMotionSpeed = impulseSpeed.value * ParadoxNotion.Animation.Easing.Ease(breakEase.value, 0, 1f, 1f - (deltaTime - duration.value - Mathf.Max(0f, accelDuration.value)) / breakDuration.value);
+
+                    var rootMotionVec = Time.deltaTime * rootMotionSpeed * __pawnBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                    if (__pawnActionCtrler.CanRootMotion(rootMotionVec))
+                        __pawnMovable.AddRootMotion(rootMotionVec, Quaternion.identity);
+                }).AddTo(agent);
+
+            if (!endActionWhenReachToTarget)
+                EndAction(true);
+        }
+    }
+
+    public class StartHomingRootMoion : ActionTask
+    {
+        public BBParameter<float> homingSpeed;
+        public BBParameter<float> duration;
+        public BBParameter<ParadoxNotion.Animation.EaseType> accelEase;
+        public BBParameter<float> accelDuration = -1f;
+        public BBParameter<ParadoxNotion.Animation.EaseType> breakEase;
+        public BBParameter<float> breakDuration = -1f;
+        public BBParameter<float> minApproachDistance = 0.1f;
+        public BBParameter<PawnColliderHelper> targetColliderHelper;
+        public bool endActionWhenReachToTarget;
+        PawnBrainController __pawnBrain;
+        PawnActionController __pawnActionCtrler;
+        IPawnMovable __pawnMovable;
+        IDisposable __rootMotionDisposable;
+        int __capturedActionInstanceId;
+        float __manualAdvanceSpeedCached;
+        
+        protected override void OnExecute()
+        {
+            __pawnBrain = agent.GetComponent<PawnBrainController>();
+            __pawnActionCtrler = agent.GetComponent<PawnActionController>();
+            __pawnMovable = __pawnBrain as IPawnMovable;
+
+            Debug.Assert(__pawnBrain != null && __pawnMovable as IPawnMovable != null);
+            Debug.Assert(__pawnActionCtrler != null);
+
+            __capturedActionInstanceId =  __pawnActionCtrler.currActionContext.actionInstanceId;
+            if (endActionWhenReachToTarget)
+            {
+                __pawnActionCtrler.WaitAction();
+                __manualAdvanceSpeedCached = __pawnActionCtrler.currActionContext.manualAdvanceSpeed;
+                __pawnActionCtrler.currActionContext.manualAdvanceSpeed = 0;
+            }
+
+            var executeTimeStamp = Time.time;
+
+            __pawnActionCtrler.currActionContext.rootMotionDisposable?.Dispose();
+            __pawnActionCtrler.currActionContext.rootMotionDisposable = __rootMotionDisposable = Observable.EveryUpdate()
+                .TakeUntil(Observable.Timer(TimeSpan.FromSeconds((duration.value > 0f ? duration.value : 3600f) + Mathf.Max(0f, accelDuration.value) + Mathf.Max(0f, breakDuration.value))))
+                .DoOnCancel(() => 
+                {
+                    __rootMotionDisposable = __pawnActionCtrler.currActionContext.rootMotionDisposable = null;
+                    if (endActionWhenReachToTarget)
+                    {
+                        __pawnActionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
+                        EndAction(true);
+                    }
+                })
+                .DoOnCompleted(() =>
+                {
+                    __rootMotionDisposable = __pawnActionCtrler.currActionContext.rootMotionDisposable = null;
+                    if (endActionWhenReachToTarget)
+                    {
+                        __pawnActionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
+                        EndAction(true);
+                    }
+                })
+                .Subscribe(_ =>
+                {
+                    if (endActionWhenReachToTarget)
+                        __pawnActionCtrler.currActionContext.manualAdvanceSpeed = 0;
+
+                    //* Action이 취소되었다면 즉시 중지
+                    if (!__pawnActionCtrler.CheckActionRunning() || __capturedActionInstanceId != __pawnActionCtrler.currActionContext.actionInstanceId)
+                    {
+                        Debug.Assert(__rootMotionDisposable != null && __rootMotionDisposable == __pawnActionCtrler.currActionContext.rootMotionDisposable);
+                        __rootMotionDisposable.Dispose();
+                        __rootMotionDisposable = __pawnActionCtrler.currActionContext.rootMotionDisposable = null;
+
+                        return;
+                    }
+
+                    if (!targetColliderHelper.isNoneOrNull && targetColliderHelper.value.GetDistanceBetween(__pawnBrain.coreColliderHelper) <= minApproachDistance.value)
+                    {
+                        if (endActionWhenReachToTarget)
+                        {
+                            Debug.Assert(__rootMotionDisposable != null && __rootMotionDisposable == __pawnActionCtrler.currActionContext.rootMotionDisposable);
+                            __rootMotionDisposable.Dispose();
+                            __rootMotionDisposable = __pawnActionCtrler.currActionContext.rootMotionDisposable = null;
+                        }
+
+                        //* 타겟에 도달했다면 RootMotion은 적용하지 않도록 리턴함
+                        return;
+                    }
+
+                    var rootMotionSpeed = homingSpeed.value;
+                    var deltaTime = Time.time - executeTimeStamp;
+                    if (deltaTime < accelDuration.value)
+                        rootMotionSpeed = homingSpeed.value * ParadoxNotion.Animation.Easing.Ease(accelEase.value, 0f, 1f, deltaTime / accelDuration.value);
+                    else if (deltaTime > duration.value + Mathf.Max(0f, breakDuration.value))
+                        rootMotionSpeed = homingSpeed.value * ParadoxNotion.Animation.Easing.Ease(breakEase.value, 0, 1f, 1f - (deltaTime - duration.value - Mathf.Max(0f, accelDuration.value)) / breakDuration.value);
+
+                    var rootMotionVec = Time.deltaTime * rootMotionSpeed * __pawnBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                    if (__pawnActionCtrler.CanRootMotion(rootMotionVec))
+                        __pawnMovable.AddRootMotion(rootMotionVec, Quaternion.identity);
+                }).AddTo(agent);
+
+            if (!endActionWhenReachToTarget)
+                EndAction(true);
+        }
+    }
+
+    public class FinishHomingPosition : ActionTask
+    {
+        protected override void OnExecute()
+        {
+            var actionCtrler = agent.GetComponent<PawnActionController>();
+            Debug.Assert(actionCtrler != null);
+
+            actionCtrler.currActionContext.rootMotionDisposable?.Dispose();
+            actionCtrler.currActionContext.rootMotionDisposable = null;
+
+            EndAction(true);
+        }
+    }
 
     public class StartHomingRotation : ActionTask
     {
@@ -843,7 +926,7 @@ namespace Game.NodeCanvasExtension
             Debug.Assert(actionCtrler != null);
 
             var executeTimeStamp = Time.time;
-            var movable = brain as IPawnMovable;
+            var pawnMovable = brain as IPawnMovable;
 
             actionCtrler.currActionContext.homingRotationDisposable?.Dispose();
             actionCtrler.currActionContext.homingRotationDisposable = Observable.EveryUpdate().Subscribe(_ =>
@@ -853,7 +936,7 @@ namespace Game.NodeCanvasExtension
                 if (Mathf.Abs(deltaAngle) > __MIN_DELTA_ANGLE)
                 {
                     var rotateAngle = (deltaAngle > 0f ? 1f : -1f) * Mathf.Min(Mathf.Abs(deltaAngle) * Mathf.Rad2Deg, rotateSpeed.value * Time.deltaTime);
-                    movable.FaceTo(Quaternion.Euler(0f, rotateAngle, 0f) * forward);
+                    pawnMovable.FaceTo(Quaternion.Euler(0f, rotateAngle, 0f) * forward);
                 }
             }).AddTo(agent);
 
@@ -870,6 +953,50 @@ namespace Game.NodeCanvasExtension
 
             actionCtrler.currActionContext.homingRotationDisposable?.Dispose();
             actionCtrler.currActionContext.homingRotationDisposable = null;
+
+            EndAction(true);
+        }
+    }
+
+    public class FallingRootMotion : ActionTask
+    {
+        public BBParameter<float> fallingSpeed;
+        public BBParameter<float> duration;
+        PawnActionController __pawnActionCtrler;
+        IPawnMovable __pawnMovable;
+        IDisposable __fallingDisposable;
+        float __falllingTimeStamp;
+        int __capturedActionInstanceId;
+        
+        protected override void OnExecute()
+        {
+            __pawnActionCtrler = agent.GetComponent<PawnActionController>();
+            __pawnMovable = agent.GetComponent<PawnBrainController>() as IPawnMovable;
+
+            Debug.Assert(__pawnActionCtrler != null);
+            Debug.Assert(__pawnMovable != null);
+
+            __capturedActionInstanceId =  __pawnActionCtrler.currActionContext.actionInstanceId;
+            __falllingTimeStamp = Time.time;
+            __fallingDisposable = Observable.EveryUpdate().Subscribe(_ =>
+            {   
+                if ((Time.time - __falllingTimeStamp) > duration.value || __pawnMovable.IsOnGround())
+                {
+                    __fallingDisposable.Dispose();
+                    __fallingDisposable = null;
+                    return;
+                }
+                else if (!__pawnActionCtrler.CheckActionRunning() || __capturedActionInstanceId != __pawnActionCtrler.currActionContext.actionInstanceId)
+                {
+                    __fallingDisposable.Dispose();
+                    __fallingDisposable = null;
+                    return;
+                }
+
+                var rootMotionVec = Time.deltaTime * fallingSpeed.value * Vector3.down;
+                if (__pawnActionCtrler.CanRootMotion(rootMotionVec))
+                    __pawnMovable.AddRootMotion(rootMotionVec, Quaternion.identity);
+            }).AddTo(agent);
 
             EndAction(true);
         }
@@ -1017,7 +1144,7 @@ namespace Game.NodeCanvasExtension
         {
             base.OnUpdate();
 
-            if (__pawnActionCtrler.currActionContext.actionData == null || __capturedActionInstanceId != __pawnActionCtrler.currActionContext.actionInstanceId)
+            if (!__pawnActionCtrler.CheckActionRunning() || __capturedActionInstanceId != __pawnActionCtrler.currActionContext.actionInstanceId)
                 EndAction(false);
             else if (__sampleInterval <= Time.time - __lastSampleTimeStamp && TraceSampleInternal() >= __sampleNum)
                 EndAction(true);
@@ -1189,6 +1316,7 @@ namespace Game.NodeCanvasExtension
 
     public class SetAnimBool : ActionTask
     {
+        protected override string info => string.IsNullOrEmpty(paramId.value) ? base.info : $"Set <b>{paramId.value}</b> Param <b>{newValue.value}</b>";
         public BBParameter<Animator> animator;
         public BBParameter<string> paramId;
         public BBParameter<bool> newValue;
@@ -1467,13 +1595,13 @@ namespace Game.NodeCanvasExtension
 
     public class SetMovementEnabled : ActionTask
     {
-        protected override string info => enabled.value ? $"Movement <b>On</b>" : $"Movement <b>Off</b>";
-        public BBParameter<bool> enabled;
+        protected override string info => movementEnabled ? $"Movement <b>On</b>" : $"Movement <b>Off</b>";
+        public bool movementEnabled;
 
         protected override void OnExecute()
         {
             if (agent.TryGetComponent<PawnActionController>(out var actionCtrler))
-                actionCtrler.currActionContext.movementEnabled = enabled.value;
+                actionCtrler.currActionContext.movementEnabled = movementEnabled;
 
             EndAction(true);
         }
@@ -1650,59 +1778,71 @@ namespace Game.NodeCanvasExtension
         public bool stopWhenActionCanceled = true;
         PawnActionController __pawnActionCtrler;
         EffectInstance __fxInstance;
+        IDisposable __showDisposable;
+        float __showTimeStamp;
         int __capturedActionInstanceId;
 
         protected override void OnExecute()
         {
-            if (agent.TryGetComponent<PawnActionController>(out __pawnActionCtrler))
+            __pawnActionCtrler = agent.GetComponent<PawnActionController>();
+            
+            if (!localToWorld.isNoneOrNull)
             {
-                if (!localToWorld.isNoneOrNull)
-                {
-                    var localToWorldMatrix = Matrix4x4.TRS(localToWorld.value.position, localToWorld.value.rotation, Vector3.one) * Matrix4x4.TRS(position.value, Quaternion.Euler(pitchYawRoll.value), Vector3.one);
-                    if (fxPrefab.isNoneOrNull)
-                        __fxInstance = EffectManager.Instance.Show(fxName.value, localToWorldMatrix.GetPosition(), localToWorldMatrix.rotation, scale.value, duration.value, 0f, scalingMode.value, playRate.value);
-                    else
-                        __fxInstance = EffectManager.Instance.Show(fxPrefab.value, localToWorldMatrix.GetPosition(), localToWorldMatrix.rotation, scale.value, duration.value, 0f, scalingMode.value, playRate.value);
-                }
+                var localToWorldMatrix = Matrix4x4.TRS(localToWorld.value.position, localToWorld.value.rotation, Vector3.one) * Matrix4x4.TRS(position.value, Quaternion.Euler(pitchYawRoll.value), Vector3.one);
+                if (fxPrefab.isNoneOrNull)
+                    __fxInstance = EffectManager.Instance.Show(fxName.value, localToWorldMatrix.GetPosition(), localToWorldMatrix.rotation, scale.value, duration.value, 0f, scalingMode.value, playRate.value);
                 else
-                {
-                    if (fxPrefab.isNoneOrNull)
-                        __fxInstance = EffectManager.Instance.Show(fxName.value, position.value, Quaternion.Euler(pitchYawRoll.value), scale.value, duration.value, 0f, scalingMode.value, playRate.value);
-                    else
-                        __fxInstance = EffectManager.Instance.Show(fxPrefab.value, position.value, Quaternion.Euler(pitchYawRoll.value), scale.value, duration.value, 0f, scalingMode.value, playRate.value);
-                }
+                    __fxInstance = EffectManager.Instance.Show(fxPrefab.value, localToWorldMatrix.GetPosition(), localToWorldMatrix.rotation, scale.value, duration.value, 0f, scalingMode.value, playRate.value);
+            }
+            else
+            {
+                if (fxPrefab.isNoneOrNull)
+                    __fxInstance = EffectManager.Instance.Show(fxName.value, position.value, Quaternion.Euler(pitchYawRoll.value), scale.value, duration.value, 0f, scalingMode.value, playRate.value);
+                else
+                    __fxInstance = EffectManager.Instance.Show(fxPrefab.value, position.value, Quaternion.Euler(pitchYawRoll.value), scale.value, duration.value, 0f, scalingMode.value, playRate.value);
+            }
+            
+            Debug.Assert(__fxInstance != null);
 
-                if (attachToTransform)
-                {
-                    Debug.Assert(!localToWorld.isNoneOrNull);
-                    __fxInstance.transform.SetParent(localToWorld.value, true);
-                }
+            if (attachToTransform)
+            {
+                Debug.Assert(!localToWorld.isNoneOrNull);
+                __fxInstance.transform.SetParent(localToWorld.value, true);
+            }
 
-                if (!childNameToBeHidden.isNoneOrNull && childNameToBeHidden.value.Length > 0)
+            if (!childNameToBeHidden.isNoneOrNull && childNameToBeHidden.value.Length > 0)
+            {
+                for (int i = 0; i < __fxInstance.transform.childCount; i++)
                 {
-                    for (int i = 0; i < __fxInstance.transform.childCount; i++)
+                    var child = __fxInstance.transform.GetChild(i);
+                    for (int j = 0; j < childNameToBeHidden.value.Length; j++)
                     {
-                        var child = __fxInstance.transform.GetChild(i);
-                        for (int j = 0; j < childNameToBeHidden.value.Length; j++)
+                        if (childNameToBeHidden.value[j] == child.name)
                         {
-                            if (childNameToBeHidden.value[j] == child.name)
-                            {
-                                child.gameObject.SetActive(false);
-                                break;
-                            }
+                            child.gameObject.SetActive(false);
+                            break;
                         }
                     }
                 }
-
-                __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;
-                if (stopWhenActionCanceled)
-                {
-                    Observable.Timer(TimeSpan.FromSeconds(__fxInstance.LifeTime))
-                        .TakeWhile(_ => __pawnActionCtrler.CheckActionRunning() && __pawnActionCtrler.currActionContext.actionInstanceId == __capturedActionInstanceId)
-                        .DoOnCancel(() => __fxInstance?.gameObject.SetActive(false))
-                        .Subscribe().AddTo(agent);
-                }
             }
+
+            __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;
+            __showTimeStamp = Time.time;
+            __showDisposable = Observable.EveryUpdate().Subscribe(_ =>
+            {
+                if ((Time.time - __showTimeStamp) > duration.value)
+                {
+                    __fxInstance.gameObject.SetActive(false);
+                    __showDisposable.Dispose();
+                    __showDisposable = null;
+                }
+                else if (stopWhenActionCanceled && __pawnActionCtrler != null && (!__pawnActionCtrler.CheckActionRunning() || __pawnActionCtrler.currActionContext.actionInstanceId != __capturedActionInstanceId))
+                {
+                    __fxInstance.gameObject.SetActive(false);
+                    __showDisposable.Dispose();
+                    __showDisposable = null;
+                }
+            }).AddTo(agent);
 
             EndAction(true);
         }
@@ -1719,65 +1859,55 @@ namespace Game.NodeCanvasExtension
         public bool deactivateWhenStopped = true;
         PawnActionController __pawnActionCtrler;
         ParticleSystem __particleSystem;
+        IDisposable __showDisposable;
+        float __showTimeStamp;
         int __capturedActionInstanceId;
 
         protected override void OnExecute()
         {
-            if (agent.TryGetComponent<PawnActionController>(out __pawnActionCtrler))
+            __pawnActionCtrler = agent.GetComponent<PawnActionController>();
+
+            fxAttached.value.gameObject.SetActive(true);
+            if (fxAttached.value.TryGetComponent<ParticleSystem>(out __particleSystem))
+                __particleSystem.Play();
+
+            if (!childNameToBeHidden.isNoneOrNull && childNameToBeHidden.value.Length > 0)
             {
-                fxAttached.value.gameObject.SetActive(true);
-                if (fxAttached.value.TryGetComponent<ParticleSystem>(out __particleSystem))
-                    __particleSystem.Play();
-
-                if (!childNameToBeHidden.isNoneOrNull && childNameToBeHidden.value.Length > 0)
+                for (int i = 0; i < fxAttached.value.transform.childCount; i++)
                 {
-                    for (int i = 0; i < fxAttached.value.transform.childCount; i++)
-                    {
-                        var child = fxAttached.value.transform.GetChild(i);
-                        child.gameObject.SetActive(true);
+                    var child = fxAttached.value.transform.GetChild(i);
+                    child.gameObject.SetActive(true);
 
-                        for (int j = 0; j < childNameToBeHidden.value.Length; j++)
+                    for (int j = 0; j < childNameToBeHidden.value.Length; j++)
+                    {
+                        if (childNameToBeHidden.value[j] == child.name)
                         {
-                            if (childNameToBeHidden.value[j] == child.name)
-                            {
-                                child.gameObject.SetActive(false);
-                                break;
-                            }
+                            child.gameObject.SetActive(false);
+                            break;
                         }
                     }
                 }
-
-                __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;
-                if (stopWhenActionCanceled)
-                {
-                    Observable.Timer(TimeSpan.FromSeconds(duration.value))
-                        .TakeWhile(_ => __pawnActionCtrler.CheckActionRunning() && __pawnActionCtrler.currActionContext.actionInstanceId == __capturedActionInstanceId)
-                        .DoOnCancel(() => 
-                        {
-                            if (__particleSystem != null) __particleSystem.Stop();
-                            if (deactivateWhenStopped) fxAttached.value.gameObject.SetActive(false);
-                        })
-                        .Subscribe(_ => 
-                        {
-                            if (__particleSystem != null) __particleSystem.Stop();
-                            if (deactivateWhenStopped) fxAttached.value.gameObject.SetActive(false);
-                        }).AddTo(agent);
-                }
-                else
-                {
-                    Observable.Timer(TimeSpan.FromSeconds(duration.value))
-                        .DoOnCancel(() => 
-                        {
-                            if (__particleSystem != null) __particleSystem.Stop();
-                            if (deactivateWhenStopped) fxAttached.value.gameObject.SetActive(false);
-                        })
-                        .Subscribe(_ => 
-                        {
-                            if (__particleSystem != null) __particleSystem.Stop();
-                            if (deactivateWhenStopped) fxAttached.value.gameObject.SetActive(false);
-                        }).AddTo(agent);
-                }
             }
+
+            __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;
+            __showTimeStamp = Time.time;
+            __showDisposable = Observable.EveryUpdate().Subscribe(_ =>
+            {
+                if ((Time.time - __showTimeStamp) > duration.value)
+                {
+                    if (__particleSystem != null) __particleSystem.Stop();
+                    if (deactivateWhenStopped) fxAttached.value.gameObject.SetActive(false);
+                    __showDisposable.Dispose();
+                    __showDisposable = null;
+                }
+                else if (stopWhenActionCanceled && __pawnActionCtrler != null && (!__pawnActionCtrler.CheckActionRunning() || __pawnActionCtrler.currActionContext.actionInstanceId != __capturedActionInstanceId))
+                {
+                    if (__particleSystem != null) __particleSystem.Stop();
+                    if (deactivateWhenStopped) fxAttached.value.gameObject.SetActive(false);
+                    __showDisposable.Dispose();
+                    __showDisposable = null;
+                }
+            }).AddTo(agent);
 
             EndAction(true);
         }
@@ -1792,67 +1922,42 @@ namespace Game.NodeCanvasExtension
         public BBParameter<float> duration = -1f;
         public bool stopWhenActionCanceled = true;
         PawnActionController __pawnActionCtrler;
+        IDisposable __showDisposable;
+        float __showTimeStamp;
         int __capturedActionInstanceId;
 
         protected override void OnExecute()
         {
-            if (agent.TryGetComponent<PawnActionController>(out __pawnActionCtrler))
+            __pawnActionCtrler = agent.GetComponent<PawnActionController>();
+
+            if (!startPoint.isNoneOrNull)
+                trailFx.value.PointStart = startPoint.value;
+            if (!endPoint.isNoneOrNull)
+                trailFx.value.PointEnd = endPoint.value;
+
+            trailFx.value.Activate();
+
+            __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;
+            __showTimeStamp = Time.time;
+            __showDisposable = Observable.EveryUpdate().Subscribe(_ =>
             {
-                if (!startPoint.isNoneOrNull)
-                    trailFx.value.PointStart = startPoint.value;
-                if (!endPoint.isNoneOrNull)
-                    trailFx.value.PointEnd = endPoint.value;
-
-                trailFx.value.Activate();
-
-                __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;
-
-                if (stopWhenActionCanceled)
+                if ((Time.time - __showTimeStamp) > duration.value)
                 {
-                    Observable.Timer(TimeSpan.FromSeconds(duration.value))
-                        .TakeWhile(_ => __pawnActionCtrler.CheckActionRunning() && __pawnActionCtrler.currActionContext.actionInstanceId == __capturedActionInstanceId)
-                        .DoOnCancel(() => trailFx.value.Deactivate())
-                        .DoOnCompleted(() => trailFx.value.Deactivate())
-                        .Subscribe().AddTo(agent);
+                    trailFx.value.Deactivate();
+                    __showDisposable.Dispose();
+                    __showDisposable = null;
                 }
-                else
+                else if (stopWhenActionCanceled && __pawnActionCtrler != null && (!__pawnActionCtrler.CheckActionRunning() || __pawnActionCtrler.currActionContext.actionInstanceId != __capturedActionInstanceId))
                 {
-                    Observable.Timer(TimeSpan.FromSeconds(duration.value))
-                        .Subscribe(_ => trailFx.value.Deactivate()).AddTo(agent);
+                    trailFx.value.Deactivate();
+                    __showDisposable.Dispose();
+                    __showDisposable = null;
                 }
-            }
+            }).AddTo(agent);
 
             EndAction(true);
         }
     }
-
-    // public class ShowBladeTrail : ActionTask
-    // {
-    //     protected override string info => $"ShowBladeTrail : {trailIndex}";
-    //     public BBParameter<int> trailIndex;
-
-    //     protected override void OnExecute()
-    //     {
-    //         var brain = agent.GetComponent<PawnBrainController>();
-    //         brain.ShowTrail(true, trailIndex.value);
-
-    //         EndAction(true);
-    //     }
-    // }
-
-    // public class HideBladeTrail : ActionTask
-    // {
-    //     protected override string info => $"HideBladeTrail : {trailIndex}";
-    //     public BBParameter<int> trailIndex;
-
-    //     protected override void OnExecute()
-    //     {
-    //         var brain = agent.GetComponent<PawnBrainController>();
-    //         brain.ShowTrail(false, trailIndex.value);
-
-    //         EndAction(true);
-    //     }
-    // }
 
     public class PlaySound : ActionTask 
     {

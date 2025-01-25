@@ -40,7 +40,7 @@ namespace Game
         void IPawnMovable.Stop() { __pawnMovement.Stop(); }
 #endregion
 
-        public enum Decisions
+        public enum Decisions : int
         {
             None = -1,
             Idle,

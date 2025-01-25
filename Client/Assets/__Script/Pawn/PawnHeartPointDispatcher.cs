@@ -409,11 +409,11 @@ namespace Game
             damageContext.receiverBrain.PawnHP.LastDamageTimeStamp = Time.time;
 
             //* 히트 시엔 impulseRootMotion을 꺼줌
-            if (senderActionCtrler != null)
-            {
-                senderActionCtrler.currActionContext.impulseRootMotionDisposable?.Dispose();
-                senderActionCtrler.currActionContext.impulseRootMotionDisposable = null;
-            }
+            // if (senderActionCtrler != null)
+            // {
+            //     senderActionCtrler.currActionContext.rootMotionDisposable?.Dispose();
+            //     senderActionCtrler.currActionContext.rootMotionDisposable = null;
+            // }
         }
 
         float CalcFinalDamage(ref DamageContext damageContext)

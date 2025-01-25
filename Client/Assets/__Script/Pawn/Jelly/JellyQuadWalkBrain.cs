@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using UniRx;
 using UnityEngine;
@@ -29,6 +30,14 @@ namespace Game
         {
             __decisionCoolTime = decisionCoolTime;
             JellyBB.decision.currDecision.Value = Decisions.None;
+        }
+
+        public override void ChangeDecision(int newDecision)
+        {
+            __decisionCoolTime = 0f;
+            
+            Debug.Assert(newDecision >= (int)JellyBrain.Decisions.None && newDecision < (int)JellyBrain.Decisions.Max);
+            JellyBB.decision.currDecision.Value = (JellyBrain.Decisions)newDecision;
         }
 
         public JellyQuadWalkBlackboard JellyQuadWalkBB { get; private set; }

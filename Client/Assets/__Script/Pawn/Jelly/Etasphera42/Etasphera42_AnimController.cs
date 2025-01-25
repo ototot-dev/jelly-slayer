@@ -1,3 +1,5 @@
+using UniRx;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
@@ -7,6 +9,7 @@ namespace Game
     {
         [Header("Component")]
         public Transform hookingPoint;
+        public Transform pelves;
         public Transform turretBody;
         public Transform leftTurret;
         public Transform rightTurret;
@@ -51,12 +54,30 @@ namespace Game
             __centerTurretRotationCached = centerTurret.transform.localRotation;
             __topTurret1_RotationCached = topTurret1.transform.localRotation;
             __topTurret2_RotationCached = topTurret2.transform.localRotation;
+
+            __isDrivingParam = Animator.StringToHash("IsDriving");
+            __onDriveTrigger = Animator.StringToHash("OnDrive");
         }
+
+        int __isDrivingParam;
+        int __onDriveTrigger;
 
         void Start()
         {
+            // __brain.BB.action.isDriving.Subscribe(v =>
+            // {
+            //     if (v != mainAnimator.GetBool(__isDrivingParam))
+            //     {
+            //         mainAnimator.SetBool(__isDrivingParam, v);
+            //         if (v) mainAnimator.SetTrigger(__onDriveTrigger);
+            //     }
+            // }).AddTo(this);
+
             __brain.onUpdate += () =>
             {
+                if (mainAnimator.GetBool(__isDrivingParam))
+                    pelves.transform.localRotation *= Quaternion.Euler(90f, 0f, 0f);
+
                 if (__brain.BB.IsDown)
                     __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation);
                 else if (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
@@ -111,20 +132,11 @@ namespace Game
             {
                 __brain.ActionCtrler.hookingPointColliderHelper.transform.position = hookingPoint.transform.position;
 
+                // if (__brain.BB.IsDriving)
+                //     pelves.transform.localRotation *= Quaternion.Euler(90f, 0f, 0f);
+
                 if (__brain.BB.TargetColliderHelper != null)
                     UpdateTurretRotation(__brain.BB.TargetColliderHelper.GetWorldCenter());
-
-                // if (__brain.BB.TargetColliderHelper != null)
-                // {
-                //     bodyOverrideTransform.data.rotation = 
-                //         new Vector3(-Vector3.SignedAngle(__brain.coreColliderHelper.transform.forward.Vector2D(), (__brain.BB.TargetColliderHelper.transform.position - __brain.coreColliderHelper.transform.position).Vector2D(), Vector3.up), 0f, 0f);
-                // }
-                // else
-                // {
-                //     bodyOverrideTransform.data.rotation = Vector3.zero;
-                // }
-
-                // UpdateTurretPitch();
             };
 
             __brain.PawnHP.onDead += (_) =>

@@ -11,6 +11,7 @@ namespace Game
     public class Etasphera42_ActionController : JellyQuadWalkActionController
     {
         [Header("Component")]
+        public PawnColliderHelper dashActionColliderHelper;
         public PawnColliderHelper hookingPointColliderHelper;
 
         [Header("Parameter")]

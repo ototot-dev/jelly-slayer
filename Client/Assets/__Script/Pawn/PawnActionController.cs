@@ -35,7 +35,7 @@ namespace Game
             public float preMotionTimeStamp;
             public float finishTimeStamp;
             public float waitTimeStamp;
-            public IDisposable impulseRootMotionDisposable;
+            public IDisposable rootMotionDisposable;
             public IDisposable homingRotationDisposable;
             public IDisposable actionDisposable;
             static int __actionInstanceIdCounter;
@@ -69,7 +69,7 @@ namespace Game
                 preMotionTimeStamp = 0f;
                 finishTimeStamp = 0f;
                 waitTimeStamp = 0f;
-                impulseRootMotionDisposable = null;
+                rootMotionDisposable = null;
                 homingRotationDisposable = null;
                 actionDisposable = null;
             }
@@ -102,7 +102,7 @@ namespace Game
                 preMotionTimeStamp = 0f;
                 finishTimeStamp = 0f;
                 waitTimeStamp = 0f;
-                impulseRootMotionDisposable = null;
+                rootMotionDisposable = null;
                 homingRotationDisposable = null;
                 actionDisposable = null;
             }
@@ -532,10 +532,10 @@ namespace Game
             currActionContext.actionCanceled = true;
             currActionContext.actionDisposable?.Dispose();
             currActionContext.homingRotationDisposable?.Dispose();
-            currActionContext.impulseRootMotionDisposable?.Dispose();
+            currActionContext.rootMotionDisposable?.Dispose();
             currActionContext.actionDisposable = null;
             currActionContext.homingRotationDisposable = null;
-            currActionContext.impulseRootMotionDisposable = null;
+            currActionContext.rootMotionDisposable = null;
             onActionCanceled?.Invoke(currActionContext, rewindAction ? rewindSpeed : 1);
 
             if (rewindAction)
@@ -571,10 +571,10 @@ namespace Game
 
             currActionContext.actionDisposable?.Dispose();
             currActionContext.homingRotationDisposable?.Dispose();
-            currActionContext.impulseRootMotionDisposable?.Dispose();
+            currActionContext.rootMotionDisposable?.Dispose();
             currActionContext.actionDisposable = null;
             currActionContext.homingRotationDisposable = null;
-            currActionContext.impulseRootMotionDisposable = null;
+            currActionContext.rootMotionDisposable = null;
             currActionContext.finishTimeStamp = Time.time;
 
             prevActionContext = currActionContext;

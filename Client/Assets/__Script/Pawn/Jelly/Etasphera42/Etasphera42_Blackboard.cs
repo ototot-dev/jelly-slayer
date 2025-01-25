@@ -6,6 +6,7 @@ namespace Game
 {
     public class Etasphera42_Blackboard : JellyQuadWalkBlackboard
     {
+        public bool IsDriving => action.isDriving.Value;
         public override bool IsJumping => action.isJumping.Value;
         public override bool IsGliding => action.isGliding.Value;
         public override bool IsFalling => action.isFalling.Value;
@@ -17,6 +18,7 @@ namespace Game
         public override float MinApproachDistance => action.minApproachDistance;
         public float HoldPositionRate => action.holdPositionRate;
         public float MoveAroundRate => action.moveAroundRate;
+
         [Serializable]
         public class Body
         {
@@ -39,6 +41,7 @@ namespace Game
         [Serializable]
         public class Action
         {
+            public BoolReactiveProperty isDriving = new();
             public BoolReactiveProperty isJumping = new();
             public BoolReactiveProperty isGliding = new();
             public BoolReactiveProperty isFalling = new();

@@ -86,6 +86,7 @@ namespace Game
 
         MainTable.ActionData __muzzleFireActionData;
         MainTable.ActionData __torchFireActionData;
+        MainTable.ActionData __rushActionData;
 
         protected override void StartInternal()
         {
@@ -93,6 +94,7 @@ namespace Game
             
             __muzzleFireActionData ??= ActionDataSelector.GetActionData("MuzzleFire");
             __torchFireActionData ??= ActionDataSelector.GetActionData("TorchFire");
+            __rushActionData ??= ActionDataSelector.GetActionData("Rush");
 
             onTick += (deltaTick) =>
             {
@@ -104,19 +106,24 @@ namespace Game
                 if (debugActionDisabled)
                     return;
                 
-                if (!ActionCtrler.CheckActionRunning() && !ActionCtrler.CheckActionPending() && (ActionDataSelector.CheckExecutable(__muzzleFireActionData) || ActionDataSelector.CheckExecutable(__torchFireActionData)))
+                if (!ActionCtrler.CheckActionRunning() && !ActionCtrler.CheckActionPending())
                 {
                     var distanceConstraint = BB.TargetBrain != null ? coreColliderHelper.GetApproachDistance(BB.TargetBrain.GetWorldPosition()) : -1f;
-                    if (ActionDataSelector.EvaluateSelection(__muzzleFireActionData, distanceConstraint, 1f) && CheckTargetVisibility())
-                    {
-                        ActionDataSelector.ResetSelection(__muzzleFireActionData);
-                        ActionCtrler.SetPendingAction(__muzzleFireActionData.actionName);
-                    }
-                    else if (ActionDataSelector.EvaluateSelection(__torchFireActionData, distanceConstraint, 1f) && CheckTargetVisibility())
+                    // if (ActionDataSelector.CheckExecutable(__muzzleFireActionData) && ActionDataSelector.EvaluateSelection(__muzzleFireActionData, distanceConstraint, 1f) && CheckTargetVisibility())
+                    // {
+                    //     ActionDataSelector.ResetSelection(__muzzleFireActionData);
+                    //     ActionCtrler.SetPendingAction(__muzzleFireActionData.actionName);
+                    // }
+                    if (ActionDataSelector.CheckExecutable(__torchFireActionData) && ActionDataSelector.EvaluateSelection(__torchFireActionData, distanceConstraint, 1f) && CheckTargetVisibility())
                     {
                         ActionDataSelector.ResetSelection(__torchFireActionData);
                         ActionCtrler.SetPendingAction(__torchFireActionData.actionName);
                     }
+                    // else if (ActionDataSelector.CheckExecutable(__rushActionData) && ActionDataSelector.EvaluateSelection(__rushActionData, distanceConstraint, 1f) && CheckTargetVisibility())
+                    // {
+                    //     ActionDataSelector.ResetSelection(__rushActionData);
+                    //     ActionCtrler.SetPendingAction(__rushActionData.actionName);
+                    // }
                 }
             };
 
