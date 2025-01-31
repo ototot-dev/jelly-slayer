@@ -16,7 +16,7 @@
 		<showpic_l>true</showpic_l>
 		<emotion_l>Angry</emotion_l>
 		<trigger_l>refuse</trigger_l>		
-		<text>난 이미 전투의 전문가야. 기초적인 건 필요없다구.</text>
+		<text>잠깐만. 난 이미 전투의 전문가야. 기초적인 건 필요없다구.</text>
 	</item>
 	<item>
 		<status>Text</status>
@@ -64,6 +64,15 @@
 		<name>시스템</name>
 		<showpic_r>true</showpic_r>
 		<text>점프를 하면 바닥에 깔리는 공격을 회피할 수 있습니다. 점프 키를 눌러 3번 점프해보세요.</text>
+	</item>
+	<item>
+		<status>Text</status>
+		<name>주인공</name>
+		<showpic_l>true</showpic_l>
+		<closeeye_l>0</closeeye_l>
+		<emotion_l>Angry</emotion_l>
+		<trigger_l>idle</trigger_l>
+		<text>이런건 어렸을 때 했던 수련인데....</text>
 	</item>
 	<item>
 		<status>SetMode</status>
@@ -115,6 +124,7 @@
 		<showpic_l>true</showpic_l>
 		<emotion_l>Surprise</emotion_l>
 		<trigger_l>surprise</trigger_l>
+		<closeeye_l>0</closeeye_l>
 		<text>히익!… 저게 뭐야?</text>
 	</item>
 	<item>
@@ -217,5 +227,14 @@
 	<item>
 		<status>EnableInput</status>
 		<action>Parry</action>
+	</item>
+	<item>
+		<status>Text</status>
+		<name>시스템</name>
+		<showpic_r>true</showpic_r>
+		<text>완벽해요. 기초 튜토리얼을 완료했습니다.</text>
+	</item>
+	<item>
+		<status>End</status>
 	</item>
 </tutorial>

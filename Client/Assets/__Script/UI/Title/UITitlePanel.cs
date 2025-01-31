@@ -7,13 +7,32 @@ using Game;
 public class UITitlePanel : MonoBehaviour
 {
     int _cursorIndex = 0;
+
+    public RectTransform _rtLogo;
+    public RectTransform _rtMenu;
+
     public Transform _trCursor;
-    public Transform[] _trButton;
+    public UITItleButton[] _buttons;
+
+    public SocialAvatar _avatar;
 
     // Start is called before the first frame update
     void Start()
     {
         InitManager.Initialize();
+
+        float ratio = (float)Screen.width / (float)Screen.height;
+        ratio /= (1280f / 800f);
+        ratio--;
+        if(ratio < 0)
+            ratio = 0;
+
+        _rtLogo.anchoredPosition += new Vector2(0, 150 * ratio);
+        _rtMenu.anchoredPosition -= new Vector2(0, 150 * ratio);
+
+        SetCursorIndex(0);
+
+        _avatar.SetEmotion(EMOTION.Angry);
     }
     public void OnClickGameStart()
     {
@@ -37,8 +56,17 @@ public class UITitlePanel : MonoBehaviour
         if (index >= 3)
             index = 2;
 
+        SelectButton(index);
+    }
+    void SelectButton(int index) 
+    {
         _cursorIndex = index;
-        _trCursor.position = _trButton[index].position;
+        _trCursor.position = _buttons[index].transform.position;
+
+        for (int ia = 0; ia < _buttons.Length; ia++) 
+        {
+            _buttons[ia].Select(ia == index);
+        }
     }
 
     void DoAction() 

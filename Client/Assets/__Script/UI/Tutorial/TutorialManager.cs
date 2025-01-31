@@ -6,16 +6,18 @@ using System;
 using System.Linq;
 using NodeCanvas.StateMachines;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public enum TutorialStatus 
 { 
     None,
     Text,
-    EnableInput, // 입력 Enable
-    DisableInput, // 입력 Disable
-    ActiveTarget, // 객체 Active
-    SetMode,
-    ActiveTargetAttack, 
+    EnableInput,        // 입력 Enable
+    DisableInput,       // 입력 Disable
+    ActiveTarget,       // 객체 Active
+    SetMode,            // 모드
+    ActiveTargetAttack, // Target Attack Active
+    End,                // 튜토리얼 종료
 }
 
 public enum TutorialAction 
@@ -283,6 +285,9 @@ public class TutorialManager : MonoBehaviour
                 case TutorialStatus.ActiveTargetAttack:
                     EnableSoldierAttack(item._targetIndex, true);
                     break;
+                case TutorialStatus.End:
+                    EndTutorial();
+                    break;
             }
             _delActivateItem?.Invoke(item);
 
@@ -301,6 +306,10 @@ public class TutorialManager : MonoBehaviour
         {
             _delTutorialEnd?.Invoke();
         }
+    }
+    void EndTutorial() 
+    {
+        SceneManager.LoadScene("Title");
     }
     void EnableSoldierAttack(int index, bool isEnable) 
     {

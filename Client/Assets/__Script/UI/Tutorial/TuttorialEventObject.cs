@@ -14,6 +14,18 @@ public class TutorialEventObject : MonoBehaviour
     }
     public void OnTriggerEnter(Collider other)
     {
+        CheckArrive(other.transform.position);
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        CheckArrive(other.transform.position);
+    }
+    void CheckArrive(Vector3 pos) 
+    {
+        var dist = Vector3.Distance(transform.position, pos);
+        if (dist > 1.0f)
+            return;
+
         _boxCollider.enabled = false;
 
         _manager.GoNext();

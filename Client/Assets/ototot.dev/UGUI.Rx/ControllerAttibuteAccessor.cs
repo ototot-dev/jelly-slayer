@@ -14,7 +14,7 @@ namespace UGUI.Rx {
 public class ControllerAttributeAccessor : ototot.dev.Singleton<ControllerAttributeAccessor> {
 
     public string GetTemplateResourcePath(Type type) {
-#if !UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
+#if AABBCC //!UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
         return ControllerAttributeAOT.Instance.GetTemplatePath(type);
 #else
         var attrs = type.GetCustomAttributes(typeof(TemplateAttribute), false);
@@ -27,10 +27,10 @@ public class ControllerAttributeAccessor : ototot.dev.Singleton<ControllerAttrib
     }
 
     public AssetAlias GetTemplateAssetAlias(Type type) {
-#if !UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
+#if AABBCC //!UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
         return ControllerAttributeAOT.Instance.GetTemplateBundleAlias(type);
 #else
-        var attrs = type.GetCustomAttributes(typeof(TemplateAttribute), false);
+            var attrs = type.GetCustomAttributes(typeof(TemplateAttribute), false);
 
         if (attrs != null && attrs.Length > 0 && string.IsNullOrEmpty((attrs[0] as TemplateAttribute).Path))
             return new AssetAlias((attrs[0] as TemplateAttribute).BundleName, (attrs[0] as TemplateAttribute).AssetName);
@@ -40,7 +40,7 @@ public class ControllerAttributeAccessor : ototot.dev.Singleton<ControllerAttrib
     }
 
     public string[] GetStyleSheetResourcePath(Type type) {
-#if !UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
+#if AABBCC //!UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
         return ControllerAttributeAOT.Instance.GetStyleSheetPaths(type);
 #else
         var attrs = type.GetCustomAttributes(typeof(StyleSheetAttribute), false);
@@ -53,7 +53,7 @@ public class ControllerAttributeAccessor : ototot.dev.Singleton<ControllerAttrib
     }
 
     public AssetAlias[] GetStyleSheetAssetAlias(Type type) {
-#if !UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
+#if AABBCC //!UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
         return ControllerAttributeAOT.Instance.GetStyleSheetBundleAlias(type);
 #else
         var attrs = type.GetCustomAttributes(typeof(StyleSheetAttribute), false);
@@ -66,7 +66,7 @@ public class ControllerAttributeAccessor : ototot.dev.Singleton<ControllerAttrib
     }
 
     public string[] GetMemberResourcePath<T>(T target) where T : Controller {
-#if !UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
+#if AABBCC //!UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
         return ControllerAttributeAOT.Instance.GetResourcePath<T>(target);
 #else
         var attrs = typeof(T).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
@@ -112,7 +112,7 @@ public class ControllerAttributeAccessor : ototot.dev.Singleton<ControllerAttrib
     }
 
     public void SetMemberResource<T>(T target) where T : Controller {
-#if !UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
+#if AABBCC //!UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
         ControllerAttributeAOT.Instance.SetResource<T>(target);
 #else
         var tuples = typeof(T).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
@@ -170,10 +170,10 @@ public class ControllerAttributeAccessor : ototot.dev.Singleton<ControllerAttrib
     }
 
     public AssetAlias[] GetMemberAssetAlias<T>(T target) where T : Controller{
-#if !UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
+#if AABBCC //!UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
         return ControllerAttributeAOT.Instance.GetBundleAlias<T>(target);
 #else
-        var attrs = typeof(T).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+            var attrs = typeof(T).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
             .Select(f => {
                 var temps = f.GetCustomAttributes(typeof(AssetBundleAttribute), false);
 
@@ -220,10 +220,10 @@ public class ControllerAttributeAccessor : ototot.dev.Singleton<ControllerAttrib
     }
 
     public void SetMemberAsset<T>(T target) where T : Controller {
-#if !UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
+#if AABBCC //!UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
         ControllerAttributeAOT.Instance.SetAssets<T>(target);
 #else
-        var tuples = typeof(T).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+            var tuples = typeof(T).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
             .Select(f => {
                 var temps = f.GetCustomAttributes(typeof(AssetBundleAttribute), false);
 
