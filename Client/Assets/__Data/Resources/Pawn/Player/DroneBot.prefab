@@ -96700,7 +96700,7 @@ GameObject:
   - component: {fileID: 4182435610322765386}
   m_Layer: 0
   m_Name: DroneBot
-  m_TagString: Jelly
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -96793,6 +96793,7 @@ MonoBehaviour:
   capsule: {fileID: 5714658555218957785}
   capsuleRigidBody: {fileID: 6549831737906849650}
   capsuleCollider: {fileID: 7470518144501520989}
+  ignoredColliders: []
   freezeMovement: 0
   freezeRotation: 0
   rootMotionEnabled: 1
@@ -96806,6 +96807,7 @@ MonoBehaviour:
   destination: {x: 0, y: 0, z: 0}
   minApproachDistance: 1
   drawGizmosEnabled: 0
+  prepareHangingDuration: 0
   testHeight: 2
 --- !u!114 &3616433649530575527
 MonoBehaviour:
@@ -96820,8 +96822,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainAnimator: {fileID: 681538142487681436}
-  legAnimator: {fileID: 0}
   rigBuilder: {fileID: 0}
+  rigSetup: {fileID: 0}
+  legAnimator: {fileID: 0}
+  ragdollAnimator: {fileID: 0}
   leftHand: {fileID: 5988580521898645832}
   rightHand: {fileID: 1824209911909775786}
   hangingAttachPoint: {fileID: 7363935143626021191}
@@ -96843,8 +96847,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b04de838c42f4889a9e4701fcc9f7be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bodyHitColliderHelper: {fileID: 666158820448204795}
-  parryHitColliderHelper: {fileID: 0}
   hitColliderHelper: {fileID: 0}
   assaultActionColliderHelper: {fileID: 0}
   emitPointL: {fileID: 449322475394318657}
@@ -96867,6 +96869,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coreColliderHelper: {fileID: 8387849614197782209}
+  bodyHitColliderHelper: {fileID: 0}
+  parryColliderHelper: {fileID: 0}
+  visibilityChecker: {fileID: 0}
   owner: {fileID: 0}
   tickInterval: 0.1
   tickEnabled: 1
@@ -96959,15 +96964,15 @@ MonoBehaviour:
     minApproachDistance: 0.1
     holdPositionRate: 1
     moveAroundRate: 1
-    hostBrain:
-      value: {fileID: 0}
-    formationSpot:
-      value: {fileID: 0}
   decision:
     currDecision:
       value: -1
     aggressiveLevel:
       value: 0
+    hostBrain:
+      value: {fileID: 0}
+    formationSpot:
+      value: {fileID: 0}
   resource:
     protonExplosionFx: {fileID: 4086126213069182278, guid: 9c419106672632b4995bed7695c58ade, type: 3}
     jetBoostFx: {fileID: 2028202623014272037}

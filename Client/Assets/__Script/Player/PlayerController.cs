@@ -8,11 +8,13 @@ namespace Game
 {
     public class PlayerController : MonoBehaviour
     {
-        [Header("Component")]
-        public CursorController cursorCtrler;
-        public KeyboardController keyboardCtrler;
-        public DroneBotFormationController droneBotFormationCtrler;
+        public CursorController CursorCtrler { get; private set; }
+        public KeyboardController KeyboardCtrler { get; private set; }
+        public TargetingController TargetingCtrler { get; private set; }
+
+        [Header("Possess")]
         public HeroBrain possessedBrain;
+        public DroneBotFormationController dronebotFormationCtrler;
         public GameObject PossessedPawn => possessedBrain != null ? possessedBrain.gameObject : null;
 
         [Header("Parameter")]
@@ -74,6 +76,13 @@ namespace Game
             possessedBrain = null;
         }
 
+        void Awake()
+        {
+            CursorCtrler = GetComponent<CursorController>();
+            KeyboardCtrler = GetComponent<KeyboardController>();
+            TargetingCtrler = GetComponent<TargetingController>();
+        }
+
         void Update()
         {
             if (possessedBrain == null)
@@ -104,12 +113,12 @@ namespace Game
 
                     var targetCapsule = possessedBrain.BB.TargetColliderHelper.GetCapsuleCollider();
                     if (targetCapsule != null)
-                        cursorCtrler.cursor.position = possessedBrain.AnimCtrler.HeadLookAt.position + (targetCapsule.radius + targetCapsule.height * 0.5f) * Vector3.up;
+                        CursorCtrler.cursor.position = possessedBrain.AnimCtrler.HeadLookAt.position + (targetCapsule.radius + targetCapsule.height * 0.5f) * Vector3.up;
                 }
                 else
                 {
                     possessedBrain.Movement.faceVec = lookVec.Value;
-                    cursorCtrler.cursor.position = possessedBrain.Movement.capsule.position + lookVec.Value;
+                    CursorCtrler.cursor.position = possessedBrain.Movement.capsule.position + lookVec.Value;
 
                     // if (MyHeroBrain.SensorCtrler.ListeningColliders.Count > 0 && MyHeroBrain.SensorCtrler.ListeningColliders.FirstOrDefault() != null)
                     //     MyHeroBrain.AnimCtrler.HeadLookAt.position = MyHeroBrain.SensorCtrler.ListeningColliders.FirstOrDefault().transform.position + Vector3.up;

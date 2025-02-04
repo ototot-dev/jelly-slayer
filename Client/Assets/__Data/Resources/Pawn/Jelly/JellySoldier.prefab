@@ -190,7 +190,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!136 &2631676355314689051
 CapsuleCollider:
@@ -3940,7 +3940,7 @@ GameObject:
   - component: {fileID: 7979756587045458682}
   - component: {fileID: 3317346212697241151}
   - component: {fileID: 7827817497564531622}
-  m_Layer: 12
+  m_Layer: 11
   m_Name: HitBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20274,7 +20274,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coreColliderHelper: {fileID: 168326260960991395}
-  bodyHitColliderHelper: {fileID: 0}
+  bodyHitColliderHelper: {fileID: 7827817497564531622}
   parryColliderHelper: {fileID: 0}
   visibilityChecker: {fileID: 0}
   owner: {fileID: 0}

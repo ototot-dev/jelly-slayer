@@ -9,11 +9,11 @@ namespace Game
     {
         public string TerrainLayerName => "Terrain";
         public Camera MainCamera => cameraCtrler != null ? cameraCtrler.viewCamera : null;
-        public CursorController CursorCtrler => playerCtrler != null ? playerCtrler.cursorCtrler : null;
+        public CursorController CursorCtrler => playerCtrler != null ? playerCtrler.CursorCtrler : null;
         public HeroBrain HeroBrain => playerCtrler != null ? playerCtrler.possessedBrain : null;
         public DroneBotFormationController droneBotFormationCtrler;
         public PlayerController playerCtrler;
-        public PlayerTargetManager playerTargetManager;
+        public TargetingController playerTargetManager;
         public CameraController cameraCtrler;
         public TerrainManager terrainManager;
         public SlimeSpawnManager jellySpawnManager;

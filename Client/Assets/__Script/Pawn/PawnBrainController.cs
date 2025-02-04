@@ -66,8 +66,8 @@ namespace Game
 
         protected virtual void StartInternal()
         {
-            if (visibilityChecker != null)
-                LevelVisibilityManager.Instance.RegisterChecker(visibilityChecker);
+            // if (visibilityChecker != null)
+            //     LevelVisibilityManager.Instance.RegisterChecker(visibilityChecker);
 
             //* 지형 위로 y값 보정
             var hit = TerrainManager.GetTerrainHitPoint(transform.position);

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Game
 {
-    public class PlayerTargetManager : MonoBehaviour
+    public class TargetingController : MonoBehaviour
     {
         public float _inBound = 5;
         public float _outBound = 6;

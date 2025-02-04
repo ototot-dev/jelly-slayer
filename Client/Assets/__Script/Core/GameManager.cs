@@ -1,8 +1,45 @@
 using Game;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class GameManager : MonoSingleton<GameManager>
 {
+    public void SpawnHero()
+    {
+        GameContext.Instance.playerCtrler.SpawnHeroPawn(Resources.Load<GameObject>("Pawn/Player/Hero_OneUp"), true).transform.SetPositionAndRotation(Vector3.left, Quaternion.identity);
+    }
+
+    public void SpawnDroneBot()
+    {
+        Instantiate(Resources.Load<GameObject>("Pawn/Player/DroneBot")).transform.SetPositionAndRotation(2f * Vector3.up, Quaternion.identity);
+    }
+
+    public void SpawnSoldier()
+    {
+        Instantiate(Resources.Load<GameObject>("Pawn/Jelly/JellySoldier")).transform.SetPositionAndRotation(Vector3.right, Quaternion.identity);
+    }
+
+    public void SpawnEtasphera42()
+    {
+        Instantiate(Resources.Load<GameObject>("Pawn/Jelly/JellyEtasphera42")).transform.SetPositionAndRotation(Vector3.right, Quaternion.identity);
+    }
+
+    public void ShowLevel_HackerDen()
+    {
+        GameObject.Find("Launcher").GetComponent<Launcher>().hackerDen.SetActive(true);
+    }
+
+    public void ShowLevel_ShootingRange()
+    {
+        GameObject.Find("Launcher").GetComponent<Launcher>().shootingRange.SetActive(true);
+    }
+
+    public void HideCurrentLevel()
+    {
+        GameObject.Find("Launcher").GetComponent<Launcher>().hackerDen.SetActive(false);
+        GameObject.Find("Launcher").GetComponent<Launcher>().shootingRange.SetActive(false);
+    }
+
     // 주석    
     public delegate void OnPawnSpawned(PawnBrainController pawn);
     public OnPawnSpawned _delPawnSpawned;
