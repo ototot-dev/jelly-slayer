@@ -36,6 +36,13 @@ public class SocialAvatar : MonoBehaviour
 
     public int _emotionStart = 0;
     public int _mouthStart = 0;
+    public int _blinkIndex = 14;
+
+    public bool _isEnableBlink = false;
+    public float _blinkValue = 0;
+    public bool _isBlinking = false;
+
+    public float _closeEyeValue = 0;
 
     //float[] _emotionValue = { 0, 0, 0, 0, 0 };
     //float[] _emotionTarget = { 0, 0, 0, 0, 0 };
@@ -47,6 +54,7 @@ public class SocialAvatar : MonoBehaviour
         {
             _skinnedMesh = _skinnedMeshRenderer.sharedMesh;
         }
+        DoBlink();
         //SetEmotion(EMOTION.ANGRY);
     }
     void OnAnimatorIK(int layerIndex)
@@ -70,7 +78,9 @@ public class SocialAvatar : MonoBehaviour
         if (_skinnedMeshRenderer == null)
             return;
 
-        _skinnedMeshRenderer.SetBlendShapeWeight(14, value);
+        _closeEyeValue = value;
+
+        _skinnedMeshRenderer.SetBlendShapeWeight(_blinkIndex, value);
     }
     public void SetMouth(MOUTH mouth) 
     {
@@ -146,6 +156,24 @@ public class SocialAvatar : MonoBehaviour
                 SetEmotionWeight(_emotionStart+4, 100);
                 //_skinnedMeshRenderer.SetBlendShapeWeight(_emotionStart+4, value);
                 break;
+        }
+    }
+    void DoBlink() 
+    {
+        _isBlinking = true;
+        DG.Tweening.Sequence sequence = DOTween.Sequence();
+        sequence.Append(DOTween.To(() => _blinkValue, x => _blinkValue = x, 100, 0.15f)) // 0 → 1 (1초 동안)
+                .Append(DOTween.To(() => _blinkValue, x => _blinkValue = x, _closeEyeValue, 0.3f)) // 1 → 0 (1초 동안)
+                .OnUpdate(() => _skinnedMeshRenderer.SetBlendShapeWeight(_blinkIndex, _blinkValue)) // 값 확인
+                .OnComplete(() => _isBlinking = false);
+    }
+    private void Update()
+    {
+        if (_isEnableBlink == true && _isBlinking == false)
+        {
+            var rand = UnityEngine.Random.Range(0, 1000);
+            if(rand <= 0)
+                DoBlink();
         }
     }
     /*
