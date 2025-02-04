@@ -33,7 +33,12 @@ namespace Game
         void IPawnSpawnable.OnDespawnedHandler() {}
         void IPawnSpawnable.OnStartSpawnHandler() {}
         void IPawnSpawnable.OnFinishSpawnHandler() {}
-        void IPawnSpawnable.OnDeadHandler() {}
+        void IPawnSpawnable.OnDeadHandler() 
+        { 
+            var droneBotBrain = droneBotFormationCtrler.PickDroneBot();
+            droneBotFormationCtrler.ReleaseDroneBot(droneBotBrain);
+            Destroy(droneBotBrain.gameObject);
+        }
         void IPawnSpawnable.OnLifeTimeOutHandler() {}
         bool IPawnMovable.IsJumping() { return BB.IsJumping; }
         bool IPawnMovable.IsRolling() { return BB.IsRolling; }

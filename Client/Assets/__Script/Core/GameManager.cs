@@ -9,6 +9,11 @@ public class GameManager : MonoSingleton<GameManager>
         GameContext.Instance.playerCtrler.SpawnHeroPawn(Resources.Load<GameObject>("Pawn/Player/Hero_OneUp"), true).transform.SetPositionAndRotation(Vector3.left, Quaternion.identity);
     }
 
+    public void DespawnHero()
+    {
+        GameContext.Instance.playerCtrler.possessedBrain.BB.common.isDead.Value = true;
+    }
+
     public void SpawnDroneBot()
     {
         Instantiate(Resources.Load<GameObject>("Pawn/Player/DroneBot")).transform.SetPositionAndRotation(2f * Vector3.up, Quaternion.identity);
@@ -19,9 +24,23 @@ public class GameManager : MonoSingleton<GameManager>
         Instantiate(Resources.Load<GameObject>("Pawn/Jelly/JellySoldier")).transform.SetPositionAndRotation(Vector3.right, Quaternion.identity);
     }
 
+    public void DespawnSoldier()
+    {
+        var soldierBrain = GameObject.FindFirstObjectByType<SoldierBrain>();
+        if (soldierBrain != null)
+            soldierBrain.BB.common.isDead.Value = true;
+    }
+
     public void SpawnEtasphera42()
     {
         Instantiate(Resources.Load<GameObject>("Pawn/Jelly/JellyEtasphera42")).transform.SetPositionAndRotation(Vector3.right, Quaternion.identity);
+    }
+
+    public void DespawnEtasphera42()
+    {
+        var etasphera42_brain = GameObject.FindFirstObjectByType<Etasphera42_Brain>();
+        if (etasphera42_brain != null)
+            etasphera42_brain.BB.common.isDead.Value = true;
     }
 
     public void ShowLevel_HackerDen()
