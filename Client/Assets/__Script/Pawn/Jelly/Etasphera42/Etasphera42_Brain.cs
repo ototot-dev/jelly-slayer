@@ -109,12 +109,12 @@ namespace Game
                 if (!ActionCtrler.CheckActionRunning() && !ActionCtrler.CheckActionPending())
                 {
                     var distanceConstraint = BB.TargetBrain != null ? coreColliderHelper.GetApproachDistance(BB.TargetBrain.GetWorldPosition()) : -1f;
-                    // if (ActionDataSelector.CheckExecutable(__muzzleFireActionData) && ActionDataSelector.EvaluateSelection(__muzzleFireActionData, distanceConstraint, 1f) && CheckTargetVisibility())
-                    // {
-                    //     ActionDataSelector.ResetSelection(__muzzleFireActionData);
-                    //     ActionCtrler.SetPendingAction(__muzzleFireActionData.actionName);
-                    // }
-                    if (ActionDataSelector.CheckExecutable(__torchFireActionData) && ActionDataSelector.EvaluateSelection(__torchFireActionData, distanceConstraint, 1f) && CheckTargetVisibility())
+                    if (ActionDataSelector.CheckExecutable(__muzzleFireActionData) && ActionDataSelector.EvaluateSelection(__muzzleFireActionData, distanceConstraint, 1f) && CheckTargetVisibility())
+                    {
+                        ActionDataSelector.ResetSelection(__muzzleFireActionData);
+                        ActionCtrler.SetPendingAction(__muzzleFireActionData.actionName);
+                    }
+                    else if (ActionDataSelector.CheckExecutable(__torchFireActionData) && ActionDataSelector.EvaluateSelection(__torchFireActionData, distanceConstraint, 1f) && CheckTargetVisibility())
                     {
                         ActionDataSelector.ResetSelection(__torchFireActionData);
                         ActionCtrler.SetPendingAction(__torchFireActionData.actionName);
@@ -127,11 +127,11 @@ namespace Game
                 }
             };
 
-            BB.action.isFalling.Skip(1).Subscribe(v =>
-            {
-                //* 착지 동작 완료까지 이동을 금지함
-                if (!v) PawnStatusCtrler.AddStatus(PawnStatus.CanNotMove, 1f, 0.5f);
-            }).AddTo(this);
+            // BB.action.isFalling.Skip(1).Subscribe(v =>
+            // {
+            //     //* 착지 동작 완료까지 이동을 금지함
+            //     if (!v) PawnStatusCtrler.AddStatus(PawnStatus.CanNotMove, 1f, 0.5f);
+            // }).AddTo(this);
         }
 
         protected override void DamageReceiverHandler(ref PawnHeartPointDispatcher.DamageContext damageContext)
@@ -162,7 +162,7 @@ namespace Game
 
         protected override void FinishJumpInternal()
         {
-            Movement.StartFalling();
+            // Movement.StartFalling();
         }
     }
 }

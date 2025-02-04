@@ -1,8 +1,6 @@
 using System;
 using System.Linq;
 using UniRx;
-using UniRx.Triggers;
-using Unity.Mathematics;
 using UnityEngine;
 
 namespace Game
@@ -19,22 +17,21 @@ namespace Game
         public bool gravityEnabled;
         public LayerMask sensorLayerMask;
         public float sensorEnabledTime = 0.1f;
+        public float bodyEnabledTime = 0.1f;
         public float despawnWaitingTime = 0.1f;
         public float lifeTime = 1;
         public bool isLifeTimeOut;
         public bool destroyWhenLifeTimeOut = true;
         public float maxTravelDistance = -1f;
         public bool destoryWhenMaxTravelDistanceReached = false;
-        public bool updateEnabled = true;
-        public bool fixedUpdateEnabled = false;
 
-        [Header("Pooling")]
-        public string sourceName;
-        public GameObject sourcePrefab;
+        [Header("Update")]
+        public bool updateEnabled = true;
+        public bool lateUpdateEnabled = false;
+        public bool fixedUpdateEnabled = true;
 
         [Header("Emitter")]
         public ReactiveProperty<PawnBrainController> emitterBrain = new();
-
         public Action onStartMove;
         public Action onStopMove;
         public Action onLifeTimeOut;
@@ -79,31 +76,18 @@ namespace Game
             if (canMove2)
                 transform.position += Time.deltaTime * velocity;
 
-            if (Time.time - __moveStartTimeStamp > sensorEnabledTime && sensorCollider != null && !sensorCollider.enabled)
+            if ((Time.time - __moveStartTimeStamp) > sensorEnabledTime && sensorCollider != null && !sensorCollider.enabled)
             {
-                if (__sensorBoxCollider != null)
-                {
-                    var currPosition = sensorCollider.transform.position + __sensorBoxCollider.center;
-                    __traceCount = Physics.BoxCastNonAlloc(__lastTracedPosition, 0.5f * Vector3.Scale(__sensorBoxCollider.size, sensorCollider.transform.lossyScale), (currPosition - __lastTracedPosition).normalized, __traceHitsNonAlloc, sensorCollider.transform.rotation, (currPosition - __lastTracedPosition).magnitude, sensorLayerMask);
-                    __lastTracedPosition = currPosition;
-                }
-                else if (__sensorSphereCollider != null)
-                {
-                    var currPosition = sensorCollider.transform.position + __sensorSphereCollider.center;
-                    __traceCount = Physics.SphereCastNonAlloc(__lastTracedPosition, __sensorSphereCollider.radius * Mathf.Max(sensorCollider.transform.lossyScale.x, sensorCollider.transform.lossyScale.y, sensorCollider.transform.lossyScale.z), (currPosition- __lastTracedPosition).normalized, __traceHitsNonAlloc, (currPosition - __lastTracedPosition).magnitude, sensorLayerMask);
-                    __lastTracedPosition = currPosition;
-                }
-                else if (__sensorCapsuleCollider != null)
-                {
-                    var halfHeight = Mathf.Max(0, 0.5f * __sensorCapsuleCollider.height * sensorCollider.transform.lossyScale.y - __sensorCapsuleCollider.radius * Mathf.Max(sensorCollider.transform.lossyScale.x, sensorCollider.transform.lossyScale.y, sensorCollider.transform.lossyScale.z));
-                    var currPosition = sensorCollider.transform.position + __sensorCapsuleCollider.center;
-                    __traceCount = Physics.CapsuleCastNonAlloc(currPosition - halfHeight * sensorCollider.transform.up, currPosition + halfHeight * sensorCollider.transform.up, __sensorCapsuleCollider.radius, (currPosition - __lastTracedPosition).normalized, __traceHitsNonAlloc, (currPosition - __lastTracedPosition).magnitude, sensorLayerMask);
-                    __lastTracedPosition = currPosition;
-                }
+                sensorCollider.enabled = true;
 
-                for (int i = 0; i < __traceCount; i++)
-                    onHitSomething?.Invoke(__traceHitsNonAlloc[i].collider);
+                if (__sensorBoxCollider != null) __lastTracedPosition = sensorCollider.transform.position + __sensorBoxCollider.center;
+                else if (__sensorSphereCollider != null) __lastTracedPosition = sensorCollider.transform.position + __sensorSphereCollider.center;
+                else if (__sensorCapsuleCollider != null) __lastTracedPosition = sensorCollider.transform.position + __sensorCapsuleCollider.center;
+                else Debug.Assert(false);
             }
+
+            if ((Time.time - __moveStartTimeStamp) > bodyEnabledTime && BodyCollider != null && !BodyCollider.enabled)
+                if (!BodyCollider.enabled) BodyCollider.enabled = true;
 
             if (!isLifeTimeOut && lifeTime > 0 && lifeTime < Time.time - __moveStartTimeStamp)
             {
@@ -113,7 +97,71 @@ namespace Game
             }
         }
 
-        protected virtual void OnFixedUpdateHandler() {}
+        protected virtual void OnLateUpdateHandler() {}
+        protected virtual void OnFixedUpdateHandler() 
+        {
+            if (!sensorCollider.enabled)
+                return;
+
+            var distanceLessThanEpsilon = false;
+            if (__sensorBoxCollider != null)
+            {
+                var currPosition = sensorCollider.transform.position + __sensorBoxCollider.center;
+
+                if (distanceLessThanEpsilon = Vector3.Distance(currPosition, __lastTracedPosition) < MathExtension.DEFAULT_EPSILON)
+                {
+                    __traceCollidersNonAlloc ??= new Collider[__maxTraceCount];
+                    __traceCount = Physics.OverlapBoxNonAlloc(currPosition, 0.5f * Vector3.Scale(__sensorBoxCollider.size, sensorCollider.transform.lossyScale), __traceCollidersNonAlloc, sensorCollider.transform.rotation, sensorLayerMask);
+                }
+                else
+                {
+                    __traceHitsNonAlloc ??= new RaycastHit[__maxTraceCount];
+                    __traceCount = Physics.BoxCastNonAlloc(__lastTracedPosition, 0.5f * Vector3.Scale(__sensorBoxCollider.size, sensorCollider.transform.lossyScale), (currPosition - __lastTracedPosition).normalized, __traceHitsNonAlloc, sensorCollider.transform.rotation, (currPosition - __lastTracedPosition).magnitude, sensorLayerMask);
+                    __lastTracedPosition = currPosition;
+                }
+            }
+            else if (__sensorSphereCollider != null)
+            {
+                var currPosition = sensorCollider.transform.position + __sensorSphereCollider.center;
+
+                if (distanceLessThanEpsilon = Vector3.Distance(currPosition, __lastTracedPosition) < MathExtension.DEFAULT_EPSILON)
+                {
+                    __traceCollidersNonAlloc ??= new Collider[__maxTraceCount];
+                    __traceCount = Physics.OverlapSphereNonAlloc(currPosition, __sensorSphereCollider.radius * Mathf.Max(sensorCollider.transform.lossyScale.x, sensorCollider.transform.lossyScale.y, sensorCollider.transform.lossyScale.z), __traceCollidersNonAlloc, sensorLayerMask);
+                }
+                else
+                {
+                    __traceHitsNonAlloc ??= new RaycastHit[__maxTraceCount];
+                    __traceCount = Physics.SphereCastNonAlloc(__lastTracedPosition, __sensorSphereCollider.radius * Mathf.Max(sensorCollider.transform.lossyScale.x, sensorCollider.transform.lossyScale.y, sensorCollider.transform.lossyScale.z), (currPosition- __lastTracedPosition).normalized, __traceHitsNonAlloc, (currPosition - __lastTracedPosition).magnitude, sensorLayerMask);
+                    __lastTracedPosition = currPosition;
+                }
+            }
+            else if (__sensorCapsuleCollider != null)
+            {
+                var halfHeight = Mathf.Max(0, 0.5f * __sensorCapsuleCollider.height * sensorCollider.transform.lossyScale.y - __sensorCapsuleCollider.radius * Mathf.Max(sensorCollider.transform.lossyScale.x, sensorCollider.transform.lossyScale.y, sensorCollider.transform.lossyScale.z));
+                var currPosition = sensorCollider.transform.position + __sensorCapsuleCollider.center;
+
+                if (distanceLessThanEpsilon = Vector3.Distance(currPosition, __lastTracedPosition) < MathExtension.DEFAULT_EPSILON)
+                {
+                    __traceCollidersNonAlloc ??= new Collider[__maxTraceCount];
+                    __traceCount = Physics.OverlapCapsuleNonAlloc(currPosition - halfHeight * sensorCollider.transform.up, currPosition + halfHeight * sensorCollider.transform.up, __sensorCapsuleCollider.radius, __traceCollidersNonAlloc, sensorLayerMask);
+                }
+                else
+                {
+                    __traceHitsNonAlloc ??= new RaycastHit[__maxTraceCount];
+                    __traceCount = Physics.CapsuleCastNonAlloc(currPosition - halfHeight * sensorCollider.transform.up, currPosition + halfHeight * sensorCollider.transform.up, __sensorCapsuleCollider.radius, (currPosition - __lastTracedPosition).normalized, __traceHitsNonAlloc, (currPosition - __lastTracedPosition).magnitude, sensorLayerMask);
+                    __lastTracedPosition = currPosition;
+                }
+            }
+            else
+            {
+                Debug.Assert(false);
+            }
+
+            for (int i = 0; i < __traceCount; i++)
+                onHitSomething?.Invoke(distanceLessThanEpsilon ? __traceCollidersNonAlloc[i] : __traceHitsNonAlloc[i].collider);
+        }
+
         protected Rigidbody __rigidBody;
         protected BoxCollider __sensorBoxCollider;
         protected SphereCollider __sensorSphereCollider;
@@ -123,35 +171,38 @@ namespace Game
         protected Vector3 __emittedPosition;
         protected Vector3 __lastTracedPosition;
         protected int __traceCount;
-        protected static RaycastHit[] __traceHitsNonAlloc = new RaycastHit[48];
+        protected int __maxTraceCount = 36;
+        protected static RaycastHit[] __traceHitsNonAlloc;
+        protected static Collider[] __traceCollidersNonAlloc;
 
-        public void Pop(PawnBrainController emitter, Vector3 position, Vector3 impulse, Vector3 scale)
+        public void Pop(PawnBrainController emitter, Vector3 impulse, Vector3 scale)
         {
             __moveStartTimeStamp = Time.time;
-            __emittedPosition = position;
+            __emittedPosition = transform.position;
             __rigidBody.isKinematic = false;
             __rigidBody.useGravity = true;
-            BodyCollider.enabled = true;
-            transform.position = position;
-            transform.rotation = Quaternion.identity;
-            transform.localScale = scale;
-
             isLifeTimeOut = false;
             IsDespawnPending = false;
+            transform.localScale = scale;
             emitterBrain.Value = emitter;
 
-            Observable.NextFrame(FrameCountType.FixedUpdate).Subscribe(_ => __rigidBody.linearVelocity = impulse).AddTo(this);
-            onStartMove?.Invoke();
+            Observable.NextFrame(FrameCountType.FixedUpdate).Subscribe(_ => 
+            {
+                __rigidBody.linearVelocity = impulse;
+                onStartMove?.Invoke();
+            }).AddTo(this);
 
             if (updateEnabled)
                 Observable.EveryUpdate().TakeWhile(_ => !IsDespawnPending).Subscribe(_ => OnUpdateHandler()).AddTo(this);
+            if (lateUpdateEnabled)
+                Observable.EveryLateUpdate().TakeWhile(_ => !IsDespawnPending).Subscribe(_ => OnLateUpdateHandler()).AddTo(this);
             if (fixedUpdateEnabled)
                 Observable.EveryFixedUpdate().TakeWhile(_ => !IsDespawnPending).Subscribe(_ => OnFixedUpdateHandler()).AddTo(this);
         }
 
-        public void Pop(PawnBrainController emitter, float impulse, float scale = 1)
+        public void Pop(PawnBrainController emitter, float impulse, float scale = 1f)
         {
-            Pop(emitter, transform.position, transform.forward * impulse, Vector3.one * scale);
+            Pop(emitter, transform.forward * impulse, Vector3.one * scale);
         }
 
         public void Go(PawnBrainController emitter, Vector3 position, Vector3 velocity, Vector3 scale)

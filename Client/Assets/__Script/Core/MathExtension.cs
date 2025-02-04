@@ -3,13 +3,15 @@ using UnityEngine;
 
 namespace Game
 {
-    public static class UnityMathExtension
+    public static class MathExtension
     {
+        public const float DEFAULT_EPSILON = 0.00001f;
 
         public static float MaxElem(this Vector3 vec)
         {
             return Mathf.Max(Mathf.Max(vec.x, vec.y), vec.z);
         }
+
         public static float MaxAbsElem(this Vector3 vec)
         {
             return Mathf.Max(Mathf.Max(Mathf.Abs(vec.x), Mathf.Abs(vec.y)), Mathf.Abs(vec.z));
@@ -25,6 +27,16 @@ namespace Game
             return new Vector3(vec.x, 0, vec.z).sqrMagnitude;
         }
 
+        public static float Distance2D(this Vector3 vec, Vector3 target)
+        {
+            return (target - vec).Magnitude2D();
+        }
+
+        public static float SqrDistance2D(this Vector3 vec, Vector3 target)
+        {
+            return (target - vec).SqrMagnitude2D();
+        }
+
         public static Vector3 Abs(this Vector3 vec)
         {
             return new Vector3(Mathf.Abs(vec.x), Mathf.Abs(vec.y), Mathf.Abs(vec.z));
@@ -33,7 +45,6 @@ namespace Game
         public static Vector3 AbsRef(this ref Vector3 vec)
         {
             vec = new Vector3(Mathf.Abs(vec.x), Mathf.Abs(vec.y), Mathf.Abs(vec.z));
-
             return vec;
         }
 
@@ -81,12 +92,22 @@ namespace Game
             return color;
         }
 
-        public static float LerpSpeed(this float start, float end, float speed, float deltaTime)
+        public static float LerpSpeed(this float curr, float target, float speed, float deltaTime)
         {
-            if (end > start)
-                return Mathf.Min(end, start + speed * deltaTime);
+            if (target > curr)
+                return Mathf.Min(target, curr + speed * deltaTime);
             else
-                return Mathf.Max(end, start - speed * deltaTime);
+                return Mathf.Max(target, curr - speed * deltaTime);
+        }
+
+        public static float LerpRefSpeed(this ref float curr, float target, float speed, float deltaTime)
+        {
+            if (target > curr)
+                curr = Mathf.Min(target, curr + speed * deltaTime);
+            else
+                curr = Mathf.Max(target, curr - speed * deltaTime);
+
+            return curr;
         }
 
         public static Vector3 LerpSpeed(this Vector3 vec, Vector3 target, float speed, float deltaTime)
@@ -188,7 +209,6 @@ namespace Game
         public static Vector3 RandomRef(this ref Vector3 vec, float min, float max)
         {
             vec = new Vector3(UnityEngine.Random.Range(min, max), UnityEngine.Random.Range(min, max), UnityEngine.Random.Range(min, max));
-
             return vec;
         }
 
@@ -210,22 +230,18 @@ namespace Game
         public static Vector3 RandomRefX(this ref Vector3 vec, float min, float max)
         {
             vec = new Vector3(UnityEngine.Random.Range(min, max), vec.y, vec.z);
-
             return vec;
         }
 
         public static Vector3 RandomRefY(this ref Vector3 vec, float min, float max)
         {
             vec = new Vector3(vec.x, UnityEngine.Random.Range(min, max), vec.z);
-
             return vec;
         }
 
-        /// <summary>
         public static Vector3 RandomRefZ(this ref Vector3 vec, float min, float max)
         {
             vec = new Vector3(vec.x, vec.y, UnityEngine.Random.Range(min, max));
-
             return vec;
         }
 

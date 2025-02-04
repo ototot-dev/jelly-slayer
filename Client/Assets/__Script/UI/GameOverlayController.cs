@@ -6,14 +6,9 @@ using UniRx;
 using UGUI.Rx;
 using Unity.Linq;
 using System.Linq;
-using DG.Tweening;
 
 namespace Game
 {
-
-    /// <summary>
-    /// 
-    /// </summary>
     [Template(path: "UI/game-overlay")]
     public class GameOverlayController : Controller
     {

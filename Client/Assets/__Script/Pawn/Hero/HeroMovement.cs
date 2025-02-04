@@ -3,7 +3,6 @@ using FIMSpace.FProceduralAnimation;
 using static FIMSpace.FProceduralAnimation.LegsAnimator;
 using UniRx;
 using System;
-using FIMSpace.Generating.Rules.Modelling;
 
 namespace Game
 {
@@ -215,7 +214,7 @@ namespace Game
             }
             else if (__brain.BB.IsHanging)
             {
-                ;
+                ResetRootMotion();
             }
             else if (__brain.BB.IsRolling)
             {
@@ -246,9 +245,9 @@ namespace Game
                     moveVec = canMove2 ? moveVec : Vector3.zero;
                 }
 
-                if (__freezeMovementFoeOneFrame)
+                if (__freezeMovementForOneFrame)
                 {
-                    __freezeMovementFoeOneFrame = false;
+                    __freezeMovementForOneFrame = false;
                     __ecmMovement.Move(Time.fixedDeltaTime);
                 }
                 else if (__rootMotionPosition.sqrMagnitude > 0f)

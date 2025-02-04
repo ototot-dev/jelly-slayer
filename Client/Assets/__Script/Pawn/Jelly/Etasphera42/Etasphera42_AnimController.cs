@@ -1,5 +1,4 @@
-using UniRx;
-using Unity.Burst.Intrinsics;
+using FIMSpace.BonesStimulation;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
@@ -16,6 +15,7 @@ namespace Game
         public Transform centerTurret;
         public Transform topTurret1;
         public Transform topTurret2;
+        public BonesStimulator[] legBoneSimulators;
 
         [Header("Parameter")]
         public float rigBlendWeight = 1f;
@@ -28,10 +28,10 @@ namespace Game
 
         public enum TurretIndices : int
         {
-            Top,
-            Left,
-            Right,
+            Base,
+            Side,
             Center,
+            Top,
             Max,
         }
 
@@ -136,7 +136,36 @@ namespace Game
                 //     pelves.transform.localRotation *= Quaternion.Euler(90f, 0f, 0f);
 
                 if (__brain.BB.TargetColliderHelper != null)
-                    UpdateTurretRotation(__brain.BB.TargetColliderHelper.GetWorldCenter());
+                {
+                    var targetPoint = __brain.BB.TargetColliderHelper.GetWorldCenter() + 0.2f * Vector3.up;
+                    if (__brain.ActionCtrler.CheckActionRunning())
+                    {
+                        if (__brain.ActionCtrler.CurrActionName == "Torch")
+                        {
+                            UpdateTurretRotation(targetPoint, __brain.BB.action.torch_baseRotateSpeed, TurretIndices.Base);
+                            UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Side);
+                            UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_topRotateSpeed, TurretIndices.Top);
+                        }
+                        else if (__brain.ActionCtrler.CurrActionName == "LaserA")
+                        {
+                            UpdateTurretRotation(__brain.BB.attachment.laserA_aimPoint.position, __brain.BB.action.laserA_baseRotateSpeed, TurretIndices.Base);
+                            UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Side);
+                            UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_topRotateSpeed, TurretIndices.Top);
+                        }
+                        else 
+                        {
+                            UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Base);
+                            UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Side);
+                            UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_topRotateSpeed, TurretIndices.Top);
+                        }
+                    }
+                    else
+                    {
+                        UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Base);
+                        UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Side);
+                        UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_topRotateSpeed, TurretIndices.Top);
+                    }
+                }
             };
 
             __brain.PawnHP.onDead += (_) =>
@@ -152,33 +181,40 @@ namespace Game
         Quaternion __topTurret1_RotationCached;
         Quaternion __topTurret2_RotationCached;
 
-        void UpdateTurretRotation(Vector3 aimPoint, TurretIndices primaryTurretIndex = TurretIndices.Max)
+        void UpdateTurretRotation(Vector3 targetPoint, float rotateSpeed, TurretIndices interestTurretIndex = TurretIndices.Max)
         {
-            //* turretBody의 로컬 피봇으로 인해서 Right 벡터가 Up 벡터가 됨 (또한 90도 돌아가 있어서 이를 역보정해주기 위해 Vector3.down 축을 Forward 축으로 대입함) 
-            var deltaAngle1 = Vector3.SignedAngle(Vector3.down, turretBody.transform.InverseTransformPoint(aimPoint).AdjustX(0f), Vector3.right);
-            turretBody.transform.localRotation = __turretBodyRotationCached.LerpRefAngleSpeed(turretBody.transform.localRotation * Quaternion.Euler(deltaAngle1, 0f, 0f), __brain.BB.body.turretBodyRotateSpeed, Time.deltaTime);
+            if (interestTurretIndex == TurretIndices.Base)
+            {
+                //* turretBody의 로컬 피봇으로 인해서 Right 벡터가 Up 벡터가 됨 (또한 90도 돌아가 있어서 이를 역보정해주기 위해 Vector3.down 축을 Forward 축으로 대입함) 
+                var deltaAngle1 = Vector3.SignedAngle(Vector3.down, turretBody.transform.InverseTransformPoint(targetPoint).AdjustX(0f), Vector3.right);
+                turretBody.transform.localRotation = __turretBodyRotationCached.LerpRefAngleSpeed(turretBody.transform.localRotation * Quaternion.Euler(deltaAngle1, 0f, 0f), rotateSpeed, Time.deltaTime);
 
-            //* leftTurret와 rightTurrent의 로컬 피봇도 Right 벡터가 Up 벡터가 됨
-            var deltaAngle2 = Vector3.SignedAngle(Vector3.forward, leftTurret.transform.InverseTransformPoint(aimPoint).AdjustX(0f), Vector3.right);
-            leftTurret.transform.localRotation = __leftTurretRotationCached.LerpRefAngleSpeed(leftTurret.transform.localRotation * Quaternion.Euler(deltaAngle2, 0f, 0f), __brain.BB.body.leftTurretRotateSpeed, Time.deltaTime);
-            rightTurret.transform.localRotation = __rightTurretRotationCached.LerpRefAngleSpeed(rightTurret.transform.localRotation * Quaternion.Euler(deltaAngle2, 0f, 0f), __brain.BB.body.rightTurretRotateSpeed, Time.deltaTime);
-            // leftTurret.transform.localRotation *= Quaternion.Euler(deltaAngle2, 0f, 0f);
-            // rightTurret.transform.localRotation *= Quaternion.Euler(deltaAngle2, 0f, 0f);
+                //* centerTurret은 회전하지 않음
+                centerTurret.transform.localRotation = __centerTurretRotationCached;
+            }
+            else if (interestTurretIndex == TurretIndices.Side)
+            {
+                //* leftTurret와 rightTurrent의 로컬 피봇도 Right 벡터가 Up 벡터가 됨
+                var deltaAngle2 = Vector3.SignedAngle(Vector3.forward, leftTurret.transform.InverseTransformPoint(targetPoint).AdjustX(0f), Vector3.right);
+                leftTurret.transform.localRotation = __leftTurretRotationCached.LerpRefAngleSpeed(leftTurret.transform.localRotation * Quaternion.Euler(deltaAngle2, 0f, 0f), rotateSpeed, Time.deltaTime);
+                rightTurret.transform.localRotation = __rightTurretRotationCached.LerpRefAngleSpeed(rightTurret.transform.localRotation * Quaternion.Euler(deltaAngle2, 0f, 0f), rotateSpeed, Time.deltaTime);
+            }
+            else if (interestTurretIndex == TurretIndices.Center)
+            {
+                //* centerTurret은 피봇 정상
+                // var deltaAngle3 = Vector3.SignedAngle(Vector3.forward, centerTurret.transform.InverseTransformPoint(aimPoint).AdjustY(0f), Vector3.up);
+                // centerTurret.transform.localRotation = __centerTurretRotationCached.LerpRefAngleSpeed(centerTurret.transform.localRotation * Quaternion.Euler(0f, deltaAngle3, 0f), rotateSpeed, Time.deltaTime);
+            }
+            else if (interestTurretIndex == TurretIndices.Top)
+            {
+                //* topTurret1도 피봇 정상
+                var deltaAngle4 = Vector3.SignedAngle(Vector3.forward, topTurret1.transform.InverseTransformPoint(targetPoint).AdjustY(0f), Vector3.up);
+                topTurret1.transform.localRotation = __topTurret1_RotationCached.LerpRefAngleSpeed(topTurret1.transform.localRotation * Quaternion.Euler(0f, deltaAngle4, 0f), rotateSpeed, Time.deltaTime);
 
-            //* centerTurret은 피봇 정상
-            var deltaAngle3 = Vector3.SignedAngle(Vector3.forward, centerTurret.transform.InverseTransformPoint(aimPoint).AdjustY(0f), Vector3.up);
-            centerTurret.transform.localRotation = __centerTurretRotationCached.LerpRefAngleSpeed(centerTurret.transform.localRotation * Quaternion.Euler(0f, deltaAngle3, 0f), __brain.BB.body.centerTurretRotateSpeed, Time.deltaTime);
-            // centerTurret.transform.localRotation *= Quaternion.Euler(0f, deltaAngle3, 0f);
-
-            //* topTurret1도 피봇 정상
-            var deltaAngle4 = Vector3.SignedAngle(Vector3.forward, topTurret1.transform.InverseTransformPoint(aimPoint).AdjustY(0f), Vector3.up);
-            topTurret1.transform.localRotation = __topTurret1_RotationCached.LerpRefAngleSpeed(topTurret1.transform.localRotation * Quaternion.Euler(0f, deltaAngle4, 0f), __brain.BB.body.topTurret1_RotateSpeed, Time.deltaTime);
-            // topTurret1.transform.localRotation *= Quaternion.Euler(0f, deltaAngle4, 0f);
-
-            //* topTurret2의 로컬 피봇은 Right 벡터가 Up 벡터가 됨
-            var deltaAngle5 = Vector3.SignedAngle(Vector3.forward, topTurret2.transform.InverseTransformPoint(aimPoint).AdjustX(0f), Vector3.right);
-            topTurret2.transform.localRotation = __topTurret2_RotationCached.LerpRefAngleSpeed(topTurret2.transform.localRotation * Quaternion.Euler(deltaAngle5, 0f, 0f), __brain.BB.body.topTurret2_RotateSpeed, Time.deltaTime);
-            // topTurret2.transform.localRotation *= Quaternion.Euler(deltaAngle5, 0f, 0f);
+                //* topTurret2의 로컬 피봇은 Right 벡터가 Up 벡터가 됨
+                var deltaAngle5 = Vector3.SignedAngle(Vector3.forward, topTurret2.transform.InverseTransformPoint(targetPoint).AdjustX(0f), Vector3.right);
+                topTurret2.transform.localRotation = __topTurret2_RotationCached.LerpRefAngleSpeed(topTurret2.transform.localRotation * Quaternion.Euler(deltaAngle5, 0f, 0f), rotateSpeed, Time.deltaTime);
+            }
         }
     }
 }

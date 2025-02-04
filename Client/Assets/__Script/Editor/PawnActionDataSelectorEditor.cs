@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 using FlowCanvas.Nodes;
+using Unity.VisualScripting;
 
 namespace Game
 {
@@ -67,7 +68,17 @@ namespace Game
 
             GUILayout.BeginHorizontal();
             {
-                if (GUILayout.Button("Glide"))
+                if (GUILayout.Button("Down"))
+                {
+                    var damageConext = new PawnHeartPointDispatcher.DamageContext(null);
+                    (target as PawnActionDataSelector).GetComponent<PawnActionController>().StartOnKnockDownAction(ref damageConext);
+                }
+                if (GUILayout.Button("Groggy"))
+                {
+                    var damageConext = new PawnHeartPointDispatcher.DamageContext(null);
+                    (target as PawnActionDataSelector).GetComponent<PawnActionController>().StartOnGroogyAction(ref damageConext);
+                }
+                if (GUILayout.Button("Jump"))
                     ((target as PawnActionDataSelector).GetComponent<PawnBrainController>() as IPawnMovable).StartJump(1f);
                 if (GUILayout.Button("Land"))
                     ((target as PawnActionDataSelector).GetComponent<PawnBrainController>() as IPawnMovable).FinishJump();

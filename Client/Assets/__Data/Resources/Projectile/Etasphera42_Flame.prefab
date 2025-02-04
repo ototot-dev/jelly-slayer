@@ -160,8 +160,9 @@ MonoBehaviour:
   gravityEnabled: 0
   sensorLayerMask:
     serializedVersion: 2
-    m_Bits: 14344
+    m_Bits: 6144
   sensorEnabledTime: 0.1
+  bodyEnabledTime: 0.1
   despawnWaitingTime: 0.1
   lifeTime: 1
   isLifeTimeOut: 0
@@ -169,8 +170,7 @@ MonoBehaviour:
   maxTravelDistance: 2.5
   destoryWhenMaxTravelDistanceReached: 1
   updateEnabled: 1
-  fixedUpdateEnabled: 0
-  sourceName: 
-  sourcePrefab: {fileID: 0}
+  lateUpdateEnabled: 0
+  fixedUpdateEnabled: 1
   emitterBrain:
     value: {fileID: 0}

@@ -26,6 +26,7 @@ namespace Game
         float IPawnMovable.GetDefaultMinApproachDistance() { return Movement.GetDefaultMinApproachDistance(); }
         bool IPawnMovable.GetFreezeMovement() { return Movement.freezeMovement; }
         bool IPawnMovable.GetFreezeRotation() { return Movement.freezeRotation; }
+        void IPawnMovable.FreezeForOneFrame() { Movement.FreezeForOneFrame(); }
         void IPawnMovable.ReserveDestination(Vector3 destination) { Movement.ReserveDestination(destination); }
         float IPawnMovable.SetDestination(UnityEngine.Vector3 destination) { return Movement.SetDestination(destination); }
         void IPawnMovable.SetMinApproachDistance(float distance) { Movement.minApproachDistance = distance; }
@@ -194,7 +195,7 @@ namespace Game
 
         float __decisionCoolTime;
 
-        void InvalidateDecision(float decisionCoolTime = 0)
+        public override void InvalidateDecision(float decisionCoolTime = 0f)
         {
             BB.decision.currDecision.Value = Decisions.None;
             __decisionCoolTime = decisionCoolTime;

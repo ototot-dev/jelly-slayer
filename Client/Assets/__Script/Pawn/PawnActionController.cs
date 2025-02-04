@@ -35,9 +35,9 @@ namespace Game
             public float preMotionTimeStamp;
             public float finishTimeStamp;
             public float waitTimeStamp;
+            public IDisposable actionDisposable;
             public IDisposable rootMotionDisposable;
             public IDisposable homingRotationDisposable;
-            public IDisposable actionDisposable;
             static int __actionInstanceIdCounter;
 
             //* 일반적인 Action 초기화
@@ -69,9 +69,9 @@ namespace Game
                 preMotionTimeStamp = 0f;
                 finishTimeStamp = 0f;
                 waitTimeStamp = 0f;
+                actionDisposable = null;
                 rootMotionDisposable = null;
                 homingRotationDisposable = null;
-                actionDisposable = null;
             }
 
             //* 리액션 및 Addictivie 액션 초기화
@@ -102,9 +102,9 @@ namespace Game
                 preMotionTimeStamp = 0f;
                 finishTimeStamp = 0f;
                 waitTimeStamp = 0f;
+                actionDisposable = null;
                 rootMotionDisposable = null;
                 homingRotationDisposable = null;
-                actionDisposable = null;
             }
         }
 
@@ -210,7 +210,8 @@ namespace Game
         public virtual IDisposable StartOnParriedAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false) { return null; }
         public virtual IDisposable StartOnKnockDownAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false) { return null; }
         public virtual IDisposable StartOnGroogyAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false) { return null; }
-        public virtual IDisposable StartActionDisposable(ref PawnHeartPointDispatcher.DamageContext damageContext, string actionName) { return null;}
+        public virtual IDisposable StartCustomAction(ref PawnHeartPointDispatcher.DamageContext damageContext, string actionName) { return null; }
+        public virtual void EmitActionHandler(GameObject emitPrefab, Transform emitPoint, int emitIndex) {}
 
         public void SetPendingAction(string actionName)
         {
@@ -476,7 +477,7 @@ namespace Game
                     __pawnAnimCtrler.mainAnimator.SetFloat("AnimAdvance", 0);
                 }
 
-                currActionContext.actionDisposable = StartActionDisposable(ref damageContext, actionName);
+                currActionContext.actionDisposable = StartCustomAction(ref damageContext, actionName);
             }
 
 #if UNITY_EDITOR
@@ -899,17 +900,6 @@ namespace Game
         {
             __traceLayerNames.Clear();
             __tracePawnNames.Clear();
-        }
-
-        public virtual void EmitProjectile(GameObject emitSource, Transform emitPoint, int emitIndex)
-        {
-            if (emitSource == null) 
-            {
-                Debug.Log("EmitProjectile is Null");
-                return;
-            }
-
-            onEmitProjectile?.Invoke(currActionContext, emitSource.GetComponent<ProjectileMovement>(), emitPoint, emitIndex);
         }
     }
 }

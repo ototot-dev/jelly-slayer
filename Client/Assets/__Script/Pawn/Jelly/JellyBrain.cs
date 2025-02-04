@@ -31,6 +31,7 @@ namespace Game
         void IPawnMovable.SetFaceVector(Vector3 faceVec) { __pawnMovement.faceVec = faceVec; }
         void IPawnMovable.FreezeMovement(bool newValue) { __pawnMovement.freezeMovement = newValue; }
         void IPawnMovable.FreezeRotation(bool newValue) { __pawnMovement.freezeRotation = newValue; }
+        void IPawnMovable.FreezeForOneFrame() { __pawnMovement.FreezeForOneFrame(); }
         void IPawnMovable.AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation) { __pawnMovement.AddRootMotion(deltaPosition, deltaRotation); }
         void IPawnMovable.StartJump(float jumpHeight) { StartJumpInternal(jumpHeight); }
         void IPawnMovable.FinishJump() { FinishJumpInternal(); }

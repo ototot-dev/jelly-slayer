@@ -83,27 +83,29 @@ namespace Game
             public Tuple<PawnStatus, float> receiverPenalty;
             public float finalDamage;
 
-            public DamageContext(PawnBrainController senderBrain, PawnBrainController receiverBrain, MainTable.ActionData senderActionData, Vector3 hitPoint, Collider hitCollider, bool insufficientStamina)
+#if UNITY_EDITOR
+            public DamageContext(Collider hitCollider)
             {
                 timeStamp = Time.time;
-                this.hitPoint = hitPoint;
+                hitPoint = hitCollider != null ? hitCollider.transform.position : Vector3.zero;
                 this.hitCollider = hitCollider;
-                this.insufficientStamina = insufficientStamina;
-                this.senderActionData = senderActionData;
+                insufficientStamina = false;
+                senderActionData = null;
                 receiverActionData = null;
-                this.senderBrain = senderBrain;
-                this.receiverBrain = receiverBrain;
+                senderBrain = null;
+                receiverBrain = null;
                 projectile = null;
                 actionResult = ActionResults.None;
                 senderPenalty = new(PawnStatus.None, -1);
                 receiverPenalty = new(PawnStatus.None, -1);
                 finalDamage = -1;
             }
+#endif
 
             public DamageContext(PawnBrainController senderBrain, PawnBrainController receiverBrain, MainTable.ActionData actionData, Collider hitCollider, bool insufficientStamina)
             {
                 timeStamp = Time.time;
-                hitPoint = hitCollider.TryGetComponent<PawnColliderHelper>(out var hitCollierHelper) ?  hitCollierHelper.GetHitPoint(senderBrain.GetWorldPosition()) : receiverBrain.bodyHitColliderHelper.GetHitPoint(senderBrain.GetWorldPosition());
+                hitPoint = hitCollider.TryGetComponent<PawnColliderHelper>(out var hitCollierHelper) ? hitCollierHelper.GetHitPoint(senderBrain.GetWorldPosition()) : receiverBrain.bodyHitColliderHelper.GetHitPoint(senderBrain.GetWorldPosition());
                 this.hitCollider = hitCollider;
                 this.insufficientStamina = insufficientStamina;
                 this.senderActionData = actionData;

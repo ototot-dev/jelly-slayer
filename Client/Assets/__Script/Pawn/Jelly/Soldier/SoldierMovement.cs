@@ -77,6 +77,8 @@ namespace Game
 
                 if (__jumpImpulseTimeStamp > 0f && __ecmMovement.velocity.y < 0f)
                     StartGliding();
+                    
+                ResetRootMotion();
             }
             else if (__brain.BB.IsFalling)
             {
@@ -87,12 +89,14 @@ namespace Game
 
                 if (__ecmMovement.isGrounded)
                     FinishFalling();
+
+                ResetRootMotion();
             }
             else if (__brain.BB.IsGliding)
             {
-                if (__freezeMovementFoeOneFrame)
+                if (__freezeMovementForOneFrame)
                 {
-                    __freezeMovementFoeOneFrame = false;
+                    __freezeMovementForOneFrame = false;
                     __ecmMovement.Move(Time.fixedDeltaTime);
                 }
                 else if (__rootMotionPosition.sqrMagnitude > 0f)

@@ -339,7 +339,7 @@ namespace Game
             possessedBrain.ActionCtrler.SetPendingAction("Rolling");
 
             // Roll Sound
-            EffectManager.Instance.Show("FX_Cartoony_Jump_Up_01", possessedBrain.GetWorldPosition(),
+            EffectManager.Instance.Show("FX/FX_Cartoony_Jump_Up_01", possessedBrain.GetWorldPosition(),
                 Quaternion.identity, Vector3.one, 1f);
             SoundManager.Instance.Play(SoundID.JUMP);
 

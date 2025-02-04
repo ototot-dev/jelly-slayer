@@ -28,14 +28,10 @@ namespace Game
         {
             base.StartInternal();
 
-            emitterBrain.Where(v => v != null).Subscribe(v => 
+            emitterBrain.Where(v => v != null).Subscribe(v =>
             {
-                if (v.TryGetComponent<PawnActionController>(out var actionCtrler))
-                {
-                    sourcePrefab = (v as Etasphera42_Brain).BB.action.bulletPrefab;
-                    actionData = actionCtrler.currActionContext.actionData;
-                    Debug.Assert(actionData != null);
-                }
+                actionData = v.GetComponent<PawnActionController>().currActionContext.actionData;
+                Debug.Assert(actionData != null);
             }).AddTo(this);
 
             onStopMove += () =>
@@ -45,7 +41,7 @@ namespace Game
                 Observable.Timer(TimeSpan.FromSeconds(despawnWaitingTime)).Subscribe(_ =>
                 {
                     Debug.Assert(IsDespawnPending);
-                    ProjectilePoolingSystem.Instance.ReturnProjectile(this, sourcePrefab);
+                    ObjectPoolingSystem.Instance.ReturnObject(gameObject);
                 }).AddTo(this);
             };
 

@@ -1,10 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using NodeCanvas.Framework.Internal;
-using Obi;
 using UniRx;
 using UnityEngine;
-using XftWeapon;
+using static FIMSpace.FProceduralAnimation.LegsAnimator;
 
 namespace Game
 {
@@ -13,10 +12,6 @@ namespace Game
         [Header("Component")]
         public PawnColliderHelper dashActionColliderHelper;
         public PawnColliderHelper hookingPointColliderHelper;
-
-        [Header("Parameter")]
-        public float leapRootMotionDistance = 7f;
-        public float leapRootMotionMultiplier = 1f;
 
         public override IDisposable StartOnHitAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
         {
@@ -67,11 +62,216 @@ namespace Game
             if (damageContext.actionResult == ActionResults.Damaged)
             {
                 SoundManager.Instance.Play(SoundID.HIT_FLESH);
-                EffectManager.Instance.Show("@Hit 23 cube", damageContext.hitPoint, Quaternion.identity, Vector3.one, 1);
-                EffectManager.Instance.Show("@BloodFX_impact_col", damageContext.hitPoint, Quaternion.identity, 1.5f * Vector3.one, 3);
+                EffectManager.Instance.Show("FX/@Hit 23 cube", damageContext.hitPoint, Quaternion.identity, Vector3.one, 1);
+                EffectManager.Instance.Show("FX/@BloodFX_impact_col", damageContext.hitPoint, Quaternion.identity, 1.5f * Vector3.one, 3);
             }
 
             return base.StartOnKnockDownAction(ref damageContext, isAddictiveAction);
+        }
+
+        public override IDisposable StartCustomAction(ref PawnHeartPointDispatcher.DamageContext damageContext, string actionName)
+        {
+            if (actionName == "Jump")
+            {
+                return Observable.FromCoroutine(JumpActionCoroutine)
+                    .DoOnCancel(() => 
+                    {
+                        currActionContext.actionDisposable = null;
+                        __brain.AnimCtrler.legAnimator.enabled = true;
+                        __brain.AnimCtrler.legAnimator.LegsAnimatorBlend = 1f;
+                        foreach (var s in __brain.AnimCtrler.legBoneSimulators)
+                        {
+                            s.enabled = false;
+                            s.StimulatorAmount = 0f;
+                        }
+                    })
+                    .DoOnCompleted(() => currActionContext.actionDisposable = null)
+                    .Subscribe().AddTo(this);
+            }
+            if (actionName == "LaserA")
+            {
+                return Observable.FromCoroutine(LaserA_ActionCoroutine)
+                    .DoOnCancel(() => 
+                    {
+                        currActionContext.actionDisposable = null;
+                        __brain.BB.attachment.laserA_Renderer.flashFx.Stop();
+                        __brain.BB.attachment.laserA_Renderer.hitFx.Stop();
+                        __brain.BB.attachment.laserA_Renderer.FadeOut(0.2f);
+                    })
+                    .DoOnCompleted(() => currActionContext.actionDisposable = null)
+                    .Subscribe().AddTo(this);
+            }
+            else if (actionName == "LaserB")
+            {
+                __laserB_disposable?.Dispose();
+                __laserB_disposable = Observable.FromCoroutine(LaserB_ActionCoroutine)
+                    .DoOnCancel(() => 
+                    {
+                        __laserB_disposable = null;
+                        __brain.BB.attachment.laserB_Renderer.flashFx.Stop();
+                        __brain.BB.attachment.laserB_Renderer.hitFx.Stop();
+                        __brain.BB.attachment.laserB_Renderer.FadeOut(0.2f);
+                    })
+                    .DoOnCompleted(() => __laserB_disposable = null)
+                    .Subscribe().AddTo(this);
+
+                //* 'LaserB'는 독립형 액션으로 다른 액션과 무관하게 독립적으로 동시에 동작할 수 있음
+                return null;
+            }
+
+            return null;
+        }
+
+        IEnumerator JumpActionCoroutine()
+        {
+            __brain.AnimCtrler.legAnimator.User_AddImpulse(new ImpulseExecutor(0.4f * Vector3.down, Vector3.zero, 0.4f));
+            yield return new WaitForSeconds(0.3f);
+
+            __brain.Movement.StartJump(3f);
+
+            yield return Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.1f))).Do(_ =>
+            {
+                foreach (var s in __brain.AnimCtrler.legBoneSimulators)
+                {
+                    if (!s.enabled) s.enabled = true;
+                    s.StimulatorAmount = Mathf.Clamp01(s.StimulatorAmount + 10f * Time.deltaTime);
+                }
+            }).ToYieldInstruction();
+
+            while(__brain.Movement.GetCharacterMovement().velocity.y > 0f)
+                yield return null;
+
+            __brain.Movement.GetCharacterMovement().velocity.y = -30f;
+
+            while(!__brain.Movement.GetCharacterMovement().isOnGround)
+                yield return null;
+
+            __brain.AnimCtrler.legAnimator.User_AddImpulse(new ImpulseExecutor(0.8f * Vector3.down, Vector3.zero, 0.2f));
+            EffectManager.Instance.Show(__brain.BB.graphics.onJumpSlamFx1, __brain.coreColliderHelper.transform.position, Quaternion.identity, Vector3.one);
+            EffectManager.Instance.Show(__brain.BB.graphics.onJumpSlamFx2, __brain.coreColliderHelper.transform.position, Quaternion.identity, 1.5f * Vector3.one);
+
+            yield return Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.1f))).Do(_ =>
+            {
+                foreach (var s in __brain.AnimCtrler.legBoneSimulators)
+                    s.StimulatorAmount = Mathf.Clamp01(s.StimulatorAmount - 10f * Time.deltaTime);
+            }).ToYieldInstruction();
+
+            foreach (var s in __brain.AnimCtrler.legBoneSimulators)
+                s.enabled = false;
+        }
+
+        IEnumerator LaserA_ActionCoroutine()
+        {
+            var laserRenderer = __brain.BB.attachment.laserA_Renderer;
+
+            laserRenderer.flashFx.Play();
+            laserRenderer.hitFx.Play();
+            laserRenderer.hitFx.transform.position = laserRenderer.transform.position + 0.1f * laserRenderer.transform.forward;
+            yield return Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(2f))).Do(_ => __brain.BB.attachment.laserA_aimPoint.position = __brain.BB.TargetColliderHelper.GetWorldCenter() + 0.2f * Vector3.up).ToYieldInstruction();
+                    
+            laserRenderer.FadeIn(0.5f, 0.2f);
+            yield return new WaitForSeconds(0.2f);
+
+            var hitLayerMask = LayerMask.GetMask("Terrain", "PhysicsBody", "HitBox", "HitBoxBlocking", "Obstacle");
+            var hitOffset = 0.1f;
+            var waitApproachTimeStamp = Time.time;
+            yield return Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(4f))).Do(_ =>
+            {
+                if ((Time.time - waitApproachTimeStamp) > 1f)
+                    __brain.BB.attachment.laserA_aimPoint.position = __brain.BB.attachment.laserA_aimPoint.position.LerpSpeed(__brain.BB.TargetColliderHelper.GetWorldCenter() + 0.2f * Vector3.up, __brain.BB.action.laserA_approachSpeed, Time.deltaTime);
+
+                var hitIndex = LaserActionTraceTarget(laserRenderer.transform.position, laserRenderer.transform.forward, laserRenderer.lineWidth * 0.5f, __brain.BB.action.laserA_sweepDistance, hitLayerMask);
+                if (hitIndex >= 0)
+                    laserRenderer.hitFx.transform.position = __hitsNonAlloc[hitIndex].point + hitOffset * __hitsNonAlloc[hitIndex].normal;
+                else
+                    laserRenderer.hitFx.transform.position = laserRenderer.transform.position + __brain.BB.action.laserA_sweepDistance * laserRenderer.transform.forward;
+            }).ToYieldInstruction();
+
+            laserRenderer.FadeIn(1f, 0.4f);
+            yield return new WaitForSeconds(0.4f);
+
+            var sweepAlpha = 0f;
+            var sweepStartVec = laserRenderer.transform.forward; 
+            var sweepEndVec = laserRenderer.transform.worldToLocalMatrix.MultiplyPoint(__brain.BB.TargetCore.position).x > 0f ? laserRenderer.transform.right.Vector2D() : -laserRenderer.transform.right.Vector2D();
+            yield return Observable.EveryLateUpdate().TakeWhile(_ => sweepAlpha < 1f).Do(_ =>
+            {
+                var hitIndex = LaserActionTraceTarget(laserRenderer.transform.position, laserRenderer.transform.forward, laserRenderer.lineWidth * 0.5f, __brain.BB.action.laserA_sweepDistance, hitLayerMask);
+                if (hitIndex >= 0)
+                    laserRenderer.hitFx.transform.position = __hitsNonAlloc[hitIndex].point + hitOffset * __hitsNonAlloc[hitIndex].normal;
+                else
+                    laserRenderer.hitFx.transform.position = __brain.BB.attachment.laserA_aimPoint.position;
+
+                if (hitIndex >= 0 && __hitsNonAlloc[hitIndex].collider.TryGetComponent<PawnColliderHelper>(out var helper) && helper.pawnBrain == __brain.BB.TargetColliderHelper.pawnBrain)
+                    sweepAlpha += 0.02f * Time.deltaTime;
+                else
+                    sweepAlpha += 2f * Time.deltaTime;
+
+                var sweepVec = Vector3.Slerp(sweepStartVec, sweepEndVec, sweepAlpha);
+                __brain.BB.attachment.laserA_aimPoint.position = laserRenderer.transform.position +  __brain.BB.action.laserA_sweepDistance * sweepVec;
+            }).ToYieldInstruction();
+
+            laserRenderer.flashFx.Stop();
+            laserRenderer.hitFx.Stop();
+            laserRenderer.FadeOut(0.2f);
+            yield return new WaitForSeconds(0.2f);
+        }
+
+        IEnumerator LaserB_ActionCoroutine()
+        {
+            var laserRenderer = __brain.BB.attachment.laserB_Renderer;
+
+            laserRenderer.flashFx.Play();
+            laserRenderer.hitFx.Play();
+
+            yield return Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(1f))).Do(_ =>
+            {
+                laserRenderer.hitFx.transform.position = laserRenderer.transform.position;
+            }).ToYieldInstruction();
+                    
+            laserRenderer.FadeIn(0.2f, 0.2f);
+            yield return new WaitForSeconds(0.2f);
+
+            var hitLayerMask = LayerMask.GetMask("Terrain", "PhysicsBody", "HitBox", "HitBoxBlocking", "Obstacle");
+            var hitOffset = 0.1f;
+            yield return Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(1f))).Do(_ =>
+            {
+                __brain.BB.attachment.laserA_aimPoint.position = __brain.BB.TargetColliderHelper.GetWorldCenter();
+
+                var hitIndex = LaserActionTraceTarget(laserRenderer.transform.position, laserRenderer.transform.forward, laserRenderer.lineWidth, __brain.BB.action.laserB_maxDistance, hitLayerMask);
+                if (hitIndex >= 0)
+                    laserRenderer.hitFx.transform.position = __hitsNonAlloc[hitIndex].point + hitOffset * __hitsNonAlloc[hitIndex].normal;
+                else
+                    laserRenderer.hitFx.transform.position = laserRenderer.transform.position + __brain.BB.action.laserB_maxDistance * laserRenderer.transform.forward;
+            }).ToYieldInstruction();
+
+            laserRenderer.flashFx.Stop();
+            laserRenderer.hitFx.Stop();
+            laserRenderer.FadeOut(0.2f);
+            yield return new WaitForSeconds(0.2f);
+        }
+
+        int LaserActionTraceTarget(Vector3 origin, Vector3 direction, float radius, float distance, int layerMask)
+        {
+            var compareSqrDistance = -1f;
+            var hitIndex = -1;
+            var hitCount = Physics.SphereCastNonAlloc(origin, radius, direction, __hitsNonAlloc, distance, layerMask);
+            if (hitCount > 0)
+            {
+                for (int i = 0; i < hitCount; i++)
+                {
+                    if (__hitsNonAlloc[i].collider.TryGetComponent<PawnColliderHelper>(out var helper) && helper.pawnBrain != __brain.BB.TargetColliderHelper.pawnBrain)
+                        continue;
+
+                    var sqrDistance = (__hitsNonAlloc[i].collider.transform.position - origin).sqrMagnitude;
+                    if (hitIndex < 0 || sqrDistance < compareSqrDistance)
+                    {
+                        hitIndex = i;
+                        compareSqrDistance = sqrDistance;
+                    }
+                }
+            }
+
+            return hitIndex;
         }
 
         void ShowHitColor(PawnColliderHelper colliderHelper)
@@ -82,7 +282,7 @@ namespace Game
                 hitBoxIndex = Etasphera42_Brain.HitBoxIndices.Body;
                 if (!__hitColorRenderers.ContainsKey(Etasphera42_Brain.HitBoxIndices.Body))
                 {
-                    __hitColorRenderers.Add(Etasphera42_Brain.HitBoxIndices.Body, __brain.BB.graphics.body_meshRenderers);
+                    __hitColorRenderers.Add(Etasphera42_Brain.HitBoxIndices.Body, __brain.BB.attachment.body_meshRenderers);
                     __hitColorDisposables.Add(Etasphera42_Brain.HitBoxIndices.Body, null);
                 }
             }
@@ -91,7 +291,7 @@ namespace Game
                 hitBoxIndex = Etasphera42_Brain.HitBoxIndices.LeftLeg1;
                 if (!__hitColorRenderers.ContainsKey(Etasphera42_Brain.HitBoxIndices.LeftLeg1))
                 {
-                    __hitColorRenderers.Add(Etasphera42_Brain.HitBoxIndices.LeftLeg1, __brain.BB.graphics.leftLeg1_meshRenderes);
+                    __hitColorRenderers.Add(Etasphera42_Brain.HitBoxIndices.LeftLeg1, __brain.BB.attachment.leftLeg1_meshRenderes);
                     __hitColorDisposables.Add(Etasphera42_Brain.HitBoxIndices.LeftLeg1, null);
                 }
             }
@@ -100,7 +300,7 @@ namespace Game
                 hitBoxIndex = Etasphera42_Brain.HitBoxIndices.LeftLeg2;
                 if (!__hitColorRenderers.ContainsKey(Etasphera42_Brain.HitBoxIndices.LeftLeg2))
                 {
-                    __hitColorRenderers.Add(Etasphera42_Brain.HitBoxIndices.LeftLeg2, __brain.BB.graphics.leftLeg2_meshRenderes);
+                    __hitColorRenderers.Add(Etasphera42_Brain.HitBoxIndices.LeftLeg2, __brain.BB.attachment.leftLeg2_meshRenderes);
                     __hitColorDisposables.Add(Etasphera42_Brain.HitBoxIndices.LeftLeg2, null);
                 }
             }
@@ -109,7 +309,7 @@ namespace Game
                 hitBoxIndex = Etasphera42_Brain.HitBoxIndices.RightLeg1;
                 if (!__hitColorRenderers.ContainsKey(Etasphera42_Brain.HitBoxIndices.RightLeg1))
                 {
-                    __hitColorRenderers.Add(Etasphera42_Brain.HitBoxIndices.RightLeg1, __brain.BB.graphics.rightLeg1_meshRenderes);
+                    __hitColorRenderers.Add(Etasphera42_Brain.HitBoxIndices.RightLeg1, __brain.BB.attachment.rightLeg1_meshRenderes);
                     __hitColorDisposables.Add(Etasphera42_Brain.HitBoxIndices.RightLeg1, null);
                 }
             }
@@ -118,7 +318,7 @@ namespace Game
                 hitBoxIndex = Etasphera42_Brain.HitBoxIndices.RightLeg2;
                 if (!__hitColorRenderers.ContainsKey(Etasphera42_Brain.HitBoxIndices.RightLeg2))
                 {
-                    __hitColorRenderers.Add(Etasphera42_Brain.HitBoxIndices.RightLeg2, __brain.BB.graphics.rightLeg2_meshRenderes);
+                    __hitColorRenderers.Add(Etasphera42_Brain.HitBoxIndices.RightLeg2, __brain.BB.attachment.rightLeg2_meshRenderes);
                     __hitColorDisposables.Add(Etasphera42_Brain.HitBoxIndices.RightLeg2, null);
                 }
             }
@@ -139,8 +339,37 @@ namespace Game
             }).AddTo(this);
         }
 
+        public override void EmitActionHandler(GameObject emitPrefab, Transform emitPoint, int emitNum)
+        {
+            __nextFrameObservable ??= Observable.NextFrame(FrameCountType.EndOfFrame);
+            if (emitPrefab == __brain.BB.action.bulletPrefab)
+            {
+                __nextFrameObservable.Subscribe(_ =>
+                {
+                    ObjectPoolingSystem.Instance.GetObject<Etasphera42_Bullet>(emitPrefab, emitPoint.position + UnityEngine.Random.Range(-0.2f, 0.2f) * Vector3.right, emitPoint.rotation).Go(__brain, 20f, 0.5f);
+                });
+            }
+            else if (emitPrefab == __brain.BB.action.framePrefab)
+            {
+                __nextFrameObservable.Subscribe(_ =>
+                {
+                    ObjectPoolingSystem.Instance.GetObject<Etasphera42_Frame>(emitPrefab, emitPoint.position + UnityEngine.Random.Range(-0.2f, 0.2f) * Vector3.right, emitPoint.rotation).Go(__brain, 20f, 1f);
+                });
+            }
+            else if (emitPrefab == __brain.BB.action.bombPrefab)
+            {
+                __nextFrameObservable.Subscribe(_ =>
+                {
+                    ObjectPoolingSystem.Instance.GetObject<Etasphera42_Bomb>(emitPrefab, emitPoint.position + UnityEngine.Random.Range(-0.2f, 0.2f) * Vector3.right, emitPoint.rotation).Pop(__brain, UnityEngine.Random.Range(2f, 10f) * Vector3.up.RandomX(-1f, 1f).RandomZ(-1f, 1f), Vector3.one);
+                });
+            }
+        }
+
         readonly Dictionary<Etasphera42_Brain.HitBoxIndices, SkinnedMeshRenderer[]> __hitColorRenderers = new();
         readonly Dictionary<Etasphera42_Brain.HitBoxIndices, IDisposable> __hitColorDisposables = new();
+        readonly RaycastHit[] __hitsNonAlloc = new RaycastHit[16];
+        IObservable<Unit> __nextFrameObservable;
+        IDisposable __laserB_disposable;
         Etasphera42_Brain __brain;
 
         protected override void AwakeInternal()
@@ -157,14 +386,6 @@ namespace Game
             {
                 __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", v);
             }).AddTo(this);
-        }
-
-        public override void EmitProjectile(GameObject sourcePrefab, Transform emitPoint, int emitNum)
-        {
-            if (sourcePrefab == __brain.BB.action.bulletPrefab)
-                ProjectilePoolingSystem.Instance.GetProjectile<Etasphera42_Bullet>(sourcePrefab, emitPoint.position + UnityEngine.Random.Range(-0.2f, 0.2f) * Vector3.right, emitPoint.rotation).Go(__brain, 20f, 0.5f);
-            else if (sourcePrefab == __brain.BB.action.framePrefab)
-                ProjectilePoolingSystem.Instance.GetProjectile<Etasphera42_Frame>(sourcePrefab, emitPoint.position + UnityEngine.Random.Range(-0.2f, 0.2f) * Vector3.right, emitPoint.rotation).Go(__brain, 20f, 1f);
         }
     }
 }

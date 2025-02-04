@@ -59,8 +59,8 @@ namespace Game
                 }
 
                 SoundManager.Instance.Play(SoundID.HIT_FLESH);
-                EffectManager.Instance.Show("@Hit 23 cube", damageContext.hitPoint, Quaternion.identity, Vector3.one, 1);
-                EffectManager.Instance.Show("@BloodFX_impact_col", damageContext.hitPoint, Quaternion.identity, 1.5f * Vector3.one, 3);
+                EffectManager.Instance.Show("FX/@Hit 23 cube", damageContext.hitPoint, Quaternion.identity, Vector3.one, 1);
+                EffectManager.Instance.Show("FX/@BloodFX_impact_col", damageContext.hitPoint, Quaternion.identity, 1.5f * Vector3.one, 3);
             }
 
             var knockBackDisposable = Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.2f)))
@@ -110,7 +110,7 @@ namespace Game
                 }).AddTo(this);
         }
 
-        public override IDisposable StartActionDisposable(ref PawnHeartPointDispatcher.DamageContext damageContext, string actionName)
+        public override IDisposable StartCustomAction(ref PawnHeartPointDispatcher.DamageContext damageContext, string actionName)
         {
             if (actionName == "Hook")
             {
@@ -202,7 +202,7 @@ namespace Game
 
             }
 
-            return base.StartActionDisposable(ref damageContext, actionName);
+            return base.StartCustomAction(ref damageContext, actionName);
         }
 
         IObservable<float> AssaultActionObservable(Vector3 startPosition, float startTimeStamp, float duration)
@@ -290,7 +290,7 @@ namespace Game
             };
         }
 
-        public override void EmitProjectile(GameObject emitSource, Transform emitPoint, int emitNum)
+        public override void EmitActionHandler(GameObject emitSource, Transform emitPoint, int emitNum)
         {
             // if (Instantiate(emitSource, emitPoint.position, emitPoint.rotation).TryGetComponent<DroneBotBullet>(out var bullet))
             //     bullet.Go(__brain, 16f);
@@ -302,7 +302,7 @@ namespace Game
             // }).AddTo(this);
 
             //* onEmitProjectile 호출은 제일 나중에 함
-            base.EmitProjectile(emitSource, emitPoint, emitNum);
+            base.EmitActionHandler(emitSource, emitPoint, emitNum);
         }
     }
 }

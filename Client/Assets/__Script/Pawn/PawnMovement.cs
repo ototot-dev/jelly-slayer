@@ -51,9 +51,9 @@ namespace Game
 
         void Start()
         {
-            __pawnBrain.onFixedUpdate += OnFixedUpdateHandler;
             __pawnBrain.onUpdate += OnUpdateHandler;
-            
+            __pawnBrain.onFixedUpdate += OnFixedUpdateHandler;
+
             StartInternal();
         }
 
@@ -70,9 +70,9 @@ namespace Game
             }
             else
             {
-                if (__freezeMovementFoeOneFrame)
+                if (__freezeMovementForOneFrame)
                 {
-                    __freezeMovementFoeOneFrame = false;
+                    __freezeMovementForOneFrame = false;
                     __ecmMovement.Move(Time.fixedDeltaTime);
                 }
                 else if (__rootMotionPosition.sqrMagnitude > 0f)
@@ -85,8 +85,9 @@ namespace Game
                 }
 
                 __ecmMovement.rotation *= __rootMotionRotation;
-                ResetRootMotion();
             }
+            
+            ResetRootMotion();
         }
 
         protected virtual void OnUpdateHandler()
@@ -106,15 +107,15 @@ namespace Game
             __ecmMovement.ClearAccumulatedForces();
         }
 
-        public void Freeze()
+        public void FreezeForOneFrame()
         {   
             //* RootMotion에 의해서 축첟된 velocity값을 리셋함
             __ecmMovement.velocity = Vector3.zero;
             __ecmMovement.ClearAccumulatedForces();
-            __freezeMovementFoeOneFrame = true;
+            __freezeMovementForOneFrame = true;
         }
 
-        protected bool __freezeMovementFoeOneFrame;
+        protected bool __freezeMovementForOneFrame;
 
         public void FaceTo(Vector3 direction)
         {

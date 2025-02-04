@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using PampelGames.BloodFactory;
 using UniRx;
@@ -10,9 +9,6 @@ namespace Game
 {
     public class EffectInstance : MonoBehaviour
     {
-        public string sourceName;
-        public GameObject sourcePrefab;
-
         // void OnParticleCollision(GameObject other)
         // {
         //     __collisionEvents ??= new();
@@ -21,10 +17,10 @@ namespace Game
         //     for (int i = 0; i < eventNum; i++)
         //         onCollisionEvent?.Invoke(__collisionEvents[i]);
         // }
-
-        ParticleSystemScalingMode __defaultScaleMode;
         // List<ParticleCollisionEvent> __collisionEvents;
         // public Action<ParticleCollisionEvent> onCollisionEvent;
+        
+        ParticleSystemScalingMode __defaultScaleMode;
 
         public void PlayLooping(float playRate = 1f)
         {
@@ -217,7 +213,6 @@ namespace Game
             var instance = GetInstance(sourcePrefab, position, rotation, scale, scalingMode);
             if (waitingTime > 0f)
             {
-                // instance.gameObject.SetActive(false);
                 Observable.Timer(TimeSpan.FromSeconds(waitingTime)).Subscribe(_ =>
                 {
                     instance.gameObject.SetActive(true);
@@ -233,88 +228,53 @@ namespace Game
             return instance;
         }
 
-        EffectInstance GetInstance(string sourceName, Vector3 position, Quaternion rotation, Vector3 scale, ParticleSystemScalingMode scalingMode)
+        EffectInstance GetInstance(string sourcePath, Vector3 position, Quaternion rotation, Vector3 scale, ParticleSystemScalingMode scalingMode)
         {
-            if (!__instancePoolA.ContainsKey(sourceName))
-                __instancePoolA.Add(sourceName, new());
+            var handler = ObjectPoolingSystem.Instance.GetObject<ObjectPoolableHandler>(sourcePath, position, rotation);
+            if (!handler.TryGetComponent<EffectInstance>(out var ret))
+                ret = handler.gameObject.AddComponent<EffectInstance>();
 
-            EffectInstance instance;
-            if (__instancePoolA[sourceName].Count > 0)
+            //* (성능 이슈로 인해서..) Light는 기본적으로 끔
+            foreach (var d in ret.gameObject.DescendantsAndSelf())
             {
-                instance = __instancePoolA[sourceName].First();
-                __instancePoolA[sourceName].Remove(instance);
-            }
-            else
-            {
-                instance = Instantiate(Resources.Load<GameObject>($"FX/{sourceName}"), position, rotation).AddComponent<EffectInstance>();
-                instance.sourceName = sourceName;
-
-                //* (성능 이슈로 인해서..) Light는 기본적으로 끔
-                foreach (var d in instance.gameObject.DescendantsAndSelf())
-                {
-                    if (d.TryGetComponent<Light>(out var light))
-                        light.gameObject.SetActive(false);
-                }
+                if (d.TryGetComponent<Light>(out var light))
+                    light.gameObject.SetActive(false);
             }
 
-            instance.transform.SetPositionAndRotation(position, rotation);
-            instance.SetScale(scale, scalingMode);
-            instance.gameObject.SetActive(true);
+            ret.transform.SetPositionAndRotation(position, rotation);
+            ret.SetScale(scale, scalingMode);
+            ret.gameObject.SetActive(true);
 
-            return instance;
+            return ret;
         }
 
         EffectInstance GetInstance(GameObject sourcePrefab, Vector3 position, Quaternion rotation, Vector3 scale, ParticleSystemScalingMode scalingMode)
         {
-            if (!__instancePoolB.ContainsKey(sourcePrefab))
-                __instancePoolB.Add(sourcePrefab, new());
+            var handler = ObjectPoolingSystem.Instance.GetObject<ObjectPoolableHandler>(sourcePrefab, position, rotation);
+            if (!handler.TryGetComponent<EffectInstance>(out var ret))
+                ret = handler.gameObject.AddComponent<EffectInstance>();
 
-            EffectInstance instance;
-            if (__instancePoolB[sourcePrefab].Count > 0)
+            //* (성능 이슈로 인해서..) Light는 기본적으로 끔
+            foreach (var d in ret.gameObject.DescendantsAndSelf())
             {
-                instance = __instancePoolB[sourcePrefab].First();
-                __instancePoolB[sourcePrefab].Remove(instance);
-            }
-            else
-            {
-                instance = Instantiate(sourcePrefab, position, rotation).AddComponent<EffectInstance>();
-                instance.sourceName = string.Empty;
-                instance.sourcePrefab = sourcePrefab;
-
-                //* (성능 이슈로 인해서..) Light는 기본적으로 끔
-                foreach (var d in instance.gameObject.DescendantsAndSelf())
-                {
-                    if (d.TryGetComponent<Light>(out var light))
-                        light.gameObject.SetActive(false);
-                }
+                if (d.TryGetComponent<Light>(out var light))
+                    light.gameObject.SetActive(false);
             }
 
-            instance.transform.SetPositionAndRotation(position, rotation);
-            instance.SetScale(scale, scalingMode);
-            // instance.gameObject.SetActive(true);
+            ret.transform.SetPositionAndRotation(position, rotation);
+            ret.SetScale(scale, scalingMode);
 
-            return instance;
+            return ret;
         }
 
-        public void ReleaseInstance(EffectInstance effectInstance)
+        public void ReleaseInstance(EffectInstance instance)
         {
-            effectInstance.gameObject.SetActive(false);
-            effectInstance.transform.SetParent(transform);
-            effectInstance.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
-            effectInstance.ResetScale();
+            instance.gameObject.SetActive(false);
+            instance.transform.SetParent(transform);
+            instance.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+            instance.ResetScale();
 
-            if (effectInstance.sourcePrefab != null)
-            {
-                __instancePoolB[effectInstance.sourcePrefab].Add(effectInstance);
-            }
-            else
-            {
-                Debug.Assert(effectInstance.sourceName != string.Empty);
-                __instancePoolA[effectInstance.sourceName].Add(effectInstance);
-            }
+            ObjectPoolingSystem.Instance.ReturnObject(instance.gameObject);
         }
-
-        readonly Dictionary<string, HashSet<EffectInstance>> __instancePoolA = new();
-        readonly Dictionary<GameObject, HashSet<EffectInstance>> __instancePoolB = new();
     }
 }

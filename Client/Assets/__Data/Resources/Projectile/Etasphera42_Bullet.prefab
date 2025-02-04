@@ -14946,14 +14946,16 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 30728
   sensorEnabledTime: 0.1
+  bodyEnabledTime: 0.1
   despawnWaitingTime: 0.1
   lifeTime: 10
   isLifeTimeOut: 0
   destroyWhenLifeTimeOut: 0
+  maxTravelDistance: -1
+  destoryWhenMaxTravelDistanceReached: 0
   updateEnabled: 1
-  fixedUpdateEnabled: 0
-  sourceName: 
-  sourcePrefab: {fileID: 0}
+  lateUpdateEnabled: 0
+  fixedUpdateEnabled: 1
   emitterBrain:
     value: {fileID: 0}
   bulletMissileFx: {fileID: 8223906092269073355}

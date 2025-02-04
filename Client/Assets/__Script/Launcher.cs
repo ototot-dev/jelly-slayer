@@ -15,7 +15,7 @@ namespace Game
         {
             Default,
             Test,
-            JellyTest,
+            Game,
         }
         public GameModes gameMode = GameModes.Default;
         public FloatReactiveProperty timeScale = new(1);
@@ -35,12 +35,19 @@ namespace Game
 
                 new TitleController().Load().Show(GameContext.Instance.mainCanvasCtrler.body);
             }
-            else
+            else if (gameMode == GameModes.Test)
             {
                 GameContext.Instance.playerCtrler = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
                 GameContext.Instance.playerTargetManager = GameContext.Instance.playerCtrler.GetComponent<PlayerTargetManager>();
                 GameContext.Instance.cameraCtrler = GameObject.FindWithTag("MainCamera").GetComponent<CameraController>();
             }
+            else if (gameMode == GameModes.Game)
+            {
+                GameContext.Instance.playerCtrler = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
+                GameContext.Instance.playerTargetManager = GameContext.Instance.playerCtrler.GetComponent<PlayerTargetManager>();
+                GameContext.Instance.cameraCtrler = GameObject.FindWithTag("MainCamera").GetComponent<CameraController>();
+            }
+            
             GameManager.Instance.CheckInstance();
 
             timeScale.Subscribe(v => Time.timeScale = v);

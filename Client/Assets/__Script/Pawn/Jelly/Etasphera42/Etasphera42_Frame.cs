@@ -6,8 +6,13 @@ using UnityEngine;
 
 namespace Game
 {
-    public class Etasphera42_Frame : ProjectileMovement
+    public class Etasphera42_Frame : ProjectileMovement, IObjectPoolable
     {
+#region ISpawnable/IMovable 구현
+        void IObjectPoolable.OnGetFromPool() {}
+        void IObjectPoolable.OnReturnedToPool() {}
+#endregion
+
         [Header("Parameter")]
         public ActionData actionData;
 
@@ -17,12 +22,8 @@ namespace Game
 
             emitterBrain.Where(v => v != null).Subscribe(v => 
             {
-                if (v.TryGetComponent<PawnActionController>(out var actionCtrler))
-                {
-                    sourcePrefab = (v as Etasphera42_Brain).BB.action.framePrefab;
-                    actionData = actionCtrler.currActionContext.actionData;
-                    Debug.Assert(actionData != null);
-                }
+                actionData = v.GetComponent<PawnActionController>().currActionContext.actionData;
+                Debug.Assert(actionData != null);
             }).AddTo(this);
 
             onStopMove += () =>
@@ -30,7 +31,7 @@ namespace Game
                 Observable.Timer(TimeSpan.FromSeconds(despawnWaitingTime)).Subscribe(_ =>
                 {
                     Debug.Assert(IsDespawnPending);
-                    ProjectilePoolingSystem.Instance.ReturnProjectile(this, sourcePrefab);
+                    ObjectPoolingSystem.Instance.ReturnObject(gameObject);
                 }).AddTo(this);
             };
 

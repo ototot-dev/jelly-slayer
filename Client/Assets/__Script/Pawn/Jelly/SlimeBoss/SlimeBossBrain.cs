@@ -34,6 +34,7 @@ namespace Game
         float IPawnMovable.GetDefaultMinApproachDistance() { return Movement.GetDefaultMinApproachDistance(); }
         bool IPawnMovable.GetFreezeMovement() { return Movement.freezeMovement; }
         bool IPawnMovable.GetFreezeRotation() { return Movement.freezeRotation; }
+        void IPawnMovable.FreezeForOneFrame() { Movement.FreezeForOneFrame(); }
         void IPawnMovable.ReserveDestination(Vector3 destination) { Movement.ReserveDestination(destination); }
         float IPawnMovable.SetDestination(Vector3 destination) { return Movement.SetDestination(destination); }
         void IPawnMovable.SetMinApproachDistance(float distance) { Movement.minApproachDistance = distance; }
@@ -85,7 +86,7 @@ namespace Game
             }
         }
 
-        protected void InvalidateDecision(float decisionCoolTime = 0)
+        public override void InvalidateDecision(float decisionCoolTime = 0)
         {
             __decisionCoolTime = decisionCoolTime;
             BB.currDecision.Value = Decisions.None;
@@ -113,7 +114,7 @@ namespace Game
                 if (v)
                     EffectManager.Instance.ShowLooping("StunnedStars", fxAttachPoint.position, fxAttachPoint.rotation, Vector3.one).transform.SetParent(fxAttachPoint, true);
                 else
-                    fxAttachPoint.gameObject.Children().Select(c => c.GetComponent<EffectInstance>()).First(e => e != null && e.sourceName == "StunnedStars").Stop();
+                    fxAttachPoint.gameObject.Children().Select(c => c.GetComponent<EffectInstance>()).First(h => h != null && h.GetComponent<ObjectPoolableHandler>().sourcePath == "StunnedStars").Stop();
             }).AddTo(this);
 
             BB.currDecision.Subscribe(v =>

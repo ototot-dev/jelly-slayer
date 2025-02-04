@@ -88,13 +88,13 @@ namespace Game
                 else
                 {
                     SoundManager.Instance.Play(SoundID.HIT_BLOCK);
-                    EffectManager.Instance.Show("@Hit 4 yellow arrow", __brain.BB.graphics.forceShieldRenderer.transform.position, Quaternion.identity, Vector3.one, 1f);
+                    EffectManager.Instance.Show("FX/@Hit 4 yellow arrow", __brain.BB.graphics.forceShieldRenderer.transform.position, Quaternion.identity, Vector3.one, 1f);
                 }
 
                 var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
                 Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
-                    .DoOnCancel(() => __brain.Movement.Freeze())
-                    .DoOnCompleted(() => __brain.Movement.Freeze())
+                    .DoOnCancel(() => __brain.Movement.FreezeForOneFrame())
+                    .DoOnCompleted(() => __brain.Movement.FreezeForOneFrame())
                     .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity))
                     .AddTo(this);
 
@@ -137,7 +137,7 @@ namespace Game
                     var hitPoint = damageContext.senderBrain.coreColliderHelper.GetWorldCenter() + 
                         damageContext.senderBrain.coreColliderHelper.GetRadius() * (__brain.coreColliderHelper.GetWorldCenter() - damageContext.senderBrain.coreColliderHelper.GetWorldCenter()).Vector2D().normalized;
 
-                    EffectManager.Instance.Show("Hit 26 blue crystal", hitPoint, Quaternion.identity, 2f * Vector3.one, 1f);
+                    EffectManager.Instance.Show("FX/Hit 26 blue crystal", hitPoint, Quaternion.identity, 2f * Vector3.one, 1f);
                     SoundManager.Instance.Play(SoundID.HIT_PARRYING);
                 }
 
@@ -145,8 +145,8 @@ namespace Game
                 {
                     var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
                     Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.5f / __brain.BB.pawnData_Movement.knockBackSpeed)))
-                        .DoOnCancel(() => __brain.Movement.Freeze())
-                        .DoOnCompleted(() => __brain.Movement.Freeze())
+                        .DoOnCancel(() => __brain.Movement.FreezeForOneFrame())
+                        .DoOnCompleted(() => __brain.Movement.FreezeForOneFrame())
                         .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity))
                         .AddTo(this);
                 }
@@ -168,13 +168,13 @@ namespace Game
             Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
                 .DoOnCancel(() =>
                 {
-                    __brain.Movement.Freeze();
+                    __brain.Movement.FreezeForOneFrame();
                     if (CurrActionName == "!OnBlocked")
                         FinishAction();
                 })
                 .DoOnCompleted(() =>
                 {
-                    __brain.Movement.Freeze();
+                    __brain.Movement.FreezeForOneFrame();
                     if (CurrActionName == "!OnBlocked")
                         FinishAction();
                 })
@@ -185,13 +185,29 @@ namespace Game
 
         public override IDisposable StartOnKnockDownAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
         {
+#if UNITY_EDITOR
+            if (damageContext.senderBrain == null && damageContext.receiverBrain == null)
+            {
+                __brain.PawnStatusCtrler.AddStatus(PawnStatus.KnockDown, 1f, 4f);
+
+                var __knockBackVec = -__brain.BB.pawnData_Movement.knockBackSpeed * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(4f / __brain.BB.pawnData_Movement.knockBackSpeed)))
+                    .DoOnCancel(() => __brain.Movement.FreezeForOneFrame())
+                    .DoOnCompleted(() => __brain.Movement.FreezeForOneFrame())
+                    .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * __knockBackVec, Quaternion.identity))
+                    .AddTo(this);
+
+                return null;
+            }
+#endif
+
             Debug.Assert(damageContext.receiverBrain == __brain);
             Debug.Assert(!isAddictiveAction);
 
             var knockBackVec = -__brain.BB.pawnData_Movement.knockBackSpeed * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
             Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
-                .DoOnCancel(() => __brain.Movement.Freeze())
-                .DoOnCompleted(() => __brain.Movement.Freeze())
+                .DoOnCancel(() => __brain.Movement.FreezeForOneFrame())
+                .DoOnCompleted(() => __brain.Movement.FreezeForOneFrame())
                 .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity))
                 .AddTo(this);
 
@@ -200,7 +216,7 @@ namespace Game
 
         public float testImpulseStrength = 1f;
 
-        public override IDisposable StartActionDisposable(ref PawnHeartPointDispatcher.DamageContext damageContext, string actionName)
+        public override IDisposable StartCustomAction(ref PawnHeartPointDispatcher.DamageContext damageContext, string actionName)
         {
             if (actionName == "Assault")
             {
@@ -225,7 +241,7 @@ namespace Game
                 // }).AddTo(this);
             }
             
-            return base.StartActionDisposable(ref damageContext, actionName);
+            return base.StartCustomAction(ref damageContext, actionName);
         }
 
         HeroBrain __brain;
@@ -251,12 +267,16 @@ namespace Game
                     //* Down (Loop) 스테이트에서 애님 클립이 진행되지 않고 강제로 멈춰있도록 함
                     __brain.AnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1);
                     __brain.AnimCtrler.mainAnimator.SetFloat("AnimAdvance", 99f);
+
+                    __brain.Movement.GetCharacterMovement().collisionLayers = LayerMask.GetMask("Terrain", "Obstacle", "Cell");
                 }
                 else
                 {
                     //* 일어나는 모션동안은 무적
                     __brain.PawnStatusCtrler.AddStatus(PawnStatus.Invincible, 1f, 1f);
                     __brain.AnimCtrler.mainAnimator.SetBool("IsDown", false);
+
+                    __brain.Movement.GetCharacterMovement().collisionLayers = LayerMask.GetMask("Terrain", "HitBoxBlocking", "Obstacle", "Cell");
                 }
             }).AddTo(this);
 
@@ -264,13 +284,13 @@ namespace Game
             {
                 if (v)
                 {
-                    EffectManager.Instance.Show("FX_Cartoony_Jump_Up_01", __brain.GetWorldPosition(), 
+                    EffectManager.Instance.Show("FX/FX_Cartoony_Jump_Up_01", __brain.GetWorldPosition(), 
                         Quaternion.identity, Vector3.one, 1f);
                     SoundManager.Instance.Play(SoundID.JUMP);
                 }
                 else if (__brain.Movement.IsOnGround)
                 {
-                    EffectManager.Instance.Show("JumpCloudSmall", __brain.GetWorldPosition() + 
+                    EffectManager.Instance.Show("FX/JumpCloudSmall", __brain.GetWorldPosition() + 
                         Time.deltaTime * __brain.Movement.moveSpeed * __brain.Movement.moveVec + 
                         0.1f * Vector3.up, Quaternion.identity, 0.8f * Vector3.one, 1f);
                     SoundManager.Instance.Play(SoundID.LAND);

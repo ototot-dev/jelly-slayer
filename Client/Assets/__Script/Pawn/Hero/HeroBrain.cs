@@ -50,6 +50,7 @@ namespace Game
         void IPawnMovable.SetFaceVector(Vector3 faceVec) { Movement.faceVec = faceVec; }
         void IPawnMovable.FreezeMovement(bool newValue) {}
         void IPawnMovable.FreezeRotation(bool newValue) {}
+        void IPawnMovable.FreezeForOneFrame() { Movement.FreezeForOneFrame(); }
         void IPawnMovable.AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation) { Movement.AddRootMotion(deltaPosition, deltaRotation); }
         void IPawnMovable.StartJump(float jumpHeight) {}
         void IPawnMovable.FinishJump() {}
@@ -190,7 +191,7 @@ namespace Game
                         Debug.Log("<color=green>HP Regen : " + (100 * rate) + "%, " + hpAdd + "</green>");
 
                         var viewVec = GameContext.Instance.MainCamera.transform.forward;
-                        EffectManager.Instance.Show("HealSingle", GetWorldPosition() + Vector3.up - viewVec, Quaternion.identity, Vector3.one, 1f);
+                        EffectManager.Instance.Show("FX/HealSingle", GetWorldPosition() + Vector3.up - viewVec, Quaternion.identity, Vector3.one, 1f);
                     }
                 }
             };

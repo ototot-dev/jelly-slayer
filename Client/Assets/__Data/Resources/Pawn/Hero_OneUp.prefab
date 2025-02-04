@@ -74,6 +74,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3758835991799220657}
   - component: {fileID: 2413320803077063668}
+  - component: {fileID: 1130383802714546397}
   - component: {fileID: 1853797499062314162}
   - component: {fileID: 629930389286374974}
   - component: {fileID: 3540552371793380332}
@@ -123,6 +124,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   heartPoint:
     value: 0
+--- !u!114 &1130383802714546397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 859846127300755753}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51753b4002b0d48c299cb80bc4ef44cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1853797499062314162
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -344,6 +357,7 @@ MonoBehaviour:
     forceShieldRenderer: {fileID: 409659756734369044}
     onGuardParriedFx: {fileID: 8290359115699195188, guid: e7b0059f09cb15241973d434a922f01a, type: 3}
     onBlockFx: {fileID: 2866177464396845944, guid: 6b2b519e0ec0572459f5bb22f05fed59, type: 3}
+    onBleedFx: {fileID: 7550723611969325616, guid: 51da5c76ba1172d4aa429503f30316b5, type: 3}
 --- !u!114 &8791414763947496166
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5961,10 +5975,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   handler:
     _Editor_SelectedChain: 0
-    _Editor_ChainCategory: 2
+    _Editor_ChainCategory: 0
     _EditorCategory: 3
     _EditorMainCategory: 1
-    _EditorMotionCategory: 2
+    _EditorMotionCategory: 0
     m_hemi: {fileID: -2508796484986968503, guid: 44d994eaad14fdf49a2dd378b4d62094, type: 3}
     m_cyli: {fileID: 2534964839176971238, guid: 2ea99bbc50a9266448416f21d645a771, type: 3}
     m_sphere: {fileID: 4711208715938537054, guid: b43618aedd7473a4eb1aaa5e80012a1d, type: 3}
@@ -6069,13 +6083,33 @@ MonoBehaviour:
         rootSpaceRotation: {x: 0.8509654, y: 0.020861378, z: 0.0139682805, w: 0.52462125}
       LastBaseTransform: {fileID: 3244703593161533231}
     UseExtraFeatures: 1
-    ExtraFeatures: []
+    ExtraFeatures:
+    - CustomName: 
+      enabled: 1
+      FeatureReference: {fileID: 11400000, guid: 70318e95358caf840add7d18b7e462a9, type: 2}
+      customStringList: []
+      customObjectList: []
+      customEventsList: []
+      variables:
+      - VariableName: Selected
+        Tooltip: 
+        _value: {x: 4, y: 0, z: 0, w: 1}
+        _string: 
+        _curve:
+          serializedVersion: 2
+          m_Curve: []
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+        _uObject: {fileID: 0}
+        VariableType: 0
+        _rangeHelper: {x: 0, y: 0, z: 0, w: 0}
     IsHumanoid: 1
     dummyContainer: {fileID: 0}
     skeletonFillExtraBonesList: []
     MusclesPower: 1
     SpringsValue: 1500
-    SpringsOnFall: 0
+    SpringsOnFall: 1
     DampingValue: 40
     DampingValueOnFall: 0
     HardMatching: 0
@@ -6116,18 +6150,18 @@ MonoBehaviour:
     ProjectionMode: 0
     PreProcessing: 0
     RagdollBlend: 1
-    animatingMode: 0
+    animatingMode: 1
     UseReconstruction: 0
     UnitySolverIterations: 12
     Calibrate: 1
     AnimatePhysics: 0
-    ApplyPositions: 0
+    ApplyPositions: 1
     OptimizeOnZeroBlend: 1
     HideDummyInSceneView: 0
     IgnoreBoundedColliders: 1
-    RagdollDummyLayer: 12
+    RagdollDummyLayer: 7
     UnscaledTime: 0
-    FadeInAnimation: 0
+    FadeInAnimation: 0.1
     IgnoreSourceSkeletonColliders: 1
     WaitForInit: 1
     AnimationMatchLimits: 1
@@ -6181,7 +6215,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 0
+        ForceKinematicOnStanding: 1
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -6246,7 +6280,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 0
+        ForceKinematicOnStanding: 1
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -6311,7 +6345,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 0
+        ForceKinematicOnStanding: 1
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -6393,7 +6427,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 0
+        ForceKinematicOnStanding: 1
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -6458,7 +6492,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 0
+        ForceKinematicOnStanding: 1
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -6523,7 +6557,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 0
+        ForceKinematicOnStanding: 1
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -6605,7 +6639,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 0
+        ForceKinematicOnStanding: 1
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -6670,7 +6704,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 0
+        ForceKinematicOnStanding: 1
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -6735,7 +6769,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 0
+        ForceKinematicOnStanding: 1
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -6817,7 +6851,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 0
+        ForceKinematicOnStanding: 1
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -6882,7 +6916,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 0
+        ForceKinematicOnStanding: 1
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -6947,7 +6981,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 0
+        ForceKinematicOnStanding: 1
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -7029,7 +7063,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 0
+        ForceKinematicOnStanding: 1
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -7094,7 +7128,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 0
+        ForceKinematicOnStanding: 1
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -7159,7 +7193,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 0
+        ForceKinematicOnStanding: 1
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -19005,7 +19039,7 @@ GameObject:
   - component: {fileID: 6673541937507687907}
   - component: {fileID: 5557626094041119168}
   - component: {fileID: 2023143863012937403}
-  m_Layer: 12
+  m_Layer: 11
   m_Name: HitBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19024,7 +19058,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 4224567820856287989}
   m_Father: {fileID: 5773660180996915832}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &5557626094041119168
@@ -19572,7 +19607,7 @@ MonoBehaviour:
   _useFlatBaseForGroundChecks: 0
   _collisionLayers:
     serializedVersion: 2
-    m_Bits: 28808
+    m_Bits: 28680
   _triggerInteraction: 1
   _advanced:
     minMoveDistance: 0
@@ -20178,6 +20213,72 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1001 &1127170306918934391
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 6673541937507687907}
+    m_Modifications:
+    - target: {fileID: 3820228278332556673, guid: 46a70a0b518377a43b94d38f6d83079e, type: 3}
+      propertyPath: m_Name
+      value: FireRoundTorch
+      objectReference: {fileID: 0}
+    - target: {fileID: 3820228278332556673, guid: 46a70a0b518377a43b94d38f6d83079e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3820228278332556674, guid: 46a70a0b518377a43b94d38f6d83079e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3820228278332556674, guid: 46a70a0b518377a43b94d38f6d83079e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.886
+      objectReference: {fileID: 0}
+    - target: {fileID: 3820228278332556674, guid: 46a70a0b518377a43b94d38f6d83079e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3820228278332556674, guid: 46a70a0b518377a43b94d38f6d83079e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3820228278332556674, guid: 46a70a0b518377a43b94d38f6d83079e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3820228278332556674, guid: 46a70a0b518377a43b94d38f6d83079e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3820228278332556674, guid: 46a70a0b518377a43b94d38f6d83079e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3820228278332556674, guid: 46a70a0b518377a43b94d38f6d83079e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3820228278332556674, guid: 46a70a0b518377a43b94d38f6d83079e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3820228278332556674, guid: 46a70a0b518377a43b94d38f6d83079e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 46a70a0b518377a43b94d38f6d83079e, type: 3}
+--- !u!4 &4224567820856287989 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3820228278332556674, guid: 46a70a0b518377a43b94d38f6d83079e, type: 3}
+  m_PrefabInstance: {fileID: 1127170306918934391}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1681321264514386907
 PrefabInstance:
   m_ObjectHideFlags: 0

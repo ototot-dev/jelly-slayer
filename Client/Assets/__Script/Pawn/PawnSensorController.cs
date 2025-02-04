@@ -21,29 +21,28 @@ namespace Game
         public HashSet<Collider> ListeningColliders { get; private set; } = new();
         public HashSet<Collider> WatchingColliders { get; private set; } = new();
 
-        /// <summary>
-        /// Listen 영역 안에 Random-Point를 리턴
-        /// </summary>
-        /// <param name="rangeScale"></param>
-        /// <returns></returns>
-        public Vector3 GetRandomPointInListeningArea(Vector3 domainForwardVec, float randAngle, float rangeScale = 1)
+        public Vector3 GetRandomPointInListeningArea(Vector3 forwardVec, float randAngle)
         {
-            var randPoint = __pawnBrain.coreColliderHelper.transform.position;
-            randPoint += Quaternion.Euler(0, UnityEngine.Random.Range(-randAngle, randAngle), 0) * domainForwardVec * UnityEngine.Random.Range(listenLen * rangeScale * 0.5f, listenLen * rangeScale);
-
-            return TerrainManager.GetTerrainPoint(randPoint);
+            var ret = __pawnBrain.GetWorldPosition() + UnityEngine.Random.Range(listenLen * 0.5f, listenLen) * (Quaternion.Euler(0, UnityEngine.Random.Range(-randAngle, randAngle), 0) * forwardVec);
+            return TerrainManager.GetTerrainPoint(ret);
         }
 
-        /// <summary>
-        /// 도망칠 위치 리턴
-        /// </summary>
-        /// <param name="hazardPoint"></param>
-        /// <param name="distanceScale"></param>
-        /// <returns></returns>
-        public Vector3 GetFleePoint(Vector3 hazardPoint, float distanceScale = 1)
+        public Vector3 GetRandomPoint(Vector3 forwardVec, float randAngle, float randDistance)
         {
-            var fleePoint = __pawnBrain.coreColliderHelper.transform.position + (__pawnBrain.coreColliderHelper.transform.position - hazardPoint).Vector2D().normalized * listenLen * distanceScale;
-            return TerrainManager.GetTerrainPoint(fleePoint);
+            var ret = __pawnBrain.GetWorldPosition() + UnityEngine.Random.Range(randDistance * 0.5f, randDistance) * (Quaternion.Euler(0, UnityEngine.Random.Range(-randAngle, randAngle), 0) * forwardVec);
+            return TerrainManager.GetTerrainPoint(ret);
+        }
+
+        public Vector3 GetFleePointInListeningArea(Vector3 avoidPoint)
+        {
+            var ret = __pawnBrain.GetWorldPosition() + listenLen * (__pawnBrain.GetWorldPosition() - avoidPoint).Vector2D().normalized;
+            return TerrainManager.GetTerrainPoint(ret);
+        }
+
+        public Vector3 GetFleePoint(Vector3 avoidPoint, float distance)
+        {
+            var ret = __pawnBrain.GetWorldPosition() + distance * (__pawnBrain.GetWorldPosition() - avoidPoint).Vector2D().normalized;
+            return TerrainManager.GetTerrainPoint(ret);
         }
 
         void Awake()

@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using FlowCanvas.Nodes;
 using Unity.Linq;
 using UnityEngine;
 
@@ -54,6 +53,9 @@ namespace Game
                 pawnRigidbody = GetComponent<Rigidbody>();
             if (pawnBrain == null)
                 pawnBrain = gameObject.AncestorsAndSelf().First(a => a.GetComponent<PawnBrainController>() != null).GetComponent<PawnBrainController>();
+
+            Debug.Assert(pawnBrain != null);
+            pawnBrain.pawnColliderHelpers.Add(this);
         }
 
         public CapsuleCollider GetCapsuleCollider() => __capsuleCollider;

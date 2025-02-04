@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using NodeCanvas.StateMachines;
 using UniRx;
@@ -8,13 +9,13 @@ namespace Game
 {
     public abstract class PawnBrainController : MonoBehaviour
     {
-        public virtual void OnPossessedHandler() {}
-        public virtual void OnUnpossessedHandler() {}
-        public virtual void OnTouchTerrainBoundaryHandler(GameObject boundary) {}
-        public virtual void OnWatchSomethingOrDamagedHandler(PawnBrainController otherBrain, float reservedDecisionCoolTime) {}
-        public virtual void OnDecisionFinishedHandler() {}
-        public virtual void InvalidateDecision(float decisionCoolTime = 0) {}
-        public virtual void ChangeDecision(int newDecision) {}
+        public virtual void OnPossessedHandler() { }
+        public virtual void OnUnpossessedHandler() { }
+        public virtual void OnTouchTerrainBoundaryHandler(GameObject boundary) { }
+        public virtual void OnWatchSomethingOrDamagedHandler(PawnBrainController otherBrain, float reservedDecisionCoolTime) { }
+        public virtual void OnDecisionFinishedHandler() { }
+        public virtual void InvalidateDecision(float decisionCoolTime = 0) { }
+        public virtual void ChangeDecision(int newDecision) { }
         public virtual Vector3 GetWorldPosition() => coreColliderHelper != null ? coreColliderHelper.transform.position : transform.position;
         public virtual Quaternion GetWorldRotation() => coreColliderHelper != null ? coreColliderHelper.transform.rotation : transform.rotation;
         public virtual Transform GetWorldTransform() => coreColliderHelper != null ? coreColliderHelper.transform : transform;
@@ -61,6 +62,7 @@ namespace Game
         public PawnStatusController PawnStatusCtrler { get; private set; }
         public PawnSensorController PawnSensorCtrler { get; private set; }
         public PawnSoundSourceGenerator PawnSoundSourceGen { get; private set; }
+        public readonly HashSet<PawnColliderHelper> pawnColliderHelpers = new();
 
         protected virtual void StartInternal()
         {
@@ -100,11 +102,11 @@ namespace Game
                 {
                     (this as IPawnSpawnable)?.OnDespawnedHandler();
 
-                    if (FSM != null) 
+                    if (FSM != null)
                         FSM.enabled = false;
                     if (visibilityChecker != null)
                         LevelVisibilityManager.Instance.UnregisterChecker(visibilityChecker);
-                        
+
                     Destroy(gameObject, 0.1f);
                 }).AddTo(this);
             }).AddTo(this);
@@ -189,25 +191,5 @@ namespace Game
                     (this as IPawnSpawnable)?.OnLifeTimeOutHandler();
             }
         }
-        
-        // public float GetDistance(PawnBrainController pawn)
-        // {
-        //     var vDist = CoreTransform.position - pawn.CoreTransform.position;
-        //     return vDist.magnitude;
-        // }
-
-        // public void TargetAction(ActionType type)
-        // {
-        //     if (TargetPawn == null)
-        //         return;
-
-        //     TargetPawn.DoAction(type, this);
-        // }
-
-        // public virtual void StartJump() {}
-        // public virtual void StartLand() {}
-        // public virtual void RollingGround() {}
-        // public virtual void ShowTrail(bool isActive, int trailIndex) {}
-        // public virtual void DoAction(ActionType type, PawnBrainController attacker) {}
     }
 }

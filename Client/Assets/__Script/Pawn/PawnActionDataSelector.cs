@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using FIMSpace.Generating;
 using MainTable;
 using UnityEngine;
 
@@ -56,8 +55,7 @@ namespace Game
 #if UNITY_EDITOR
             DatasheetManager.Instance.Load();
 #endif
-            var pawnBB = GetComponent<PawnBlackboard>();
-            if (pawnBB != null)
+            if (TryGetComponent<PawnBlackboard>(out var pawnBB))
             {
                 var data = DatasheetManager.Instance.GetActionData(pawnBB.common.pawnId);
                 if (data != null)

@@ -30,6 +30,7 @@ namespace Game
         void IPawnMovable.SetFaceVector(Vector3 faceVec) { Movement.faceVec = faceVec; }
         void IPawnMovable.FreezeMovement(bool newValue) { Movement.freezeMovement = newValue; }
         void IPawnMovable.FreezeRotation(bool newValue) { Movement.freezeRotation = newValue; }
+        void IPawnMovable.FreezeForOneFrame() { Movement.FreezeForOneFrame(); }
         void IPawnMovable.AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation) { Movement.AddRootMotion(deltaPosition, deltaRotation); }
         void IPawnMovable.StartJump(float jumpHeight) {}
         void IPawnMovable.FinishJump() {}
@@ -232,7 +233,7 @@ namespace Game
 
         float __decisionCoolTime;
 
-        void InvalidateDecision(float decisionCoolTime = 0)
+        public override void InvalidateDecision(float decisionCoolTime = 0f)
         {
             __decisionCoolTime = decisionCoolTime;
             BB.decision.currDecision.Value = Decisions.None;

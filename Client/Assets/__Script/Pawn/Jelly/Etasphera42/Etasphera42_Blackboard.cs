@@ -1,4 +1,5 @@
 using System;
+using FIMSpace.Generating;
 using UniRx;
 using UnityEngine;
 
@@ -8,16 +9,18 @@ namespace Game
     {
         public bool IsDriving => action.isDriving.Value;
         public override bool IsJumping => action.isJumping.Value;
-        public override bool IsGliding => action.isGliding.Value;
-        public override bool IsFalling => action.isFalling.Value;
+        // public override bool IsFalling => action.isFalling.Value;
         public override bool IsGuarding => action.isGuarding.Value;
-        public override float SpacingInDistance => action.spacingInDistance;
-        public override float SpacingOutDistance => action.spacingOutDistance;
-        public override float MinSpacingDistance => action.minSpacingDistance;
-        public override float MaxSpacingDistance => action.maxSpacingDistance;
-        public override float MinApproachDistance => action.minApproachDistance;
-        public float HoldPositionRate => action.holdPositionRate;
-        public float MoveAroundRate => action.moveAroundRate;
+        public override float SpacingInDistance => body.spacingInDistance;
+        public override float SpacingOutDistance => body.spacingOutDistance;
+        public override float MinSpacingDistance => body.minSpacingDistance;
+        public override float MaxSpacingDistance => body.maxSpacingDistance;
+        public override float MinApproachDistance => body.minApproachDistance;
+        public float HoldPositionRate => body.holdPositionRate;
+        public float MoveAroundRate => body.moveAroundRate;
+        public GameObject BulletPrefab => action.bulletPrefab;
+        public GameObject FlamePrefab => action.framePrefab;
+        public GameObject BombPrefab => action.bombPrefab;
 
         [Serializable]
         public class Body
@@ -27,13 +30,14 @@ namespace Game
             public float glidingDuration = 1f;
             public float glidingAmplitude = 1f;
             public float glidingFrequency = 1f;
-
-            public float turretBodyRotateSpeed = 90f;
-            public float leftTurretRotateSpeed = 90f;
-            public float rightTurretRotateSpeed = 90f;
-            public float centerTurretRotateSpeed = 90f;
-            public float topTurret1_RotateSpeed = 90f;
-            public float topTurret2_RotateSpeed = 90f;
+            public float turretRotateSpeed = 90f;
+            public float spacingInDistance = 1f;
+            public float spacingOutDistance = 1f;
+            public float minSpacingDistance = 1f;
+            public float maxSpacingDistance = 1f;
+            public float minApproachDistance = 1f;
+            public float holdPositionRate = 1f;
+            public float moveAroundRate = 1f;
         }
 
         public Body body = new();
@@ -43,29 +47,31 @@ namespace Game
         {
             public BoolReactiveProperty isDriving = new();
             public BoolReactiveProperty isJumping = new();
-            public BoolReactiveProperty isGliding = new();
-            public BoolReactiveProperty isFalling = new();
             public BoolReactiveProperty isGuarding = new();
-            public float spacingInDistance = 1f;
-            public float spacingOutDistance = 1f;
-            public float minSpacingDistance = 1f;
-            public float maxSpacingDistance = 1f;
-            public float minApproachDistance = 1f;
-            public float holdPositionRate = 1f;
-            public float moveAroundRate = 1f;
             public float comboAttackRateBoostAfterCounterAttack;  //* 반격 후 콤보 1타 발생 확률 증가
             public float allAttackFixedRateAfterLeapHit; //* 점프 공격 히트 후 모든 공격 발생 확률 고정
             public float comboAttackRateStep;  //* Idle 상태에서 콤보 1타 발생 확률 증가
             public float counterAttackRateStep; //* 블럭 후 반격 발생 확률 증가
             public float leapRateStep; //* 타켓과 거리가 떨어졌을 때 Leap 발생 확률 증가
 
+            [Header("Bullet")]
             public GameObject bulletPrefab;
-            public GameObject framePrefab;
 
-            public float turretHighPitch = 1f;
-            public float turretLowPitch = 1f;
-            public float turretPitchSpeed = 1f;
-            public float turretPitchRecoverSpeed = 1f;
+            [Header("Torch")]
+            public GameObject framePrefab;
+            public float torch_baseRotateSpeed = 1f;
+
+            [Header("Bomb")]
+            public GameObject bombPrefab;
+
+            [Header("LaserA")]
+            public float laserA_baseRotateSpeed = 1f;
+            public float laserA_approachSpeed = 1f;
+            public float laserA_sweepDistance = 1f;
+
+            [Header("LaserB")]
+            public float laserB_topRotateSpeed = 1f;
+            public float laserB_maxDistance = 1f;
         }
 
         public Action action = new();
@@ -73,6 +79,7 @@ namespace Game
         [Serializable]
         public class Graphics
         {
+            public Material hitColor;
             public GameObject onHitFx;
             public GameObject onBigHitFx;
             public GameObject onKickHitFx;
@@ -80,14 +87,25 @@ namespace Game
             public GameObject onMissedFx;
             public GameObject onBlockedFx;
             public GameObject onGuardBreakFx;
-            public Material hitColor;
+            public GameObject onJumpSlamFx1;
+            public GameObject onJumpSlamFx2;
+        }
+
+        public Graphics graphics = new();
+
+        [Serializable]
+        public class Attachment
+        {
             public SkinnedMeshRenderer[] body_meshRenderers;
             public SkinnedMeshRenderer[] leftLeg1_meshRenderes;
             public SkinnedMeshRenderer[] leftLeg2_meshRenderes;
             public SkinnedMeshRenderer[] rightLeg1_meshRenderes;
             public SkinnedMeshRenderer[] rightLeg2_meshRenderes;
+            public Transform laserA_aimPoint;
+            public Etasphera42_LaserRenderer laserA_Renderer;
+            public Etasphera42_LaserRenderer laserB_Renderer;
         }
 
-        public Graphics graphics = new();
+        public Attachment attachment = new();
     }
 }
