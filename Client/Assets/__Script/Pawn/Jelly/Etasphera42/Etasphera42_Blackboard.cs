@@ -68,6 +68,7 @@ namespace Game
             public float laserA_baseRotateSpeed = 1f;
             public float laserA_approachSpeed = 1f;
             public float laserA_sweepDistance = 1f;
+            public float laserA_sendDamageInterval = 0.1f;
 
             [Header("LaserB")]
             public float laserB_topRotateSpeed = 1f;

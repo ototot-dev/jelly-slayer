@@ -1,5 +1,4 @@
 using Game;
-using Unity.Mathematics;
 using UnityEngine;
 
 public class GameManager : MonoSingleton<GameManager>
