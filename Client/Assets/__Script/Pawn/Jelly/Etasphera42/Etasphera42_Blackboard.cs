@@ -9,8 +9,6 @@ namespace Game
     {
         public bool IsDriving => action.isDriving.Value;
         public override bool IsJumping => action.isJumping.Value;
-        // public override bool IsFalling => action.isFalling.Value;
-        public override bool IsGuarding => action.isGuarding.Value;
         public override float SpacingInDistance => body.spacingInDistance;
         public override float SpacingOutDistance => body.spacingOutDistance;
         public override float MinSpacingDistance => body.minSpacingDistance;
@@ -47,32 +45,31 @@ namespace Game
         {
             public BoolReactiveProperty isDriving = new();
             public BoolReactiveProperty isJumping = new();
-            public BoolReactiveProperty isGuarding = new();
-            public float comboAttackRateBoostAfterCounterAttack;  //* 반격 후 콤보 1타 발생 확률 증가
-            public float allAttackFixedRateAfterLeapHit; //* 점프 공격 히트 후 모든 공격 발생 확률 고정
-            public float comboAttackRateStep;  //* Idle 상태에서 콤보 1타 발생 확률 증가
-            public float counterAttackRateStep; //* 블럭 후 반격 발생 확률 증가
-            public float leapRateStep; //* 타켓과 거리가 떨어졌을 때 Leap 발생 확률 증가
 
             [Header("Bullet")]
             public GameObject bulletPrefab;
 
             [Header("Torch")]
             public GameObject framePrefab;
-            public float torch_baseRotateSpeed = 1f;
+            public float torchRotateSpeed = 1f;
 
             [Header("Bomb")]
             public GameObject bombPrefab;
 
             [Header("LaserA")]
-            public float laserA_baseRotateSpeed = 1f;
+            public float laserA_damageInterval = 0.1f;
+            public float laserA_maxDistance = 1f;
+            public float laserA_rotateSpeed = 1f;
+            public float laserA_charingDuration = 1f;
             public float laserA_approachSpeed = 1f;
-            public float laserA_sweepDistance = 1f;
-            public float laserA_sendDamageInterval = 0.1f;
+            public float laserA_approachDuration = 1f;
+            public float laserA_sweepDuration = 1f;
 
             [Header("LaserB")]
-            public float laserB_topRotateSpeed = 1f;
+            public float laserB_stayDuration = 1f;
             public float laserB_maxDistance = 1f;
+            public float laserB_rotateSpeed = 1f;
+            public float laserB_charingDuration = 1f;
         }
 
         public Action action = new();

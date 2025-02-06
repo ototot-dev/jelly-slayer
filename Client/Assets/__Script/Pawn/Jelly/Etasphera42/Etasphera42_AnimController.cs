@@ -142,28 +142,28 @@ namespace Game
                     {
                         if (__brain.ActionCtrler.CurrActionName == "Torch")
                         {
-                            UpdateTurretRotation(targetPoint, __brain.BB.action.torch_baseRotateSpeed, TurretIndices.Base);
+                            UpdateTurretRotation(targetPoint, __brain.BB.action.torchRotateSpeed, TurretIndices.Base);
                             UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Side);
-                            UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_topRotateSpeed, TurretIndices.Top);
+                            UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_rotateSpeed, TurretIndices.Top);
                         }
                         else if (__brain.ActionCtrler.CurrActionName == "LaserA")
                         {
-                            UpdateTurretRotation(__brain.BB.attachment.laserA_aimPoint.position, __brain.BB.action.laserA_baseRotateSpeed, TurretIndices.Base);
+                            UpdateTurretRotation(__brain.BB.attachment.laserA_aimPoint.position, __brain.BB.action.laserA_rotateSpeed, TurretIndices.Base);
                             UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Side);
-                            UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_topRotateSpeed, TurretIndices.Top);
+                            UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_rotateSpeed, TurretIndices.Top);
                         }
                         else 
                         {
                             UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Base);
                             UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Side);
-                            UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_topRotateSpeed, TurretIndices.Top);
+                            UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_rotateSpeed, TurretIndices.Top);
                         }
                     }
                     else
                     {
                         UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Base);
                         UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Side);
-                        UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_topRotateSpeed, TurretIndices.Top);
+                        UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_rotateSpeed, TurretIndices.Top);
                     }
                 }
             };
