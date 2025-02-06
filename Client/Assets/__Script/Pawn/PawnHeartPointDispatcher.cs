@@ -319,7 +319,7 @@ namespace Game
                         {
                             damageContext.receiverBrain.PawnBB.stat.stance.Value += damageContext.senderActionData.groggyAccum;
 
-                            __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged", "stat.stance", damageContext.senderBrain.PawnBB.stat.stance.Value, "stat.maxStance", damageContext.senderBrain.PawnBB.stat.maxStance.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
+                            __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged => Groggy", "stat.stance", damageContext.senderBrain.PawnBB.stat.stance.Value, "stat.maxStance", damageContext.senderBrain.PawnBB.stat.maxStance.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
 
                             if (damageContext.receiverBrain.PawnBB.stat.stance.Value >= damageContext.receiverBrain.PawnBB.stat.maxStance.Value)
                             {
@@ -330,12 +330,22 @@ namespace Game
                         }
 
                         //* KnockDown 처리
-                        if (damageContext.receiverBrain.PawnBB.IsGroggy)
+                        if (damageContext.receiverBrain.TryGetComponent<HeroBlackboard>(out var heroBB) && heroBB.IsHanging)
+                        { 
+                            if (heroBB.stat.ReduceStamina(damageContext.senderActionData.hangingStaminaDamage) <= 0 && damageContext.receiverPenalty.Item1 == PawnStatus.None)
+                            {
+                                __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged => KnockDown", "senderActionData.haningStaminaDamage", damageContext.senderActionData.hangingStaminaDamage, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
+
+                                damageContext.receiverBrain.PawnBB.stat.knockDown.Value = 0;
+                                damageContext.receiverPenalty = new(PawnStatus.KnockDown, damageContext.receiverBrain.PawnBB.pawnData.knockDownDuration);
+                            }
+                        }
+                        else if (damageContext.receiverBrain.PawnBB.IsGroggy)
                         {
                             damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value += damageContext.senderActionData.groggyHit;
                             Debug.Assert(damageContext.receiverPenalty.Item1 == PawnStatus.None);
 
-                            __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged", "stat.groggyHitCount", damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value, "stat.maxGroggyHitCount", damageContext.receiverBrain.PawnBB.stat.maxGroggyHitCount.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
+                            __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged => KnockDown", "stat.groggyHitCount", damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value, "stat.maxGroggyHitCount", damageContext.receiverBrain.PawnBB.stat.maxGroggyHitCount.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
 
                             if (damageContext.receiverPenalty.Item1 == PawnStatus.None && damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value >= damageContext.receiverBrain.PawnBB.stat.maxGroggyHitCount.Value)
                             {
@@ -347,7 +357,7 @@ namespace Game
                         {
                             damageContext.receiverBrain.PawnBB.stat.knockDown.Value += damageContext.senderActionData.knockDownAccum;
 
-                            __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged", "stat.knockDown", damageContext.receiverBrain.PawnBB.stat.knockDown.Value, "stat.maxKnockDown", damageContext.receiverBrain.PawnBB.stat.maxKnockDown.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
+                            __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "ActionResults.Damaged => KnockDown", "stat.knockDown", damageContext.receiverBrain.PawnBB.stat.knockDown.Value, "stat.maxKnockDown", damageContext.receiverBrain.PawnBB.stat.maxKnockDown.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
 
                             if (damageContext.receiverPenalty.Item1 == PawnStatus.None && damageContext.receiverBrain.PawnBB.stat.knockDown.Value >= damageContext.receiverBrain.PawnBB.stat.maxKnockDown.Value)
                             {

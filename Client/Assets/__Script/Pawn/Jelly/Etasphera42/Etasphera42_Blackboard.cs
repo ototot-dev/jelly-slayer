@@ -48,10 +48,12 @@ namespace Game
 
             [Header("Bullet")]
             public GameObject bulletPrefab;
+            public float bulletTurretRotateSpeed = 1f;
+            public float bulletMaxShakeAngle = 1f;
 
             [Header("Torch")]
             public GameObject framePrefab;
-            public float torchRotateSpeed = 1f;
+            public float torchTurretRotateSpeed = 1f;
 
             [Header("Bomb")]
             public GameObject bombPrefab;
@@ -59,7 +61,7 @@ namespace Game
             [Header("LaserA")]
             public float laserA_damageInterval = 0.1f;
             public float laserA_maxDistance = 1f;
-            public float laserA_rotateSpeed = 1f;
+            public float laserA_turretRotateSpeed = 1f;
             public float laserA_charingDuration = 1f;
             public float laserA_approachSpeed = 1f;
             public float laserA_approachDuration = 1f;
@@ -68,7 +70,7 @@ namespace Game
             [Header("LaserB")]
             public float laserB_stayDuration = 1f;
             public float laserB_maxDistance = 1f;
-            public float laserB_rotateSpeed = 1f;
+            public float laserB_turretRotateSpeed = 1f;
             public float laserB_charingDuration = 1f;
         }
 

@@ -83,6 +83,7 @@ namespace MainTable
 		public System.Single guardBreak;
 		public System.Single guardStaminaDamage;
 		public System.Single guardStaminaCostMultiplier;
+		public System.Single hangingStaminaDamage;
   
 
 #region fuctions

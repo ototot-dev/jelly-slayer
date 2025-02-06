@@ -2610,6 +2610,43 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6029872931248605079, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
   m_PrefabInstance: {fileID: 1175517550}
   m_PrefabAsset: {fileID: 0}
+--- !u!84 &85233091
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 640
+  m_Height: 360
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 94
+  m_ColorFormat: 4
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 1
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 0
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!4 &86036589 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6029872931248605079, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
@@ -18339,7 +18376,7 @@ PrefabInstance:
     - target: {fileID: 9205371885998440386, guid: e96cffa9d00b6b545adfeb26165952cc, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 873083760}
+      objectReference: {fileID: 85233091}
     - target: {fileID: 9205371885998440386, guid: e96cffa9d00b6b545adfeb26165952cc, type: 3}
       propertyPath: orthographic size
       value: 4.2
@@ -25866,43 +25903,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7821217888551990375, guid: fec6123700ea2aa44a24818e607ed575, type: 3}
   m_PrefabInstance: {fileID: 1184418049}
   m_PrefabAsset: {fileID: 0}
---- !u!84 &873083760
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 640
-  m_Height: 360
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 94
-  m_ColorFormat: 4
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 1
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 0
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1001 &879041338
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -65883,8 +65883,32 @@ PrefabInstance:
       value: 3600
       objectReference: {fileID: 0}
     - target: {fileID: 2127815980358740746, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
+      propertyPath: action.bulletMaxShakeAngle
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2127815980358740746, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
+      propertyPath: action.bullet_maxShakeAngle
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2127815980358740746, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
+      propertyPath: action.torchTurretRotateSpeed
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 2127815980358740746, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
+      propertyPath: action.bulletTurretRotateSpeed
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 2127815980358740746, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
       propertyPath: action.laserA_approachDuration
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2127815980358740746, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
+      propertyPath: action.laserA_turretRotateSpeed
+      value: 3600
+      objectReference: {fileID: 0}
+    - target: {fileID: 2127815980358740746, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
+      propertyPath: action.laserB_turretRotateSpeed
+      value: 3600
       objectReference: {fileID: 0}
     - target: {fileID: 2644497925866717800, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
       propertyPath: _collisionLayers.m_Bits

@@ -185,6 +185,9 @@ namespace Game
 
         public override IDisposable StartOnKnockDownAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
         {
+            if (__brain.BB.IsHanging) 
+                __brain.Movement.CancelHanging();
+
 #if UNITY_EDITOR
             if (damageContext.senderBrain == null && damageContext.receiverBrain == null)
             {
