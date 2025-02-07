@@ -80,7 +80,7 @@ namespace Game
                 if (damageContext.actionResult == ActionResults.Damaged)
                 {
                     SoundManager.Instance.Play(SoundID.HIT_FLESH);
-                    EffectManager.Instance.Show(__brain.BB.graphics.onBleedFx, damageContext.hitPoint, Quaternion.identity, Vector3.one, 10f);
+                    //EffectManager.Instance.Show(__brain.BB.graphics.onBleedFx, damageContext.hitPoint, Quaternion.identity, Vector3.one, 10f);
 
                     // EffectManager.Instance.Show("@Hit 23 cube", damageContext.hitPoint, Quaternion.identity, Vector3.one, 1f);
                     // EffectManager.Instance.Show("@BloodFX_impact_col", damageContext.hitPoint, Quaternion.identity, 1.5f * Vector3.one, 3f);

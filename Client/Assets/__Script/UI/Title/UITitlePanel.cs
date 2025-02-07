@@ -75,18 +75,12 @@ public class UITitlePanel : MonoBehaviour
     {
         switch (_cursorIndex)
         {
-            //case 0: SceneManager.LoadScene("BattleTest"); break;
             case 0:
                 GameObject.Find("Launcher").GetComponent<Launcher>().SetMode(Launcher.GameModes.Game);
-                //gameObject.SetActive(false);
-
                 DoCloseAction();
                 break;
-            //case 1: SceneManager.LoadScene("Tutorial"); break;
             case 1:
-                //GameObject.Find("Launcher").GetComponent<Launcher>().SetMode(Launcher.GameModes.Tutorial);
-                //gameObject.SetActive(false);
-
+                GameObject.Find("Launcher").GetComponent<Launcher>().SetMode(Launcher.GameModes.Tutorial);
                 DoCloseAction();
                 break;
             case 2: Application.Quit(); break;
@@ -96,7 +90,7 @@ public class UITitlePanel : MonoBehaviour
     {
         var logopos = _rtLogo.anchoredPosition;
         var menupos = _rtMenu.anchoredPosition;
-        _rtLogo.DOMoveX(2000, 0.7f).SetDelay(0.4f);
+        _rtLogo.DOMoveX(3000, 0.7f).SetDelay(0.4f);
         _rtMenu.DOMoveY(-400, 0.7f).SetDelay(0.4f);
 
         _imageShadow.DOColor(new Color(0, 0, 0, 0), 0.8f).SetDelay(1.5f);

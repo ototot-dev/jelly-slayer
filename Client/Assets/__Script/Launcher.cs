@@ -40,6 +40,9 @@ namespace Game
         void Start()
         {
             InitManager.Initialize();
+
+            GameManager.Instance.ShowLevel_TrainingRoom(false);
+            GameManager.Instance.ShowLevel_ShootingRange(false);
         }
 
         public void SetMode(GameModes mode) 
@@ -72,7 +75,7 @@ namespace Game
                         GameContext.Instance.cameraCtrler = GameObject.FindWithTag("MainCamera").GetComponent<CameraController>();
 
                         GameManager.Instance.ShowLevel_HackerDen(true);
-                        Observable.Timer(TimeSpan.FromSeconds(1f)).Subscribe(_ => GameManager.Instance.SpawnHero());
+                        Observable.Timer(TimeSpan.FromSeconds(1f)).Subscribe(_ => GameManager.Instance.SpawnHero(new Vector3(-2, 0, -3)));
                         Observable.Timer(TimeSpan.FromSeconds(1.1f)).Subscribe(_ => GameManager.Instance.SpawnDroneBot());
                         Observable.Timer(TimeSpan.FromSeconds(1.2f)).Subscribe(_ => GameManager.Instance.SpawnSoldier());
                         // Observable.Timer(TimeSpan.FromSeconds(1.2f)).Subscribe(_ => GameManager.Instance.SpawnEtasphera42());
@@ -88,9 +91,9 @@ namespace Game
                         GameManager.Instance.Activate_Game(true);
                         GameManager.Instance.ShowLevel_ShootingRange(true);
 
-                        Observable.Timer(TimeSpan.FromSeconds(1f)).Subscribe(_ => GameManager.Instance.SpawnHero());
+                        Observable.Timer(TimeSpan.FromSeconds(1f)).Subscribe(_ => GameManager.Instance.SpawnHero(new Vector3(-2, 0, -3)));
                         Observable.Timer(TimeSpan.FromSeconds(1.1f)).Subscribe(_ => GameManager.Instance.SpawnDroneBot());
-                        Observable.Timer(TimeSpan.FromSeconds(1.2f)).Subscribe(_ => GameManager.Instance.SpawnEtasphera42());
+                        Observable.Timer(TimeSpan.FromSeconds(2.0f)).Subscribe(_ => GameManager.Instance.SpawnEtasphera42());
                     }
                     break;
                 case GameModes.Tutorial:
@@ -103,9 +106,9 @@ namespace Game
                         GameManager.Instance.Activate_Tutorial(true);
                         GameManager.Instance.ShowLevel_TrainingRoom(true);
 
-                        Observable.Timer(TimeSpan.FromSeconds(1f)).Subscribe(_ => GameManager.Instance.SpawnHero());
+                        Observable.Timer(TimeSpan.FromSeconds(1f)).Subscribe(_ => GameManager.Instance.SpawnHero(new Vector3(-2, 0, -3)));
                         Observable.Timer(TimeSpan.FromSeconds(1.1f)).Subscribe(_ => GameManager.Instance.SpawnDroneBot());
-                        Observable.Timer(TimeSpan.FromSeconds(1.2f)).Subscribe(_ => GameManager.Instance.SpawnSoldier());
+                        Observable.Timer(TimeSpan.FromSeconds(2.0f)).Subscribe(_ => GameManager.Instance.SpawnSoldier());
                     }
                     break;
                 case GameModes.Title:

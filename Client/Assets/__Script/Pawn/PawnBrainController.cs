@@ -173,7 +173,7 @@ namespace Game
                 Observable.EveryUpdate().Where(_ => __isBrainInited).Subscribe(_ => onUpdate?.Invoke()).AddTo(this);
 
             // Spawn
-            GameManager.Instance.Spawn(this);
+            GameManager.Instance.OnSpawned(this);
         }
 
         protected bool __isBrainInited;

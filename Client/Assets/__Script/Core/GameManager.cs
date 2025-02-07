@@ -3,21 +3,20 @@ using UnityEngine;
 
 public class GameManager : MonoSingleton<GameManager>
 {
-    public void SpawnHero()
+    public void SpawnHero(Vector3 vPos)
     {
         if (GameContext.Instance == null || GameContext.Instance.playerCtrler == null) 
-        {
             return;
-        }
+
         var res = Resources.Load<GameObject>("Pawn/Player/Hero_OneUp");
         var pawnObj = GameContext.Instance.playerCtrler.SpawnHeroPawn(res, true);
         if (pawnObj == null)
             return;
 
         pawnObj.SetActive(true);
-        pawnObj.transform.SetPositionAndRotation(Vector3.left, Quaternion.identity);
+        pawnObj.transform.SetPositionAndRotation(vPos, Quaternion.identity);
 
-        Spawn(pawnObj.GetComponent<PawnBrainController>());
+        OnSpawned(pawnObj.GetComponent<PawnBrainController>());
     }
 
     public void DespawnHero()
@@ -163,7 +162,7 @@ public class GameManager : MonoSingleton<GameManager>
 
         _delGameEnd?.Invoke();
     }
-    public void Spawn(PawnBrainController pawn) 
+    public void OnSpawned(PawnBrainController pawn) 
     { 
         if(pawn == null) return;
 
