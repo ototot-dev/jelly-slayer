@@ -153,7 +153,7 @@ namespace Game
             possessedBrain.BB.action.isGuarding.Value = value.Get<float>() > 0;
             if (possessedBrain.BB.IsGuarding)
             {
-                var canParry1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsJumping && !possessedBrain.BB.IsRolling;
+                var canParry1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsJumping && !possessedBrain.BB.IsRolling;
                 var canParry2 = canParry1 && (!possessedBrain.ActionCtrler.CheckActionRunning() || possessedBrain.ActionCtrler.CanInterruptAction());
                 var canParry3 = canParry2 && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered) && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.CanNotGuard);
                 if (canParry3)
@@ -182,7 +182,7 @@ namespace Game
 
             if (value.isPressed)
             {   
-                var canJump1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsJumping && !possessedBrain.BB.IsRolling;
+                var canJump1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsJumping && !possessedBrain.BB.IsRolling;
                 var canJump2 = canJump1 && (!possessedBrain.ActionCtrler.CheckActionRunning() || possessedBrain.ActionCtrler.CanInterruptAction()) && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
 
                 if (canJump2)
@@ -205,6 +205,7 @@ namespace Game
                         possessedBrain.Movement.StartJump(possessedBrain.BB.body.jumpHeight);
                         possessedBrain.BB.stat.ReduceStamina(jumpStaminaCost);
                     }
+
                     GameManager.Instance.PawnJumped();
                 }
             }
@@ -310,7 +311,7 @@ namespace Game
             Debug.Assert(actionData != null);
 
             // 대쉬 가능 체크
-            var canRolling1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsJumping && !possessedBrain.BB.IsRolling;
+            var canRolling1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsJumping && !possessedBrain.BB.IsRolling;
             var canRolling2 = canRolling1 && (!possessedBrain.ActionCtrler.CheckActionRunning() || possessedBrain.ActionCtrler.CanInterruptAction()) && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.CanNotRoll);
 
             if (canRolling2 == false)
@@ -362,7 +363,7 @@ namespace Game
             if (possessedBrain == null)
                 return;
 
-            var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsRolling;
+            var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsRolling;
             var canAction2 = canAction1 && (!possessedBrain.ActionCtrler.CheckActionRunning() || possessedBrain.ActionCtrler.CanInterruptAction()) && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
 
             if (canAction2)
@@ -423,7 +424,7 @@ namespace Game
                 }
             }).AddTo(this);
 
-            var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsRolling;
+            var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsRolling;
             // var canAction2 = canAction1 && !MyHeroBrain.PawnBB.IsThrowing && !MyHeroBrain.PawnBB.IsGrabbed;
             var canAction3 = canAction1 && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
 
@@ -517,7 +518,7 @@ namespace Game
 
             if (value.isPressed)
             {
-                var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsRolling;
+                var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsRolling;
                 var canAction2 = canAction1 && (!possessedBrain.ActionCtrler.CheckActionRunning() || possessedBrain.ActionCtrler.CanInterruptAction()) && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
 
                 if (canAction2)

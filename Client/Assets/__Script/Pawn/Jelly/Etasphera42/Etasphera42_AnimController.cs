@@ -29,6 +29,8 @@ namespace Game
         public enum TurretIndices : int
         {
             Base,
+            Left,
+            Right,
             Side,
             Center,
             Top,
@@ -140,30 +142,41 @@ namespace Game
                     var targetPoint = __brain.BB.TargetColliderHelper.GetWorldCenter() + 0.2f * Vector3.up;
                     if (__brain.ActionCtrler.CheckActionRunning())
                     {
-                        if (__brain.ActionCtrler.CurrActionName == "Torch")
+                        if (__brain.ActionCtrler.CurrActionName == "Bullet")
                         {
-                            UpdateTurretRotation(targetPoint, __brain.BB.action.torch_baseRotateSpeed, TurretIndices.Base);
-                            UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Side);
-                            UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_topRotateSpeed, TurretIndices.Top);
+                            UpdateTurretRotation(targetPoint, __brain.BB.action.bulletTurretRotateSpeed, TurretIndices.Base, __brain.BB.action.bulletMaxShakeAngle * Mathf.Sin(Mathf.PI * 2f * (Time.time - __brain.ActionCtrler.currActionContext.startTimeStamp)));
+                            UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Left);
+                            UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Right);
+                            UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_turretRotateSpeed, TurretIndices.Top);
+                        }
+                        else if (__brain.ActionCtrler.CurrActionName == "Torch")
+                        {
+                            UpdateTurretRotation(targetPoint, __brain.BB.action.torchTurretRotateSpeed, TurretIndices.Base);
+                            UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Left);
+                            UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Right);
+                            UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_turretRotateSpeed, TurretIndices.Top);
                         }
                         else if (__brain.ActionCtrler.CurrActionName == "LaserA")
                         {
-                            UpdateTurretRotation(__brain.BB.attachment.laserA_aimPoint.position, __brain.BB.action.laserA_baseRotateSpeed, TurretIndices.Base);
-                            UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Side);
-                            UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_topRotateSpeed, TurretIndices.Top);
+                            UpdateTurretRotation(__brain.BB.attachment.laserA_aimPoint.position, __brain.BB.action.laserA_turretRotateSpeed, TurretIndices.Base);
+                            UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Left);
+                            UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Right);
+                            UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_turretRotateSpeed, TurretIndices.Top);
                         }
                         else 
                         {
                             UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Base);
-                            UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Side);
-                            UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_topRotateSpeed, TurretIndices.Top);
+                            UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Left);
+                            UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Right);
+                            UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_turretRotateSpeed, TurretIndices.Top);
                         }
                     }
                     else
                     {
                         UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Base);
-                        UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Side);
-                        UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_topRotateSpeed, TurretIndices.Top);
+                        UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Left);
+                        UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Right);
+                        UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_turretRotateSpeed, TurretIndices.Top);
                     }
                 }
             };
@@ -181,39 +194,45 @@ namespace Game
         Quaternion __topTurret1_RotationCached;
         Quaternion __topTurret2_RotationCached;
 
-        void UpdateTurretRotation(Vector3 targetPoint, float rotateSpeed, TurretIndices interestTurretIndex = TurretIndices.Max)
+        void UpdateTurretRotation(Vector3 targetPoint, float rotateSpeed, TurretIndices interestTurretIndex, float offsetAngle = 0f)
         {
             if (interestTurretIndex == TurretIndices.Base)
             {
                 //* turretBody의 로컬 피봇으로 인해서 Right 벡터가 Up 벡터가 됨 (또한 90도 돌아가 있어서 이를 역보정해주기 위해 Vector3.down 축을 Forward 축으로 대입함) 
-                var deltaAngle1 = Vector3.SignedAngle(Vector3.down, turretBody.transform.InverseTransformPoint(targetPoint).AdjustX(0f), Vector3.right);
-                turretBody.transform.localRotation = __turretBodyRotationCached.LerpRefAngleSpeed(turretBody.transform.localRotation * Quaternion.Euler(deltaAngle1, 0f, 0f), rotateSpeed, Time.deltaTime);
+                var deltaAngle = Vector3.SignedAngle(Vector3.down, turretBody.transform.InverseTransformPoint(targetPoint).AdjustX(0f), Vector3.right);
+                turretBody.transform.localRotation = Quaternion.Euler(offsetAngle, 0f, 0f) * __turretBodyRotationCached.LerpRefAngleSpeed(turretBody.transform.localRotation * Quaternion.Euler(deltaAngle, 0f, 0f), rotateSpeed, Time.deltaTime);
+                // turretBody.transform.localRotation = __turretBodyRotationCached.LerpRefAngleSpeed(turretBody.transform.localRotation * Quaternion.Euler(deltaAngle, 0f, 0f), rotateSpeed, Time.deltaTime);
 
                 //* centerTurret은 회전하지 않음
                 centerTurret.transform.localRotation = __centerTurretRotationCached;
             }
-            else if (interestTurretIndex == TurretIndices.Side)
+            else if (interestTurretIndex == TurretIndices.Left)
             {
                 //* leftTurret와 rightTurrent의 로컬 피봇도 Right 벡터가 Up 벡터가 됨
-                var deltaAngle2 = Vector3.SignedAngle(Vector3.forward, leftTurret.transform.InverseTransformPoint(targetPoint).AdjustX(0f), Vector3.right);
-                leftTurret.transform.localRotation = __leftTurretRotationCached.LerpRefAngleSpeed(leftTurret.transform.localRotation * Quaternion.Euler(deltaAngle2, 0f, 0f), rotateSpeed, Time.deltaTime);
-                rightTurret.transform.localRotation = __rightTurretRotationCached.LerpRefAngleSpeed(rightTurret.transform.localRotation * Quaternion.Euler(deltaAngle2, 0f, 0f), rotateSpeed, Time.deltaTime);
+                var deltaAngle = Vector3.SignedAngle(Vector3.forward, leftTurret.transform.InverseTransformPoint(targetPoint).AdjustX(0f), Vector3.right);
+                leftTurret.transform.localRotation = __leftTurretRotationCached.LerpRefAngleSpeed(leftTurret.transform.localRotation * Quaternion.Euler(deltaAngle, 0f, 0f), rotateSpeed, Time.deltaTime);
             }
-            else if (interestTurretIndex == TurretIndices.Center)
+            else if (interestTurretIndex == TurretIndices.Right)
             {
-                //* centerTurret은 피봇 정상
-                // var deltaAngle3 = Vector3.SignedAngle(Vector3.forward, centerTurret.transform.InverseTransformPoint(aimPoint).AdjustY(0f), Vector3.up);
-                // centerTurret.transform.localRotation = __centerTurretRotationCached.LerpRefAngleSpeed(centerTurret.transform.localRotation * Quaternion.Euler(0f, deltaAngle3, 0f), rotateSpeed, Time.deltaTime);
+                //* leftTurret와 rightTurrent의 로컬 피봇도 Right 벡터가 Up 벡터가 됨
+                var deltaAngle = Vector3.SignedAngle(Vector3.back, rightTurret.transform.InverseTransformPoint(targetPoint).AdjustX(0f), Vector3.left);
+                rightTurret.transform.localRotation = __rightTurretRotationCached.LerpRefAngleSpeed(rightTurret.transform.localRotation * Quaternion.Euler(-deltaAngle, 0f, 0f), rotateSpeed, Time.deltaTime);
             }
+            // else if (interestTurretIndex == TurretIndices.Center)
+            // {
+                   //* centerTurret은 피봇 정상
+            //     var deltaAngle = Vector3.SignedAngle(Vector3.forward, centerTurret.transform.InverseTransformPoint(targetPoint).AdjustY(0f), Vector3.up);
+            //     centerTurret.transform.localRotation = __centerTurretRotationCached.LerpRefAngleSpeed(centerTurret.transform.localRotation * Quaternion.Euler(0f, deltaAngle, 0f), rotateSpeed, Time.deltaTime);
+            // }
             else if (interestTurretIndex == TurretIndices.Top)
             {
                 //* topTurret1도 피봇 정상
-                var deltaAngle4 = Vector3.SignedAngle(Vector3.forward, topTurret1.transform.InverseTransformPoint(targetPoint).AdjustY(0f), Vector3.up);
-                topTurret1.transform.localRotation = __topTurret1_RotationCached.LerpRefAngleSpeed(topTurret1.transform.localRotation * Quaternion.Euler(0f, deltaAngle4, 0f), rotateSpeed, Time.deltaTime);
+                var deltaAngle1 = Vector3.SignedAngle(Vector3.forward, topTurret1.transform.InverseTransformPoint(targetPoint).AdjustY(0f), Vector3.up);
+                topTurret1.transform.localRotation = __topTurret1_RotationCached.LerpRefAngleSpeed(topTurret1.transform.localRotation * Quaternion.Euler(0f, deltaAngle1, 0f), rotateSpeed, Time.deltaTime);
 
                 //* topTurret2의 로컬 피봇은 Right 벡터가 Up 벡터가 됨
-                var deltaAngle5 = Vector3.SignedAngle(Vector3.forward, topTurret2.transform.InverseTransformPoint(targetPoint).AdjustX(0f), Vector3.right);
-                topTurret2.transform.localRotation = __topTurret2_RotationCached.LerpRefAngleSpeed(topTurret2.transform.localRotation * Quaternion.Euler(deltaAngle5, 0f, 0f), rotateSpeed, Time.deltaTime);
+                var deltaAngle2 = Vector3.SignedAngle(Vector3.forward, topTurret2.transform.InverseTransformPoint(targetPoint).AdjustX(0f), Vector3.right);
+                topTurret2.transform.localRotation = __topTurret2_RotationCached.LerpRefAngleSpeed(topTurret2.transform.localRotation * Quaternion.Euler(deltaAngle2, 0f, 0f), rotateSpeed, Time.deltaTime);
             }
         }
     }

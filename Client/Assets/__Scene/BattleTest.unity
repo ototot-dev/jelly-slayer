@@ -2610,6 +2610,43 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6029872931248605079, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
   m_PrefabInstance: {fileID: 1175517550}
   m_PrefabAsset: {fileID: 0}
+--- !u!84 &85233091
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 640
+  m_Height: 360
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 94
+  m_ColorFormat: 4
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 1
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 0
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!4 &86036589 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6029872931248605079, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
@@ -6502,7 +6539,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 325d37b766625f54587161e1b69e2904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameMode: 2
+  gameMode: 1
   hackerDen: {fileID: 0}
   shootingRange: {fileID: 0}
   timeScale:
@@ -18339,7 +18376,7 @@ PrefabInstance:
     - target: {fileID: 9205371885998440386, guid: e96cffa9d00b6b545adfeb26165952cc, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 1428992168}
+      objectReference: {fileID: 85233091}
     - target: {fileID: 9205371885998440386, guid: e96cffa9d00b6b545adfeb26165952cc, type: 3}
       propertyPath: orthographic size
       value: 4.2
@@ -21028,6 +21065,10 @@ PrefabInstance:
     - target: {fileID: 8861700421523015734, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
       propertyPath: m_Name
       value: JellySoldier
+      objectReference: {fileID: 0}
+    - target: {fileID: 8861700421523015734, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -45468,43 +45509,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6029872931248605079, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
   m_PrefabInstance: {fileID: 1235880313}
   m_PrefabAsset: {fileID: 0}
---- !u!84 &1428992168
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 640
-  m_Height: 360
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 94
-  m_ColorFormat: 4
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 1
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 0
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!4 &1433175983 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1142463278020202925, guid: 8fb51fe1cfd799648b58ed3e9c0f1612, type: 3}
@@ -65854,10 +65858,58 @@ PrefabInstance:
       propertyPath: _boundGraphSource._translation.y
       value: 73.0843
       objectReference: {fileID: 0}
+    - target: {fileID: 2070915656517336712, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 203338a0e052b47fbb216a96b84445cf, type: 2}
     - target: {fileID: 2127815980358740746, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
       propertyPath: action.bombPrefab
       value: 
       objectReference: {fileID: 3083626412401777055, guid: 14a40d111e678473c881515177c08a54, type: 3}
+    - target: {fileID: 2127815980358740746, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
+      propertyPath: action.laserA_maxDistance
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2127815980358740746, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
+      propertyPath: action.laserA_rotateSpeed
+      value: 3600
+      objectReference: {fileID: 0}
+    - target: {fileID: 2127815980358740746, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
+      propertyPath: action.laserB_maxDistance
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2127815980358740746, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
+      propertyPath: action.laserB_rotateSpeed
+      value: 3600
+      objectReference: {fileID: 0}
+    - target: {fileID: 2127815980358740746, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
+      propertyPath: action.bulletMaxShakeAngle
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2127815980358740746, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
+      propertyPath: action.bullet_maxShakeAngle
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2127815980358740746, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
+      propertyPath: action.torchTurretRotateSpeed
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 2127815980358740746, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
+      propertyPath: action.bulletTurretRotateSpeed
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 2127815980358740746, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
+      propertyPath: action.laserA_approachDuration
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2127815980358740746, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
+      propertyPath: action.laserA_turretRotateSpeed
+      value: 3600
+      objectReference: {fileID: 0}
+    - target: {fileID: 2127815980358740746, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
+      propertyPath: action.laserB_turretRotateSpeed
+      value: 3600
+      objectReference: {fileID: 0}
     - target: {fileID: 2644497925866717800, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
       propertyPath: _collisionLayers.m_Bits
       value: 12424
@@ -65868,7 +65920,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2862570711861676520, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2909659972003230112, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
       propertyPath: _serializedBlackboard
@@ -66027,6 +66079,10 @@ PrefabInstance:
       propertyPath: '_serializedVariables.Array.data[13]._references.Array.data[1]'
       value: 
       objectReference: {fileID: 1487037987534291903}
+    - target: {fileID: 4322762508192710866, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4d34cac4d9fcd4242b26a5670987055f, type: 2}
     - target: {fileID: 4813937049273337529, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.29
@@ -66067,6 +66123,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8832675060639137070, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 02eb34699e16945f9878c5e1c57f0961, type: 2}
+    - target: {fileID: 9157393473839660543, guid: 1367e251ff6ea4c78b78b85edf08317e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: a93dedbdc39a94fc5b8f8e170964629e, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -66322,6 +66386,10 @@ PrefabInstance:
     - target: {fileID: 859846127300755753, guid: 31be19a0e23ac441d906c3c6f7481852, type: 3}
       propertyPath: m_Name
       value: Hero_OneUp
+      objectReference: {fileID: 0}
+    - target: {fileID: 859846127300755753, guid: 31be19a0e23ac441d906c3c6f7481852, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3758835991799220657, guid: 31be19a0e23ac441d906c3c6f7481852, type: 3}
       propertyPath: m_LocalPosition.x

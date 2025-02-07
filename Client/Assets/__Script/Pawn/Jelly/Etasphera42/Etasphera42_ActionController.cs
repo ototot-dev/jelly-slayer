@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using FIMSpace.Generating.Rules.Modelling;
 using UniRx;
 using UnityEngine;
 using static FIMSpace.FProceduralAnimation.LegsAnimator;
@@ -167,52 +168,90 @@ namespace Game
             laserRenderer.flashFx.Play();
             laserRenderer.hitFx.Play();
             laserRenderer.hitFx.transform.position = laserRenderer.transform.position + 0.1f * laserRenderer.transform.forward;
-            yield return Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(2f))).Do(_ => __brain.BB.attachment.laserA_aimPoint.position = __brain.BB.TargetColliderHelper.GetWorldCenter() + 0.2f * Vector3.up).ToYieldInstruction();
-                    
+
+            //* 차징 스텝
+            yield return Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(__brain.BB.action.laserA_charingDuration)))
+                .Do(_ => 
+                {
+                    laserRenderer.hitFx.transform.position = laserRenderer.transform.position + 0.1f * laserRenderer.transform.forward;
+                    __brain.BB.attachment.laserA_aimPoint.position = __brain.BB.TargetColliderHelper.GetWorldCenter() + 0.2f * Vector3.up;
+                }).ToYieldInstruction();
+            
+            //* 레이저 Fade-In
             laserRenderer.FadeIn(0.5f, 0.2f);
             yield return new WaitForSeconds(0.2f);
 
             var hitLayerMask = LayerMask.GetMask("Terrain", "PhysicsBody", "HitBox", "HitBoxBlocking", "Obstacle");
             var hitOffset = 0.1f;
             var waitApproachTimeStamp = Time.time;
-            yield return Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(4f))).Do(_ =>
+            var sendDamageTimeStamp = 0f;
+
+            //* 목표물 추적
+            yield return Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(__brain.BB.action.laserA_approachDuration))).Do(_ =>
             {
-                if ((Time.time - waitApproachTimeStamp) > 1f)
+                if ((Time.time - waitApproachTimeStamp) > 0.2f)
                     __brain.BB.attachment.laserA_aimPoint.position = __brain.BB.attachment.laserA_aimPoint.position.LerpSpeed(__brain.BB.TargetColliderHelper.GetWorldCenter() + 0.2f * Vector3.up, __brain.BB.action.laserA_approachSpeed, Time.deltaTime);
 
-                var hitIndex = LaserActionTraceTarget(laserRenderer.transform.position, laserRenderer.transform.forward, laserRenderer.lineWidth * 0.5f, __brain.BB.action.laserA_sweepDistance, hitLayerMask);
+                var hitIndex = LaserActionTraceTarget(laserRenderer.transform.position, laserRenderer.transform.forward, laserRenderer.lineWidth * 0.5f, __brain.BB.action.laserA_maxDistance, hitLayerMask);
                 if (hitIndex >= 0)
+                {
+                    //* 데미지 처리
+                    if ((Time.time - sendDamageTimeStamp) > __brain.BB.action.laserA_damageInterval && __hitsNonAlloc[hitIndex].collider.TryGetComponent<PawnColliderHelper>(out var hitColliderHelper) && hitColliderHelper.pawnBrain == __brain.BB.TargetColliderHelper.pawnBrain)
+                    {
+                        __brain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__brain, hitColliderHelper.pawnBrain, currActionContext.actionData, hitColliderHelper.pawnCollider, false));
+                        sendDamageTimeStamp = Time.time;
+                    }
+
                     laserRenderer.hitFx.transform.position = __hitsNonAlloc[hitIndex].point + hitOffset * __hitsNonAlloc[hitIndex].normal;
+                }
                 else
-                    laserRenderer.hitFx.transform.position = laserRenderer.transform.position + __brain.BB.action.laserA_sweepDistance * laserRenderer.transform.forward;
+                {
+                    laserRenderer.hitFx.transform.position = laserRenderer.transform.position + __brain.BB.action.laserA_maxDistance * laserRenderer.transform.forward;
+                }
             }).ToYieldInstruction();
 
+            //* 레이저 Thinkenss 변경
             laserRenderer.FadeIn(1f, 0.4f);
             yield return new WaitForSeconds(0.4f);
 
             var sweepAlpha = 0f;
             var sweepStartVec = laserRenderer.transform.forward; 
             var sweepEndVec = laserRenderer.transform.worldToLocalMatrix.MultiplyPoint(__brain.BB.TargetCore.position).x > 0f ? laserRenderer.transform.right.Vector2D() : -laserRenderer.transform.right.Vector2D();
+
+            //* 추적 방향으로 90도 빠르게 회전하면서 공간을 Sweep
             yield return Observable.EveryLateUpdate().TakeWhile(_ => sweepAlpha < 1f).Do(_ =>
             {
-                var hitIndex = LaserActionTraceTarget(laserRenderer.transform.position, laserRenderer.transform.forward, laserRenderer.lineWidth * 0.5f, __brain.BB.action.laserA_sweepDistance, hitLayerMask);
+                var hitIndex = LaserActionTraceTarget(laserRenderer.transform.position, laserRenderer.transform.forward, laserRenderer.lineWidth * 0.5f, __brain.BB.action.laserA_maxDistance, hitLayerMask);
                 if (hitIndex >= 0)
                     laserRenderer.hitFx.transform.position = __hitsNonAlloc[hitIndex].point + hitOffset * __hitsNonAlloc[hitIndex].normal;
                 else
                     laserRenderer.hitFx.transform.position = __brain.BB.attachment.laserA_aimPoint.position;
 
-                if (hitIndex >= 0 && __hitsNonAlloc[hitIndex].collider.TryGetComponent<PawnColliderHelper>(out var helper) && helper.pawnBrain == __brain.BB.TargetColliderHelper.pawnBrain)
-                    sweepAlpha += 0.02f * Time.deltaTime;
-                else
-                    sweepAlpha += 2f * Time.deltaTime;
+                if (hitIndex >= 0 && __hitsNonAlloc[hitIndex].collider.TryGetComponent<PawnColliderHelper>(out var hitColliderHelper) && hitColliderHelper.pawnBrain == __brain.BB.TargetColliderHelper.pawnBrain)
+                {
+                    //* 데미지 처리
+                    if ((Time.time - sendDamageTimeStamp) > __brain.BB.action.laserA_damageInterval)
+                    {
+                        __brain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__brain, hitColliderHelper.pawnBrain, currActionContext.actionData, hitColliderHelper.pawnCollider, false));
+                        sendDamageTimeStamp = Time.time;
+                    }
 
-                var sweepVec = Vector3.Slerp(sweepStartVec, sweepEndVec, sweepAlpha);
-                __brain.BB.attachment.laserA_aimPoint.position = laserRenderer.transform.position +  __brain.BB.action.laserA_sweepDistance * sweepVec;
+                    //* 히트 시에는 Sweep 진행 속력을 20%로 낮춤
+                    sweepAlpha += 0.2f * Time.deltaTime / __brain.BB.action.laserA_sweepDuration;
+                }
+                else
+                {
+                    sweepAlpha += Time.deltaTime / __brain.BB.action.laserA_sweepDuration;
+                }
+
+                __brain.BB.attachment.laserA_aimPoint.position = laserRenderer.transform.position +  __brain.BB.action.laserA_maxDistance * Vector3.Slerp(sweepStartVec, sweepEndVec, sweepAlpha);
             }).ToYieldInstruction();
 
+            //* 레이저 발사 종료
             laserRenderer.flashFx.Stop();
             laserRenderer.hitFx.Stop();
             laserRenderer.FadeOut(0.2f);
+
             yield return new WaitForSeconds(0.2f);
         }
 
@@ -222,31 +261,50 @@ namespace Game
 
             laserRenderer.flashFx.Play();
             laserRenderer.hitFx.Play();
+            laserRenderer.hitFx.transform.position = laserRenderer.transform.position;
 
-            yield return Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(1f))).Do(_ =>
+            //* 차징 스텝
+            yield return Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(__brain.BB.action.laserB_charingDuration))).Do(_ =>
             {
                 laserRenderer.hitFx.transform.position = laserRenderer.transform.position;
             }).ToYieldInstruction();
-                    
+
+            //* 레이저 Fade-In        
             laserRenderer.FadeIn(0.2f, 0.2f);
             yield return new WaitForSeconds(0.2f);
 
             var hitLayerMask = LayerMask.GetMask("Terrain", "PhysicsBody", "HitBox", "HitBoxBlocking", "Obstacle");
             var hitOffset = 0.1f;
-            yield return Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(1f))).Do(_ =>
+            var damageCount = 0;
+
+            //* 레이저 발사
+            yield return Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(__brain.BB.action.laserB_stayDuration))).Do(_ =>
             {
                 __brain.BB.attachment.laserA_aimPoint.position = __brain.BB.TargetColliderHelper.GetWorldCenter();
 
                 var hitIndex = LaserActionTraceTarget(laserRenderer.transform.position, laserRenderer.transform.forward, laserRenderer.lineWidth, __brain.BB.action.laserB_maxDistance, hitLayerMask);
                 if (hitIndex >= 0)
+                {
+                    //* 데미지 처리 (데미지는 한번만 처리함)
+                    if (damageCount == 0 && __hitsNonAlloc[hitIndex].collider.TryGetComponent<PawnColliderHelper>(out var hitColliderHelper) && hitColliderHelper.pawnBrain == __brain.BB.TargetColliderHelper.pawnBrain)
+                    {
+                        __brain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__brain, hitColliderHelper.pawnBrain, currActionContext.actionData, hitColliderHelper.pawnCollider, false));
+                        damageCount++;
+                    }
+
                     laserRenderer.hitFx.transform.position = __hitsNonAlloc[hitIndex].point + hitOffset * __hitsNonAlloc[hitIndex].normal;
+                }
                 else
+                {
                     laserRenderer.hitFx.transform.position = laserRenderer.transform.position + __brain.BB.action.laserB_maxDistance * laserRenderer.transform.forward;
+                }
             }).ToYieldInstruction();
 
+            //* 레이저 발사 종료
             laserRenderer.flashFx.Stop();
             laserRenderer.hitFx.Stop();
             laserRenderer.FadeOut(0.2f);
+
             yield return new WaitForSeconds(0.2f);
         }
 
@@ -381,11 +439,6 @@ namespace Game
         protected override void StartInternal()
         {
             base.StartInternal();
-
-            __brain.BB.action.isGuarding.Subscribe(v =>
-            {
-                __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", v);
-            }).AddTo(this);
         }
     }
 }

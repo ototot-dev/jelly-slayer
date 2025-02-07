@@ -3,15 +3,14 @@ using FIMSpace.FProceduralAnimation;
 using static FIMSpace.FProceduralAnimation.LegsAnimator;
 using UniRx;
 using System;
+using Obi;
 
 namespace Game
 {
     [TooltipAttribute("이동, 점프, 대시 등의 처리")]
     public class HeroMovement : PawnMovement, LegsAnimator.ILegStepReceiver
     {
-        [Header("Paramter")]
         public float LastJumpTimeStamp => __jumpTimeStamp;
-        public float LastLandingTimeStamp => __landingTimeStamp;
         public float LastRollingTimeStamp => __rollingTimeStamp;
         public float LastStartHangingTimeStamp => __startHangingTimeStamp;
         public float LastFinishHangingTimeStamp => __finishHangingTimeStamp;
@@ -19,7 +18,7 @@ namespace Game
 
         public void StartJump(float jumpHeight)
         {
-            __isFalling = false;
+            __isJumpFalling = false;
             __jumpTimeStamp = Time.time;
             __ecmMovement.velocity.y = GetVerticalImpulseOnJump(jumpHeight);
             __ecmMovement.PauseGroundConstraint();
@@ -30,9 +29,14 @@ namespace Game
 
         public void FinishJump()
         {
-            __landingTimeStamp = Time.time;
-            __brain.AnimCtrler.mainAnimator.SetBool("IsJumping", false);
             __brain.AnimCtrler.legAnimator.User_AddImpulse(new ImpulseExecutor(0.2f * Vector3.down, Vector3.zero, 0.2f));
+            __brain.AnimCtrler.mainAnimator.SetBool("IsJumping", false);
+            __brain.BB.action.isJumping.Value = false;
+        }
+
+        public void CancelJump()
+        {
+            __brain.AnimCtrler.mainAnimator.SetBool("IsJumping", false);
             __brain.BB.action.isJumping.Value = false;
         }
 
@@ -83,6 +87,13 @@ namespace Game
             __brain.AnimCtrler.mainAnimator.SetBool("IsHanging", false);
         }
 
+        //* 외부 영향으로 강제로 Hanging 상태가 취소되는 경우
+        public void CancelHanging()
+        {
+            FinishHanging();
+            __brain.AnimCtrler.mainAnimator.SetBool("IsJumping", false);
+        }
+
         public void StartRolling(float duration)
         {
             if (__brain.BB.IsRolling)
@@ -128,14 +139,14 @@ namespace Game
             }
         }
 
-        bool __isFalling;
+        bool __isJumpFalling;
         float __jumpTimeStamp;
-        float __landingTimeStamp;
         float __prevCapsulePositionY;
         float __rollingTimeStamp;
         float __rollingDuration;
         float __rollingSpeed;
         Vector3 __rollingVec;
+        Vector3 __rootMotionFallingVec;
         HeroBrain __brain;
 
         protected override void AwakeInternal()
@@ -186,10 +197,10 @@ namespace Game
             if (__brain.BB.IsJumping)
             {
                 if (__prevCapsulePositionY > capsule.position.y && Time.time - __jumpTimeStamp > 2f * Time.fixedDeltaTime)
-                    __isFalling = true;
+                    __isJumpFalling = true;
                 __prevCapsulePositionY = capsule.position.y;
 
-                if (__isFalling && __ecmMovement.isGrounded)
+                if (__isJumpFalling && __ecmMovement.isGrounded)
                 {
                     FinishJump();
                 }
@@ -252,11 +263,20 @@ namespace Game
                 }
                 else if (__rootMotionPosition.sqrMagnitude > 0f)
                 {
-                    __ecmMovement.Move(GetRootMotionVelocity(Time.fixedDeltaTime), Time.fixedDeltaTime);
+                    __rootMotionFallingVec = __ecmMovement.isGrounded ? Vector3.zero : __rootMotionFallingVec + Time.fixedDeltaTime * gravity;
+                    __ecmMovement.Move(GetRootMotionVelocity(Time.fixedDeltaTime) + __rootMotionFallingVec, Time.fixedDeltaTime);
                 }
                 else
                 {
-                    __ecmMovement.SimpleMove(moveSpeed * moveVec, moveSpeed, moveAccel, moveBrake, 1f, 1f, gravity, false, Time.fixedDeltaTime);
+                    if (__ecmMovement.isGrounded)
+                    {
+                        __ecmMovement.SimpleMove(moveSpeed * moveVec, moveSpeed, moveAccel, moveBrake, 1f, 1f, gravity, false, Time.fixedDeltaTime);
+                    }
+                    else
+                    {
+                        __ecmMovement.velocity += Time.fixedDeltaTime * gravity;
+                        __ecmMovement.Move(Time.fixedDeltaTime);
+                    }
                 }
 
                 __ecmMovement.rotation *= __rootMotionRotation;
