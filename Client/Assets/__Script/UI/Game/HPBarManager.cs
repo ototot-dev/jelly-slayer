@@ -1,6 +1,7 @@
 using Game;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Linq;
 using UnityEngine;
 
 public class HPBarManager : MonoBehaviour
@@ -33,7 +34,17 @@ public class HPBarManager : MonoBehaviour
             _cameraController = _camera.GetComponent<CameraController>();
         }
     }
-
+    public void ClearAll() 
+    {
+        foreach(var panel in _dicPanel.Values) 
+        {
+            if (panel != null) 
+            {
+                panel.gameObject.Destroy();
+            }
+        }
+        _dicPanel.Clear();
+    }
     public HPBarPanel GetPanel(PawnBrainController pawn)
     {
         if(_dicPanel.TryGetValue(pawn, out HPBarPanel panel))

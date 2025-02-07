@@ -11,9 +11,14 @@ public class UIGame : MonoBehaviour
     [SerializeField]
     private DamageTextManager _dmgTextManager;
 
+    [SerializeField]
+    private UIGamePanel _gamePanel;
+
     // Start is called before the first frame update
     void Awake()
     {
+        GameManager.Instance._delGameStart += OnGameStart;
+        GameManager.Instance._delGameEnd += OnGameEnd;
         GameManager.Instance._delPawnSpawned += OnPawnSpawned;
         GameManager.Instance._delPawnDamaged += OnPawnDamaged;
     }
@@ -22,18 +27,32 @@ public class UIGame : MonoBehaviour
         if (GameManager.Instance == null)
             return;
 
+        GameManager.Instance._delGameStart -= OnGameStart;
+        GameManager.Instance._delGameEnd -= OnGameEnd;
         GameManager.Instance._delPawnSpawned -= OnPawnSpawned;
         GameManager.Instance._delPawnDamaged -= OnPawnDamaged;
+    }
+    void OnGameStart() 
+    { 
+    }
+    void OnGameEnd() 
+    {
+        _hpBarManager.ClearAll();
     }
     void OnPawnSpawned(PawnBrainController pawn)
     {
         Debug.Log("OnPawnSpawned : " + pawn.name);
 
         //* Hp 출력안하는 Pawn
-        if (pawn is HeroBrain || pawn is DroneBotBrain)
+        if (pawn is DroneBotBrain)
             return;
+        if (pawn is HeroBrain)
+        {
+            _gamePanel.SetHeroBrain(pawn);
+            return;
+        }
 
-        bool isStamina = (pawn.PawnBB.stat.maxStamina.Value > 0);
+            bool isStamina = (pawn.PawnBB.stat.maxStamina.Value > 0);
         _hpBarManager.Create(pawn, isStamina);
     }
     void OnPawnDamaged(ref PawnHeartPointDispatcher.DamageContext damageContext) 

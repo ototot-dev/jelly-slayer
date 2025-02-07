@@ -10,11 +10,13 @@ public class UIGamePanel : MonoBehaviour
     [SerializeField] GameObject _menuObj;
 
     [Header("Player")]
+    public GameObject _playerObj;
     public Slider _playerHpSlider;
     public Slider _playerSpSlider;
     public Slider _playerRageSlider;
 
     [Header("Enemy")]
+    public GameObject _enemyObj;
     public Slider _enemyHPSlider;
     public Text _enemyName;
 
@@ -28,11 +30,22 @@ public class UIGamePanel : MonoBehaviour
         if (_heroBrain == null) 
         {
             _heroBrain = FindAnyObjectByType<HeroBrain>();
+            if (_heroBrain == null) 
+            {
+                _playerObj.SetActive(false);
+            }
         }
         if (_menuObj == null) 
         {
             _menuObj = GameObject.Find("GameMenu");
         }
+    }
+    public void SetHeroBrain(PawnBrainController pawn) 
+    {
+        _heroBrain = (HeroBrain)pawn;
+        Update();
+
+        _playerObj.SetActive(true);
     }
     public void OnClickMenu() 
     {
@@ -63,6 +76,10 @@ public class UIGamePanel : MonoBehaviour
         else 
         {
             _enemyHPSlider.value = 0;
+        }
+        if (Input.GetKeyDown(KeyCode.Escape)) 
+        {
+            OnClickMenu();
         }
     }
 }
