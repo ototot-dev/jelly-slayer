@@ -254,7 +254,6 @@ MonoBehaviour:
   forceFieldMeshRenderer: {fileID: 0}
   kickActionCollider: {fileID: 515486780858504094}
   swordActionCollider: {fileID: 0}
-  testImpulseStrength: 1
 --- !u!114 &4268522763273999486
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -356,8 +355,10 @@ MonoBehaviour:
   graphics:
     forceShieldRenderer: {fileID: 409659756734369044}
     onGuardParriedFx: {fileID: 8290359115699195188, guid: e7b0059f09cb15241973d434a922f01a, type: 3}
-    onBlockFx: {fileID: 2866177464396845944, guid: 6b2b519e0ec0572459f5bb22f05fed59, type: 3}
+    onBlockFx: {fileID: 1192610406659927679, guid: 880081a37cc1a7d4bab71175403b1c23, type: 3}
     onBleedFx: {fileID: 7550723611969325616, guid: 51da5c76ba1172d4aa429503f30316b5, type: 3}
+  attachment:
+    BlockingFxAttachPoint: {fileID: 7529133790137668671}
 --- !u!114 &8791414763947496166
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -372,6 +373,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coreColliderHelper: {fileID: 4575544682901093454}
   bodyHitColliderHelper: {fileID: 0}
+  shieldHitColliderHelper: {fileID: 0}
   parryColliderHelper: {fileID: 1104606249163493149}
   visibilityChecker: {fileID: 1411842691130928027}
   owner: {fileID: 0}
@@ -650,6 +652,37 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
+--- !u!1 &2375305412877235467
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7529133790137668671}
+  m_Layer: 0
+  m_Name: BlockingFxAttachPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7529133790137668671
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2375305412877235467}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.5, y: -0.5, z: -0.5, w: 0.5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6481943652038670949}
+  m_LocalEulerAnglesHint: {x: -90, y: -90, z: 0}
 --- !u!1 &3244703593161570817
 GameObject:
   m_ObjectHideFlags: 0
@@ -5968,7 +6001,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3244703593161571087}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 104179351ca7dd24a8f5bd7beecf8d06, type: 3}
   m_Name: 
@@ -5977,7 +6010,7 @@ MonoBehaviour:
     _Editor_SelectedChain: 0
     _Editor_ChainCategory: 0
     _EditorCategory: 3
-    _EditorMainCategory: 1
+    _EditorMainCategory: 0
     _EditorMotionCategory: 0
     m_hemi: {fileID: -2508796484986968503, guid: 44d994eaad14fdf49a2dd378b4d62094, type: 3}
     m_cyli: {fileID: 2534964839176971238, guid: 2ea99bbc50a9266448416f21d645a771, type: 3}
@@ -6086,33 +6119,27 @@ MonoBehaviour:
     ExtraFeatures:
     - CustomName: 
       enabled: 1
-      FeatureReference: {fileID: 11400000, guid: 70318e95358caf840add7d18b7e462a9, type: 2}
+      FeatureReference: {fileID: 11400000, guid: fec516eb5421cbb4aa744a2e99ff15ef, type: 2}
       customStringList: []
       customObjectList: []
       customEventsList: []
-      variables:
-      - VariableName: Selected
-        Tooltip: 
-        _value: {x: 4, y: 0, z: 0, w: 1}
-        _string: 
-        _curve:
-          serializedVersion: 2
-          m_Curve: []
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
-        _uObject: {fileID: 0}
-        VariableType: 0
-        _rangeHelper: {x: 0, y: 0, z: 0, w: 0}
+      variables: []
+    - CustomName: 
+      enabled: 1
+      FeatureReference: {fileID: 11400000, guid: bc0b2dc1b6b44ec4fb5b7fd43331c140, type: 2}
+      customStringList: []
+      customObjectList: []
+      customEventsList: []
+      variables: []
     IsHumanoid: 1
     dummyContainer: {fileID: 0}
     skeletonFillExtraBonesList: []
     MusclesPower: 1
     SpringsValue: 1500
-    SpringsOnFall: 1
+    SpringsOnFall: 5
     DampingValue: 40
-    DampingValueOnFall: 0
-    HardMatching: 0
+    DampingValueOnFall: 1
+    HardMatching: 1
     HardMatchPositions: 0
     HardMatchPositionsOnFall: 0
     PositionHardMatchingMultiplier: 1
@@ -6150,7 +6177,7 @@ MonoBehaviour:
     ProjectionMode: 0
     PreProcessing: 0
     RagdollBlend: 1
-    animatingMode: 1
+    animatingMode: 0
     UseReconstruction: 0
     UnitySolverIterations: 12
     Calibrate: 1
@@ -6215,7 +6242,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 1
+        ForceKinematicOnStanding: 0
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -6280,7 +6307,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 1
+        ForceKinematicOnStanding: 0
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -6345,7 +6372,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 1
+        ForceKinematicOnStanding: 0
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -6427,7 +6454,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 1
+        ForceKinematicOnStanding: 0
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -6492,7 +6519,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 1
+        ForceKinematicOnStanding: 0
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -6557,7 +6584,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 1
+        ForceKinematicOnStanding: 0
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -6639,7 +6666,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 1
+        ForceKinematicOnStanding: 0
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -6704,7 +6731,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 1
+        ForceKinematicOnStanding: 0
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -6769,7 +6796,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 1
+        ForceKinematicOnStanding: 0
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -6851,7 +6878,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 1
+        ForceKinematicOnStanding: 0
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -6916,7 +6943,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 1
+        ForceKinematicOnStanding: 0
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -6981,7 +7008,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 1
+        ForceKinematicOnStanding: 0
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -7063,7 +7090,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 1
+        ForceKinematicOnStanding: 0
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -7128,7 +7155,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 1
+        ForceKinematicOnStanding: 0
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -7193,7 +7220,7 @@ MonoBehaviour:
         ConnectionMassOverride: 0
         DisableCollisionEvents: 0
         ForceLimitsAllTheTime: 0
-        ForceKinematicOnStanding: 1
+        ForceKinematicOnStanding: 0
         AllowConfigurablePosition: 0
         LinearSpringLimit: 10000
         LinearSpringDamping: 5
@@ -19133,6 +19160,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6187976876240212002}
+  - {fileID: 7529133790137668671}
   m_Father: {fileID: 3452488443664082073}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8693690476844283935

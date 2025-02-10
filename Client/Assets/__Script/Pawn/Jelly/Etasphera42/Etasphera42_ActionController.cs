@@ -1,8 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using FIMSpace.Generating.Rules.Modelling;
-using MainTable;
 using UniRx;
 using UnityEngine;
 using static FIMSpace.FProceduralAnimation.LegsAnimator;

@@ -56,6 +56,14 @@ namespace Game
 
         public Graphics graphics = new();
 
+        [Serializable]
+        public class Attachment
+        {
+            public Transform BlockingFxAttachPoint;
+        }
+
+        public Attachment attachment = new();
+
         protected override void AwakeInternal()
         {
             base.AwakeInternal();

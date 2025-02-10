@@ -54,7 +54,7 @@ namespace Game
                     SoundManager.Instance.PlayWithClip(__brain.BB.audios.onHitAudioClip);
                 }
 
-                ShowHitColor();
+                ShowHitColor(__brain.bodyHitColliderHelper);
             }
             else if (damageContext.actionResult == ActionResults.Missed)
             {
@@ -70,6 +70,7 @@ namespace Game
                 Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onBlockedFx, __brain.BB.graphics.BlockingFxAttachPoint.transform.position, Quaternion.identity, 0.8f * Vector3.one, 1f)).AddTo(this);
                 SoundManager.Instance.PlayWithClip(__brain.BB.audios.onBlockedAudioClip);
 
+                ShowHitColor(__brain.shieldHitColliderHelper);
             }
             else if (damageContext.actionResult == ActionResults.GuardBreak) 
             {
@@ -93,21 +94,38 @@ namespace Game
             return base.StartOnKnockDownAction(ref damageContext, isAddictiveAction);
         }
 
-        void ShowHitColor()
+        void ShowHitColor(PawnColliderHelper hitColliderHelper)
         {
-            foreach (var r in __brain.BB.attachment.bodyMeshRenderers)
-                r.materials = new Material[] { r.material, new(__brain.BB.graphics.hitColor) };
-
-            __hitColorDisposable?.Dispose();
-            __hitColorDisposable = Observable.Timer(TimeSpan.FromMilliseconds(100)).Subscribe(_ => 
+            if (hitColliderHelper == __brain.bodyHitColliderHelper)
             {
-                __hitColorDisposable = null;
                 foreach (var r in __brain.BB.attachment.bodyMeshRenderers)
-                    r.materials = new Material[] { r.materials[0] };
-            }).AddTo(this);
+                    r.materials = new Material[] { r.material, new(__brain.BB.graphics.hitColor) };
+
+                __hitColorDisposable?.Dispose();
+                __hitColorDisposable = Observable.Timer(TimeSpan.FromMilliseconds(100)).Subscribe(_ => 
+                {
+                    __hitColorDisposable = null;
+                    foreach (var r in __brain.BB.attachment.bodyMeshRenderers)
+                        r.materials = new Material[] { r.materials[0] };
+                }).AddTo(this);
+            }
+            else if (hitColliderHelper == __brain.shieldHitColliderHelper)
+            {
+                __brain.BB.attachment.shieldMeshRenderer.materials = new Material[] { __brain.BB.attachment.shieldMeshRenderer.material, new(__brain.BB.graphics.hitColor) };
+
+                __hitColorDisposable?.Dispose();
+                __hitColorDisposable = Observable.Timer(TimeSpan.FromMilliseconds(100)).Subscribe(_ => 
+                {
+                    __hitColorDisposable = null;
+                    __brain.BB.attachment.shieldMeshRenderer.materials = new Material[] { __brain.BB.attachment.shieldMeshRenderer.material };
+                }).AddTo(this);
+            }
+            else
+            {
+                Debug.Assert(false);
+            }
         }
 
-        readonly HashSet<Renderer> __hitColorRenderers = new();
         IDisposable __hitColorDisposable;
         SoldierBrain __brain;
 

@@ -24,6 +24,7 @@ namespace Game
         [Header("Component")]
         public PawnColliderHelper coreColliderHelper;
         public PawnColliderHelper bodyHitColliderHelper;
+        public PawnColliderHelper shieldHitColliderHelper;
         public PawnColliderHelper parryColliderHelper;
         public SphereCollider visibilityChecker;
         public PlayerController owner;

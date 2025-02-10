@@ -92,6 +92,7 @@ namespace Game
         public class Attachment
         {
             public Renderer[] bodyMeshRenderers;
+            public Renderer shieldMeshRenderer;
             public Transform BlockingFxAttachPoint;
             // public Transform laserAimPoint;
             // public Etasphera42_LaserRenderer laserB_Renderer;

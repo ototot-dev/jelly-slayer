@@ -118,18 +118,19 @@ namespace Game
 
                     Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ =>
                     {
-                        EffectManager.Instance.Show(__brain.BB.graphics.onBlockFx, __brain.BB.graphics.forceShieldRenderer.transform.position + 0.1f * __brain.BB.graphics.forceShieldRenderer.transform.forward, Quaternion.identity, 0.5f * Vector3.one);
+                        EffectManager.Instance.Show(__brain.BB.graphics.onBlockFx, __brain.BB.attachment.BlockingFxAttachPoint.transform.position, Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward, Vector3.up), Vector3.one);
                         SoundManager.Instance.Play(SoundID.HIT_BLOCK);
                     });
                 }
                 else if (damageContext.actionResult == ActionResults.GuardParried)
                 {
                     __brain.AnimCtrler.mainAnimator.SetTrigger("OnGuardParry");
+                    SoundManager.Instance.Play(SoundID.HIT_PARRYING);
 
-                    Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ =>
+                    Observable.Timer(TimeSpan.FromMilliseconds(50)).Subscribe(_ =>
                     {
                         EffectManager.Instance.Show(__brain.BB.graphics.onGuardParriedFx, __brain.BB.graphics.forceShieldRenderer.transform.position + 0.5f * __brain.coreColliderHelper.transform.forward, Quaternion.identity, 0.8f * Vector3.one);
-                        SoundManager.Instance.Play(SoundID.HIT_PARRYING);
+                        // SoundManager.Instance.Play(SoundID.HIT_PARRYING);
                     });
                 }
                 else if (damageContext.actionResult == ActionResults.KickParried)
