@@ -34,7 +34,7 @@ namespace Game
                 __particleSystem.Play();
 
                 //* 음수면 재생 시간은 무한대, 즉 Looping임을 뜻함
-                LifeTime = -1f;
+                PlayDuration = -1f;
             }
             else if (__bloodFactory != null || TryGetComponent<BloodFactory>(out __bloodFactory))
             {
@@ -54,19 +54,19 @@ namespace Game
                 mainModule.simulationSpeed = playRate;
                 __particleSystem.Play();
 
-                LifeTime = duration > 0 ? duration : Mathf.Max(0.1f, mainModule.duration * 0.99f);
-                Observable.Timer(TimeSpan.FromSeconds(LifeTime)).Subscribe(_ => Stop(releaseInstance)).AddTo(this);
+                PlayDuration = duration > 0 ? duration : Mathf.Max(0.1f, mainModule.duration * 0.99f);
+                Observable.Timer(TimeSpan.FromSeconds(PlayDuration)).Subscribe(_ => Stop(releaseInstance)).AddTo(this);
             }
             else if (__bloodFactory != null || TryGetComponent<BloodFactory>(out __bloodFactory))
             {
                 __bloodFactory.Execute();
 
-                LifeTime = duration > 0 ? duration : Mathf.Max(0.1f, __bloodFactory.bloodParticles.Max(p => p.duration) * 2f);
-                Observable.Timer(TimeSpan.FromSeconds(LifeTime)).Subscribe(_ => Stop(releaseInstance)).AddTo(this);
+                PlayDuration = duration > 0 ? duration : Mathf.Max(0.1f, __bloodFactory.bloodParticles.Max(p => p.duration) * 2f);
+                Observable.Timer(TimeSpan.FromSeconds(PlayDuration)).Subscribe(_ => Stop(releaseInstance)).AddTo(this);
             }
         }
 
-        public float LifeTime { get; private set; }
+        public float PlayDuration { get; private set; }
         ParticleSystem __particleSystem;
         BloodFactory __bloodFactory;
         IDisposable __stopDiposable;

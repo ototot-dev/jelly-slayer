@@ -1825,6 +1825,7 @@ namespace Game.NodeCanvasExtension
         protected override void OnExecute()
         {
             __pawnActionCtrler = agent.GetComponent<PawnActionController>();
+            Debug.Assert(__pawnActionCtrler != null);
             
             if (!localToWorld.isNoneOrNull)
             {
@@ -1867,22 +1868,18 @@ namespace Game.NodeCanvasExtension
             }
 
             __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;
-            __showTimeStamp = Time.time;
-            __showDisposable = Observable.EveryUpdate().Subscribe(_ =>
+            if (stopWhenActionCanceled)
             {
-                if ((Time.time - __showTimeStamp) > duration.value)
+                __showDisposable = Observable.EveryUpdate().Subscribe(_ =>
                 {
-                    __fxInstance.gameObject.SetActive(false);
-                    __showDisposable.Dispose();
-                    __showDisposable = null;
-                }
-                else if (stopWhenActionCanceled && __pawnActionCtrler != null && (!__pawnActionCtrler.CheckActionRunning() || __pawnActionCtrler.currActionContext.actionInstanceId != __capturedActionInstanceId))
-                {
-                    __fxInstance.gameObject.SetActive(false);
-                    __showDisposable.Dispose();
-                    __showDisposable = null;
-                }
-            }).AddTo(agent);
+                    if (!__pawnActionCtrler.CheckActionRunning() || __pawnActionCtrler.currActionContext.actionInstanceId != __capturedActionInstanceId)
+                    {
+                        __fxInstance.gameObject.SetActive(false);
+                        __showDisposable.Dispose();
+                        __showDisposable = null;
+                    }
+                }).AddTo(agent);
+            }
 
             EndAction(true);
         }
