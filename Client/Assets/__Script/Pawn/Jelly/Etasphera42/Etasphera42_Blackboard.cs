@@ -61,6 +61,7 @@ namespace Game
             [Header("LaserA")]
             public float laserA_damageInterval = 0.1f;
             public float laserA_maxDistance = 1f;
+            public float laserA_forwardSpeed = 1f;
             public float laserA_turretRotateSpeed = 1f;
             public float laserA_charingDuration = 1f;
             public float laserA_approachSpeed = 1f;
@@ -70,6 +71,7 @@ namespace Game
             [Header("LaserB")]
             public float laserB_stayDuration = 1f;
             public float laserB_maxDistance = 1f;
+            public float laserB_forwardSpeed = 1f;
             public float laserB_turretRotateSpeed = 1f;
             public float laserB_charingDuration = 1f;
         }
@@ -101,7 +103,7 @@ namespace Game
             public SkinnedMeshRenderer[] leftLeg2_meshRenderes;
             public SkinnedMeshRenderer[] rightLeg1_meshRenderes;
             public SkinnedMeshRenderer[] rightLeg2_meshRenderes;
-            public Transform laserA_aimPoint;
+            public Transform laserAimPoint;
             public Etasphera42_LaserRenderer laserA_Renderer;
             public Etasphera42_LaserRenderer laserB_Renderer;
         }

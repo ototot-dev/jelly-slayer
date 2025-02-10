@@ -110,8 +110,10 @@ namespace Game
                 }).AddTo(this);
         }
 
-        public override IDisposable StartCustomAction(ref PawnHeartPointDispatcher.DamageContext damageContext, string actionName)
+        public override IDisposable StartCustomAction(ref PawnHeartPointDispatcher.DamageContext damageContext, string actionName, bool isAddictiveAction = false)
         {
+            Debug.Assert(!isAddictiveAction);
+
             if (actionName == "Hook")
             {
                 Debug.Assert(__brain.BB.HostBrain.BB.TargetBrain != null);

@@ -83,12 +83,20 @@ namespace Game
             {
                 __watchingStateNames.Add("OnDown");
                 legAnimator.User_FadeToDisabled(0.1f);
+                ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Standing;
+                Observable.Timer(TimeSpan.FromSeconds(0.1f)).Subscribe(_ => ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Falling).AddTo(this);
             }).AddTo(this);
-            
+            FindObservableStateMachineTriggerEx("OnDown (End)").OnStateEnterAsObservable().Subscribe(s => 
+            {
+                __brain.Movement.GetCharacterMovement().SetPosition(__brain.AnimCtrler.ragdollAnimator.Handler.DummyReference.transform.GetChild(0).position);
+                ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Standing;
+            }).AddTo(this);
             FindObservableStateMachineTriggerEx("OnDown (End)").OnStateExitAsObservable().Subscribe(s => 
             {
                 __watchingStateNames.Remove("OnDown");
                 legAnimator.User_FadeEnabled(0.1f);
+                // __brain.Movement.GetCharacterMovement().SetPosition(__brain.AnimCtrler.ragdollAnimator.Handler.DummyReference.transform.GetChild(0).position);
+                ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Off;
             }).AddTo(this);
 
             spineOverrideTransform.weight = 1f;
@@ -116,7 +124,7 @@ namespace Game
                     return;
                 }
 
-                if (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
+                if ((__brain.ActionCtrler.CheckActionRunning() || __watchingStateNames.Contains("OnDown")) && __brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
                 {
                     //* 평면 방향 RootMotion에 대한 Constraints가 존재하면 값을 0으로 변경해준다.
                     if (__brain.ActionCtrler.CheckRootMotionConstraint(RootMotionConstraints.FreezePositionX, RootMotionConstraints.FreezePositionZ))

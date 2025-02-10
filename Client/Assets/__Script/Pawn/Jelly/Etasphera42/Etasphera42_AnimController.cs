@@ -143,40 +143,25 @@ namespace Game
                     if (__brain.ActionCtrler.CheckActionRunning())
                     {
                         if (__brain.ActionCtrler.CurrActionName == "Bullet")
-                        {
                             UpdateTurretRotation(targetPoint, __brain.BB.action.bulletTurretRotateSpeed, TurretIndices.Base, __brain.BB.action.bulletMaxShakeAngle * Mathf.Sin(Mathf.PI * 2f * (Time.time - __brain.ActionCtrler.currActionContext.startTimeStamp)));
-                            UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Left);
-                            UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Right);
-                            UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_turretRotateSpeed, TurretIndices.Top);
-                        }
                         else if (__brain.ActionCtrler.CurrActionName == "Torch")
-                        {
                             UpdateTurretRotation(targetPoint, __brain.BB.action.torchTurretRotateSpeed, TurretIndices.Base);
-                            UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Left);
-                            UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Right);
-                            UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_turretRotateSpeed, TurretIndices.Top);
-                        }
                         else if (__brain.ActionCtrler.CurrActionName == "LaserA")
-                        {
-                            UpdateTurretRotation(__brain.BB.attachment.laserA_aimPoint.position, __brain.BB.action.laserA_turretRotateSpeed, TurretIndices.Base);
-                            UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Left);
-                            UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Right);
-                            UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_turretRotateSpeed, TurretIndices.Top);
-                        }
+                            UpdateTurretRotation(__brain.BB.attachment.laserAimPoint.position, __brain.BB.action.laserA_turretRotateSpeed, TurretIndices.Base);
                         else 
-                        {
                             UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Base);
-                            UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Left);
-                            UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Right);
-                            UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_turretRotateSpeed, TurretIndices.Top);
-                        }
+                        
+                        UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Left);
+                        UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Right);
+                        UpdateTurretRotation(__brain.ActionCtrler.CheckAddictiveActionRunning("LaserB") ? __brain.BB.attachment.laserAimPoint.position : targetPoint, __brain.BB.action.laserB_turretRotateSpeed, TurretIndices.Top);
+
                     }
                     else
                     {
                         UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Base);
                         UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Left);
                         UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Right);
-                        UpdateTurretRotation(targetPoint, __brain.BB.action.laserB_turretRotateSpeed, TurretIndices.Top);
+                        UpdateTurretRotation(__brain.ActionCtrler.CheckAddictiveActionRunning("LaserB") ? __brain.BB.attachment.laserAimPoint.position : targetPoint, __brain.BB.action.laserB_turretRotateSpeed, TurretIndices.Top);
                     }
                 }
             };

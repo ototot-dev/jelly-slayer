@@ -10,6 +10,19 @@ namespace Game
         public Vector3 destination;
         public float minApproachDistance = 1f;
         public virtual float GetDefaultMinApproachDistance() => 1f;
+        public virtual bool CanMove()
+        {
+                var canMove1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsGroggy && !__pawnBrain.PawnBB.IsDown && !CheckReachToDestination();
+                var canMove2 = canMove1 && (__pawnActionCtrler == null || (!__pawnActionCtrler.CheckKnockBackRunning() && (!__pawnActionCtrler.CheckActionRunning() || __pawnActionCtrler.currActionContext.movementEnabled)));
+                var canMove3 = canMove2 && (__pawnStatusCtrler == null || (!__pawnStatusCtrler.CheckStatus(PawnStatus.Staggered) && !__pawnStatusCtrler.CheckStatus(PawnStatus.CanNotMove)));
+                return canMove3;
+        }
+        public virtual bool CanRotate()
+        {
+            var canRotate1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsGroggy && !__pawnBrain.PawnBB.IsDown;
+            var canRotate2 = canRotate1 && (__pawnActionCtrler == null || !__pawnActionCtrler.CheckActionRunning());
+            return canRotate2;
+        }
         public bool CheckReachToDestination() => (destination - capsule.position).SqrMagnitude2D() < minApproachDistance * minApproachDistance;
         public float DistanceToDestination() => Mathf.Max(0, (destination - capsule.position).Magnitude2D() - minApproachDistance);
         public float EstimateTimeToDestination() => DistanceToDestination() / (moveSpeed > 0f ? moveSpeed : 1f);
@@ -24,14 +37,10 @@ namespace Game
         {
             if (!freezeMovement)
             {
-                var canMove1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsGroggy && !__pawnBrain.PawnBB.IsDown && !CheckReachToDestination();
-                var canMove2 = canMove1 && (__pawnActionCtrler == null || (!__pawnActionCtrler.CheckKnockBackRunning() && (!__pawnActionCtrler.CheckActionRunning() || __pawnActionCtrler.currActionContext.movementEnabled)));
-                var canMove3 = canMove2 && (__pawnStatusCtrler == null || (!__pawnStatusCtrler.CheckStatus(PawnStatus.Staggered) && !__pawnStatusCtrler.CheckStatus(PawnStatus.CanNotMove)));
-
                 if (IsMovingToDestination)
-                    moveVec = canMove3 ? (destination - capsule.position).Vector2D().normalized : Vector3.zero;
+                    moveVec = CanMove() ? (destination - capsule.position).Vector2D().normalized : Vector3.zero;
                 else
-                    moveVec = canMove3 ? moveVec : Vector3.zero;
+                    moveVec = CanMove() ? moveVec : Vector3.zero;
             }
             else
             {

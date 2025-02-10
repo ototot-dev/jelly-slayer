@@ -74,7 +74,7 @@ namespace Game
                 homingRotationDisposable = null;
             }
 
-            //* 리액션 및 Addictivie 액션 초기화
+            //* 리액션 및 Addictive 액션 초기화
             public ActionContext(string actionName, float actionSpeedMultiplier, float startTimeStamp)
             {
                 actionData = null;
@@ -83,7 +83,7 @@ namespace Game
                 this.actionName = actionName;
                 actionSpeed = actionSpeedMultiplier;
                 rootMotionConstraint = 0;
-                rootMotionMultiplier = 1;
+                rootMotionMultiplier = 1f;
                 rootMotionCurve = null;
                 insufficientStamina = false;
                 actionCanceled = false;
@@ -112,6 +112,7 @@ namespace Game
         public ActionContext currActionContext = new(string.Empty, 1f, 0f);
         public bool CheckActionPending() => !string.IsNullOrEmpty(PendingActionData.Item1);
         public bool CheckActionRunning() => currActionContext.actionData != null || currActionContext.actionDisposable != null;
+        public virtual bool CheckAddictiveActionRunning(string actionName) => false;
         public bool CheckActionCanceled() { Debug.Assert(CheckActionRunning()); return currActionContext.actionCanceled; }
         public bool CheckMovementEnabled() { Debug.Assert(CheckActionRunning()); return currActionContext.movementEnabled; }
         public bool CanInterruptAction() { Debug.Assert(CheckActionRunning()); return currActionContext.interruptEnabled; }
@@ -148,11 +149,13 @@ namespace Game
 
 #region IBuffContainer
         Dictionary<PawnStatus, Tuple<float, float>> IStatusContainer.GetStatusTable() => __statusContainer;
+#if UNITY_EDITOR
+        Dictionary<PawnStatus, Tuple<float, float>>.Enumerator IStatusContainer.GetStatusEnumerator() => __statusContainer.GetEnumerator();
+#endif
 
         bool IStatusContainer.AddStatus(PawnStatus buff, float strength, float duration)
         {
             Debug.Assert(__pawnBrain.PawnStatusCtrler != null && CheckActionRunning());
-
             __pawnBrain.PawnStatusCtrler.AddExternStatus(this, buff, strength, duration);
             return true;
         }
@@ -174,10 +177,6 @@ namespace Game
             Debug.Assert(__pawnBrain.PawnStatusCtrler != null && CheckActionRunning());
             return __pawnBrain.PawnStatusCtrler.GetStrength(buff);
         }
-
-#if UNITY_EDITOR
-        Dictionary<PawnStatus, Tuple<float, float>>.Enumerator IStatusContainer.GetStatusEnumerator() => __statusContainer.GetEnumerator();
-#endif
 #endregion
 
         public virtual float GetRootMotionMultiplier()
@@ -210,7 +209,7 @@ namespace Game
         public virtual IDisposable StartOnParriedAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false) { return null; }
         public virtual IDisposable StartOnKnockDownAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false) { return null; }
         public virtual IDisposable StartOnGroogyAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false) { return null; }
-        public virtual IDisposable StartCustomAction(ref PawnHeartPointDispatcher.DamageContext damageContext, string actionName) { return null; }
+        public virtual IDisposable StartCustomAction(ref PawnHeartPointDispatcher.DamageContext damageContext, string actionName, bool isAddictiveAction = false) { return null; }
         public virtual void EmitActionHandler(GameObject emitPrefab, Transform emitPoint, int emitIndex) {}
 
         public void SetPendingAction(string actionName)
@@ -489,28 +488,23 @@ namespace Game
 
         public bool StartAddictiveAction(PawnHeartPointDispatcher.DamageContext damageContext, string actionName, float actionSpeedMultiplier = 1, float rootMotionMultiplier = 1)
         {
-            if (!actionName.StartsWith('!'))
-            {
-                __Logger.WarningR2(gameObject, nameof(StartAddictiveAction), "actionName.StartsWith('!') is false.", "actionName", actionName);
-                return false;
-            }
-
             __Logger.LogR2(gameObject, nameof(StartAddictiveAction), "onAddictiveActionStart is invoked.", "actionName", actionName);
             onAddictiveActionStart?.Invoke(new ActionContext(actionName, 1f, Time.time), damageContext);
 
-            if (__pawnAnimCtrler != null && __pawnAnimCtrler.mainAnimator != null)
+            if (actionName.StartsWith('!'))
             {
-                __pawnAnimCtrler.mainAnimator.SetFloat("AnimSpeed", actionSpeedMultiplier);
-                __pawnAnimCtrler.mainAnimator.SetFloat("AnimAdvance", 0);
+                switch (actionName)
+                {
+                    case "!OnHit": StartOnHitAction(ref damageContext, true); break;
+                    case "!OnGroggy": StartOnGroogyAction(ref damageContext, true); break;
+                    case "!OnKnockDown": StartOnKnockDownAction(ref damageContext, true); break;
+                    case "!OnBlocked": StartOnBlockedAction(ref damageContext, true); break;
+                    case "!OnParried": StartOnParriedAction(ref damageContext, true); break;
+                }
             }
-
-            switch (actionName)
+            else
             {
-                case "!OnHit": StartOnHitAction(ref damageContext, true); break;
-                case "!OnGroggy": StartOnGroogyAction(ref damageContext, true); break;
-                case "!OnKnockDown": StartOnKnockDownAction(ref damageContext, true); break;
-                case "!OnBlocked": StartOnBlockedAction(ref damageContext, true); break;
-                case "!OnParried": StartOnParriedAction(ref damageContext, true); break;
+                StartCustomAction(ref damageContext, actionName, true);
             }
 
             return true;

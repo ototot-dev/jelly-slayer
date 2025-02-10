@@ -191,14 +191,14 @@ namespace Game
 #if UNITY_EDITOR
             if (damageContext.senderBrain == null && damageContext.receiverBrain == null)
             {
-                __brain.PawnStatusCtrler.AddStatus(PawnStatus.KnockDown, 1f, 4f);
+                __brain.PawnStatusCtrler.AddStatus(PawnStatus.KnockDown, 1f, __brain.BB.pawnData.knockDownDuration);
 
-                var __knockBackVec = -__brain.BB.pawnData_Movement.knockBackSpeed * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
-                Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(4f / __brain.BB.pawnData_Movement.knockBackSpeed)))
-                    .DoOnCancel(() => __brain.Movement.FreezeForOneFrame())
-                    .DoOnCompleted(() => __brain.Movement.FreezeForOneFrame())
-                    .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * __knockBackVec, Quaternion.identity))
-                    .AddTo(this);
+                var __knockDownTimeStamp = Time.time;
+                var __knockBackVec = -__brain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.1f))).Subscribe(_ =>
+                {
+                    __brain.Movement.AddRootMotion(Time.fixedDeltaTime * (__brain.BB.pawnData_Movement.knockBackSpeed * __knockBackVec), Quaternion.identity);
+                }).AddTo(this);
 
                 return null;
             }
@@ -206,49 +206,33 @@ namespace Game
 
             Debug.Assert(damageContext.receiverBrain == __brain);
             Debug.Assert(!isAddictiveAction);
+            
+            var hitVec = damageContext.receiverBrain.GetWorldPosition() - damageContext.senderBrain.GetWorldPosition();
+            hitVec = damageContext.receiverBrain.GetWorldTransform().InverseTransformDirection(hitVec).Vector2D().normalized;
+            if (Mathf.Abs(hitVec.x) > Mathf.Abs(hitVec.z))
+            {
+                __brain.AnimCtrler.mainAnimator.SetFloat("HitX", hitVec.x > 0f ? 1f : -1f);
+                __brain.AnimCtrler.mainAnimator.SetFloat("HitY", 0f);
+            }
+            else
+            {
+                __brain.AnimCtrler.mainAnimator.SetFloat("HitX", 0f);
+                __brain.AnimCtrler.mainAnimator.SetFloat("HitY", hitVec.z > 0f ? 1f : -1f);
+            }
+            __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0);
+            __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
 
-            var knockBackVec = -__brain.BB.pawnData_Movement.knockBackSpeed * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
-            Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
-                .DoOnCancel(() => __brain.Movement.FreezeForOneFrame())
-                .DoOnCompleted(() => __brain.Movement.FreezeForOneFrame())
-                .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity))
-                .AddTo(this);
+            var knockDownTimeStamp = Time.time;
+            var knockBakVec = (damageContext.receiverBrain.GetWorldPosition() - damageContext.senderBrain.GetWorldPosition()).Vector2D().normalized;
+            Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.1f))).Subscribe(_ =>
+            {
+                __brain.Movement.AddRootMotion(Time.fixedDeltaTime * (__brain.BB.pawnData_Movement.knockBackSpeed * knockBakVec), Quaternion.identity);
+            }).AddTo(this);
 
             return null;
         }
 
-        public float testImpulseStrength = 1f;
-
-        public override IDisposable StartCustomAction(ref PawnHeartPointDispatcher.DamageContext damageContext, string actionName)
-        {
-            if (actionName == "Assault")
-            {
-                // float assaultTimeStamp = Time.time;
-                // float assaultDuration = 0.2f;
-                // float 
-
-                // Observable.EveryFixedUpdate().Subscribe(_ =>
-                // {
-                //     var alpha = (Time.time - __zipRidingTimeStamp) / __zipRidingDuration;
-                //     if (alpha >= 1f || __ecmMovement.isGrounded)
-                //     {
-                //         FinishZipRiding();
-                //     }
-                //     else
-                //     {
-
-                //         var newPosition = Vector3.Lerp(__zipRidingStartPoint.position, __zipRidingEndPoint.position, alpha);
-                //         __ecmMovement.SetPosition(newPosition + ziplineOffsetY * Vector3.down);
-                //         __ecmMovement.SetRotation(Quaternion.LookRotation((__zipRidingEndPoint.position - __zipRidingStartPoint.position).Vector2D().normalized));
-                //     }
-                // }).AddTo(this);
-            }
-            
-            return base.StartCustomAction(ref damageContext, actionName);
-        }
-
         HeroBrain __brain;
-        EffectInstance __staggerFxInstance;
 
         protected override void AwakeInternal()
         {
@@ -260,26 +244,18 @@ namespace Game
         {
             base.StartInternal();
 
-            __brain.BB.common.isDown.Subscribe(v =>
+            __brain.BB.common.isDown.Skip(1).Subscribe(v =>
             {
                 if (v)
                 {
                     __brain.AnimCtrler.mainAnimator.SetBool("IsDown", true);
                     __brain.AnimCtrler.mainAnimator.SetTrigger("OnDown");
-
-                    //* Down (Loop) 스테이트에서 애님 클립이 진행되지 않고 강제로 멈춰있도록 함
-                    __brain.AnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1);
-                    __brain.AnimCtrler.mainAnimator.SetFloat("AnimAdvance", 99f);
-
-                    __brain.Movement.GetCharacterMovement().collisionLayers = LayerMask.GetMask("Terrain", "Obstacle", "Cell");
                 }
                 else
                 {
                     //* 일어나는 모션동안은 무적
                     __brain.PawnStatusCtrler.AddStatus(PawnStatus.Invincible, 1f, 1f);
                     __brain.AnimCtrler.mainAnimator.SetBool("IsDown", false);
-
-                    __brain.Movement.GetCharacterMovement().collisionLayers = LayerMask.GetMask("Terrain", "HitBoxBlocking", "Obstacle", "Cell");
                 }
             }).AddTo(this);
 

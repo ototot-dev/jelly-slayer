@@ -7,8 +7,9 @@ namespace Game
     [RequireComponent(typeof(Etasphera42_Blackboard))]
     [RequireComponent(typeof(Etasphera42_AnimController))]
     [RequireComponent(typeof(Etasphera42_ActionController))]
-    public class Etasphera42_Brain : JellyQuadWalkBrain, IPawnTargetable
+    public class Etasphera42_Brain : JellyQuadWalkBrain, IPawnTargetable, IPlayerActionListener
     {
+#region IPawnTargetable 구현
         public enum HitBoxIndices
         {
             Body = 0,
@@ -19,7 +20,6 @@ namespace Game
             Max,
         }
 
-#region IPawnTargetable 구현
         PawnColliderHelper IPawnTargetable.StartTargeting()
         {   
             __currTargetingIndex = HitBoxIndices.Body;
@@ -57,6 +57,20 @@ namespace Game
         }
 
         HitBoxIndices __currTargetingIndex = HitBoxIndices.Max;
+#endregion
+
+#region IPlayerActionListener 구현
+        void IPlayerActionListener.OnPlayerActionEvent(string eventName)
+        {
+            switch (eventName)
+            {
+                case "OnJump": break;
+                case "OnHanging": ActionCtrler.StartAddictiveAction(new PawnHeartPointDispatcher.DamageContext(),  "LaserB"); break;
+            }
+        }
+
+        void IPlayerActionListener.OnPlayerActionStatus(PawnStatus status, float strength, float duration) {}
+        void IPlayerActionListener.OnPlayerActionDamage(PawnHeartPointDispatcher.DamageContext damageContext) {}
 #endregion
 
         [Header("Component")]

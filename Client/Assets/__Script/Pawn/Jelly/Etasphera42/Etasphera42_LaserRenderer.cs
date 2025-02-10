@@ -24,8 +24,21 @@ namespace Game
         [Header("Debug")]
         public BoolReactiveProperty debug_OnOff = new();
 
+        public void FadeIn(float lineWidth, float duration)
+        {
+            this.lineWidth = lineWidth;
+            FadeIn(duration);
+        }
+
         public void FadeIn(float duration)
         {
+            if (duration <= 0f)
+            {
+                lineRenderer.enabled = true;
+                lineRenderer.startWidth = lineRenderer.endWidth = lineWidth;
+                return;
+            }
+
             var fadeTimeStamp = Time.time;
 
             __fadeDisposable?.Dispose();
@@ -42,14 +55,15 @@ namespace Game
             }).AddTo(this);
         }
 
-        public void FadeIn(float lineWidth, float duration)
-        {
-            this.lineWidth = lineWidth;
-            FadeIn(duration);
-        }
-
         public void FadeOut(float duration)
         {
+            if (duration <= 0f)
+            {
+                lineRenderer.startWidth = lineRenderer.endWidth = 0f;
+                lineRenderer.enabled = false;
+                return;
+            }
+
             var fadeTimeStamp = Time.time;
 
             __fadeDisposable?.Dispose();

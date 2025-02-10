@@ -4,14 +4,20 @@ namespace Game
 {
     public class JellyBrain : PawnBrainController, IPawnSpawnable, IPawnMovable
     {
-        
 #region IPawnSpawnable / IPawnMovable 구현
         Vector3 IPawnSpawnable.GetSpawnPosition() => transform.position;
-        void IPawnSpawnable.OnStartSpawnHandler() { __pawnMovement.capsule.gameObject.layer = LayerMask.NameToLayer("Default"); }
-        void IPawnSpawnable.OnFinishSpawnHandler() { __pawnMovement.capsule.gameObject.layer = LayerMask.NameToLayer("Pawn"); }
+        void IPawnSpawnable.OnStartSpawnHandler() {}
+        void IPawnSpawnable.OnFinishSpawnHandler() 
+        { 
+            if (this is IPlayerActionListener listener)
+                GameContext.Instance.playerCtrler.RegisterPlayerActionListener(listener);
+        }
         void IPawnSpawnable.OnDespawnedHandler() {}
         void IPawnSpawnable.OnDeadHandler() 
         { 
+            if (this is IPlayerActionListener listener)
+                GameContext.Instance.playerCtrler.UnregisterPlayerActionListener(listener);
+
             __pawnAnimCtrler.mainAnimator.SetTrigger("OnDead"); 
             __pawnMovement.SetMovementEnabled(false);
         }

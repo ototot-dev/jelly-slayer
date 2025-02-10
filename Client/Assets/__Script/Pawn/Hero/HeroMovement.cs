@@ -3,7 +3,6 @@ using FIMSpace.FProceduralAnimation;
 using static FIMSpace.FProceduralAnimation.LegsAnimator;
 using UniRx;
 using System;
-using Obi;
 
 namespace Game
 {

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using FIMSpace.Generating.Rules.Modelling;
+using MainTable;
 using UniRx;
 using UnityEngine;
 using static FIMSpace.FProceduralAnimation.LegsAnimator;
@@ -13,6 +14,11 @@ namespace Game
         [Header("Component")]
         public PawnColliderHelper dashActionColliderHelper;
         public PawnColliderHelper hookingPointColliderHelper;
+
+        public override bool CheckAddictiveActionRunning(string actionName)
+        {
+            return __laserB_disposable != null && actionName == "LaserB";
+        }
 
         public override IDisposable StartOnHitAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
         {
@@ -70,10 +76,12 @@ namespace Game
             return base.StartOnKnockDownAction(ref damageContext, isAddictiveAction);
         }
 
-        public override IDisposable StartCustomAction(ref PawnHeartPointDispatcher.DamageContext damageContext, string actionName)
+        public override IDisposable StartCustomAction(ref PawnHeartPointDispatcher.DamageContext damageContext, string actionName, bool isAddictiveAction = false)
         {
             if (actionName == "Jump")
             {
+                Debug.Assert(!isAddictiveAction);
+
                 return Observable.FromCoroutine(JumpActionCoroutine)
                     .DoOnCancel(() => 
                     {
@@ -91,6 +99,8 @@ namespace Game
             }
             if (actionName == "LaserA")
             {
+                Debug.Assert(!isAddictiveAction);
+
                 return Observable.FromCoroutine(LaserA_ActionCoroutine)
                     .DoOnCancel(() => 
                     {
@@ -104,6 +114,8 @@ namespace Game
             }
             else if (actionName == "LaserB")
             {
+                Debug.Assert(isAddictiveAction);
+
                 __laserB_disposable?.Dispose();
                 __laserB_disposable = Observable.FromCoroutine(LaserB_ActionCoroutine)
                     .DoOnCancel(() => 
@@ -174,7 +186,7 @@ namespace Game
                 .Do(_ => 
                 {
                     laserRenderer.hitFx.transform.position = laserRenderer.transform.position + 0.1f * laserRenderer.transform.forward;
-                    __brain.BB.attachment.laserA_aimPoint.position = __brain.BB.TargetColliderHelper.GetWorldCenter() + 0.2f * Vector3.up;
+                    __brain.BB.attachment.laserAimPoint.position = __brain.BB.TargetColliderHelper.GetWorldCenter() + 0.2f * Vector3.up;
                 }).ToYieldInstruction();
             
             //* 레이저 Fade-In
@@ -190,7 +202,7 @@ namespace Game
             yield return Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(__brain.BB.action.laserA_approachDuration))).Do(_ =>
             {
                 if ((Time.time - waitApproachTimeStamp) > 0.2f)
-                    __brain.BB.attachment.laserA_aimPoint.position = __brain.BB.attachment.laserA_aimPoint.position.LerpSpeed(__brain.BB.TargetColliderHelper.GetWorldCenter() + 0.2f * Vector3.up, __brain.BB.action.laserA_approachSpeed, Time.deltaTime);
+                    __brain.BB.attachment.laserAimPoint.position = __brain.BB.attachment.laserAimPoint.position.LerpSpeed(__brain.BB.TargetColliderHelper.GetWorldCenter() + 0.2f * Vector3.up, __brain.BB.action.laserA_approachSpeed, Time.deltaTime);
 
                 var hitIndex = LaserActionTraceTarget(laserRenderer.transform.position, laserRenderer.transform.forward, laserRenderer.lineWidth * 0.5f, __brain.BB.action.laserA_maxDistance, hitLayerMask);
                 if (hitIndex >= 0)
@@ -206,7 +218,7 @@ namespace Game
                 }
                 else
                 {
-                    laserRenderer.hitFx.transform.position = laserRenderer.transform.position + __brain.BB.action.laserA_maxDistance * laserRenderer.transform.forward;
+                    laserRenderer.hitFx.transform.position = laserRenderer.hitFx.transform.position.LerpSpeed(laserRenderer.transform.position + __brain.BB.action.laserA_maxDistance * laserRenderer.transform.forward, __brain.BB.action.laserB_forwardSpeed, Time.deltaTime);
                 }
             }).ToYieldInstruction();
 
@@ -225,7 +237,7 @@ namespace Game
                 if (hitIndex >= 0)
                     laserRenderer.hitFx.transform.position = __hitsNonAlloc[hitIndex].point + hitOffset * __hitsNonAlloc[hitIndex].normal;
                 else
-                    laserRenderer.hitFx.transform.position = __brain.BB.attachment.laserA_aimPoint.position;
+                    laserRenderer.hitFx.transform.position = laserRenderer.hitFx.transform.position.LerpSpeed(__brain.BB.attachment.laserAimPoint.position, __brain.BB.action.laserA_forwardSpeed, Time.deltaTime);
 
                 if (hitIndex >= 0 && __hitsNonAlloc[hitIndex].collider.TryGetComponent<PawnColliderHelper>(out var hitColliderHelper) && hitColliderHelper.pawnBrain == __brain.BB.TargetColliderHelper.pawnBrain)
                 {
@@ -244,7 +256,7 @@ namespace Game
                     sweepAlpha += Time.deltaTime / __brain.BB.action.laserA_sweepDuration;
                 }
 
-                __brain.BB.attachment.laserA_aimPoint.position = laserRenderer.transform.position +  __brain.BB.action.laserA_maxDistance * Vector3.Slerp(sweepStartVec, sweepEndVec, sweepAlpha);
+                __brain.BB.attachment.laserAimPoint.position = laserRenderer.transform.position + __brain.BB.action.laserA_maxDistance * Vector3.Slerp(sweepStartVec, sweepEndVec, sweepAlpha);
             }).ToYieldInstruction();
 
             //* 레이저 발사 종료
@@ -258,54 +270,58 @@ namespace Game
         IEnumerator LaserB_ActionCoroutine()
         {
             var laserRenderer = __brain.BB.attachment.laserB_Renderer;
-
             laserRenderer.flashFx.Play();
-            laserRenderer.hitFx.Play();
-            laserRenderer.hitFx.transform.position = laserRenderer.transform.position;
 
             //* 차징 스텝
             yield return Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(__brain.BB.action.laserB_charingDuration))).Do(_ =>
             {
-                laserRenderer.hitFx.transform.position = laserRenderer.transform.position;
+                laserRenderer.hitFx.transform.position = __brain.BB.attachment.laserAimPoint.position = __brain.BB.TargetColliderHelper.GetWorldCenter();
             }).ToYieldInstruction();
 
             //* 레이저 Fade-In        
-            laserRenderer.FadeIn(0.2f, 0.2f);
-            yield return new WaitForSeconds(0.2f);
+            laserRenderer.FadeIn(0.2f, 0.1f);
+            yield return new WaitForSeconds(0.1f);
 
             var hitLayerMask = LayerMask.GetMask("Terrain", "PhysicsBody", "HitBox", "HitBoxBlocking", "Obstacle");
             var hitOffset = 0.1f;
-            var damageCount = 0;
+            var sendDamageTimeStamp = 0f;
 
             //* 레이저 발사
             yield return Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(__brain.BB.action.laserB_stayDuration))).Do(_ =>
             {
-                __brain.BB.attachment.laserA_aimPoint.position = __brain.BB.TargetColliderHelper.GetWorldCenter();
+                //* 히트하지 전까지만 목표를 추적함
+                if (!__brain.BB.TargetColliderHelper.pawnBrain.PawnBB.IsDown)
+                    __brain.BB.attachment.laserAimPoint.position = __brain.BB.TargetColliderHelper.GetWorldCenter();
 
                 var hitIndex = LaserActionTraceTarget(laserRenderer.transform.position, laserRenderer.transform.forward, laserRenderer.lineWidth, __brain.BB.action.laserB_maxDistance, hitLayerMask);
-                if (hitIndex >= 0)
+                if (hitIndex >= 0 && __hitsNonAlloc[hitIndex].collider.TryGetComponent<PawnColliderHelper>(out var hitColliderHelper) && hitColliderHelper.pawnBrain == __brain.BB.TargetColliderHelper.pawnBrain)
                 {
                     //* 데미지 처리 (데미지는 한번만 처리함)
-                    if (damageCount == 0 && __hitsNonAlloc[hitIndex].collider.TryGetComponent<PawnColliderHelper>(out var hitColliderHelper) && hitColliderHelper.pawnBrain == __brain.BB.TargetColliderHelper.pawnBrain)
+                    if ((Time.time - sendDamageTimeStamp) > __brain.BB.action.laserA_damageInterval)
                     {
-                        __brain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__brain, hitColliderHelper.pawnBrain, currActionContext.actionData, hitColliderHelper.pawnCollider, false));
-                        damageCount++;
+                        var actionData = DatasheetManager.Instance.GetActionData(PawnId.Etasphera42, "LaserB");
+                        Debug.Assert(actionData != null);
+
+                        __brain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__brain, hitColliderHelper.pawnBrain, actionData, hitColliderHelper.pawnCollider, false));
+                        sendDamageTimeStamp = Time.time;
                     }
 
+                    if (!laserRenderer.hitFx.isPlaying) laserRenderer.hitFx.Play();
                     laserRenderer.hitFx.transform.position = __hitsNonAlloc[hitIndex].point + hitOffset * __hitsNonAlloc[hitIndex].normal;
                 }
                 else
                 {
-                    laserRenderer.hitFx.transform.position = laserRenderer.transform.position + __brain.BB.action.laserB_maxDistance * laserRenderer.transform.forward;
+                    if (laserRenderer.hitFx.isPlaying) laserRenderer.hitFx.Stop();
+                    laserRenderer.hitFx.transform.position = laserRenderer.hitFx.transform.position.LerpSpeed(laserRenderer.transform.position + __brain.BB.action.laserB_maxDistance * laserRenderer.transform.forward, __brain.BB.action.laserB_forwardSpeed, Time.deltaTime);
                 }
             }).ToYieldInstruction();
 
             //* 레이저 발사 종료
             laserRenderer.flashFx.Stop();
             laserRenderer.hitFx.Stop();
-            laserRenderer.FadeOut(0.2f);
+            laserRenderer.FadeOut(0.1f);
 
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.1f);
         }
 
         int LaserActionTraceTarget(Vector3 origin, Vector3 direction, float radius, float distance, int layerMask)

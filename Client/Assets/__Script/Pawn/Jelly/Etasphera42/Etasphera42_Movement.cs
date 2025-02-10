@@ -17,15 +17,18 @@ namespace Game
 
         public void FinishJump()
         {
-            __landingTimeStamp = Time.time;
             __isFalling = false;
             __brain.BB.action.isJumping.Value = false;
         }
 
         bool __isFalling;
         float __jumpTimeStamp;
-        float __landingTimeStamp;
         Etasphera42_Brain __brain;
+
+        public override bool CanMove()
+        {
+            return !__brain.ActionCtrler.CheckAddictiveActionRunning("LaserB") && base.CanMove();
+        }
 
         protected override void AwakeInternal()
         {

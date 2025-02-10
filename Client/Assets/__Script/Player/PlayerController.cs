@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UniRx;
 using UnityEngine;
@@ -33,6 +34,28 @@ namespace Game
         public bool _isEnable_Jump = true;
         public bool _isEnable_Guard = true;
         public bool _isEnable_Parry = true;
+
+#region IPlayerActionListener 인터페이스 API
+        HashSet<IPlayerActionListener> __playerActionListeners = new();
+
+        public void RegisterPlayerActionListener(IPlayerActionListener listener) { __playerActionListeners.Add(listener); }
+        public void UnregisterPlayerActionListener(IPlayerActionListener listener) { __playerActionListeners.Remove(listener); }
+        public void SendPlayerActionEvent(string eventName)
+        {
+            foreach (var l in __playerActionListeners)
+                l.OnPlayerActionEvent(eventName);
+        }
+        public void SendPlayerActionStatus(PawnStatus status, float strength, float duration)
+        {
+            foreach (var l in __playerActionListeners)
+                l.OnPlayerActionStatus(status, strength, duration);
+        }
+        public void SendPlayerActionDamage(PawnHeartPointDispatcher.DamageContext damageContext)
+        {
+            foreach (var l in __playerActionListeners)
+                l.OnPlayerActionDamage(damageContext);
+        }
+#endregion
 
         public GameObject SpawnHeroPawn(GameObject heroPrefab, bool possessImmediately = false)
         {
@@ -206,6 +229,7 @@ namespace Game
                         possessedBrain.BB.stat.ReduceStamina(jumpStaminaCost);
                     }
 
+                    SendPlayerActionEvent(nameof(OnJump));
                     GameManager.Instance.PawnJumped();
                 }
             }

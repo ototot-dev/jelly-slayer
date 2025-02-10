@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Game
 {
@@ -60,5 +61,12 @@ namespace Game
 #if UNITY_EDITOR
         Dictionary<PawnStatus, Tuple<float, float>>.Enumerator GetStatusEnumerator();
 #endif
+    }
+
+    public interface IPlayerActionListener
+    {
+        void OnPlayerActionEvent(string eventName);
+        void OnPlayerActionStatus(PawnStatus status, float strength, float duration);
+        void OnPlayerActionDamage(PawnHeartPointDispatcher.DamageContext damageContext);
     }
 }
