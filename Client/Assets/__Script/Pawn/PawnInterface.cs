@@ -45,8 +45,8 @@ namespace Game
     public interface IPawnTargetable
     {
         PawnColliderHelper StartTargeting();
-        PawnColliderHelper NextTargeting();
-        PawnColliderHelper CurrTargeting();
+        PawnColliderHelper NextTarget();
+        PawnColliderHelper CurrTarget();
         void StopTargeting();
     }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 using XftWeapon;
@@ -52,6 +53,8 @@ namespace Game
                     EffectManager.Instance.Show(__brain.BB.graphics.onHitFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()) * Quaternion.Euler(90f, 0f, 0f), Vector3.one, 1f);
                     SoundManager.Instance.PlayWithClip(__brain.BB.audios.onHitAudioClip);
                 }
+
+                ShowHitColor();
             }
             else if (damageContext.actionResult == ActionResults.Missed)
             {
@@ -90,6 +93,22 @@ namespace Game
             return base.StartOnKnockDownAction(ref damageContext, isAddictiveAction);
         }
 
+        void ShowHitColor()
+        {
+            foreach (var r in __brain.BB.attachment.bodyMeshRenderers)
+                r.materials = new Material[] { r.material, new(__brain.BB.graphics.hitColor) };
+
+            __hitColorDisposable?.Dispose();
+            __hitColorDisposable = Observable.Timer(TimeSpan.FromMilliseconds(100)).Subscribe(_ => 
+            {
+                __hitColorDisposable = null;
+                foreach (var r in __brain.BB.attachment.bodyMeshRenderers)
+                    r.materials = new Material[] { r.materials[0] };
+            }).AddTo(this);
+        }
+
+        readonly HashSet<Renderer> __hitColorRenderers = new();
+        IDisposable __hitColorDisposable;
         SoldierBrain __brain;
 
         protected override void AwakeInternal()

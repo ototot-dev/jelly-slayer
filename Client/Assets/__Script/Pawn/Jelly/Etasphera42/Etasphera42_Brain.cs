@@ -26,14 +26,14 @@ namespace Game
             return GetCurrentTarget();
         }
 
-        PawnColliderHelper IPawnTargetable.NextTargeting()
+        PawnColliderHelper IPawnTargetable.NextTarget()
         {
             if (++__currTargetingIndex == HitBoxIndices.Max)
                 __currTargetingIndex = HitBoxIndices.Body;
             return GetCurrentTarget();
         }
 
-        PawnColliderHelper IPawnTargetable.CurrTargeting()
+        PawnColliderHelper IPawnTargetable.CurrTarget()
         {
             return GetCurrentTarget();
         }

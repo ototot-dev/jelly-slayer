@@ -65,6 +65,9 @@ namespace Game
             public GameObject onBlockedFx;
             public GameObject onGuardBreakFx;
 
+            [Header("Material")]
+            public Material hitColor;
+
             [Header("Attached")]
             public Transform BlockingFxAttachPoint;
         }
@@ -84,5 +87,16 @@ namespace Game
         }
 
         public Audios audios = new();
+
+        [Serializable]
+        public class Attachment
+        {
+            public Renderer[] bodyMeshRenderers;
+            public Transform BlockingFxAttachPoint;
+            // public Transform laserAimPoint;
+            // public Etasphera42_LaserRenderer laserB_Renderer;
+        }
+
+        public Attachment attachment = new();
     }
 }

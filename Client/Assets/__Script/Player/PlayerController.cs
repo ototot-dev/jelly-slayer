@@ -275,7 +275,7 @@ namespace Game
             else
             {
                 //* 내부 타겟팅 순회
-                if ((possessedBrain.BB.TargetBrain as IPawnTargetable).NextTargeting() != null)
+                if ((possessedBrain.BB.TargetBrain as IPawnTargetable).NextTarget() != null)
                     return;
 
                 var colliderHelpers = possessedBrain.PawnSensorCtrler.ListeningColliders.Select(c => c.GetComponent<PawnColliderHelper>())
