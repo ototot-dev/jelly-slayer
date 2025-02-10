@@ -41,8 +41,16 @@ namespace Game
         {
             InitManager.Initialize();
 
-            GameManager.Instance.ShowLevel_TrainingRoom(false);
-            GameManager.Instance.ShowLevel_ShootingRange(false);
+            if (_gameMode == GameModes.BattleTest)
+            {
+                SetMode(GameModes.BattleTest);
+            }
+            else
+            {
+                GameManager.Instance.ShowLevel_TrainingRoom(false);
+                GameManager.Instance.ShowLevel_ShootingRange(false);
+            }
+
         }
 
         public void SetMode(GameModes mode) 
