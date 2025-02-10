@@ -11,6 +11,7 @@ namespace Game
         public FloatReactiveProperty heartPoint = new();
         public PawnBrainController PawnBrain { get; private set; }
         public float LastDamageTimeStamp { get; private set; }
+        public float LastParriedTimeStamp { get; private set; }
 
         void Awake()
         {
@@ -414,6 +415,10 @@ namespace Game
                     __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "senderPenalty is added.", "PawnStatus", damageContext.senderPenalty.Item1, "duration", damageContext.senderPenalty.Item2, "senderBrain", damageContext.senderBrain);
                     damageContext.senderBrain.PawnStatusCtrler.AddStatus(damageContext.senderPenalty.Item1, 1f, damageContext.senderPenalty.Item2);
                 }
+
+                if (damageContext.actionResult == ActionResults.GuardParried && damageContext.senderBrain.TryGetComponent<PawnHeartPointDispatcher>(out var senderPawnHp))
+                    senderPawnHp.LastParriedTimeStamp = Time.time;
+
                 damageContext.senderBrain.PawnHP.onDamaged?.Invoke(damageContext);
             }
 

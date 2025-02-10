@@ -257,7 +257,7 @@ MonoBehaviour:
   _useFlatBaseForGroundChecks: 0
   _collisionLayers:
     serializedVersion: 2
-    m_Bits: 28744
+    m_Bits: 12424
   _triggerInteraction: 1
   _advanced:
     minMoveDistance: 0
@@ -1135,6 +1135,7 @@ GameObject:
   - component: {fileID: 3735996293672512473}
   - component: {fileID: 1458070737609187091}
   - component: {fileID: 7398242047268905765}
+  - component: {fileID: 8492852247566670552}
   m_Layer: 12
   m_Name: SM_Prop_Shield_01
   m_TagString: Untagged
@@ -1230,10 +1231,26 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.29473624
-  m_Height: 1.0206949
+  m_Radius: 0.2
+  m_Height: 1
   m_Direction: 1
-  m_Center: {x: 0.0000003948751, y: 0.51034707, z: -0.18}
+  m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!114 &8492852247566670552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1098007411617824454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c93af81a158ff4ebbb764993c3a8ac91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pawnRigidbody: {fileID: 0}
+  pawnCollider: {fileID: 0}
+  pawnBrain: {fileID: 0}
+  sensorTrigger: 0
 --- !u!1 &1115307538362855896
 GameObject:
   m_ObjectHideFlags: 0
@@ -3940,7 +3957,7 @@ GameObject:
   - component: {fileID: 7979756587045458682}
   - component: {fileID: 3317346212697241151}
   - component: {fileID: 7827817497564531622}
-  m_Layer: 11
+  m_Layer: 12
   m_Name: HitBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9073,7 +9090,7 @@ LODGroup:
     - renderer: {fileID: 9194429152969378777}
     - renderer: {fileID: 1286483666596674130}
     - renderer: {fileID: 2578511542226120213}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!114 &1265836189428614339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20276,6 +20293,7 @@ MonoBehaviour:
   coreColliderHelper: {fileID: 168326260960991395}
   bodyHitColliderHelper: {fileID: 7827817497564531622}
   parryColliderHelper: {fileID: 0}
+  shieldHitColliderHelper: {fileID: 0}
   visibilityChecker: {fileID: 0}
   owner: {fileID: 0}
   tickInterval: 0.1
@@ -20396,6 +20414,7 @@ MonoBehaviour:
     onMissedFx: {fileID: 8338894570034044190, guid: 727c6a11e51e81140a330e6639938e26, type: 3}
     onBlockedFx: {fileID: 4961553964636584268, guid: d7027452566465c47aeacb4cdcf40015, type: 3}
     onGuardBreakFx: {fileID: 8905666514069622321, guid: a84cbbb54404c3d499340f02e684aab0, type: 3}
+    hitColor: {fileID: 2100000, guid: a352a16cd87054b82af9135444ad0122, type: 2}
     BlockingFxAttachPoint: {fileID: 827300965817690329}
   audios:
     onHitAudioClip: {fileID: 8300000, guid: bba0a0725054ad0419aecf461293c8e9, type: 3}
@@ -20405,6 +20424,28 @@ MonoBehaviour:
     onMissedAudioClip: {fileID: 8300000, guid: b47bb87ddf4afcc49ba83a4999cf050e, type: 3}
     onBlockedAudioClip: {fileID: 8300000, guid: b47bb87ddf4afcc49ba83a4999cf050e, type: 3}
     onGuardBreakAudioClip: {fileID: 8300000, guid: 93fc0b243c8d39441a33d29e6146b688, type: 3}
+  attachment:
+    bodyMeshRenderers:
+    - {fileID: 6326383988657614727}
+    - {fileID: 7513062555006303461}
+    - {fileID: 509346161713306460}
+    - {fileID: 5537948711049648370}
+    - {fileID: 3921102808047915454}
+    - {fileID: 316897482240028709}
+    - {fileID: 3662317525877549392}
+    - {fileID: 6236082419928929425}
+    - {fileID: 4048807129569063123}
+    - {fileID: 1471542358613324643}
+    - {fileID: 4544499011187886280}
+    - {fileID: 7740533778098207567}
+    - {fileID: 5783114930764202393}
+    - {fileID: 4204017175760051160}
+    - {fileID: 245716065519010877}
+    - {fileID: 6830847616707725790}
+    - {fileID: 272344135153078987}
+    - {fileID: 3483022944015183678}
+    shieldMeshRenderer: {fileID: 1458070737609187091}
+    BlockingFxAttachPoint: {fileID: 827300965817690329}
 --- !u!114 &8593737910688562853
 MonoBehaviour:
   m_ObjectHideFlags: 0
