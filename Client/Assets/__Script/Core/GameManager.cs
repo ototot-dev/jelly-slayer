@@ -3,9 +3,20 @@ using UnityEngine;
 
 public class GameManager : MonoSingleton<GameManager>
 {
-    public void SpawnHero()
+    public void SpawnHero(Vector3 vPos)
     {
-        GameContext.Instance.playerCtrler.SpawnHeroPawn(Resources.Load<GameObject>("Pawn/Player/Hero_OneUp"), true).transform.SetPositionAndRotation(Vector3.left, Quaternion.identity);
+        if (GameContext.Instance == null || GameContext.Instance.playerCtrler == null) 
+            return;
+
+        var res = Resources.Load<GameObject>("Pawn/Player/Hero_OneUp");
+        var pawnObj = GameContext.Instance.playerCtrler.SpawnHeroPawn(res, true);
+        if (pawnObj == null)
+            return;
+
+        pawnObj.SetActive(true);
+        pawnObj.transform.SetPositionAndRotation(vPos, Quaternion.identity);
+
+        OnSpawned(pawnObj.GetComponent<PawnBrainController>());
     }
 
     public void DespawnHero()
@@ -20,7 +31,8 @@ public class GameManager : MonoSingleton<GameManager>
 
     public void SpawnSoldier()
     {
-        Instantiate(Resources.Load<GameObject>("Pawn/Jelly/JellySoldier")).transform.SetPositionAndRotation(Vector3.right, Quaternion.identity);
+        var pawnObj = Instantiate(Resources.Load<GameObject>("Pawn/Jelly/JellySoldier"));
+        pawnObj.transform.SetPositionAndRotation(Vector3.right + Vector3.up, Quaternion.identity);
     }
 
     public void DespawnSoldier()
@@ -42,23 +54,61 @@ public class GameManager : MonoSingleton<GameManager>
             etasphera42_brain.BB.common.isDead.Value = true;
     }
 
-    public void ShowLevel_HackerDen()
+    public void ShowLevel_HackerDen(bool isShow)
     {
-        GameObject.Find("Launcher").GetComponent<Launcher>().hackerDen.SetActive(true);
+        GameObject.Find("Launcher").GetComponent<Launcher>().hackerDen.SetActive(isShow);
     }
 
-    public void ShowLevel_ShootingRange()
+    public void ShowLevel_ShootingRange(bool isShow)
     {
-        GameObject.Find("Launcher").GetComponent<Launcher>().shootingRange.SetActive(true);
+        GameObject.Find("Launcher").GetComponent<Launcher>().shootingRange.SetActive(isShow);
+    }
+
+    public void ShowLevel_TrainingRoom(bool isShow)
+    {
+        GameObject.Find("Launcher").GetComponent<Launcher>().trainingRoom.SetActive(isShow);
+    }
+
+    public void Activate_Title(bool isActive)
+    {
+        var launcher = GameObject.Find("Launcher").GetComponent<Launcher>();
+        Activate_ObjList(isActive, launcher._objTitleList);
+    }
+    public void Activate_Game(bool isActive)
+    {
+        var launcher = GameObject.Find("Launcher").GetComponent<Launcher>();
+        Activate_ObjList(isActive, launcher._objGameList);
+    }
+    public void Activate_Tutorial(bool isActive)
+    {
+        var launcher = GameObject.Find("Launcher").GetComponent<Launcher>();
+        Activate_ObjList(isActive, launcher._objTutorialList);
+    }
+
+    void Activate_ObjList(bool isActive, GameObject[] objList) 
+    { 
+        foreach (var obj in objList) 
+        { 
+            obj.SetActive(isActive);
+        }
     }
 
     public void HideCurrentLevel()
     {
-        GameObject.Find("Launcher").GetComponent<Launcher>().hackerDen.SetActive(false);
-        GameObject.Find("Launcher").GetComponent<Launcher>().shootingRange.SetActive(false);
+        var launcherObj = GameObject.Find("Launcher");
+        var launcher = launcherObj.GetComponent<Launcher>();
+
+        launcher.hackerDen.SetActive(false);
+        launcher.shootingRange.SetActive(false);
     }
 
     // 주석    
+    public delegate void OnGameStart();
+    public OnGameStart _delGameStart;
+
+    public delegate void OnGameEnd();
+    public OnGameEnd _delGameEnd;
+
     public delegate void OnPawnSpawned(PawnBrainController pawn);
     public OnPawnSpawned _delPawnSpawned;
 
@@ -71,6 +121,7 @@ public class GameManager : MonoSingleton<GameManager>
     public delegate void OnPawnJumped();
     public OnPawnJumped _delPawnJumped;
 
+    public bool _isGameStart = false;
     public Vector3 _vInitPos;
 
     // Start is called before the first frame update
@@ -89,8 +140,32 @@ public class GameManager : MonoSingleton<GameManager>
             objPlane.SetActive(false);
         }
     }
-    public void Spawn(PawnBrainController pawn) 
+    public void StartGame() 
+    {
+        _isGameStart = true;
+
+        _delGameStart?.Invoke();
+    }
+    public void CloseGame()
+    {
+        _isGameStart = false;
+
+        Activate_Game(false);
+        ShowLevel_HackerDen(false);
+        ShowLevel_ShootingRange(false);
+
+        DespawnHero();
+        GameContext.Instance.playerCtrler.Unpossess();
+
+        DespawnEtasphera42();
+        DespawnSoldier();
+
+        _delGameEnd?.Invoke();
+    }
+    public void OnSpawned(PawnBrainController pawn) 
     { 
+        if(pawn == null) return;
+
         _delPawnSpawned?.Invoke(pawn);
     }
     public void PawnDamaged(ref PawnHeartPointDispatcher.DamageContext damageContext) 

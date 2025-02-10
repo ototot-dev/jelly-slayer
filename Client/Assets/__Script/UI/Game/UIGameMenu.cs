@@ -1,3 +1,4 @@
+using Game;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -17,6 +18,10 @@ public class UIGameMenu : MonoBehaviour
     }
     public void OnClickGameExit() 
     {
-        SceneManager.LoadScene("Title");
+        //SceneManager.LoadScene("Title");
+        gameObject.SetActive(false);
+        GameManager.Instance.CloseGame();
+
+        GameObject.Find("Launcher").GetComponent<Launcher>().SetMode(Launcher.GameModes.Title);
     }
 }

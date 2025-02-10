@@ -15,6 +15,8 @@ namespace Game
             SoundManager.Instance.Init();
             NpcSpawnManager.Instance.Init();
 
+            GameManager.Instance.CheckInstance();
+
             _isInit = true;
         }
     }

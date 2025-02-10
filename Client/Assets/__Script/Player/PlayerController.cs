@@ -158,7 +158,7 @@ namespace Game
 
         public void OnLook(InputValue value)
         {
-            if (_isEnable_Look == false)
+            if (_isEnable_Look == false || possessedBrain == null)
                 return;
             if (GameContext.Instance.cameraCtrler != null && 
                 GameContext.Instance.cameraCtrler.TryGetPickingPointOnTerrain(value.Get<Vector2>(), out var pickingPoint))
