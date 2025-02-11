@@ -91,7 +91,7 @@ namespace Game
                 mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
                 mainAnimator.SetLayerWeight(1, Mathf.Clamp01(mainAnimator.GetLayerWeight(1) + ((__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CurrActionName != "!OnHit") ? actionLayerBlendSpeed : -actionLayerBlendSpeed) * Time.deltaTime));
                 mainAnimator.SetLayerWeight(2, 1f);
-                mainAnimator.SetBool("IsMoving", __brain.Movement.CurrVelocity.sqrMagnitude > 0);
+                mainAnimator.SetBool("IsMoving", __brain.Movement.CurrVelocity.sqrMagnitude > 0 && !__brain.ActionCtrler.CheckKnockBackRunning());
                 mainAnimator.SetBool("IsMovingStrafe", __brain.Movement.freezeRotation);
                 mainAnimator.SetFloat("MoveSpeed", __brain.Movement.CurrVelocity.magnitude);
                 mainAnimator.SetFloat("MoveAnimSpeed", 1f);

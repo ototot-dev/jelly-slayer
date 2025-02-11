@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 168326260960991395}
   - component: {fileID: 3491578883216556144}
   - component: {fileID: 1913970846515973815}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8989,7 +8989,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.1, y: 1.1, z: 1.1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8554854225558961486}
@@ -20333,7 +20333,7 @@ MonoBehaviour:
   updateEnabled: 1
   lateUpdateEnabled: 1
   fixedUpdateEnabled: 1
-  debugActionDisabled: 1
+  debugActionDisabled: 0
 --- !u!114 &1626602440402030822
 MonoBehaviour:
   m_ObjectHideFlags: 0

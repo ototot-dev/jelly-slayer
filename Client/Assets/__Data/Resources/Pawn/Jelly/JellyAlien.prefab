@@ -379,8 +379,8 @@ Transform:
   m_GameObject: {fileID: 1134071198423779485}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5, y: -0.5, z: -0.5, w: 0.5}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0.0003, y: -0.0223, z: 0.0002}
+  m_LocalScale: {x: 1, y: 2, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6896400903623736736}
@@ -418,7 +418,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9c3d8522ac719e044b18af6d11f7bb45, type: 2}
+  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2117,7 +2117,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f36d9440b0b70f84a9133b9c228c3b21, type: 2}
+  - {fileID: 2100000, guid: eb9916568a9d33c4a8ec7c6344a43e9e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3780,9 +3780,9 @@ MonoBehaviour:
     skeletonFillExtraBonesList: []
     MusclesPower: 1
     SpringsValue: 1500
-    SpringsOnFall: 0
+    SpringsOnFall: 50
     DampingValue: 40
-    DampingValueOnFall: 0
+    DampingValueOnFall: 1
     HardMatching: 1
     HardMatchPositions: 1
     HardMatchPositionsOnFall: 0
@@ -3821,7 +3821,7 @@ MonoBehaviour:
     ProjectionMode: 0
     PreProcessing: 0
     RagdollBlend: 1
-    animatingMode: 1
+    animatingMode: 0
     UseReconstruction: 0
     UnitySolverIterations: 12
     Calibrate: 1
@@ -5153,8 +5153,8 @@ Transform:
   m_GameObject: {fileID: 8057140280658733147}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5, y: -0.5, z: -0.5, w: 0.5}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0.0001, y: 0.0155, z: -0.0001}
+  m_LocalScale: {x: 1, y: 2, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1794549956671138629}
@@ -5192,7 +5192,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9c3d8522ac719e044b18af6d11f7bb45, type: 2}
+  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5425,7 +5425,7 @@ MonoBehaviour:
   rigBuilder: {fileID: 0}
   rigSetup: {fileID: 0}
   legAnimator: {fileID: 8506788649860838208}
-  ragdollAnimator: {fileID: 0}
+  ragdollAnimator: {fileID: 2184916005730746549}
   jellyMeshSlot: {fileID: 0}
   leftWeaponSlot: {fileID: 7280174105718298382}
   rightWeaponSlot: {fileID: 7280477188958709450}

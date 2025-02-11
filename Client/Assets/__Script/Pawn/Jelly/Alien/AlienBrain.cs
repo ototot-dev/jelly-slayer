@@ -9,8 +9,15 @@ namespace Game
     [RequireComponent(typeof(AlienBlackboard))]
     [RequireComponent(typeof(AlienAnimController))]
     [RequireComponent(typeof(AlienActionController))]
-    public class AlienBrain : JellyHumanoidBrain
+    public class AlienBrain : JellyHumanoidBrain, IPawnTargetable
     {
+#region IPawnTargetable 구현
+        PawnColliderHelper IPawnTargetable.StartTargeting() => bodyHitColliderHelper;
+        PawnColliderHelper IPawnTargetable.NextTarget() => null;
+        PawnColliderHelper IPawnTargetable.CurrTarget() => bodyHitColliderHelper;
+        void IPawnTargetable.StopTargeting() {}
+#endregion
+
         [Header("Debug")]
         public bool debugActionDisabled;
 

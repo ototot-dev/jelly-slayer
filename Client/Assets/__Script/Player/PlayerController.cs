@@ -278,15 +278,18 @@ namespace Game
                 if ((possessedBrain.BB.TargetBrain as IPawnTargetable).NextTarget() != null)
                     return;
 
-                var colliderHelpers = possessedBrain.PawnSensorCtrler.ListeningColliders.Select(c => c.GetComponent<PawnColliderHelper>())
+                var targetableBrains = possessedBrain.PawnSensorCtrler.ListeningColliders.Select(c => c.GetComponent<PawnColliderHelper>())
                         .Where(h => h != null && h.pawnBrain != null && !h.pawnBrain.PawnBB.IsDead && h.pawnBrain is IPawnTargetable)
-                        .ToArray();
+                        .Select(h => h.pawnBrain).Distinct().ToArray();
 
-                for (int i = 0; i < colliderHelpers.Length; i++)
+                for (int i = 0; i < targetableBrains.Length; i++)
                 {
-                    if (colliderHelpers[i].pawnBrain == possessedBrain.BB.TargetBrain)
+                    if (targetableBrains[i] == possessedBrain.BB.TargetBrain)
                     {
-                        possessedBrain.BB.target.targetPawnHP.Value = (i + 1 < colliderHelpers.Length ? colliderHelpers[i + 1] : colliderHelpers[0]).pawnBrain.PawnHP;
+                        var nextTargetIndex = i + 1;
+                        if (nextTargetIndex >= targetableBrains.Length) nextTargetIndex = 0;
+
+                        possessedBrain.BB.target.targetPawnHP.Value = targetableBrains[nextTargetIndex].PawnHP;
                         (possessedBrain.BB.TargetBrain as IPawnTargetable).StartTargeting();
                         return;
                     }

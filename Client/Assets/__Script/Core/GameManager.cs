@@ -31,8 +31,7 @@ public class GameManager : MonoSingleton<GameManager>
 
     public void SpawnSoldier()
     {
-        var pawnObj = Instantiate(Resources.Load<GameObject>("Pawn/Jelly/JellySoldier"));
-        pawnObj.transform.SetPositionAndRotation(Vector3.right + Vector3.up, Quaternion.identity);
+        Instantiate(Resources.Load<GameObject>("Pawn/Jelly/JellySoldier")).transform.SetPositionAndRotation(Vector3.right + Vector3.up, Quaternion.identity);
     }
 
     public void DespawnSoldier()
@@ -40,6 +39,18 @@ public class GameManager : MonoSingleton<GameManager>
         var soldierBrain = GameObject.FindFirstObjectByType<SoldierBrain>();
         if (soldierBrain != null)
             soldierBrain.BB.common.isDead.Value = true;
+    }
+
+    public void SpawnDroid(Vector3 position)
+    {
+        Instantiate(Resources.Load<GameObject>("Pawn/Jelly/JellyAliend")).transform.SetPositionAndRotation(position, Quaternion.identity);
+    }
+
+    public void DespawnDroid()
+    {
+        var alienBrain = GameObject.FindFirstObjectByType<AlienBrain>();
+        if (alienBrain != null)
+            alienBrain.BB.common.isDead.Value = true;
     }
 
     public void SpawnEtasphera42()

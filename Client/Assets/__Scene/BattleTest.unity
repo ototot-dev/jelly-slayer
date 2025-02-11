@@ -434,43 +434,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8fb51fe1cfd799648b58ed3e9c0f1612, type: 3}
---- !u!84 &19379163
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 640
-  m_Height: 360
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 94
-  m_ColorFormat: 4
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 1
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 0
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1001 &20691215
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12164,17 +12127,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a28acc233a000aa4f8b9d2f66c391fa8, type: 3}
---- !u!114 &417225992 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2184916005730746549, guid: 0b9fc09354ec64912b836f5677c9f5c8, type: 3}
-  m_PrefabInstance: {fileID: 530634125}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 104179351ca7dd24a8f5bd7beecf8d06, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &418799083
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15296,10 +15248,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 180640794804867358, guid: 0b9fc09354ec64912b836f5677c9f5c8, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1.5
-      objectReference: {fileID: 0}
     - target: {fileID: 791442315315432696, guid: 0b9fc09354ec64912b836f5677c9f5c8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -15340,22 +15288,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1811753942648848682, guid: 0b9fc09354ec64912b836f5677c9f5c8, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2752227257672566115, guid: 0b9fc09354ec64912b836f5677c9f5c8, type: 3}
-      propertyPath: ragdollAnimator
-      value: 
-      objectReference: {fileID: 417225992}
     - target: {fileID: 8861700421523015734, guid: 0b9fc09354ec64912b836f5677c9f5c8, type: 3}
       propertyPath: m_Name
       value: JellyAlien
       objectReference: {fileID: 0}
-    - target: {fileID: 9087182296524324895, guid: 0b9fc09354ec64912b836f5677c9f5c8, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: e600b338198602a449203a6e59c0e794, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -18408,7 +18344,7 @@ PrefabInstance:
     - target: {fileID: 9205371885998440386, guid: e96cffa9d00b6b545adfeb26165952cc, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 19379163}
+      objectReference: {fileID: 980681609}
     - target: {fileID: 9205371885998440386, guid: e96cffa9d00b6b545adfeb26165952cc, type: 3}
       propertyPath: orthographic size
       value: 4.2
@@ -21102,13 +21038,17 @@ PrefabInstance:
       propertyPath: _Editor_OnValidateTrigger
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8683783354359918731, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+      propertyPath: debugActionDisabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8861700421523015734, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
       propertyPath: m_Name
       value: JellySoldier
       objectReference: {fileID: 0}
     - target: {fileID: 8861700421523015734, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9098167240469274342, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
       propertyPath: m_LocalScale.x
@@ -33480,6 +33420,43 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7821217888551990375, guid: fec6123700ea2aa44a24818e607ed575, type: 3}
   m_PrefabInstance: {fileID: 1687934520}
   m_PrefabAsset: {fileID: 0}
+--- !u!84 &980681609
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 640
+  m_Height: 360
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 94
+  m_ColorFormat: 4
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 1
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 0
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!1001 &981870923
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -58127,6 +58104,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5a1b286ff0b638f419994e3633d30815, type: 3}
+--- !u!1001 &1878540680
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 791442315315432696, guid: 0b9fc09354ec64912b836f5677c9f5c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.868
+      objectReference: {fileID: 0}
+    - target: {fileID: 791442315315432696, guid: 0b9fc09354ec64912b836f5677c9f5c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 791442315315432696, guid: 0b9fc09354ec64912b836f5677c9f5c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.521
+      objectReference: {fileID: 0}
+    - target: {fileID: 791442315315432696, guid: 0b9fc09354ec64912b836f5677c9f5c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 791442315315432696, guid: 0b9fc09354ec64912b836f5677c9f5c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 791442315315432696, guid: 0b9fc09354ec64912b836f5677c9f5c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 791442315315432696, guid: 0b9fc09354ec64912b836f5677c9f5c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 791442315315432696, guid: 0b9fc09354ec64912b836f5677c9f5c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 791442315315432696, guid: 0b9fc09354ec64912b836f5677c9f5c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 791442315315432696, guid: 0b9fc09354ec64912b836f5677c9f5c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8861700421523015734, guid: 0b9fc09354ec64912b836f5677c9f5c8, type: 3}
+      propertyPath: m_Name
+      value: JellyAlien (1)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0b9fc09354ec64912b836f5677c9f5c8, type: 3}
 --- !u!4 &1878563011 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6029872931248605079, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
@@ -68992,6 +69026,7 @@ SceneRoots:
   - {fileID: 672230230}
   - {fileID: 2053694352}
   - {fileID: 530634125}
+  - {fileID: 1878540680}
   - {fileID: 48199374}
   - {fileID: 562150559}
   - {fileID: 729516252}
