@@ -1,8 +1,10 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using FIMSpace.BonesStimulation;
 using FIMSpace.FEyes;
+using UniRx;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
 
 namespace Game
 {
@@ -27,17 +29,37 @@ namespace Game
         public float boneSimulatorTargetWeight = 0f;
         public Vector3[] moveXmoveY_Table;
         AlienBrain __brain;
-        Rig __rig;
+        HashSet<string> __watchingStateNames = new();
+        public bool CheckWatchingState(string stateName) => __watchingStateNames.Contains(stateName);
 
         void Awake()
         {
             __brain = GetComponent<AlienBrain>();
-            // __rig = mainAnimator.GetComponent<RigBuilder>().layers.First().rig;
             springMassSystem.coreAttachPoint = jellyMeshSlot;
         }
 
         void Start()
         {
+            FindObservableStateMachineTriggerEx("OnDown (Start)").OnStateEnterAsObservable().Subscribe(s => 
+            {
+                __watchingStateNames.Add("OnDown");
+                legAnimator.User_FadeToDisabled(0.1f);
+                ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Standing;
+                Observable.Timer(TimeSpan.FromSeconds(0.1f)).Subscribe(_ => ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Falling).AddTo(this);
+            }).AddTo(this);
+            FindObservableStateMachineTriggerEx("OnDown (End)").OnStateEnterAsObservable().Subscribe(s => 
+            {
+                __brain.Movement.GetCharacterMovement().SetPosition(__brain.AnimCtrler.ragdollAnimator.Handler.DummyReference.transform.GetChild(0).position);
+                ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Standing;
+            }).AddTo(this);
+            FindObservableStateMachineTriggerEx("OnDown (End)").OnStateExitAsObservable().Subscribe(s => 
+            {
+                __watchingStateNames.Remove("OnDown");
+                legAnimator.User_FadeEnabled(0.1f);
+                // __brain.Movement.GetCharacterMovement().SetPosition(__brain.AnimCtrler.ragdollAnimator.Handler.DummyReference.transform.GetChild(0).position);
+                ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Off;
+            }).AddTo(this);
+
             __brain.StatusCtrler.onStatusActive += (buff) =>
             {
                 if (buff == PawnStatus.Staggered || buff == PawnStatus.Groggy)

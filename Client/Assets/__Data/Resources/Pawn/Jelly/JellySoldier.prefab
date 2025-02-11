@@ -257,7 +257,7 @@ MonoBehaviour:
   _useFlatBaseForGroundChecks: 0
   _collisionLayers:
     serializedVersion: 2
-    m_Bits: 12424
+    m_Bits: 12296
   _triggerInteraction: 1
   _advanced:
     minMoveDistance: 0
@@ -5618,6 +5618,37 @@ Transform:
   - {fileID: 223780761960215182}
   - {fileID: 6103839905940590512}
   m_Father: {fileID: 7827977228490854561}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4618020312267389559
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1348428409082901270}
+  m_Layer: 0
+  m_Name: Ragdoll
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1348428409082901270
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4618020312267389559}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 791442315315432696}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4639289187876753470
 GameObject:
@@ -20124,6 +20155,7 @@ Transform:
   m_Children:
   - {fileID: 1109906978231848430}
   - {fileID: 6920421996920446943}
+  - {fileID: 1348428409082901270}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1324956326913573888
@@ -20301,7 +20333,7 @@ MonoBehaviour:
   updateEnabled: 1
   lateUpdateEnabled: 1
   fixedUpdateEnabled: 1
-  debugActionDisabled: 0
+  debugActionDisabled: 1
 --- !u!114 &1626602440402030822
 MonoBehaviour:
   m_ObjectHideFlags: 0
