@@ -355,7 +355,7 @@ MonoBehaviour:
   graphics:
     forceShieldRenderer: {fileID: 409659756734369044}
     onGuardParriedFx: {fileID: 8290359115699195188, guid: e7b0059f09cb15241973d434a922f01a, type: 3}
-    onBlockFx: {fileID: 6286301211705783859, guid: 169fbfdd50145fd4d9a5bcfb3b035bed, type: 3}
+    onBlockFx: {fileID: 4961553964636584268, guid: d7027452566465c47aeacb4cdcf40015, type: 3}
     onBleedFx: {fileID: 7550723611969325616, guid: 51da5c76ba1172d4aa429503f30316b5, type: 3}
   attachment:
     BlockingFxAttachPoint: {fileID: 7529133790137668671}
@@ -419,7 +419,7 @@ MonoBehaviour:
     _version: 3.31
     _category: 
     _comments: 
-    _translation: {x: -143.70131, y: -310.8348}
+    _translation: {x: -127, y: -272}
     _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 0
@@ -447,7 +447,6 @@ MonoBehaviour:
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"MagicPillarBlastYellow":{"_value":3,"_name":"MagicPillarBlastYellow","_id":"7fef883a-e638-41a3-b1f9-cefe9eae4ba5","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"SlashRoundRed":{"_value":4,"_name":"SlashRoundRed","_id":"e2d28471-6969-499f-904b-985050c2c1a2","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"NukeExplosion":{"_value":5,"_name":"NukeExplosion","_id":"bb6533af-e7a5-41e2-8002-8ce241afdfc2","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
-    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"AttackHitBlue":{"_value":6,"_name":"AttackHitBlue","_id":"f4d6b465-2570-4769-9c6a-c9e4041091d4","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}}}'
   _objectReferences:
   - {fileID: 0}
@@ -456,7 +455,6 @@ MonoBehaviour:
   - {fileID: 484316541744064046, guid: 01428f06eefd7b341b077152a3c814f4, type: 3}
   - {fileID: 6209972863228401158, guid: 346845f5ec84256469525d334ac20d56, type: 3}
   - {fileID: 6019855409510650258, guid: 4dde32030b4070945b4db2b6444e5ada, type: 3}
-  - {fileID: 6286301211705783859, guid: 169fbfdd50145fd4d9a5bcfb3b035bed, type: 3}
   _serializedVariables:
   - _json: '{"_value":1,"_name":"SlashRoundYellow","_id":"e3b84ea2-99ac-47d4-b800-c0e4e7d37ec2","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
       UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
@@ -483,11 +481,6 @@ MonoBehaviour:
     _references:
     - {fileID: 0}
     - {fileID: 6019855409510650258, guid: 4dde32030b4070945b4db2b6444e5ada, type: 3}
-  - _json: '{"_value":1,"_name":"AttackHitBlue","_id":"f4d6b465-2570-4769-9c6a-c9e4041091d4","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
-      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
-    _references:
-    - {fileID: 0}
-    - {fileID: 6286301211705783859, guid: 169fbfdd50145fd4d9a5bcfb3b035bed, type: 3}
 --- !u!1 &1101305529287299696
 GameObject:
   m_ObjectHideFlags: 0
@@ -669,7 +662,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7529133790137668671}
   m_Layer: 0
-  m_Name: ShieldFxAttachPoint
+  m_Name: BlockingFxAttachPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

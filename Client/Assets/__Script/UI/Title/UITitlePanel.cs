@@ -36,6 +36,10 @@ public class UITitlePanel : MonoBehaviour
 
         _avatar.SetEmotion(EMOTION.Angry);
     }
+    private void OnEnable()
+    {
+        _imageShadow.color = new Color(0, 0, 0, 1);
+    }
     public void OnClickGameStart()
     {
         SetCursorIndex(0);

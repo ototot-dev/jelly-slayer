@@ -2610,9 +2610,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 325d37b766625f54587161e1b69e2904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameMode: 2
+  _gameMode: 0
   hackerDen: {fileID: 0}
   shootingRange: {fileID: 0}
+  trainingRoom: {fileID: 0}
+  _objTitleList: []
+  _objGameList: []
+  _objTutorialList: []
   timeScale:
     value: 1
 --- !u!1001 &214653906
@@ -7039,7 +7043,7 @@ PrefabInstance:
     - target: {fileID: 9205371885998440386, guid: e96cffa9d00b6b545adfeb26165952cc, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 1535535494}
+      objectReference: {fileID: 1194811985}
     - target: {fileID: 9205371885998440386, guid: e96cffa9d00b6b545adfeb26165952cc, type: 3}
       propertyPath: orthographic size
       value: 4.2
@@ -7936,6 +7940,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _hpBarManager: {fileID: 622720110}
   _dmgTextManager: {fileID: 1904166561}
+  _gamePanel: {fileID: 1458452289}
 --- !u!1001 &731191760
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12970,6 +12975,43 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _anim: {fileID: 778108834}
+--- !u!84 &1194811985
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 576
+  m_Height: 360
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 94
+  m_ColorFormat: 4
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 1
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 0
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!4 &1201593310 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 752522522500434355, guid: b40a718ceec2e354aba9376e98dcc8bb, type: 3}
@@ -15045,6 +15087,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5947494458222356936, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
   m_PrefabInstance: {fileID: 1458452287}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1458452289 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3965475699116710096, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
+  m_PrefabInstance: {fileID: 1458452287}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 074e1326e4b260941b1ad4bd18bde11e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1461378678 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2513109410118053051, guid: 4d9a4da9dbbdcb047b89517e1b5b3687, type: 3}
@@ -15525,43 +15578,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 9176283281908172893, guid: 66507cd02b418fb44914e12da16676b9, type: 3}
   m_PrefabInstance: {fileID: 1558444513}
   m_PrefabAsset: {fileID: 0}
---- !u!84 &1535535494
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 576
-  m_Height: 360
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 94
-  m_ColorFormat: 4
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 1
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 0
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1001 &1539615587
 PrefabInstance:
   m_ObjectHideFlags: 0

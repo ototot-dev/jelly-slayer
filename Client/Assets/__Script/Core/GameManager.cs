@@ -67,17 +67,17 @@ public class GameManager : MonoSingleton<GameManager>
 
     public void ShowLevel_HackerDen(bool isShow)
     {
-        GameObject.Find("Launcher").GetComponent<Launcher>().hackerDen.SetActive(isShow);
+        GameObject.Find("Launcher").GetComponent<Launcher>().hackerDen?.SetActive(isShow);
     }
 
     public void ShowLevel_ShootingRange(bool isShow)
     {
-        GameObject.Find("Launcher").GetComponent<Launcher>().shootingRange.SetActive(isShow);
+        GameObject.Find("Launcher").GetComponent<Launcher>().shootingRange?.SetActive(isShow);
     }
 
     public void ShowLevel_TrainingRoom(bool isShow)
     {
-        GameObject.Find("Launcher").GetComponent<Launcher>().trainingRoom.SetActive(isShow);
+        GameObject.Find("Launcher").GetComponent<Launcher>().trainingRoom?.SetActive(isShow);
     }
 
     public void Activate_Title(bool isActive)
