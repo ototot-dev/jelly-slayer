@@ -48,7 +48,7 @@ public class UIGame : MonoBehaviour
             return;
         if (pawn is HeroBrain)
         {
-            _gamePanel.SetHeroBrain(pawn);
+            _gamePanel?.SetHeroBrain(pawn);
             return;
         }
 

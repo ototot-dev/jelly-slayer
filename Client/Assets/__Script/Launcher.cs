@@ -112,7 +112,7 @@ namespace Game
                             GameContext.Instance.cameraCtrler = GameObject.FindWithTag("MainCamera").GetComponent<CameraController>();
 
                         GameManager.Instance.Activate_Tutorial(true);
-                        GameManager.Instance.ShowLevel_TrainingRoom(true);
+                        GameManager.Instance.ShowLevel_HackerDen(true);
 
                         Observable.Timer(TimeSpan.FromSeconds(1f)).Subscribe(_ => GameManager.Instance.SpawnHero(new Vector3(-2, 0, -3)));
                         Observable.Timer(TimeSpan.FromSeconds(1.1f)).Subscribe(_ => GameManager.Instance.SpawnDroneBot());
