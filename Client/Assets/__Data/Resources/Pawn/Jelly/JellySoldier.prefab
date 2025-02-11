@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 168326260960991395}
   - component: {fileID: 3491578883216556144}
   - component: {fileID: 1913970846515973815}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1136,7 +1136,7 @@ GameObject:
   - component: {fileID: 1458070737609187091}
   - component: {fileID: 7398242047268905765}
   - component: {fileID: 8492852247566670552}
-  m_Layer: 12
+  m_Layer: 11
   m_Name: SM_Prop_Shield_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20354,7 +20354,7 @@ MonoBehaviour:
     isSpawnFinished:
       value: 0
     isInvincible:
-      value: 1
+      value: 0
     isDead:
       value: 0
     isDown:

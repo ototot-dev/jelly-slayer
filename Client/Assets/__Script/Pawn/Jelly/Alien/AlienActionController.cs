@@ -32,19 +32,38 @@ namespace Game
 
             if (damageContext.actionResult == ActionResults.Damaged)
             {
-                SoundManager.Instance.Play(SoundID.HIT_FLESH);
-                EffectManager.Instance.Show("@Hit 23 cube", damageContext.hitPoint, Quaternion.identity, Vector3.one, 1);
-                EffectManager.Instance.Show("@BloodFX_impact_col", damageContext.hitPoint, Quaternion.identity, 1.5f * Vector3.one, 3);
+                if (damageContext.senderActionData.actionName.StartsWith("Kick"))
+                {
+                    EffectManager.Instance.Show(__brain.BB.graphics.onKickHitFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.identity, Vector3.one, 1f);
+                    SoundManager.Instance.PlayWithClip(__brain.BB.audios.onKickHitAudioClip);
+                }
+                else if (damageContext.senderActionData.actionName.StartsWith("Heavy"))
+                {
+                    EffectManager.Instance.Show(__brain.BB.graphics.onBigHitFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()) * Quaternion.Euler(90f, 0f, 0f), Vector3.one, 1f);
+                    SoundManager.Instance.PlayWithClip(__brain.BB.audios.onBigHitAudioClip);
+                }
+                else
+                {
+                    EffectManager.Instance.Show(__brain.BB.graphics.onHitFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()) * Quaternion.Euler(90f, 0f, 0f), Vector3.one, 1f);
+                    SoundManager.Instance.PlayWithClip(__brain.BB.audios.onHitAudioClip);
+                }
+
+                ShowHitColor(__brain.bodyHitColliderHelper);
             }
-            else if (damageContext.actionResult == ActionResults.Missed || damageContext.actionResult == ActionResults.Blocked)
+            else if (damageContext.actionResult == ActionResults.Missed)
             {
-                SoundManager.Instance.Play(SoundID.HIT_BLOCK);
-                EffectManager.Instance.Show("@Hit 4 yellow arrow", 0.5f * (__brain.AnimCtrler.leftWeaponSlot.position + __brain.AnimCtrler.rightWeaponSlot.position), Quaternion.identity, Vector3.one, 1f);
+                Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onMissedFx, __brain.BB.graphics.BlockingFxAttachPoint.transform.position, Quaternion.identity, 0.8f * Vector3.one, 1f)).AddTo(this);
+                SoundManager.Instance.PlayWithClip(__brain.BB.audios.onMissedAudioClip);
+            }
+            else if (damageContext.actionResult == ActionResults.Blocked)
+            {
+                Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onBlockedFx, __brain.BB.graphics.BlockingFxAttachPoint.transform.position, Quaternion.identity, 0.8f * Vector3.one, 1f)).AddTo(this);
+                SoundManager.Instance.PlayWithClip(__brain.BB.audios.onBlockedAudioClip);
             }
             else if (damageContext.actionResult == ActionResults.GuardBreak) 
             {
-                SoundManager.Instance.Play(SoundID.GUARD_BREAK);
-                EffectManager.Instance.Show("SwordHitRed", 0.5f * (__brain.AnimCtrler.leftWeaponSlot.position + __brain.AnimCtrler.rightWeaponSlot.position), Quaternion.identity, Vector3.one, 1f);
+                Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onGuardBreakFx, __brain.BB.graphics.BlockingFxAttachPoint.transform.position, Quaternion.identity, Vector3.one, 1f)).AddTo(this);
+                SoundManager.Instance.PlayWithClip(__brain.BB.audios.onGuardBreakAudioClip);
             }
 
             return base.StartOnHitAction(ref damageContext, isAddictiveAction);
@@ -96,6 +115,28 @@ namespace Game
             return null;
         }
 
+        void ShowHitColor(PawnColliderHelper hitColliderHelper)
+        {
+            if (hitColliderHelper == __brain.bodyHitColliderHelper)
+            {
+                foreach (var r in __brain.BB.attachment.bodyMeshRenderers)
+                    r.materials = new Material[] { r.material, new(__brain.BB.graphics.hitColor) };
+
+                __hitColorDisposable?.Dispose();
+                __hitColorDisposable = Observable.Timer(TimeSpan.FromMilliseconds(100)).Subscribe(_ => 
+                {
+                    __hitColorDisposable = null;
+                    foreach (var r in __brain.BB.attachment.bodyMeshRenderers)
+                        r.materials = new Material[] { r.materials[0] };
+                }).AddTo(this);
+            }
+            else
+            {
+                Debug.Assert(false);
+            }
+        }
+
+        IDisposable __hitColorDisposable;
         AlienBrain __brain;
 
         protected override void AwakeInternal()

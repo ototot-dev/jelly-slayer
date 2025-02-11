@@ -1036,7 +1036,7 @@ Transform:
   m_GameObject: {fileID: 4639289187876753470}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.5, z: 0}
+  m_LocalPosition: {x: 0, y: 1.2, z: 0.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5510,7 +5510,7 @@ MonoBehaviour:
     isSpawnFinished:
       value: 0
     isInvincible:
-      value: 1
+      value: 0
     isDead:
       value: 0
     isDown:
@@ -5583,6 +5583,28 @@ MonoBehaviour:
     comboAttackRateBoostAfterCounterAttack: 0.1
     comboAttackRateStep: 0.2
     counterAttackRateStep: 0.5
+  graphics:
+    onHitFx: {fileID: 3011233550371498735, guid: 24e37d54f259141abb7ebbc527b8bf4e, type: 3}
+    onBigHitFx: {fileID: 3011233550371498735, guid: 8502543f66322458a81956cdd59fe959, type: 3}
+    onKickHitFx: {fileID: 5627402125419773176, guid: 5567adfb3bd0fd14180e380e0bba7ead, type: 3}
+    onBleedingFx: {fileID: 4288968687243109827, guid: 0b307a2529dbe91449d41a3419233b34, type: 3}
+    onMissedFx: {fileID: 8338894570034044190, guid: 727c6a11e51e81140a330e6639938e26, type: 3}
+    onBlockedFx: {fileID: 4961553964636584268, guid: d7027452566465c47aeacb4cdcf40015, type: 3}
+    onGuardBreakFx: {fileID: 8905666514069622321, guid: a84cbbb54404c3d499340f02e684aab0, type: 3}
+    hitColor: {fileID: 2100000, guid: a352a16cd87054b82af9135444ad0122, type: 2}
+    BlockingFxAttachPoint: {fileID: 5781964363949412845}
+  audios:
+    onHitAudioClip: {fileID: 8300000, guid: bba0a0725054ad0419aecf461293c8e9, type: 3}
+    onBigHitAudioClip: {fileID: 8300000, guid: bba0a0725054ad0419aecf461293c8e9, type: 3}
+    onKickHitAudioClip: {fileID: 8300000, guid: 9cb0b1ad621027a478ebeb3ce2f31faa, type: 3}
+    onBleedingAudioClip: {fileID: 8300000, guid: bba0a0725054ad0419aecf461293c8e9, type: 3}
+    onMissedAudioClip: {fileID: 8300000, guid: b47bb87ddf4afcc49ba83a4999cf050e, type: 3}
+    onBlockedAudioClip: {fileID: 8300000, guid: b47bb87ddf4afcc49ba83a4999cf050e, type: 3}
+    onGuardBreakAudioClip: {fileID: 8300000, guid: 93fc0b243c8d39441a33d29e6146b688, type: 3}
+  attachment:
+    bodyMeshRenderers:
+    - {fileID: 7273401361180638372}
+    BlockingFxAttachPoint: {fileID: 0}
 --- !u!114 &8593737910688562853
 MonoBehaviour:
   m_ObjectHideFlags: 0

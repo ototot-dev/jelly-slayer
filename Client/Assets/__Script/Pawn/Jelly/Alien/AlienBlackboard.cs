@@ -42,5 +42,49 @@ namespace Game
         }
 
         public Action action = new();
+
+        [Serializable]
+        public class Graphics
+        {
+            [Header("Prefab")]
+            public GameObject onHitFx;
+            public GameObject onBigHitFx;
+            public GameObject onKickHitFx;
+            public GameObject onBleedingFx;
+            public GameObject onMissedFx;
+            public GameObject onBlockedFx;
+            public GameObject onGuardBreakFx;
+
+            [Header("Material")]
+            public Material hitColor;
+
+            [Header("Attached")]
+            public Transform BlockingFxAttachPoint;
+        }
+
+        public Graphics graphics = new();
+
+        [Serializable]
+        public class Audios
+        {
+            public AudioClip onHitAudioClip;
+            public AudioClip onBigHitAudioClip;
+            public AudioClip onKickHitAudioClip;
+            public AudioClip onBleedingAudioClip;
+            public AudioClip onMissedAudioClip;
+            public AudioClip onBlockedAudioClip;
+            public AudioClip onGuardBreakAudioClip;
+        }
+
+        public Audios audios = new();
+
+        [Serializable]
+        public class Attachment
+        {
+            public Renderer[] bodyMeshRenderers;
+            public Transform BlockingFxAttachPoint;
+        }
+
+        public Attachment attachment = new();
     }
 }
