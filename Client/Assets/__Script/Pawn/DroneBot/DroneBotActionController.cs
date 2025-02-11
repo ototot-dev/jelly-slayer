@@ -233,7 +233,7 @@ namespace Game
                     var assaultActionData = DatasheetManager.Instance.GetActionData(__brain.BB.HostBrain.BB.common.pawnId, "Assault");
                     Debug.Assert(assaultActionData != null);
 
-                    __brain.BB.HostBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__brain.BB.HostBrain, __assaultActionTargetBrain, assaultActionData, null, false));
+                    __brain.BB.HostBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__brain.BB.HostBrain, __assaultActionTargetBrain, assaultActionData, __assaultActionTargetBrain.bodyHitColliderHelper.pawnCollider, false));
                     __brain.BB.HostBrain.Movement.FinishHanging();
                     __brain.BB.HostBrain.Movement.StartJump(1f);
                     __brain.BB.HostBrain.BB.action.isJumping.Take(2).Skip(1).Subscribe(v =>
