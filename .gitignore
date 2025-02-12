@@ -77,3 +77,6 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /Client/[Aa]ssets/[Ss]treamingAssets/aa.meta
 /Client/[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# OSX Finder generated file
+.DS_Store
