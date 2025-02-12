@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NodeCanvas.Framework;
+using ParadoxNotion.Design;
 using Retween.Rx;
 using UniRx;
 using UnityEngine;
@@ -9,6 +10,7 @@ using XftWeapon;
 
 namespace Game.NodeCanvasExtension
 {
+    [Category("Pawn")]
     public class CheckActionRunning : ConditionTask
     {
         protected override string info => "CheckActionRunning() == " + (invert ? "False" : "True");
@@ -18,6 +20,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class CheckActionHasPreMotion : ConditionTask
     {
         protected override string info => "CheckActionHasPreMotion() == " + (invert ? "False" : "True");
@@ -27,6 +30,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class FreePosition : ActionTask
     {
         public BBParameter<float> duration = -1;
@@ -59,6 +63,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class HoldPosition : ActionTask
     {
         public BBParameter<Transform> lookAt;
@@ -100,6 +105,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class MoveTo : ActionTask
     {
         public BBParameter<Vector3> destination;
@@ -137,6 +143,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class MoveAround : ActionTask
     {
         public BBParameter<float> maxTurnAngle = 90;
@@ -180,6 +187,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class Approach : ActionTask
     {
         public BBParameter<Transform> target;
@@ -252,6 +260,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class Spacing : ActionTask
     {
         public BBParameter<Transform> target;
@@ -364,6 +373,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class StartPendingAction : ActionTask
     {
         protected override string info => $"Start Action <b>{actionName.value}</b>";
@@ -405,6 +415,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class StartJumping : ActionTask
     {
         public BBParameter<float> jumpHeight;
@@ -420,6 +431,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class FinishJumping : ActionTask
     {
         protected override void OnExecute()
@@ -433,22 +445,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
-    public class StartAction : ActionTask
-    {
-        public BBParameter<string> actionName;
-        public BBParameter<float> actionSpeed = new(1);
-        public BBParameter<bool> manualAdvanceEnabled;
-        public BBParameter<float> rootMotionMultiplier = new(1);
-        public BBParameter<AnimationCurve> rootMotionCurve;
-        public BBParameter<float> actionTimeOut = new(-1);
-        protected override string info => $"Start Action <b>{actionName.value}</b>";
-
-        protected override void OnExecute()
-        {
-            EndAction(agent.GetComponent<PawnActionController>().StartAction(actionName.value, string.Empty, actionSpeed.value, rootMotionMultiplier.value, 0, rootMotionCurve.value, manualAdvanceEnabled.value));
-        }
-    }
-
+    [Category("Pawn")]
     public class FinishAction : ActionTask
     {
         protected override string info => possibility.isNoneOrNull || possibility.value <= 0f ? base.info : $"Finish Action <b>{possibility.value * 100f}%</b>";
@@ -475,6 +472,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class WaitAction : ActionTask
     {
         protected override string info => useCurrentTime.value ? $"Wait for {waitTime} secs" : $"Wait@ {waitTime} secs";
@@ -534,6 +532,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class WaitFrame : ActionTask
     {
         protected override string info => waitFrame.value > 0 ? $"Frame<b>#{waitFrame.value}</b>" + (interruptEnabled.value ? " <b>!!</b>" : string.Empty) : $"Frame<b>#End</b>";
@@ -584,6 +583,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class WaitActionDisposable : ActionTask
     {
         PawnActionController __pawnActionCtrler;
@@ -604,6 +604,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class WaitPreMotion : ActionTask
     {
         protected override string info => string.IsNullOrEmpty(stateName.value) ? base.info : $"Wait PreMotion <b>{stateName.value}</b>";
@@ -655,6 +656,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class WaitGroundHit : ActionTask
     {
         PawnMovement __pawnMovement;
@@ -677,6 +679,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class DelayAction : ActionTask
     {
         protected override string info => $"Delay {delayTime} secs";
@@ -730,6 +733,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class ImpluseRootMotion : ActionTask
     {
         public BBParameter<float> impulseStrength;
@@ -831,6 +835,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class StartHomingRotation : ActionTask
     {
         public BBParameter<Transform> target;
@@ -869,6 +874,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class FinishHomingRotation : ActionTask
     {
         protected override void OnExecute()
@@ -883,6 +889,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class StartHomingRootMoion : ActionTask
     {
         public BBParameter<float> homingSpeed = 1f;
@@ -986,6 +993,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class FinishHomingRootMotion : ActionTask
     {
         protected override void OnExecute()
@@ -1000,6 +1008,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class FallingRootMotion : ActionTask
     {
         public BBParameter<float> fallingSpeed;
@@ -1042,6 +1051,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class StartTraceActionTargets : ActionTask
     {
         public BBParameter<Collider> traceCollider;
@@ -1071,6 +1081,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class FinishTraceActionTargets : ActionTask
     {
         public bool cancelActionWhenTraceFailed;
@@ -1081,6 +1092,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class TraceActionTargets : ActionTask
     {
         protected override string info => traceSampleNum.value == 1 ? "Trace <b>One-Frame</b>" : (traceDuration.value > 0 ? $"Trace for <b>{traceDuration.value}</b> secs" : $"Trace for <b>{traceFrames.value}</b> frames");
@@ -1254,6 +1266,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class SendDamage : ActionTask
     {
         public BBParameter<string> actionDataName;
@@ -1280,6 +1293,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class EmitProjectile : ActionTask
     {
         protected override string info => emitPrefab.isNoneOrNull && emitPrefab.varRef == null ? base.info : $"Emit '{emitPrefab.name}' x <b>{emitNum.value}</b>";
@@ -1329,6 +1343,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class TriggerAnim : ActionTask
     {
         protected override string info => string.IsNullOrEmpty(triggerName.value) ? base.info : $"Trigger <b>{triggerName.value}</b>";
@@ -1341,19 +1356,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
-    public class TriggerAnimAB : ActionTask
-    {
-        public BBParameter<Animator> animator;
-        public BBParameter<bool> condition;
-        public BBParameter<string> triggerNameA;
-        public BBParameter<string> triggerNameB;
-        protected override void OnExecute()
-        {
-            animator.value.SetTrigger(condition.value? triggerNameA.value : triggerNameB.value);
-            EndAction(true);
-        }
-    }
-
+    [Category("Pawn")]
     public class SetAnimBool : ActionTask
     {
         protected override string info => string.IsNullOrEmpty(paramId.value) ? base.info : $"Set <b>{paramId.value}</b> Param <b>{newValue.value}</b>";
@@ -1367,6 +1370,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class SetAnimInteger : ActionTask
     {
         protected override string info => string.IsNullOrEmpty(paramId.value) ? base.info : $"Set <b>{paramId.value}</b> Param <b>{newValue.value}</b>";
@@ -1380,6 +1384,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class SetAnimFloat : ActionTask
     {
         protected override string info => $"Set <b>{paramId.value}</b> Param <b>{newValue.value}</b>";
@@ -1393,7 +1398,9 @@ namespace Game.NodeCanvasExtension
             EndAction(true);
         }
     }
-        public class FadeAnimFloat : ActionTask
+
+    [Category("Pawn")]
+    public class FadeAnimFloat : ActionTask
     {
         protected override string info => $"Fade <b>{paramId.value}</b> Param to <b>{targetValue.value}</b>";
         public BBParameter<Animator> animator;
@@ -1422,6 +1429,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class SetAnimSpeedMultiplier : ActionTask
     {
         protected override string info => $"Set AnimSpeedMultiplier <b>{newValue.value}</b>";
@@ -1443,6 +1451,20 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
+    public class SetRootMotionMultiplier : ActionTask
+    {   
+        protected override string info => $"Set RootMotion Multiplier <b>{newValue.value}</b>";
+        public BBParameter<float> newValue;
+        protected override void OnExecute()
+        {
+            if (agent.TryGetComponent<PawnActionController>(out var actionCtrler) && actionCtrler.currActionContext.actionData != null)
+                actionCtrler.currActionContext.rootMotionMultiplier = newValue.value;
+            EndAction(true);
+        }
+    }
+
+    [Category("Pawn")]
     public class ModifyTransform : ActionTask
     {
         public BBParameter<Transform> target;
@@ -1464,23 +1486,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
-    // 상대의 액션 셋팅
-    public class TargetAction : ActionTask
-    {
-        protected override string info => $"Target Action";
-        public BBParameter<bool> isKnockDown;
-
-        protected override void OnExecute()
-        {
-            if (isKnockDown.value == true) 
-            {
-                var brain = agent.GetComponent<PawnBrainController>();
-                // brain.TargetAction(ActionType.Knockback);
-            }
-            EndAction(true);
-        }
-    }
-
+    [Category("Pawn")]
     public class SetTweenSelector : ActionTask
     {
         protected override string info 
@@ -1527,112 +1533,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
-    public class SetBoolReactiveProperty : ActionTask
-    {
-        protected override string info => string.IsNullOrEmpty(property.name) ? base.info : $"Set '{property.name}' <b>{newValue.value}</b>";
-        public BBParameter<BoolReactiveProperty> property;
-        public BBParameter<bool> newValue;
-
-        protected override void OnExecute()
-        {
-            property.value.Value = newValue.value;
-            EndAction(true);
-        }
-    }
-
-    public class SetIntReactiveProperty : ActionTask
-    {
-        protected override string info => string.IsNullOrEmpty(property.name) ? base.info : $"Set '{property.name}' <b>{newValue.value}</b>";
-        public BBParameter<IntReactiveProperty> property;
-        public BBParameter<int> newValue;
-
-        protected override void OnExecute()
-        {
-            property.value.Value = newValue.value;
-            EndAction(true);
-        }
-    }
-
-    public class SetFloatReactiveProperty : ActionTask
-    {
-        protected override string info => string.IsNullOrEmpty(property.name) ? base.info : $"Set '{property.name}' <b>{newValue.value}</b>";
-        public BBParameter<FloatReactiveProperty> property;
-        public BBParameter<float> newValue;
-
-        protected override void OnExecute()
-        {
-            property.value.Value = newValue.value;
-            EndAction(true);
-        }
-    }
-
-    public class WaitBoolReactiveProperty : ActionTask
-    {
-        protected override string info =>  $"Wait '{property.name}' being <b>{checkValue.value}</b>";
-        public BBParameter<BoolReactiveProperty> property;
-        public BBParameter<bool> checkValue;
-        PawnActionController __pawnActionCtrler;
-
-        protected override void OnExecute()
-        {
-            base.OnExecute();
-            __pawnActionCtrler = agent.GetComponent<PawnActionController>();
-        }
-
-        protected override void OnUpdate()
-        {
-            base.OnUpdate();
-
-            if (__pawnActionCtrler.currActionContext.actionData == null)
-                EndAction(false);
-            else if (property.value.Value == checkValue.value)
-                EndAction(true);
-        }
-    }
-
-    public class WaitIntReactiveProperty : ActionTask
-    {
-        protected override string info =>  $"Wait '{property.name}' being <b>{checkValue.value}</b>";
-        public BBParameter<IntReactiveProperty> property;
-        public BBParameter<int> checkValue;
-
-        protected override void OnUpdate()
-        {
-            base.OnUpdate();
-
-            if (property.value.Value == checkValue.value)
-                EndAction(true);
-        }
-    }
-
-    public class WaitFloatReactiveProperty : ActionTask
-    {
-        protected override string info =>  $"Wait '{property.name}' being <b>{checkValue.value}</b>";
-        public BBParameter<FloatReactiveProperty> property;
-        public BBParameter<float> checkValue;
-
-        protected override void OnUpdate()
-        {
-            base.OnUpdate();
-
-            if (property.value.Value == checkValue.value)
-                EndAction(true);
-        }
-    }
-    
-    public class SetJellyMeshScale : ActionTask
-    {
-        protected override string info =>  $"Set JellyMesh Scale <b>{newScale.value}</b>";
-        public BBParameter<JellySpringMassSystem> springMassSystem;
-        public BBParameter<Vector3> newScale;
-
-        protected override void OnExecute()
-        {
-            springMassSystem.value.SetScale(newScale.value.x, newScale.value.y, newScale.value.z);
-            EndAction(true);
-        }
-    }
-
+    [Category("Pawn")]
     public class SetMovementEnabled : ActionTask
     {
         protected override string info => movementEnabled ? $"Movement <b>On</b>" : $"Movement <b>Off</b>";
@@ -1647,18 +1548,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
-    public class SetRootMotionMultiplier : ActionTask
-    {   
-        protected override string info => $"Set RootMotion Multiplier <b>{newValue.value}</b>";
-        public BBParameter<float> newValue;
-        protected override void OnExecute()
-        {
-            if (agent.TryGetComponent<PawnActionController>(out var actionCtrler) && actionCtrler.currActionContext.actionData != null)
-                actionCtrler.currActionContext.rootMotionMultiplier = newValue.value;
-            EndAction(true);
-        }
-    }
-
+    [Category("Pawn")]
     public class SetLegGlueEnabled : ActionTask
     {
         protected override string info => enabled.value ? $"Leg Glue <b>On</b>" : $"Leg Glue <b>Off</b>";
@@ -1673,6 +1563,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class SetInterruptEnabled : ActionTask
     {
         protected override string info => enabled.value ? $"Interrupt <b>Enabled</b>" : $"Interrupt <b>Disabled</b>";
@@ -1687,18 +1578,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
-    public class SetSuperArmorEnabled : ActionTask
-    {   
-        protected override string info => newValue.value ? "SuperArmor <b>On</b>" : "SuperArmor <b>Off</b>";
-        public BBParameter<bool> newValue;
-        protected override void OnExecute()
-        {
-            if (agent.TryGetComponent<PawnActionController>(out var actionCtrler) && actionCtrler.currActionContext.actionData != null)
-                actionCtrler.SetSuperArmorEnabled(newValue.value);
-            EndAction(true);
-        }
-    }
-
+    [Category("Pawn")]
     public class SetParryingEnabled : ActionTask
     {   
         protected override string info => newValue.value ? "Parrying <b>On</b>" : "Parrying <b>Off</b>";
@@ -1711,57 +1591,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
-    public class SetParrying : ActionTask
-    {   
-        protected override string info => newValue.value ? "Set Parrying <b>On</b>" : "Set Parrying <b>Off</b>";
-        public BBParameter<bool> newValue;
-        protected override void OnExecute()
-        {
-            if (agent.TryGetComponent<PawnActionController>(out var actionCtrler) && actionCtrler.currActionContext.actionData != null)
-                actionCtrler.SetActiveParryingEnabled(newValue.value);
-            EndAction(true);
-        }
-    }
-
-    public class AddBuff : ActionTask
-    {
-        protected override string info => duration.value < 0 ? $"<b>{buffType.value}</b> On" : $"<b>{buffType.value}</b> On for <b>{duration.value}</b> secs";
-        public BBParameter<PawnStatus> buffType;
-        public BBParameter<float> strength;
-        public BBParameter<float> duration;
-        public bool removeBuffWhenActionFinished = true;
-        protected override void OnExecute()
-        {
-            Debug.Assert(buffType.value < PawnStatus.__DEBUFF__SEPERATOR__);
-
-            if (removeBuffWhenActionFinished)
-            {
-                if (agent.TryGetComponent<PawnActionController>(out var actionCtrler))
-                    (actionCtrler as IStatusContainer).AddStatus(buffType.value, strength.value, duration.value);
-            }
-            else
-            {
-                if (agent.TryGetComponent<PawnStatusController>(out var statusCtrler))
-                    statusCtrler.AddStatus(buffType.value, strength.value, duration.value);
-            }
-
-            EndAction(true);
-        }
-    }
-
-    public class RemoveBuff : ActionTask
-    {
-        protected override string info => $"<b>{buffType.value}</b> Off";
-        public BBParameter<PawnStatus> buffType;
-        protected override void OnExecute()
-        {
-            if (agent.TryGetComponent<PawnActionController>(out var actionCtrler))
-                (actionCtrler as IStatusContainer).RemoveStatus(buffType.value);
-
-            EndAction(true);
-        }
-    }
-    
+    [Category("Pawn")]
     public class AddStatus : ActionTask
     {
         protected override string info => duration.value < 0 ? $"<b>{status.value}</b> On" : $"<b>{status.value}</b> On for <b>{duration.value}</b> secs";
@@ -1788,6 +1618,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class RemoveStatus : ActionTask
     {
         protected override string info => $"<b>{status.value}</b> Off";
@@ -1801,6 +1632,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class ShowFX : ActionTask
     {
         protected override string info => $"Show FX <b>{(fxPrefab.isNoneOrNull && fxPrefab.varRef == null ? fxName.value : fxPrefab)}</b>";
@@ -1885,71 +1717,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
-    public class ShowFX_Attached : ActionTask
-    {
-        protected override string info => $"Show FX <b>{(fxAttached.isNoneOrNull ? string.Empty : fxAttached)}</b>";
-        public BBParameter<Transform> fxAttached;
-        public BBParameter<float> duration = -1f;
-        public BBParameter<float> playRate = 1f;
-        public BBParameter<string[]> childNameToBeHidden;
-        public bool stopWhenActionCanceled = true;
-        public bool deactivateWhenStopped = true;
-        PawnActionController __pawnActionCtrler;
-        ParticleSystem __particleSystem;
-        IDisposable __showDisposable;
-        float __showTimeStamp;
-        int __capturedActionInstanceId;
-
-        protected override void OnExecute()
-        {
-            __pawnActionCtrler = agent.GetComponent<PawnActionController>();
-
-            fxAttached.value.gameObject.SetActive(true);
-            if (fxAttached.value.TryGetComponent<ParticleSystem>(out __particleSystem))
-                __particleSystem.Play();
-
-            if (!childNameToBeHidden.isNoneOrNull && childNameToBeHidden.value.Length > 0)
-            {
-                for (int i = 0; i < fxAttached.value.transform.childCount; i++)
-                {
-                    var child = fxAttached.value.transform.GetChild(i);
-                    child.gameObject.SetActive(true);
-
-                    for (int j = 0; j < childNameToBeHidden.value.Length; j++)
-                    {
-                        if (childNameToBeHidden.value[j] == child.name)
-                        {
-                            child.gameObject.SetActive(false);
-                            break;
-                        }
-                    }
-                }
-            }
-
-            __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;
-            __showTimeStamp = Time.time;
-            __showDisposable = Observable.EveryUpdate().Subscribe(_ =>
-            {
-                if ((Time.time - __showTimeStamp) > duration.value)
-                {
-                    if (__particleSystem != null) __particleSystem.Stop();
-                    if (deactivateWhenStopped) fxAttached.value.gameObject.SetActive(false);
-                    __showDisposable.Dispose();
-                    __showDisposable = null;
-                }
-                else if (stopWhenActionCanceled && __pawnActionCtrler != null && (!__pawnActionCtrler.CheckActionRunning() || __pawnActionCtrler.currActionContext.actionInstanceId != __capturedActionInstanceId))
-                {
-                    if (__particleSystem != null) __particleSystem.Stop();
-                    if (deactivateWhenStopped) fxAttached.value.gameObject.SetActive(false);
-                    __showDisposable.Dispose();
-                    __showDisposable = null;
-                }
-            }).AddTo(agent);
-
-            EndAction(true);
-        }
-    }
-
+    [Category("Pawn")]
     public class ShowTrailFX : ActionTask
     {
         protected override string info => $"Show Trail-FX <b>{(trailFx.isNoneOrNull ? trailFx.value : string.Empty)}</b>";
@@ -1996,6 +1764,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class PlaySound : ActionTask 
     {
         public BBParameter<SoundID> soundId;
@@ -2009,6 +1778,7 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+    [Category("Pawn")]
     public class PlaySoundClip : ActionTask 
     {
         protected override string info => soundClip.isNoneOrNull ? base.info : $"Play SoundClip <b>{soundClip.value}</b>";
@@ -2024,7 +1794,8 @@ namespace Game.NodeCanvasExtension
         }
     }
     
-    public class CameraAction : ActionTask
+    [Category("Pawn")]
+    public class ZoomCamera : ActionTask
     {
         public BBParameter<bool> isZoom;
         public BBParameter<float> zoomValue = 1.0f;
@@ -2044,16 +1815,102 @@ namespace Game.NodeCanvasExtension
         }
     }
 
-    public class CallFunction : ActionTask
+    [Category("Pawn")]
+    public class SetBoolReactiveProperty : ActionTask
     {
-        public BBParameter<string> funcName;
+        protected override string info => string.IsNullOrEmpty(property.name) ? base.info : $"Set '{property.name}' <b>{newValue.value}</b>";
+        public BBParameter<BoolReactiveProperty> property;
+        public BBParameter<bool> newValue;
 
         protected override void OnExecute()
         {
-            if (funcName.value != "")
-                agent.SendMessage(funcName.value, SendMessageOptions.DontRequireReceiver);
-
+            property.value.Value = newValue.value;
             EndAction(true);
+        }
+    }
+
+    [Category("Pawn")]
+    public class SetIntReactiveProperty : ActionTask
+    {
+        protected override string info => string.IsNullOrEmpty(property.name) ? base.info : $"Set '{property.name}' <b>{newValue.value}</b>";
+        public BBParameter<IntReactiveProperty> property;
+        public BBParameter<int> newValue;
+
+        protected override void OnExecute()
+        {
+            property.value.Value = newValue.value;
+            EndAction(true);
+        }
+    }
+
+    [Category("Pawn")]
+    public class SetFloatReactiveProperty : ActionTask
+    {
+        protected override string info => string.IsNullOrEmpty(property.name) ? base.info : $"Set '{property.name}' <b>{newValue.value}</b>";
+        public BBParameter<FloatReactiveProperty> property;
+        public BBParameter<float> newValue;
+
+        protected override void OnExecute()
+        {
+            property.value.Value = newValue.value;
+            EndAction(true);
+        }
+    }
+
+    [Category("Pawn")]
+    public class WaitBoolReactiveProperty : ActionTask
+    {
+        protected override string info =>  $"Wait '{property.name}' being <b>{checkValue.value}</b>";
+        public BBParameter<BoolReactiveProperty> property;
+        public BBParameter<bool> checkValue;
+        PawnActionController __pawnActionCtrler;
+
+        protected override void OnExecute()
+        {
+            base.OnExecute();
+            __pawnActionCtrler = agent.GetComponent<PawnActionController>();
+        }
+
+        protected override void OnUpdate()
+        {
+            base.OnUpdate();
+
+            if (__pawnActionCtrler.currActionContext.actionData == null)
+                EndAction(false);
+            else if (property.value.Value == checkValue.value)
+                EndAction(true);
+        }
+    }
+
+    [Category("Pawn")]
+    public class WaitIntReactiveProperty : ActionTask
+    {
+        protected override string info =>  $"Wait '{property.name}' being <b>{checkValue.value}</b>";
+        public BBParameter<IntReactiveProperty> property;
+        public BBParameter<int> checkValue;
+
+        protected override void OnUpdate()
+        {
+            base.OnUpdate();
+
+            if (property.value.Value == checkValue.value)
+                EndAction(true);
+        }
+    }
+
+    [Category("Pawn")]
+    public class WaitFloatReactiveProperty : ActionTask
+    {
+        protected override string info =>  $"Wait '{property.name}' being <b>{checkValue.value}</b>";
+        public BBParameter<FloatReactiveProperty> property;
+        public BBParameter<float> checkValue;
+
+        protected override void OnUpdate()
+        {
+            base.OnUpdate();
+
+            if (property.value.Value == checkValue.value)
+                EndAction(true);
         }
     }
 }

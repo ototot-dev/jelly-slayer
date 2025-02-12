@@ -115,10 +115,6 @@ namespace Game
             {
                 if ((actionContext.actionData?.actionName ?? string.Empty) == "DrinkPotion")
                     Movement.moveSpeed = BB.body.walkSpeed;
-
-                if (StatusCtrler.CheckStatus(PawnStatus.IncPoise) == true) {
-                    StatusCtrler.AddStatus(PawnStatus.IncPoise, 50, 1);
-                }
             };
 
             ActionCtrler.onActionCanceled += (actionContext, _) =>
@@ -154,25 +150,24 @@ namespace Game
                 BB.stat.ReduceStance(PawnHP.LastDamageTimeStamp, Time.deltaTime);
             };
 
-            StatusCtrler.onStatusActive += (statusContext) =>
+            StatusCtrler.onStatusActive += (status) =>
             {
-                if (statusContext == PawnStatus.IncPoise)
-                {
-                    BB.stat.poise = BB.pawnData.poise + StatusCtrler.GetStrength(PawnStatus.IncPoise);
-                }
+                if (status == PawnStatus.IncreasePoise)
+                    BB.stat.poise = BB.pawnData.poise + StatusCtrler.GetStrength(PawnStatus.IncreasePoise);
             };
             
-            StatusCtrler.onStatusDeactive += (statusContext) =>
+            StatusCtrler.onStatusDeactive += (status) =>
             {
-                if (statusContext == PawnStatus.IncPoise)
-                {
+                if (status == PawnStatus.IncreasePoise)
                     BB.stat.poise = BB.pawnData.poise;
-                }
             };
 
             BB.action.isCharging.Subscribe(v => 
             {
-                StatusCtrler.AddStatus(PawnStatus.IncPoise, 50);
+                if (v)
+                    StatusCtrler.AddStatus(PawnStatus.IncreasePoise, 50);
+                else
+                    StatusCtrler.RemoveStatus(PawnStatus.IncreasePoise);
             });
 
             onTick += (_) =>

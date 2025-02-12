@@ -30,7 +30,7 @@ namespace Game
         MoveSpeedUp,        // 이동 속도 증가
         ActionSpeedUp,      // 액션 속도 증가
         HPRegen,            // 체력 회복
-        IncPoise,           // 강인도 증가
+        IncreasePoise,      // 강인도 증가
         __DEBUFF__SEPERATOR__,
         Groggy,             //* 그로기
         Staggered,          //* 경직

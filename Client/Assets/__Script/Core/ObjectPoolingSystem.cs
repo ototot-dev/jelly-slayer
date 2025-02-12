@@ -22,6 +22,8 @@ namespace Game
     {
         public T GetObject<T>(string sourcePath, Vector3 position, Quaternion rotation) where T : MonoBehaviour
         {
+            Debug.Assert(!string.IsNullOrEmpty(sourcePath));
+
             if (!__poolA.ContainsKey(sourcePath))
                 __poolA.Add(sourcePath, new());
 

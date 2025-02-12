@@ -627,17 +627,6 @@ namespace Game
             currActionContext.interruptEnabled = newValue;
         }
 
-        public void SetSuperArmorEnabled(bool newValue)
-        {
-            if (!CheckActionRunning())
-            {
-                __Logger.WarningR2(gameObject, nameof(SetSuperArmorEnabled), "CheckActionRunning() return false.");
-                return;
-            }
-
-            // currActionContext. = newValue;
-        }
-
         public void SetActiveParryingEnabled(bool newValue)
         {
             if (!CheckActionRunning())
