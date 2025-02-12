@@ -43,7 +43,7 @@ public class GameManager : MonoSingleton<GameManager>
 
     public void SpawnDroid(Vector3 position)
     {
-        Instantiate(Resources.Load<GameObject>("Pawn/Jelly/JellyAliend")).transform.SetPositionAndRotation(position, Quaternion.identity);
+        Instantiate(Resources.Load<GameObject>("Pawn/Jelly/JellyAlien")).transform.SetPositionAndRotation(position, Quaternion.identity);
     }
 
     public void DespawnDroid()
