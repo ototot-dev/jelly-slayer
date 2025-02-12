@@ -29,6 +29,7 @@ namespace Game
             public bool manualAdvanceEnabled;
             public float manualAdvanceTime;
             public float manualAdvanceSpeed;
+            public float animLayerBlendWeight;
             public float animClipLength;
             public int animClipFps;
             public float startTimeStamp;
@@ -63,6 +64,7 @@ namespace Game
                 this.manualAdvanceEnabled = manualAdvacneEnabled;
                 manualAdvanceTime = 0f;
                 manualAdvanceSpeed = actionSpeed;
+                animLayerBlendWeight = 1f;
                 animClipLength = -1f;
                 animClipFps = -1;
                 this.startTimeStamp = startTimeStamp;
@@ -96,6 +98,7 @@ namespace Game
                 manualAdvanceEnabled = false;
                 manualAdvanceTime = 0f;
                 manualAdvanceSpeed = actionSpeed;
+                animLayerBlendWeight = 1f;
                 animClipLength = -1f;
                 animClipFps = -1;
                 this.startTimeStamp = startTimeStamp;

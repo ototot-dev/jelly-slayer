@@ -21,7 +21,6 @@ namespace Game
         public BonesStimulator rightArmBoneSimulator;
         public BonesStimulator leftLegBoneSimulator;
         public BonesStimulator rightLegBoneSimulator;
-        public ParticleSystem jetFrameFx;
         public JellySpringMassSystem springMassSystem;
 
         [Header("Parameter")]
@@ -87,8 +86,11 @@ namespace Game
                 //* 발바닥에서 발사하는 Frame 이펙트 On
                 if (v)
                 {
-                    jetFrameFx.transform.parent.GetComponent<MeshRenderer>().enabled = true;
-                    jetFrameFx.transform.parent.DOScale(2f * Vector3.one, 0.5f).OnComplete(() => jetFrameFx.Play());
+                    foreach (var p in __brain.BB.attachment.jetParticleSystems)
+                    {
+                        p.transform.parent.GetComponent<MeshRenderer>().enabled = true;
+                        p.transform.parent.DOScale(2f * Vector3.one, 0.5f).OnComplete(() => p.Play());
+                    }
                 }
             }).AddTo(this);
             
@@ -97,11 +99,14 @@ namespace Game
                 //* 발바닥에서 발사하는 Frame 이펙트 Off
                 if (!v)
                 {
-                    jetFrameFx.transform.parent.DOScale(Vector3.zero, 0.2f).OnComplete(() => 
+                    foreach (var p in __brain.BB.attachment.jetParticleSystems)
                     {
-                        jetFrameFx.transform.parent.GetComponent<MeshRenderer>().enabled = false;
-                        jetFrameFx.Stop();
-                    });
+                        p.transform.parent.DOScale(Vector3.zero, 0.2f).OnComplete(() => 
+                        {
+                            p.transform.parent.GetComponent<MeshRenderer>().enabled = false;
+                            p.Stop();
+                        });
+                    }
                 }
             }).AddTo(this);
 
@@ -113,7 +118,12 @@ namespace Game
                         __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition, mainAnimator.deltaRotation);
 
                     mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
-                    mainAnimator.SetLayerWeight((int)LayerIndices.Action, Mathf.Clamp01(mainAnimator.GetLayerWeight((int)LayerIndices.Action) + (__brain.ActionCtrler.CheckActionRunning() ? actionLayerBlendSpeed : -actionLayerBlendSpeed) * Time.deltaTime));
+
+                    if (__brain.ActionCtrler.CheckActionRunning())
+                        mainAnimator.SetLayerWeight((int)LayerIndices.Action, Mathf.Clamp(mainAnimator.GetLayerWeight((int)LayerIndices.Action) + actionLayerBlendSpeed * Time.deltaTime, 0f, __brain.ActionCtrler.currActionContext.animLayerBlendWeight));
+                    else
+                        mainAnimator.SetLayerWeight((int)LayerIndices.Action, Mathf.Clamp01(mainAnimator.GetLayerWeight((int)LayerIndices.Action)  - actionLayerBlendSpeed * Time.deltaTime));
+
                     mainAnimator.SetLayerWeight((int)LayerIndices.Addictive, 1f);
                     mainAnimator.SetBool("IsMoving", __brain.Movement.CurrVelocity.sqrMagnitude > 0 && !__brain.ActionCtrler.CheckKnockBackRunning());
                     mainAnimator.SetBool("IsMovingStrafe", __brain.Movement.freezeRotation);

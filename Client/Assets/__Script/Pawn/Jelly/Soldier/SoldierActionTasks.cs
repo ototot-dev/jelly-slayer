@@ -10,16 +10,27 @@ using XftWeapon;
 
 namespace Game.NodeCanvasExtension.Soldier
 {
-    // [Category("Soldier")]
-    // public class StartJump : ActionTask
-    // {
-    //     protected override string info => string.IsNullOrEmpty(triggerName.value) ? base.info : $"Trigger <b>{triggerName.value}</b>";
-    //     public BBParameter<Animator> animator;
-    //     public BBParameter<string> triggerName;
-    //     protected override void OnExecute()
-    //     {
-    //         animator.value.SetTrigger(triggerName.value);
-    //         EndAction(true);
-    //     }
-    // }
+    [Category("Soldier")]
+    public class StartGliding : ActionTask
+    {
+        protected override void OnExecute()
+        {
+            if (agent.TryGetComponent<SoldierBrain>(out var brain))
+                brain.Movement.StartJump(brain.BB.body.jumpHeight);
+
+            EndAction(true);
+        }
+    }
+
+    [Category("Soldier")]
+    public class FinishGliding : ActionTask
+    {
+        protected override void OnExecute()
+        {
+            if (agent.TryGetComponent<SoldierBrain>(out var brain))
+                brain.Movement.StartFalling();
+
+            EndAction(true);
+        }
+    }
 }

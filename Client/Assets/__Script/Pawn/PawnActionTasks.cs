@@ -688,6 +688,7 @@ namespace Game.NodeCanvasExtension
         public BBParameter<float> randomRangeMax = 0.1f;
         public BBParameter<float> animAdvanceSinusoidalAmplitude = 0.1f;
         public BBParameter<float> animAdvanceSinusoidalFrequence = 1;
+        public bool resetActionStartTime;
         PawnActionController __pawnActionCtrler;
         int __capturedActionInstanceId;
         float __waitDuration;
@@ -717,6 +718,9 @@ namespace Game.NodeCanvasExtension
             }
             else if (!__pawnActionCtrler.CheckWaitAction(__waitDuration))
             {   
+                if (resetActionStartTime)
+                    __pawnActionCtrler.currActionContext.startTimeStamp = Time.time;
+
                 EndAction(true);
             }
             else if (animAdvanceSinusoidalAmplitude.value > 0)
@@ -1342,6 +1346,21 @@ namespace Game.NodeCanvasExtension
             }
         }
     }
+
+    [Category("Pawn")]
+    public class SetActionAnimLayerBlendWeight : ActionTask
+    {
+        protected override string info => base.info + $" <b>{newValue}</b>";
+        public float newValue;
+        protected override void OnExecute()
+        {
+            if (agent.TryGetComponent<PawnActionController>(out var actionCtrler) && actionCtrler.CheckActionRunning())
+                actionCtrler.currActionContext.animLayerBlendWeight = Mathf.Clamp01(newValue);
+
+            EndAction(true);
+        }
+    }
+
 
     [Category("Pawn")]
     public class TriggerAnim : ActionTask

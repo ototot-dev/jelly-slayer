@@ -93,6 +93,7 @@ namespace Game
         {
             public Renderer[] bodyMeshRenderers;
             public Renderer shieldMeshRenderer;
+            public ParticleSystem[] jetParticleSystems;
             public Transform BlockingFxAttachPoint;
             // public Transform laserAimPoint;
             // public Etasphera42_LaserRenderer laserB_Renderer;
