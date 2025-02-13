@@ -13,6 +13,7 @@ public class UITitlePanel : MonoBehaviour
     public RectTransform _rtLogo;
     public RectTransform _rtMenu;
     public Image _imageShadow;
+    public RawImage _imageRender;
 
     public Transform _trCursor;
     public UITItleButton[] _buttons;
@@ -50,13 +51,16 @@ public class UITitlePanel : MonoBehaviour
         var logopos = _rtLogo.anchoredPosition;
         var menupos = _rtMenu.anchoredPosition;
         _rtLogo.anchoredPosition = new Vector3(logopos.x - 3000, logopos.y);
-        _rtMenu.anchoredPosition = new Vector3(menupos.x, menupos.y - 400);
+        _rtMenu.anchoredPosition = new Vector3(menupos.x, menupos.y - 600);
 
         _rtLogo.DOLocalMoveX(0, 0.6f).SetDelay(0.2f);
-        _rtMenu.DOLocalMoveY(-200, 0.7f).SetDelay(0.6f);
+        _rtMenu.DOLocalMoveY(-200, 0.5f).SetDelay(1.2f);
 
         _cutSceneObj.SetActive(true);
         _imageShadow.color = new Color(0, 0, 0, 1);
+        _imageRender.color = new Color(0, 0, 0, 1);
+
+        _imageRender.DOColor(new Color(1, 1, 1, 1), 0.7f).SetDelay(2.0f);
     }
     public void OnClickGameStart()
     {
@@ -118,6 +122,7 @@ public class UITitlePanel : MonoBehaviour
         _rtMenu.DOMoveY(-400, 0.7f).SetDelay(0.4f);
 
         _imageShadow.DOColor(new Color(0, 0, 0, 0), 0.8f).SetDelay(1.5f);
+        _imageRender.DOColor(new Color(0, 0, 0, 0), 0.8f).SetDelay(0.1f);
 
         DOVirtual.DelayedCall(2.4f, () => {
             gameObject.SetActive(false);

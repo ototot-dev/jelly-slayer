@@ -1527,6 +1527,7 @@ MonoBehaviour:
   _rtLogo: {fileID: 4711985616197029720}
   _rtMenu: {fileID: 2026335701801378444}
   _imageShadow: {fileID: 3442146176451763145}
+  _imageRender: {fileID: 5990520746874727339}
   _trCursor: {fileID: 6957013258767375216}
   _buttons:
   - {fileID: 3191453526517742920}
