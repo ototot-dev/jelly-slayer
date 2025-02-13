@@ -1,12 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using NodeCanvas.Framework;
 using ParadoxNotion.Design;
-using Retween.Rx;
-using UniRx;
-using UnityEngine;
-using XftWeapon;
 
 namespace Game.NodeCanvasExtension.Soldier
 {

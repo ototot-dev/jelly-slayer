@@ -1361,7 +1361,6 @@ namespace Game.NodeCanvasExtension
         }
     }
 
-
     [Category("Pawn")]
     public class TriggerAnim : ActionTask
     {
