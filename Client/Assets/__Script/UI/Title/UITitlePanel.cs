@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Rendering;
 using Game;
 using DG.Tweening;
 
@@ -17,6 +18,12 @@ public class UITitlePanel : MonoBehaviour
     public UITItleButton[] _buttons;
 
     public SocialAvatar _avatar;
+    public GameObject _cutSceneObj;
+    public Volume _volume;
+
+    public float _duration = 1f; // 애니메이션 지속 시간
+    private bool _isGlitch = false;
+    private float _value = 0f;
 
     // Start is called before the first frame update
     void Start()
@@ -40,6 +47,15 @@ public class UITitlePanel : MonoBehaviour
     }
     private void OnEnable()
     {
+        var logopos = _rtLogo.anchoredPosition;
+        var menupos = _rtMenu.anchoredPosition;
+        _rtLogo.anchoredPosition = new Vector3(logopos.x - 3000, logopos.y);
+        _rtMenu.anchoredPosition = new Vector3(menupos.x, menupos.y - 400);
+
+        _rtLogo.DOLocalMoveX(0, 0.6f).SetDelay(0.2f);
+        _rtMenu.DOLocalMoveY(-200, 0.7f).SetDelay(0.6f);
+
+        _cutSceneObj.SetActive(true);
         _imageShadow.color = new Color(0, 0, 0, 1);
     }
     public void OnClickGameStart()
@@ -82,10 +98,12 @@ public class UITitlePanel : MonoBehaviour
         switch (_cursorIndex)
         {
             case 0:
+                _cutSceneObj.SetActive(false);
                 GameObject.Find("Launcher").GetComponent<Launcher>().SetMode(Launcher.GameModes.Game);
                 DoCloseAction();
                 break;
             case 1:
+                _cutSceneObj.SetActive(false);
                 GameObject.Find("Launcher").GetComponent<Launcher>().SetMode(Launcher.GameModes.Tutorial);
                 DoCloseAction();
                 break;
@@ -111,6 +129,22 @@ public class UITitlePanel : MonoBehaviour
     }
     private void Update()
     {
+        if (_isGlitch == false)
+        {
+            var rand = Random.Range(0, 1200);
+            if (rand == 0)
+            {
+                _isGlitch = true;
+                DOTween.To(() => _value, x => _value = x, 1f, _duration)
+                    .OnUpdate(() => { _volume.weight = _value; })
+                    .OnComplete(() =>
+                    {
+                        DOTween.To(() => _value, x => _value = x, 0f, _duration)
+                        .OnUpdate(() => { _volume.weight = _value; })
+                        .OnComplete(() => { _isGlitch = false; });
+                    });
+            }
+        }
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
             SetCursorIndex(_cursorIndex - 1);
