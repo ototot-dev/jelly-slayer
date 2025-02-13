@@ -26,6 +26,8 @@ public class UITitlePanel : MonoBehaviour
     private bool _isGlitch = false;
     private float _value = 0f;
 
+    public AudioClip[] _clipList;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -53,29 +55,27 @@ public class UITitlePanel : MonoBehaviour
         _rtLogo.anchoredPosition = new Vector3(logopos.x - 3000, logopos.y);
         _rtMenu.anchoredPosition = new Vector3(menupos.x, menupos.y - 600);
 
-        _rtLogo.DOLocalMoveX(0, 0.6f).SetDelay(0.2f);
+        _rtLogo.DOLocalMoveX(0, 0.4f).SetDelay(0.2f);
         _rtMenu.DOLocalMoveY(-200, 0.5f).SetDelay(1.2f);
 
         _cutSceneObj.SetActive(true);
         _imageShadow.color = new Color(0, 0, 0, 1);
         _imageRender.color = new Color(0, 0, 0, 1);
 
-        _imageRender.DOColor(new Color(1, 1, 1, 1), 0.7f).SetDelay(2.0f);
+        _volume.enabled = false;
+        _imageRender.DOColor(new Color(1, 1, 1, 1), 1.2f).SetDelay(3.0f)
+            .OnComplete(() => {
+                _volume.enabled = true;
+            });
     }
-    public void OnClickGameStart()
+    public void OnClickButton(int index)
     {
-        SetCursorIndex(0);
+        SetCursorIndex(index);
         Invoke("DoAction", 0.1f);
     }
-    public void OnClickTutorial()
+    public void OnHoverButton(int index)
     {
-        SetCursorIndex(1);
-        Invoke("DoAction", 0.1f);
-    }
-    public void OnClickGameExit()
-    {
-        SetCursorIndex(2);
-        Invoke("DoAction", 0.1f);
+        SetCursorIndex(index);
     }
     void SetCursorIndex(int index) 
     {
@@ -88,7 +88,11 @@ public class UITitlePanel : MonoBehaviour
     }
     void SelectButton(int index) 
     {
-        _cursorIndex = index;
+        if (_cursorIndex != index)
+        {
+            _cursorIndex = index;
+            SoundManager.Instance.PlayWithClip(_clipList[0]);
+        }
         _trCursor.position = _buttons[index].transform.position;
 
         for (int ia = 0; ia < _buttons.Length; ia++) 
@@ -116,6 +120,8 @@ public class UITitlePanel : MonoBehaviour
     }
     void DoCloseAction() 
     {
+        _volume.enabled = false;
+
         var logopos = _rtLogo.anchoredPosition;
         var menupos = _rtMenu.anchoredPosition;
         _rtLogo.DOMoveX(3000, 0.7f).SetDelay(0.4f);
@@ -140,6 +146,7 @@ public class UITitlePanel : MonoBehaviour
             if (rand == 0)
             {
                 _isGlitch = true;
+
                 DOTween.To(() => _value, x => _value = x, 1f, _duration)
                     .OnUpdate(() => { _volume.weight = _value; })
                     .OnComplete(() =>
@@ -148,6 +155,10 @@ public class UITitlePanel : MonoBehaviour
                         .OnUpdate(() => { _volume.weight = _value; })
                         .OnComplete(() => { _isGlitch = false; });
                     });
+                DOVirtual.DelayedCall(0.1f, () => {
+                    int rand = Random.Range(2, 5);
+                    SoundManager.Instance.PlayWithClip(_clipList[rand]);
+                });
             }
         }
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))

@@ -1163,6 +1163,7 @@ GameObject:
   - component: {fileID: 5829605217876525848}
   - component: {fileID: 8623176938397480990}
   - component: {fileID: 3191453526517742920}
+  - component: {fileID: 6363009172865031984}
   m_Layer: 5
   m_Name: Button (1)
   m_TagString: Untagged
@@ -1274,8 +1275,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 9107669498052339955}
         m_TargetAssemblyTypeName: UITitlePanel, Assembly-CSharp
-        m_MethodName: OnClickGameStart
-        m_Mode: 1
+        m_MethodName: OnClickButton
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1299,6 +1300,35 @@ MonoBehaviour:
   _trBack: {fileID: 6888779809784711704}
   _text: {fileID: 3892406544597306631}
   _targetScale: 1
+--- !u!114 &6363009172865031984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7095064850710726505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 9107669498052339955}
+          m_TargetAssemblyTypeName: UITitlePanel, Assembly-CSharp
+          m_MethodName: OnHoverButton
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &7541721985391511645
 GameObject:
   m_ObjectHideFlags: 0
@@ -1452,8 +1482,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1537,6 +1567,13 @@ MonoBehaviour:
   _cutSceneObj: {fileID: 0}
   _volume: {fileID: 4804340240795988832}
   _duration: 1
+  _clipList:
+  - {fileID: 8300000, guid: b392f83fe924a437c84ff9b6c54a1405, type: 3}
+  - {fileID: 8300000, guid: bfcedf6b5928241789006874eead796e, type: 3}
+  - {fileID: 8300000, guid: b392f83fe924a437c84ff9b6c54a1405, type: 3}
+  - {fileID: 8300000, guid: 53df1ba675bb84592aa8104512652085, type: 3}
+  - {fileID: 8300000, guid: 933dce9d7d21d48d984e5e3bca2a9b23, type: 3}
+  - {fileID: 8300000, guid: 1a9c6da6db8b043c88f60b16d24537e4, type: 3}
 --- !u!1 &7914316484739743158
 GameObject:
   m_ObjectHideFlags: 0
@@ -1709,6 +1746,7 @@ GameObject:
   - component: {fileID: 7069025983109500112}
   - component: {fileID: 1858680073107662404}
   - component: {fileID: 7528527127717965681}
+  - component: {fileID: 5988894266146934792}
   m_Layer: 5
   m_Name: Button (2)
   m_TagString: Untagged
@@ -1820,12 +1858,12 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 9107669498052339955}
         m_TargetAssemblyTypeName: UITitlePanel, Assembly-CSharp
-        m_MethodName: OnClickTutorial
-        m_Mode: 1
+        m_MethodName: OnClickButton
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -1845,6 +1883,35 @@ MonoBehaviour:
   _trBack: {fileID: 8042869350789175166}
   _text: {fileID: 6862731683832515639}
   _targetScale: 1
+--- !u!114 &5988894266146934792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8037626552026566910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 9107669498052339955}
+          m_TargetAssemblyTypeName: UITitlePanel, Assembly-CSharp
+          m_MethodName: OnHoverButton
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 1
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &8143531695834265597
 GameObject:
   m_ObjectHideFlags: 0
@@ -1858,6 +1925,7 @@ GameObject:
   - component: {fileID: 5430232054582720947}
   - component: {fileID: 6992882929466455087}
   - component: {fileID: 1666730509671100032}
+  - component: {fileID: 8425363762631062401}
   m_Layer: 5
   m_Name: Button (3)
   m_TagString: Untagged
@@ -1969,12 +2037,12 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 9107669498052339955}
         m_TargetAssemblyTypeName: UITitlePanel, Assembly-CSharp
-        m_MethodName: OnClickGameExit
-        m_Mode: 1
+        m_MethodName: OnClickButton
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 2
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -1994,6 +2062,35 @@ MonoBehaviour:
   _trBack: {fileID: 3024915795638320447}
   _text: {fileID: 6841406103150219653}
   _targetScale: 1
+--- !u!114 &8425363762631062401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8143531695834265597}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 9107669498052339955}
+          m_TargetAssemblyTypeName: UITitlePanel, Assembly-CSharp
+          m_MethodName: OnHoverButton
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 2
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &8383061031283355752
 GameObject:
   m_ObjectHideFlags: 0

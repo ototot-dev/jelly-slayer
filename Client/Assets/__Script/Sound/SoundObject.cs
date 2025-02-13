@@ -161,14 +161,21 @@ public class SoundObject : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        //if (_isPlay == false)
-            //return;
+        if (_isPlay == false)
+            return;
 
         if (_source.isPlaying == false)
         {
             if (Time.time - _timePlayStart > _lifeTime)
             {
-                //_info.Delete(this);
+                if (_data != null)
+                {
+                    _data.Delete(this);
+                }
+                else 
+                {
+                    GameObject.Destroy(gameObject);
+                }
             }
         }
 	}
