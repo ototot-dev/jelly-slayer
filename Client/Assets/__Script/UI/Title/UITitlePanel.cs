@@ -35,6 +35,8 @@ public class UITitlePanel : MonoBehaviour
         SetCursorIndex(0);
 
         _avatar.SetEmotion(EMOTION.Angry);
+
+        SoundManager.Instance.PlayBGM(SoundID.BGM_TITLE);
     }
     private void OnEnable()
     {

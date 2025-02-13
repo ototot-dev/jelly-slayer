@@ -13,7 +13,7 @@ public class SoundManager : MonoSingleton<SoundManager>
 #endif
 
     public float _volumeSFX = 1;
-    public float _volumeBGM = 1;
+    public float _volumeBGM = 0.5f;
     public float _volumeVCE = 1;
 
 	public SoundID _curBGM = 0;
@@ -138,7 +138,8 @@ public class SoundManager : MonoSingleton<SoundManager>
 		if (_curBGM >= 0)
 		{
 			SoundData data = GetData(_curBGM);
-			data.FadeOut();
+            if (data != null)
+				data.FadeOut();
 		}
 		_curBGM = i_id;
 		SoundObject sound = Play(i_id, true);
@@ -201,7 +202,6 @@ public class SoundManager : MonoSingleton<SoundManager>
 		SoundObject sound;
 		for (int ia = 0; ia < count; ia++)
 		{
-
 			child = transform.GetChild(ia);
 			sound = child.GetComponent<SoundObject>();
 			if (sound && sound.IsPlaying)

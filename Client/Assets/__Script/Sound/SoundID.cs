@@ -4,7 +4,8 @@ using GoogleSheet.Core.Type;
 public enum SoundID 
 {
     NONE,
-    BGM_DEFAULT,
+    BGM_TITLE,
+    BGM_GAME,
 
     HIT_FLESH,
     HIT_BLOCK,
