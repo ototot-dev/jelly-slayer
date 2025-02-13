@@ -1348,7 +1348,7 @@ namespace Game.NodeCanvasExtension
     }
 
     [Category("Pawn")]
-    public class SetActionAnimLayerBlendWeight : ActionTask
+    public class SetActionLayerBlendWeight : ActionTask
     {
         protected override string info => base.info + $" <b>{newValue}</b>";
         public float newValue;
