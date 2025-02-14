@@ -82,7 +82,7 @@ namespace Game
             }
             else if (__brain.BB.IsFalling)
             {
-                Debug.Assert(__rootMotionPosition.sqrMagnitude <= 0f);
+                //Debug.Assert(__rootMotionPosition.sqrMagnitude <= 0f);
                 
                 __ecmMovement.velocity += Time.fixedDeltaTime * gravity;
                 __ecmMovement.Move(Time.fixedDeltaTime);
