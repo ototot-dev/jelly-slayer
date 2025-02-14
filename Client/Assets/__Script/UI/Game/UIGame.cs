@@ -84,29 +84,7 @@ public class UIGame : MonoBehaviour
             }
             _dmgTextManager.Create(damageContext.finalDamage.ToString("0"), damageContext.hitPoint, scale, color);
         }
-        switch(damageContext.receiverPenalty.Item1)
-        {
-            case PawnStatus.Staggered:
-                //_dmgTextManager.Create("Stagger", damageContext.hitPoint);
-                break;
-            case PawnStatus.KnockDown:
-                //_dmgTextManager.Create("KnockDown", damageContext.hitPoint);
-                break;
-            case PawnStatus.Groggy:
-                //_dmgTextManager.Create("Stunned", damageContext.hitPoint);
-                break;
-
-        }
         _hpBarManager.PawnDamaged(ref damageContext);
-
-        // 
-        switch(damageContext.actionResult) 
-        {
-            case ActionResults.GuardBreak:
-                {
-                    Debug.Log("GuardBreak!!!!!!");
-                }
-                break;
-        }
+        _gamePanel.PawnDamaged(ref damageContext);
     }
 }

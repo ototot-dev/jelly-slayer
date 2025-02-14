@@ -13,7 +13,7 @@ public class SoundManager : MonoSingleton<SoundManager>
 #endif
 
     public float _volumeSFX = 1;
-    public float _volumeBGM = 0.5f;
+    public float _volumeBGM = 0.3f;
     public float _volumeVCE = 1;
 
 	public SoundID _curBGM = 0;

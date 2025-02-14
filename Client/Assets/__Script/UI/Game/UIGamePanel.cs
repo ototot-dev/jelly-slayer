@@ -22,7 +22,9 @@ public class UIGamePanel : MonoBehaviour
 
     [Space(10)]
     public HeroBrain _heroBrain;
-    public PawnBrainController _targetPawn;
+    public PawnBrainController _targetPawn = null;
+    public PawnBrainController _attackedPawn = null;
+    float _attackedTime = 0;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -51,7 +53,24 @@ public class UIGamePanel : MonoBehaviour
     {
         _menuObj?.SetActive(true);
     }
-
+    public void PawnDamaged(ref PawnHeartPointDispatcher.DamageContext damageContext)
+    {
+        if (damageContext.senderBrain == _heroBrain)
+        {
+            if (damageContext.receiverBrain != null && damageContext.receiverBrain.PawnBB.IsDead == false)
+            {
+                _attackedPawn = damageContext.receiverBrain;
+                _attackedTime = 3.0f;
+                return;
+            }
+        }
+        else if(damageContext.receiverBrain == _heroBrain)
+        {
+            _attackedPawn = damageContext.senderBrain;
+            _attackedTime = 3.0f;
+            return;
+        }
+    }
     // Update is called once per frame
     void Update()
     {
@@ -67,16 +86,28 @@ public class UIGamePanel : MonoBehaviour
         _playerSpSlider.value = (maxStamina > 0) ? _heroBrain.PawnBB.stat.stamina.Value / maxStamina : 0;
 
         // Enemy HP Value
-        _targetPawn = _heroBrain.BB.TargetBrain;
-        if (_targetPawn != null)
+        if (_attackedPawn != null)
         {
+            _attackedTime -= Time.deltaTime;
+            if (_attackedTime <= 0)
+            {
+                _attackedPawn = null;
+            }
+        }
+        _targetPawn = (_attackedPawn != null) ? _attackedPawn : _heroBrain.BB.TargetBrain;
+        if (_targetPawn != null && _targetPawn.PawnBB.IsDead == false)
+        {
+            _enemyObj.SetActive(true);
             var maxValue2 = _targetPawn.PawnBB.stat.maxHeartPoint.Value;
             _enemyHPSlider.value = (maxValue > 0) ? _targetPawn.PawnHP.heartPoint.Value / maxValue2 : 0;
+
+            _enemyName.text = _targetPawn.PawnBB.common.pawnName; 
         }
         else 
         {
-            _enemyHPSlider.value = 0;
+            _enemyObj.SetActive(false);
         }
+        // ¸Þ´º Ã¢
         if (Input.GetKeyDown(KeyCode.Escape)) 
         {
             OnClickMenu();
