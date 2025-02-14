@@ -1,4 +1,5 @@
 using System;
+using Cinemachine.Utility;
 using UniRx;
 using UnityEngine;
 
@@ -48,6 +49,7 @@ namespace Game
         protected PawnActionController __pawnActionCtrler;
         protected PawnStatusController __pawnStatusCtrler;
         protected ECM2.CharacterMovement __ecmMovement;
+        Vector3 __rootMotionFallingVec;
 
         void Start()
         {
@@ -77,11 +79,21 @@ namespace Game
                 }
                 else if (__rootMotionPosition.sqrMagnitude > 0f)
                 {
-                    __ecmMovement.Move(GetRootMotionVelocity(Time.fixedDeltaTime), Time.fixedDeltaTime);
+                    __rootMotionFallingVec = __ecmMovement.isGrounded ? Vector3.zero : __rootMotionFallingVec + Time.fixedDeltaTime * gravity;
+                    __ecmMovement.Move(GetRootMotionVelocity(Time.fixedDeltaTime) + __rootMotionFallingVec, Time.fixedDeltaTime);
                 }
                 else
                 {
-                    __ecmMovement.SimpleMove(moveSpeed * moveVec, moveSpeed, moveAccel, moveBrake, 1f, 1f, gravity, false, Time.fixedDeltaTime);
+                    if (__ecmMovement.isGrounded || gravity.AlmostZero())
+                    {
+                        __rootMotionFallingVec = Vector3.zero;
+                        __ecmMovement.SimpleMove(moveSpeed * moveVec, moveSpeed, moveAccel, moveBrake, 1f, 1f, gravity, false, Time.fixedDeltaTime);
+                    }
+                    else
+                    {
+                        __ecmMovement.velocity += Time.fixedDeltaTime * gravity;
+                        __ecmMovement.Move(Time.fixedDeltaTime);
+                    }
                 }
 
                 __ecmMovement.rotation *= __rootMotionRotation;

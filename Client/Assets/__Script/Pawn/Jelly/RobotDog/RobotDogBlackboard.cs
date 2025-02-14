@@ -1,14 +1,12 @@
 using System;
+using System.Linq;
 using UniRx;
 using UnityEngine;
 
 namespace Game
 {
-    public class SoldierBlackboard : JellyHumanoidBlackboard
+    public class RobotDogBlackboard : JellyHumanoidBlackboard
     {
-        public override bool IsJumping => action.isJumping.Value;
-        public override bool IsGliding => action.isGliding.Value;
-        public override bool IsFalling => action.isFalling.Value;
         public override bool IsGuarding => action.isGuarding.Value;
         public override float SpacingInDistance => action.spacingInDistance;
         public override float SpacingOutDistance => action.spacingOutDistance;
@@ -22,10 +20,7 @@ namespace Game
         public class Body
         {
             public float walkSpeed = 1f;
-            public float jumpHeight = 1f;
-            public float glidingDuration = 1f;
-            public float glidingAmplitude = 1f;
-            public float glidingFrequency = 1f;
+            public float runSpeed = 1f;
         }
 
         public Body body = new();
@@ -33,9 +28,6 @@ namespace Game
         [Serializable]
         public class Action
         {
-            public BoolReactiveProperty isJumping = new();
-            public BoolReactiveProperty isGliding = new();
-            public BoolReactiveProperty isFalling = new();
             public BoolReactiveProperty isGuarding = new();
             public float spacingInDistance = 1f;
             public float spacingOutDistance = 1f;
@@ -44,12 +36,9 @@ namespace Game
             public float minApproachDistance = 1f;
             public float holdPositionRate = 1f;
             public float moveAroundRate = 1f;
-            public float comboAttackRateBoostAfterCounterAttack;  //* 반격 후 콤보 1타 발생 확률 증가
-            public float allAttackFixedRateAfterLeapHit; //* 점프 공격 히트 후 모든 공격 발생 확률 고정
+            public float comboAttackRateBoostAfterCounterAttack;   //* 반격 후 콤보 1타 콤보 발생 확률 증가
             public float comboAttackRateStep;  //* Idle 상태에서 콤보 1타 발생 확률 증가
             public float counterAttackRateStep; //* 블럭 후 반격 발생 확률 증가
-            public float leapRateStep; //* 타켓과 거리가 떨어졌을 때 Leap 발생 확률 증가
-            public GameObject missilePrefab;
         }
 
         public Action action = new();
@@ -93,11 +82,7 @@ namespace Game
         public class Attachment
         {
             public Renderer[] bodyMeshRenderers;
-            public Renderer shieldMeshRenderer;
-            public ParticleSystem[] jetParticleSystems;
             public Transform BlockingFxAttachPoint;
-            // public Transform laserAimPoint;
-            // public Etasphera42_LaserRenderer laserB_Renderer;
         }
 
         public Attachment attachment = new();

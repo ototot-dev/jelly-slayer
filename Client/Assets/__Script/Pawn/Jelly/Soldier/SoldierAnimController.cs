@@ -120,7 +120,7 @@ namespace Game
                     mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
 
                     if (__brain.ActionCtrler.CheckActionRunning())
-                        mainAnimator.SetLayerWeight((int)LayerIndices.Action, Mathf.Clamp(mainAnimator.GetLayerWeight((int)LayerIndices.Action) + actionLayerBlendSpeed * Time.deltaTime, 0f, __brain.ActionCtrler.currActionContext.animLayerBlendWeight));
+                        mainAnimator.SetLayerWeight((int)LayerIndices.Action, Mathf.Clamp(mainAnimator.GetLayerWeight((int)LayerIndices.Action) + (__brain.ActionCtrler.currActionContext.actionData?.animBlendSpeed ?? actionLayerBlendSpeed) * Time.deltaTime, 0f, __brain.ActionCtrler.currActionContext.animLayerBlendWeight));
                     else
                         mainAnimator.SetLayerWeight((int)LayerIndices.Action, Mathf.Clamp01(mainAnimator.GetLayerWeight((int)LayerIndices.Action)  - actionLayerBlendSpeed * Time.deltaTime));
 

@@ -269,6 +269,7 @@ namespace Game
                 {
                     if (__ecmMovement.isGrounded)
                     {
+                        __rootMotionFallingVec = Vector3.zero;
                         __ecmMovement.SimpleMove(moveSpeed * moveVec, moveSpeed, moveAccel, moveBrake, 1f, 1f, gravity, false, Time.fixedDeltaTime);
                     }
                     else

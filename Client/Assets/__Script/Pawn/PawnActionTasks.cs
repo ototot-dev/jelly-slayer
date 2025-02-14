@@ -998,7 +998,7 @@ namespace Game.NodeCanvasExtension
     }
 
     [Category("Pawn")]
-    public class FinishHomingRootMotion : ActionTask
+    public class VerticalRootMotion : ActionTask
     {
         protected override void OnExecute()
         {
@@ -1007,6 +1007,22 @@ namespace Game.NodeCanvasExtension
 
             actionCtrler.currActionContext.rootMotionDisposable?.Dispose();
             actionCtrler.currActionContext.rootMotionDisposable = null;
+
+            EndAction(true);
+        }
+    }
+
+    [Category("Pawn")]
+    public class VerticalImpulseRootMotion : ActionTask
+    {
+        public BBParameter<float> verticalImpulse = 1f;
+        protected override void OnExecute()
+        {
+            if (agent.TryGetComponent<PawnMovement>(out var pawnMovement) && pawnMovement.GetCharacterMovement() != null)
+            {
+                pawnMovement.GetCharacterMovement().velocity.y = verticalImpulse.value;
+                pawnMovement.GetCharacterMovement().PauseGroundConstraint();
+            }
 
             EndAction(true);
         }
