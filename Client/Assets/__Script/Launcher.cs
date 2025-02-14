@@ -100,6 +100,8 @@ namespace Game
                         GameManager.Instance.Activate_Game(true);
                         GameManager.Instance.ShowLevel_ShootingRange(true);
 
+                        SoundManager.Instance.PlayBGM(SoundID.BGM_GAME);
+
                         Observable.Timer(TimeSpan.FromSeconds(1f)).Subscribe(_ => GameManager.Instance.SpawnHero(new UnityEngine.Vector3(-2, 0, -3)));
                         Observable.Timer(TimeSpan.FromSeconds(1.1f)).Subscribe(_ => GameManager.Instance.SpawnDroneBot());
                         Observable.Timer(TimeSpan.FromSeconds(2.0f)).Subscribe(_ => GameManager.Instance.SpawnSoldier());
@@ -126,6 +128,8 @@ namespace Game
                 case GameModes.Title:
                     {
                         GameManager.Instance.Activate_Title(true);
+
+                        SoundManager.Instance.PlayBGM(SoundID.BGM_TITLE);
                     }
                     break;
             }

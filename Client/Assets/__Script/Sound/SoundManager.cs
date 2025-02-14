@@ -13,7 +13,7 @@ public class SoundManager : MonoSingleton<SoundManager>
 #endif
 
     public float _volumeSFX = 1;
-    public float _volumeBGM = 0.5f;
+    public float _volumeBGM = 0.3f;
     public float _volumeVCE = 1;
 
 	public SoundID _curBGM = 0;
@@ -83,6 +83,9 @@ public class SoundManager : MonoSingleton<SoundManager>
         sound._lifeTime = 20.0f;
         sound.PlayWithPath(i_resPath);
 
+        if (sound.transform.parent == null)
+            sound.transform.SetParent(transform);
+
 #if UNITY_EDITOR
         _count = transform.childCount;
 #endif
@@ -103,6 +106,9 @@ public class SoundManager : MonoSingleton<SoundManager>
         sound.SetLoop(i_isLoop);
         sound._lifeTime = i_clip.length;
         sound.PlayWithClip(i_clip);
+
+        if (sound.transform.parent == null)
+            sound.transform.SetParent(transform);
 
 #if UNITY_EDITOR
         _count = transform.childCount;

@@ -65,8 +65,8 @@ public class SoundData
 
         foreach(SoundObject sound in _listObj) 
         {
-            //if (sound != null) 
-                //sound.FadeOut();
+            if (sound != null) 
+                sound.FadeOut();
         }
     }
     public void AllStop() 
