@@ -56,16 +56,20 @@ public class UITitlePanel : MonoBehaviour
         _rtMenu.anchoredPosition = new Vector3(menupos.x, menupos.y - 600);
 
         _rtLogo.DOLocalMoveX(0, 0.4f).SetDelay(0.2f);
-        _rtMenu.DOLocalMoveY(-200, 0.5f).SetDelay(1.2f);
+        _rtMenu.DOLocalMoveY(-200, 0.3f).SetDelay(3.2f);
 
         _cutSceneObj.SetActive(true);
         _imageShadow.color = new Color(0, 0, 0, 1);
         _imageRender.color = new Color(0, 0, 0, 1);
 
         _volume.enabled = false;
-        _imageRender.DOColor(new Color(1, 1, 1, 1), 1.2f).SetDelay(3.0f)
-            .OnComplete(() => {
+        _imageRender.DOColor(new Color(1, 1, 1, 1), 1.2f).SetDelay(1.5f)
+            .OnStart(() => {
                 _volume.enabled = true;
+                DoGlitch();
+            })
+            .OnComplete(() => {
+
             });
     }
     public void OnClickButton(int index)
@@ -103,6 +107,7 @@ public class UITitlePanel : MonoBehaviour
 
     void DoAction() 
     {
+        SoundManager.Instance.PlayWithClip(_clipList[1]);
         switch (_cursorIndex)
         {
             case 0:
@@ -138,6 +143,23 @@ public class UITitlePanel : MonoBehaviour
         });
 
     }
+    void DoGlitch() 
+    {
+        _isGlitch = true;
+
+        DOTween.To(() => _value, x => _value = x, 1f, _duration)
+            .OnUpdate(() => { _volume.weight = _value; })
+            .OnComplete(() =>
+            {
+                DOTween.To(() => _value, x => _value = x, 0f, _duration)
+                .OnUpdate(() => { _volume.weight = _value; })
+                .OnComplete(() => { _isGlitch = false; });
+            });
+        DOVirtual.DelayedCall(0.1f, () => {
+            int rand = Random.Range(2, 5);
+            SoundManager.Instance.PlayWithClip(_clipList[rand]);
+        });
+    }
     private void Update()
     {
         if (_isGlitch == false)
@@ -145,20 +167,7 @@ public class UITitlePanel : MonoBehaviour
             var rand = Random.Range(0, 1200);
             if (rand == 0)
             {
-                _isGlitch = true;
-
-                DOTween.To(() => _value, x => _value = x, 1f, _duration)
-                    .OnUpdate(() => { _volume.weight = _value; })
-                    .OnComplete(() =>
-                    {
-                        DOTween.To(() => _value, x => _value = x, 0f, _duration)
-                        .OnUpdate(() => { _volume.weight = _value; })
-                        .OnComplete(() => { _isGlitch = false; });
-                    });
-                DOVirtual.DelayedCall(0.1f, () => {
-                    int rand = Random.Range(2, 5);
-                    SoundManager.Instance.PlayWithClip(_clipList[rand]);
-                });
+                DoGlitch();
             }
         }
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
