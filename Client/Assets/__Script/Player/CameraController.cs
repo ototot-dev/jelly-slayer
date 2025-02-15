@@ -15,7 +15,7 @@ namespace Game
         public PixelCameraManager pixelCameraManager;
 
         [Header("Parameter")]
-        [Range(0.1f, 1f)]
+        [Range(0.1f, 2f)]
         public float zoom = 1f;
         public float zoomSpeed = 1f;
         public float yawAngleOnGrouned = 40f;

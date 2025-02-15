@@ -164,7 +164,7 @@ public class UITitlePanel : MonoBehaviour
     {
         if (_isGlitch == false)
         {
-            var rand = Random.Range(0, 1100);
+            var rand = Random.Range(0, 1000);
             if (rand == 0)
             {
                 DoGlitch();
