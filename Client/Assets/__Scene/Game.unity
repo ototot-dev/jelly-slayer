@@ -2588,6 +2588,38 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 157535112}
     m_Modifications:
+    - target: {fileID: 1192040130163728839, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1192040130163728839, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2369121818574372330, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 65
+      objectReference: {fileID: 0}
+    - target: {fileID: 2369121818574372330, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 2508618499003490662, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
+      propertyPath: m_FontData.m_Font
+      value: 
+      objectReference: {fileID: 12800000, guid: 5c425d43bb0df45ca8eb162d5154251e, type: 3}
+    - target: {fileID: 2508618499003490662, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
+      propertyPath: m_FontData.m_MaxSize
+      value: 46
+      objectReference: {fileID: 0}
+    - target: {fileID: 2508618499003490662, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
+      propertyPath: m_FontData.m_FontSize
+      value: 46
+      objectReference: {fileID: 0}
+    - target: {fileID: 2508618499003490662, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
+      propertyPath: m_FontData.m_FontStyle
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3538263936112435760, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
       propertyPath: m_Name
       value: GamePanel
@@ -2596,6 +2628,14 @@ PrefabInstance:
       propertyPath: _menuObj
       value: 
       objectReference: {fileID: 100515941}
+    - target: {fileID: 4277484477790531678, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5829656812684631420, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5947494458222356936, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2676,6 +2716,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7142342661140399728, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7142342661140399728, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7707226506227217703, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7707226506227217703, guid: 732da1bb68ac3dd498df08c31c1aafdf, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2696,43 +2752,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 794360693511112823, guid: 10129b35f9e77a646b1d24c28b3a0a75, type: 3}
   m_PrefabInstance: {fileID: 399960173}
   m_PrefabAsset: {fileID: 0}
---- !u!84 &88467221
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 576
-  m_Height: 360
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 94
-  m_ColorFormat: 4
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 1
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 0
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1001 &88578805
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4937,7 +4956,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &157535112
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11894,6 +11913,43 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 150701606710579443, guid: 971bd9e987231b74195505e43d414a52, type: 3}
   m_PrefabInstance: {fileID: 2107167338}
   m_PrefabAsset: {fileID: 0}
+--- !u!84 &405327402
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 576
+  m_Height: 360
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 94
+  m_ColorFormat: 4
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 1
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 0
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!1001 &405534986
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16547,7 +16603,7 @@ PrefabInstance:
     - target: {fileID: 9205371885998440386, guid: e96cffa9d00b6b545adfeb26165952cc, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 88467221}
+      objectReference: {fileID: 405327402}
     - target: {fileID: 9205371885998440386, guid: e96cffa9d00b6b545adfeb26165952cc, type: 3}
       propertyPath: orthographic size
       value: 4.2
@@ -46452,7 +46508,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7881376194213910270, guid: d47c59fe5d1b4b140ba77a6a9e5588e1, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9107669498052339955, guid: d47c59fe5d1b4b140ba77a6a9e5588e1, type: 3}
       propertyPath: _avatar

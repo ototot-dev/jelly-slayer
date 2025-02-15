@@ -66,7 +66,8 @@ namespace Game
 
             onHitSomething += (c) =>
             {
-                if (__isGrounded && c.TryGetComponent<PawnColliderHelper>(out var helper) && helper.pawnBrain != emitterBrain.Value && helper.pawnBrain.PawnBB.common.pawnName == "Hero")
+                if (__isGrounded && c.TryGetComponent<PawnColliderHelper>(out var helper) && 
+                helper.pawnBrain != emitterBrain.Value && helper.pawnBrain.PawnBB.common.pawnName == "Hero")
                     Explode();
             };
 

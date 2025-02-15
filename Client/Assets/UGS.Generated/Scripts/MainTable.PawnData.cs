@@ -78,6 +78,7 @@ namespace MainTable
 		public System.Int32 groggyHitCount;
 		public System.Single groggyDuration;
 		public System.Single knockDownDuration;
+		public System.String name;
   
 
 #region fuctions

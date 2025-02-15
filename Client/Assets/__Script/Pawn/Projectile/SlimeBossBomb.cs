@@ -52,7 +52,8 @@ namespace Game
                 if (c == null || c == base.emitterBrain.Value)
                     continue;
 
-                if (c.TryGetComponent<PawnColliderHelper>(out var hitColliderHelper) && hitColliderHelper.pawnBrain != null && hitColliderHelper.pawnBrain != miniBrain && hitColliderHelper.pawnBrain.PawnBB.common.pawnName == "Hero")
+                if (c.TryGetComponent<PawnColliderHelper>(out var hitColliderHelper) && hitColliderHelper.pawnBrain != null && 
+                    hitColliderHelper.pawnBrain != miniBrain && hitColliderHelper.pawnBrain.PawnBB.common.pawnName == "Hero")
                     miniBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, base.emitterBrain.Value, hitColliderHelper.pawnBrain, actionData, hitColliderHelper.pawnCollider, false));
             }
 
