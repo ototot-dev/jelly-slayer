@@ -3,20 +3,22 @@ using UnityEngine;
 
 public class GameManager : MonoSingleton<GameManager>
 {
-    public void SpawnHero(Vector3 vPos)
+    public GameObject SpawnHero(Vector3 vPos)
     {
         if (GameContext.Instance == null || GameContext.Instance.playerCtrler == null) 
-            return;
+            return null;
 
         var res = Resources.Load<GameObject>("Pawn/Player/Hero_OneUp");
         var pawnObj = GameContext.Instance.playerCtrler.SpawnHeroPawn(res, true);
         if (pawnObj == null)
-            return;
+            return null;
 
         pawnObj.SetActive(true);
         pawnObj.transform.SetPositionAndRotation(vPos, Quaternion.identity);
 
         OnSpawned(pawnObj.GetComponent<PawnBrainController>());
+
+        return pawnObj;
     }
 
     public void DespawnHero()
@@ -24,15 +26,11 @@ public class GameManager : MonoSingleton<GameManager>
         GameContext.Instance.playerCtrler.possessedBrain.BB.common.isDead.Value = true;
     }
 
-    public void SpawnDroneBot()
-    {
-        Instantiate(Resources.Load<GameObject>("Pawn/Player/DroneBot")).transform.SetPositionAndRotation(2f * Vector3.up, Quaternion.identity);
-    }
+    //public void SpawnDroneBot()
+    //{ Instantiate(Resources.Load<GameObject>("Pawn/Player/DroneBot")).transform.SetPositionAndRotation(2f * Vector3.up, Quaternion.identity);}
 
-    public void SpawnSoldier()
-    {
-        Instantiate(Resources.Load<GameObject>("Pawn/Jelly/JellySoldier")).transform.SetPositionAndRotation(Vector3.right + Vector3.up, Quaternion.identity);
-    }
+    //public void SpawnSoldier()
+    //{ Instantiate(Resources.Load<GameObject>("Pawn/Jelly/JellySoldier")).transform.SetPositionAndRotation(Vector3.right + Vector3.up, Quaternion.identity);}
 
     public void DespawnSoldier()
     {
@@ -41,10 +39,8 @@ public class GameManager : MonoSingleton<GameManager>
             soldierBrain.BB.common.isDead.Value = true;
     }
 
-    public void SpawnDroid(Vector3 position)
-    {
-        Instantiate(Resources.Load<GameObject>("Pawn/Jelly/JellyAlien")).transform.SetPositionAndRotation(position, Quaternion.identity);
-    }
+    //public void SpawnDroid(Vector3 position)
+    //{ Instantiate(Resources.Load<GameObject>("Pawn/Jelly/JellyAlien")).transform.SetPositionAndRotation(position, Quaternion.identity); }
 
     public void DespawnDroid()
     {
@@ -53,10 +49,8 @@ public class GameManager : MonoSingleton<GameManager>
             alienBrain.BB.common.isDead.Value = true;
     }
 
-    public void SpawnEtasphera42()
-    {
-        Instantiate(Resources.Load<GameObject>("Pawn/Jelly/JellyEtasphera42")).transform.SetPositionAndRotation(Vector3.right, Quaternion.identity);
-    }
+    //public void SpawnEtasphera42()
+    //{ Instantiate(Resources.Load<GameObject>("Pawn/Jelly/JellyEtasphera42")).transform.SetPositionAndRotation(Vector3.right, Quaternion.identity);}
 
     public void DespawnEtasphera42()
     {
@@ -149,15 +143,15 @@ public class GameManager : MonoSingleton<GameManager>
     {
         _isGameStart = false;
 
+        GameContext.Instance.playerCtrler.Unpossess();
+
         Activate_Game(false);
         ShowLevel_HackerDen(false);
         ShowLevel_ShootingRange(false);
 
-        DespawnHero();
-        GameContext.Instance.playerCtrler.Unpossess();
-
-        DespawnEtasphera42();
-        DespawnSoldier();
+        //DespawnHero();
+        //DespawnEtasphera42();
+        //DespawnSoldier();
 
         _delGameEnd?.Invoke();
     }
