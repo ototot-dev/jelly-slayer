@@ -5594,7 +5594,7 @@ MonoBehaviour:
     hitColor: {fileID: 2100000, guid: a352a16cd87054b82af9135444ad0122, type: 2}
     BlockingFxAttachPoint: {fileID: 5781964363949412845}
   audios:
-    onHitAudioClip: {fileID: 8300000, guid: bba0a0725054ad0419aecf461293c8e9, type: 3}
+    onHitAudioClip: {fileID: 8300000, guid: d7ac4b645350e4f2e8367c3d6840cb61, type: 3}
     onBigHitAudioClip: {fileID: 8300000, guid: bba0a0725054ad0419aecf461293c8e9, type: 3}
     onKickHitAudioClip: {fileID: 8300000, guid: 9cb0b1ad621027a478ebeb3ce2f31faa, type: 3}
     onBleedingAudioClip: {fileID: 8300000, guid: bba0a0725054ad0419aecf461293c8e9, type: 3}

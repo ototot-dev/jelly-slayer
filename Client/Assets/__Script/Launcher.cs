@@ -101,12 +101,13 @@ namespace Game
                         GameManager.Instance.ShowLevel_ShootingRange(true);
 
                         SoundManager.Instance.PlayBGM(SoundID.BGM_GAME);
-
+                        /*
                         Observable.Timer(TimeSpan.FromSeconds(1f)).Subscribe(_ => GameManager.Instance.SpawnHero(new UnityEngine.Vector3(-2, 0, -3)));
                         Observable.Timer(TimeSpan.FromSeconds(1.1f)).Subscribe(_ => GameManager.Instance.SpawnDroneBot());
                         Observable.Timer(TimeSpan.FromSeconds(2.0f)).Subscribe(_ => GameManager.Instance.SpawnSoldier());
                         Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(_ => GameManager.Instance.SpawnDroid(UnityEngine.Vector3.right * 5));
                         Observable.Timer(TimeSpan.FromSeconds(4.0f)).Subscribe(_ => GameManager.Instance.SpawnDroid(UnityEngine.Vector3.left * 5));
+                        */
                         // Observable.Timer(TimeSpan.FromSeconds(2.0f)).Subscribe(_ => GameManager.Instance.SpawnEtasphera42());
                     }
                     break;

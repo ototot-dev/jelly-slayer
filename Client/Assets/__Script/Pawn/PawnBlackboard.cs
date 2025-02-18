@@ -108,6 +108,8 @@ namespace Game
             stat.guardStaminaCost = pawnData.guardStaminaCost;
             stat.guardStaggerDuration = pawnData.guardStaggerDuration;
             stat.staminaRecoverSpeed = pawnData.staminaRecoverSpeed;
+
+            common.pawnName = pawnData.name;
         }
 
         public MainTable.PawnData pawnData;

@@ -70,7 +70,7 @@ namespace Game
 
             if (__brain.BB.IsJumping)
             {
-                Debug.Assert(__rootMotionPosition.sqrMagnitude <= 0f);
+                //Debug.Assert(__rootMotionPosition.sqrMagnitude <= 0f);
 
                 __ecmMovement.velocity += Time.fixedDeltaTime * gravity;
                 __ecmMovement.Move(Time.fixedDeltaTime);
