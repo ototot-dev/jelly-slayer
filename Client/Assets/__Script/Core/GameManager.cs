@@ -114,6 +114,9 @@ public class GameManager : MonoSingleton<GameManager>
     public delegate void OnGameEnd();
     public OnGameEnd _delGameEnd;
 
+    public delegate void OnGameOver();
+    public OnGameEnd _delGameOver;
+
     public delegate void OnPawnSpawned(PawnBrainController pawn);
     public OnPawnSpawned _delPawnSpawned;
 
@@ -127,7 +130,10 @@ public class GameManager : MonoSingleton<GameManager>
     public OnPawnJumped _delPawnJumped;
 
     public bool _isGameStart = false;
+    public bool _isGameOver = false;
     public Vector3 _vInitPos;
+
+    public PawnBrainController _player;
 
     // Start is called before the first frame update
     void Start()
@@ -136,12 +142,14 @@ public class GameManager : MonoSingleton<GameManager>
     public void StartGame() 
     {
         _isGameStart = true;
+        _isGameOver = false;
 
         _delGameStart?.Invoke();
     }
     public void CloseGame()
     {
         _isGameStart = false;
+        _isGameOver = false;
 
         GameContext.Instance.playerCtrler.Unpossess();
 
@@ -159,6 +167,9 @@ public class GameManager : MonoSingleton<GameManager>
     { 
         if(pawn == null) return;
 
+        if (pawn is HeroBrain)
+        {
+        }
         _delPawnSpawned?.Invoke(pawn);
     }
     public void PawnDamaged(ref PawnHeartPointDispatcher.DamageContext damageContext) 
@@ -175,5 +186,22 @@ public class GameManager : MonoSingleton<GameManager>
     public void PawnJumped()
     {
         _delPawnJumped?.Invoke();
+    }
+    void GameOver() 
+    {
+        _isGameOver = true;
+
+        _delGameOver?.Invoke();
+    }
+    private void Update()
+    {
+        if (_isGameStart == false || _isGameOver == true)
+            return;
+
+        var brain = GameContext.Instance.playerCtrler.possessedBrain;
+        if (brain != null && brain.PawnBB.IsDead == true) 
+        {
+            GameOver();
+        }
     }
 }
