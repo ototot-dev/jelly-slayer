@@ -80920,7 +80920,7 @@ MonoBehaviour:
   lateUpdateEnabled: 1
   fixedUpdateEnabled: 1
   roboDogFormationCtrler: {fileID: 5938920085556766268}
-  debugActionDisabled: 1
+  debugActionDisabled: 0
 --- !u!114 &1626602440402030822
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80936,6 +80936,7 @@ MonoBehaviour:
   common:
     pawnId: 3
     pawnName: Soldier
+    displayName: 
     spawnWaitingTime: 1
     despawnWaitingTime: 1
     isSpawnFinished:
@@ -80999,45 +81000,29 @@ MonoBehaviour:
     aggressiveLevel:
       value: 0
   body:
+    isJumping:
+      value: 0
+    isGliding:
+      value: 0
+    isFalling:
+      value: 0
+    isGuarding:
+      value: 0
     walkSpeed: 1
     jumpHeight: 2
     glidingDuration: -1
     glidingAmplitude: 1
     glidingFrequency: 2
-    spacingInDistance: 1
-    spacingOutDistance: 1
-    minSpacingDistance: 1
-    maxSpacingDistance: 1
-    minApproachDistance: 1
-    isJumping:
-      value: 0
-    isGliding:
-      value: 0
-    isFalling:
-      value: 0
-    isGuarding:
-      value: 0
-  action:
-    isJumping:
-      value: 0
-    isGliding:
-      value: 0
-    isFalling:
-      value: 0
-    isGuarding:
-      value: 0
     spacingInDistance: 4
     spacingOutDistance: 5
     minSpacingDistance: 2
     maxSpacingDistance: 3
     minApproachDistance: 1
-    holdPositionRate: 1
-    moveAroundRate: 1
-    comboAttackRateBoostAfterCounterAttack: 0.2
-    allAttackFixedRateAfterLeapHit: 0
-    leapRateStep: 0.5
-    comboAttackIncreaseRateOnIdle: 0
-    counterAttackIncreaseRateOnGuard: 0
+  action:
+    comboAttackIncreaseRateOnIdle: 1
+    comboAttackBoostRateAfterCounterAttack: 1
+    counterAttackIncreaseRateOnGuard: 1
+    leapIncreaseRate: 0.2
     missileEmitNum: 5
     missileEmitIntervalA: 0.2
     missileEmitIntervalB: 1
