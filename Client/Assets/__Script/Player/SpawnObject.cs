@@ -1,7 +1,9 @@
 using Game;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using UniRx;
+using Unity.Linq;
 using UnityEngine;
 
 [System.Serializable]
@@ -17,6 +19,8 @@ public class SpawnObject : MonoBehaviour
 {
     public SpawnData[] _spawnData;
 
+    public List<GameObject> _pawnList = new ();
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -25,7 +29,9 @@ public class SpawnObject : MonoBehaviour
         //Observable.Timer(TimeSpan.FromSeconds(2.0f)).Subscribe(_ => GameManager.Instance.SpawnSoldier());
         //Observable.Timer(TimeSpan.FromSeconds(3.0f)).Subscribe(_ => GameManager.Instance.SpawnDroid(UnityEngine.Vector3.right * 5));
         //Observable.Timer(TimeSpan.FromSeconds(4.0f)).Subscribe(_ => GameManager.Instance.SpawnDroid(UnityEngine.Vector3.left * 5));
-
+    }
+    private void OnEnable()
+    {
         int count = _spawnData.Length;
         for (int ia=0; ia<count; ia++) 
         {
@@ -38,14 +44,31 @@ public class SpawnObject : MonoBehaviour
                 });
             }
         }
-
+    }
+    private void OnDisable()
+    {
+        int count = _pawnList.Count;
+        for (int ia=0; ia<count; ia++)
+        {
+            var obj = _pawnList[ia];
+            if (obj)
+            {
+                var controller = obj.GetComponent<PawnBrainController>();
+                if(controller != null)
+                {
+                    controller.PawnBB.common.isDead.Value = true;
+                }
+                obj.Destroy();
+            }
+        }
+        _pawnList.Clear();
     }
     void Spawn(PawnId id, Vector3 pos)
     {
         switch (id)
         {
             case PawnId.Hero:
-                GameManager.Instance.SpawnHero(pos);
+                SpawnHero(pos);
                 break;
             case PawnId.DroneBot:
                 SpawnPawn("Pawn/Player/DroneBot", pos);
@@ -64,10 +87,21 @@ public class SpawnObject : MonoBehaviour
                 break;
         }
     }
-    void SpawnPawn(string resPath, Vector3 pos) 
+    GameObject SpawnHero(Vector3 pos) 
+    {
+        var pawnObj = GameManager.Instance.SpawnHero(pos);
+
+        _pawnList.Add(pawnObj);
+        return pawnObj;
+    }
+    GameObject SpawnPawn(string resPath, Vector3 pos) 
     {
         var pawnObj = Instantiate(Resources.Load<GameObject>(resPath));
         pawnObj.transform.SetPositionAndRotation(pos, Quaternion.identity);
+
+        _pawnList.Add(pawnObj);
+
+        return pawnObj;
     }
     public void SpawnDroneBot(Vector3 pos)
     {

@@ -85,8 +85,8 @@ namespace Game
 
                         GameManager.Instance.ShowLevel_HackerDen(true);
                         Observable.Timer(TimeSpan.FromSeconds(1f)).Subscribe(_ => GameManager.Instance.SpawnHero(new UnityEngine.Vector3(-2, 0, -3)));
-                        Observable.Timer(TimeSpan.FromSeconds(1.1f)).Subscribe(_ => GameManager.Instance.SpawnDroneBot());
-                        Observable.Timer(TimeSpan.FromSeconds(1.2f)).Subscribe(_ => GameManager.Instance.SpawnSoldier());
+                        //Observable.Timer(TimeSpan.FromSeconds(1.1f)).Subscribe(_ => GameManager.Instance.SpawnDroneBot());
+                        //Observable.Timer(TimeSpan.FromSeconds(1.2f)).Subscribe(_ => GameManager.Instance.SpawnSoldier());
                         // Observable.Timer(TimeSpan.FromSeconds(1.2f)).Subscribe(_ => GameManager.Instance.SpawnEtasphera42());
                     }
                     break;
@@ -122,8 +122,8 @@ namespace Game
                         GameManager.Instance.ShowLevel_HackerDen(true);
 
                         Observable.Timer(TimeSpan.FromSeconds(1f)).Subscribe(_ => GameManager.Instance.SpawnHero(new UnityEngine.Vector3(-2, 0, -3)));
-                        Observable.Timer(TimeSpan.FromSeconds(1.1f)).Subscribe(_ => GameManager.Instance.SpawnDroneBot());
-                        Observable.Timer(TimeSpan.FromSeconds(2.0f)).Subscribe(_ => GameManager.Instance.SpawnSoldier());
+                        //Observable.Timer(TimeSpan.FromSeconds(1.1f)).Subscribe(_ => GameManager.Instance.SpawnDroneBot());
+                        //Observable.Timer(TimeSpan.FromSeconds(2.0f)).Subscribe(_ => GameManager.Instance.SpawnSoldier());
                     }
                     break;
                 case GameModes.Title:

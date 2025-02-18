@@ -92,7 +92,10 @@ namespace Game
         {
             pawnData = MainTable.PawnData.PawnDataList.First(d => d.pawnId == common.pawnId);
             common.displayName = pawnData.name;
-            
+
+            // meatmania, test-code
+            common.despawnWaitingTime = 1000000;
+
             __pawnBrain = GetComponent<PawnBrainController>();
             stat.heartPoint = GetComponent<PawnHeartPointDispatcher>().heartPoint;
             stat.maxHeartPoint.Value = stat.heartPoint.Value = pawnData.health;

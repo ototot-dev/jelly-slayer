@@ -13,6 +13,8 @@ namespace Game
 
         public RoboDogBrain PickRoboDog()
         {
+            if (__assignedBrains.Count <= 0)
+                return null;
             return __assignedBrains.Values.First();
         }
 
