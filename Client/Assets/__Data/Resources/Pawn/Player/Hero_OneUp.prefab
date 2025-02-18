@@ -373,7 +373,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coreColliderHelper: {fileID: 4575544682901093454}
-  bodyHitColliderHelper: {fileID: 0}
+  bodyHitColliderHelper: {fileID: 2023143863012937403}
   parryColliderHelper: {fileID: 1104606249163493149}
   shieldHitColliderHelper: {fileID: 0}
   visibilityChecker: {fileID: 1411842691130928027}
@@ -420,7 +420,7 @@ MonoBehaviour:
     _version: 3.31
     _category: 
     _comments: 
-    _translation: {x: -127, y: -272}
+    _translation: {x: -247, y: -293}
     _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 0

@@ -178,7 +178,7 @@ Transform:
   m_GameObject: {fileID: 479801403419617558}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1, y: 0, z: -1}
+  m_LocalPosition: {x: -2, y: 0, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -13635,7 +13635,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 28fb0f45c326b78408d12bad34b84d15, type: 2}
+  - {fileID: 2100000, guid: cfc41be0ac9598c44a676b7fe5b0889c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -24795,7 +24795,7 @@ Transform:
   m_GameObject: {fileID: 3821986084079940183}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1, y: 0, z: -1}
+  m_LocalPosition: {x: 2, y: 0, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -80919,6 +80919,7 @@ MonoBehaviour:
   updateEnabled: 1
   lateUpdateEnabled: 1
   fixedUpdateEnabled: 1
+  roboDogFormationCtrler: {fileID: 5938920085556766268}
   debugActionDisabled: 1
 --- !u!114 &1626602440402030822
 MonoBehaviour:
@@ -81003,6 +81004,19 @@ MonoBehaviour:
     glidingDuration: -1
     glidingAmplitude: 1
     glidingFrequency: 2
+    spacingInDistance: 1
+    spacingOutDistance: 1
+    minSpacingDistance: 1
+    maxSpacingDistance: 1
+    minApproachDistance: 1
+    isJumping:
+      value: 0
+    isGliding:
+      value: 0
+    isFalling:
+      value: 0
+    isGuarding:
+      value: 0
   action:
     isJumping:
       value: 0
@@ -81021,9 +81035,9 @@ MonoBehaviour:
     moveAroundRate: 1
     comboAttackRateBoostAfterCounterAttack: 0.2
     allAttackFixedRateAfterLeapHit: 0
-    comboAttackRateStep: 0.1
-    counterAttackRateStep: 0.5
     leapRateStep: 0.5
+    comboAttackIncreaseRateOnIdle: 0
+    counterAttackIncreaseRateOnGuard: 0
     missileEmitNum: 5
     missileEmitIntervalA: 0.2
     missileEmitIntervalB: 1

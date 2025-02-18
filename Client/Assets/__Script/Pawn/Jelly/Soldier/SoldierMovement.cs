@@ -12,9 +12,9 @@ namespace Game
             __jumpImpulseTimeStamp = -1f;
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnJump");
             __brain.AnimCtrler.mainAnimator.SetBool("IsJumping", true);
-            __brain.BB.action.isJumping.Value = true;
-            __brain.BB.action.isFalling.Value = false;
-            __brain.BB.action.isGliding.Value = false;
+            __brain.BB.body.isJumping.Value = true;
+            __brain.BB.body.isFalling.Value = false;
+            __brain.BB.body.isGliding.Value = false;
 
             Observable.Timer(TimeSpan.FromMilliseconds(40)).Subscribe(_ =>
             {            
@@ -32,23 +32,23 @@ namespace Game
             __ecmMovement.velocity = __ecmMovement.velocity.AdjustY(0f);
             __glidingTimeStamp = Time.time;
             __brain.AnimCtrler.mainAnimator.SetBool("IsGliding", true);
-            __brain.BB.action.isJumping.Value = false;
-            __brain.BB.action.isGliding.Value = true;
+            __brain.BB.body.isJumping.Value = false;
+            __brain.BB.body.isGliding.Value = true;
         }
 
         public void StartFalling()
         {
             __brain.AnimCtrler.mainAnimator.SetBool("IsFalling", true);
-            __brain.BB.action.isJumping.Value = false;
-            __brain.BB.action.isGliding.Value = false;
-            __brain.BB.action.isFalling.Value = true;
+            __brain.BB.body.isJumping.Value = false;
+            __brain.BB.body.isGliding.Value = false;
+            __brain.BB.body.isFalling.Value = true;
         }
 
         public void FinishFalling()
         {
             __landingTimeStamp = Time.time;
             __brain.AnimCtrler.mainAnimator.SetBool("IsFalling", false);
-            __brain.BB.action.isFalling.Value = false;
+            __brain.BB.body.isFalling.Value = false;
         }
 
         float __jumpTimeStamp;

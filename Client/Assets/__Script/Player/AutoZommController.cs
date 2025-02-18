@@ -31,6 +31,8 @@ namespace Game
         // Update is called once per frame
         void Update()
         {
+            return;
+            
             if(_playerCtrler == null || _playerCtrler.possessedBrain == null)
                 return;
 

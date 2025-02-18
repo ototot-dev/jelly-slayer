@@ -101,13 +101,13 @@ public class UIGamePanel : MonoBehaviour
             var maxValue2 = _targetPawn.PawnBB.stat.maxHeartPoint.Value;
             _enemyHPSlider.value = (maxValue > 0) ? _targetPawn.PawnHP.heartPoint.Value / maxValue2 : 0;
 
-            _enemyName.text = _targetPawn.PawnBB.common.pawnName; 
+            _enemyName.text = _targetPawn.PawnBB.common.displayName; 
         }
         else 
         {
             _enemyObj.SetActive(false);
         }
-        // �޴� â
+        // �޴� â
         if (Input.GetKeyDown(KeyCode.Escape)) 
         {
             OnClickMenu();

@@ -92,7 +92,7 @@ namespace Game
                     }
                     else if (ActionCtrler.CurrActionName == "Counter")
                     {
-                        ActionDataSelector.BoostSelection(__combo1ActionData, BB.action.comboAttackRateBoostAfterCounterAttack);
+                        ActionDataSelector.BoostSelection(__combo1ActionData, BB.action.comboAttackBoostRateAfterCounterAttack);
 
                         //* 반격 후에 1타 공격
                         if (ActionDataSelector.EvaluateSelection(__combo1ActionData, -1f, 1f))
@@ -134,7 +134,7 @@ namespace Game
                         }
                         else
                         {
-                            ActionDataSelector.BoostSelection(__leapActionData, BB.action.leapRateStep * Time.deltaTime);
+                            ActionDataSelector.BoostSelection(__leapActionData, BB.action.leapIncreaseRate * Time.deltaTime);
                         }
                     }
                     else
@@ -145,7 +145,7 @@ namespace Game
                 }
             };
 
-            BB.action.isFalling.Skip(1).Subscribe(v =>
+            BB.body.isFalling.Skip(1).Subscribe(v =>
             {
                 //* 착지 동작 완료까지 이동을 금지함
                 if (!v) PawnStatusCtrler.AddStatus(PawnStatus.CanNotMove, 1f, 0.5f);

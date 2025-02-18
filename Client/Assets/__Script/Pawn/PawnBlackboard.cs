@@ -26,6 +26,7 @@ namespace Game
         {
             public PawnId pawnId;
             public string pawnName;
+            public string displayName;
             public float spawnWaitingTime = 1f;
             public float despawnWaitingTime = 1f;
             public BoolReactiveProperty isSpawnFinished = new();
@@ -90,6 +91,8 @@ namespace Game
         protected virtual void AwakeInternal() 
         {
             pawnData = MainTable.PawnData.PawnDataList.First(d => d.pawnId == common.pawnId);
+            common.displayName = pawnData.name;
+            
             __pawnBrain = GetComponent<PawnBrainController>();
             stat.heartPoint = GetComponent<PawnHeartPointDispatcher>().heartPoint;
             stat.maxHeartPoint.Value = stat.heartPoint.Value = pawnData.health;
@@ -108,8 +111,6 @@ namespace Game
             stat.guardStaminaCost = pawnData.guardStaminaCost;
             stat.guardStaggerDuration = pawnData.guardStaggerDuration;
             stat.staminaRecoverSpeed = pawnData.staminaRecoverSpeed;
-
-            common.pawnName = pawnData.name;
         }
 
         public MainTable.PawnData pawnData;

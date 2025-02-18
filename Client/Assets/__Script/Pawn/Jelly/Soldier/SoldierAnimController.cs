@@ -81,7 +81,7 @@ namespace Game
                 }
             };
 
-            __brain.BB.action.isJumping.Subscribe(v =>
+            __brain.BB.body.isJumping.Subscribe(v =>
             {
                 //* 발바닥에서 발사하는 Frame 이펙트 On
                 if (v)
@@ -94,7 +94,7 @@ namespace Game
                 }
             }).AddTo(this);
             
-            __brain.BB.action.isGliding.Subscribe(v =>
+            __brain.BB.body.isGliding.Subscribe(v =>
             {
                 //* 발바닥에서 발사하는 Frame 이펙트 Off
                 if (!v)

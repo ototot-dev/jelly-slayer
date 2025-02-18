@@ -265,7 +265,7 @@ namespace Game
         {
             base.StartInternal();
 
-            __brain.BB.action.isGuarding.Subscribe(v =>
+            __brain.BB.body.isGuarding.Subscribe(v =>
             {
                 __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", v);
             }).AddTo(this);
