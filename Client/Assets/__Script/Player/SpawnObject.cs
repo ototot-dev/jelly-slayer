@@ -8,6 +8,7 @@ using UnityEngine;
 public class SpawnData
 {
     public PawnId _id;
+    public bool _isEnable = true;
     public float _delay;
     public Vector3 _pos;
 }
@@ -29,9 +30,13 @@ public class SpawnObject : MonoBehaviour
         for (int ia=0; ia<count; ia++) 
         {
             var data = _spawnData[ia];
-            Observable.Timer(TimeSpan.FromSeconds(data._delay)).Subscribe(_ => {
-                Spawn(data._id, data._pos);
-            });
+            if (data._isEnable == true)
+            {
+                Observable.Timer(TimeSpan.FromSeconds(data._delay)).Subscribe(_ =>
+                {
+                    Spawn(data._id, data._pos);
+                });
+            }
         }
 
     }
@@ -50,6 +55,9 @@ public class SpawnObject : MonoBehaviour
                 break;
             case PawnId.Alien:
                 SpawnPawn("Pawn/Jelly/JellyAlien", pos);
+                break;
+            case PawnId.Etasphera42:
+                SpawnPawn("Pawn/Jelly/JellyEtasphera42", pos);
                 break;
         }
     }

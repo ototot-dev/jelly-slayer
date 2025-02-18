@@ -70,8 +70,8 @@ public class UITutorialPanel : MonoBehaviour
             _fullText = item._text;
             _delayRate = item._delayRate;
 
-            _portrait[0].gameObject.SetActive(item._isShowPicL);
-            _portrait[1].gameObject.SetActive(item._isShowPicR);
+            //_portrait[0].gameObject.SetActive(item._isShowPicL);
+            //_portrait[1].gameObject.SetActive(item._isShowPicR);
 
             if (item._isShowPicL)
             {
