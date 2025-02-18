@@ -59,6 +59,9 @@ public class SpawnObject : MonoBehaviour
             case PawnId.Etasphera42:
                 SpawnPawn("Pawn/Jelly/JellyEtasphera42", pos);
                 break;
+            case PawnId.RoboDog:
+                SpawnPawn("Pawn/Jelly/JellyRoboDog", pos);
+                break;
         }
     }
     void SpawnPawn(string resPath, Vector3 pos) 
