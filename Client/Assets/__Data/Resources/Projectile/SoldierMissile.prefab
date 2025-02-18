@@ -9,9 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3083626412401777052}
-  - component: {fileID: 1484950052495980767}
-  - component: {fileID: 3521837419636682943}
-  - component: {fileID: 9154458461126115181}
+  - component: {fileID: 1515782431598519111}
   m_Layer: 9
   m_Name: SoldierMissile
   m_TagString: Untagged
@@ -35,55 +33,7 @@ Transform:
   - {fileID: 6408658188381473224}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!54 &1484950052495980767
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3083626412401777055}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!135 &3521837419636682943
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3083626412401777055}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Radius: 0.4
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &9154458461126115181
+--- !u!114 &1515782431598519111
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -92,23 +42,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 3083626412401777055}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e67dd31422ab4a8ba82515a6ae5d614, type: 3}
+  m_Script: {fileID: 11500000, guid: 0db9621f159aa421e8d075415a6e4e50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BodyCollider: {fileID: 3521837419636682943}
-  sensorCollider: {fileID: 60354225124519395}
+  BodyCollider: {fileID: 0}
+  sensorCollider: {fileID: 2149588873643281214}
   velocity: {x: 0, y: 0, z: 0}
   gravity: {x: 0, y: -30, z: 0}
-  gravityEnabled: 1
   sensorLayerMask:
     serializedVersion: 2
-    m_Bits: 6144
-  sensorEnabledTime: 0.1
+    m_Bits: 14344
+  sensorEnabledTime: 1
   bodyEnabledTime: 0.1
   despawnWaitingTime: 0.1
   lifeTime: 10
   isLifeTimeOut: 0
-  destroyWhenLifeTimeOut: 1
+  destroyWhenLifeTimeOut: 0
   maxTravelDistance: -1
   destoryWhenMaxTravelDistanceReached: 0
   updateEnabled: 1
@@ -116,10 +65,11 @@ MonoBehaviour:
   fixedUpdateEnabled: 1
   emitterBrain:
     value: {fileID: 0}
-  explosionFx: {fileID: 6492204436859048914, guid: 2e2fd3bdff6e6924192d7c05f6ba916a, type: 3}
-  linearDampingOnGrounded: 10
-  explosionRadius: 2
-  explosionOffset: {x: 0, y: 0.1, z: 0}
+  hitFx: {fileID: 5377929886163509407, guid: 381783eda7657bc46816c29a324f3139, type: 3}
+  hoveringDuration: 5
+  homingAccel: 20
+  homingMaxSpeed: 20
+  homingRotateSpeed: 60
 --- !u!1 &4467024655271340327
 GameObject:
   m_ObjectHideFlags: 0
@@ -5229,7 +5179,7 @@ GameObject:
   - component: {fileID: 9181066552851838697}
   - component: {fileID: 6200076296296849255}
   - component: {fileID: 2334041039659248490}
-  - component: {fileID: 60354225124519395}
+  - component: {fileID: 2149588873643281214}
   m_Layer: 10
   m_Name: ProtonMissileBlue
   m_TagString: Untagged
@@ -10226,7 +10176,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   randomPercent: 10
---- !u!135 &60354225124519395
+--- !u!135 &2149588873643281214
 SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10241,11 +10191,11 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 1
+  m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8762761456670189345
 GameObject:

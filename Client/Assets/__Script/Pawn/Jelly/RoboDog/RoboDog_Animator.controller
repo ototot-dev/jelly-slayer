@@ -571,7 +571,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: RobotDog_Animator
+  m_Name: RoboDog_Animator
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: OnDead

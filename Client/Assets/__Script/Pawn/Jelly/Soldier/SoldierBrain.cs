@@ -16,6 +16,23 @@ namespace Game
         void IPawnTargetable.StopTargeting() {}
 #endregion
 
+#region IPawnSpawnable 재정의
+        public override void OnDeadHandler()
+        {
+            base.OnDeadHandler();
+            
+            var roboDogBrain = roboDogFormationCtrler.PickRoboDog();
+            while (roboDogBrain != null)
+            {
+                roboDogFormationCtrler.ReleaseRoboDog(roboDogBrain);
+                roboDogBrain.BB.common.isDead.Value = true;
+                roboDogBrain = roboDogFormationCtrler.PickRoboDog();
+            }
+        }
+#endregion
+
+        [Header("Component")]
+        public RoboDogFormationController roboDogFormationCtrler;
 
         [Header("Debug")]
         public bool debugActionDisabled;
@@ -123,7 +140,7 @@ namespace Game
                     else
                     {
                         __lastComboAttackRateStepTimeStamp = Time.time;
-                        ActionDataSelector.BoostSelection(__combo1ActionData, BB.action.comboAttackRateStep);
+                        ActionDataSelector.BoostSelection(__combo1ActionData, BB.action.comboAttackIncreaseRateOnIdle);
                     }
                 }
             };
@@ -151,7 +168,7 @@ namespace Game
                 }
                 else
                 {
-                    ActionDataSelector.BoostSelection(__counterActionData, BB.action.counterAttackRateStep);
+                    ActionDataSelector.BoostSelection(__counterActionData, BB.action.counterAttackIncreaseRateOnGuard);
                 }
             }
         }

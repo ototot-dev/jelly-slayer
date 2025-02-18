@@ -14,7 +14,7 @@ namespace Game
         public Transform jellyMeshSlot;
         public Transform shieldMeshSlot;
         public Transform hookingPoint;
-        public Transform eyeTarget;
+        public Transform lookAt;
         public MeshRenderer shieldMeshRenderer;
         public FEyesAnimator eyeAnimator;
         public BonesStimulator leftArmBoneSimulator;
@@ -212,10 +212,13 @@ namespace Game
 
             __brain.onLateUpdate += () =>
             {
-                if (__brain.BB.TargetBrain != null)
-                    eyeTarget.position = __brain.BB.TargetBrain.coreColliderHelper.transform.position + Vector3.up;
+                rigSetup.weight = 1f;
+                if (__brain.ActionCtrler.CheckAddictiveActionRunning("Laser"))
+                    lookAt.position = __brain.BB.action.laserAimPoint.position;
+                else if (__brain.BB.TargetBrain != null && __brain.BB.TargetBrain.coreColliderHelper != null)
+                    lookAt.position = __brain.BB.TargetBrain.coreColliderHelper.GetWorldCenter() + 0.5f * Vector3.up;
                 else
-                    eyeTarget.position = __brain.coreColliderHelper.transform.position + __brain.coreColliderHelper.transform.forward + Vector3.up;
+                    lookAt.position = __brain.coreColliderHelper.GetWorldCenter() + 1000f * __brain.coreColliderHelper.transform.forward;
 
                 __brain.ActionCtrler.hookingPointColliderHelper.transform.position = hookingPoint.transform.position;
             };

@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using MainTable;
 using UniRx;
-using UniRx.Triggers;
 using UnityEngine;
 
 namespace Game
@@ -13,16 +12,21 @@ namespace Game
         void IObjectPoolable.OnGetFromPool() {}
         void IObjectPoolable.OnReturnedToPool() 
         {
+            __hoveringStartTimeStamp = -1f;
+            __homingStartTimeStamp = -1f;
+            __homingTargetBrain = null;
+            emitterBrain.Value = null;
         }
 #endregion
 
         [Header("Attachment")]
-        public GameObject explosionFx;
+        public GameObject hitFx;
 
         [Header("Parameter")]
-        public ActionData actionData;
-        // public float hoveringAccel;
-        // public float 
+        public float hoveringDuration = 1f;
+        public float homingAccel = 1f;
+        public float homingMaxSpeed = 1f;
+        public float homingRotateSpeed = 1f;
 
         protected override void AwakeInternal()
         {
@@ -30,21 +34,14 @@ namespace Game
 
             emitterBrain.Where(v => v != null).Subscribe(v => 
             {
-                actionData = v.GetComponent<PawnActionController>().currActionContext.actionData;
-                Debug.Assert(actionData != null);
+                __homingTargetBrain = v.PawnBB.TargetBrain;
+                __actionData ??= v.GetComponent<PawnActionController>().currActionContext.actionData;
+                Debug.Assert(__actionData != null);
             }).AddTo(this);
 
             onStartMove += () =>
             {
-                __onCollisionEnterDisposalbe = BodyCollider.OnCollisionEnterAsObservable().Subscribe(c =>
-                {
-                    if (LayerMask.LayerToName(c.gameObject.layer) == "Terrain")
-                    {
-                        __isGrounded = true;
-                        __onCollisionEnterDisposalbe.Dispose();
-                        __onCollisionEnterDisposalbe = null;
-                    }
-                }).AddTo(this);
+                gravity = new(0f, -30f, 0f);
             };
 
             onStopMove += () =>
@@ -58,23 +55,54 @@ namespace Game
 
             onHitSomething += (c) =>
             {
-                if (__isGrounded && c.TryGetComponent<PawnColliderHelper>(out var helper) && helper.pawnBrain != emitterBrain.Value && helper.pawnBrain.PawnBB.common.pawnName == "Hero")
-                    Explode();
+                if (c.TryGetComponent<PawnColliderHelper>(out var helper))
+                {
+                    if (helper.pawnBrain == __homingTargetBrain)
+                        emitterBrain.Value.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, emitterBrain.Value, __homingTargetBrain, __actionData, __homingTargetBrain.bodyHitColliderHelper.pawnCollider, false));
+                    else
+                        return;
+                }
+
+                EffectManager.Instance.Show(hitFx, transform.position, Quaternion.identity, Vector3.one);
+                Stop(false);
             };
 
-            onLifeTimeOut += () => { Explode(); };
+            onLifeTimeOut += () => { Stop(false); };
         }
 
-        IDisposable __onCollisionEnterDisposalbe;
-        bool __isGrounded;
+        float __hoveringStartTimeStamp;
+        float __homingStartTimeStamp;
+        PawnBrainController __homingTargetBrain;
+        ActionData __actionData;
 
         protected override void OnUpdateHandler()
         {
-            if ((Time.time - __moveStartTimeStamp) < sensorEnabledTime)
+            if (__hoveringStartTimeStamp <= 0f)
             {
-
-
-                return;
+                velocity += Time.deltaTime * gravity;
+                //* 정점에 도달했다면 Hovering 시작함
+                if (velocity.y < 0f)
+                    __hoveringStartTimeStamp = Time.time;
+            }
+            else
+            {
+                if ((Time.time - __hoveringStartTimeStamp) < hoveringDuration)
+                {
+                    velocity.y = Perlin.Noise(Time.time - __hoveringStartTimeStamp);
+                }
+                else
+                {
+                    if (__homingStartTimeStamp <= 0f)
+                    {
+                        __homingStartTimeStamp = Time.time;
+                        transform.rotation = Quaternion.LookRotation(__homingTargetBrain.bodyHitColliderHelper.GetWorldCenter() - transform.position);
+                    }
+                    else
+                    {
+                        transform.rotation = transform.rotation.LerpAngleSpeed(Quaternion.LookRotation(__homingTargetBrain.bodyHitColliderHelper.GetWorldCenter() - transform.position), homingRotateSpeed, Time.deltaTime);
+                    }
+                    velocity =  Mathf.Min(homingMaxSpeed, velocity.magnitude + homingAccel * Time.deltaTime) * transform.forward;
+                }
             }
 
             base.OnUpdateHandler();

@@ -5,11 +5,11 @@ using UnityEngine;
 
 namespace Game
 {
-    [RequireComponent(typeof(RobotDogMovement))]
-    [RequireComponent(typeof(RobotDogBlackboard))]
-    [RequireComponent(typeof(RobotDogAnimController))]
-    [RequireComponent(typeof(RobotDogActionController))]
-    public class RobotDogBrain : JellyHumanoidBrain, IPawnTargetable
+    [RequireComponent(typeof(RoboDogMovement))]
+    [RequireComponent(typeof(RoboDogBlackboard))]
+    [RequireComponent(typeof(RoboDogAnimController))]
+    [RequireComponent(typeof(RoboDogActionController))]
+    public class RoboDogBrain : JellyHumanoidBrain, IPawnTargetable
     {
 #region IPawnTargetable 구현
         PawnColliderHelper IPawnTargetable.StartTargeting() => bodyHitColliderHelper;
@@ -18,22 +18,30 @@ namespace Game
         void IPawnTargetable.StopTargeting() {}
 #endregion
 
+#region IPawnSpawnable 재정의
+        public override void OnFinishSpawnHandler()
+        {
+            base.OnFinishSpawnHandler();
+            BB.HostBrain.roboDogFormationCtrler.AssignRoboDog(this);
+        }
+#endregion
+
         [Header("Debug")]
         public bool debugActionDisabled;
 
-        public RobotDogBlackboard BB { get; private set; }
-        public RobotDogMovement Movement { get; private set; }
-        public RobotDogAnimController AnimCtrler { get; private set; }
-        public RobotDogActionController ActionCtrler { get; private set; }
+        public RoboDogBlackboard BB { get; private set; }
+        public RoboDogMovement Movement { get; private set; }
+        public RoboDogAnimController AnimCtrler { get; private set; }
+        public RoboDogActionController ActionCtrler { get; private set; }
 
         protected override void AwakeInternal()
         {
             base.AwakeInternal();
 
-            BB = GetComponent<RobotDogBlackboard>();
-            Movement = GetComponent<RobotDogMovement>();
-            AnimCtrler = GetComponent<RobotDogAnimController>();
-            ActionCtrler = GetComponent<RobotDogActionController>();
+            BB = GetComponent<RoboDogBlackboard>();
+            Movement = GetComponent<RoboDogMovement>();
+            AnimCtrler = GetComponent<RoboDogAnimController>();
+            ActionCtrler = GetComponent<RoboDogActionController>();
         }
 
         float __lastComboAttackRateStepTimeStamp;

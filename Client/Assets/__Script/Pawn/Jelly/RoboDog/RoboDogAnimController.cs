@@ -6,7 +6,7 @@ using UnityEngine.Animations.Rigging;
 
 namespace Game
 {
-    public class RobotDogAnimController : PawnAnimController
+    public class RoboDogAnimController : PawnAnimController
     {
         [Header("Component")]
         public Transform jellyMeshSlot;
@@ -26,12 +26,12 @@ namespace Game
         public float boneSimulatorBlendSpeed = 1f;
         public float boneSimulatorTargetWeight = 0f;
         public Vector3[] moveXmoveY_Table;
-        RobotDogBrain __brain;
+        RoboDogBrain __brain;
         Rig __rig;
 
         void Awake()
         {
-            __brain = GetComponent<RobotDogBrain>();
+            __brain = GetComponent<RoboDogBrain>();
             // __rig = mainAnimator.GetComponent<RigBuilder>().layers.First().rig;
             springMassSystem.coreAttachPoint = jellyMeshSlot;
         }
@@ -103,7 +103,8 @@ namespace Game
                 }
                 else
                 {   
-                    legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude  > 0 && !__brain.ActionCtrler.CheckActionRunning() ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.8f : 0.9f, 1f);
+                    // legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude  > 0 && !__brain.ActionCtrler.CheckActionRunning() ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.8f : 0.9f, 1f);
+                    legAnimator.MainGlueBlend = 1f;
                     legAnimator.User_SetIsMoving(__brain.Movement.CurrVelocity.sqrMagnitude > 0 && !__brain.ActionCtrler.CheckActionRunning());
                     legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround);
                 }

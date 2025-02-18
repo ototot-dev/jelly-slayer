@@ -13,8 +13,7 @@ namespace Game
 
         [Header("Parameter")]
         public Vector3 velocity;
-        public Vector3 gravity = new(0, -30, 0);
-        public bool gravityEnabled;
+        public Vector3 gravity = new(0f, -30f, 0f);
         public LayerMask sensorLayerMask;
         public float sensorEnabledTime = 0.1f;
         public float bodyEnabledTime = 0.1f;

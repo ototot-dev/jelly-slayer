@@ -4603,7 +4603,7 @@ GameObject:
   - component: {fileID: 937156682906900337}
   - component: {fileID: 8593737910688562853}
   m_Layer: 0
-  m_Name: JellyRobotDog
+  m_Name: JellyRoboDog
   m_TagString: Jelly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4696,9 +4696,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f8c34eee5d264d74882f5b6d0e10c6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  capsule: {fileID: 0}
-  capsuleRigidBody: {fileID: 0}
-  capsuleCollider: {fileID: 0}
+  capsule: {fileID: 6920421996920446943}
+  capsuleRigidBody: {fileID: 7402423699649128735}
+  capsuleCollider: {fileID: 2631676355314689051}
   ignoredColliders: []
   freezeMovement: 0
   freezeRotation: 0
@@ -4725,7 +4725,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3da262a0269854ddd9deb68d52efc00f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainAnimator: {fileID: 0}
+  mainAnimator: {fileID: 8645345914597580230}
   rigBuilder: {fileID: 0}
   rigSetup: {fileID: 0}
   legAnimator: {fileID: 0}
@@ -4775,8 +4775,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   common:
-    pawnId: 0
-    pawnName: 
+    pawnId: 4
+    pawnName: RoboDog
     spawnWaitingTime: 1
     despawnWaitingTime: 1
     isSpawnFinished:
@@ -4790,7 +4790,7 @@ MonoBehaviour:
     isGroggy:
       value: 0
     lifeTime:
-      value: 60
+      value: -1
     targetPawnHP:
       value: {fileID: 0}
   stat:
@@ -4842,6 +4842,10 @@ MonoBehaviour:
   body:
     walkSpeed: 1
     runSpeed: 1
+    hostBrain:
+      value: {fileID: 0}
+    formationSpot:
+      value: {fileID: 0}
   action:
     isGuarding:
       value: 0
@@ -4888,8 +4892,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 337bc0ade53c24e24b82d9d1393905f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coreColliderHelper: {fileID: 0}
-  bodyHitColliderHelper: {fileID: 0}
+  coreColliderHelper: {fileID: 168326260960991395}
+  bodyHitColliderHelper: {fileID: 7827817497564531622}
   parryColliderHelper: {fileID: 0}
   shieldHitColliderHelper: {fileID: 0}
   visibilityChecker: {fileID: 0}
@@ -4899,7 +4903,7 @@ MonoBehaviour:
   updateEnabled: 1
   lateUpdateEnabled: 0
   fixedUpdateEnabled: 0
-  debugActionDisabled: 0
+  debugActionDisabled: 1
 --- !u!114 &937156682906900337
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4913,20 +4917,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _serializedExposedParameters: []
-  _boundGraphSerialization: '{"type":"NodeCanvas.StateMachines.FSM","nodes":[{"_actionList":{"executionMode":1,"actions":[]},"_name":"Spawning","_position":{"x":727.0,"y":170.0},"$type":"NodeCanvas.StateMachines.ActionState","$id":"0"},{"_nestedBT":{"_value":1},"_name":"Idle","_position":{"x":931.0,"y":260.0},"$type":"NodeCanvas.StateMachines.NestedBTState","$id":"1"},{"_nestedBT":{"_value":2},"_name":"Combat","_position":{"x":686.0,"y":409.0},"$type":"NodeCanvas.StateMachines.NestedBTState","$id":"2"},{"_position":{"x":720.0,"y":720.0},"$type":"NodeCanvas.StateMachines.AnyState","$id":"3"},{"_actionList":{"executionMode":1,"actions":[]},"_name":"Dead","_position":{"x":537.0,"y":586.0},"$type":"NodeCanvas.StateMachines.ActionState","$id":"4"},{"_subTree":{"_value":3},"_position":{"x":880.0,"y":554.0},"$type":"NodeCanvas.StateMachines.ConcurrentSubTree"}],"connections":[{"_condition":{"valueA":{"_name":"IsSpawnFinished","_targetVariableID":"12dce929-2c8e-452f-9706-27977b011bde"},"valueB":{"_value":true},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsInCombat","_targetVariableID":"241f0ca1-cb9d-4529-9ba6-5283ff2082b2"},"valueB":{"_value":true},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsInCombat","_targetVariableID":"241f0ca1-cb9d-4529-9ba6-5283ff2082b2"},"valueB":{},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"2"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsDead","_targetVariableID":"9fe36af6-74d3-435d-9ff8-e91d9b1eade3"},"valueB":{"_value":true},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"3"},"_targetNode":{"$ref":"4"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsDead","_targetVariableID":"9fe36af6-74d3-435d-9ff8-e91d9b1eade3"},"valueB":{},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"4"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.StateMachines.FSMConnection"}],"canvasGroups":[],"localBlackboard":{"_variables":{"IsSpawnFinished":{"_propertyPath":"Game.AlienBlackboard.IsSpawnFinished","_name":"IsSpawnFinished","_id":"12dce929-2c8e-452f-9706-27977b011bde","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
-    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},"IsInCombat":{"_propertyPath":"Game.AlienBlackboard.IsInCombat","_name":"IsInCombat","_id":"241f0ca1-cb9d-4529-9ba6-5283ff2082b2","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
-    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},"IsDead":{"_propertyPath":"Game.AlienBlackboard.IsDead","_name":"IsDead","_id":"9fe36af6-74d3-435d-9ff8-e91d9b1eade3","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
+  _boundGraphSerialization: '{"type":"NodeCanvas.StateMachines.FSM","nodes":[{"_actionList":{"executionMode":1,"actions":[]},"_name":"Spawning","_position":{"x":727.0,"y":170.0},"$type":"NodeCanvas.StateMachines.ActionState","$id":"0"},{"_nestedBT":{"_value":1},"_name":"Idle","_position":{"x":931.0,"y":261.0},"$type":"NodeCanvas.StateMachines.NestedBTState","$id":"1"},{"_nestedBT":{"_value":2},"_name":"Combat","_position":{"x":686.0,"y":409.0},"$type":"NodeCanvas.StateMachines.NestedBTState","$id":"2"},{"_position":{"x":720.0,"y":720.0},"$type":"NodeCanvas.StateMachines.AnyState","$id":"3"},{"_actionList":{"executionMode":1,"actions":[]},"_name":"Dead","_position":{"x":537.0,"y":586.0},"$type":"NodeCanvas.StateMachines.ActionState","$id":"4"},{"_subTree":{"_value":3},"_position":{"x":880.0,"y":554.0},"$type":"NodeCanvas.StateMachines.ConcurrentSubTree"}],"connections":[{"_condition":{"valueA":{"_name":"IsSpawnFinished","_targetVariableID":"690ddd0a-f476-4ee8-bdf9-b971e0b1ab6c"},"valueB":{"_value":true},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsInCombat","_targetVariableID":"8f596490-05a3-4dcd-84f9-66bdc27e660e"},"valueB":{"_value":true},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsInCombat","_targetVariableID":"8f596490-05a3-4dcd-84f9-66bdc27e660e"},"valueB":{},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"2"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsDead","_targetVariableID":"232a4c73-027e-473f-b1f3-072f1f9c8220"},"valueB":{"_value":true},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"3"},"_targetNode":{"$ref":"4"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsDead","_targetVariableID":"232a4c73-027e-473f-b1f3-072f1f9c8220"},"valueB":{},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"4"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.StateMachines.FSMConnection"}],"canvasGroups":[],"localBlackboard":{"_variables":{"IsSpawnFinished":{"_propertyPath":"Game.RoboDogBlackboard.IsSpawnFinished","_name":"IsSpawnFinished","_id":"690ddd0a-f476-4ee8-bdf9-b971e0b1ab6c","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},"IsInCombat":{"_propertyPath":"Game.RoboDogBlackboard.IsInCombat","_name":"IsInCombat","_id":"8f596490-05a3-4dcd-84f9-66bdc27e660e","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},"IsDead":{"_propertyPath":"Game.RoboDogBlackboard.IsDead","_name":"IsDead","_id":"232a4c73-027e-473f-b1f3-072f1f9c8220","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
     mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"}}}}'
   _boundGraphObjectReferences:
   - {fileID: 0}
-  - {fileID: 11400000, guid: 8e8e7aca879d848939246cd3ed7d3fc8, type: 2}
-  - {fileID: 11400000, guid: 3860588a94b3144bd924f985639349f5, type: 2}
-  - {fileID: 11400000, guid: 51dd99a7acf264e57a432e40bdc5cc5d, type: 2}
+  - {fileID: 11400000, guid: a61749a0388ce4ef88107ba4487cd02e, type: 2}
+  - {fileID: 11400000, guid: bb2a656ac9bf942499cea31a0cef85da, type: 2}
+  - {fileID: 11400000, guid: 414e62828819a49f58b12590bea98bcb, type: 2}
   _boundGraphSource:
     _version: 3.31
     _category: 
     _comments: 
-    _translation: {x: -262, y: -77}
+    _translation: {x: -525, y: 36}
     _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 0

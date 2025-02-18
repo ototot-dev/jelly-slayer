@@ -373,6 +373,120 @@ namespace Game.NodeCanvasExtension
         }
     }
 
+
+    [Category("Pawn")]
+    public class Away : ActionTask
+    {
+        public BBParameter<Transform> target;
+        public BBParameter<float> minDistance = 1;
+        public BBParameter<float> maxDistance = 1;
+        public BBParameter<float> outDistance = 1;
+        public BBParameter<float> duration = -1;
+        public bool shouldRotateToTarget = true;
+        public bool notifyDecisionFinished = false;
+        PawnBrainController __targetBrain;
+        PawnBrainController __pawnBrain;
+        IPawnMovable __pawnMovable;
+        IDisposable __moveStrafeDisposable;
+        Vector3 __strafeMoveVec;
+        float __strafeDuration;
+        float __targetCapsuleRadius;
+        float __minApproachDistance;
+        float __executeTimeStamp;
+
+        protected override void OnExecute()
+        {
+            __targetBrain = target.value.GetComponent<PawnBrainController>();
+            __targetCapsuleRadius = (__targetBrain != null && __targetBrain.coreColliderHelper.GetCapsuleCollider() != null) ? __targetBrain.coreColliderHelper.GetCapsuleCollider().radius : 0f;
+            
+            __pawnBrain = agent.GetComponent<PawnBrainController>();
+            Debug.Assert(__pawnBrain != null);
+             
+            __pawnMovable = __pawnBrain as IPawnMovable;
+            Debug.Assert(__pawnMovable != null);
+            
+            __strafeMoveVec = Vector3.zero;
+            __minApproachDistance = Mathf.Max(0.1f, __pawnBrain.coreColliderHelper.GetRadius() + __targetCapsuleRadius);
+            __pawnMovable.SetMinApproachDistance(__minApproachDistance);
+            __pawnMovable.FreezeRotation(true);
+            __executeTimeStamp = Time.time;
+        }
+
+        protected override void OnUpdate()
+        {
+            var isDurationExpired = duration.value > 0 && Time.time - __executeTimeStamp > duration.value;
+            if (__moveStrafeDisposable == null && !isDurationExpired)
+                __moveStrafeDisposable = MoveStrafe();
+
+            if (isDurationExpired && __moveStrafeDisposable == null)
+                EndAction(true);
+            else if (__targetBrain != null && __targetBrain.PawnBB.IsDead)
+                EndAction(true);
+            else if ((__targetBrain != null ? __pawnBrain.coreColliderHelper.GetDistanceBetween(__targetBrain.coreColliderHelper) : __pawnBrain.GetWorldPosition().Distance2D(target.value.position))  > outDistance.value)
+                EndAction(true);
+                
+        }
+
+        IDisposable MoveStrafe()
+        {
+            var spacingDistance = UnityEngine.Random.Range(minDistance.value, maxDistance.value);
+            
+            __strafeMoveVec = __strafeMoveVec == Vector3.zero ? new Vector3(UnityEngine.Random.Range(-1, 2), 0f, 0f) : Vector3.zero;
+            if (__strafeMoveVec == Vector3.zero)
+            {
+                __strafeDuration = UnityEngine.Random.Range(1f, 2f);
+                __pawnMovable.Stop();
+            }
+            else
+            {
+                __strafeDuration = duration.value > 0 ? UnityEngine.Random.Range(duration.value * 0.5f, duration.value) : UnityEngine.Random.Range(3f, 4f);
+            }
+
+            return Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(__strafeDuration)))
+                .DoOnCompleted(() =>
+                {
+                    if (__moveStrafeDisposable != null)
+                    {
+                        __moveStrafeDisposable.Dispose();
+                        __moveStrafeDisposable = null;
+                    }
+                })
+                .Subscribe(_ =>
+                {
+                    if (__strafeMoveVec != Vector3.zero)
+                    {
+                        var newDestination = __pawnBrain.GetWorldPosition() + __minApproachDistance * 2f * (__pawnBrain.GetWorldRotation() * __strafeMoveVec).Vector2D().normalized;
+                        if (__targetBrain != null)
+                            newDestination = __targetBrain.GetWorldPosition() + (spacingDistance + __targetCapsuleRadius) * (newDestination - __targetBrain.GetWorldPosition()).Vector2D().normalized;
+                        else
+                            newDestination = target.value.position + spacingDistance * (newDestination - target.value.position).Vector2D().normalized;
+
+                        __pawnMovable.SetDestination(newDestination);
+                    }
+                    
+                    if (shouldRotateToTarget)
+                        __pawnMovable.SetFaceVector(((__targetBrain != null ? __targetBrain.GetWorldPosition() : target.value.position) - __pawnBrain.GetWorldPosition()).Vector2D().normalized);
+                }).AddTo(agent);
+        }
+
+        protected override void OnStop(bool interrupted)
+        {
+            base.OnStop(interrupted);
+
+            if (__moveStrafeDisposable != null)
+            {
+                __moveStrafeDisposable.Dispose();
+                __moveStrafeDisposable = null;
+            }
+
+            __pawnMovable.FreezeRotation(false);
+            __pawnMovable.Stop();
+
+            if (!interrupted && notifyDecisionFinished)
+                __pawnBrain.OnDecisionFinishedHandler();
+        }
+    }
+
     [Category("Pawn")]
     public class StartPendingAction : ActionTask
     {

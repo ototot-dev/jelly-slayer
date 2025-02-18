@@ -17,6 +17,8 @@ namespace Game
         public override float MinApproachDistance => action.minApproachDistance;
         public float HoldPositionRate => action.holdPositionRate;
         public float MoveAroundRate => action.moveAroundRate;
+        public GameObject MissilePrefab => action.missilePrefab;
+        public Transform MissileEmitPoint => action.missileEmitPoint;
 
         [Serializable]
         public class Body
@@ -26,6 +28,15 @@ namespace Game
             public float glidingDuration = 1f;
             public float glidingAmplitude = 1f;
             public float glidingFrequency = 1f;
+            public float spacingInDistance = 1f;
+            public float spacingOutDistance = 1f;
+            public float minSpacingDistance = 1f;
+            public float maxSpacingDistance = 1f;
+            public float minApproachDistance = 1f;
+            public BoolReactiveProperty isJumping = new();
+            public BoolReactiveProperty isGliding = new();
+            public BoolReactiveProperty isFalling = new();
+            public BoolReactiveProperty isGuarding = new();
         }
 
         public Body body = new();
@@ -46,10 +57,32 @@ namespace Game
             public float moveAroundRate = 1f;
             public float comboAttackRateBoostAfterCounterAttack;  //* 반격 후 콤보 1타 발생 확률 증가
             public float allAttackFixedRateAfterLeapHit; //* 점프 공격 히트 후 모든 공격 발생 확률 고정
-            public float comboAttackRateStep;  //* Idle 상태에서 콤보 1타 발생 확률 증가
-            public float counterAttackRateStep; //* 블럭 후 반격 발생 확률 증가
             public float leapRateStep; //* 타켓과 거리가 떨어졌을 때 Leap 발생 확률 증가
+
+
+            [Header("Combo")]
+            public float comboAttackIncreaseRateOnIdle;  //* Idle 상태에서 콤보 1타 발생 확률 증가
+
+            [Header("Counter")]
+            public float counterAttackIncreaseRateOnGuard; //* 가드 후 반격 발생 확률 증가
+
+            [Header("Missile")]
+            public int missileEmitNum = 1;
+            public float missileEmitIntervalA = 1f;
+            public float missileEmitIntervalB = 1f;
+            public float missileEmitSpeed = 10f;
+            public Transform missileEmitPoint;
             public GameObject missilePrefab;
+
+            [Header("Laser")]
+            public float laserDamageInterval = 0.1f;
+            public float laserStayDuration = 1f;
+            public float laseMaxDistance = 1f;
+            public float laserForwardSpeed = 1f;
+            public float laserRotateSpeed = 1f;
+            public float laserCharingDuration = 1f;
+            public Transform laserAimPoint;
+            public SoldierLaserRenderer laserRenderer;
         }
 
         public Action action = new();
@@ -92,12 +125,10 @@ namespace Game
         [Serializable]
         public class Attachment
         {
-            public Renderer[] bodyMeshRenderers;
             public Renderer shieldMeshRenderer;
+            public Renderer[] bodyMeshRenderers;
             public ParticleSystem[] jetParticleSystems;
             public Transform BlockingFxAttachPoint;
-            // public Transform laserAimPoint;
-            // public Etasphera42_LaserRenderer laserB_Renderer;
         }
 
         public Attachment attachment = new();

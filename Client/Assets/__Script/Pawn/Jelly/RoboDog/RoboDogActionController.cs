@@ -5,7 +5,7 @@ using XftWeapon;
 
 namespace Game
 {
-    public class RobotDogActionController : JellyHumanoidActionController
+    public class RoboDogActionController : JellyHumanoidActionController
     {
         [Header("Component")]
         public Transform counterActionCollider;
@@ -137,12 +137,12 @@ namespace Game
         }
 
         IDisposable __hitColorDisposable;
-        RobotDogBrain __brain;
+        RoboDogBrain __brain;
 
         protected override void AwakeInternal()
         {
             base.AwakeInternal();
-            __brain = GetComponent<RobotDogBrain>();
+            __brain = GetComponent<RoboDogBrain>();
         }
 
         protected override void StartInternal()

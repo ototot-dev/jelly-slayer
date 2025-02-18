@@ -7,13 +7,13 @@ namespace Game
 #region IPawnSpawnable / IPawnMovable 구현
         Vector3 IPawnSpawnable.GetSpawnPosition() => transform.position;
         void IPawnSpawnable.OnStartSpawnHandler() {}
-        void IPawnSpawnable.OnFinishSpawnHandler() 
+        public virtual void OnFinishSpawnHandler() 
         { 
             if (this is IPlayerActionListener listener)
                 GameContext.Instance.playerCtrler.RegisterPlayerActionListener(listener);
         }
         void IPawnSpawnable.OnDespawnedHandler() {}
-        void IPawnSpawnable.OnDeadHandler() 
+        public virtual void OnDeadHandler() 
         { 
             if (this is IPlayerActionListener listener)
                 GameContext.Instance.playerCtrler.UnregisterPlayerActionListener(listener);
@@ -53,6 +53,7 @@ namespace Game
             Idle,
             Spacing,
             Approach,
+            Away,
             Max
         }
 

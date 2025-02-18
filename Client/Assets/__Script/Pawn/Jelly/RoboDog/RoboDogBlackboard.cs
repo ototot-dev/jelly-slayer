@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public class RobotDogBlackboard : JellyHumanoidBlackboard
+    public class RoboDogBlackboard : JellyHumanoidBlackboard
     {
         public override bool IsGuarding => action.isGuarding.Value;
         public override float SpacingInDistance => action.spacingInDistance;
@@ -15,12 +15,17 @@ namespace Game
         public override float MinApproachDistance => action.minApproachDistance;
         public float HoldPositionRate => action.holdPositionRate;
         public float MoveAroundRate => action.moveAroundRate;
+        public SoldierBrain HostBrain => body.hostBrain.Value;
+        public Transform HostCore => body.hostBrain.Value.coreColliderHelper.transform;
+        public Transform FormationSpot => body.formationSpot.Value;
 
         [Serializable]
         public class Body
         {
             public float walkSpeed = 1f;
             public float runSpeed = 1f;
+            public ReactiveProperty<SoldierBrain> hostBrain;
+            public ReactiveProperty<Transform> formationSpot;
         }
 
         public Body body = new();
