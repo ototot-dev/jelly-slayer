@@ -18,7 +18,7 @@ namespace Game
             if (this is IPlayerActionListener listener)
                 GameContext.Instance.playerCtrler.UnregisterPlayerActionListener(listener);
 
-            __pawnAnimCtrler.mainAnimator.SetTrigger("OnDead"); 
+            // __pawnAnimCtrler.mainAnimator.SetTrigger("OnDead");
             __pawnMovement.SetMovementEnabled(false);
         }
         void IPawnSpawnable.OnLifeTimeOutHandler() { PawnHP.Die("TimeOut"); }

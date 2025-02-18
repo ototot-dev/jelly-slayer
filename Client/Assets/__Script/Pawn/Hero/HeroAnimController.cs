@@ -219,7 +219,7 @@ namespace Game
                         __brain.BB.graphics.forceShieldRenderer.transform.localScale = Vector3.one;
                     }
 
-                    // TODO: 
+                    // TODO: healingPotion Show/Hide 임시 코드
                     if (__watchingStateNames.Contains("DrinkPotion"))
                     {
                         if (!__brain.BB.attachment.healingPotion.activeSelf) 

@@ -387,9 +387,11 @@ namespace Game
 
             if (damageContext.receiverBrain.PawnHP.heartPoint.Value <= 0)
             {
-                __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "receiverBrain.PawnHP.heartPoint is below 0. receiverBrain is now dead.");
-                damageContext.receiverBrain.PawnBB.common.isDead.Value = true;
+                __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "receiverBrain is dead.", "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
+                
+                //* onDamaged 호출은 isDead가 true롤 셋팅되지 전에 불려야함!!
                 damageContext.receiverBrain.PawnHP.onDamaged?.Invoke(damageContext);
+                damageContext.receiverBrain.PawnBB.common.isDead.Value = true;
                 damageContext.receiverBrain.PawnHP.onDead?.Invoke(damageContext);
             }
             else
@@ -405,6 +407,7 @@ namespace Game
                     if (damageContext.receiverPenalty.Item1 == PawnStatus.KnockDown && damageContext.receiverBrain.PawnStatusCtrler.CheckStatus(PawnStatus.Groggy))
                         damageContext.receiverBrain.PawnStatusCtrler.RemoveStatus(PawnStatus.Groggy);
                 }
+
                 damageContext.receiverBrain.PawnHP.onDamaged?.Invoke(damageContext);
             }
 
