@@ -5503,10 +5503,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   common:
-    pawnId: 5
+    pawnId: 6
     pawnName: Alien
+    displayName: 
     spawnWaitingTime: 1
-    despawnWaitingTime: 1
+    despawnWaitingTime: 9999
     isSpawnFinished:
       value: 0
     isInvincible:
