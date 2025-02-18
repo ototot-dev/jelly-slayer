@@ -60,6 +60,7 @@ namespace Game
         public class Attachment
         {
             public Transform BlockingFxAttachPoint;
+            public GameObject healingPotion;
         }
 
         public Attachment attachment = new();

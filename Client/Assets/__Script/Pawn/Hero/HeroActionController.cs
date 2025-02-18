@@ -323,13 +323,3 @@ namespace Game
         }
     }
 }
-
-// void RollingEffect() 
-// {
-//     // 롤링 이펙트
-//     var trRoot = __brain.coreColliderHelper.transform;
-//     var pos = trRoot.position + (0.2f * Vector3.up);
-//     EffectManager.Instance.Show("JumpCloudSmall", pos, Quaternion.identity, 0.8f * Vector3.one, 0.4f);
-
-//     SoundManager.Instance.Play(SoundID.ROLL);
-// }

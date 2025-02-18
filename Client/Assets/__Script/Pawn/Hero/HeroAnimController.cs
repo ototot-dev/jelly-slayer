@@ -219,7 +219,19 @@ namespace Game
                         __brain.BB.graphics.forceShieldRenderer.transform.localScale = Vector3.one;
                     }
 
-                    mainAnimator.SetLayerWeight((int)LayerIndices.Arms, __brain.BB.IsJumping ? 0f : 1f);
+                    // TODO: 
+                    if (__watchingStateNames.Contains("DrinkPotion"))
+                    {
+                        if (!__brain.BB.attachment.healingPotion.activeSelf) 
+                            __brain.BB.attachment.healingPotion.SetActive(true);
+                    }
+                    else
+                    {
+                        if (__brain.BB.attachment.healingPotion.activeSelf) 
+                            __brain.BB.attachment.healingPotion.SetActive(false);
+                    }
+
+                    mainAnimator.SetLayerWeight((int)LayerIndices.Arms, __brain.BB.IsJumping || __watchingStateNames.Contains("DrinkPotion") ? 0f : 1f);
                     mainAnimator.SetLayerWeight((int)LayerIndices.Upper, __watchingStateNames.Contains("DrinkPotion") ? 1f : 0f);
 
                     if (__watchingStateNames.Contains("DrinkPotion"))
