@@ -19,6 +19,8 @@ public class HPBarPanel : MonoBehaviour
     [SerializeField] bool _isStamina = false;
     public Slider _spSlider;
 
+    Vector3 _curPos;
+
     float _counterViewTime = 0;
 
     //Vector2 _pos;
@@ -46,7 +48,6 @@ public class HPBarPanel : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void LateUpdate()
     {
         if(_pawn == null || _pawn.PawnBB == null) 
@@ -69,6 +70,7 @@ public class HPBarPanel : MonoBehaviour
         float rate = 2.5f * (GameContext.Instance.cameraCtrler.zoom / 20.0f);
         rate = Mathf.Clamp(rate, 2.5f, 4.0f);
         var pos = _pawn.GetWorldPosition() + (rate * Vector3.up);
+
 
         Vector2 viewportPosition = GameContext.Instance.cameraCtrler.viewCamera.WorldToViewportPoint(pos);
         Vector2 screenPosition = new Vector2(

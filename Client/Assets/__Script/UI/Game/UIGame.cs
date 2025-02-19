@@ -60,7 +60,7 @@ public class UIGame : MonoBehaviour
         {
             isStamina = true;
             _gamePanel?.SetHeroBrain(pawn);
-            //return;
+            return;
         }
         _hpBarManager.Create(pawn, isStamina);
     }
