@@ -54,13 +54,14 @@ public class UIGame : MonoBehaviour
         //* Hp 출력안하는 Pawn
         if (pawn is DroneBotBrain)
             return;
+
+        bool isStamina = false; // (pawn.PawnBB.stat.maxStamina.Value > 0);
         if (pawn is HeroBrain)
         {
+            isStamina = true;
             _gamePanel?.SetHeroBrain(pawn);
-            return;
+            //return;
         }
-
-            bool isStamina = (pawn.PawnBB.stat.maxStamina.Value > 0);
         _hpBarManager.Create(pawn, isStamina);
     }
     void OnPawnDamaged(ref PawnHeartPointDispatcher.DamageContext damageContext) 
