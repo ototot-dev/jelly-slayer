@@ -123,12 +123,12 @@ namespace Game
                 if (!ActionCtrler.CheckActionRunning() && !ActionCtrler.CheckActionPending())
                 {
                     var distanceConstraint = BB.TargetBrain != null ? coreColliderHelper.GetApproachDistance(BB.TargetBrain.GetWorldPosition()) : -1f;
-                    if (ActionDataSelector.CheckExecutable(__muzzleFireActionData) && ActionDataSelector.EvaluateSelection(__muzzleFireActionData, distanceConstraint, 1f) && CheckTargetVisibility())
+                    if (ActionDataSelector.CheckExecutable(__muzzleFireActionData) && ActionDataSelector.EvaluateSelection(__muzzleFireActionData, 0f, 1f) && CheckTargetVisibility())
                     {
                         ActionDataSelector.ResetSelection(__muzzleFireActionData);
                         ActionCtrler.SetPendingAction(__muzzleFireActionData.actionName);
                     }
-                    else if (ActionDataSelector.CheckExecutable(__torchFireActionData) && ActionDataSelector.EvaluateSelection(__torchFireActionData, distanceConstraint, 1f) && CheckTargetVisibility())
+                    else if (ActionDataSelector.CheckExecutable(__torchFireActionData) && ActionDataSelector.EvaluateSelection(__torchFireActionData, 0f, 1f) && CheckTargetVisibility())
                     {
                         ActionDataSelector.ResetSelection(__torchFireActionData);
                         ActionCtrler.SetPendingAction(__torchFireActionData.actionName);

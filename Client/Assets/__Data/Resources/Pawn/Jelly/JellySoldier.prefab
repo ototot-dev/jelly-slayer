@@ -42031,15 +42031,15 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5638448918812328678}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.52883923, y: -0.095537506, z: 0.84118134, w: -0.060130693}
-  m_LocalPosition: {x: -0.13722111, y: -0.103992075, z: 0.061109032}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: 0.7071068, w: 0}
+  m_LocalPosition: {x: -0.145, y: 0, z: 0.03}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8358087021355627582}
   - {fileID: 6341947184674742915}
   m_Father: {fileID: 223780761960215182}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 180}
 --- !u!1 &5639835476758749829
 GameObject:
   m_ObjectHideFlags: 0
@@ -81021,6 +81021,7 @@ MonoBehaviour:
   action:
     comboAttackIncreaseRateOnIdle: 1
     comboAttackBoostRateAfterCounterAttack: 1
+    jumpAttackTriggerDistance: 2
     counterAttackIncreaseRateOnGuard: 1
     leapIncreaseRate: 0.2
     missileEmitNum: 5

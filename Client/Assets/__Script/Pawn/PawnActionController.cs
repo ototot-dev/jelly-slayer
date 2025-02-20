@@ -29,7 +29,8 @@ namespace Game
             public bool manualAdvanceEnabled;
             public float manualAdvanceTime;
             public float manualAdvanceSpeed;
-            public float animLayerBlendWeight;
+            public float animBlendSpeed;
+            public float animBlendWeight;
             public float animClipLength;
             public int animClipFps;
             public float startTimeStamp;
@@ -49,7 +50,7 @@ namespace Game
                 actionInstanceId = ++__actionInstanceIdCounter;
                 this.preMotionName = preMotionName;
                 actionName = actionData.actionName;
-                actionSpeed = actionData.actionSpeed * actionSpeedMultiplier;
+                this.actionSpeed = actionData.actionSpeed * actionSpeedMultiplier;
                 this.rootMotionMultiplier = rootMotionMultiplier;
                 this.rootMotionConstraint = rootMotionConstraint;
                 this.rootMotionCurve = rootMotionCurve;
@@ -63,8 +64,9 @@ namespace Game
                 isTraceRunning = false;
                 this.manualAdvanceEnabled = manualAdvacneEnabled;
                 manualAdvanceTime = 0f;
-                manualAdvanceSpeed = actionSpeed;
-                animLayerBlendWeight = 1f;
+                manualAdvanceSpeed = this.actionSpeed;
+                animBlendSpeed = -1f;
+                animBlendWeight = 1f;
                 animClipLength = -1f;
                 animClipFps = -1;
                 this.startTimeStamp = startTimeStamp;
@@ -77,13 +79,13 @@ namespace Game
             }
 
             //* 리액션 및 Addictive 액션 초기화
-            public ActionContext(string actionName, float actionSpeedMultiplier, float startTimeStamp)
+            public ActionContext(string actionName, float actionSpeed, float startTimeStamp)
             {
                 actionData = null;
                 actionInstanceId = ++__actionInstanceIdCounter;
                 preMotionName = string.Empty;
                 this.actionName = actionName;
-                actionSpeed = actionSpeedMultiplier;
+                this.actionSpeed = actionSpeed;
                 rootMotionConstraint = 0;
                 rootMotionMultiplier = 1f;
                 rootMotionCurve = null;
@@ -97,8 +99,9 @@ namespace Game
                 isTraceRunning = false;
                 manualAdvanceEnabled = false;
                 manualAdvanceTime = 0f;
-                manualAdvanceSpeed = actionSpeed;
-                animLayerBlendWeight = 1f;
+                manualAdvanceSpeed = this.actionSpeed;
+                animBlendSpeed = 1f;
+                animBlendWeight = -1f;
                 animClipLength = -1f;
                 animClipFps = -1;
                 this.startTimeStamp = startTimeStamp;
@@ -442,9 +445,17 @@ namespace Game
                     case "!OnParried": currActionContext.actionDisposable = StartOnParriedAction(ref damageContext); break;
                 }
 
-                //* 수행할 액션이 없다면 다음 프레임에 종료시켜준다.
                 if (currActionContext.actionDisposable == null)
-                    Observable.NextFrame().Subscribe(_ => FinishAction()).AddTo(this);
+                {
+                    var capturedActionInstanceId = currActionContext.actionInstanceId;
+                    
+                    //* 수행할 액션이 없다면 다음 프레임에 종료시켜준다.
+                    Observable.NextFrame().Subscribe(_ => 
+                    {
+                        if (currActionContext.actionInstanceId == capturedActionInstanceId)
+                            FinishAction();
+                    }).AddTo(this);
+                }
             }
             else
             {
@@ -566,6 +577,9 @@ namespace Game
                 __pawnAnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1);
                 __pawnAnimCtrler.mainAnimator.SetFloat("AnimAdvance", 0);
             }
+
+            if (__pawnMovement != null)
+                __pawnMovement.FreezeMovementForOneFrame();
 
             currActionContext.actionDisposable?.Dispose();
             currActionContext.homingRotationDisposable?.Dispose();

@@ -1028,56 +1028,56 @@ namespace Game.NodeCanvasExtension
             var pawnBrain = agent.GetComponent<PawnBrainController>();
             Debug.Assert(pawnBrain != null);
 
-            var __actionCtrler = pawnBrain.GetComponent<PawnActionController>();
-            Debug.Assert(__actionCtrler != null);
+            var pawnActionCtrler = pawnBrain.GetComponent<PawnActionController>();
+            Debug.Assert(pawnActionCtrler != null);
 
             var pawnMovable = pawnBrain as IPawnMovable;
             Debug.Assert(pawnMovable != null);
 
-            __capturedActionInstanceId =  __actionCtrler.currActionContext.actionInstanceId;
+            __capturedActionInstanceId =  pawnActionCtrler.currActionContext.actionInstanceId;
             if (endActionWhenReachToTarget)
             {
-                __actionCtrler.WaitAction();
-                __manualAdvanceSpeedCached = __actionCtrler.currActionContext.manualAdvanceSpeed;
-                __actionCtrler.currActionContext.manualAdvanceSpeed = 0;
+                pawnActionCtrler.WaitAction();
+                __manualAdvanceSpeedCached = pawnActionCtrler.currActionContext.manualAdvanceSpeed;
+                pawnActionCtrler.currActionContext.manualAdvanceSpeed = 0;
             }
 
             var executeTimeStamp = Time.time;
 
-            __actionCtrler.currActionContext.rootMotionDisposable?.Dispose();
-            __actionCtrler.currActionContext.rootMotionDisposable = __rootMotionDisposable = Observable.EveryUpdate()
+            pawnActionCtrler.currActionContext.rootMotionDisposable?.Dispose();
+            pawnActionCtrler.currActionContext.rootMotionDisposable = __rootMotionDisposable = Observable.EveryUpdate()
                 .TakeUntil(Observable.Timer(TimeSpan.FromSeconds((duration.value > 0f ? duration.value : 3600f) + Mathf.Max(0f, accelDuration.value) + Mathf.Max(0f, breakDuration.value))))
                 .DoOnCancel(() => 
                 {
-                    // __pawnMovable.FreezeForOneFrame();
-                    __actionCtrler.currActionContext.rootMotionDisposable = __rootMotionDisposable = null;
+                    pawnMovable.FreezeForOneFrame();
+                    pawnActionCtrler.currActionContext.rootMotionDisposable = __rootMotionDisposable = null;
                     if (endActionWhenReachToTarget)
                     {
-                        __actionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
+                        pawnActionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
                         EndAction(true);
                     }
                 })
                 .DoOnCompleted(() =>
                 {
-                    // __pawnMovable.FreezeForOneFrame();
-                    __actionCtrler.currActionContext.rootMotionDisposable = __rootMotionDisposable = null;
+                    pawnMovable.FreezeForOneFrame();
+                    pawnActionCtrler.currActionContext.rootMotionDisposable = __rootMotionDisposable = null;
                     if (endActionWhenReachToTarget)
                     {
-                        __actionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
+                        pawnActionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
                         EndAction(true);
                     }
                 })
                 .Subscribe(_ =>
                 {
                     if (endActionWhenReachToTarget)
-                        __actionCtrler.currActionContext.manualAdvanceSpeed = 0;
+                        pawnActionCtrler.currActionContext.manualAdvanceSpeed = 0;
 
                     //* Action이 취소되었다면 즉시 중지
-                    if (!__actionCtrler.CheckActionRunning() || __capturedActionInstanceId != __actionCtrler.currActionContext.actionInstanceId)
+                    if (!pawnActionCtrler.CheckActionRunning() || __capturedActionInstanceId != pawnActionCtrler.currActionContext.actionInstanceId)
                     {
-                        Debug.Assert(__rootMotionDisposable != null && __rootMotionDisposable == __actionCtrler.currActionContext.rootMotionDisposable);
+                        Debug.Assert(__rootMotionDisposable != null && __rootMotionDisposable == pawnActionCtrler.currActionContext.rootMotionDisposable);
                         __rootMotionDisposable.Dispose();
-                        __rootMotionDisposable = __actionCtrler.currActionContext.rootMotionDisposable = null;
+                        __rootMotionDisposable = pawnActionCtrler.currActionContext.rootMotionDisposable = null;
 
                         return;
                     }
@@ -1086,9 +1086,9 @@ namespace Game.NodeCanvasExtension
                     {
                         if (endActionWhenReachToTarget)
                         {
-                            Debug.Assert(__rootMotionDisposable != null && __rootMotionDisposable == __actionCtrler.currActionContext.rootMotionDisposable);
+                            Debug.Assert(__rootMotionDisposable != null && __rootMotionDisposable == pawnActionCtrler.currActionContext.rootMotionDisposable);
                             __rootMotionDisposable.Dispose();
-                            __rootMotionDisposable = __actionCtrler.currActionContext.rootMotionDisposable = null;
+                            __rootMotionDisposable = pawnActionCtrler.currActionContext.rootMotionDisposable = null;
                         }
 
                         //* 타겟에 도달했다면 RootMotion은 적용하지 않도록 리턴함
@@ -1108,21 +1108,6 @@ namespace Game.NodeCanvasExtension
 
             if (!endActionWhenReachToTarget)
                 EndAction(true);
-        }
-    }
-
-    [Category("Pawn")]
-    public class VerticalRootMotion : ActionTask
-    {
-        protected override void OnExecute()
-        {
-            var actionCtrler = agent.GetComponent<PawnActionController>();
-            Debug.Assert(actionCtrler != null);
-
-            actionCtrler.currActionContext.rootMotionDisposable?.Dispose();
-            actionCtrler.currActionContext.rootMotionDisposable = null;
-
-            EndAction(true);
         }
     }
 
@@ -1478,6 +1463,20 @@ namespace Game.NodeCanvasExtension
     }
 
     [Category("Pawn")]
+    public class SetActionLayerBlendSpeed : ActionTask
+    {
+        protected override string info => base.info + $" <b>{newValue}</b>";
+        public float newValue;
+        protected override void OnExecute()
+        {
+            if (agent.TryGetComponent<PawnActionController>(out var actionCtrler) && actionCtrler.CheckActionRunning())
+                actionCtrler.currActionContext.animBlendSpeed = Mathf.Clamp01(newValue);
+
+            EndAction(true);
+        }
+    }
+
+    [Category("Pawn")]
     public class SetActionLayerBlendWeight : ActionTask
     {
         protected override string info => base.info + $" <b>{newValue}</b>";
@@ -1485,7 +1484,7 @@ namespace Game.NodeCanvasExtension
         protected override void OnExecute()
         {
             if (agent.TryGetComponent<PawnActionController>(out var actionCtrler) && actionCtrler.CheckActionRunning())
-                actionCtrler.currActionContext.animLayerBlendWeight = Mathf.Clamp01(newValue);
+                actionCtrler.currActionContext.animBlendWeight = Mathf.Clamp01(newValue);
 
             EndAction(true);
         }

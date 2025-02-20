@@ -107,17 +107,17 @@ namespace Game
                 else if (Time.time - PawnHP.LastDamageTimeStamp >= 1f && Time.time - __lastComboAttackRateStepTimeStamp >= 1f)
                 {
                     var distanceConstraint = BB.TargetBrain != null ? BB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position) : -1f;
-                    if (ActionDataSelector.CheckExecutable(__combo1ActionData) && ActionDataSelector.EvaluateSelection(__combo1ActionData, distanceConstraint, 1f) && CheckTargetVisibility())
+                    if (ActionDataSelector.CheckExecutable(__combo1ActionData) && ActionDataSelector.EvaluateSelection(__combo1ActionData, 0f, 1f) && CheckTargetVisibility())
                     {
                         ActionDataSelector.ResetSelection(__combo1ActionData);
                         ActionCtrler.SetPendingAction(__combo1ActionData.actionName);
                     }
-                    else if (ActionDataSelector.CheckExecutable(__counterActionData) && ActionDataSelector.EvaluateSelection(__counterActionData, distanceConstraint, 1f) && CheckTargetVisibility())
+                    else if (ActionDataSelector.CheckExecutable(__counterActionData) && ActionDataSelector.EvaluateSelection(__counterActionData, 0f, 1f) && CheckTargetVisibility())
                     {
                         ActionDataSelector.ResetSelection(__counterActionData);
                         ActionCtrler.SetPendingAction(__counterActionData.actionName);
                     }
-                    else if (ActionDataSelector.CheckExecutable(__chargeActionData) && ActionDataSelector.EvaluateSelection(__chargeActionData, distanceConstraint, 1f) && CheckTargetVisibility())
+                    else if (ActionDataSelector.CheckExecutable(__chargeActionData) && ActionDataSelector.EvaluateSelection(__chargeActionData, 0f, 1f) && CheckTargetVisibility())
                     {
                         ActionDataSelector.ResetSelection(__chargeActionData);
                         ActionCtrler.SetPendingAction(__chargeActionData.actionName);

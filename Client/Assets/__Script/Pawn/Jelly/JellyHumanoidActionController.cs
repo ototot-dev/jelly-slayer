@@ -22,7 +22,7 @@ namespace Game
 
             if (__humanoidBrain.PawnBB.TargetBrain != null && __humanoidBrain.SensorCtrler.TouchingColliders.Contains(__humanoidBrain.PawnBB.TargetBrain.coreColliderHelper.pawnCollider))
             {
-                //* RootMotion으로 목표물을 밀지 않도록 목묘물의 TouchingColliders와 접축할 정도로 가깝다면 rootMotionVec가 목표물에서 멀어지는 방향일때만 적용해준다.
+                //* RootMotion으로 목표물을 밀지 않도록 목표물의 TouchingColliders와 접축할 정도로 가깝다면 rootMotionVec가 목표물에서 멀어지는 방향일때만 적용해준다.
                 return __humanoidBrain.coreColliderHelper.GetDistanceDelta(__humanoidBrain.PawnBB.TargetBrain.coreColliderHelper, rootMotionVec) > 0f;
             }
             else
@@ -80,12 +80,12 @@ namespace Game
                 __knockBackDisposable = Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(1f / __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed)))
                     .DoOnCancel(() => 
                     {
-                        __pawnMovement.FreezeForOneFrame();
+                        __pawnMovement.FreezeMovementForOneFrame();
                         __knockBackDisposable = null;
                     })
                     .DoOnCompleted(() => 
                     {
-                        __pawnMovement.FreezeForOneFrame();
+                        __pawnMovement.FreezeMovementForOneFrame();
                         __knockBackDisposable = null;
                     })
                     .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity)).AddTo(this);
@@ -97,13 +97,13 @@ namespace Game
                     .DoOnCancel(() => 
                     {
                         __pawnBrain.InvalidateDecision(0.5f);
-                        __pawnMovement.FreezeForOneFrame();
+                        __pawnMovement.FreezeMovementForOneFrame();
                         __knockBackDisposable = null;
                     })
                     .DoOnCompleted(() => 
                     {
                         __pawnBrain.InvalidateDecision(0.5f);
-                        __pawnMovement.FreezeForOneFrame();
+                        __pawnMovement.FreezeMovementForOneFrame();
                         __knockBackDisposable = null;
                     })
                     .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity)).AddTo(this);
@@ -127,13 +127,13 @@ namespace Game
                 .DoOnCancel(() => 
                 {
                     __pawnBrain.InvalidateDecision(0.5f);
-                    __pawnMovement.FreezeForOneFrame();
+                    __pawnMovement.FreezeMovementForOneFrame();
                     __knockBackDisposable = null;
                 })
                 .DoOnCompleted(() => 
                 {
                     __pawnBrain.InvalidateDecision(0.5f);
-                    __pawnMovement.FreezeForOneFrame();
+                    __pawnMovement.FreezeMovementForOneFrame();
                     __knockBackDisposable = null;
                 })
                 .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity)).AddTo(this);
@@ -145,7 +145,6 @@ namespace Game
         {
             Debug.Assert(damageContext.senderBrain == __humanoidBrain);
 
-            __Logger.LogR2(gameObject, nameof(StartOnParriedAction), "-", "Distance", damageContext.senderBrain.coreColliderHelper.GetDistanceBetween(damageContext.receiverBrain.coreColliderHelper));
             __pawnAnimCtrler.mainAnimator.SetTrigger("OnParried");
 
             var knockBackDistance = 0f;
@@ -158,6 +157,8 @@ namespace Game
 
             if (knockBackDistance <= 0f)
                 __Logger.WarningR2(gameObject, nameof(StartOnParriedAction), "knockBackDistance is zero", "knockBackDistance", knockBackDistance);
+            else
+                __Logger.LogR1(gameObject, nameof(StartOnParriedAction), "knockBackDistance", knockBackDistance);
 
             var knockBackVec = __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed * damageContext.receiverBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
             __knockBackDisposable?.Dispose();
@@ -165,13 +166,13 @@ namespace Game
                 .DoOnCancel(() => 
                 {
                     __pawnBrain.InvalidateDecision(0.5f);
-                    __pawnMovement.FreezeForOneFrame();
+                    __pawnMovement.FreezeMovementForOneFrame();
                     __knockBackDisposable = null;
                 })
                 .DoOnCompleted(() => 
                 {
                     __pawnBrain.InvalidateDecision(0.5f);
-                    __pawnMovement.FreezeForOneFrame();
+                    __pawnMovement.FreezeMovementForOneFrame();
                     __knockBackDisposable = null;
                 })
                 .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity)).AddTo(this);
@@ -207,7 +208,7 @@ namespace Game
                     .DoOnCancel(() =>
                     {
                         __pawnBrain.InvalidateDecision(0.5f);
-                        __pawnMovement.FreezeForOneFrame();
+                        __pawnMovement.FreezeMovementForOneFrame();
                         __knockBackDisposable = null;
 
                         //* KnockBack 연출 후에 Groogy 모션 진입
@@ -217,7 +218,7 @@ namespace Game
                     .DoOnCompleted(() =>
                     {
                         __pawnBrain.InvalidateDecision(0.5f);
-                        __pawnMovement.FreezeForOneFrame();
+                        __pawnMovement.FreezeMovementForOneFrame();
                         __knockBackDisposable = null;
 
                         //* KnockBack 연출 후에 Groogy 모션 진입

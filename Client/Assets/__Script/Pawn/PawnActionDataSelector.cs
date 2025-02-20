@@ -10,25 +10,25 @@ namespace Game
         public class SelectionState
         {
             public MainTable.ActionData actionData;
-            public float currRate;
+            public float currProb;
             public float currCoolTime;
 
             public SelectionState(MainTable.ActionData actionData)
             {
                 this.actionData = actionData;
 
-                ResetRate();
+                ResetProbability();
                 ResetCoolTime();
             }
 
-            public void IncreaseRate(float deltaRate)
+            public void IncreaseProbability(float deltaProb)
             {
-                currRate += deltaRate;
+                currProb += deltaProb;
             }
 
-            public void ResetRate()
+            public void ResetProbability(float resetProb = 0f)
             {
-                currRate = actionData.selectionRate;
+                currProb = resetProb;
             }
 
             public float DecreaseCoolTime(float deltaCoolTime)
@@ -57,10 +57,10 @@ namespace Game
 #endif
             if (TryGetComponent<PawnBlackboard>(out var pawnBB))
             {
-                var data = DatasheetManager.Instance.GetActionData(pawnBB.common.pawnId);
-                if (data != null)
+                var actionData = DatasheetManager.Instance.GetActionData(pawnBB.common.pawnId);
+                if (actionData != null)
                 {
-                    foreach (var d in data)
+                    foreach (var d in actionData)
                         SelectionStates.Add(d, new SelectionState(d));
                 }
             }
@@ -84,30 +84,30 @@ namespace Game
         {            
             foreach (var s in SelectionStates)
             {
-                if (s.Key.selectionRate > 0 && (s.Key.coolTime < 0f || (s.Key.coolTime > 0 && s.Value.DecreaseCoolTime(deltaTime) <= 0)))
+                if (s.Key.coolTime < 0f || (s.Key.coolTime > 0 && s.Value.DecreaseCoolTime(deltaTime) <= 0f))
                     __executables.Add(s.Key);
             }
         }
 
-        public void BoostSelection(string actionName, float deltaRate) => BoostSelection(GetActionData(actionName), deltaRate);
-        public void BoostSelection(MainTable.ActionData actionData, float deltaRate)
+        public void BoostSelection(string actionName, float boostProb) => BoostSelection(GetActionData(actionName), boostProb);
+        public void BoostSelection(MainTable.ActionData actionData, float boostProb)
         {   
             Debug.Assert(actionData != null);
 
             if (SelectionStates.TryGetValue(actionData, out var state))
-                state.currRate += deltaRate;
+                state.currProb += boostProb;
             else
                 __Logger.WarningR2(gameObject, nameof(BoostSelection), "SourceActionStates.TryGetValue() return false", "actionName", actionData.actionName);
         }
         
-        public void ResetSelection(string actionName) => ResetSelection(GetActionData(actionName));
-        public void ResetSelection(MainTable.ActionData actionData)
+        public void ResetSelection(string actionName, float resetProb = 0f) => ResetSelection(GetActionData(actionName), resetProb);
+        public void ResetSelection(MainTable.ActionData actionData, float resetProb = 0f)
         {   
             Debug.Assert(actionData != null);
 
             if (SelectionStates.TryGetValue(actionData, out var state))
             {
-                state.ResetRate();
+                state.ResetProbability(resetProb);
                 state.ResetCoolTime();
                 __executables.Remove(actionData);
             }
@@ -117,8 +117,8 @@ namespace Game
             }
         }
 
-        public bool EvaluateSelection(string actionName, float distanceConstraint, float staminaConstraint) => EvaluateSelection(GetActionData(actionName), distanceConstraint, staminaConstraint);
-        public bool EvaluateSelection(MainTable.ActionData actionData, float distanceConstraint, float staminaConstraint)
+        public bool EvaluateSelection(string actionName, float probConstraint = -1f, float staminaConstraint = -1f) => EvaluateSelection(GetActionData(actionName), probConstraint, staminaConstraint);
+        public bool EvaluateSelection(MainTable.ActionData actionData, float probConstraint = -1f, float staminaConstraint = -1f)
         {
             Debug.Assert(actionData != null);
 
@@ -127,12 +127,7 @@ namespace Game
 
             if (SelectionStates.TryGetValue(actionData, out var actionState))
             {
-                if (actionData.actionRange < distanceConstraint)
-                    return false;
-                else if (actionData.staminaCost > staminaConstraint)
-                    return false;
-                else
-                    return actionState.currRate > UnityEngine.Random.Range(0f, 1f);
+                return actionState.currProb >= probConstraint && (actionData.staminaCost <= staminaConstraint || staminaConstraint < 0f);
             }
             else
             {
@@ -141,34 +136,20 @@ namespace Game
             }
         }
         
-        public bool TryRandomSelection(float distanceConstraint, float staminaConstraint, bool resetRate, out MainTable.ActionData result)
+        public MainTable.ActionData PickRandomSelection(float probConstraint = -1f, float staminaConstraint = -1f)
         {
-            result = RandomSelection(distanceConstraint, staminaConstraint, resetRate);
-            return result != null;
-        }
-
-        public MainTable.ActionData RandomSelection(float distanceConstraint, float staminaConstraint, bool resetSelection)
-        {
-            var selector = UnityEngine.Random.Range(0, __executables.Where(d => d.actionRange >= distanceConstraint && d.staminaCost <= staminaConstraint).Sum(d => SelectionStates[d].currRate));
-            var curr = 0f;
-            foreach (var d in __executables)
+            var selectRate = UnityEngine.Random.Range(0, __executables.Where(e => SelectionStates[e].currProb >= probConstraint && (e.staminaCost <= staminaConstraint || staminaConstraint < 0f)).Sum(e => SelectionStates[e].currProb));
+            var accumRate = 0f;
+            foreach (var e in __executables)
             {
-                if (distanceConstraint > d.actionRange || staminaConstraint < d.staminaCost)
+                if (SelectionStates[e].currProb < probConstraint)
                     continue;
+                if (staminaConstraint >= 0f && e.staminaCost > staminaConstraint)
+                    continue;
+                if (selectRate >= accumRate && selectRate < accumRate + SelectionStates[e].currProb)
+                    return e;
 
-                if (selector >= curr && selector < curr + SelectionStates[d].currRate)
-                {
-                    if (resetSelection)
-                    {
-                        SelectionStates[d].ResetRate();
-                        SelectionStates[d].ResetCoolTime();
-                    }
-                 
-                    __executables.Remove(d);     
-                    return d;
-                }
-
-                curr += SelectionStates[d].currRate;
+                accumRate += SelectionStates[e].currProb;
             }
 
             return null;

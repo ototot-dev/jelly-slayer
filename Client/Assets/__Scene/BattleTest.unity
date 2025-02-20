@@ -15304,13 +15304,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6216396230011918169, guid: 0b9fc09354ec64912b836f5677c9f5c8, type: 3}
-      propertyPath: debugActionDisabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8861700421523015734, guid: 0b9fc09354ec64912b836f5677c9f5c8, type: 3}
       propertyPath: m_Name
       value: JellyAlien
+      objectReference: {fileID: 0}
+    - target: {fileID: 8861700421523015734, guid: 0b9fc09354ec64912b836f5677c9f5c8, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -18364,7 +18364,7 @@ PrefabInstance:
     - target: {fileID: 9205371885998440386, guid: e96cffa9d00b6b545adfeb26165952cc, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 2075856802}
+      objectReference: {fileID: 1454664022}
     - target: {fileID: 9205371885998440386, guid: e96cffa9d00b6b545adfeb26165952cc, type: 3}
       propertyPath: orthographic size
       value: 4.2
@@ -21050,17 +21050,33 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1265836189428614339, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
-      propertyPath: _Editor_OnValidateTrigger
-      value: 1
+    - target: {fileID: 1626602440402030822, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+      propertyPath: attachment.laserAimPoint
+      value: 
+      objectReference: {fileID: 672230232}
+    - target: {fileID: 1626602440402030822, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+      propertyPath: attachment.laserRenderer
+      value: 
+      objectReference: {fileID: 672230234}
+    - target: {fileID: 1626602440402030822, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+      propertyPath: action.maxCoolDownDuration
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1626602440402030822, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+      propertyPath: action.minCoolDownDuration
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1626602440402030822, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+      propertyPath: attachment.blockingFxAttachPoint
+      value: 
+      objectReference: {fileID: 672230233}
+    - target: {fileID: 1626602440402030822, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+      propertyPath: action.counterProbBoostRateOnGuard
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 8861700421523015734, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
       propertyPath: m_Name
       value: JellySoldier
-      objectReference: {fileID: 0}
-    - target: {fileID: 8861700421523015734, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -21076,6 +21092,27 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a54349b5eb26447da89ee1e4388af50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &672230232 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5689320857391352882, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+  m_PrefabInstance: {fileID: 672230230}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &672230233 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 827300965817690329, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+  m_PrefabInstance: {fileID: 672230230}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &672230234 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9042071260790409409, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+  m_PrefabInstance: {fileID: 672230230}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86031242895364d78856880cf9b5f8cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &673565729 stripped
@@ -43714,6 +43751,22 @@ PrefabInstance:
       propertyPath: _boundGraphSource._translation.y
       value: -151
       objectReference: {fileID: 0}
+    - target: {fileID: 1293864437648779426, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
+      propertyPath: _EditorCategory
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1293864437648779426, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
+      propertyPath: _EditorMotionCategory
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1293864437648779426, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
+      propertyPath: _Editor_OnValidateTrigger
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1293864437648779426, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
+      propertyPath: BaseLegAnimating.StepMoveDuration
+      value: 0.3
+      objectReference: {fileID: 0}
     - target: {fileID: 4660759323482832590, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
       propertyPath: lateUpdateEnabled
       value: 1
@@ -46011,6 +46064,43 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 515844353544733868, guid: 1eff6285a93e5424b8ae79d26a91a68c, type: 3}
   m_PrefabInstance: {fileID: 1017512859}
   m_PrefabAsset: {fileID: 0}
+--- !u!84 &1454664022
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 640
+  m_Height: 360
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 94
+  m_ColorFormat: 4
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 1
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 0
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!1 &1456965713 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 636581859208276779, guid: aeb389fa169e7514eb6638c9bc512519, type: 3}
@@ -63521,43 +63611,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7821217888551990375, guid: fec6123700ea2aa44a24818e607ed575, type: 3}
   m_PrefabInstance: {fileID: 437076237}
   m_PrefabAsset: {fileID: 0}
---- !u!84 &2075856802
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 640
-  m_Height: 360
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 94
-  m_ColorFormat: 4
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 1
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 0
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!4 &2076277553 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2089961859844078718, guid: 31be19a0e23ac441d906c3c6f7481852, type: 3}
@@ -66536,6 +66589,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4268522763273999486, guid: 31be19a0e23ac441d906c3c6f7481852, type: 3}
+      propertyPath: common.isInvincible.value
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -66644,6 +66701,22 @@ PrefabInstance:
     - target: {fileID: 937156682906900337, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
       propertyPath: _boundGraphSource._translation.y
       value: -151
+      objectReference: {fileID: 0}
+    - target: {fileID: 1293864437648779426, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
+      propertyPath: _EditorCategory
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1293864437648779426, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
+      propertyPath: _EditorMotionCategory
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1293864437648779426, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
+      propertyPath: _Editor_OnValidateTrigger
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1293864437648779426, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
+      propertyPath: BaseLegAnimating.StepMoveDuration
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 4660759323482832590, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
       propertyPath: lateUpdateEnabled

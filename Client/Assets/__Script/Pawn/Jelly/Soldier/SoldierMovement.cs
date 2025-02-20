@@ -68,7 +68,12 @@ namespace Game
             if (!__ecmMovement.enabled)
                 return;
 
-            if (__brain.BB.IsJumping)
+            if (__isFrozenMovementForOneFrame)
+            {
+                __ecmMovement.Move(Time.fixedDeltaTime);
+                __isFrozenMovementForOneFrame = false;
+            }
+            else if (__brain.BB.IsJumping)
             {
                 //Debug.Assert(__rootMotionPosition.sqrMagnitude <= 0f);
 
@@ -94,12 +99,7 @@ namespace Game
             }
             else if (__brain.BB.IsGliding)
             {
-                if (__freezeMovementForOneFrame)
-                {
-                    __freezeMovementForOneFrame = false;
-                    __ecmMovement.Move(Time.fixedDeltaTime);
-                }
-                else if (__rootMotionPosition.sqrMagnitude > 0f)
+                if (__rootMotionPosition.sqrMagnitude > 0f)
                 {
                     __ecmMovement.Move(GetRootMotionVelocity(Time.fixedDeltaTime), Time.fixedDeltaTime);
                 }
@@ -128,6 +128,7 @@ namespace Game
                 }
 
                 __ecmMovement.rotation *= __rootMotionRotation;
+
                 ResetRootMotion();
             }
             else

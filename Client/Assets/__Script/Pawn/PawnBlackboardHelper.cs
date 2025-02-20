@@ -1,9 +1,22 @@
+using System;
 using UnityEngine;
 
 namespace Game
 {
     public static class PawnBlackboardHelper
     {
+        public static int ConsumeActionPoint(this PawnBlackboard.Stat stat, int count)
+        {   
+            stat.actionPoint.Value = Math.Max(0, stat.actionPoint.Value - count);
+            return stat.actionPoint.Value;
+        }
+
+        public static int RecoverActionPoint(this PawnBlackboard.Stat stat, int count)
+        {   
+            stat.actionPoint.Value = Math.Min(stat.maxActionPoint.Value, stat.actionPoint.Value + count);
+            return stat.actionPoint.Value;
+        }
+
         public static float ReduceStamina(this PawnBlackboard.Stat stat, float delta)
         {   
             stat.stamina.Value = Mathf.Max(0f, stat.stamina.Value -delta);

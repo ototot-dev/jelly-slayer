@@ -42,15 +42,12 @@ namespace Game
         [Serializable]
         public class Action
         {
-            [Header("Combo")]
-            public float comboAttackIncreaseRateOnIdle;  //* Idle 상태에서 콤보 1타 발생 확률 증가
-            public float comboAttackBoostRateAfterCounterAttack;  //* 반격 후 콤보 1타 발생 확률 증가
+            [Header("CoolDown")]
+            public float minCoolDownDuration = 1f;
+            public float maxCoolDownDuration= 1f;
 
             [Header("Counter")]
-            public float counterAttackIncreaseRateOnGuard; //* 가드 후 반격 발생 확률 증가
-
-            [Header("Leap")]
-            public float leapIncreaseRate; //* 타켓과 거리가 떨어졌을 때 Leap 발생 확률 증가
+            public float counterProbBoostRateOnGuard; //* 가드 후 반격 발생 확률 증가
 
             [Header("Missile")]
             public int missileEmitNum = 1;
@@ -67,8 +64,6 @@ namespace Game
             public float laserForwardSpeed = 1f;
             public float laserRotateSpeed = 1f;
             public float laserCharingDuration = 1f;
-            public Transform laserAimPoint;
-            public SoldierLaserRenderer laserRenderer;
         }
 
         public Action action = new();
@@ -114,7 +109,9 @@ namespace Game
             public Renderer shieldMeshRenderer;
             public Renderer[] bodyMeshRenderers;
             public ParticleSystem[] jetParticleSystems;
-            public Transform BlockingFxAttachPoint;
+            public Transform blockingFxAttachPoint;
+            public Transform laserAimPoint;
+            public SoldierLaserRenderer laserRenderer;
         }
 
         public Attachment attachment = new();

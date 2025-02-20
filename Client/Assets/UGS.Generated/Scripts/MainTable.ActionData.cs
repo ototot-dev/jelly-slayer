@@ -60,12 +60,10 @@ namespace MainTable
 		public System.Int32 index;
 		public PawnId pawnId;
 		public System.String actionName;
-		public System.Single animBlendSpeed;
-		public System.Single actionSpeed;
-		public System.Single actionRange;
 		public System.Int32 staminaCost;
-		public System.Single selectionRate;
+		public System.Int32 actionPoint;
 		public System.Single coolTime;
+		public System.Single actionSpeed;
 		public System.Single damageMultiplier;
 		public System.Single damageMultiplierOnGroggy;
 		public System.Int32 cannotHitOnJump;

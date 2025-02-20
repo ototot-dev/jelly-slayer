@@ -93,8 +93,8 @@ namespace Game
 
                 var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
                 Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
-                    .DoOnCancel(() => __brain.Movement.FreezeForOneFrame())
-                    .DoOnCompleted(() => __brain.Movement.FreezeForOneFrame())
+                    .DoOnCancel(() => __brain.Movement.FreezeMovementForOneFrame())
+                    .DoOnCompleted(() => __brain.Movement.FreezeMovementForOneFrame())
                     .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity))
                     .AddTo(this);
 
@@ -146,8 +146,8 @@ namespace Game
                 {
                     var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
                     Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.5f / __brain.BB.pawnData_Movement.knockBackSpeed)))
-                        .DoOnCancel(() => __brain.Movement.FreezeForOneFrame())
-                        .DoOnCompleted(() => __brain.Movement.FreezeForOneFrame())
+                        .DoOnCancel(() => __brain.Movement.FreezeMovementForOneFrame())
+                        .DoOnCompleted(() => __brain.Movement.FreezeMovementForOneFrame())
                         .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity))
                         .AddTo(this);
                 }
@@ -169,13 +169,13 @@ namespace Game
             Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
                 .DoOnCancel(() =>
                 {
-                    __brain.Movement.FreezeForOneFrame();
+                    __brain.Movement.FreezeMovementForOneFrame();
                     if (CurrActionName == "!OnBlocked")
                         FinishAction();
                 })
                 .DoOnCompleted(() =>
                 {
-                    __brain.Movement.FreezeForOneFrame();
+                    __brain.Movement.FreezeMovementForOneFrame();
                     if (CurrActionName == "!OnBlocked")
                         FinishAction();
                 })

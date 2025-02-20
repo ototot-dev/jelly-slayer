@@ -25,8 +25,8 @@ namespace Game
                 var oldBackgroundColor = GUI.backgroundColor;
                 foreach (var s in (target as PawnActionDataSelector).SelectionStates)
                 {
-                    GUI.backgroundColor = s.Value.currRate > 0f && s.Value.currCoolTime <= 0f ? new Color(0.8f, 0.8f, 1) : Color.white;
-                    if (GUILayout.Button($"{s.Value.actionData.actionName} | Rate:{s.Value.currRate:F2} | CoolTime:{s.Value.currCoolTime:F1}"))
+                    GUI.backgroundColor = s.Value.currProb > 0f && s.Value.currCoolTime <= 0f ? new Color(0.8f, 0.8f, 1) : Color.white;
+                    if (GUILayout.Button($"{s.Value.actionData.actionName} | Rate:{s.Value.currProb:F2} | CoolTime:{s.Value.currCoolTime:F1}"))
                         (target as PawnActionDataSelector).GetComponent<PawnActionController>().SetPendingAction(s.Value.actionData.actionName);
                 }
                 GUI.backgroundColor = oldBackgroundColor;

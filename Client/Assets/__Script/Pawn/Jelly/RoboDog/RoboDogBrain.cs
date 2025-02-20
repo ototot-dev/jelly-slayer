@@ -121,7 +121,7 @@ namespace Game
                 else if (Time.time - PawnHP.LastDamageTimeStamp >= 1f && Time.time - __lastComboAttackRateStepTimeStamp >= 1f)
                 {
                     var distanceConstraint = BB.TargetBrain != null ? BB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position) : -1f;
-                    if (ActionDataSelector.CheckExecutable(__combo1ActionData) && ActionDataSelector.EvaluateSelection(__combo1ActionData, distanceConstraint, 1f) && CheckTargetVisibility())
+                    if (ActionDataSelector.CheckExecutable(__combo1ActionData) && ActionDataSelector.EvaluateSelection(__combo1ActionData, 0f, 1f) && CheckTargetVisibility())
                     {
                         ActionDataSelector.ResetSelection(__combo1ActionData);
                         ActionCtrler.SetPendingAction(__combo1ActionData.actionName);

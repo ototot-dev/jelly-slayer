@@ -120,9 +120,9 @@ namespace Game
                     mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
 
                     if (__brain.ActionCtrler.CheckActionRunning())
-                        mainAnimator.SetLayerWeight((int)LayerIndices.Action, Mathf.Clamp(mainAnimator.GetLayerWeight((int)LayerIndices.Action) + (__brain.ActionCtrler.currActionContext.actionData?.animBlendSpeed ?? actionLayerBlendSpeed) * Time.deltaTime, 0f, __brain.ActionCtrler.currActionContext.animLayerBlendWeight));
+                        mainAnimator.SetLayerWeight((int)LayerIndices.Action, Mathf.Clamp(mainAnimator.GetLayerWeight((int)LayerIndices.Action) + (__brain.ActionCtrler.currActionContext.animBlendSpeed > 0f ? __brain.ActionCtrler.currActionContext.animBlendSpeed : actionLayerBlendSpeed) * Time.deltaTime, 0f, __brain.ActionCtrler.currActionContext.animBlendWeight));
                     else
-                        mainAnimator.SetLayerWeight((int)LayerIndices.Action, Mathf.Clamp01(mainAnimator.GetLayerWeight((int)LayerIndices.Action)  - actionLayerBlendSpeed * Time.deltaTime));
+                        mainAnimator.SetLayerWeight((int)LayerIndices.Action, Mathf.Clamp01(mainAnimator.GetLayerWeight((int)LayerIndices.Action) - actionLayerBlendSpeed * Time.deltaTime));
 
                     mainAnimator.SetLayerWeight((int)LayerIndices.Addictive, 1f);
                     mainAnimator.SetBool("IsMoving", __brain.Movement.CurrVelocity.sqrMagnitude > 0 && !__brain.ActionCtrler.CheckKnockBackRunning());
@@ -214,7 +214,7 @@ namespace Game
             {
                 rigSetup.weight = 1f;
                 if (__brain.ActionCtrler.CheckAddictiveActionRunning("Laser"))
-                    lookAt.position = __brain.BB.action.laserAimPoint.position;
+                    lookAt.position = __brain.BB.attachment.laserAimPoint.position;
                 else if (__brain.BB.TargetBrain != null && __brain.BB.TargetBrain.coreColliderHelper != null)
                     lookAt.position = __brain.BB.TargetBrain.coreColliderHelper.GetWorldCenter() + 0.5f * Vector3.up;
                 else

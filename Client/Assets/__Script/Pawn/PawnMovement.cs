@@ -66,18 +66,18 @@ namespace Game
             if (!__ecmMovement.enabled)
                 return;
 
-            if (IsPushForceRunning)
+            if (__isFrozenMovementForOneFrame)
+            {
+                __isFrozenMovementForOneFrame = false;
+                __ecmMovement.Move(Time.fixedDeltaTime);
+            }
+            else if (IsPushForceRunning)
             {
                 __ecmMovement.Move(__pushForceVec * __pushForceMagnitude, Time.fixedDeltaTime);
             }
             else
             {
-                if (__freezeMovementForOneFrame)
-                {
-                    __freezeMovementForOneFrame = false;
-                    __ecmMovement.Move(Time.fixedDeltaTime);
-                }
-                else if (__rootMotionPosition.sqrMagnitude > 0f)
+                if (__rootMotionPosition.sqrMagnitude > 0f)
                 {
                     __rootMotionFallingVec = __ecmMovement.isGrounded ? Vector3.zero : __rootMotionFallingVec + Time.fixedDeltaTime * gravity;
                     __ecmMovement.Move(GetRootMotionVelocity(Time.fixedDeltaTime) + __rootMotionFallingVec, Time.fixedDeltaTime);
@@ -118,16 +118,6 @@ namespace Game
             __ecmMovement.velocity = Vector3.zero;
             __ecmMovement.ClearAccumulatedForces();
         }
-
-        public void FreezeForOneFrame()
-        {   
-            //* RootMotion에 의해서 축첟된 velocity값을 리셋함
-            __ecmMovement.velocity = Vector3.zero;
-            __ecmMovement.ClearAccumulatedForces();
-            __freezeMovementForOneFrame = true;
-        }
-
-        protected bool __freezeMovementForOneFrame;
 
         public void FaceTo(Vector3 direction)
         {
@@ -183,6 +173,16 @@ namespace Game
         {
             return __rootMotionPosition / deltaTime;
         }
+        
+        public void FreezeMovementForOneFrame()
+        {   
+            //* RootMotion에 의해서 축척된 velocity값을 리셋함
+            __ecmMovement.velocity = Vector3.zero;
+            __ecmMovement.ClearAccumulatedForces();
+            __isFrozenMovementForOneFrame = true;
+        }
+
+        protected bool __isFrozenMovementForOneFrame;
 
         public void SetMovementEnabled(bool newValue, float delayTime = 0)
         {

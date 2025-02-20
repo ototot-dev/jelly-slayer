@@ -60,7 +60,7 @@ namespace MainTable
 		public System.Int32 index;
 		public PawnId pawnId;
 		public System.Int32 health;
-		public System.Int32 magic;
+		public System.Int32 actionPoint;
 		public System.Int32 stamina;
 		public System.Int32 stance;
 		public System.Int32 knockDown;

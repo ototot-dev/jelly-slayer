@@ -160,9 +160,9 @@ namespace Game
                     .DoOnCancel(() => 
                     {
                         __laserDisposable = null;
-                        __brain.BB.action.laserRenderer.flashFx.Stop();
-                        __brain.BB.action.laserRenderer.hitFx.Stop();
-                        __brain.BB.action.laserRenderer.FadeOut(0.2f);
+                        __brain.BB.attachment.laserRenderer.flashFx.Stop();
+                        __brain.BB.attachment.laserRenderer.hitFx.Stop();
+                        __brain.BB.attachment.laserRenderer.FadeOut(0.2f);
                     })
                     .DoOnCompleted(() => __laserDisposable = null)
                     .Subscribe().AddTo(this);
@@ -176,13 +176,13 @@ namespace Game
         
         IEnumerator LaserActionCoroutine()
         {
-            var laserRenderer = __brain.BB.action.laserRenderer;
+            var laserRenderer = __brain.BB.attachment.laserRenderer;
             laserRenderer.flashFx.Play();
 
             //* 차징 스텝
             yield return Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(__brain.BB.action.laserCharingDuration))).Do(_ =>
             {
-                laserRenderer.hitFx.transform.position = __brain.BB.action.laserAimPoint.position = __brain.BB.TargetColliderHelper.GetWorldCenter();
+                laserRenderer.hitFx.transform.position = __brain.BB.attachment.laserAimPoint.position = __brain.BB.TargetColliderHelper.GetWorldCenter();
             }).ToYieldInstruction();
 
             //* 레이저 Fade-In        
@@ -198,7 +198,7 @@ namespace Game
             {
                 //* 히트하지 전까지만 목표를 추적함
                 if (!__brain.BB.TargetColliderHelper.pawnBrain.PawnBB.IsDown)
-                    __brain.BB.action.laserAimPoint.position = __brain.BB.TargetColliderHelper.GetWorldCenter();
+                    __brain.BB.attachment.laserAimPoint.position = __brain.BB.TargetColliderHelper.GetWorldCenter();
 
                 var hitIndex = LaserActionTraceTarget(laserRenderer.transform.position, laserRenderer.transform.forward, laserRenderer.lineWidth, __brain.BB.action.laseMaxDistance, hitLayerMask);
                 if (hitIndex >= 0 && __hitsNonAlloc[hitIndex].collider.TryGetComponent<PawnColliderHelper>(out var hitColliderHelper) && hitColliderHelper.pawnBrain == __brain.BB.TargetColliderHelper.pawnBrain)

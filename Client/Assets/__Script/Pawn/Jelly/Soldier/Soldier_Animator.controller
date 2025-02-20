@@ -158,7 +158,7 @@ AnimatorStateTransition:
     m_EventTreshold: 0
   - m_ConditionMode: 6
     m_ConditionEvent: AnimId
-    m_EventTreshold: 6
+    m_EventTreshold: 7
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -6007524402016816691}
   m_Solo: 0
@@ -575,7 +575,7 @@ AnimatorStateTransition:
     m_EventTreshold: 0
   - m_ConditionMode: 6
     m_ConditionEvent: AnimId
-    m_EventTreshold: 7
+    m_EventTreshold: 8
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -1831271741815528714}
   m_Solo: 0
@@ -635,9 +635,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.1211229
+  m_TransitionDuration: 0.25329936
   m_TransitionOffset: 0
-  m_ExitTime: 0.7115383
+  m_ExitTime: 0.7069496
   m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -684,7 +684,7 @@ AnimatorStateTransition:
     m_EventTreshold: 0
   - m_ConditionMode: 6
     m_ConditionEvent: AnimId
-    m_EventTreshold: 5
+    m_EventTreshold: 6
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -4947318600135916046}
   m_Solo: 0
@@ -2466,7 +2466,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Jump-Attack1
+  m_Name: Jump-Attack
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -2570,7 +2570,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Jump-Attack1Hit
+  m_Name: Jump-Attack-Hit
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -3013,7 +3013,7 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 6
     m_ConditionEvent: AnimId
-    m_EventTreshold: 4
+    m_EventTreshold: 5
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -9097370037316161261}
   m_Solo: 0
@@ -3651,7 +3651,7 @@ AnimatorStateMachine:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack#Jump
+  m_Name: JumpAttack
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: -4436082550143987421}

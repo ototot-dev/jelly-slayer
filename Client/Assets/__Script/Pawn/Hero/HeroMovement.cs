@@ -193,7 +193,12 @@ namespace Game
             if (!__ecmMovement.enabled)
                 return;
 
-            if (__brain.BB.IsJumping)
+            if (__isFrozenMovementForOneFrame)
+            {
+                __ecmMovement.Move(Time.fixedDeltaTime);
+                __isFrozenMovementForOneFrame = false;
+            }
+            else if (__brain.BB.IsJumping)
             {
                 if (__prevCapsulePositionY > capsule.position.y && Time.time - __jumpTimeStamp > 2f * Time.fixedDeltaTime)
                     __isJumpFalling = true;
@@ -219,12 +224,10 @@ namespace Game
                         __ecmMovement.Move(Time.fixedDeltaTime);
                     }
                 }
-
-                ResetRootMotion();
             }
             else if (__brain.BB.IsHanging)
             {
-                ResetRootMotion();
+                ;
             }
             else if (__brain.BB.IsRolling)
             {
@@ -239,12 +242,10 @@ namespace Game
                     __ecmMovement.SimpleMove(moveSpeed * moveVec, moveSpeed, moveAccel, moveBrake, 1f, 1f, gravity, false, Time.fixedDeltaTime);
 
                 __ecmMovement.rotation *= __rootMotionRotation;
-                ResetRootMotion();
             }
             else if (IsPushForceRunning)
             {
                 __ecmMovement.Move(__pushForceVec * __pushForceMagnitude, __pushForceMagnitude);
-                ResetRootMotion();
             }
             else
             {
@@ -254,13 +255,8 @@ namespace Game
                     var canMove2 = canMove1 && (!__pawnActionCtrler.CheckActionRunning() || __pawnActionCtrler.currActionContext.movementEnabled) && !__pawnStatusCtrler.CheckStatus(PawnStatus.Staggered);
                     moveVec = canMove2 ? moveVec : Vector3.zero;
                 }
-
-                if (__freezeMovementForOneFrame)
-                {
-                    __freezeMovementForOneFrame = false;
-                    __ecmMovement.Move(Time.fixedDeltaTime);
-                }
-                else if (__rootMotionPosition.sqrMagnitude > 0f)
+                
+                if (__rootMotionPosition.sqrMagnitude > 0f)
                 {
                     __rootMotionFallingVec = __ecmMovement.isGrounded ? Vector3.zero : __rootMotionFallingVec + Time.fixedDeltaTime * gravity;
                     __ecmMovement.Move(GetRootMotionVelocity(Time.fixedDeltaTime) + __rootMotionFallingVec, Time.fixedDeltaTime);
@@ -280,8 +276,9 @@ namespace Game
                 }
 
                 __ecmMovement.rotation *= __rootMotionRotation;
-                ResetRootMotion();
             }
+
+            ResetRootMotion();
         }
     }
 }
