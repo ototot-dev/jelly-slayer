@@ -80956,7 +80956,7 @@ MonoBehaviour:
   stat:
     maxHeartPoint:
       value: 1
-    maxMagicPoint:
+    maxActionPoint:
       value: 1
     maxStamina:
       value: 1
@@ -80968,7 +80968,7 @@ MonoBehaviour:
       value: 0
     heartPoint:
       value: 0
-    magicPoint:
+    actionPoint:
       value: 1
     stamina:
       value: 1
@@ -81019,11 +81019,9 @@ MonoBehaviour:
     maxSpacingDistance: 3
     minApproachDistance: 1
   action:
-    comboAttackIncreaseRateOnIdle: 1
-    comboAttackBoostRateAfterCounterAttack: 1
-    jumpAttackTriggerDistance: 2
-    counterAttackIncreaseRateOnGuard: 1
-    leapIncreaseRate: 0.2
+    minCoolDownDuration: 4
+    maxCoolDownDuration: 5
+    counterProbBoostRateOnGuard: 0.2
     missileEmitNum: 5
     missileEmitIntervalA: 0.2
     missileEmitIntervalB: 1
@@ -81036,8 +81034,6 @@ MonoBehaviour:
     laserForwardSpeed: 1
     laserRotateSpeed: 1
     laserCharingDuration: 1
-    laserAimPoint: {fileID: 5689320857391352882}
-    laserRenderer: {fileID: 9042071260790409409}
   graphics:
     onHitFx: {fileID: 3011233550371498735, guid: 24e37d54f259141abb7ebbc527b8bf4e, type: 3}
     onBigHitFx: {fileID: 3011233550371498735, guid: 8502543f66322458a81956cdd59fe959, type: 3}
@@ -81081,7 +81077,9 @@ MonoBehaviour:
     - {fileID: 3935539841163386744}
     - {fileID: 887079386883597543}
     - {fileID: 6190342805854576835}
-    BlockingFxAttachPoint: {fileID: 827300965817690329}
+    blockingFxAttachPoint: {fileID: 827300965817690329}
+    laserAimPoint: {fileID: 5689320857391352882}
+    laserRenderer: {fileID: 9042071260790409409}
 --- !u!114 &8593737910688562853
 MonoBehaviour:
   m_ObjectHideFlags: 0
