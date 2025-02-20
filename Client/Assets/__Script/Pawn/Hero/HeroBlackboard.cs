@@ -7,17 +7,25 @@ namespace Game
 {
     public class HeroBlackboard : PawnBlackboard
     {
-        public bool IsJumping => action.isJumping.Value;
-        public bool IsHanging => action.hangingBrain.Value != null;
-        public bool IsRolling => action.isRolling.Value;
-        public bool IsGuarding => action.isGuarding.Value;
-        public bool IsGuardBroken => action.isGuardBroken.Value;
-        public bool IsAutoGuardEnabled => action.isAutoGuardEnabled.Value;
-        public bool IsCharging => action.isCharging.Value;
+        public bool IsJumping => body.isJumping.Value;
+        public bool IsHanging => body.hangingBrain.Value != null;
+        public bool IsRolling => body.isRolling.Value;
+        public bool IsGuarding => body.isGuarding.Value;
+        public bool IsGuardBroken => body.isGuardBroken.Value;
+        public bool IsAutoGuardEnabled => body.isAutoGuardEnabled.Value;
+        public bool IsCharging => body.isCharging.Value;
 
         [Serializable]
         public class Body
         {   
+            public ReactiveProperty<DroneBotBrain> hangingBrain = new();
+            public BoolReactiveProperty isJumping = new();
+            public BoolReactiveProperty isRolling = new();
+            public BoolReactiveProperty isGuarding = new();
+            public BoolReactiveProperty isGuardBroken = new();
+            public BoolReactiveProperty isAutoGuardEnabled = new(true);
+            public BoolReactiveProperty isCharging = new();
+            public IntReactiveProperty chargingLevel = new();
             public float walkSpeed = 1f;
             public float runSpeed = 1f;
             public float sprintSpeed = 0.1f;
@@ -29,21 +37,6 @@ namespace Game
         }
 
         public Body body = new();
-
-        [Serializable]
-        public class Action
-        {
-            public BoolReactiveProperty isJumping = new();
-            public ReactiveProperty<DroneBotBrain> hangingBrain = new();
-            public BoolReactiveProperty isRolling = new();
-            public BoolReactiveProperty isGuarding = new();
-            public BoolReactiveProperty isGuardBroken = new();
-            public BoolReactiveProperty isAutoGuardEnabled = new(true);
-            public BoolReactiveProperty isCharging = new();
-            public IntReactiveProperty chargingLevel = new();
-        }
-
-        public Action action = new();
 
         [Serializable]
         public class Graphics

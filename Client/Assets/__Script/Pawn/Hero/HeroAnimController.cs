@@ -55,7 +55,7 @@ namespace Game
 
         void Start()
         {
-            __brain.BB.action.isGuarding.CombineLatest(__brain.BB.action.isCharging, (a, b) => new Tuple<bool, bool>(a, b)).Subscribe(v =>
+            __brain.BB.body.isGuarding.CombineLatest(__brain.BB.body.isCharging, (a, b) => new Tuple<bool, bool>(a, b)).Subscribe(v =>
             {   
                 if (!v.Item1 && !v.Item2)
                 {
@@ -64,12 +64,12 @@ namespace Game
                 }
             }).AddTo(this);
 
-            __brain.BB.action.isRolling.Subscribe(v =>
+            __brain.BB.body.isRolling.Subscribe(v =>
             {
                 if (v)
                     legAnimator.User_FadeEnabled(0f);
                 else
-                    legAnimator.User_FadeEnabled(0f);
+                    legAnimator.User_FadeToDisabled(0f);
 
             }).AddTo(this);
 

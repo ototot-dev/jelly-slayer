@@ -162,7 +162,7 @@ namespace Game
                     BB.stat.poise = BB.pawnData.poise;
             };
 
-            BB.action.isCharging.Subscribe(v => 
+            BB.body.isCharging.Subscribe(v => 
             {
                 if (v)
                     StatusCtrler.AddStatus(PawnStatus.IncreasePoise, 50);

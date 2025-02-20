@@ -23,20 +23,20 @@ namespace Game
             __ecmMovement.PauseGroundConstraint();
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnJump");
             __brain.AnimCtrler.mainAnimator.SetBool("IsJumping", true);
-            __brain.BB.action.isJumping.Value = true;
+            __brain.BB.body.isJumping.Value = true;
         }
 
         public void FinishJump()
         {
             __brain.AnimCtrler.legAnimator.User_AddImpulse(new ImpulseExecutor(0.2f * Vector3.down, Vector3.zero, 0.2f));
             __brain.AnimCtrler.mainAnimator.SetBool("IsJumping", false);
-            __brain.BB.action.isJumping.Value = false;
+            __brain.BB.body.isJumping.Value = false;
         }
 
         public void CancelJump()
         {
             __brain.AnimCtrler.mainAnimator.SetBool("IsJumping", false);
-            __brain.BB.action.isJumping.Value = false;
+            __brain.BB.body.isJumping.Value = false;
         }
 
         public void PrepareHanging(DroneBotBrain hangingBrain, float duration)
@@ -51,12 +51,12 @@ namespace Game
         {
             Debug.Assert(ReservedHangingBrain != null);
 
-            __brain.BB.action.hangingBrain.Value = ReservedHangingBrain;
+            __brain.BB.body.hangingBrain.Value = ReservedHangingBrain;
             ReservedHangingBrain = null;
 
             //* 점프가 종료되는 상황은 발생하면 안됨
             Debug.Assert(__brain.BB.IsJumping);
-            __brain.BB.action.isJumping.Value = false;
+            __brain.BB.body.isJumping.Value = false;
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnHanging");
             __brain.AnimCtrler.mainAnimator.SetBool("IsHanging", true);
 
@@ -67,7 +67,7 @@ namespace Game
                 __hangingLerpDisposable = Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.1f)))
                     .DoOnCancel(() => __hangingLerpDisposable = null)
                     .DoOnCompleted(() => __hangingLerpDisposable = null)
-                    .Subscribe(_ => __ecmMovement.SetPosition(capsule.transform.position.LerpSpeed(__brain.BB.action.hangingBrain.Value.AnimCtrler.hangingAttachPoint.position, moveSpeed, Time.deltaTime))).AddTo(this);
+                    .Subscribe(_ => __ecmMovement.SetPosition(capsule.transform.position.LerpSpeed(__brain.BB.body.hangingBrain.Value.AnimCtrler.hangingAttachPoint.position, moveSpeed, Time.deltaTime))).AddTo(this);
             }
         }
 
@@ -78,11 +78,11 @@ namespace Game
 
         public void FinishHanging()
         {
-            Debug.Assert(__brain.BB.action.hangingBrain.Value != null);
+            Debug.Assert(__brain.BB.body.hangingBrain.Value != null);
             
             __finishHangingTimeStamp = Time.time;
-            __brain.BB.action.hangingBrain.Value.InvalidateDecision(0.1f);
-            __brain.BB.action.hangingBrain.Value = null;
+            __brain.BB.body.hangingBrain.Value.InvalidateDecision(0.1f);
+            __brain.BB.body.hangingBrain.Value = null;
             __brain.AnimCtrler.mainAnimator.SetBool("IsHanging", false);
         }
 
@@ -126,7 +126,7 @@ namespace Game
             }
             __brain.AnimCtrler.mainAnimator.SetBool("IsRolling", true);
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnRolling");
-            __brain.BB.action.isRolling.Value = true;
+            __brain.BB.body.isRolling.Value = true;
         }
 
         public void FinishRolling()
@@ -134,7 +134,7 @@ namespace Game
             if (__brain.BB.IsRolling)
             {
                 __brain.AnimCtrler.mainAnimator.SetBool("IsRolling", false);
-                __brain.BB.action.isRolling.Value = false;
+                __brain.BB.body.isRolling.Value = false;
             }
         }
 
@@ -167,7 +167,7 @@ namespace Game
                 {
                     //* hangingPoint로 위치값 및 회전값을 맞춰줌
                     if (__hangingLerpDisposable == null)
-                        __ecmMovement.SetPositionAndRotation(__brain.BB.action.hangingBrain.Value.AnimCtrler.hangingAttachPoint.position, __brain.BB.action.hangingBrain.Value.AnimCtrler.hangingAttachPoint.rotation);
+                        __ecmMovement.SetPositionAndRotation(__brain.BB.body.hangingBrain.Value.AnimCtrler.hangingAttachPoint.position, __brain.BB.body.hangingBrain.Value.AnimCtrler.hangingAttachPoint.rotation);
                 }
             };
         }
@@ -229,20 +229,20 @@ namespace Game
             {
                 ;
             }
-            else if (__brain.BB.IsRolling)
-            {
-                if (Time.time - __rollingTimeStamp <= __rollingDuration)
-                    AddRootMotion(__rollingSpeed * Time.fixedDeltaTime * __rollingVec, Quaternion.identity);
-                else
-                    FinishRolling();
+            // else if (__brain.BB.IsRolling)
+            // {
+            //     if (Time.time - __rollingTimeStamp <= __rollingDuration)
+            //         AddRootMotion(__rollingSpeed * Time.fixedDeltaTime * __rollingVec, Quaternion.identity);
+            //     else
+            //         FinishRolling();
 
-                if (__rootMotionPosition.sqrMagnitude > 0f)
-                    __ecmMovement.Move(GetRootMotionVelocity(Time.fixedDeltaTime), Time.fixedDeltaTime);
-                else
-                    __ecmMovement.SimpleMove(moveSpeed * moveVec, moveSpeed, moveAccel, moveBrake, 1f, 1f, gravity, false, Time.fixedDeltaTime);
+            //     if (__rootMotionPosition.sqrMagnitude > 0f)
+            //         __ecmMovement.Move(GetRootMotionVelocity(Time.fixedDeltaTime), Time.fixedDeltaTime);
+            //     else
+            //         __ecmMovement.SimpleMove(moveSpeed * moveVec, moveSpeed, moveAccel, moveBrake, 1f, 1f, gravity, false, Time.fixedDeltaTime);
 
-                __ecmMovement.rotation *= __rootMotionRotation;
-            }
+            //     __ecmMovement.rotation *= __rootMotionRotation;
+            // }
             else if (IsPushForceRunning)
             {
                 __ecmMovement.Move(__pushForceVec * __pushForceMagnitude, __pushForceMagnitude);

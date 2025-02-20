@@ -16,18 +16,14 @@ namespace Game
 
         public override bool CanRootMotion(Vector3 rootMotionVec)
         {
-            if (!base.CanRootMotion(rootMotionVec) || __brain.BB.IsRolling)
+            if (!base.CanRootMotion(rootMotionVec))
                 return false;
 
-            if (__brain.BB.TargetBrain != null && __brain.SensorCtrler.TouchingColliders.Contains(__brain.BB.TargetBrain.coreColliderHelper.pawnCollider))
-            {
-                //* RootMotion으로 목표물을 밀지 않도록 목묘물의 TouchingColliders와 접축할 정도로 가깝다면 rootMotionVec가 목표물에서 멀어지는 방향일때만 적용해준다.
-                return __brain.coreColliderHelper.GetDistanceDelta(__brain.BB.TargetBrain.coreColliderHelper, rootMotionVec) > 0f;
-            }
-            else
-            {
+            if (__brain.BB.IsRolling || __brain.BB.TargetBrain == null || !__brain.SensorCtrler.TouchingColliders.Contains(__brain.BB.TargetBrain.coreColliderHelper.pawnCollider))
                 return true;
-            }
+
+            //* RootMotion으로 목표물을 밀지 않도록 목표물의 TouchingColliders와 접축할 정도로 가깝다면 rootMotionVec가 목표물에서 멀어지는 방향일때만 적용해준다.
+            return __brain.coreColliderHelper.GetDistanceDelta(__brain.BB.TargetBrain.coreColliderHelper, rootMotionVec) > 0f;
         }
 
         public override bool CanParryAction(ref PawnHeartPointDispatcher.DamageContext damageContext)
@@ -262,7 +258,7 @@ namespace Game
                 }
             }).AddTo(this);
 
-            __brain.BB.action.isJumping.Skip(1).Subscribe(v =>
+            __brain.BB.body.isJumping.Skip(1).Subscribe(v =>
             {
                 if (v)
                 {
@@ -300,9 +296,23 @@ namespace Game
             };
 
             onActiveParryEnabled += (_) => __brain.parryColliderHelper.pawnCollider.enabled = currActionContext.activeParryEnabled;
-            onActionCanceled += (_, __) => __brain.parryColliderHelper.pawnCollider.enabled = false;
-            onActionFinished += (_) => __brain.parryColliderHelper.pawnCollider.enabled = false;
-
+            onActionStart += (_, __) => 
+            {
+                if ((currActionContext.actionData?.actionName ?? string.Empty) == "Rolling") 
+                    __brain.BB.body.isRolling.Value = true; 
+            };
+            onActionCanceled += (actionContext, __) => 
+            { 
+                __brain.parryColliderHelper.pawnCollider.enabled = false; 
+                if ((actionContext.actionData?.actionName ?? string.Empty) == "Rolling") 
+                    __brain.BB.body.isRolling.Value = false; 
+            };
+            onActionFinished += (actionContext) => 
+            { 
+                __brain.parryColliderHelper.pawnCollider.enabled = false;
+                if ((actionContext.actionData?.actionName ?? string.Empty) == "Rolling") 
+                    __brain.BB.body.isRolling.Value = false; 
+            };
             onEmitProjectile += OnEmitProjectile;
         }
 

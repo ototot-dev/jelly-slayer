@@ -217,7 +217,7 @@ namespace Game
 
                     __brain.BB.HostBrain.Movement.FinishHanging();
                     __brain.BB.HostBrain.Movement.StartJump(1f);
-                    __brain.BB.HostBrain.BB.action.isJumping.Take(2).Skip(1).Subscribe(v =>
+                    __brain.BB.HostBrain.BB.body.isJumping.Take(2).Skip(1).Subscribe(v =>
                     {
                         Debug.Assert(!v);
                         //* Capsule의 Layer를 원래대로 복구함
@@ -236,7 +236,7 @@ namespace Game
                     __brain.BB.HostBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__brain.BB.HostBrain, __assaultActionTargetBrain, assaultActionData, __assaultActionTargetBrain.bodyHitColliderHelper.pawnCollider, false));
                     __brain.BB.HostBrain.Movement.FinishHanging();
                     __brain.BB.HostBrain.Movement.StartJump(1f);
-                    __brain.BB.HostBrain.BB.action.isJumping.Take(2).Skip(1).Subscribe(v =>
+                    __brain.BB.HostBrain.BB.body.isJumping.Take(2).Skip(1).Subscribe(v =>
                     {
                         Debug.Assert(!v);
                         //* Capsule의 Layer를 원래대로 복구함

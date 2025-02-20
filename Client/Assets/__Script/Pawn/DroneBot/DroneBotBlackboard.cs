@@ -12,7 +12,7 @@ namespace Game
         public PawnColliderHelper HostColliderHelper => HostBrain != null ? decision.hostBrain.Value.coreColliderHelper : null;
         public Transform HostCore => HostBrain != null ? decision.hostBrain.Value.coreColliderHelper.transform : null;
         public Transform FormationSpot => decision.formationSpot.Value;
-        public bool IsHanging => HostBrain != null && HostBrain.BB.action.hangingBrain.Value == __pawnBrain;
+        public bool IsHanging => HostBrain != null && HostBrain.BB.body.hangingBrain.Value == __pawnBrain;
         public bool IsInCombat => decision.aggressiveLevel.Value >= 0f;
         public float AggressiveLevel => decision.aggressiveLevel.Value;
         public float HookingDistance => body.hookingDistance;

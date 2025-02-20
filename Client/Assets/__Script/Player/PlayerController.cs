@@ -173,7 +173,7 @@ namespace Game
 
             possessedBrain.ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
 
-            possessedBrain.BB.action.isGuarding.Value = value.Get<float>() > 0;
+            possessedBrain.BB.body.isGuarding.Value = value.Get<float>() > 0;
             if (possessedBrain.BB.IsGuarding)
             {
                 var canParry1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsJumping && !possessedBrain.BB.IsRolling;
@@ -216,7 +216,7 @@ namespace Game
                     if (possessedBrain.BB.IsHanging)
                     {
                         //* 점프 방향을 셋팅해줌
-                        possessedBrain.Movement.GetCharacterMovement().velocity = possessedBrain.BB.action.hangingBrain.Value.Movement.CurrVelocity;
+                        possessedBrain.Movement.GetCharacterMovement().velocity = possessedBrain.BB.body.hangingBrain.Value.Movement.CurrVelocity;
                         possessedBrain.Movement.FinishHanging();
                         possessedBrain.Movement.StartJump(possessedBrain.BB.body.jumpHeight);
                     }
@@ -419,8 +419,8 @@ namespace Game
                 if (possessedBrain.ActionCtrler.CheckActionRunning())
                 {
                     __attackReleasedTimeStamp = Time.time;
-                    possessedBrain.BB.action.isCharging.Value = false;
-                    possessedBrain.BB.action.chargingLevel.Value = 0;
+                    possessedBrain.BB.body.isCharging.Value = false;
+                    possessedBrain.BB.body.chargingLevel.Value = 0;
 
                     __Logger.LogR2(gameObject, nameof(OnAttack), "Charging canceled.", "CurrActionName", possessedBrain.ActionCtrler.CurrActionName);
                 }
@@ -431,22 +431,22 @@ namespace Game
                     //* 챠징 판정 시간은 1초
                     if (chargingTime > 1f)
                     {
-                        if (possessedBrain.BB.action.isCharging.Value == false)
+                        if (possessedBrain.BB.body.isCharging.Value == false)
                         {
                             Observable.Timer(TimeSpan.FromSeconds(0.2f)).Subscribe(_ 
                                 => EffectManager.Instance.Show("ChonkExplosionBlue", 
                                 possessedBrain.GetWorldPosition() + Vector3.up,
                                 Quaternion.identity, 0.8f * Vector3.one, 1f)).AddTo(this);
                         }
-                        possessedBrain.BB.action.isCharging.Value = true;
-                        possessedBrain.BB.action.chargingLevel.Value = Mathf.FloorToInt(Time.time - __attackPresssedTimeStamp) + 1;
+                        possessedBrain.BB.body.isCharging.Value = true;
+                        possessedBrain.BB.body.chargingLevel.Value = Mathf.FloorToInt(Time.time - __attackPresssedTimeStamp) + 1;
 
                         possessedBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
                     }
                     else
                     {
-                        possessedBrain.BB.action.isCharging.Value = false;
-                        possessedBrain.BB.action.chargingLevel.Value = 0;
+                        possessedBrain.BB.body.isCharging.Value = false;
+                        possessedBrain.BB.body.chargingLevel.Value = 0;
                     }
                 }
             }).AddTo(this);
@@ -532,7 +532,7 @@ namespace Game
                 }
 
                 //* 챠징 어택 판별을 위해서 'isCharging' 값은 제일 마지막에 리셋
-                possessedBrain.BB.action.isCharging.Value = false;
+                possessedBrain.BB.body.isCharging.Value = false;
             }
         }
 
