@@ -107,7 +107,7 @@ public class UIGamePanel : MonoBehaviour
         {
             _enemyObj.SetActive(false);
         }
-        // �޴� â
+        // Menu
         if (Input.GetKeyDown(KeyCode.Escape)) 
         {
             OnClickMenu();

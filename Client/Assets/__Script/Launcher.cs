@@ -101,6 +101,8 @@ namespace Game
                         GameManager.Instance.ShowLevel_ShootingRange(true);
 
                         SoundManager.Instance.PlayBGM(SoundID.BGM_GAME);
+
+                        GameManager.Instance.StartGame();
                         /*
                         Observable.Timer(TimeSpan.FromSeconds(1f)).Subscribe(_ => GameManager.Instance.SpawnHero(new UnityEngine.Vector3(-2, 0, -3)));
                         Observable.Timer(TimeSpan.FromSeconds(1.1f)).Subscribe(_ => GameManager.Instance.SpawnDroneBot());

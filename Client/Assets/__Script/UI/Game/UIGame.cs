@@ -13,6 +13,8 @@ public class UIGame : MonoBehaviour
 
     [SerializeField]
     private UIGamePanel _gamePanel;
+    [SerializeField]
+    private UIGameOver _gameOverPanel;
 
     // Start is called before the first frame update
     void Awake()
@@ -21,6 +23,7 @@ public class UIGame : MonoBehaviour
         GameManager.Instance._delGameEnd += OnGameEnd;
         GameManager.Instance._delPawnSpawned += OnPawnSpawned;
         GameManager.Instance._delPawnDamaged += OnPawnDamaged;
+        GameManager.Instance._delGameOver += OnGameOver;
     }
     private void OnDestroy()
     {
@@ -31,9 +34,14 @@ public class UIGame : MonoBehaviour
         GameManager.Instance._delGameEnd -= OnGameEnd;
         GameManager.Instance._delPawnSpawned -= OnPawnSpawned;
         GameManager.Instance._delPawnDamaged -= OnPawnDamaged;
+        GameManager.Instance._delGameOver -= OnGameOver;
     }
     void OnGameStart() 
     { 
+    }
+    void OnGameOver() 
+    {
+        _gameOverPanel.gameObject.SetActive(true);
     }
     void OnGameEnd() 
     {
@@ -46,13 +54,14 @@ public class UIGame : MonoBehaviour
         //* Hp 출력안하는 Pawn
         if (pawn is DroneBotBrain)
             return;
+
+        bool isStamina = false; // (pawn.PawnBB.stat.maxStamina.Value > 0);
         if (pawn is HeroBrain)
         {
+            isStamina = true;
             _gamePanel?.SetHeroBrain(pawn);
             return;
         }
-
-            bool isStamina = (pawn.PawnBB.stat.maxStamina.Value > 0);
         _hpBarManager.Create(pawn, isStamina);
     }
     void OnPawnDamaged(ref PawnHeartPointDispatcher.DamageContext damageContext) 
