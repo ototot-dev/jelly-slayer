@@ -45,6 +45,7 @@ namespace Game
             [Header("CoolDown")]
             public float minCoolDownDuration = 1f;
             public float maxCoolDownDuration= 1f;
+            public float currCoolDownTimeLeft;
 
             [Header("Counter")]
             public float counterProbBoostRateOnGuard; //* 가드 후 반격 발생 확률 증가
@@ -64,6 +65,9 @@ namespace Game
             public float laserForwardSpeed = 1f;
             public float laserRotateSpeed = 1f;
             public float laserCharingDuration = 1f;
+
+            [Header("Leap")]
+            public float backStepTriggerDistance = 1;
         }
 
         public Action action = new();

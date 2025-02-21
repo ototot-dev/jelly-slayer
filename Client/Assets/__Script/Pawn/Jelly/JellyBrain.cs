@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Game
@@ -45,6 +47,44 @@ namespace Game
         void IPawnMovable.MoveTo(Vector3 destination) { __pawnMovement.destination = destination; }
         void IPawnMovable.FaceTo(Vector3 direction) { __pawnMovement.FaceTo(direction); }
         void IPawnMovable.Stop() { __pawnMovement.Stop(); }
+#endregion
+
+#region ActionSquenceChain 구현
+        public class ActionSquenceChain
+        {
+            public ActionSquenceChain(int uniqueAlias, params MainTable.ActionData[] actionSequences)
+            {
+                UniqueAlias = uniqueAlias;
+                __sequences = actionSequences;
+            }
+            public MainTable.ActionData Curr() => __sequences[__currIndex];
+            public MainTable.ActionData Next() => ++__currIndex < __sequences.Length ? __sequences[__currIndex] : null;
+            public int UniqueAlias { get; private set; } = -1;
+            readonly MainTable.ActionData[] __sequences;
+            int __currIndex;
+        }
+
+        public ActionSquenceChain MakeActionSequenceChain(int uniqueAlias, params string[] actionNames)
+        {
+            if (!__actionDataChains.ContainsKey(uniqueAlias))
+                __actionDataChains.Add(uniqueAlias, new ActionSquenceChain(uniqueAlias, actionNames.Select(n => DatasheetManager.Instance.GetActionData(PawnBB.common.pawnId, n)).ToArray()));
+            else
+                Debug.Assert(false);
+
+            return __actionDataChains[uniqueAlias];
+        }
+        
+        public ActionSquenceChain GetActionSwquenceChain(int uniqueAlias) => __actionDataChains.TryGetValue(uniqueAlias, out var ret) ? ret : null;
+        public ActionSquenceChain CurrActionSequenceChain() => __actionDataChainQueue.TryPeek(out var ret) ? ret : null;
+        public ActionSquenceChain NextActionSwquenceChain()
+        {
+            __actionDataChainQueue.Dequeue();
+            return CurrActionSequenceChain();
+        }
+        public void ClearActionDataChains() { __actionDataChainQueue.Clear(); }
+
+        readonly Queue<ActionSquenceChain> __actionDataChainQueue = new();
+        readonly Dictionary<int, ActionSquenceChain> __actionDataChains = new();
 #endregion
 
         public enum Decisions : int

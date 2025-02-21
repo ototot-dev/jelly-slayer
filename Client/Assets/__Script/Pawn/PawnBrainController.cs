@@ -41,7 +41,7 @@ namespace Game
         public Action onFixedUpdate;
         public Action<float> onTick;
         public Action<float> onPreTick;
-
+        
         void Awake()
         {
             AwakeInternal();
@@ -159,6 +159,8 @@ namespace Game
                         if (!__isBrainInited)
                             return;
 
+                        __tickCount++;
+                        
                         onPreTick?.Invoke(tickInterval);
                         OnTickInternal(tickInterval);
                         onTick?.Invoke(tickInterval);
@@ -178,6 +180,7 @@ namespace Game
         }
 
         protected bool __isBrainInited;
+        protected int __tickCount;
 
         protected virtual void Init()
         {

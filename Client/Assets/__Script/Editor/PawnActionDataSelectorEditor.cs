@@ -23,7 +23,7 @@ namespace Game
             GUILayout.BeginVertical();
             {
                 var oldBackgroundColor = GUI.backgroundColor;
-                foreach (var s in (target as PawnActionDataSelector).SelectionStates)
+                foreach (var s in (target as PawnActionDataSelector).ActionDataStates)
                 {
                     GUI.backgroundColor = s.Value.currProb > 0f && s.Value.currCoolTime <= 0f ? new Color(0.8f, 0.8f, 1) : Color.white;
                     if (GUILayout.Button($"{s.Value.actionData.actionName} | Rate:{s.Value.currProb:F2} | CoolTime:{s.Value.currCoolTime:F1}"))

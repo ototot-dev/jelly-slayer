@@ -1,19 +1,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using MainTable;
+using NodeCanvas.Framework;
 using UnityEngine;
 
 namespace Game
 {
     public class PawnActionDataSelector : MonoBehaviour
-    {
-        public class SelectionState
+    {   
+        public class ActionDataState
         {
             public MainTable.ActionData actionData;
             public float currProb;
             public float currCoolTime;
 
-            public SelectionState(MainTable.ActionData actionData)
+            public ActionDataState(MainTable.ActionData actionData)
             {
                 this.actionData = actionData;
 
@@ -43,11 +44,12 @@ namespace Game
             }
         };
 
-        /// <summary>
-        /// Item1: Weight, Item2: CoolTime
-        /// </summary>
-        public Dictionary<MainTable.ActionData, SelectionState> SelectionStates { get; private set; } = new();
-        HashSet<MainTable.ActionData> __executables = new();
+#if UNITY_EDITOR
+        public Dictionary<MainTable.ActionData, ActionDataState> ActionDataStates => __actionDataStates;
+#endif
+
+        readonly Dictionary<MainTable.ActionData, ActionDataState> __actionDataStates = new();
+        readonly HashSet<MainTable.ActionData> __executables = new();
         PawnBrainController __pawnBrain;
 
         void Awake()
@@ -61,7 +63,7 @@ namespace Game
                 if (actionData != null)
                 {
                     foreach (var d in actionData)
-                        SelectionStates.Add(d, new SelectionState(d));
+                        __actionDataStates.Add(d, new ActionDataState(d));
                 }
             }
 
@@ -82,7 +84,7 @@ namespace Game
 
         public void UpdateSelection(float deltaTime)
         {            
-            foreach (var s in SelectionStates)
+            foreach (var s in __actionDataStates)
             {
                 if (s.Key.coolTime < 0f || (s.Key.coolTime > 0 && s.Value.DecreaseCoolTime(deltaTime) <= 0f))
                     __executables.Add(s.Key);
@@ -94,7 +96,7 @@ namespace Game
         {   
             Debug.Assert(actionData != null);
 
-            if (SelectionStates.TryGetValue(actionData, out var state))
+            if (__actionDataStates.TryGetValue(actionData, out var state))
                 state.currProb += boostProb;
             else
                 __Logger.WarningR2(gameObject, nameof(BoostSelection), "SourceActionStates.TryGetValue() return false", "actionName", actionData.actionName);
@@ -105,7 +107,7 @@ namespace Game
         {   
             Debug.Assert(actionData != null);
 
-            if (SelectionStates.TryGetValue(actionData, out var state))
+            if (__actionDataStates.TryGetValue(actionData, out var state))
             {
                 state.ResetProbability(resetProb);
                 state.ResetCoolTime();
@@ -125,7 +127,7 @@ namespace Game
             if (!__executables.Contains(actionData))
                 return false;
 
-            if (SelectionStates.TryGetValue(actionData, out var actionState))
+            if (__actionDataStates.TryGetValue(actionData, out var actionState))
             {
                 return actionState.currProb >= probConstraint && (actionData.staminaCost <= staminaConstraint || staminaConstraint < 0f);
             }
@@ -135,21 +137,25 @@ namespace Game
                 return false;
             }
         }
-        
+        public bool TryPickRandomSelection(float probConstraint, float staminaConstraint, out MainTable.ActionData actionData)
+        {
+            actionData = PickRandomSelection(probConstraint, staminaConstraint);
+            return actionData != null;
+        }
         public MainTable.ActionData PickRandomSelection(float probConstraint = -1f, float staminaConstraint = -1f)
         {
-            var selectRate = UnityEngine.Random.Range(0, __executables.Where(e => SelectionStates[e].currProb >= probConstraint && (e.staminaCost <= staminaConstraint || staminaConstraint < 0f)).Sum(e => SelectionStates[e].currProb));
+            var selectRate = UnityEngine.Random.Range(0, __executables.Where(e => __actionDataStates[e].currProb >= probConstraint && (e.staminaCost <= staminaConstraint || staminaConstraint < 0f)).Sum(e => __actionDataStates[e].currProb));
             var accumRate = 0f;
             foreach (var e in __executables)
             {
-                if (SelectionStates[e].currProb < probConstraint)
+                if (__actionDataStates[e].currProb < probConstraint)
                     continue;
                 if (staminaConstraint >= 0f && e.staminaCost > staminaConstraint)
                     continue;
-                if (selectRate >= accumRate && selectRate < accumRate + SelectionStates[e].currProb)
+                if (selectRate >= accumRate && selectRate < accumRate + __actionDataStates[e].currProb)
                     return e;
 
-                accumRate += SelectionStates[e].currProb;
+                accumRate += __actionDataStates[e].currProb;
             }
 
             return null;

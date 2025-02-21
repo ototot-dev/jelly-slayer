@@ -53,8 +53,17 @@ namespace Game
             ActionCtrler = GetComponent<SoldierActionController>();
         }
 
+        public enum ActionSequences
+        {
+            Counter,
+            Combo,
+            Leap,
+            Max,
+        }
+
         float __coolDownFinishTimeStamp;
         MainTable.ActionData __leapActionData;
+        MainTable.ActionData __backStepActionData;
         MainTable.ActionData __laserActionData;
         MainTable.ActionData __missileActionData;
         MainTable.ActionData __counterActionData;
@@ -63,10 +72,14 @@ namespace Game
         MainTable.ActionData __combo3ActionData;
         MainTable.ActionData __jumpAttackActionData;
         MainTable.ActionData __comboStartActionData;
+        MainTable.ActionData __randomPickActionData;
 
         protected override void StartInternal()
         {
             base.StartInternal();
+
+            MakeActionSequenceChain((int)ActionSequences.Combo, "Attack#1", "Attack#2", "Attack#3");
+            MakeActionSequenceChain((int)ActionSequences.Leap, "BackStep", "Missile", "Leap");
             
             __leapActionData ??= ActionDataSelector.GetActionData("Leap");
             __counterActionData ??= ActionDataSelector.GetActionData("Counter");
@@ -74,6 +87,7 @@ namespace Game
             __combo2ActionData ??= ActionDataSelector.GetActionData("Attack#2");
             __combo3ActionData ??= ActionDataSelector.GetActionData("Attack#3");
             __jumpAttackActionData ??= ActionDataSelector.GetActionData("JumpAttack");
+            __backStepActionData ??= ActionDataSelector.GetActionData("BackStep");
 
             onTick += (deltaTick) =>
             {
@@ -85,21 +99,36 @@ namespace Game
                 if (debugActionDisabled) 
                     return;
 
-                if (Time.time > __coolDownFinishTimeStamp && !ActionCtrler.CheckActionRunning() && !ActionCtrler.CheckActionPending())
+                BB.action.currCoolDownTimeLeft = Mathf.Max(0f, BB.action.currCoolDownTimeLeft - deltaTick);
+                if (BB.action.currCoolDownTimeLeft <= 0f && !ActionCtrler.CheckActionRunning() && !ActionCtrler.CheckActionPending())
                 {
-                    var distanceToTarget = coreColliderHelper.GetDistanceBetween(BB.TargetBrain.coreColliderHelper);
-                    
-                    if (distanceToTarget < BB.body.maxSpacingDistance && ActionDataSelector.EvaluateSelection(__combo1ActionData) && CheckTargetVisibility())
+                    // if (__tickCount % 2 == 0 && ActionDataSelector.TryPickRandomSelection(1f, -1f, out __randomPickActionData))
+                    // {
+                    //     if (((this as IPawnSpawnable).GetSpawnPosition() - GetWorldPosition()).Vector2D().magnitude > BB.action.backStepTriggerDistance)
+                    //     {
+                    //         ActionCtrler.SetPendingAction(__backStepActionData.actionName);
+                    //     }
+                    //     else
+                    //     {
+                    //         ActionDataSelector.ResetSelection(__randomPickActionData.actionName);
+                    //         ActionCtrler.SetPendingAction(__randomPickActionData.actionName);
+                    //     }
+                    // }
+                    // else if (BB.action.currCoolDownTimeLeft <= 0f)
                     {
-                        ActionDataSelector.ResetSelection(__combo1ActionData);
-                        ActionCtrler.SetPendingAction(__combo1ActionData.actionName);
-                        __comboStartActionData = __combo1ActionData;
-                    }
-                    else if (distanceToTarget > BB.body.spacingInDistance && distanceToTarget < BB.body.spacingOutDistance && ActionDataSelector.EvaluateSelection(__jumpAttackActionData) && CheckTargetVisibility())
-                    {
-                        ActionDataSelector.ResetSelection(__jumpAttackActionData);
-                        ActionCtrler.SetPendingAction(__jumpAttackActionData.actionName);
-                        __comboStartActionData = __jumpAttackActionData;
+                        var distanceToTarget = coreColliderHelper.GetDistanceBetween(BB.TargetBrain.coreColliderHelper);
+                        if (distanceToTarget < BB.body.maxSpacingDistance && ActionDataSelector.EvaluateSelection(__combo1ActionData) && CheckTargetVisibility())
+                        {
+                            ActionDataSelector.ResetSelection(__combo1ActionData);
+                            ActionCtrler.SetPendingAction(__combo1ActionData.actionName);
+                            __comboStartActionData = __combo1ActionData;
+                        }
+                        else if (distanceToTarget > BB.body.spacingInDistance && ActionDataSelector.EvaluateSelection(__jumpAttackActionData) && CheckTargetVisibility())
+                        {
+                            ActionDataSelector.ResetSelection(__jumpAttackActionData);
+                            ActionCtrler.SetPendingAction(__jumpAttackActionData.actionName);
+                            __comboStartActionData = __jumpAttackActionData;
+                        }
                     }
                 }
                 else if (!ActionCtrler.CheckActionPending() && ActionCtrler.CheckActionRunning() && ActionCtrler.CanInterruptAction())
@@ -130,6 +159,7 @@ namespace Game
                         ActionCtrler.SetPendingAction(__combo3ActionData.actionName);
                         ActionCtrler.CancelAction(false);
                     }
+                    // else if (Actionda)
 
                     // if (ActionCtrler.CurrActionName == "Leap")
                     // {
@@ -175,12 +205,25 @@ namespace Game
                 // }
             };
 
+            // ActionCtrler.onActionStart += (actionContext, __) =>
+            // {
+            //     if (actionContext.actionData == __randomPickActionData)
+            //         __randomPickActionData = null;
+            // };
+
+            // ActionCtrler.onActionFinished += (actionContext) =>
+            // {
+            //     if (__randomPickActionData == null) return;
+
+            //     if ((actionContext.actionData?.actionName ?? string.Empty) == "BackStep")
+            // };
+
             BB.stat.actionPoint.Skip(1).Subscribe(v =>
             {
                 //* ActionPoint 전부 소모하면 CoolDown 상태로 진입
                 if (v <= 0) 
                 {
-                    __coolDownFinishTimeStamp = UnityEngine.Random.Range(BB.action.minCoolDownDuration, BB.action.maxCoolDownDuration) + Time.time;
+                    BB.action.currCoolDownTimeLeft = UnityEngine.Random.Range(BB.action.minCoolDownDuration, BB.action.maxCoolDownDuration);
                     Observable.NextFrame().Subscribe(_ => BB.stat.RecoverActionPoint(BB.stat.maxActionPoint.Value)).AddTo(this);
                 }
             }).AddTo(this);
@@ -190,6 +233,11 @@ namespace Game
                 //* 착지 동작 완료까지 이동을 금지함
                 if (!v) PawnStatusCtrler.AddStatus(PawnStatus.CanNotMove, 1f, 0.5f);
             }).AddTo(this);
+        }
+
+        protected override void OnTickInternal(float interval)
+        {
+            base.OnTickInternal(interval);
         }
 
         protected override void DamageReceiverHandler(ref PawnHeartPointDispatcher.DamageContext damageContext)
