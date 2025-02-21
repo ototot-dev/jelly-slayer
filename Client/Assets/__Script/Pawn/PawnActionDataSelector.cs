@@ -1,13 +1,104 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MainTable;
-using NodeCanvas.Framework;
 using UnityEngine;
 
 namespace Game
 {
     public class PawnActionDataSelector : MonoBehaviour
     {   
+#region ActionSequence 구현
+        public class ActionSequence
+        {
+            public ActionSequence(int hashCode, string sequenceName, params MainTable.ActionData[] sequenceData)
+            {
+                HashCode = hashCode;
+                SequenceName = sequenceName;
+                __sequenceData = sequenceData;
+                __currIndex = -1;
+            }
+            public MainTable.ActionData Curr() => __sequenceData[__currIndex];
+            public MainTable.ActionData Next() => ++__currIndex < __sequenceData.Length ? __sequenceData[__currIndex] : null;
+            public void Reset() { __currIndex = 0; }
+            readonly MainTable.ActionData[] __sequenceData;
+            int __currIndex;
+            public int HashCode { get; private set; }
+            public string SequenceName { get; private set; }
+            
+            public MainTable.ActionData this[int index]
+            {
+                get => __sequenceData[index];  // 값 가져오기
+                set => __sequenceData[index] = value;  // 값 설정하기
+            }
+        }
+
+        public ActionSequence ReserveSequence<T>(T alias, params string[] actionNames) where T : Enum
+        {
+            var hashCode = alias.GetHashCode();
+            if (__reservedSequences.ContainsKey(hashCode))
+            {
+                Debug.Assert(false);
+                return null;
+            }
+            __reservedSequences.Add(hashCode, new ActionSequence(alias.GetHashCode(), alias.ToString(), actionNames.Select(n => DatasheetManager.Instance.GetActionData(__pawnBrain.PawnBB.common.pawnId, n)).ToArray()));
+            return __reservedSequences[hashCode];
+        }
+
+        public ActionSequence GetSequence<T>(T alias) where T : Enum
+        {
+            if (__reservedSequences.TryGetValue(alias.GetHashCode(), out var ret)) 
+                return ret;
+            else
+                return null;
+        }
+
+        public MainTable.ActionData GetSequenceData<T>(T alias, int dataIndex = 0) where T : Enum
+        {
+            if (__reservedSequences.TryGetValue(alias.GetHashCode(), out var ret)) 
+                return ret[dataIndex];
+            else
+                return null;
+        }
+
+        public ActionSequence EnqueueSequence<T>(T alias) where T : Enum
+        { 
+            var sequence = GetSequence<T>(alias);
+            Debug.Assert(sequence != null);
+
+            if (!__sequenceQueue.Contains(sequence))
+            {
+                sequence.Reset();
+                __sequenceQueue.Enqueue(sequence);
+                return sequence;
+            }
+            else
+            {
+                __Logger.WarningR2(gameObject, nameof(EnqueueSequence), "__actionSequencePatternQueue.Contains() returns true.", "patternAlias", alias);
+                return null;
+            }
+        }
+
+        public ActionData AdvanceSequence()
+        {
+            if (__sequenceQueue.TryPeek(out var currSequence))
+                return currSequence.Next() != null ? currSequence.Curr() : (NextSequence()?.Curr() ?? null);
+            else
+                return null;
+        }
+
+        public ActionSequence CurrSequence() => __sequenceQueue.TryPeek(out var ret) ? ret : null;
+        public ActionSequence NextSequence()
+        {
+            __sequenceQueue.Dequeue();
+            return CurrSequence();
+        }
+        public void ClearSequences() { __sequenceQueue.Clear(); }
+
+        readonly Queue<ActionSequence> __sequenceQueue = new();
+        readonly Dictionary<int, ActionSequence> __reservedSequences = new();
+#endregion
+
         public class ActionDataState
         {
             public MainTable.ActionData actionData;

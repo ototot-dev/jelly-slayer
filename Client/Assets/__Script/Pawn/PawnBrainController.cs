@@ -25,7 +25,9 @@ namespace Game
         public PawnColliderHelper coreColliderHelper;
         public PawnColliderHelper bodyHitColliderHelper;
         public PawnColliderHelper parryColliderHelper;
+        public PawnColliderHelper parryHitColliderHelper;
         public PawnColliderHelper shieldHitColliderHelper;
+        public PawnColliderHelper hookingColliderHelper;
         public SphereCollider visibilityChecker;
         public PlayerController owner;
 

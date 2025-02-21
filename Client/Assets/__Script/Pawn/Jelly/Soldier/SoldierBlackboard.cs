@@ -45,7 +45,7 @@ namespace Game
             [Header("CoolDown")]
             public float minCoolDownDuration = 1f;
             public float maxCoolDownDuration= 1f;
-            public float currCoolDownTimeLeft;
+            public float sequenceCoolTimeLeft;
 
             [Header("Counter")]
             public float counterProbBoostRateOnGuard; //* 가드 후 반격 발생 확률 증가
