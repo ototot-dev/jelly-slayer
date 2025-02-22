@@ -591,7 +591,7 @@ namespace Game
 
             prevActionContext = currActionContext;
             prevActionContext.finishTimeStamp = Time.time;
-            currActionContext = new(string.Empty, 1, 0);
+            currActionContext = new(string.Empty, 1f, 0f);
             onActionFinished?.Invoke(prevActionContext);
 
 #if UNITY_EDITOR

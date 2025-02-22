@@ -96,16 +96,35 @@ namespace Game
                     var nextActionData = ActionDataSelector.AdvanceSequence();
                     if (nextActionData == null && BB.action.sequenceCoolTimeLeft <= 0f)
                     {
-                        var distanceToTarget = coreColliderHelper.GetDistanceBetween(BB.TargetBrain.coreColliderHelper);
-                        if (distanceToTarget < BB.body.maxSpacingDistance && ActionDataSelector.EvaluateSelection(ActionDataSelector.GetSequenceData(ActionPatterns.Combo)) && CheckTargetVisibility())
+                        if (ActionDataSelector.TryPickRandomSelection(1f, -1f, out var randomActionData))
                         {
-                            nextActionData = ActionDataSelector.EnqueueSequence(ActionPatterns.Combo).Curr();
+                            if (randomActionData == ActionDataSelector.GetSequence(ActionPatterns.Missile).Last())
+                            {
+                                nextActionData = ActionDataSelector.EnqueueSequence(ActionPatterns.Missile).First();
+                                ActionDataSelector.ResetSelection(randomActionData);
+                            }
+                            else if (randomActionData == ActionDataSelector.GetSequence(ActionPatterns.Leap).Last())
+                            {
+                                nextActionData = ActionDataSelector.EnqueueSequence(ActionPatterns.Leap).First();
+                                ActionDataSelector.ResetSelection(randomActionData);
+                            }
                         }
-                        else if (distanceToTarget > BB.body.spacingInDistance && ActionDataSelector.EvaluateSelection(ActionDataSelector.GetSequenceData(ActionPatterns.JumpAttack)) && CheckTargetVisibility())
+                        else
                         {
-                            nextActionData = ActionDataSelector.EnqueueSequence(ActionPatterns.JumpAttack).Curr();
-                            if (ActionDataSelector.EvaluateSelection(ActionDataSelector.GetSequenceData(ActionPatterns.Combo)))
-                                ActionDataSelector.EnqueueSequence(ActionPatterns.Combo);
+                            ActionDataSelector.BoostSelection("Missile", BB.action.missileProbBoostRateOnIdle);
+                            ActionDataSelector.BoostSelection("Leap", BB.action.leapProbBoostRateOnIdle);
+
+                            var distanceToTarget = coreColliderHelper.GetDistanceBetween(BB.TargetBrain.coreColliderHelper);
+                            if (distanceToTarget < BB.body.maxSpacingDistance && ActionDataSelector.EvaluateSelection(ActionPatterns.Combo) && CheckTargetVisibility())
+                            {
+                                nextActionData = ActionDataSelector.EnqueueSequence(ActionPatterns.Combo).First();
+                            }
+                            else if (distanceToTarget > BB.body.spacingInDistance && ActionDataSelector.EvaluateSelection(ActionPatterns.JumpAttack) && CheckTargetVisibility())
+                            {
+                                nextActionData = ActionDataSelector.EnqueueSequence(ActionPatterns.JumpAttack).First();
+                                if (ActionDataSelector.EvaluateSelection(ActionPatterns.Combo))
+                                    ActionDataSelector.EnqueueSequence(ActionPatterns.Combo);
+                            }
                         }
                     }
 
@@ -117,36 +136,6 @@ namespace Game
                         ActionDataSelector.ResetSelection(nextActionData);
                     }
                 }
-
-                // else if (ActionDataSelector.CheckExecutable(__combo1ActionData) && Time.time - PawnHP.LastDamageTimeStamp >= 1f && Time.time - __lastComboAttackRateStepTimeStamp >= 1f)
-                // {
-                //     var distanceConstraint = BB.TargetBrain != null ? BB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position) : -1f;
-                //     if (ActionDataSelector.EvaluateSelection(__combo1ActionData, 1f) && CheckTargetVisibility())
-                //     {
-                //         ActionDataSelector.ResetSelection(__combo1ActionData);
-                //         ActionCtrler.SetPendingAction(__combo1ActionData.actionName, "PreMotion");
-                //     }
-                //     else if (distanceConstraint > __leapActionData.actionRange)
-                //     {
-                //         if (ActionDataSelector.EvaluateSelection(__leapActionData, 1f) && CheckTargetVisibility())
-                //         {
-                //             ActionDataSelector.ResetSelection(__leapActionData);
-                //             ActionCtrler.SetPendingAction(__leapActionData.actionName);
-
-                //             //* 'Leap' 액션의 루트모션 이동거리인 7m 기준으로 목표점까지의 이동 거리를 조절해준다.
-                //             ActionCtrler.leapRootMotionMultiplier = Mathf.Clamp01((BB.TargetBrain.GetWorldPosition() - GetWorldPosition()).Magnitude2D() / ActionCtrler.leapRootMotionDistance);
-                //         }
-                //         else
-                //         {
-                //             ActionDataSelector.BoostSelection(__leapActionData, BB.action.leapIncreaseRate * Time.deltaTime);
-                //         }
-                //     }
-                //     else
-                //     {
-                //         __lastComboAttackRateStepTimeStamp = Time.time;
-                //         ActionDataSelector.BoostSelection(__combo1ActionData, BB.action.comboAttackIncreaseRateOnIdle);
-                //     }
-                // }
             };
 
             PawnStatusCtrler.onStatusActive += (status) =>
@@ -173,7 +162,13 @@ namespace Game
                 if (v <= 0) 
                 {
                     BB.action.sequenceCoolTimeLeft = UnityEngine.Random.Range(BB.action.minCoolDownDuration, BB.action.maxCoolDownDuration);
-                    Observable.NextFrame().Subscribe(_ => BB.stat.RecoverActionPoint(BB.stat.maxActionPoint.Value)).AddTo(this);
+                    __Logger.LogR1(gameObject, "BB.stat.actionPoint becomes 0 and enters Cooldown.", "BB.action.sequenceCoolTimeLeft", BB.action.sequenceCoolTimeLeft);
+
+                    Observable.NextFrame().Subscribe(_ => 
+                    {
+                        BB.stat.RecoverActionPoint(BB.stat.maxActionPoint.Value);
+                        __Logger.LogR1(gameObject, "Recover by setting ActionPoint to maximum", "BB.stat.maxActionPoint", BB.stat.maxActionPoint.Value);
+                    }).AddTo(this);
                 }
             }).AddTo(this);
 
@@ -198,16 +193,16 @@ namespace Game
                 if (debugActionDisabled)
                     return;
                     
-                if (!ActionCtrler.CheckActionPending() && ActionDataSelector.EvaluateSelection(ActionDataSelector.GetSequenceData(ActionPatterns.Counter), UnityEngine.Random.Range(0f, 1f)))
+                if (!ActionCtrler.CheckActionPending() && ActionDataSelector.EvaluateSelection(ActionPatterns.Counter, UnityEngine.Random.Range(0f, 1f)))
                 {
                     ActionDataSelector.ClearSequences();
 
-                    var newActionData = ActionDataSelector.EnqueueSequence(ActionPatterns.Counter).Curr();
-                    if (ActionDataSelector.EvaluateSelection(ActionDataSelector.GetSequenceData(ActionPatterns.Combo)))
+                    var counterActionData = ActionDataSelector.EnqueueSequence(ActionPatterns.Counter).First();
+                    if (ActionDataSelector.EvaluateSelection(ActionPatterns.Combo))
                         ActionDataSelector.EnqueueSequence(ActionPatterns.Combo);
 
-                    ActionCtrler.SetPendingAction(newActionData.actionName);
-                    ActionDataSelector.ResetSelection(newActionData);
+                    ActionCtrler.SetPendingAction(counterActionData.actionName);
+                    ActionDataSelector.ResetSelection(counterActionData);
                 }
                 else
                 {

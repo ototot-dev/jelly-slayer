@@ -53,6 +53,24 @@ namespace Game
         HashSet<string> __watchingStateNames = new();
         public bool CheckWatchingState(string stateName) => __watchingStateNames.Contains(stateName);
 
+        public override void OnAnimatorMoveHandler()
+        {
+            if ((__brain.ActionCtrler.CheckActionRunning() || __watchingStateNames.Contains("OnDown")) && __brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
+            {
+                //* 평면 방향 RootMotion에 대한 Constraints가 존재하면 값을 0으로 변경해준다.
+                if (__brain.ActionCtrler.CheckRootMotionConstraint(RootMotionConstraints.FreezePositionX, RootMotionConstraints.FreezePositionZ))
+                    __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition.AdjustXZ(0f, 0f), mainAnimator.deltaRotation);
+                else
+                    __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition, mainAnimator.deltaRotation);
+            }
+            else if (__watchingStateNames.Contains("GuardParry"))
+            {
+                __brain.Movement.AddRootMotion(guardParryRootMotionMultiplier * mainAnimator.deltaPosition, Quaternion.identity);
+            }
+
+            // mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
+        }
+
         void Start()
         {
             __brain.BB.body.isGuarding.CombineLatest(__brain.BB.body.isCharging, (a, b) => new Tuple<bool, bool>(a, b)).Subscribe(v =>
@@ -123,21 +141,6 @@ namespace Game
                      
                     return;
                 }
-
-                if ((__brain.ActionCtrler.CheckActionRunning() || __watchingStateNames.Contains("OnDown")) && __brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
-                {
-                    //* 평면 방향 RootMotion에 대한 Constraints가 존재하면 값을 0으로 변경해준다.
-                    if (__brain.ActionCtrler.CheckRootMotionConstraint(RootMotionConstraints.FreezePositionX, RootMotionConstraints.FreezePositionZ))
-                        __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition.AdjustXZ(0f, 0f), mainAnimator.deltaRotation);
-                    else
-                        __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition, mainAnimator.deltaRotation);
-                }
-                else if (__watchingStateNames.Contains("GuardParry"))
-                {
-                    __brain.Movement.AddRootMotion(guardParryRootMotionMultiplier * mainAnimator.deltaPosition, Quaternion.identity);
-                }
-
-                mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
 
                 if (__brain.BB.IsRolling)
                 {

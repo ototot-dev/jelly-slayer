@@ -18,19 +18,22 @@ namespace Game
                 __sequenceData = sequenceData;
                 __currIndex = -1;
             }
-            public MainTable.ActionData Curr() => __sequenceData[__currIndex];
-            public MainTable.ActionData Next() => ++__currIndex < __sequenceData.Length ? __sequenceData[__currIndex] : null;
-            public void Reset() { __currIndex = 0; }
-            readonly MainTable.ActionData[] __sequenceData;
-            int __currIndex;
-            public int HashCode { get; private set; }
-            public string SequenceName { get; private set; }
-            
+
             public MainTable.ActionData this[int index]
             {
                 get => __sequenceData[index];  // 값 가져오기
                 set => __sequenceData[index] = value;  // 값 설정하기
             }
+            public MainTable.ActionData First() => __sequenceData[0];
+            public MainTable.ActionData Last() => __sequenceData[__sequenceData.Length - 1];
+            public MainTable.ActionData Curr() => __sequenceData[__currIndex];
+            public MainTable.ActionData Next() => ++__currIndex < __sequenceData.Length ? __sequenceData[__currIndex] : null;
+            public void Reset() { __currIndex = 0; }
+            
+            readonly MainTable.ActionData[] __sequenceData;
+            int __currIndex;
+            public int HashCode { get; private set; }
+            public string SequenceName { get; private set; }
         }
 
         public ActionSequence ReserveSequence<T>(T alias, params string[] actionNames) where T : Enum
@@ -210,6 +213,15 @@ namespace Game
             }
         }
 
+        public bool EvaluateSelection<T>(T alias, float probConstraint = -1f, float staminaConstraint = -1f) where T : Enum
+        {
+            return EvaluateSelection(GetSequenceData(alias), probConstraint, staminaConstraint);
+        }
+        public bool EvaluateSelection<T>(T alias, int dataIndex, float probConstraint = -1f, float staminaConstraint = -1f) where T : Enum
+        {
+            return EvaluateSelection(GetSequenceData(alias, dataIndex), probConstraint, staminaConstraint);
+        }
+        
         public bool EvaluateSelection(string actionName, float probConstraint = -1f, float staminaConstraint = -1f) => EvaluateSelection(GetActionData(actionName), probConstraint, staminaConstraint);
         public bool EvaluateSelection(MainTable.ActionData actionData, float probConstraint = -1f, float staminaConstraint = -1f)
         {
@@ -228,6 +240,7 @@ namespace Game
                 return false;
             }
         }
+
         public bool TryPickRandomSelection(float probConstraint, float staminaConstraint, out MainTable.ActionData actionData)
         {
             actionData = PickRandomSelection(probConstraint, staminaConstraint);

@@ -28,5 +28,7 @@ namespace Game
 
             return found;
         }
+
+        public virtual void OnAnimatorMoveHandler() {}
     }
 }

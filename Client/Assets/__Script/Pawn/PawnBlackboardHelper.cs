@@ -5,15 +5,15 @@ namespace Game
 {
     public static class PawnBlackboardHelper
     {
-        public static int ConsumeActionPoint(this PawnBlackboard.Stat stat, int count)
+        public static int ConsumeActionPoint(this PawnBlackboard.Stat stat, int delta)
         {   
-            stat.actionPoint.Value = Math.Max(0, stat.actionPoint.Value - count);
+            stat.actionPoint.Value = Math.Max(0, stat.actionPoint.Value - delta);
             return stat.actionPoint.Value;
         }
 
-        public static int RecoverActionPoint(this PawnBlackboard.Stat stat, int count)
+        public static int RecoverActionPoint(this PawnBlackboard.Stat stat, int delta)
         {   
-            stat.actionPoint.Value = Math.Min(stat.maxActionPoint.Value, stat.actionPoint.Value + count);
+            stat.actionPoint.Value = Math.Min(stat.maxActionPoint.Value, stat.actionPoint.Value + delta);
             return stat.actionPoint.Value;
         }
 

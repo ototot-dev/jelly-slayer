@@ -97,8 +97,11 @@ namespace Game
 
             __pawnActionCtrler.onActionStart += (actionContext, _) =>
             {
-                //* ActionPoint 소모
-                JellyBB.stat.ConsumeActionPoint(actionContext.actionData?.actionPoint ?? 0);
+                if ((actionContext.actionData?.actionPoint ?? 0) > 0)
+                {
+                    JellyBB.stat.ConsumeActionPoint(actionContext.actionData.actionPoint);
+                    __Logger.LogR1(gameObject, "ActionPoint is consumed.", "stat.actionPoint", JellyBB.stat.actionPoint, "actionData.actionPoint", actionContext.actionData.actionPoint);
+                }
             };
         }
 

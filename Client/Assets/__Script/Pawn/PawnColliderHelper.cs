@@ -36,8 +36,9 @@ namespace Game
         //* deltaVec만큼 움직였을 때 거리이 변화값
         public float GetDistanceDelta(PawnColliderHelper otherColliderHelper, Vector3 deltaVec)
         {
-            var distanceVec = otherColliderHelper.transform.position - transform.position;
-            return (distanceVec + deltaVec).Magnitude2D() - distanceVec.Magnitude2D();
+            var currDistance = (otherColliderHelper.transform.position - transform.position).Magnitude2D();
+            var newDistance = (otherColliderHelper.transform.position - (transform.position + deltaVec)).Magnitude2D();
+            return newDistance - currDistance;
         }
 
         //* Center 위치에서 senderPosition을 바라보는 방향으로 pawnCollider의 표면과 교차하는 한 점을 HitPoint로 리턴함

@@ -15,6 +15,8 @@ namespace Game
         public override float MinSpacingDistance => body.minSpacingDistance;
         public override float MaxSpacingDistance => body.maxSpacingDistance;
         public override float MinApproachDistance => body.minApproachDistance;
+        public float LeapRootMotionDistance => action.leapRootMotionDistance;
+        public float BackstepRootMotionDistance => action.backstepRootMotionDistance;
         public GameObject MissilePrefab => action.missilePrefab;
         public Transform MissileEmitPoint => action.missileEmitPoint;
 
@@ -55,6 +57,7 @@ namespace Game
             public float missileEmitIntervalA = 1f;
             public float missileEmitIntervalB = 1f;
             public float missileEmitSpeed = 10f;
+            public float missileProbBoostRateOnIdle = 0.1f;
             public Transform missileEmitPoint;
             public GameObject missilePrefab;
 
@@ -67,7 +70,14 @@ namespace Game
             public float laserCharingDuration = 1f;
 
             [Header("Leap")]
-            public float backStepTriggerDistance = 1;
+            public float leapRootMotionDistance = 1f;
+            public float leapRootMotionMultiplier = 1f;
+            public float leapProbBoostRateOnIdle = 0.1f;
+
+            [Header("Backstep")]
+            public float backstepTriggerDistance = 1f;
+            public float backstepRootMotionDistance = 1f;
+            public float backstepRootMotionMultiplier = 1f;
         }
 
         public Action action = new();
