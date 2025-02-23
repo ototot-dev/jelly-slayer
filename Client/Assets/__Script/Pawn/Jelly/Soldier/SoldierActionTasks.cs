@@ -10,7 +10,7 @@ namespace Game.NodeCanvasExtension.Soldier
         protected override void OnExecute()
         {
             if (agent.TryGetComponent<SoldierBrain>(out var brain))
-                brain.Movement.StartJump(brain.BB.body.jumpHeight);
+                brain.Movement.StartJump(brain.BB.action.leapJumpHeight);
 
             EndAction(true);
         }

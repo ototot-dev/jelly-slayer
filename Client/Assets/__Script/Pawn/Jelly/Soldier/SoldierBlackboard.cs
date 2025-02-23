@@ -70,6 +70,7 @@ namespace Game
             public float laserCharingDuration = 1f;
 
             [Header("Leap")]
+            public float leapJumpHeight = 1f;
             public float leapRootMotionDistance = 1f;
             public float leapRootMotionMultiplier = 1f;
             public float leapProbBoostRateOnIdle = 0.1f;

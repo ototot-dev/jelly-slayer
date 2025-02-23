@@ -1,5 +1,6 @@
 using System;
 using Cinemachine.Utility;
+using FIMSpace;
 using UniRx;
 using UnityEngine;
 
@@ -29,6 +30,8 @@ namespace Game
         public ECM2.CharacterMovement GetCharacterMovement() => __ecmMovement;
         public float GetVerticalImpulseOnJump(float jumpHeight) => Mathf.Sqrt(2f * jumpHeight * gravity.magnitude);
         public float GetEstimatedJumpingDuration(float jumpHeight) => 4f * GetVerticalImpulseOnJump(jumpHeight);
+        public bool CheckRootMotionNonZero() => __rootMotionPosition.sqrMagnitude > 0f;
+        public bool CheckRootMotionZero() => __rootMotionPosition.sqrMagnitude <= 0f;
         
         void Awake()
         {
@@ -49,7 +52,8 @@ namespace Game
         protected PawnActionController __pawnActionCtrler;
         protected PawnStatusController __pawnStatusCtrler;
         protected ECM2.CharacterMovement __ecmMovement;
-        Vector3 __rootMotionFallingVec;
+        protected Vector3 __rootMotionPosition;
+        IDisposable __movementEnabledDisposable;
 
         void Start()
         {
@@ -66,40 +70,26 @@ namespace Game
             if (!__ecmMovement.enabled)
                 return;
 
-            if (__isFrozenMovementForOneFrame)
+            if (CheckRootMotionNonZero())
             {
-                __isFrozenMovementForOneFrame = false;
-                __ecmMovement.Move(Time.fixedDeltaTime);
-            }
-            else if (IsPushForceRunning)
-            {
-                __ecmMovement.Move(__pushForceVec * __pushForceMagnitude, Time.fixedDeltaTime);
+                if (!__ecmMovement.isGrounded)
+                {
+                    __ecmMovement.velocity += Time.fixedDeltaTime * gravity;
+                    __ecmMovement.Move(Time.fixedDeltaTime);
+                }
             }
             else
             {
-                if (__rootMotionPosition.sqrMagnitude > 0f)
+                if (__ecmMovement.isGrounded || gravity.AlmostZero())
                 {
-                    __rootMotionFallingVec = __ecmMovement.isGrounded ? Vector3.zero : __rootMotionFallingVec + Time.fixedDeltaTime * gravity;
-                    __ecmMovement.Move(GetRootMotionVelocity(Time.fixedDeltaTime) + __rootMotionFallingVec, Time.fixedDeltaTime);
+                    __ecmMovement.SimpleMove(moveSpeed * moveVec, moveSpeed, moveAccel, moveBrake, 1f, 1f, gravity, false, Time.fixedDeltaTime);
                 }
                 else
                 {
-                    if (__ecmMovement.isGrounded || gravity.AlmostZero())
-                    {
-                        __rootMotionFallingVec = Vector3.zero;
-                        __ecmMovement.SimpleMove(moveSpeed * moveVec, moveSpeed, moveAccel, moveBrake, 1f, 1f, gravity, false, Time.fixedDeltaTime);
-                    }
-                    else
-                    {
-                        __ecmMovement.velocity += Time.fixedDeltaTime * gravity;
-                        __ecmMovement.Move(Time.fixedDeltaTime);
-                    }
+                    __ecmMovement.velocity += Time.fixedDeltaTime * gravity;
+                    __ecmMovement.Move(Time.fixedDeltaTime);
                 }
-
-                __ecmMovement.rotation *= __rootMotionRotation;
             }
-            
-            ResetRootMotion();
         }
 
         protected virtual void OnUpdateHandler()
@@ -109,12 +99,13 @@ namespace Game
 
             if (faceVec != Vector3.zero)
                 __ecmMovement.RotateTowards(faceVec, rotateSpeed * Time.deltaTime);
+
+            DampenRootMotion();
         }
 
         public void Teleport(Vector3 destination, bool stickToGround = true)
         {
-            if (stickToGround)
-                __ecmMovement.SetPosition(TerrainManager.GetTerrainPoint(destination));
+            if (stickToGround) __ecmMovement.SetPosition(TerrainManager.GetTerrainPoint(destination));
             __ecmMovement.velocity = Vector3.zero;
             __ecmMovement.ClearAccumulatedForces();
         }
@@ -130,71 +121,35 @@ namespace Game
             faceVec = (target - capsule.position).Vector2D().normalized;
             __ecmMovement.SetRotation(Quaternion.LookRotation(faceVec));
         }
-
-        protected Vector3 __pushForceVec;
-        protected float __pushForceTimeStamp;
-        protected float __pushForceDuration;
-        protected float __pushForceMagnitude;
-        public bool IsPushForceRunning => __pushForceMagnitude > 0 && (Time.time - __pushForceTimeStamp) <= __pushForceDuration;
-
-        public void SetPushForce(Vector3 pushForce, float duration)
-        {
-            __pushForceVec = pushForce.normalized;
-            __pushForceTimeStamp = Time.time;
-            __pushForceDuration = duration;
-            __pushForceMagnitude = pushForce.magnitude;
-        }
-
-        public void StopPushForce()
-        {
-            __pushForceVec = Vector3.zero;
-            __pushForceDuration = 0;
-            __pushForceMagnitude = 0;
-        }
         
-        protected Vector3 __rootMotionPosition = Vector3.zero;
-        protected Quaternion __rootMotionRotation = Quaternion.identity;
-        IDisposable __setMovementEnabledDisposable;
-
-        public void AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation)
+        public void AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation, float deltaTime)
         {
+            var preserveVelocityY = __ecmMovement.velocity.y;
+            __ecmMovement.Move(deltaPosition / deltaTime, deltaTime);
+            __ecmMovement.velocity = Vector3.zero.AdjustY(preserveVelocityY);
+            __ecmMovement.rotation *= deltaRotation;
             __rootMotionPosition += deltaPosition;
-            __rootMotionRotation *= deltaRotation;
             // __Logger.LogF(gameObject, nameof(AddRootMotion), "-", "position", position, "__rootMotionPosition", __rootMotionPosition);
         }
 
-        public void ResetRootMotion()
+        public void DampenRootMotion(float dampingFactor = 0.5f)
         {
-            __rootMotionPosition = Vector3.zero;
-            __rootMotionRotation = Quaternion.identity;
+            __rootMotionPosition = Vector3.Lerp(Vector3.zero, __rootMotionPosition, dampingFactor);
+            if (__rootMotionPosition.sqrMagnitude < MathExtension.DEFAULT_EPSILON)
+                __rootMotionPosition = Vector3.zero;
         }
-
-        public Vector3 GetRootMotionVelocity(float deltaTime)
-        {
-            return __rootMotionPosition / deltaTime;
-        }
-        
-        public void FreezeMovementForOneFrame()
-        {   
-            //* RootMotion에 의해서 축척된 velocity값을 리셋함
-            __ecmMovement.velocity = Vector3.zero;
-            __ecmMovement.ClearAccumulatedForces();
-            __isFrozenMovementForOneFrame = true;
-        }
-
-        protected bool __isFrozenMovementForOneFrame;
 
         public void SetMovementEnabled(bool newValue, float delayTime = 0)
         {
-            if (__setMovementEnabledDisposable != null)
+            if (__movementEnabledDisposable != null)
             {
-                __setMovementEnabledDisposable.Dispose();
-                __setMovementEnabledDisposable = null;
+                __movementEnabledDisposable.Dispose();
+                __movementEnabledDisposable = null;
             }
 
             if (delayTime > 0)
             {
-                __setMovementEnabledDisposable = __setMovementEnabledDisposable = Observable.Timer(TimeSpan.FromSeconds(delayTime)).Subscribe(_ =>
+                __movementEnabledDisposable = __movementEnabledDisposable = Observable.Timer(TimeSpan.FromSeconds(delayTime)).Subscribe(_ =>
                 {
                     capsuleCollider.GetComponent<Rigidbody>().isKinematic = !newValue;
                     capsuleCollider.enabled = newValue;

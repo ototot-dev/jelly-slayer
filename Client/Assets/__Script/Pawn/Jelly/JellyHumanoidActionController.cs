@@ -78,17 +78,9 @@ namespace Game
             {
                 __knockBackDisposable?.Dispose();
                 __knockBackDisposable = Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(1f / __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed)))
-                    .DoOnCancel(() => 
-                    {
-                        __pawnMovement.FreezeMovementForOneFrame();
-                        __knockBackDisposable = null;
-                    })
-                    .DoOnCompleted(() => 
-                    {
-                        __pawnMovement.FreezeMovementForOneFrame();
-                        __knockBackDisposable = null;
-                    })
-                    .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity)).AddTo(this);
+                    .DoOnCancel(() => __knockBackDisposable = null)
+                    .DoOnCompleted(() => __knockBackDisposable = null)
+                    .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity, Time.fixedDeltaTime)).AddTo(this);
             }
             else
             {            
@@ -97,16 +89,14 @@ namespace Game
                     .DoOnCancel(() => 
                     {
                         __pawnBrain.InvalidateDecision(0.5f);
-                        __pawnMovement.FreezeMovementForOneFrame();
                         __knockBackDisposable = null;
                     })
                     .DoOnCompleted(() => 
                     {
                         __pawnBrain.InvalidateDecision(0.5f);
-                        __pawnMovement.FreezeMovementForOneFrame();
                         __knockBackDisposable = null;
                     })
-                    .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity)).AddTo(this);
+                    .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity, Time.fixedDeltaTime)).AddTo(this);
             }
 
             return null;
@@ -127,16 +117,14 @@ namespace Game
                 .DoOnCancel(() => 
                 {
                     __pawnBrain.InvalidateDecision(0.5f);
-                    __pawnMovement.FreezeMovementForOneFrame();
                     __knockBackDisposable = null;
                 })
                 .DoOnCompleted(() => 
                 {
                     __pawnBrain.InvalidateDecision(0.5f);
-                    __pawnMovement.FreezeMovementForOneFrame();
                     __knockBackDisposable = null;
                 })
-                .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity)).AddTo(this);
+                .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity, Time.fixedDeltaTime)).AddTo(this);
 
             return null;
         }
@@ -166,16 +154,14 @@ namespace Game
                 .DoOnCancel(() => 
                 {
                     __pawnBrain.InvalidateDecision(0.5f);
-                    __pawnMovement.FreezeMovementForOneFrame();
                     __knockBackDisposable = null;
                 })
                 .DoOnCompleted(() => 
                 {
                     __pawnBrain.InvalidateDecision(0.5f);
-                    __pawnMovement.FreezeMovementForOneFrame();
                     __knockBackDisposable = null;
                 })
-                .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity)).AddTo(this);
+                .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity, Time.fixedDeltaTime)).AddTo(this);
 
             return null;
         }
@@ -208,7 +194,6 @@ namespace Game
                     .DoOnCancel(() =>
                     {
                         __pawnBrain.InvalidateDecision(0.5f);
-                        __pawnMovement.FreezeMovementForOneFrame();
                         __knockBackDisposable = null;
 
                         //* KnockBack 연출 후에 Groogy 모션 진입
@@ -218,14 +203,13 @@ namespace Game
                     .DoOnCompleted(() =>
                     {
                         __pawnBrain.InvalidateDecision(0.5f);
-                        __pawnMovement.FreezeMovementForOneFrame();
                         __knockBackDisposable = null;
 
                         //* KnockBack 연출 후에 Groogy 모션 진입
                         __pawnAnimCtrler.mainAnimator.SetBool("IsGroggy", true);
                         __pawnAnimCtrler.mainAnimator.SetTrigger("OnGroggy");
                     })
-                    .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity))
+                    .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity, Time.fixedDeltaTime))
                     .AddTo(this);
             }
             else
@@ -259,7 +243,7 @@ namespace Game
                             __pawnAnimCtrler.mainAnimator.SetBool("IsGroggy", true);
                             __pawnAnimCtrler.mainAnimator.SetTrigger("OnGroggy");
                         })
-                        .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity))
+                        .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity, Time.fixedDeltaTime))
                         .AddTo(this);
                 }
             }

@@ -943,9 +943,9 @@ namespace Game.NodeCanvasExtension
                     else if (deltaTime > duration.value + Mathf.Max(0f, breakDuration.value))
                         rootMotionSpeed = impulseSpeed.value * ParadoxNotion.Animation.Easing.Ease(breakEase.value, 0, 1f, 1f - (deltaTime - duration.value - Mathf.Max(0f, accelDuration.value)) / breakDuration.value);
 
-                    var rootMotionVec = Time.deltaTime * rootMotionSpeed * pawnBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                    var rootMotionVec = rootMotionSpeed * pawnBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
                     if (actionCtrler.CanRootMotion(rootMotionVec))
-                        pawnMovable.AddRootMotion(rootMotionVec, Quaternion.identity);
+                        pawnMovable.AddRootMotion(Time.deltaTime * rootMotionVec, Quaternion.identity, Time.deltaTime);
                 }).AddTo(agent);
 
             if (!endActionWhenReachToTarget)
@@ -1049,7 +1049,6 @@ namespace Game.NodeCanvasExtension
                 .TakeUntil(Observable.Timer(TimeSpan.FromSeconds((duration.value > 0f ? duration.value : 3600f) + Mathf.Max(0f, accelDuration.value) + Mathf.Max(0f, breakDuration.value))))
                 .DoOnCancel(() => 
                 {
-                    pawnMovable.FreezeForOneFrame();
                     pawnActionCtrler.currActionContext.rootMotionDisposable = __rootMotionDisposable = null;
                     if (endActionWhenReachToTarget)
                     {
@@ -1059,7 +1058,6 @@ namespace Game.NodeCanvasExtension
                 })
                 .DoOnCompleted(() =>
                 {
-                    pawnMovable.FreezeForOneFrame();
                     pawnActionCtrler.currActionContext.rootMotionDisposable = __rootMotionDisposable = null;
                     if (endActionWhenReachToTarget)
                     {
@@ -1102,8 +1100,8 @@ namespace Game.NodeCanvasExtension
                     else if (deltaTime > duration.value + Mathf.Max(0f, breakDuration.value))
                         rootMotionSpeed = homingSpeed.value * ParadoxNotion.Animation.Easing.Ease(breakEase.value, 0, 1f, 1f - (deltaTime - duration.value - Mathf.Max(0f, accelDuration.value)) / breakDuration.value);
 
-                    var rootMotionVec = Time.deltaTime * rootMotionSpeed * pawnBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-                    pawnMovable.AddRootMotion(rootMotionVec, Quaternion.identity);
+                    var rootMotionVec = rootMotionSpeed * pawnBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                    pawnMovable.AddRootMotion(Time.deltaTime * rootMotionVec, Quaternion.identity, Time.deltaTime);
                 }).AddTo(agent);
 
             if (!endActionWhenReachToTarget)
@@ -1161,9 +1159,7 @@ namespace Game.NodeCanvasExtension
                     return;
                 }
 
-                var rootMotionVec = Time.deltaTime * fallingSpeed.value * Vector3.down;
-                if (actionCtrler.CanRootMotion(rootMotionVec))
-                    pawnMovable.AddRootMotion(rootMotionVec, Quaternion.identity);
+                pawnMovable.AddRootMotion(fallingSpeed.value * Time.deltaTime * Vector3.down, Quaternion.identity, Time.deltaTime);
             }).AddTo(agent);
 
             EndAction(true);

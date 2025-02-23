@@ -63,10 +63,6 @@ namespace Game
                 else
                     faceVec = canRotate2 ? faceVec : Vector3.zero;
             }
-            // else
-            // {
-            //     faceVec = Vector3.zero;
-            // }
 
             base.OnUpdateHandler();
         }

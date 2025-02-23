@@ -68,42 +68,25 @@ namespace Game
             if (!__ecmMovement.enabled)
                 return;
 
-            if (__isFrozenMovementForOneFrame)
+            if (__brain.BB.IsJumping)
             {
-                __ecmMovement.Move(Time.fixedDeltaTime);
-                __isFrozenMovementForOneFrame = false;
-            }
-            else if (__brain.BB.IsJumping)
-            {
-                //Debug.Assert(__rootMotionPosition.sqrMagnitude <= 0f);
-
                 __ecmMovement.velocity += Time.fixedDeltaTime * gravity;
                 __ecmMovement.Move(Time.fixedDeltaTime);
 
                 if (__jumpImpulseTimeStamp > 0f && __ecmMovement.velocity.y < 0f)
                     StartGliding();
-                    
-                ResetRootMotion();
             }
             else if (__brain.BB.IsFalling)
-            {
-                //Debug.Assert(__rootMotionPosition.sqrMagnitude <= 0f);
-                
+            {                
                 __ecmMovement.velocity += Time.fixedDeltaTime * gravity;
                 __ecmMovement.Move(Time.fixedDeltaTime);
 
                 if (__ecmMovement.isGrounded)
                     FinishFalling();
-
-                ResetRootMotion();
             }
             else if (__brain.BB.IsGliding)
             {
-                if (__rootMotionPosition.sqrMagnitude > 0f)
-                {
-                    __ecmMovement.Move(GetRootMotionVelocity(Time.fixedDeltaTime), Time.fixedDeltaTime);
-                }
-                else
+                if (CheckRootMotionZero())
                 {   
                     if (!freezeMovement)
                     {
@@ -126,10 +109,6 @@ namespace Game
                     if (__brain.BB.body.glidingDuration >= 0f && glidingElapsedTime > __brain.BB.body.glidingDuration)
                         StartFalling();
                 }
-
-                __ecmMovement.rotation *= __rootMotionRotation;
-
-                ResetRootMotion();
             }
             else
             {

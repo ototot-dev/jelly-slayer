@@ -71,7 +71,7 @@ namespace Game
             {    
                 if (__brain.ActionCtrler.CheckActionRunning())
                 {
-                    __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation);
+                    // __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation);
                     // if (__brain.ActionCtrler.currActionContext.rootMotionCurve != null)
                     // {
                     //     var rootMotionVec = Mathf.Max(0f, __brain.ActionCtrler.EvaluateRootMotion(Time.deltaTime)) * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;

@@ -35,14 +35,13 @@ namespace Game
         float IPawnMovable.GetDefaultMinApproachDistance() { return Movement.GetDefaultMinApproachDistance(); }
         bool IPawnMovable.GetFreezeMovement() { return Movement.freezeMovement; }
         bool IPawnMovable.GetFreezeRotation() { return Movement.freezeRotation; }
-        void IPawnMovable.FreezeForOneFrame() { Movement.FreezeMovementForOneFrame(); }
         void IPawnMovable.ReserveDestination(Vector3 destination) { Movement.ReserveDestination(destination); }
         float IPawnMovable.SetDestination(Vector3 destination) { return Movement.SetDestination(destination); }
         void IPawnMovable.SetMinApproachDistance(float distance) { Movement.minApproachDistance = distance; }
         void IPawnMovable.SetFaceVector(Vector3 faceVec) { Movement.faceVec = faceVec; }
         void IPawnMovable.FreezeMovement(bool newValue) { Movement.freezeMovement = newValue; }
         void IPawnMovable.FreezeRotation(bool newValue) { Movement.freezeRotation = newValue; }
-        void IPawnMovable.AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation) { Movement.AddRootMotion(deltaPosition, deltaRotation); }
+        void IPawnMovable.AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation, float deltaTime) { Movement.AddRootMotion(deltaPosition, deltaRotation, deltaTime); }
         void IPawnMovable.StartJump(float jumpHeight) {}
         void IPawnMovable.FinishJump() {}
         void IPawnMovable.Teleport(Vector3 destination) { Movement.Teleport(destination); }
@@ -124,8 +123,8 @@ namespace Game
 
             onUpdate += () =>
             {
-                if (ActionCtrler.CheckActionRunning())
-                    Movement.AddRootMotion(SensorCtrler.TouchingColliders.Count > 0 ? Vector3.zero : bodyAnimator.deltaPosition, bodyAnimator.deltaRotation);
+                // if (ActionCtrler.CheckActionRunning())
+                //     Movement.AddRootMotion(SensorCtrler.TouchingColliders.Count > 0 ? Vector3.zero : bodyAnimator.deltaPosition, bodyAnimator.deltaRotation);
                 bodyAnimator.transform.SetPositionAndRotation(coreColliderHelper.transform.position, coreColliderHelper.transform.rotation);
                 bodyAnimator.SetLayerWeight(1, Mathf.Clamp01(bodyAnimator.GetLayerWeight(1) + (ActionCtrler.CheckActionRunning() ? 10 : -1) * Time.deltaTime));
                 bodyAnimator.SetBool("IsMoving", Movement.moveVec != Vector3.zero);
@@ -160,10 +159,10 @@ namespace Game
                     // bodyAnimator.SetFloat("HitX", 0);
                     // bodyAnimator.SetFloat("HitY", 1);
 
-                    var pushBackVec = damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-                    Observable.EveryFixedUpdate()
-                        .TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.2f)))
-                        .Subscribe(_ => Movement.AddRootMotion(4 * Time.fixedDeltaTime * pushBackVec, Quaternion.identity)).AddTo(this);
+                    // var pushBackVec = damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                    // Observable.EveryFixedUpdate()
+                    //     .TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.2f)))
+                    //     .Subscribe(_ => Movement.AddRootMotion(4 * Time.fixedDeltaTime * pushBackVec, Quaternion.identity)).AddTo(this);
 
                     // Hit Effect
                     EffectCenter.CreateEffect(30, damageContext.hitPoint);

@@ -49,9 +49,11 @@ namespace Game
         public override void OnAnimatorMoveHandler()
         {
             if (__brain.BB.IsDown)
-                __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation);
+                __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation, Time.deltaTime);
             else if (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
-                __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition, mainAnimator.deltaRotation);
+                __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition, mainAnimator.deltaRotation, Time.deltaTime);
+
+            // __brain.AnimCtrler.mainAnimator.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
         }
 
         void Awake()
@@ -204,7 +206,8 @@ namespace Game
                     if (__brain.BB.IsGuarding || __brain.ActionCtrler.CheckKnockBackRunning())
                         legAnimator.MainGlueBlend = 1f;
                     else
-                        legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude > 0 && !__brain.ActionCtrler.CheckActionRunning() ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.8f : 0.9f, 1);
+                        legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude > 0 && !__brain.ActionCtrler.CheckActionRunning() ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, 1f, 1);
+                        // legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude > 0 && !__brain.ActionCtrler.CheckActionRunning() ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.8f : 0.9f, 1);
 
                     legAnimator.User_SetIsMoving(__brain.Movement.CurrVelocity.sqrMagnitude > 0 && !__brain.ActionCtrler.CheckActionRunning() && !__brain.ActionCtrler.CheckKnockBackRunning());
                     legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround);
@@ -214,7 +217,7 @@ namespace Game
             __brain.onLateUpdate += () =>
             {
                 mainAnimator.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
-                
+
                 rigSetup.weight = 1f;
                 if (__brain.ActionCtrler.CheckAddictiveActionRunning("Laser"))
                     lookAt.position = __brain.BB.attachment.laserAimPoint.position;
@@ -223,7 +226,7 @@ namespace Game
                 else
                     lookAt.position = __brain.coreColliderHelper.GetWorldCenter() + 1000f * __brain.coreColliderHelper.transform.forward;
 
-                __brain.ActionCtrler.hookingPointColliderHelper.transform.position = hookingPoint.transform.position;
+                // __brain.ActionCtrler.hookingPointColliderHelper.transform.position = hookingPoint.transform.position;
             };
 
             __brain.PawnHP.onDead += (_) =>

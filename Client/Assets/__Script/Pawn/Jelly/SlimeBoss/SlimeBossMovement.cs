@@ -108,9 +108,9 @@ namespace Game
                 {
                     if (__pawnActionCtrler.CheckActionRunning())
                     {
-                        var rootMotionVec = __brain.BB.bumpingSpeed * Time.fixedDeltaTime * capsule.forward.Vector2D().normalized;
-                        if (__pawnActionCtrler.CanRootMotion(rootMotionVec))
-                            AddRootMotion(rootMotionVec, Quaternion.identity);
+                        // var rootMotionVec = __brain.BB.bumpingSpeed * Time.fixedDeltaTime * capsule.forward.Vector2D().normalized;
+                        // if (__pawnActionCtrler.CanRootMotion(rootMotionVec))
+                        //     AddRootMotion(rootMotionVec, Quaternion.identity);
                     }
 
                     //* Bumping 이동은 RootMotion으로 처리해서 moveSpeed와 moveVec는 Zero로 셋팅함
@@ -150,8 +150,8 @@ namespace Game
                     moveVec = Vector3.zero;
 
                     //* Target까지 접근 거리를 계산해서 필요한 경우에만 이동을 함
-                    if (__brain.BB.TargetBrain.coreColliderHelper.GetApproachDistance(__brain.coreColliderHelper.transform.position) > 0f)
-                        AddRootMotion(__brain.BB.smashingSpeed * Time.fixedDeltaTime * capsule.forward.Vector2D().normalized, Quaternion.identity);
+                    // if (__brain.BB.TargetBrain.coreColliderHelper.GetApproachDistance(__brain.coreColliderHelper.transform.position) > 0f)
+                    //     AddRootMotion(__brain.BB.smashingSpeed * Time.fixedDeltaTime * capsule.forward.Vector2D().normalized, Quaternion.identity);
 
                     if (__prevCapsulePositionY > capsule.position.y && (Time.time - __jumpTimeStamp) > Time.fixedDeltaTime * 2f)
                     {
@@ -217,11 +217,11 @@ namespace Game
             }
 
             //* Zombie한테 Local-Avoidance 적용해서 SlimeBoss에게 달라붙지 않도록 함
-            foreach (var c in __pawnBrain.PawnSensorCtrler.TouchingColliders)
-            {
-                if (c.TryGetComponent<PawnColliderHelper>(out var collierHelper) && collierHelper.pawnBrain.PawnBB.common.pawnId == PawnId.Zombie && collierHelper.pawnBrain.PawnBB.IsSpawnFinished)
-                    (collierHelper.pawnBrain as IPawnMovable).AddRootMotion(Time.fixedDeltaTime * (c.transform.position - capsule.position).Vector2D().normalized, Quaternion.identity);
-            }
+            // foreach (var c in __pawnBrain.PawnSensorCtrler.TouchingColliders)
+            // {
+            //     if (c.TryGetComponent<PawnColliderHelper>(out var collierHelper) && collierHelper.pawnBrain.PawnBB.common.pawnId == PawnId.Zombie && collierHelper.pawnBrain.PawnBB.IsSpawnFinished)
+            //         (collierHelper.pawnBrain as IPawnMovable).AddRootMotion(Time.fixedDeltaTime * (c.transform.position - capsule.position).Vector2D().normalized, Quaternion.identity);
+            // }
 
             base.OnFixedUpdateHandler();
         }

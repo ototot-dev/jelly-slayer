@@ -55,8 +55,7 @@ namespace Game
         void IPawnMovable.SetFaceVector(Vector3 faceVec) { Movement.faceVec = faceVec; }
         void IPawnMovable.FreezeMovement(bool newValue) {}
         void IPawnMovable.FreezeRotation(bool newValue) {}
-        void IPawnMovable.FreezeForOneFrame() { Movement.FreezeMovementForOneFrame(); }
-        void IPawnMovable.AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation) { Movement.AddRootMotion(deltaPosition, deltaRotation); }
+        void IPawnMovable.AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation, float deltaTime) { Movement.AddRootMotion(deltaPosition, deltaRotation, deltaTime); }
         void IPawnMovable.StartJump(float jumpHeight) {}
         void IPawnMovable.FinishJump() {}
         void IPawnMovable.Teleport(Vector3 destination) { Movement.Teleport(destination); }
@@ -144,9 +143,7 @@ namespace Game
 
             onUpdate += () =>
             {
-                var timeStampA = Mathf.Max(ActionCtrler.LastActionTimeStamp, PawnHP.LastDamageTimeStamp);
-                var timeStampB = Mathf.Max(Movement.LastJumpTimeStamp, Movement.LastRollingTimeStamp);
-                BB.stat.RecoverStamina(Mathf.Max(timeStampA, timeStampB), Time.deltaTime);
+                BB.stat.RecoverStamina(Mathf.Max(ActionCtrler.LastActionTimeStamp, PawnHP.LastDamageTimeStamp, Movement.LastJumpTimeStamp), Time.deltaTime);
                 BB.stat.ReduceStance(PawnHP.LastDamageTimeStamp, Time.deltaTime);
             };
 

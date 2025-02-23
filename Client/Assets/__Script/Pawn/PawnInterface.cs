@@ -32,8 +32,7 @@ namespace Game
         void SetFaceVector(Vector3 faceVec);
         void FreezeMovement(bool newValue);
         void FreezeRotation(bool newValue);
-        void FreezeForOneFrame();
-        void AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation);
+        void AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation, float deltaTime);
         void StartJump(float jumpHeight);
         void FinishJump();
         void Teleport(Vector3 destination);

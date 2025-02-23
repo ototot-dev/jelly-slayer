@@ -80,7 +80,7 @@ namespace Game
                 var __knockBackVec = -__brain.coreColliderHelper.transform.forward.Vector2D().normalized;
                 Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.1f))).Subscribe(_ =>
                 {
-                    __brain.Movement.AddRootMotion(Time.fixedDeltaTime * (__brain.BB.pawnData_Movement.knockBackSpeed * __knockBackVec), Quaternion.identity);
+                    __brain.Movement.AddRootMotion(Time.fixedDeltaTime * (__brain.BB.pawnData_Movement.knockBackSpeed * __knockBackVec), Quaternion.identity, Time.fixedDeltaTime);
                 }).AddTo(this);
 
                 return null;
@@ -109,7 +109,7 @@ namespace Game
             var knockBakVec = (damageContext.receiverBrain.GetWorldPosition() - damageContext.senderBrain.GetWorldPosition()).Vector2D().normalized;
             Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.1f))).Subscribe(_ =>
             {
-                __brain.Movement.AddRootMotion(Time.fixedDeltaTime * (__brain.BB.pawnData_Movement.knockBackSpeed * knockBakVec), Quaternion.identity);
+                __brain.Movement.AddRootMotion(Time.fixedDeltaTime * (__brain.BB.pawnData_Movement.knockBackSpeed * knockBakVec), Quaternion.identity, Time.fixedDeltaTime);
             }).AddTo(this);
 
             return null;

@@ -578,9 +578,6 @@ namespace Game
                 __pawnAnimCtrler.mainAnimator.SetFloat("AnimAdvance", 0);
             }
 
-            if (__pawnMovement != null)
-                __pawnMovement.FreezeMovementForOneFrame();
-
             currActionContext.actionDisposable?.Dispose();
             currActionContext.homingRotationDisposable?.Dispose();
             currActionContext.rootMotionDisposable?.Dispose();

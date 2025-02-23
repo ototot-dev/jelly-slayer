@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using UniRx;
-using UniRx.Triggers.Extension;
 using UnityEngine;
 
 namespace Game
@@ -91,9 +90,7 @@ namespace Game
 
                 var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
                 Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
-                    .DoOnCancel(() => __brain.Movement.FreezeMovementForOneFrame())
-                    .DoOnCompleted(() => __brain.Movement.FreezeMovementForOneFrame())
-                    .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity))
+                    .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity, Time.fixedDeltaTime))
                     .AddTo(this);
 
                 //* 구르기 불가 상태 부여
@@ -144,9 +141,7 @@ namespace Game
                 {
                     var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
                     Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.5f / __brain.BB.pawnData_Movement.knockBackSpeed)))
-                        .DoOnCancel(() => __brain.Movement.FreezeMovementForOneFrame())
-                        .DoOnCompleted(() => __brain.Movement.FreezeMovementForOneFrame())
-                        .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity))
+                        .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity, Time.fixedDeltaTime))
                         .AddTo(this);
                 }
             }
@@ -167,17 +162,15 @@ namespace Game
             Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
                 .DoOnCancel(() =>
                 {
-                    __brain.Movement.FreezeMovementForOneFrame();
                     if (CurrActionName == "!OnBlocked")
                         FinishAction();
                 })
                 .DoOnCompleted(() =>
                 {
-                    __brain.Movement.FreezeMovementForOneFrame();
                     if (CurrActionName == "!OnBlocked")
                         FinishAction();
                 })
-                .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity)).AddTo(this);
+                .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity, Time.fixedDeltaTime)).AddTo(this);
 
             return null;
         }
@@ -193,10 +186,10 @@ namespace Game
                 __brain.PawnStatusCtrler.AddStatus(PawnStatus.KnockDown, 1f, __brain.BB.pawnData.knockDownDuration);
 
                 var __knockDownTimeStamp = Time.time;
-                var __knockBackVec = -__brain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                var __knockBackVec = -__brain.BB.pawnData_Movement.knockBackSpeed * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
                 Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.1f))).Subscribe(_ =>
                 {
-                    __brain.Movement.AddRootMotion(Time.fixedDeltaTime * (__brain.BB.pawnData_Movement.knockBackSpeed * __knockBackVec), Quaternion.identity);
+                    __brain.Movement.AddRootMotion(Time.fixedDeltaTime * __knockBackVec, Quaternion.identity, Time.fixedDeltaTime);
                 }).AddTo(this);
 
                 return null;
@@ -222,10 +215,10 @@ namespace Game
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
 
             var knockDownTimeStamp = Time.time;
-            var knockBakVec = (damageContext.receiverBrain.GetWorldPosition() - damageContext.senderBrain.GetWorldPosition()).Vector2D().normalized;
+            var knockBakVec = __brain.BB.pawnData_Movement.knockBackSpeed * (damageContext.receiverBrain.GetWorldPosition() - damageContext.senderBrain.GetWorldPosition()).Vector2D().normalized;
             Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.1f))).Subscribe(_ =>
             {
-                __brain.Movement.AddRootMotion(Time.fixedDeltaTime * (__brain.BB.pawnData_Movement.knockBackSpeed * knockBakVec), Quaternion.identity);
+                __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBakVec, Quaternion.identity, Time.fixedDeltaTime);
             }).AddTo(this);
 
             return null;
