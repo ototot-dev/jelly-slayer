@@ -1,7 +1,7 @@
 __________________________________________________________________________________________
 
 Package "Legs Animator"
-Version 1.0.3.8
+Version 1.0.4.1
 
 Made by FImpossible Creations - Filip Moeglich
 http://fimpossiblecreations.pl
@@ -60,6 +60,16 @@ Check Manual for more
 
 
 __________________________________________________________________________________________
+
+Version 1.0.4.1
+- Added 'Do Step Animation On Distance Factor' under gluing motion settings, to allow applying hips motion on smaller steps
+
+Version 1.0.4.0
+- Added 'Advanced' algorithm mode in the Leg Helper Module
+- Added possibility to cull object when multiple renderers are invisible in the camera view
+
+Version 1.0.3.9
+- Added possibility to store "setup pose" in the editor, to make legs animator use it as referece pose on init (Setup -> IK)
 
 Version 1.0.3.8
 - 'Rigidbody Step Further' module file renamed to 'Step Further with Velocity'

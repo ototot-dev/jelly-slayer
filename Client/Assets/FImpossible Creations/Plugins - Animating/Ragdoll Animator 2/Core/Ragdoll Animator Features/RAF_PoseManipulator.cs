@@ -3,6 +3,7 @@ using UnityEditor;
 #endif
 using FIMSpace.FGenerating;
 using UnityEngine;
+using static FIMSpace.FProceduralAnimation.RagdollHandler;
 
 
 namespace FIMSpace.FProceduralAnimation
@@ -14,13 +15,16 @@ namespace FIMSpace.FProceduralAnimation
         FUniversalVariable tolerMinV;
         FUniversalVariable tolerMaxV;
         FUniversalVariable addDampV;
-        //FUniversalVariable boostV;
+        FUniversalVariable springChangeV;
+        FUniversalVariable reverseLogicV;
 
         public override bool OnInit()
         {
             tolerMinV = InitializedWith.RequestVariable("Tolerance Min", 3f);
             tolerMaxV = InitializedWith.RequestVariable("Tolerance Max", 45f);
             addDampV = InitializedWith.RequestVariable("Add Damping", 100f);
+            springChangeV = InitializedWith.RequestVariable("Spring Change", 0f);
+            reverseLogicV = InitializedWith.RequestVariable("Reverse Logic", false);
             //boostV = InitializedWith.RequestVariable("Boost Spring", 0f);
 
             return base.OnInit();
@@ -33,13 +37,23 @@ namespace FIMSpace.FProceduralAnimation
             float baseDamping = ParentRagdollHandler.IsInFallingMode ? ParentRagdollHandler.DampingValueOnFall : ParentRagdollHandler.DampingValue;
             baseDamping *= ParentRagdollHandler.MusclesPower * ParentRagdollHandler.musclesPowerMultiplier;
 
+            float baseSpring = GetBaseSpringValue();
+            float powMultiplicator = GetPowerMultiplicator();
+
             float tolerMin = tolerMinV.GetFloat();
             float tolerMax = tolerMaxV.GetFloat();
+
+            if (reverseLogicV.GetBool())
+            {
+                tolerMin = tolerMax;
+                tolerMax = tolerMinV.GetFloat();
+            }
+
             float addDamp = addDampV.GetFloat();
+            float springChange = springChangeV.GetFloat();
 
             foreach (var chain in ParentRagdollHandler.Chains)
             {
-
                 foreach (var bone in chain.BoneSetups)
                 {
                     float angleDiff = Quaternion.Angle(bone.PhysicalDummyBone.rotation, bone.BoneProcessor.AnimatorRotation);
@@ -48,6 +62,13 @@ namespace FIMSpace.FProceduralAnimation
 
                     var drive = bone.Joint.slerpDrive;
                     drive.positionDamper = (bone.OverrideSpringDamp != 0f ? bone.OverrideSpringDamp : baseDamping) + extraDamping;
+
+                    if (springChange != 0f)
+                    {
+                        float boneSpring = powMultiplicator * baseSpring * chain.MusclesForce * bone.ForceMultiplier + bone.MusclesBoost * baseSpring * ParentRagdollHandler.targetMusclesPower;
+                        drive.positionSpring = (bone.OverrideSpringPower != 0f ? bone.OverrideSpringPower : boneSpring) + (/*1f - */diffFactor) * springChange;
+                    }
+
                     bone.Joint.slerpDrive = drive;
 
 #if UNITY_EDITOR
@@ -60,6 +81,23 @@ namespace FIMSpace.FProceduralAnimation
 
                 }
             }
+        }
+
+        float GetBaseSpringValue()
+        {
+            float spring = 0f;
+
+            if (ParentRagdollHandler.AnimatingMode == EAnimatingMode.Standing)
+                spring = ParentRagdollHandler.GetCurrentMainSpringsValue;
+            else // Fall mode
+                spring = ParentRagdollHandler.OverrideSpringsValueOnFall == null ? ParentRagdollHandler.GetCurrentMainSpringsValue : ParentRagdollHandler.OverrideSpringsValueOnFall.Value;
+
+            return spring;
+        }
+
+        float GetPowerMultiplicator()
+        {
+            return ParentRagdollHandler.targetMusclesPower * ParentRagdollHandler.targetMusclesPower;
         }
 
 #if UNITY_EDITOR
@@ -87,10 +125,29 @@ namespace FIMSpace.FProceduralAnimation
             tolerMaxV.Editor_DisplayVariableGUI();
 
             GUILayout.Space(4);
+            var reverseV = helper.RequestVariable("Reverse Logic", false);
+            reverseLogicV.VariableName = "Reverse Logic";
+            reverseLogicV.VariableType = FUniversalVariable.EVariableType.Bool;
+            reverseLogicV.Editor_DisplayVariableGUI();
+
+            if (reverseV.GetBool() == false)
+            {
+                EditorGUILayout.HelpBox("Angle difference = min -> No Extra Damping (no slowing) but adding spring value (speedup)\nAngle Difference = max -> Applying bone damping (slowing) and no spring (no speedup)\n(Spring change negative value will result in slowing instead of speedup)", MessageType.None);
+            }
+            else
+            {
+                EditorGUILayout.HelpBox("Angle difference = min -> Applying Extra Bone Damping (slowing) and no spring (no speedup)\nAngle Difference = max -> No Extra damping (no slowing) but adding spring (speedup)\n(Spring change negative value will result in slowing instead of speedup)", MessageType.None);
+
+            }
+
+            GUILayout.Space(4);
 
             var addDampV = helper.RequestVariable("Add Damping", 100f);
             addDampV.Editor_DisplayVariableGUI();
-            if (addDampV.GetFloat() < 0f) addDampV.SetValue(0f);
+
+            GUILayout.Space(4);
+            var springChangeV = helper.RequestVariable("Spring Change", 0f);
+            springChangeV.Editor_DisplayVariableGUI();
 
             //GUILayout.Space(2);
             //var boostV = helper.RequestVariable("Boost Spring", 0f);
@@ -130,7 +187,7 @@ namespace FIMSpace.FProceduralAnimation
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.ObjectField(_dBone.SourceBone, typeof(Transform), true);
                 EditorGUILayout.LabelField("Damping: " + _dBone.Joint.slerpDrive.positionDamper);
-                //EditorGUILayout.LabelField("Spring: " + _dBone.Joint.slerpDrive.positionSpring);
+                EditorGUILayout.LabelField("Spring: " + _dBone.Joint.slerpDrive.positionSpring);
                 EditorGUILayout.EndHorizontal();
 
                 EditorGUILayout.BeginHorizontal();

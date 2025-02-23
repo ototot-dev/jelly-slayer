@@ -4,8 +4,7 @@ namespace FIMSpace.FEyes
 {
     public partial class FEyesAnimator
     {
-        private bool changeFlag = true;
-
+        private bool changeFlag = false;
 
         /// <summary>
         /// Handling eye lag simulation

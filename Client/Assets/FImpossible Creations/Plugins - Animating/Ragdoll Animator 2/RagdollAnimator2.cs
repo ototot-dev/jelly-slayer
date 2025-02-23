@@ -5,9 +5,9 @@ namespace FIMSpace.FProceduralAnimation
     /// <summary>
     /// Ragdoll Animator 2 component is containing RagdollHandler which is responsible for all of the calculations
     /// </summary>
-    [DefaultExecutionOrder( -1 )]
-    [HelpURL( "https://assetstore.unity.com/packages/tools/physics/ragdoll-animator-2-285638" )]
-    [AddComponentMenu( "FImpossible Creations/Ragdoll Animator 2", 1 )]
+    [DefaultExecutionOrder(-1)]
+    [HelpURL("https://assetstore.unity.com/packages/tools/physics/ragdoll-animator-2-285638")]
+    [AddComponentMenu("FImpossible Creations/Ragdoll Animator 2", 1)]
     public class RagdollAnimator2 : FimpossibleComponent, IRagdollAnimator2HandlerOwner
     {
         /// <summary> The main Ragdoll processing class </summary>
@@ -46,7 +46,7 @@ namespace FIMSpace.FProceduralAnimation
         {
             get
             {
-                if( handler.BaseTransform == null ) return transform;
+                if (handler.BaseTransform == null) return transform;
                 return handler.BaseTransform;
             }
         }
@@ -59,13 +59,13 @@ namespace FIMSpace.FProceduralAnimation
         {
             handler.EnsureChainsHasParentHandler();
             handler.Mecanim = GetComponentInChildren<Animator>();
-            if( !handler.Mecanim ) if( transform.parent ) handler.Mecanim = transform.parent.GetComponent<Animator>();
+            if (!handler.Mecanim) if (transform.parent) handler.Mecanim = transform.parent.GetComponent<Animator>();
         }
 
 
         private void Start()
         {
-            handler.Initialize( this, gameObject );
+            handler.Initialize(this, gameObject);
         }
 
 
@@ -74,7 +74,7 @@ namespace FIMSpace.FProceduralAnimation
             #region Debug Performance Measure Start
 
 #if UNITY_EDITOR
-            _Debug_Perf_MeasureUpdate( true );
+            _Debug_Perf_MeasureUpdate(true);
 #endif
 
             #endregion Debug Performance Measure Start
@@ -84,7 +84,7 @@ namespace FIMSpace.FProceduralAnimation
             #region Debug Performance Measure End
 
 #if UNITY_EDITOR
-            _Debug_Perf_MeasureUpdate( false );
+            _Debug_Perf_MeasureUpdate(false);
 #endif
 
             #endregion Debug Performance Measure End
@@ -96,7 +96,7 @@ namespace FIMSpace.FProceduralAnimation
             #region Debug Performance Measure Start
 
 #if UNITY_EDITOR
-            _Debug_Perf_MeasureLateUpdate( true );
+            _Debug_Perf_MeasureLateUpdate(true);
 #endif
 
             #endregion Debug Performance Measure Start
@@ -106,7 +106,7 @@ namespace FIMSpace.FProceduralAnimation
             #region Debug Performance Measure End
 
 #if UNITY_EDITOR
-            _Debug_Perf_MeasureLateUpdate( false );
+            _Debug_Perf_MeasureLateUpdate(false);
 #endif
 
             #endregion Debug Performance Measure End
@@ -118,7 +118,7 @@ namespace FIMSpace.FProceduralAnimation
             #region Debug Performance Measure Start
 
 #if UNITY_EDITOR
-            _Debug_Perf_MeasureFixedUpdate( true );
+            _Debug_Perf_MeasureFixedUpdate(true);
 #endif
 
             #endregion Debug Performance Measure Start
@@ -128,7 +128,7 @@ namespace FIMSpace.FProceduralAnimation
             #region Debug Performance Measure End
 
 #if UNITY_EDITOR
-            _Debug_Perf_MeasureFixedUpdate( false );
+            _Debug_Perf_MeasureFixedUpdate(false);
 #endif
 
             #endregion Debug Performance Measure End
@@ -145,7 +145,7 @@ namespace FIMSpace.FProceduralAnimation
         {
             #region Editor Application Quitting Check
 #if UNITY_EDITOR
-            if( _isQuitting ) return;
+            if (_isQuitting) return;
 #endif
             #endregion
 
@@ -163,6 +163,11 @@ namespace FIMSpace.FProceduralAnimation
 
         public override void OnValidate()
         {
+#if UNITY_EDITOR
+            if (UnityEditor.BuildPipeline.isBuildingPlayer) { return; }
+            if (UnityEditor.Selection.activeGameObject == gameObject) // Avoid calling 'UpdateAllAfterManualChanges' on build
+#endif
+
             UpdateAllAfterManualChanges();
 
             base.OnValidate();
@@ -171,15 +176,15 @@ namespace FIMSpace.FProceduralAnimation
 
         public void UpdateAllAfterManualChanges()
         {
-            if( handler.Chains.Count <= 0 ) return;
+            if (handler.Chains.Count <= 0) return;
 
-            if( handler.Chains[0].ParentHandler == null ) { handler.EnsureChainsHasParentHandler(); }
+            if (handler.Chains[0].ParentHandler == null) { handler.EnsureChainsHasParentHandler(); }
 
-            if( handler.DummyWasGenerated ) handler.User_UpdateAllBonesParametersAfterManualChanges();
+            if (handler.DummyWasGenerated) handler.User_UpdateAllBonesParametersAfterManualChanges();
 
-            if( handler.WasInitialized == false ) return;
+            if (handler.WasInitialized == false) return;
 
-            handler.User_UpdateJointsPlayParameters( true );
+            handler.User_UpdateJointsPlayParameters(true);
         }
 
 
@@ -189,18 +194,18 @@ namespace FIMSpace.FProceduralAnimation
         /// </summary>
         public void TryFindBonesAndDoFullSetup()
         {
-            if( handler.Mecanim == null )
+            if (handler.Mecanim == null)
             {
                 handler.Mecanim = GetComponentInChildren<Animator>();
-                if( handler.Mecanim == null ) handler.Mecanim = GetComponentInParent<Animator>();
+                if (handler.Mecanim == null) handler.Mecanim = GetComponentInParent<Animator>();
             }
 
             handler.HelperOwnerTransform = GetBaseTransform;
             handler.TryFindBones();
 
-            foreach( var chain in handler.Chains )
+            foreach (var chain in handler.Chains)
             {
-                chain.AutoAdjustColliders( handler.IsHumanoid );
+                chain.AutoAdjustColliders(handler.IsHumanoid);
                 chain.AutoAdjustPhysics();
             }
 
@@ -218,7 +223,7 @@ namespace FIMSpace.FProceduralAnimation
         /// <summary> For Unity Events use or SendMessage </summary>
         public void RA2Event_SwitchToStand()
         {
-            this.User_SwitchFallState( true );
+            this.User_SwitchFallState(true);
         }
 
         /// <summary> For Unity Events use or SendMessage </summary>
@@ -228,71 +233,71 @@ namespace FIMSpace.FProceduralAnimation
         }
 
         /// <summary> For Unity Events use or SendMessage </summary>
-        public void RA2Event_TransitionStand( float duration )
+        public void RA2Event_TransitionStand(float duration)
         {
-            this.User_TransitionToStandingMode( duration, 0f );
+            this.User_TransitionToStandingMode(duration, 0f);
         }
 
         /// <summary> For Unity Events use or SendMessage </summary>
         public void RA2Event_SwitchToSleep()
         {
-            handler.User_SwitchFallState( RagdollHandler.EAnimatingMode.Sleep );
+            handler.User_SwitchFallState(RagdollHandler.EAnimatingMode.Sleep);
             handler.User_ResetOverrideBlends();
-            handler.User_DisableMecanimAfter( 2.5f );
+            handler.User_DisableMecanimAfter(2.5f);
         }
 
         /// <summary> For Unity Events use or SendMessage </summary>
-        public void RA2Event_SwitchToSleep( float disableMecanimAfter )
+        public void RA2Event_SwitchToSleep(float disableMecanimAfter)
         {
-            handler.User_SwitchFallState( RagdollHandler.EAnimatingMode.Sleep );
+            handler.User_SwitchFallState(RagdollHandler.EAnimatingMode.Sleep);
             handler.User_ResetOverrideBlends();
-            handler.User_DisableMecanimAfter( disableMecanimAfter );
+            handler.User_DisableMecanimAfter(disableMecanimAfter);
         }
 
         /// <summary> For Unity Events use or SendMessage </summary>
-        public void RA2Event_AddFullImpact( Vector3 impact )
+        public void RA2Event_AddFullImpact(Vector3 impact)
         {
-            handler.User_AddAllBonesImpact( impact);
+            handler.User_AddAllBonesImpact(impact);
         }
 
         /// <summary> For Unity Events use or SendMessage </summary>
-        public void RA2Event_AddLeftLegImpact( Vector3 impact )
+        public void RA2Event_AddLeftLegImpact(Vector3 impact)
         {
-            handler.User_AddChainImpact( handler.GetChain(ERagdollChainType.LeftLeg), impact, 0f );
+            handler.User_AddChainImpact(handler.GetChain(ERagdollChainType.LeftLeg), impact, 0f);
         }
 
         /// <summary> For Unity Events use or SendMessage </summary>
-        public void RA2Event_AddRightLegImpact( Vector3 impact )
+        public void RA2Event_AddRightLegImpact(Vector3 impact)
         {
-            handler.User_AddChainImpact( handler.GetChain( ERagdollChainType.RightLeg ), impact, 0f );
+            handler.User_AddChainImpact(handler.GetChain(ERagdollChainType.RightLeg), impact, 0f);
         }
 
         /// <summary> For Unity Events use or SendMessage </summary>
-        public void RA2Event_AddLeftArmImpact( Vector3 impact )
+        public void RA2Event_AddLeftArmImpact(Vector3 impact)
         {
-            handler.User_AddChainImpact( handler.GetChain( ERagdollChainType.LeftArm ), impact, 0f );
+            handler.User_AddChainImpact(handler.GetChain(ERagdollChainType.LeftArm), impact, 0f);
         }
 
         /// <summary> For Unity Events use or SendMessage </summary>
-        public void RA2Event_AddRightArmImpact( Vector3 impact )
+        public void RA2Event_AddRightArmImpact(Vector3 impact)
         {
-            handler.User_AddChainImpact( handler.GetChain( ERagdollChainType.RightArm ), impact, 0f );
+            handler.User_AddChainImpact(handler.GetChain(ERagdollChainType.RightArm), impact, 0f);
         }
 
         /// <summary> For Unity Events use or SendMessage </summary>
-        public void RA2Event_AddCoreImpact( Vector3 impact )
+        public void RA2Event_AddCoreImpact(Vector3 impact)
         {
-            handler.User_AddChainImpact( handler.GetChain( ERagdollChainType.Core ), impact, 0f );
+            handler.User_AddChainImpact(handler.GetChain(ERagdollChainType.Core), impact, 0f);
         }
 
         /// <summary> For Unity Events use or SendMessage </summary>
-        public void RA2Event_AddHeadImpact( Vector3 impact )
+        public void RA2Event_AddHeadImpact(Vector3 impact)
         {
-            var core = handler.GetChain( ERagdollChainType.Core );
-            if( core.BoneSetups.Count == 0 ) return;
-            var bone = core.GetBone( 10000 );
-            if( bone == null ) return;
-            handler.User_AddBoneImpact( bone, impact, 0f );
+            var core = handler.GetChain(ERagdollChainType.Core);
+            if (core.BoneSetups.Count == 0) return;
+            var bone = core.GetBone(10000);
+            if (bone == null) return;
+            handler.User_AddBoneImpact(bone, impact, 0f);
         }
 
         #endregion
@@ -311,17 +316,17 @@ namespace FIMSpace.FProceduralAnimation
         public FDebug_PerformanceTest _Editor_Perf_LateUpdate = new FDebug_PerformanceTest();
         public FDebug_PerformanceTest _Editor_Perf_FixedUpdate = new FDebug_PerformanceTest();
 
-        private void _Debug_Perf_MeasureUpdate( bool start )
-        { _Debug_Perf_DoMeasure( _Editor_Perf_Update, start ); }
+        private void _Debug_Perf_MeasureUpdate(bool start)
+        { _Debug_Perf_DoMeasure(_Editor_Perf_Update, start); }
 
-        private void _Debug_Perf_MeasureLateUpdate( bool start )
-        { _Debug_Perf_DoMeasure( _Editor_Perf_LateUpdate, start ); }
+        private void _Debug_Perf_MeasureLateUpdate(bool start)
+        { _Debug_Perf_DoMeasure(_Editor_Perf_LateUpdate, start); }
 
-        private void _Debug_Perf_MeasureFixedUpdate( bool start )
-        { _Debug_Perf_DoMeasure( _Editor_Perf_FixedUpdate, start ); }
+        private void _Debug_Perf_MeasureFixedUpdate(bool start)
+        { _Debug_Perf_DoMeasure(_Editor_Perf_FixedUpdate, start); }
 
-        private void _Debug_Perf_DoMeasure( FDebug_PerformanceTest test, bool start )
-        { if( start ) test.Start( gameObject, false ); else test.Finish(); }
+        private void _Debug_Perf_DoMeasure(FDebug_PerformanceTest test, bool start)
+        { if (start) test.Start(gameObject, false); else test.Finish(); }
 
 #endif
 
@@ -338,8 +343,8 @@ namespace FIMSpace.FProceduralAnimation
 
         private void OnDrawGizmosSelected()
         {
-            if( UnityEditor.Selection.activeGameObject != gameObject ) return;
-            handler.Editor_OnDrawGizmos( this );
+            if (UnityEditor.Selection.activeGameObject != gameObject) return;
+            handler.Editor_OnDrawGizmos(this);
         }
 
 #endif

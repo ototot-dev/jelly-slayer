@@ -251,7 +251,7 @@ namespace FIMSpace.FSpine
         /// <summary>
         /// Updating pointers for reversed and basic spine lead direction
         /// </summary>
-        void UpdateChainIndexHelperVariables()
+        public void UpdateChainIndexHelperVariables()
         {
             if (chainReverseFlag != LastBoneLeading)
             {

@@ -209,8 +209,9 @@ namespace FIMSpace.FProceduralAnimation
 
             GUILayout.Space( 6 );
             sp.Next( false );
+            if( handler.IsInStandingMode == false ) GUI.color = new Color( 1f, 1f, 1f, 0.6f );
             EditorGUILayout.PropertyField(sp, new GUIContent(" Motion Influence:", FGUI_Resources.Tex_Movement, sp.tooltip), GUILayout.ExpandWidth(true)); // Motion Influence
-
+            GUI.color = Color.white;
 
             EditorGUI.indentLevel--;
             GUILayout.Space( 12 );

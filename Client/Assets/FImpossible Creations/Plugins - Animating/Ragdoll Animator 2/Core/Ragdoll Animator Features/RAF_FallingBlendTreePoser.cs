@@ -437,7 +437,8 @@ namespace FIMSpace.FProceduralAnimation
             GUILayout.Space( 4 );
             var groundMask = helper.RequestVariable( "Ground Mask:", 0 << 0 );
             int layer = groundMask.GetInt();
-            layer = EditorGUILayout.MaskField( new GUIContent( "Ground Mask:", "Ground below check layer mask" ), layer, InternalEditorUtility.layers );
+            layer = EditorGUILayout.MaskField(new GUIContent("Ground Mask:", "Ground below check layer mask"), InternalEditorUtility.LayerMaskToConcatenatedLayersMask(layer), InternalEditorUtility.layers);
+            layer = InternalEditorUtility.ConcatenatedLayersMaskToLayerMask(layer);
             groundMask.SetValue( layer );
 
             EditorGUIUtility.labelWidth = 0;

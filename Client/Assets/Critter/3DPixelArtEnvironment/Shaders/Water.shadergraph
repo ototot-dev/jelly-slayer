@@ -2919,9 +2919,9 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -149.0001220703125,
-            "y": -3235.0,
-            "width": 208.0000762939453,
+            "x": -145.00006103515626,
+            "y": -3242.000244140625,
+            "width": 208.00003051757813,
             "height": 361.0
         }
     },
@@ -3062,27 +3062,6 @@
     "m_StageCapability": 3,
     "m_Value": 1.0,
     "m_DefaultValue": 1.0,
-    "m_Labels": []
-}
-
-{
-    "m_SGVersion": 0,
-    "m_Type": "UnityEditor.ShaderGraph.Vector2MaterialSlot",
-    "m_ObjectId": "3da751cb43e64150a753cde55bbc58af",
-    "m_Id": 760478300,
-    "m_DisplayName": "WorldUV",
-    "m_SlotType": 0,
-    "m_Hidden": false,
-    "m_ShaderOutputName": "_WorldUV",
-    "m_StageCapability": 3,
-    "m_Value": {
-        "x": 0.0,
-        "y": 0.0
-    },
-    "m_DefaultValue": {
-        "x": 0.0,
-        "y": 0.0
-    },
     "m_Labels": []
 }
 
@@ -7618,9 +7597,6 @@
         }
     },
     "m_Slots": [
-        {
-            "m_Id": "3da751cb43e64150a753cde55bbc58af"
-        },
         {
             "m_Id": "be161bad17df494da87140b2a9f2df3c"
         },

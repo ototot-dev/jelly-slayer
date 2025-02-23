@@ -1,7 +1,7 @@
 ﻿__________________________________________________________________________________________
 
 Package "Spine Animator"
-Version 2.0.2.1
+Version 2.0.2.2
 
 Made by FImpossible Creations - Filip Moeglich
 https://www.FilipMoeglich.pl
@@ -54,6 +54,9 @@ it can be too hard, then I recommend using my other package "Tail Animator" whic
 
 __________________________________________________________________________________________
 Changelog:
+
+v2.0.2.2
+- Added "Flatten Reference Pose" under adjust bookmark, which will make spine reference pose y = 0
 
 v2.0.2.1
 - Support for CharacterController collider

@@ -3,59 +3,62 @@ using FIMSpace.FProceduralAnimation;
 using UnityEditor;
 using UnityEngine;
 
-[CustomPropertyDrawer( typeof( RagdollBoneSelectorAttribute ) )]
-public class RagdollBoneSelector_Drawer : PropertyDrawer
+namespace FIMSpace.FProceduralAnimation
 {
-    private SerializedProperty sp = null;
-
-    public override void OnGUI( Rect position, SerializedProperty property, GUIContent label )
+    [CustomPropertyDrawer(typeof(RagdollBoneSelectorAttribute))]
+    public class RagdollBoneSelector_Drawer : PropertyDrawer
     {
-        RagdollBoneSelectorAttribute att = (RagdollBoneSelectorAttribute)base.attribute;
+        private SerializedProperty sp = null;
 
-        if( sp == null ) sp = property.serializedObject.FindProperty( att.ragdollProperty );
-        IRagdollAnimator2HandlerOwner rHandler = null;
-        if( sp != null ) rHandler = sp.objectReferenceValue as IRagdollAnimator2HandlerOwner;
-
-        var pos = position;
-
-        if( rHandler != null ) position.width -= 114;
-
-        EditorGUI.BeginProperty( position, label, property );
-        EditorGUI.PrefixLabel( position, label );
-        EditorGUI.PropertyField( position, property );
-
-        if( rHandler != null )
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            var button = pos;
-            button.x += pos.width - 110;
-            button.width = 108;
-            if( GUI.Button( button, new GUIContent( "  Select Bone", FGUI_Resources.FindIcon( "Ragdoll Animator/SPR_RagdollAnim2s" ) ) ) )
+            RagdollBoneSelectorAttribute att = (RagdollBoneSelectorAttribute)base.attribute;
+
+            if (sp == null) sp = property.serializedObject.FindProperty(att.ragdollProperty);
+            IRagdollAnimator2HandlerOwner rHandler = null;
+            if (sp != null) rHandler = sp.objectReferenceValue as IRagdollAnimator2HandlerOwner;
+
+            var pos = position;
+
+            if (rHandler != null) position.width -= 114;
+
+            EditorGUI.BeginProperty(position, label, property);
+            EditorGUI.PrefixLabel(position, label);
+            EditorGUI.PropertyField(position, property);
+
+            if (rHandler != null)
             {
-                UnityEditor.GenericMenu menu = new UnityEditor.GenericMenu();
-
-                foreach( var chain in rHandler.GetRagdollHandler.Chains )
+                var button = pos;
+                button.x += pos.width - 110;
+                button.width = 108;
+                if (GUI.Button(button, new GUIContent("  Select Bone", FGUI_Resources.FindIcon("Ragdoll Animator/SPR_RagdollAnim2s"))))
                 {
-                    string prefix = chain.ChainName + " (" + chain.ChainType + ")" + "/";
+                    UnityEditor.GenericMenu menu = new UnityEditor.GenericMenu();
 
-                    foreach( var bone in chain.BoneSetups )
+                    foreach (var chain in rHandler.GetRagdollHandler.Chains)
                     {
-                        if( bone.SourceBone == null ) continue;
+                        string prefix = chain.ChainName + " (" + chain.ChainType + ")" + "/";
 
-                        Transform target = bone.SourceBone;
-
-                        menu.AddItem( new GUIContent( prefix + target.name ), target == property.objectReferenceValue, () =>
+                        foreach (var bone in chain.BoneSetups)
                         {
-                            property.objectReferenceValue = target;
-                            UnityEditor.EditorUtility.SetDirty( property.serializedObject.targetObject );
-                            property.serializedObject.ApplyModifiedProperties();
-                        } );
+                            if (bone.SourceBone == null) continue;
+
+                            Transform target = bone.SourceBone;
+
+                            menu.AddItem(new GUIContent(prefix + target.name), target == property.objectReferenceValue, () =>
+                            {
+                                property.objectReferenceValue = target;
+                                UnityEditor.EditorUtility.SetDirty(property.serializedObject.targetObject);
+                                property.serializedObject.ApplyModifiedProperties();
+                            });
+                        }
                     }
+
+                    menu.ShowAsContext();
                 }
-
-                menu.ShowAsContext();
             }
-        }
 
-        EditorGUI.EndProperty();
+            EditorGUI.EndProperty();
+        }
     }
 }

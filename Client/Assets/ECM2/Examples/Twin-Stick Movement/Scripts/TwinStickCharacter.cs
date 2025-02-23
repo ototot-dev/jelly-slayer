@@ -48,58 +48,5 @@ namespace ECM2.Examples.TwinStickMovement
 
             RotateTowards(targetDirection, deltaTime);
         }
-
-        private void Update()
-        {
-            // Movement input
-            
-            Vector2 inputMove = new Vector2()
-            {
-                x = Input.GetAxisRaw("Horizontal"),
-                y = Input.GetAxisRaw("Vertical")
-            };
-            
-            // Movement direction in world space
-            
-            Vector3 movementDirection =  Vector3.zero;
-
-            movementDirection += Vector3.right * inputMove.x;
-            movementDirection += Vector3.forward * inputMove.y;
-            
-            // If character has a camera assigned...
-            
-            if (camera)
-            {
-                // Make movement direction relative to its camera view direction
-                
-                movementDirection = movementDirection.relativeTo(cameraTransform);
-            }
-            
-            // Set Character's movement direction
-
-            SetMovementDirection(movementDirection);
-            
-            // Calc aim direction
-
-            Vector3 aimDirection = Vector3.zero;
-
-            if (Input.GetMouseButton(0))
-            {
-                // Convert mouse screen position to world position
-                
-                Ray ray = camera.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray, out RaycastHit hitResult, Mathf.Infinity))
-                {
-                    // Compute aim direction vector (character direction -> mouse world position)
-                    
-                    Vector3 toHitPoint2D = (hitResult.point - GetPosition()).onlyXZ();
-                    aimDirection = toHitPoint2D.normalized;
-                }
-            }
-            
-            // Set Character's aim direction
-            
-            SetAimDirection(aimDirection);
-        }
     }
 }

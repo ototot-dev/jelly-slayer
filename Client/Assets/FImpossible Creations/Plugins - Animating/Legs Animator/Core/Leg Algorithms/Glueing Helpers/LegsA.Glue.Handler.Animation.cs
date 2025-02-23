@@ -383,7 +383,7 @@ namespace FIMSpace.FProceduralAnimation
 
                             leg.SendRaiseEvent( fromToDistance );
 
-                            if( legMoveDistanceFactor > 0.0401f )
+                            if( legMoveDistanceFactor > leg.LegAnimatingSettings.DoStepAnimationOnDistanceFactor * 0.82f )
                             {
                                 _legMoveDurMul = Mathf.Lerp( 1.55f, .85f, legMoveDistanceFactor * 2f );
 

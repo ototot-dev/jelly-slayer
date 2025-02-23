@@ -14,5 +14,5 @@ AssetOrigin:
   productId: 283681
   packageName: Critter Volumetric Lighting
   packageVersion: 1.1.0
-  assetPath: Assets/Critter Volumetric Lighting/Scripts/Utils/VolumetricLightResources.cs
-  uploadId: 704801
+  assetPath: Assets/Critter/Critter Volumetric Lighting/Scripts/Utils/VolumetricLightResources.cs
+  uploadId: 704792

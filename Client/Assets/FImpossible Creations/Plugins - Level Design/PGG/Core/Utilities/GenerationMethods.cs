@@ -6,6 +6,16 @@ namespace FIMSpace.Generating
 {
     public static partial class IGeneration
     {
+
+        struct SpawnActionAfterCall
+        {
+            public SpawnActionBase Action;
+            public GameObject Spawned;
+            public SpawnData Spawn;
+            public FieldCell Cell;
+        }
+
+
         /// <summary>
         /// Spawning data placed inside grid's cells 
         /// Returning list of objects with IGenerating interface implemented for post-generating events
@@ -13,6 +23,7 @@ namespace FIMSpace.Generating
         public static List<IGenerating> RunGraphSpawners(FGenGraph<FieldCell, FGenPoint> grid, Transform container, FieldSetup preset, List<GameObject> listToFillWithSpawns, List<GameObject> gatheredToCombine, List<GameObject> gatheredToStaticCombine, Matrix4x4? spawnMatrix = null)
         {
             List<IGenerating> generatorsCollected = new List<IGenerating>();
+            List<SpawnActionAfterCall> afterSpawnCalls = new List<SpawnActionAfterCall>();
 
             if (preset.OnAfterGeneratingEvents != null) preset.OnAfterGeneratingEvents.Clear();
 
@@ -146,6 +157,21 @@ namespace FIMSpace.Generating
                                 if (spawn.OnGeneratedEvents.Count != 0)
                                     for (int pe = 0; pe < spawn.OnGeneratedEvents.Count; pe++)
                                         spawn.OnGeneratedEvents[pe].Invoke(spawned);
+
+                                var objs = cell.GetCustomObjectsInCell();
+                                if (objs != null && objs.Count > 0)
+                                {
+                                    for (int o = 0; o < objs.Count; o++)
+                                    {
+                                        var spawnAction = objs[o] as SpawnActionBase;
+                                        if (spawnAction != null)
+                                        {
+                                            spawnAction.OnGameObjectSpawn(spawn, spawned, cell, grid, container, preset);
+                                            afterSpawnCalls.Add(new SpawnActionAfterCall() { Action = spawnAction, Spawn = spawn, Cell = cell, Spawned = spawned });
+                                        }
+                                    }
+                                }
+
                             }
                             else
                             {
@@ -187,6 +213,12 @@ namespace FIMSpace.Generating
                     }
                 }
 
+            }
+
+            for (int a = 0; a < afterSpawnCalls.Count; a++)
+            {
+                if (afterSpawnCalls[a].Action == null) continue;
+                afterSpawnCalls[a].Action.OnAfterAllObjectsSpawned(afterSpawnCalls[a].Spawn, afterSpawnCalls[a].Spawned, afterSpawnCalls[a].Cell, generatorsCollected, grid, container, preset);
             }
 
             preset.ClearTemporaryContainers();

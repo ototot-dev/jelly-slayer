@@ -4,7 +4,7 @@ using UnityEngine;
 namespace FIMSpace.FProceduralAnimation
 {
     [AddComponentMenu("FImpossible Creations/Legs Animator")]
-    [HelpURL( "https://assetstore.unity.com/packages/tools/animation/legs-animator-154245" )]
+    [HelpURL("https://assetstore.unity.com/packages/tools/animation/legs-animator-154245")]
     [DefaultExecutionOrder(-7)]
     public partial class LegsAnimator : MonoBehaviour
     {
@@ -122,7 +122,19 @@ namespace FIMSpace.FProceduralAnimation
             // Camera Visibility culling
             if (DisableIfInvisible != null)
             {
-                if (DisableIfInvisible.isVisible == false)
+                bool allInvisible = true;
+
+                if (DisableIfInvisible.isVisible)
+                {
+                    allInvisible = false;
+
+                    for (int i = 0; i < DisableIfInvisibleExtraRenderers.Count; i++)
+                    {
+                        if (DisableIfInvisibleExtraRenderers[i].isVisible) { allInvisible = false; break; }
+                    }
+                }
+
+                if (allInvisible)
                 {
                     legsWasDisabled = true;
                     return;

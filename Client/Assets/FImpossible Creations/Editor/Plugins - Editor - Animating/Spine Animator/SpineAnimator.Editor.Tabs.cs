@@ -322,6 +322,9 @@ public partial class FSpineAnimator_Editor
 
         GUILayout.Space(5f); EditorGUIUtility.labelWidth = 154f;
         EditorGUILayout.PropertyField(sp_DistancesMul);
+        var spc = sp_DistancesMul.Copy(); spc.Next( false );
+        if( Application.isPlaying ) GUI.enabled = false;
+        EditorGUILayout.PropertyField( spc ); GUI.enabled = true;
         GUILayout.Space(5f); EditorGUIUtility.labelWidth = 0f;
 
         El_DrawFullChainCorrections();

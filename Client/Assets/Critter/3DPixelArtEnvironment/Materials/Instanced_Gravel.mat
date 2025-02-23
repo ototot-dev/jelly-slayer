@@ -21,8 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Instanced_Gravel
-  m_Shader: {fileID: -6465566751694194690, guid: 91424e80e7633174faa0d25725ea3083,
-    type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 91424e80e7633174faa0d25725ea3083, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:

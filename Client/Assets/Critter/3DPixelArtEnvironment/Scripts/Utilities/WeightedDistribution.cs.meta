@@ -13,6 +13,6 @@ AssetOrigin:
   serializedVersion: 1
   productId: 270038
   packageName: Critter Environment
-  packageVersion: 2.0
-  assetPath: Assets/3DPixelArtEnvironment/Scripts/Utilities/WeightedDistribution.cs
-  uploadId: 704969
+  packageVersion: 2.3
+  assetPath: Assets/Critter/3DPixelArtEnvironment/Scripts/Utilities/WeightedDistribution.cs
+  uploadId: 729467

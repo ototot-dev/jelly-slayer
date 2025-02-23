@@ -55,6 +55,7 @@ namespace FIMSpace
             Leaning.LateUpdate();
         }
 
+
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
@@ -70,7 +71,15 @@ namespace FIMSpace
 
         private void OnEnable()
         {
-            if( Leaning != null ) Leaning.OnEnable();
+            if ( Leaning != null ) Leaning.OnEnable();
+
+            // On recompile support
+#if UNITY_EDITOR
+#if UNITY_2021_3_OR_NEWER
+            if (Leaning == null) Leaning = new LeaningProcessor();
+            UnityEditor.AssemblyReloadEvents.afterAssemblyReload += () => Leaning.Initialize(this);
+#endif
+#endif
         }
 
         /// <summary> Restoring leaning properties after teleporting character to the new placement </summary>

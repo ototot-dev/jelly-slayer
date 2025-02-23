@@ -157,7 +157,7 @@ namespace FIMSpace.FProceduralAnimation
                     {
                         bool loaded = false;
                         string demosPath = AssetDatabase.GetAssetPath( DemosPackage );
-                        if( AssetDatabase.LoadAssetAtPath( demosPath.Replace( "Ragdoll Animator 2 - Demos.unitypackage", "Ragdoll Animator 2 - Demo" ), typeof( UnityEngine.Object ) ) != null ) loaded = true;
+                        if( AssetDatabase.LoadAssetAtPath( demosPath.Replace( "Demos - Ragdoll Animator 2.unitypackage", "Ragdoll Animator 2 - Demo" ), typeof( UnityEngine.Object ) ) != null ) loaded = true;
 
                         if( loaded == false )
                         {

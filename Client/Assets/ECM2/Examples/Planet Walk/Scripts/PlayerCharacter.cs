@@ -1,3 +1,4 @@
+using ECM2.Examples.ThirdPerson;
 using UnityEngine;
 
 namespace ECM2.Examples.PlanetWalk
@@ -7,10 +8,35 @@ namespace ECM2.Examples.PlanetWalk
     /// to follow a planet curvature similar to the Mario Galaxy game.
     /// </summary>
     
-    public class PlayerCharacter : Character
+    public class PlayerCharacter : ThirdPersonCharacter
     {
         [Space(15f)]
         public Transform planetTransform;
+        
+        // Current camera forward, perpendicular to target's up vector.
+        
+        private Vector3 _cameraForward = Vector3.forward;
+        
+        public override void AddControlYawInput(float value)
+        {
+            // Rotate our forward along follow target's up axis
+        
+            Vector3 targetUp = followTarget.transform.up;
+            _cameraForward = Quaternion.Euler(targetUp * value) * _cameraForward;
+        }
+        
+        protected override void UpdateCameraRotation()
+        {
+            // Make sure camera forward vector is perpendicular to Character's current up vector
+            
+            Vector3 targetUp = followTarget.transform.up;
+            Vector3.OrthoNormalize(ref targetUp, ref _cameraForward);
+            
+            // Computes final Camera rotation from yaw and pitch
+            
+            cameraTransform.rotation =
+                Quaternion.LookRotation(_cameraForward, targetUp) * Quaternion.Euler(_cameraPitch, 0.0f, 0.0f);
+        }
         
         protected override void UpdateRotation(float deltaTime)
         {
@@ -29,30 +55,6 @@ namespace ECM2.Examples.PlanetWalk
             Quaternion newRotation = Quaternion.FromToRotation(GetUpVector(), worldUp) * GetRotation();
             
             SetRotation(newRotation);
-        }
-
-        private void Update()
-        {
-            // Movement direction relative to camera's view direction
-            
-            Vector2 movementInput = new Vector2
-                { x = Input.GetAxisRaw("Horizontal"), y = Input.GetAxisRaw("Vertical") };
-
-            Vector3 movementDirection = Vector3.zero;
-
-            movementDirection += Vector3.right * movementInput.x;
-            movementDirection += Vector3.forward * movementInput.y;
-
-            movementDirection = movementDirection.relativeTo(cameraTransform, GetUpVector());
-
-            SetMovementDirection(movementDirection);
-
-            // Jump
-
-            if (Input.GetButton("Jump"))
-                Jump();
-            else if (Input.GetButtonUp("Jump"))
-                StopJumping();
         }
     }
 }

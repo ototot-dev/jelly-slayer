@@ -567,6 +567,7 @@ namespace FIMSpace.FProceduralAnimation
 
                 sp.NextVisible( false ); EditorGUILayout.PropertyField( sp );
                 sp.NextVisible( false ); if( Get.AnimateFeet ) EditorGUILayout.PropertyField( sp );
+                sp.NextVisible( false ); EditorGUILayout.PropertyField( sp ); // DoStepAnimationOnDistanceFactor
 
                 EditorGUILayout.EndVertical();
 

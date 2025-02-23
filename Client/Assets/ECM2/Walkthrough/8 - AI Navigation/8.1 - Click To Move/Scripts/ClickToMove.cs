@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace ECM2.Walkthrough.Ex81
 {
@@ -26,7 +27,7 @@ namespace ECM2.Walkthrough.Ex81
 
         private void Update()
         {
-            if (Input.GetMouseButton(0))
+            if (Mouse.current.leftButton.isPressed)
             {
                 Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
                 if (Physics.Raycast(ray, out RaycastHit hitResult, Mathf.Infinity, groundMask))

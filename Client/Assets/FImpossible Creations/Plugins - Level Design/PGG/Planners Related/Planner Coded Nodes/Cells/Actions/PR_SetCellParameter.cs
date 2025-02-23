@@ -1,5 +1,4 @@
-﻿using FIMSpace.Generating.Checker;
-using FIMSpace.Graph;
+﻿using FIMSpace.Graph;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -38,6 +37,7 @@ namespace FIMSpace.Generating.Planning.PlannerNodes.Cells.Actions
 
             if (ParameterToSet == ESetCellParameter.CellData)
             {
+                String.TriggerReadPort(true);
                 //UnityEngine.Debug.Log("add data to cell " + cell.Pos + " hash " + cell.GetHashCode() + " checker hash " + Cell.GetInputCheckerValue.GetHashCode() + "  grid hash " + Cell.GetInputCheckerValue.Grid.GetHashCode() );
                 if (string.IsNullOrWhiteSpace(String.GetInputValue) == false)
                 {
@@ -47,6 +47,7 @@ namespace FIMSpace.Generating.Planning.PlannerNodes.Cells.Actions
             }
             else if (ParameterToSet == ESetCellParameter.InternalDirection)
             {
+                Value.TriggerReadPort(true);
                 cell.HelperVector = (Value.GetInputValue).V3toV3Int();
             }
             else if (ParameterToSet == ESetCellParameter.ObjectData)

@@ -783,6 +783,52 @@ namespace FIMSpace.Generating
         }
 
 
+        public BuildPlannerReference GetPlannerReferenceByID(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id)) return null;
+            if (id.Contains("[") == false) return null;
+
+            return GetPlannerReferenceByID(StringToPlannerID(id));
+        }
+
+        public Vector3 StringToPlannerID(string id)
+        {
+            Vector3 result = new Vector3(-1, -1, -1);
+
+            int brace = 0;
+            string num = "";
+
+            for (int i = 0; i < id.Length; i++)
+            {
+                if (id[i] == ' ') continue;
+
+                if (id[i] == '[')
+                {
+                    brace += 1;
+                }
+                else if (id[i] == ']')
+                {
+                    int idInt = -1;
+
+                    if (int.TryParse(num, out idInt))
+                    {
+                        if (brace == 1) result.x = idInt;
+                        else if (brace == 2) result.y = idInt;
+                        else if (brace == 3) result.z = idInt;
+                    }
+
+                    num = "";
+                }
+                else
+                {
+                    num += id[i];
+                }
+            }
+
+            return result;
+        }
+
+
         #endregion
 
 

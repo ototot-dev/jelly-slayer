@@ -14,7 +14,7 @@ namespace FIMSpace.FProceduralAnimation
             }
 
             public bool _Glue_AskingForDetach { get; private set; }
-            bool Glue_CheckDetachement()
+            public bool Glue_CheckDetachement()
             {
                 bool detach = Glue_Conditions_Detach();
                 if (!detach) detach = Glue_Conditions_DetachForced(); // If detaching is forced, detach anyway
@@ -24,7 +24,7 @@ namespace FIMSpace.FProceduralAnimation
 
             /// <summary> Confirm that leg can be detached right now.
             /// It can be restricted by idle glue mode with opposite leg during transition etc. </summary>
-            bool Glue_CheckIdleDetachementConfirm()
+            public bool Glue_CheckIdleDetachementConfirm()
             {
                 if (Owner._glueModeExecuted != EGlueMode.Idle) return true;
 
@@ -161,7 +161,7 @@ namespace FIMSpace.FProceduralAnimation
                 _gluingCulldown = Mathf.Max(_gluingCulldown, minDuration + (0.02f - Owner.GlueFadeOutSpeed * 0.03f));
             }
 
-            bool Glue_Conditions_Detach()
+            public bool Glue_Conditions_Detach()
             {
                 bool detach = false;
                 if (G_CustomForceNOTDetach /*|| G_StepHeatmapForceNOTDetach*/) { return detach; } // Prevent detach

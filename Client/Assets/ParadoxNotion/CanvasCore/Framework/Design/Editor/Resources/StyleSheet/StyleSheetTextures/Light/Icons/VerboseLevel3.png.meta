@@ -97,8 +97,8 @@ TextureImporter:
   assetBundleVariant: 
 AssetOrigin:
   serializedVersion: 1
-  productId: 14914
-  packageName: NodeCanvas
+  productId: 33903
+  packageName: FlowCanvas
   packageVersion: 3.3.1
   assetPath: Assets/ParadoxNotion/CanvasCore/Framework/Design/Editor/Resources/StyleSheet/StyleSheetTextures/Light/Icons/VerboseLevel3.png
-  uploadId: 704937
+  uploadId: 704938

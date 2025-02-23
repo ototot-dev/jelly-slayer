@@ -42,6 +42,7 @@ namespace FIMSpace.FSpine
                 else childPos = SpineBones[i + 1].transform.position;
 
                 float dist = Vector3.Distance(SpineBones[i].transform.position, childPos);
+
                 if (dist < 0.01f)
                 {
                     float refDistance = (SpineBones[SpineBones.Count - 1].transform.position - SpineBones[SpineBones.Count - 2].transform.parent.position).magnitude;
@@ -50,10 +51,18 @@ namespace FIMSpace.FSpine
                     Vector3 loc = BaseTransform.InverseTransformDirection(forw);
                     loc.y = 0f; loc.Normalize();
 
-                    SpineBones[i + 1].DefaultForward = loc;
+                    if( i + 1 < SpineBones.Count )
+                    {
+                        SpineBones[i + 1].DefaultForward = loc;
 
-                    // firstBoneOff
-                    SpineBones[i + 1].transform.position = SpineBones[i + 1].transform.position + BaseTransform.TransformDirection(loc) * refDistance * -0.125f;
+                        // firstBoneOff
+                        SpineBones[i + 1].transform.position = SpineBones[i + 1].transform.position + BaseTransform.TransformDirection( loc ) * refDistance * -0.125f;
+                    }
+                    else
+                    {
+                        UnityEngine.Debug.Log( "[Spine Animator] Check your spine bones hierarchy in '"+name+"'. Some bones are very short, consider removing them from the spine chain." );
+                    }
+
                 }
             }
 
@@ -68,9 +77,9 @@ namespace FIMSpace.FSpine
             referenceDistance /= (float)(SpineBones.Count);
 
             frontHead = new HeadBone(SpineBones[0].transform);
-            frontHead.PrepareBone(BaseTransform, SpineBones, 0);
+            frontHead.PrepareBone(BaseTransform, SpineBones, 0, FlattenReferencePose);
             backHead = new HeadBone(SpineBones[SpineBones.Count - 1].transform);
-            backHead.PrepareBone(BaseTransform, SpineBones, SpineBones.Count - 1);
+            backHead.PrepareBone(BaseTransform, SpineBones, SpineBones.Count - 1, FlattenReferencePose);
 
             if (LastBoneLeading) headBone = backHead; else headBone = frontHead;
 

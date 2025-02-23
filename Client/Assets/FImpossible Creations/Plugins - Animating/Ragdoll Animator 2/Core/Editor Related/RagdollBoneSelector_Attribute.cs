@@ -1,11 +1,14 @@
 using UnityEngine;
 
-public class RagdollBoneSelectorAttribute : PropertyAttribute
+namespace FIMSpace.FProceduralAnimation
 {
-    public string ragdollProperty = "";
-
-    public RagdollBoneSelectorAttribute( string ragdollAnimatorVariableName )
+    public class RagdollBoneSelectorAttribute : PropertyAttribute
     {
-        ragdollProperty = ragdollAnimatorVariableName;
+        public string ragdollProperty = "";
+
+        public RagdollBoneSelectorAttribute(string ragdollAnimatorVariableName)
+        {
+            ragdollProperty = ragdollAnimatorVariableName;
+        }
     }
 }

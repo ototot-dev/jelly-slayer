@@ -40,6 +40,8 @@ namespace FIMSpace.FEyes
         {
             // Info
             public Vector3 forward;
+            public Vector3 right;
+            public Vector3 up;
             public Quaternion initLocalRotation;
             public Quaternion lerpRotation;
 
@@ -51,11 +53,15 @@ namespace FIMSpace.FEyes
             public float lagTimer;
             public float lagProgress;
             public Quaternion lagStartRotation;
-            public void SetLagStartRotation(Transform baseTr, Quaternion worldRot) 
-            { lagStartRotation = previousLookRotBase; }
+            public void SetLagStartRotation(Transform baseTr, Quaternion worldRot)
+            {
+                lagStartRotation = previousLookRotBase;
+            }
             //{ lagStartRotation = FEngineering.QToLocal(baseTr.rotation, worldRot); }
             public Quaternion GetLagStartRotation(Transform baseTr) 
-            { return lagStartRotation; }
+            { 
+                return lagStartRotation;
+            }
 
             public float changeSmoother;
 
@@ -70,13 +76,14 @@ namespace FIMSpace.FEyes
                 lagProgress = 1f;
                 changeSmoother = 1f;
 
-                if( setup.ControlType == EyeSetup.EEyeControlType.RotateBone )
+
+                if ( setup.ControlType == EyeSetup.EEyeControlType.RotateBone )
                 {
                     if( eyeT )
                     {
-                        eyeT.localRotation = initLocalRotation;
-                        lerpRotation = eyeT.rotation;
                         lagStartRotation = eyeT.rotation;
+                        lerpRotation = eyeT.rotation;
+                        eyeT.localRotation = initLocalRotation;
                     }
                 }
                 else if( setup.ControlType == EyeSetup.EEyeControlType.Blendshape )
@@ -85,6 +92,36 @@ namespace FIMSpace.FEyes
                     setup.EyeRightX( 0f );
                     setup.EyeUpY( 0f );
                     setup.EyeDownY( 0f );
+                }
+            }
+
+            public Quaternion mapping = Quaternion.identity;
+            public void PrepareMappingFactor(FEyesAnimator eyesA, Transform t)
+            {
+                Transform root = eyesA.BaseTransform;
+
+                Vector3 s = t.lossyScale;
+
+                Vector3 eyeLocalForward = t.InverseTransformDirection(root.forward);
+                eyeLocalForward = Vector3.Scale(t.lossyScale, eyeLocalForward);
+                Vector3 eyeLocalUp =  t.InverseTransformDirection(root.up);
+                eyeLocalUp = Vector3.Scale(t.lossyScale, eyeLocalUp);
+                Vector3 eyeLocalRight = Vector3.Cross(eyeLocalForward, eyeLocalUp);
+                eyeLocalRight = Vector3.Scale(t.lossyScale, eyeLocalRight);
+
+                bool isLeft = root.InverseTransformPoint(t.position).x < 0f;
+
+                if (isLeft)
+                {
+                    mapping = Quaternion.identity;
+                    mapping *= Quaternion.FromToRotation(-eyeLocalRight, eyesA.Right);
+                    mapping *= Quaternion.FromToRotation(eyeLocalUp, eyesA.Up);
+                }
+                else
+                {
+                    mapping = Quaternion.identity;
+                    mapping *= Quaternion.FromToRotation(-eyeLocalRight, eyesA.Right);
+                    mapping *= Quaternion.FromToRotation(eyeLocalUp, eyesA.Up);
                 }
             }
 

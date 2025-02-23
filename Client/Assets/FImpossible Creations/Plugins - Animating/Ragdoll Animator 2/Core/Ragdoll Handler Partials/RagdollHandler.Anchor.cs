@@ -306,6 +306,13 @@ namespace FIMSpace.FProceduralAnimation
         Vector3 _lastFixedPosition;
         void UpdateMotionInfluence()
         {
+            if( IsInStandingMode == false ) // No motion influence on fall mode
+            {
+                _lastFixedPosition = _playmodeAnchorBone.BoneProcessor.AnimatorPosition;
+                _motionInfluenceOffset = Vector3.zero;
+                return;
+            }
+
             if (MotionInfluence == 1f) { _motionInfluenceOffset = Vector3.zero; _lastFixedPosition = _playmodeAnchorBone.BoneProcessor.AnimatorPosition; return; }
 
             Vector3 offset = _motionInfluenceOffset * (1f - MotionInfluence);

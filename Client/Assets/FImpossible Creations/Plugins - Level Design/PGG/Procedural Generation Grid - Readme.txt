@@ -1,7 +1,7 @@
 __________________________________________________________________________________________
 
 Package "Procedural Generation Grid"
-Version 1.6.6.2.7 (Beta)
+Version 1.6.6.2.8 (Beta)
 
 Made by FImpossible Creations - Filip Moeglich
 https://www.FilipMoeglich.pl
@@ -64,6 +64,12 @@ Description:
 - Package is providing additional packages for randomly placing smaller objects in physical space using Unity’s collision system (Object’s Stamper and Pipe Generator)
 
 __________________________________________________________________________________________
+
+Beta Version 1.6.6.2.8:
+- Implemented Spawn Actions which allows to call custom code after generating object on the scene
+You need to assign Spawn Action instance in the cell object data to trigger its code.
+- Added extra planner ID deconstruction methods in the Build Planner Executor
+- SetCellParameter node now refreshes connected string/vector value
 
 Beta Version 1.6.6.2.7:
 - Added Sync Instances Count Planner Operation

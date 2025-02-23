@@ -47,6 +47,7 @@ namespace FIMSpace.FProceduralAnimation
         public SerializedProperty sp_StepPointsOverlapRadius;
 
         public SerializedProperty sp_DisableIfInvisible;
+        public SerializedProperty sp_DisableIfInvisibleArray;
         public SerializedProperty sp_FadeOffAtDistance;
         public SerializedProperty sp_SwingHelper;
         public SerializedProperty sp_AnimationFloorLevel;
@@ -93,6 +94,7 @@ namespace FIMSpace.FProceduralAnimation
             sp_StepPointsOverlapRadius = serializedObject.FindProperty("StepPointsOverlapRadius");
 
             sp_DisableIfInvisible = serializedObject.FindProperty("DisableIfInvisible");
+            sp_DisableIfInvisibleArray = serializedObject.FindProperty("DisableIfInvisibleExtraRenderers");
             sp_FadeOffAtDistance = serializedObject.FindProperty("FadeOffAtDistance");
             sp_SwingHelper = serializedObject.FindProperty("SwingHelper");
             sp_AnimationFloorLevel = serializedObject.FindProperty("AnimationFloorLevel");

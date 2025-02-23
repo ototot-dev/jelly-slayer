@@ -1,7 +1,7 @@
 ﻿__________________________________________________________________________________________
 
 Package Bones Stimulator
-Version 2.0.0.10
+Version 2.0.0.11
 
 Made by FImpossible Creations - Filip Moeglich
 https://www.FilipMoeglich.pl
@@ -27,6 +27,9 @@ Simply add Bones Stimulator to any bone of your character, choose which bones yo
 to stimulate and play with parameters, test it in playmode to find desired effect.
 Component is highly optimized and delivers self-optimization features.
 
+
+Version 2.0.0.11:
+- Patched delta time for animate physics
 
 Version 2.0.0.10:
 - Support for CharacterController collider

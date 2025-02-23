@@ -103,8 +103,8 @@ TextureImporter:
   assetBundleVariant: 
 AssetOrigin:
   serializedVersion: 1
-  productId: 14914
-  packageName: NodeCanvas
+  productId: 33903
+  packageName: FlowCanvas
   packageVersion: 3.3.1
   assetPath: Assets/ParadoxNotion/CanvasCore/Common/Design/Editor/Resources/Resources.png
-  uploadId: 704937
+  uploadId: 704938

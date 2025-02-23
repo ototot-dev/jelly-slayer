@@ -18,7 +18,7 @@ namespace FIMSpace.FTail
 
         public override void OnInspectorGUI()
         {
-            Undo.RecordObject(target, "Spine Animator Inspector");
+            //Undo.RecordObject(target, "Spine Animator Inspector");
 
             serializedObject.Update();
 

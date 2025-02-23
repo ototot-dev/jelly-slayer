@@ -22,10 +22,10 @@ namespace FIMSpace.FSpine
             }
 
 
-            public void PrepareBone(Transform baseTransform, List<SpineBone> bones, int index)
+            public void PrepareBone(Transform baseTransform, List<SpineBone> bones, int index, bool flatten)
             {
                 // Prepare local offsets in baseTransform transform space
-                TakePoseSnapshot(baseTransform, bones, index);
+                TakePoseSnapshot(baseTransform, bones, index, flatten);
 
                 InitialLocalPosition = transform.localPosition;
                 InitialLocalRotation = transform.localRotation;
@@ -69,10 +69,11 @@ namespace FIMSpace.FSpine
             /// <summary>
             /// Taking reference pose snapshot
             /// </summary>
-            public void TakePoseSnapshot(Transform targetSpace, List<SpineBone> bones, int index)
+            public void TakePoseSnapshot(Transform targetSpace, List<SpineBone> bones, int index, bool flatten)
             {
                 baseTransform = targetSpace;
                 snapshotPoseBaseTrSpacePosition = targetSpace.InverseTransformPoint(transform.position);
+                if( flatten ) snapshotPoseBaseTrSpacePosition.y = 0f;
 
                 // Target direction position for different conditions
                 Vector3 targetPosF;

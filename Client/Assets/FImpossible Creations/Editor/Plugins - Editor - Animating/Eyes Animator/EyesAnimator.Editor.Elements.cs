@@ -1,10 +1,13 @@
 ﻿using FIMSpace.FEditor;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 public partial class FEyesAnimator_Editor : UnityEditor.Editor
 {
+    public override bool RequiresConstantRepaint()
+    {
+        return Application.isPlaying && Get.OptimizeAtDistance > 0f;
+    }
 
     void El_DrawOptimizeWithMesh()
     {
@@ -54,6 +57,31 @@ public partial class FEyesAnimator_Editor : UnityEditor.Editor
 
 
         EditorGUILayout.EndHorizontal();
+
+        var sp = sp_OptimizeWithMesh.Copy(); sp.Next(false);
+        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.PropertyField(sp);
+        if (Get.OptimizeAtDistance <= 0f)
+        {
+            Get.OptimizeAtDistance = 0f;
+            EditorGUILayout.LabelField("(not using)", EditorStyles.centeredGreyMiniLabel, GUILayout.MaxWidth(50));
+        }
+        EditorGUILayout.EndHorizontal();
+
+        if (Get.OptimizeAtDistance > 0f)
+        {
+            if (Application.isPlaying)
+            {
+                Transform cam = Get.OptimizationCameraReference;
+                if (cam == null) if (Camera.main) cam = Camera.main.transform; else EditorGUILayout.HelpBox("No Main Camera!", MessageType.Warning);
+                if (cam != null)
+                {
+                    float distance = Vector3.Distance(Get.HeadReference.position, cam.transform.position);
+                    EditorGUILayout.LabelField("Current Distance: " + distance);
+                    if (distance > Get.OptimizeAtDistance) EditorGUILayout.LabelField("Optimized", EditorStyles.centeredGreyMiniLabel);
+                }
+            }
+        }
     }
 
 
@@ -214,12 +242,12 @@ public partial class FEyesAnimator_Editor : UnityEditor.Editor
                 menu.ShowAsContext();
             }
 
-            if ( _indivClampEye > -1)
-            if ( _indivClampEye < Get.EyeSetups.Count)
+            if (_indivClampEye > -1)
+                if (_indivClampEye < Get.EyeSetups.Count)
                 {
                     DrawIndividualClampingForEye(Get.EyeSetups[_indivClampEye]);
                 }
-            else
+                else
                 {
                     _indivClampEye = -1;
                 }
@@ -265,7 +293,7 @@ public partial class FEyesAnimator_Editor : UnityEditor.Editor
 
         GUI.color = c;
 
-        if ( EditorGUI.EndChangeCheck())
+        if (EditorGUI.EndChangeCheck())
         {
             EditorUtility.SetDirty(Get);
         }

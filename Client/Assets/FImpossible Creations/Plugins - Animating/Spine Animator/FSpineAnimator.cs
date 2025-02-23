@@ -156,6 +156,9 @@ namespace FIMSpace.FSpine
         [Tooltip("Multiplies distance value between bones segments - can be useful for use with humanoid skeletons")]
         public float DistancesMultiplier = 1f;
 
+        [Tooltip( ( "(Experimental) Makes possible LastBoneLeading + ReverseForward switching smoother" ) )]
+        public bool FlattenReferencePose = false;
+
         [Tooltip("Pushing segments in world direction (should have included ground collider to collide with).")]
         public Vector3 GravityPower = Vector3.zero;
         protected Vector3 gravityScale = Vector3.zero;

@@ -30,6 +30,10 @@ namespace FIMSpace.FProceduralAnimation
 
             FSceneIcons.SetGizmoIconEnabled( rGet, false );
             RagdollHandlerEditor._referencePoseReport = null;
+
+            FSceneIcons.SetGizmoIconEnabled(typeof(RagdollAnimator2BoneIndicator), false);
+            FSceneIcons.SetGizmoIconEnabled(typeof(RA2BoneTriggerCollisionHandler), false);
+            FSceneIcons.SetGizmoIconEnabled(typeof(RA2BoneCollisionHandler), false);
         }
 
         [UnityEditor.MenuItem( "CONTEXT/RagdollAnimator2/Export Ragdoll Animator 2 Settings as Preset", false, 100000 )]
@@ -47,53 +51,25 @@ namespace FIMSpace.FProceduralAnimation
             serializedObject.Update();
 
 
-#if UNITY_6000_1_OR_NEWER
+
+#if UNITY_6000_0_0
 #else
-#if UNITY_6000_0_9
+#if UNITY_6000_0_1
 #else
-#if UNITY_6000_0_10
+#if UNITY_6000_0_2
 #else
-#if UNITY_6000_0_11
+#if UNITY_6000_0_3
 #else
-#if UNITY_6000_0_12
+#if UNITY_6000_0_4
 #else
-#if UNITY_6000_0_13
+#if UNITY_6000_0_5
 #else
-#if UNITY_6000_0_14
+#if UNITY_6000_0_6
 #else
-#if UNITY_6000_0_15
+#if UNITY_6000_0_7
 #else
-#if UNITY_6000_0_16
-#else
-#if UNITY_6000_0_17
-#else
-#if UNITY_6000_0_18
-#else
-#if UNITY_6000_0_19
-#else
-#if UNITY_6000_0_20
-#else
-#if UNITY_6000_0_21
-#else
-#if UNITY_6000_0_22
-#else
-#if UNITY_6000_0_23
-#else
-#if UNITY_6000_0_24
-#else
-#if UNITY_6000_0_25
-#else
-#if UNITY_6000_0_26
-#else
-#if UNITY_6000_0_27
-#else
-#if UNITY_6000_0_28
-#else
-#if UNITY_6000_0_29
-#else
-#if UNITY_6000_0_30
-#else
-#if UNITY_6000_0_OR_NEWER
+#if UNITY_6000_0_8
+
 
             GUILayout.Space( 8 );
             EditorGUILayout.LabelField( "Oh, you're using Unity 6 preview!", FGUI_Resources.HeaderStyleBig );
@@ -113,21 +89,9 @@ namespace FIMSpace.FProceduralAnimation
 #endif
 #endif
 #endif
-#endif
-#endif
-#endif
-#endif
-#endif
-#endif
-#endif
-#endif
-#endif
-#endif
-#endif
-#endif
-#endif
-#endif
-#endif
+
+
+
 
             EditorGUILayout.BeginVertical( BGInBoxStyle );
 

@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: 3c00611dcecd14808bc0337ec51ec3aa
+timeCreated: 1700900486
+AssetOrigin:
+  serializedVersion: 1
+  productId: 193614
+  packageName: Easy Character Movement 2
+  packageVersion: 1.4.2
+  assetPath: Assets/ECM2/Examples/Jump/Scripts/JumpInput.cs
+  uploadId: 708445

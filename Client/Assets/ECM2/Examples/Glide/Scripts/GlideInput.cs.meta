@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: cebf33f1b04cf4aa4b4ebe660922e1ed
+timeCreated: 1700292768
+AssetOrigin:
+  serializedVersion: 1
+  productId: 193614
+  packageName: Easy Character Movement 2
+  packageVersion: 1.4.2
+  assetPath: Assets/ECM2/Examples/Glide/Scripts/GlideInput.cs
+  uploadId: 708445

@@ -35,7 +35,9 @@ namespace Environment.Instancing
         public override Bounds CalculateInstancesBounds()
         {
             var bounds = this.GetComponent<Terrain>().terrainData.bounds;
-            bounds.center = this.transform.position;
+
+            bounds.center += this.transform.position;
+
             return bounds;
         }
 
@@ -103,6 +105,7 @@ namespace Environment.Instancing
                 Debug.LogWarning("Control texture not defined. Defaulting to layer 1 everywhere!");
             }
 
+            var terrainCenter = terrain.terrainData.bounds.center;
             var size = terrain.terrainData.size;
             float width = size.x, height = size.y, length = size.z;
 
@@ -129,15 +132,17 @@ namespace Environment.Instancing
                         var zPosition = (z + 0.5f + UnityEngine.Random.Range(-positionVariance, positionVariance)) * step;
                         var terrainUV = new Vector2(xPosition / width, zPosition / length);
 
+                        var position = new Vector3()
+                        {
+                            x = xPosition,
+                            y = terrain.terrainData.GetInterpolatedHeight(terrainUV.x, terrainUV.y),
+                            z = zPosition,
+                        } - terrainCenter;
+
                         var instance = new InstanceData()
                         {
                             TRS = Matrix4x4.TRS(
-                                new Vector3()
-                                {
-                                    x = xPosition,
-                                    y = terrain.terrainData.GetInterpolatedHeight(terrainUV.x, terrainUV.y),
-                                    z = zPosition,
-                                },
+                                position,
                                 Quaternion.identity,
                                 Vector3.one * UnityEngine.Random.Range(1 - scaleVariance, 1 + scaleVariance)
                             ),
@@ -154,6 +159,7 @@ namespace Environment.Instancing
                     }
                 }
             }
+
             return result.Select(list => list.ToArray());
         }
     }

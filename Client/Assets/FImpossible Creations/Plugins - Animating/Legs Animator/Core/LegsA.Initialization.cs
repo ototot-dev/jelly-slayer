@@ -12,6 +12,16 @@ namespace FIMSpace.FProceduralAnimation
         {
             if (LegsInitialized) return;
 
+            ReferencePose prePose = null;
+
+            if (SetupPose != null && SetupPose.IsSet(this)) // If using stored init pose
+            { 
+                prePose = new ReferencePose();
+                StoreSetupPose(prePose); // Remember current animation state to restore it after initialization
+
+                RestoreSetupPose(SetupPose); // Set character to stored setup pose
+            }
+
             GroundedTime = 0f;
             MovingTime = 0f;
             IsMovingBlend = 0f;
@@ -65,6 +75,8 @@ namespace FIMSpace.FProceduralAnimation
 
             User_UpdateParametersAfterManualChange();
             User_RefreshHelperVariablesOnParametersChange();
+
+            if (prePose != null) RestoreSetupPose(prePose);
         }
 
         public void InitializeGetStepInfoReceiver()

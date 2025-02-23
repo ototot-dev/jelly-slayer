@@ -1,7 +1,7 @@
 ﻿__________________________________________________________________________________________
 
 Package "Ragdoll Animator 2"
-Version 1.0.2.5
+Version 1.0.3
 
 Made by FImpossible Creations - Filip Moeglich
 http://www.fimpossiblecreations.pl
@@ -30,6 +30,31 @@ If you encounter something like spine jittery, try lowering muscles spring power
 
 __________________________________________________________________________________________
 Changelog:
+
+version 1.0.3
+- Added collission detection events support for attachables
+
+version 1.0.2.11
+- Fixed issue with re-attaching Attachables with multiple colliders
+
+version 1.0.2.10
+- Fixed auto get up layer mask field
+- Fixed blend tree poser layer mask field
+- Disabling scene icons of bone indicators
+- Fixed Unity 6 Preview Warning
+
+version 1.0.2.9
+- Ragdoll Animator component's Motion Influence compensation effect will not be applied during fall mode.
+
+version 1.0.2.8
+- Added object pooling example scene in the demos .unitypackage
+
+version 1.0.2.7
+- Updated 'Pose Manipulator' Extra Feature with few more parameters
+- Fix for rare error on first build when used Pre-Generated dummy, which was caused by OnValidate()
+
+version 1.0.2.6
+- Switching from Off to Fall mode will work properly now
 
 version 1.0.2.5
 - Calibration will not be applied on the anchor bone during fall animating mode

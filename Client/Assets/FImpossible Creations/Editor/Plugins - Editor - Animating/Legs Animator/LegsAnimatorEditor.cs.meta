@@ -17,6 +17,7 @@ MonoImporter:
   - AssemblyDefinitionsAll: {fileID: 102900000, guid: 1b8d36599035b4548acb3ac78e2106d2,
       type: 3}
   - SceneHelper_FocusOnBone: {instanceID: 0}
+  - HumanoidTPose: {fileID: 7400000, guid: e605d77184e9c5145bf97d6474c229dc, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
@@ -29,4 +30,4 @@ AssetOrigin:
   packageVersion: 1.0.3
   assetPath: Assets/FImpossible Creations/Editor/Plugins - Editor - Animating/Legs
     Animator/LegsAnimatorEditor.cs
-  uploadId: 707093
+  uploadId: 722436

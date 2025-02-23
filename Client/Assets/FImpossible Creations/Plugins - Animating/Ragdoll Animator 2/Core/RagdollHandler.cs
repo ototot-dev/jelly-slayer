@@ -75,6 +75,7 @@ namespace FIMSpace.FProceduralAnimation
 
             _motionInfluenceOffset = Vector3.zero;
             _lastFixedPosition = GetAnchorSourceBone().position;
+            _lastAnimatingMode = animatingMode;
 
             CalculateRagdollBlend();
             FinalizePhysicalDummySetup();

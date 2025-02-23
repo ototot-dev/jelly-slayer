@@ -47,7 +47,7 @@ namespace FIMSpace.FProceduralAnimation
         [Range( 0f, 1f )]
         public float HardMatchingOnFalling = 0f;
 
-        [Tooltip("Set zero to compensate body physics reaction on character body movement in world, set 1 to be affected with natural physics reaction to bones movement.")]
+        [Tooltip("[Only for standing mode] Set zero to compensate body physics reaction on character body movement in world, set 1 to be affected with natural physics reaction to bones movement.")]
         [Range(0f, 1f)]
         public float MotionInfluence = 1f;
 

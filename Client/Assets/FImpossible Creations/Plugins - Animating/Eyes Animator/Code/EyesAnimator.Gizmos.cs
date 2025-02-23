@@ -68,8 +68,8 @@ namespace FIMSpace.FEyes
                 {
                     if (Eyes[i] == null) continue;
 
-                    Vector3 eyeF;
-                    if (!Application.isPlaying) eyeF = _editor_eyeForwards[i]; else eyeF = eyesData[i].forward;
+                    Vector3 eyeF = Vector3.zero;
+                    if (!Application.isPlaying) eyeF = _editor_eyeForwards[i]; else { if ( eyesData != null) eyeF = eyesData[i].forward; }
 
                     Quaternion eyeForwarded = Eyes[i].rotation * Quaternion.Inverse(Quaternion.FromToRotation(eyeF, Vector3.forward));
                     f = eyeForwarded * Vector3.forward * (scaleRef * 2.75f);

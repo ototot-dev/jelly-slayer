@@ -246,6 +246,9 @@ namespace FIMSpace.FProceduralAnimation
             }
 
             EditorGUILayout.EndVertical();
+
+            DisplaySetupPoseGUI();
+
             EditorGUILayout.EndVertical();
         }
 
@@ -262,6 +265,8 @@ namespace FIMSpace.FProceduralAnimation
             GUILayout.Space(4);
 
             EditorGUILayout.PropertyField(sp_DisableIfInvisible);
+            if ( Get.DisableIfInvisible != null) EditorGUILayout.PropertyField(sp_DisableIfInvisibleArray);
+            
             if (Application.isPlaying) if (Get.DisableIfInvisible) EditorGUILayout.HelpBox("The Renderer is " + (Get.DisableIfInvisible.isVisible ? "Visible" : "Invisible!"), UnityEditor.MessageType.None);
 
             EditorGUILayout.BeginHorizontal();

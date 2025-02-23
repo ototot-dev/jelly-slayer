@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace FIMSpace.FEyes
@@ -10,7 +11,7 @@ namespace FIMSpace.FEyes
     /// simulate random eyes movement, simulating eye movement lags etc.
     /// </summary>
     [AddComponentMenu("FImpossible Creations/Eyes Animator 2")]
-    [HelpURL( "https://assetstore.unity.com/packages/3d/animations/eyes-animator-137246" )]
+    [HelpURL("https://assetstore.unity.com/packages/3d/animations/eyes-animator-137246")]
     [DefaultExecutionOrder(16)] // Must be Executed after Look Animator and other Fimpossible Creations procedural animation packages
     public partial class FEyesAnimator : MonoBehaviour
     {
@@ -32,6 +33,9 @@ namespace FIMSpace.FEyes
 
         [Tooltip("If you want component to not compute it's algorithm when certain renderer is not visible, drag & drop it here")]
         public Renderer OptimizeWithMesh = null;
+        [Tooltip("If you want component to not compute it's algorithm when being far from the Camera")]
+        public float OptimizeAtDistance = 0f;
+        public Transform OptimizationCameraReference { get; private set; }
 
         [Tooltip("All eyes animator features usage blend slider. Change if you want to disable all look animator features simultaneously (looking, random eyes movement and blinking.\n(Optimization) Eyes Animator will internally disable itself when this value is zero.")]
         [FPD_Suffix(0f, 1f)]
@@ -104,6 +108,8 @@ namespace FIMSpace.FEyes
 
         public Vector3 headReferenceLookForward;
         public Vector3 headReferenceUp;
+        public Vector3 headUp;
+        public Vector3 headUpDynamic;
 
         Vector3 WorldUp = Vector3.up;
         public bool WorldUpIsBaseTransformUp = false;
@@ -114,6 +120,8 @@ namespace FIMSpace.FEyes
         Vector3 Forward { get { return Vector3.forward; } }
         /// <summary> Placeholder for custom up vector (world space) </summary>
         Vector3 Up { get { return Vector3.up; } }
+        /// <summary> Placeholder for custom right vector (world space) </summary>
+        Vector3 Right { get { return Vector3.right; } }
 
         /// <summary>
         /// Preparing all needed variables and references
@@ -123,6 +131,7 @@ namespace FIMSpace.FEyes
             UpdateLists();
 
             eyesData = new Eye[Eyes.Count];
+            AdjustCount(EyeSetups, Eyes.Count);
 
             for (int i = 0; i < eyesData.Length; i++)
             {
@@ -130,41 +139,74 @@ namespace FIMSpace.FEyes
                 Eye eye = eyesData[i];
 
                 Vector3 rootPos = Eyes[i].position;
-                Vector3 targetPos = Eyes[i].position + Vector3.Scale(transform.forward, Eyes[i].transform.lossyScale);
+                Vector3 targetPos = Eyes[i].position + Vector3.Scale(BaseTransform.forward/*bs*/, Eyes[i].transform.lossyScale);
                 eye.forward = (Eyes[i].InverseTransformPoint(targetPos) - Eyes[i].InverseTransformPoint(rootPos)).normalized;
+
+                targetPos = Eyes[i].position + Vector3.Scale(BaseTransform.up/*bs*/, Eyes[i].transform.lossyScale);
+                eye.up = (Eyes[i].InverseTransformPoint(targetPos) - Eyes[i].InverseTransformPoint(rootPos)).normalized;
+
+                targetPos = Eyes[i].position + Vector3.Scale(BaseTransform.right/*bs*/, Eyes[i].transform.lossyScale);
+                eye.right = (Eyes[i].InverseTransformPoint(targetPos) - Eyes[i].InverseTransformPoint(rootPos)).normalized;
 
                 eye.initLocalRotation = Eyes[i].localRotation;
                 eye.lerpRotation = Eyes[i].rotation;
-                eye.SetLagStartRotation(BaseTransform, Eyes[i].rotation);
 
                 eye.randomTimer = 0f;
                 eye.randomDir = Vector3.zero;
                 eye.lagTimer = 0f;
-                eye.lagProgress = 1f;
                 eye.changeSmoother = 1f;
+                eye.lagProgress = 1f;
+
+                eyesData[i].lerpRotation = Eyes[i].parent.rotation * eyesData[i].initLocalRotation;
+                eyesData[i].lagStartRotation = Eyes[i].parent.rotation * eyesData[i].initLocalRotation;
+
+                eye.PrepareMappingFactor(this, Eyes[i]);
             }
 
-            AdjustCount(EyeSetups, Eyes.Count);
-
-            headForward = HeadReference.InverseTransformDirection(transform.forward);
+            headForward = HeadReference.InverseTransformDirection(BaseTransform.forward /*bs*/);
             headForwardFromTo = Quaternion.FromToRotation(headForward, Vector3.forward) * Vector3.forward;
 
-            headReferenceLookForward = Quaternion.Inverse( HeadReference.rotation ) * BaseTransform.rotation * Forward;
-            headReferenceUp = Quaternion.Inverse( HeadReference.rotation ) * BaseTransform.rotation * Up;
+            headReferenceLookForward = Quaternion.Inverse(HeadReference.rotation) * BaseTransform.rotation * Forward;
+            headReferenceUp = Quaternion.Inverse(HeadReference.rotation) * BaseTransform.rotation * Up;
+            headUp = HeadReference.transform.InverseTransformDirection(BaseTransform.up);
 
             OutOfDistance = true;
             OutOfRange = true;
+            OptimizationCameraReference = null;
 
             SetupBlinking();
             StartLookAnim();
         }
 
+        bool optimizeUpdate = false;
         private void Update()
         {
-            if (EyesAnimatorAmount <= 0f) return;
-            if (EyesRandomMovement <= 0f && FollowTargetAmount <= 0f) return;
+            optimizeUpdate = false;
 
-            if( WorldUpIsBaseTransformUp ) WorldUp = BaseTransform.up;
+            if (OptimizeWithMesh) if (OptimizeWithMesh.isVisible == false) { optimizeUpdate = true; return; }
+
+            if (OptimizeAtDistance > 0f)
+            {
+                Transform cam = OptimizationCameraReference;
+                if (cam == null) if (Camera.main) cam = Camera.main.transform;
+                if (cam != null)
+                {
+#if UNITY_EDITOR
+                    if (HeadReference == null) { Debug.Log("[Eyes Animator] Head Reference is required for distance optimization!"); return; }
+#endif
+                    float distace = Vector3.Distance(cam.position, HeadReference.position);
+                    if (distace > OptimizeAtDistance)
+                    {
+                        optimizeUpdate = true;
+                        return;
+                    }
+                }
+            }
+
+            if (EyesAnimatorAmount <= 0f) { optimizeUpdate = true; return; }
+            if (EyesRandomMovement <= 0f && FollowTargetAmount <= 0f) { optimizeUpdate = true; return; }
+
+            if (WorldUpIsBaseTransformUp) WorldUp = BaseTransform.up;
 
             // Calibrate eyes before unity animator
             for (int i = 0; i < Eyes.Count; i++)
@@ -180,8 +222,7 @@ namespace FIMSpace.FEyes
         /// </summary>
         protected virtual void LateUpdate()
         {
-            if (OptimizeWithMesh) if (OptimizeWithMesh.isVisible == false) return;
-            if (EyesAnimatorAmount <= 0f) return;
+            if (optimizeUpdate) return;
 
             IsClamping = false;
 
@@ -192,10 +233,11 @@ namespace FIMSpace.FEyes
             else
                 targetLookPosition = HeadReference.position + BaseTransform.forward * 10f;
 
-            ComputeBaseRotations(ref lookRotationBase);
+            ComputeBaseRotations();
 
             if (UseBlinking) if (BlinkingBlend > 0f) UpdateBlinking();
 
+            headUpDynamic = HeadReference.transform.TransformDirection(headUp);
 
             // Calculations for each eye
             for (int i = 0; i < Eyes.Count; i++)
@@ -240,8 +282,8 @@ namespace FIMSpace.FEyes
                     }
                     else
                     {
-                        if( IsClamping ) eyesData[i].SetLagStartRotation( BaseTransform, eyesData[i].lerpRotation );
-                        else CalculateLagTimerNonIndividualEvent( i );
+                        if (IsClamping) eyesData[i].SetLagStartRotation(BaseTransform, eyesData[i].lerpRotation);
+                        else CalculateLagTimerNonIndividualEvent(i);
                     }
                 }
 
@@ -253,28 +295,28 @@ namespace FIMSpace.FEyes
                 var eyeSetup = EyeSetups[i];
                 if (eyeSetup.ControlType == EyeSetup.EEyeControlType.Blendshape)
                 {
-                    if( eyeSetup.BlendshapeMesh == null ) continue;
+                    if (eyeSetup.BlendshapeMesh == null) continue;
                     blendshapeAnglesRequest = true;
 
                     Vector3 lookAngles = LookDeltaAnglesClamped;
 
-                    if( eyesData[randomId].randomDir != Vector3.zero )
+                    if (eyesData[randomId].randomDir != Vector3.zero)
                     {
-                        lookAngles += Vector3.LerpUnclamped( Vector3.zero, eyesData[randomId].randomDir, EyesRandomMovement );
+                        lookAngles += Vector3.LerpUnclamped(Vector3.zero, eyesData[randomId].randomDir, EyesRandomMovement);
 
-                        if( lookAngles.x < EyesClampVertical.x ) lookAngles.x = EyesClampVertical.x;
-                        else if( lookAngles.x > EyesClampVertical.y ) lookAngles.x = EyesClampVertical.y;
+                        if (lookAngles.x < EyesClampVertical.x) lookAngles.x = EyesClampVertical.x;
+                        else if (lookAngles.x > EyesClampVertical.y) lookAngles.x = EyesClampVertical.y;
 
-                        if( lookAngles.y < EyesClampHorizontal.x ) lookAngles.y = EyesClampHorizontal.x;
-                        else if( lookAngles.y > EyesClampHorizontal.y ) lookAngles.y = EyesClampHorizontal.y;
+                        if (lookAngles.y < EyesClampHorizontal.x) lookAngles.y = EyesClampHorizontal.x;
+                        else if (lookAngles.y > EyesClampHorizontal.y) lookAngles.y = EyesClampHorizontal.y;
                     }
 
-                    Vector3 lookDir = Quaternion.Euler( lookAngles ) * Vector3.forward;
-                    eyeSetup.EyeLeftX( lookDir.x );
-                    eyeSetup.EyeRightX( lookDir.x );
+                    Vector3 lookDir = Quaternion.Euler(lookAngles) * Vector3.forward;
+                    eyeSetup.EyeLeftX(lookDir.x);
+                    eyeSetup.EyeRightX(lookDir.x);
 
-                    eyeSetup.EyeUpY( lookDir.y );
-                    eyeSetup.EyeDownY( lookDir.y );
+                    eyeSetup.EyeUpY(lookDir.y);
+                    eyeSetup.EyeDownY(lookDir.y);
                 }
 
                 #endregion
@@ -293,17 +335,9 @@ namespace FIMSpace.FEyes
                     if (eyesData[lagId].lagProgress > 0f) notSquintedRotation = Quaternion.Slerp(notSquintedRotation, eyesData[i].GetLagStartRotation(BaseTransform), eyesData[lagId].lagProgress * EyesLagAmount);
                 }
 
-                //Quaternion notSquintedRotation = lookRotationBase;
-
-                notSquintedRotation *= Quaternion.FromToRotation(eyesData[i].forward, Vector3.forward);
-                notSquintedRotation *= eyesData[i].initLocalRotation;
-
-                Eyes[i].rotation = notSquintedRotation;
-                Eyes[i].rotation *= Quaternion.Inverse(eyesData[i].initLocalRotation);
-                notSquintedRotation = Eyes[i].rotation;
+                notSquintedRotation = Quaternion.LookRotation(notSquintedRotation * Forward, headUpDynamic) * eyesData[i].mapping;
 
                 #endregion
-
 
                 Quaternion targetEyeLookRotation = notSquintedRotation;
 
@@ -314,8 +348,7 @@ namespace FIMSpace.FEyes
                     Quaternion individualRotation;
                     Quaternion lookRotationQuatInd;
 
-                         lookRotationQuatInd = Quaternion.LookRotation( targetLookPosition - Eyes[i].position, WorldUp );
-                    
+                    lookRotationQuatInd = Quaternion.LookRotation(targetLookPosition - Eyes[i].position, WorldUp);
 
                     Vector3 lookRotationInd = lookRotationQuatInd.eulerAngles;
 
@@ -331,17 +364,10 @@ namespace FIMSpace.FEyes
 
                     // Getting clamped rotation
                     individualRotation = Quaternion.Euler(lookRotationInd);
-
-                    individualRotation *= Quaternion.FromToRotation(eyesData[i].forward, Vector3.forward);
-                    individualRotation *= eyesData[i].initLocalRotation;
-
-                    Eyes[i].rotation = individualRotation;
-                    Eyes[i].rotation *= Quaternion.Inverse(eyesData[i].initLocalRotation);
-                    individualRotation = Eyes[i].rotation;
+                    individualRotation = Quaternion.LookRotation(individualRotation * Vector3.forward, headUpDynamic) * eyesData[i].mapping;
 
                     targetEyeLookRotation = Quaternion.SlerpUnclamped(individualRotation, notSquintedRotation, SquintPreventer);
                 }
-
 
                 #endregion
 
@@ -350,17 +376,14 @@ namespace FIMSpace.FEyes
 
                 // Eye lag feature if not clamped
                 //if (EyesLagAmount > 0f) /*if (!IsClamping) */if (eyesData[lagId].lagProgress > 0f) targetEyeLookRotation = Quaternion.SlerpUnclamped(targetEyeLookRotation, eyesData[i].GetLagStartRotation(BaseTransform), eyesData[lagId].lagProgress * EyesLagAmount);
-                //
 
                 eyesSpeedValue = Mathf.LerpUnclamped(2f, 60f, EyesSpeed);
 
                 float deltaLimit = Time.deltaTime * eyesSpeedValue * Mathf.Lerp(1f, eyesData[i].changeSmoother, EyesRandomMovement);
                 if (deltaLimit > 1f) deltaLimit = 1f;
 
-
                 if (EyeSetups[i].ControlType == EyeSetup.EEyeControlType.RotateBone)
                 {
-
                     eyesData[i].lerpRotation = // Rotating eyes towards target rotation with certain speed with lag influence etc.
                         Quaternion.SlerpUnclamped(
                             eyesData[i].lerpRotation, targetEyeLookRotation, // Transitioning towards desired eye rotation
@@ -380,7 +403,7 @@ namespace FIMSpace.FEyes
             if (UseBlinking) UpdateBlinking();
 
             UpdateLookAnim(); // Updating look animator implementation (my other package)
-            
+
         }
 
 
@@ -452,7 +475,12 @@ namespace FIMSpace.FEyes
 
         protected virtual void OnValidate()
         {
-            UpdateLists();
+#if UNITY_EDITOR
+            if (UnityEditor.Selection.objects.Contains(gameObject))
+            {
+                UpdateLists();
+            }
+#endif
         }
 
 
@@ -460,7 +488,7 @@ namespace FIMSpace.FEyes
         {
             if (Eyes == null) Eyes = new List<Transform>();
             if (CorrectionOffsets == null) CorrectionOffsets = new List<Vector3>();
-            
+
             if (Eyes.Count != CorrectionOffsets.Count)
             {
                 if (CorrectionOffsets.Count > Eyes.Count)
@@ -525,8 +553,8 @@ namespace FIMSpace.FEyes
                 }
             }
 
-            if( UpEyelidsBlendShapes == null ) UpEyelidsBlendShapes = new List<EyesAnimator_BlenshapesInfo>();
-            if( DownEyelidsBlendShapes == null ) DownEyelidsBlendShapes = new List<EyesAnimator_BlenshapesInfo>();
+            if (UpEyelidsBlendShapes == null) UpEyelidsBlendShapes = new List<EyesAnimator_BlenshapesInfo>();
+            if (DownEyelidsBlendShapes == null) DownEyelidsBlendShapes = new List<EyesAnimator_BlenshapesInfo>();
         }
 
 

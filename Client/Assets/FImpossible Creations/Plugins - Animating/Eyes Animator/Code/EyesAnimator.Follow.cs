@@ -15,7 +15,7 @@ namespace FIMSpace.FEyes
         public Vector2 LookDeltaAnglesClamped { get; private set; }
         bool blendshapeAnglesRequest = false;
 
-        private void ComputeBaseRotations(ref Quaternion lookRotationBase)
+        private void ComputeBaseRotations()
         {
             // Look position referencing from middle of head for unsquinted look rotation
             LookStartPositionBase = GetStartLookPosition();

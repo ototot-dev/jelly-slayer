@@ -83,8 +83,9 @@ namespace FIMSpace.FSpine
 #if UNITY_EDITOR
             if (PivotOffsetOnStart) if (Application.isPlaying == false)
                 {
-                    Vector3 off = GetBaseTransform().TransformVector(MainPivotOffset);
+                    Vector3 off = MainPivotOffset;
                     off.z = -off.z;
+                    off = GetBaseTransform().TransformVector(off);
                     basePos += off;
                 }
 #endif

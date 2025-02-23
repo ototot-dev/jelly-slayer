@@ -42,8 +42,9 @@ namespace Environment.Instancing
                 var instanceData = child.GetInstanceData();
                 if (instanceData == null)
                 {
-                    Debug.Log("asdasd");
+                    Debug.LogError("GetInstanceData should not return null.");
                 }
+
                 foreach (var (configuration, data) in instanceData)
                 {
                     for (var i = 0; i < data.Count; i++)

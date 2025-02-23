@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace FIMSpace.FProceduralAnimation
@@ -88,6 +89,8 @@ namespace FIMSpace.FProceduralAnimation
 
         [Tooltip("Disable Legs Animator calculations when this renderer is not seen by any camera (including scene view camera!)")]
         public Renderer DisableIfInvisible = null;
+        public List<Renderer> DisableIfInvisibleExtraRenderers = new List<Renderer>();
+
         [Tooltip("Smoothly fade out Legs Animator when far from the camera")]
         public float FadeOffAtDistance = 0f;
 

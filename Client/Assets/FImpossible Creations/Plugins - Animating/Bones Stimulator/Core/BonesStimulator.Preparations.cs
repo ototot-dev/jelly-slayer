@@ -138,24 +138,32 @@ namespace FIMSpace.BonesStimulation
                     return;
                 }
 
-            //if (UnscaledDelta)
-            //{
-            //    if (!AnimatePhysics) delta = Time.unscaledDeltaTime; else delta = Time.fixedUnscaledDeltaTime;
-            //}
-            //else
-            //{
-            //    if (!AnimatePhysics) delta = Time.deltaTime; else delta = Time.fixedDeltaTime;
-            //}
 
-            if (UnscaledDelta)
+            if( UnscaledDelta )
             {
-                delta = Time.unscaledDeltaTime;
-                if (Time.timeScale == 0f) smoothDelta = 0f; else smoothDelta = Time.smoothDeltaTime / Time.timeScale;
+                if( !AnimatePhysics )
+                {
+                    delta = Time.unscaledDeltaTime;
+                    if( Time.timeScale == 0f ) smoothDelta = 0f; else smoothDelta = Time.smoothDeltaTime / Time.timeScale;
+                }
+                else
+                {
+                    delta = Time.fixedUnscaledDeltaTime;
+                    smoothDelta = Time.fixedDeltaTime;
+                }
             }
             else
             {
-                delta = Time.deltaTime;
-                smoothDelta = Time.smoothDeltaTime;
+                if( !AnimatePhysics )
+                {
+                    delta = Time.deltaTime;
+                    smoothDelta = Time.smoothDeltaTime;
+                }
+                else
+                {
+                    delta = Time.fixedDeltaTime;
+                    smoothDelta = Time.fixedDeltaTime;
+                }
             }
 
             elapsedDelta += delta;

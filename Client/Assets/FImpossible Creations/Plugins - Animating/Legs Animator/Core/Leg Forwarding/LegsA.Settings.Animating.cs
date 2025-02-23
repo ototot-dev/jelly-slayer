@@ -53,6 +53,8 @@ namespace FIMSpace.FProceduralAnimation
             [FPD_FixedCurveWindow(0f, -1f, 1f, 1f)]
             public AnimationCurve FootRotationCurve;
 
+            [Tooltip( "When steps are too small, then leg will not apply hips motion to the system" )]
+            [Range( 0f, 0.2f )] public float DoStepAnimationOnDistanceFactor = 0.055f;
 
 
             #region Curves Definition

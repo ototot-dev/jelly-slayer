@@ -91,17 +91,23 @@ namespace FIMSpace.FProceduralAnimation
                     if( _helperAttachableGeneratingDictionary == null ) _helperAttachableGeneratingDictionary = new Dictionary<Transform, Transform>();
 
                     Transform targetParent;
-                    if( _helperAttachableGeneratingDictionary.TryGetValue( coll.transform, out targetParent ) == false )
+                    _helperAttachableGeneratingDictionary.TryGetValue(coll.transform, out targetParent);
+
+                    if (targetParent == null)
                     {
-                        GameObject rootChild = new GameObject( coll.name + ":Attachable Physics" );
+                        GameObject rootChild = new GameObject(coll.name + ":Attachable Physics");
                         rootChild.layer = attachable.ChangeObjectLayer ? RagdollDummyLayer : coll.gameObject.layer;
                         targetParent = rootChild.transform;
 
                         targetParent.localScale = coll.transform.lossyScale;
-                        targetParent.SetParent( physicsObjectParent.transform, true );
+                        targetParent.SetParent(physicsObjectParent.transform, true);
                         targetParent.position = coll.transform.position;
                         targetParent.rotation = coll.transform.rotation;
-                        _helperAttachableGeneratingDictionary.Add( coll.transform, targetParent );
+
+                        if (_helperAttachableGeneratingDictionary.ContainsKey(coll.transform))
+                            _helperAttachableGeneratingDictionary[coll.transform] = targetParent;
+                        else
+                            _helperAttachableGeneratingDictionary.Add(coll.transform, targetParent);
                     }
 
                     // Generate physical object collision

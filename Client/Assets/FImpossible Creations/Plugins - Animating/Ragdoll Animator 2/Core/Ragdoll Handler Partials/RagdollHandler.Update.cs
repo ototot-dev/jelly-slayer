@@ -19,6 +19,7 @@ namespace FIMSpace.FProceduralAnimation
         internal bool disableUpdating = false;
 
         private bool _wasDisableUpdating = false;
+        private EAnimatingMode _lastAnimatingMode = (EAnimatingMode)(-1);
 
         /// <summary> Delta time lately used by the Ragdoll Animator </summary>
         public float Delta
@@ -36,6 +37,7 @@ namespace FIMSpace.FProceduralAnimation
             if (RagdollLogic == ERagdollLogic.JustBoneComponents)
             {
                 disableUpdating = true;
+                _lastAnimatingMode = animatingMode;
                 return;
             }
 
@@ -45,6 +47,7 @@ namespace FIMSpace.FProceduralAnimation
             {
                 disableUpdating = true;
                 _wasDisableUpdating = true;
+                _lastAnimatingMode = animatingMode;
                 return;
             }
 
@@ -53,6 +56,7 @@ namespace FIMSpace.FProceduralAnimation
                 {
                     disableUpdating = true;
                     _wasDisableUpdating = true;
+                    _lastAnimatingMode = animatingMode;
                     return;
                 }
 
@@ -60,6 +64,7 @@ namespace FIMSpace.FProceduralAnimation
             {
                 disableUpdating = true;
                 _wasDisableUpdating = true;
+                _lastAnimatingMode = animatingMode;
                 return;
             }
             else if (AnimatingMode == EAnimatingMode.Sleep)
@@ -72,11 +77,11 @@ namespace FIMSpace.FProceduralAnimation
                     // On Enable back
                     if (_wasSleepDisable == false) ResetFadeInBlend();
 
-                    if (IsInFallingMode == false)
+                    if (IsInFallingMode == false || (_lastAnimatingMode == EAnimatingMode.Off && animatingMode != EAnimatingMode.Off))
                     //if (animatingMode != EAnimatingMode.Sleep)
                     {
                         this.User_ForceMatchPhysicalBonesWithAnimator(true);
-                        Caller?.StartCoroutine(_IE_CallForFixedFrames( () => { GetAnchorBoneController.BoneProcessor.ResetPoseParameters(); }, 3));
+                        Caller?.StartCoroutine(_IE_CallForFixedFrames(() => { GetAnchorBoneController.BoneProcessor.ResetPoseParameters(); }, 3));
                         this.User_WarpRefresh();
                     }
 
@@ -87,6 +92,8 @@ namespace FIMSpace.FProceduralAnimation
                     _wasSleepDisable = false;
                     _wasDisableUpdating = false;
                 }
+
+            _lastAnimatingMode = animatingMode;
         }
 
         private void CalculateRagdollBlend()
