@@ -25,24 +25,23 @@ public class UITutorialPanel : MonoBehaviour
 
     Coroutine _coroutine;
 
-    // ÇÑ±Û À¯´ÏÄÚµå ¹üÀ§¿Í ¸ðÀ½ Å×ÀÌºí
+    // ï¿½Ñ±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìºï¿½
     private const int HANGUL_START = 0xAC00;
     private const int HANGUL_END = 0xD7A3;
     private static readonly string[] JUNGSEONG_TABLE =
     {
-        "¤¿", "¤À", "¤Á", "¤Â", 
-        "¤Ã", "¤Ä", "¤Å", "¤Æ",
-        "¤Ç", "¤È", "¤É", "¤Ê", 
-        "¤Ë", "¤Ì", "¤Í", "¤Î", 
-        "¤Ï", "¤Ð", "¤Ñ", "¤Ò", "¤Ó"
+        "ï¿½ï¿½", "ï¿½ï¿½", "ï¿½ï¿½", "ï¿½ï¿½", 
+        "ï¿½ï¿½", "ï¿½ï¿½", "ï¿½ï¿½", "ï¿½ï¿½",
+        "ï¿½ï¿½", "ï¿½ï¿½", "ï¿½ï¿½", "ï¿½ï¿½", 
+        "ï¿½ï¿½", "ï¿½ï¿½", "ï¿½ï¿½", "ï¿½ï¿½", 
+        "ï¿½ï¿½", "ï¿½ï¿½", "ï¿½ï¿½", "ï¿½ï¿½", "ï¿½ï¿½"
     };
     Dictionary<string, MOUTH> _dicVowel = new Dictionary<string, MOUTH>{ 
-        { "¤¿", MOUTH.A }, { "¤À", MOUTH.E }, { "¤Á", MOUTH.A }, { "¤Â", MOUTH.A }, 
-        { "¤Ã", MOUTH.E }, { "¤Ä", MOUTH.E }, { "¤Å", MOUTH.E }, { "¤Æ", MOUTH.E },
-        { "¤Ç", MOUTH.O }, { "¤È", MOUTH.O }, { "¤É", MOUTH.O }, { "¤Ê", MOUTH.O },
-        { "¤Ë", MOUTH.O }, { "¤Ì", MOUTH.U }, { "¤Í", MOUTH.U }, { "¤Î", MOUTH.U },
-        { "¤Ï", MOUTH.I }, { "¤Ð", MOUTH.U }, { "¤Ñ", MOUTH.U }, { "¤Ò", MOUTH.I }, { "¤Ó", MOUTH.I },
-
+        // { "ï¿½ï¿½", MOUTH.A }, { "ï¿½ï¿½", MOUTH.E }, { "ï¿½ï¿½", MOUTH.A }, { "ï¿½ï¿½", MOUTH.A }, 
+        // { "ï¿½ï¿½", MOUTH.E }, { "ï¿½ï¿½", MOUTH.E }, { "ï¿½ï¿½", MOUTH.E }, { "ï¿½ï¿½", MOUTH.E },
+        // { "ï¿½ï¿½", MOUTH.O }, { "ï¿½ï¿½", MOUTH.O }, { "ï¿½ï¿½", MOUTH.O }, { "ï¿½ï¿½", MOUTH.O },
+        // { "ï¿½ï¿½", MOUTH.O }, { "ï¿½ï¿½", MOUTH.U }, { "ï¿½ï¿½", MOUTH.U }, { "ï¿½ï¿½", MOUTH.U },
+        // { "ï¿½ï¿½", MOUTH.I }, { "ï¿½ï¿½", MOUTH.U }, { "ï¿½ï¿½", MOUTH.U }, { "ï¿½ï¿½", MOUTH.I }, { "ï¿½ï¿½", MOUTH.I },
     };
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -99,25 +98,25 @@ public class UITutorialPanel : MonoBehaviour
     void OnTutorialEnd() 
     { 
     }
-    // ¹®ÀÚ¿­¿¡¼­ ÇÑ ±ÛÀÚÀÇ ¸ðÀ½À» ÃßÃâÇÏ´Â ÇÔ¼ö
+    // ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½
     public static string GetVowel(System.Char c)
     {
         /*if (string.IsNullOrEmpty(character) || character.Length != 1)
         {
-            Debug.LogError("ÀÔ·ÂÀº ÇÑ ±ÛÀÚ¿©¾ß ÇÕ´Ï´Ù.");
+            Debug.LogError("ï¿½Ô·ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½Õ´Ï´ï¿½.");
             return null;
         }
 
         char c = character[0];
         */
-        // À¯´ÏÄÚµå ¹üÀ§ ³»¿¡ ÀÖ´ÂÁö È®ÀÎ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½
         if (c < HANGUL_START || c > HANGUL_END)
         {
-            Debug.LogWarning("ÇÑ±ÛÀÌ ¾Æ´Ñ ¹®ÀÚ°¡ ÀÔ·ÂµÇ¾ú½À´Ï´Ù.");
+            Debug.LogWarning("ï¿½Ñ±ï¿½ï¿½ï¿½ ï¿½Æ´ï¿½ ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½Ô·ÂµÇ¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
             return null;
         }
 
-        // ÇÑ±Û À¯´ÏÄÚµå °ª¿¡¼­ Áß¼º ÀÎµ¦½º¸¦ ÃßÃâ
+        // ï¿½Ñ±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß¼ï¿½ ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         int unicodeIndex = c - HANGUL_START;
         int jungsungIndex = (unicodeIndex % (21 * 28)) / 28;
 
@@ -131,10 +130,10 @@ public class UITutorialPanel : MonoBehaviour
 
         while (index < _fullText.Length)
         {
-            if (_fullText[index] == '<') // ÅÂ±× ½ÃÀÛ
+            if (_fullText[index] == '<') // ï¿½Â±ï¿½ ï¿½ï¿½ï¿½ï¿½
             {
                 int closeTagIndex = _fullText.IndexOf('>', index);
-                if (closeTagIndex != -1) // ÅÂ±× ´ÝÈû
+                if (closeTagIndex != -1) // ï¿½Â±ï¿½ ï¿½ï¿½ï¿½ï¿½
                 {
                     currentText += _fullText.Substring(index, closeTagIndex - index + 1);
                     index = closeTagIndex + 1;
