@@ -2531,11 +2531,11 @@ MonoBehaviour:
   UseGluing: 1
   MainGlueBlend: 1
   GlueRangeThreshold: 1
-  GlueFadeInSpeed: 1
+  GlueFadeInSpeed: 0.9
   AllowGlueBelowFoot: 0.2
-  GlueFadeOutSpeed: 0.5
-  UnglueOn: 30
-  AllowGlueDrag: 0.2
+  GlueFadeOutSpeed: 0.8
+  UnglueOn: 15
+  AllowGlueDrag: 0.1
   GlueMode: 2
   OnlyLocalAnimation: 0
   SmoothSuddenSteps: 0.5
@@ -3069,8 +3069,8 @@ Transform:
   m_GameObject: {fileID: 1098007411617824454}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5037242, y: 0.5332692, z: 0.6480267, w: 0.20481029}
-  m_LocalPosition: {x: -0.116, y: 1.162, z: -1.217}
-  m_LocalScale: {x: 2.7, y: 2.7, z: 2.7}
+  m_LocalPosition: {x: -0.245, y: 1.328, z: -1.644}
+  m_LocalScale: {x: 3.4, y: 3.4, z: 3.4}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 827300965817690329}
@@ -4823,7 +4823,7 @@ SkinnedMeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1483762067115523788}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -24513,7 +24513,7 @@ SkinnedMeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3480735062581954250}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -72655,7 +72655,7 @@ MonoBehaviour:
   freezeMovement: 0
   freezeRotation: 0
   rootMotionEnabled: 1
-  moveSpeed: 1
+  moveSpeed: 1.6
   moveAccel: 10
   moveBrake: 10
   rotateSpeed: 360
@@ -72686,6 +72686,7 @@ MonoBehaviour:
   shieldMeshSlot: {fileID: 321786650567484540}
   hookingPoint: {fileID: 0}
   lookAt: {fileID: 2628180316295316148}
+  headBone: {fileID: 5278882544679535675}
   shieldMeshRenderer: {fileID: 1458070737609187091}
   eyeAnimator: {fileID: 8650522791528342824}
   leftArmBoneSimulator: {fileID: 2170937694511617402}
@@ -72701,6 +72702,7 @@ MonoBehaviour:
   armBoneSimulatorTargetWeight: 1
   legBoneSimulatorBlendSpeed: 4
   legBoneSimulatorTargetWeight: 0.4
+  headBoneScaleFactor: 1.3
   moveXmoveY_Table:
   - {x: -1, y: 0, z: 0}
   - {x: 1, y: 0, z: 0}
@@ -72753,7 +72755,7 @@ MonoBehaviour:
   lateUpdateEnabled: 1
   fixedUpdateEnabled: 1
   roboDogFormationCtrler: {fileID: 5938920085556766268}
-  debugActionDisabled: 0
+  debugActionDisabled: 1
 --- !u!114 &1626602440402030822
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72846,8 +72848,8 @@ MonoBehaviour:
     glidingDuration: -1
     glidingAmplitude: 1
     glidingFrequency: 2
-    spacingInDistance: 4
-    spacingOutDistance: 5
+    spacingInDistance: 9
+    spacingOutDistance: 10
     minSpacingDistance: 2
     maxSpacingDistance: 3
     minApproachDistance: 1
@@ -72869,6 +72871,7 @@ MonoBehaviour:
     laserForwardSpeed: 1
     laserRotateSpeed: 1
     laserCharingDuration: 1
+    leapJumpHeight: 4
     leapRootMotionDistance: 7
     leapRootMotionMultiplier: 1
     leapProbBoostRateOnIdle: 0.004

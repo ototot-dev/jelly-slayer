@@ -15,6 +15,7 @@ namespace Game
         public Transform shieldMeshSlot;
         public Transform hookingPoint;
         public Transform lookAt;
+        public Transform headBone;
         public MeshRenderer shieldMeshRenderer;
         public FEyesAnimator eyeAnimator;
         public BonesStimulator leftArmBoneSimulator;
@@ -32,6 +33,7 @@ namespace Game
         public float armBoneSimulatorTargetWeight = 0f;
         public float legBoneSimulatorBlendSpeed = 1f;
         public float legBoneSimulatorTargetWeight = 0f;
+        public float headBoneScaleFactor = 1f;
         public Vector3[] moveXmoveY_Table;
         SoldierBrain __brain;
         Rig __rig;
@@ -225,6 +227,9 @@ namespace Game
                     lookAt.position = __brain.BB.TargetBrain.coreColliderHelper.GetWorldCenter() + 0.5f * Vector3.up;
                 else
                     lookAt.position = __brain.coreColliderHelper.GetWorldCenter() + 1000f * __brain.coreColliderHelper.transform.forward;
+
+                //* 머리 사이즈 키우기
+                headBone.transform.localScale = headBoneScaleFactor * Vector3.one;
 
                 // __brain.ActionCtrler.hookingPointColliderHelper.transform.position = hookingPoint.transform.position;
             };
