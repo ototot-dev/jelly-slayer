@@ -122,6 +122,7 @@ namespace Game
         public bool CheckActionCanceled() { Debug.Assert(CheckActionRunning()); return currActionContext.actionCanceled; }
         public bool CheckMovementEnabled() { Debug.Assert(CheckActionRunning()); return currActionContext.movementEnabled; }
         public bool CanInterruptAction() { Debug.Assert(CheckActionRunning()); return currActionContext.interruptEnabled; }
+        public bool CanStartPendingAction() { Debug.Assert(CheckActionPending()); return !CheckActionRunning() && Time.time > PendingActionData.Item3 + PendingActionData.Item4; }
         public SuperArmorLevels GetSuperArmorLevel() => (SuperArmorLevels)(currActionContext.actionData?.superArmorLevel?? 0);
 
         public bool CheckSuperArmorLevel(SuperArmorLevels compareLevel) { return (currActionContext.actionData?.superArmorLevel?? 0) >= (int)compareLevel; }
@@ -133,8 +134,8 @@ namespace Game
         public string PendingActionName => PendingActionData.Item1;
         public string PendingPreMotionName => PendingActionData.Item2;
 
-        //* Item1: actionName, Item2: preMotionName, Item3: pendingTimeStamp
-        public  Tuple<string, string, float> PendingActionData { get; protected set; } = new(string.Empty, string.Empty, 0);
+        //* Item1: actionName, Item2: preMotionName, Item3: pendingTimeStamp, Item4: delayTime
+        public  Tuple<string, string, float, float> PendingActionData { get; protected set; } = new(string.Empty, string.Empty, 0f, 0f);
 
         //* Item1: Strength, Item2: Duration
         protected Dictionary<PawnStatus, Tuple<float, float>> __statusContainer = new();
@@ -218,22 +219,20 @@ namespace Game
         public virtual IDisposable StartCustomAction(ref PawnHeartPointDispatcher.DamageContext damageContext, string actionName, bool isAddictiveAction = false) { return null; }
         public virtual void EmitActionHandler(GameObject emitPrefab, Transform emitPoint, int emitIndex) {}
 
-        public void SetPendingAction(string actionName)
-        {
-            SetPendingAction(actionName, string.Empty);
-        }
-
-        public void SetPendingAction(string actionName, string preMotionName)
+        public void SetPendingAction(string actionName, string preMotionName, float delayTime)
         {
             if (!string.IsNullOrEmpty(PendingActionData.Item1))
                 __Logger.WarningR2(gameObject, nameof(PendingActionData), "__pendingAction is not empty value!!", "actionName", PendingActionData.Item1);
 
-            PendingActionData = new(actionName, preMotionName, Time.time);
+            PendingActionData = new(actionName, preMotionName, Time.time, delayTime);
         }
-
+        public void SetPendingAction(string actionName)
+        {
+            SetPendingAction(actionName, string.Empty, 0f);
+        }
         public void ClearPendingAction()
         {
-            PendingActionData = new(string.Empty, string.Empty, 0);
+            PendingActionData = new(string.Empty, string.Empty, 0f, 0f);
         }
 
         void Awake()

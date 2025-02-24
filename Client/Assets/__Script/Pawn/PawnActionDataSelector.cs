@@ -11,32 +11,36 @@ namespace Game
 #region ActionSequence 구현
         public class ActionSequence
         {
-            public ActionSequence(int hashCode, string sequenceName, params MainTable.ActionData[] sequenceData)
+            public ActionSequence(int hashCode, string sequenceName, MainTable.ActionData[] sequenceData, Dictionary<int, float> paddindTimeData)
             {
                 HashCode = hashCode;
                 SequenceName = sequenceName;
                 __sequenceData = sequenceData;
+                __paddingTimeData = paddindTimeData;
                 __currIndex = -1;
             }
 
             public MainTable.ActionData this[int index]
             {
-                get => __sequenceData[index];  // 값 가져오기
-                set => __sequenceData[index] = value;  // 값 설정하기
+                get => __sequenceData[index];
+                set => __sequenceData[index] = value;
             }
             public MainTable.ActionData First() => __sequenceData[0];
             public MainTable.ActionData Last() => __sequenceData[__sequenceData.Length - 1];
             public MainTable.ActionData Curr() => __sequenceData[__currIndex];
             public MainTable.ActionData Next() => ++__currIndex < __sequenceData.Length ? __sequenceData[__currIndex] : null;
             public void Reset() { __currIndex = 0; }
+            public float GetPaddingTime() => (__paddingTimeData?.ContainsKey(__currIndex) ?? false) ? __paddingTimeData[__currIndex] : 0f;
             
             readonly MainTable.ActionData[] __sequenceData;
+            readonly Dictionary<int, float> __paddingTimeData;
             int __currIndex;
+            float __paddingTimeStamp;
             public int HashCode { get; private set; }
             public string SequenceName { get; private set; }
         }
 
-        public ActionSequence ReserveSequence<T>(T alias, params string[] actionNames) where T : Enum
+        public ActionSequence ReserveSequence<T>(T alias, params object[] actionNames) where T : Enum
         {
             var hashCode = alias.GetHashCode();
             if (__reservedSequences.ContainsKey(hashCode))
@@ -44,7 +48,20 @@ namespace Game
                 Debug.Assert(false);
                 return null;
             }
-            __reservedSequences.Add(hashCode, new ActionSequence(alias.GetHashCode(), alias.ToString(), actionNames.Select(n => DatasheetManager.Instance.GetActionData(__pawnBrain.PawnBB.common.pawnId, n)).ToArray()));
+
+            var actionData = new List<MainTable.ActionData>();
+            var paddingTimeData = new Dictionary<int, float>();
+            for (int i = 0; i < actionNames.Length; i++)
+            {
+                if (actionNames[i] is string s) 
+                    actionData.Add(DatasheetManager.Instance.GetActionData(__pawnBrain.PawnBB.common.pawnId, s));
+                else if (actionNames[i] is float f)
+                    paddingTimeData.Add(actionData.Count, f);
+                else
+                    Debug.Assert(false);
+            }
+
+            __reservedSequences.Add(hashCode, new ActionSequence(alias.GetHashCode(), alias.ToString(), actionData.ToArray(), paddingTimeData.Count > 0 ? paddingTimeData : null));
             return __reservedSequences[hashCode];
         }
 
@@ -82,19 +99,18 @@ namespace Game
             }
         }
 
+        public ActionSequence CurrSequence() => __sequenceQueue.TryPeek(out var ret) ? ret : null;
+        public ActionSequence NextSequence()
+        {
+            __sequenceQueue.Dequeue();
+            return CurrSequence();
+        }
         public ActionData AdvanceSequence()
         {
             if (__sequenceQueue.TryPeek(out var currSequence))
                 return currSequence.Next() != null ? currSequence.Curr() : (NextSequence()?.Curr() ?? null);
             else
                 return null;
-        }
-
-        public ActionSequence CurrSequence() => __sequenceQueue.TryPeek(out var ret) ? ret : null;
-        public ActionSequence NextSequence()
-        {
-            __sequenceQueue.Dequeue();
-            return CurrSequence();
         }
         public void ClearSequences() { __sequenceQueue.Clear(); }
 

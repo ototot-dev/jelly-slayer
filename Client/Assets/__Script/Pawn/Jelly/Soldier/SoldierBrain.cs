@@ -74,7 +74,7 @@ namespace Game
             ActionDataSelector.ReserveSequence(ActionPatterns.Counter, "Counter");
             ActionDataSelector.ReserveSequence(ActionPatterns.Missile, "BackStep", "Missile");
             ActionDataSelector.ReserveSequence(ActionPatterns.Combo, "Attack#1", "Attack#2", "Attack#3");
-            ActionDataSelector.ReserveSequence(ActionPatterns.Leap, "BackStep", "Missile", "Leap");
+            ActionDataSelector.ReserveSequence(ActionPatterns.Leap, "BackStep", "Missile", 0.2f, "Leap");
 
             onTick += (deltaTick) =>
             {
@@ -83,8 +83,8 @@ namespace Game
 
                 ActionDataSelector.UpdateSelection(deltaTick);
 
-                if (BB.action.sequenceCoolTimeLeft > 0f)
-                    BB.action.sequenceCoolTimeLeft -= deltaTick;
+                if (BB.action.sequenceCoolDownTimeLeft > 0f)
+                    BB.action.sequenceCoolDownTimeLeft -= deltaTick;
                 
                 if (debugActionDisabled || BB.IsGroggy || BB.IsDown || !BB.IsInCombat || BB.TargetPawn == null)
                     return;
@@ -94,7 +94,7 @@ namespace Game
                 if (!ActionCtrler.CheckActionRunning() || ActionCtrler.CanInterruptAction())
                 {
                     var nextActionData = ActionDataSelector.AdvanceSequence();
-                    if (nextActionData == null && BB.action.sequenceCoolTimeLeft <= 0f)
+                    if (nextActionData == null && BB.action.sequenceCoolDownTimeLeft <= 0f)
                     {
                         if (ActionDataSelector.TryPickRandomSelection(1f, -1f, out var randomActionData))
                         {
@@ -132,7 +132,7 @@ namespace Game
                     {
                         if (ActionCtrler.CheckActionRunning()) ActionCtrler.CancelAction(false);
 
-                        ActionCtrler.SetPendingAction(nextActionData.actionName);
+                        ActionCtrler.SetPendingAction(nextActionData.actionName, string.Empty, ActionDataSelector.CurrSequence().GetPaddingTime());
                         ActionDataSelector.ResetSelection(nextActionData);
                     }
                 }
@@ -161,8 +161,8 @@ namespace Game
                 //* ActionPoint 전부 소모하면 CoolDown 상태로 진입
                 if (v <= 0) 
                 {
-                    BB.action.sequenceCoolTimeLeft = UnityEngine.Random.Range(BB.action.minCoolDownDuration, BB.action.maxCoolDownDuration);
-                    __Logger.LogR1(gameObject, "BB.stat.actionPoint becomes 0 and enters Cooldown.", "BB.action.sequenceCoolTimeLeft", BB.action.sequenceCoolTimeLeft);
+                    BB.action.sequenceCoolDownTimeLeft = UnityEngine.Random.Range(BB.action.minCoolDownDuration, BB.action.maxCoolDownDuration);
+                    __Logger.LogR1(gameObject, "BB.stat.actionPoint becomes 0 and enters Cooldown.", "BB.action.sequenceCoolTimeLeft", BB.action.sequenceCoolDownTimeLeft);
 
                     Observable.NextFrame().Subscribe(_ => 
                     {

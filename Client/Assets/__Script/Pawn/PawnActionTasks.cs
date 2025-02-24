@@ -21,6 +21,26 @@ namespace Game.NodeCanvasExtension
     }
 
     [Category("Pawn")]
+    public class CheckActionPending : ConditionTask
+    {
+        protected override string info => "CheckActionPending() == " + (invert ? "False" : "True");
+        protected override bool OnCheck() 
+        {
+            return agent.GetComponent<PawnActionController>().CheckActionPending();
+        }
+    }
+
+    [Category("Pawn")]
+    public class CanStartPendingAction : ConditionTask
+    {
+        protected override string info => "CanStartPendingAction() == " + (invert ? "False" : "True");
+        protected override bool OnCheck() 
+        {
+            return agent.GetComponent<PawnActionController>().CanStartPendingAction();
+        }
+    }
+
+    [Category("Pawn")]
     public class CheckActionHasPreMotion : ConditionTask
     {
         protected override string info => "CheckActionHasPreMotion() == " + (invert ? "False" : "True");

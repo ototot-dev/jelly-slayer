@@ -1916,7 +1916,7 @@ MonoBehaviour:
     AnkleYawCorrection: 0
     _FinalIKPos: {x: 0, y: 0, z: 0}
   BaseLegAnimating:
-    StepMoveDuration: 0.45
+    StepMoveDuration: 0.3
     MoveToGoalCurve:
       serializedVersion: 2
       m_Curve:
@@ -2114,6 +2114,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
+    DoStepAnimationOnDistanceFactor: 0.055
   UseGluing: 1
   MainGlueBlend: 1
   GlueRangeThreshold: 0.25
@@ -2136,10 +2137,18 @@ MonoBehaviour:
   _Editor_EnsureCount: 0
   _Editor_OnValidateTrigger: 1
   _EditorAllowAutoUpdateFeetParams: 1
-  _EditorCategory: 0
+  _EditorCategory: 1
   _EditorSetupCategory: 0
-  _EditorMotionCategory: 0
+  _EditorMotionCategory: 2
   _EditorExtraCategory: 0
+  setupPose:
+    MainHipsPose:
+      SourceTransform: {fileID: 0}
+      RotationInRoot: {x: 0, y: 0, z: 0, w: 0}
+      PositionInRoot: {x: 0, y: 0, z: 0}
+    HipsPoses: []
+    LegPoses: []
+  ExtraSetupPoses: []
   IKHintMode: 0
   LimitLegStretch: 0.99
   FeetYOffset: 0
@@ -2155,6 +2164,7 @@ MonoBehaviour:
   AnimatePhysics: 0
   UnscaledDeltaTime: 0
   DisableIfInvisible: {fileID: 0}
+  DisableIfInvisibleExtraRenderers: []
   FadeOffAtDistance: 0
   GroundMask:
     serializedVersion: 2
@@ -4704,9 +4714,9 @@ MonoBehaviour:
   freezeRotation: 0
   rootMotionEnabled: 1
   moveSpeed: 1
-  moveAccel: 1
-  moveBrake: 0
-  rotateSpeed: 720
+  moveAccel: 20
+  moveBrake: 20
+  rotateSpeed: 180
   gravity: {x: 0, y: -9.81, z: 0}
   moveVec: {x: 0, y: 0, z: 0}
   faceVec: {x: 0, y: 0, z: 1}
@@ -4777,6 +4787,7 @@ MonoBehaviour:
   common:
     pawnId: 4
     pawnName: RoboDog
+    displayName: 
     spawnWaitingTime: 1
     despawnWaitingTime: 1
     isSpawnFinished:
@@ -4796,7 +4807,7 @@ MonoBehaviour:
   stat:
     maxHeartPoint:
       value: 1
-    maxMagicPoint:
+    maxActionPoint:
       value: 1
     maxStamina:
       value: 1
@@ -4808,7 +4819,7 @@ MonoBehaviour:
       value: 0
     heartPoint:
       value: 0
-    magicPoint:
+    actionPoint:
       value: 1
     stamina:
       value: 1
@@ -4840,8 +4851,8 @@ MonoBehaviour:
     aggressiveLevel:
       value: 0
   body:
-    walkSpeed: 1
-    runSpeed: 1
+    walkSpeed: 2
+    runSpeed: 2
     hostBrain:
       value: {fileID: 0}
     formationSpot:
@@ -4849,11 +4860,11 @@ MonoBehaviour:
   action:
     isGuarding:
       value: 0
-    spacingInDistance: 1
-    spacingOutDistance: 1
-    minSpacingDistance: 1
+    spacingInDistance: 99
+    spacingOutDistance: 100
+    minSpacingDistance: 0.2
     maxSpacingDistance: 1
-    minApproachDistance: 1
+    minApproachDistance: 0.1
     holdPositionRate: 1
     moveAroundRate: 1
     comboAttackRateBoostAfterCounterAttack: 0
@@ -4895,14 +4906,16 @@ MonoBehaviour:
   coreColliderHelper: {fileID: 168326260960991395}
   bodyHitColliderHelper: {fileID: 7827817497564531622}
   parryColliderHelper: {fileID: 0}
+  parryHitColliderHelper: {fileID: 0}
   shieldHitColliderHelper: {fileID: 0}
+  hookingColliderHelper: {fileID: 0}
   visibilityChecker: {fileID: 0}
   owner: {fileID: 0}
   tickInterval: 0.1
   tickEnabled: 1
   updateEnabled: 1
-  lateUpdateEnabled: 0
-  fixedUpdateEnabled: 0
+  lateUpdateEnabled: 1
+  fixedUpdateEnabled: 1
   debugActionDisabled: 1
 --- !u!114 &937156682906900337
 MonoBehaviour:
@@ -4930,7 +4943,7 @@ MonoBehaviour:
     _version: 3.31
     _category: 
     _comments: 
-    _translation: {x: -525, y: 36}
+    _translation: {x: -365, y: -151}
     _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 0

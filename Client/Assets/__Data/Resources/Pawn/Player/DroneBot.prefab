@@ -5349,7 +5349,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 776bd98dc9dedb44da093fe4799879c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _controller: {fileID: 0}
 --- !u!1 &705105474549175907
 GameObject:
   m_ObjectHideFlags: 0
@@ -96871,6 +96870,9 @@ MonoBehaviour:
   coreColliderHelper: {fileID: 8387849614197782209}
   bodyHitColliderHelper: {fileID: 0}
   parryColliderHelper: {fileID: 0}
+  parryHitColliderHelper: {fileID: 0}
+  shieldHitColliderHelper: {fileID: 0}
+  hookingColliderHelper: {fileID: 0}
   visibilityChecker: {fileID: 0}
   owner: {fileID: 0}
   tickInterval: 0.1
@@ -96894,6 +96896,7 @@ MonoBehaviour:
   common:
     pawnId: 2
     pawnName: DroneBot
+    displayName: 
     spawnWaitingTime: 1
     despawnWaitingTime: 1
     isSpawnFinished:
@@ -96913,7 +96916,7 @@ MonoBehaviour:
   stat:
     maxHeartPoint:
       value: 1
-    maxMagicPoint:
+    maxActionPoint:
       value: 1
     maxStamina:
       value: 1
@@ -96925,7 +96928,7 @@ MonoBehaviour:
       value: 0
     heartPoint:
       value: 0
-    magicPoint:
+    actionPoint:
       value: 1
     stamina:
       value: 1
@@ -97003,7 +97006,7 @@ MonoBehaviour:
     _version: 3.31
     _category: 
     _comments: 
-    _translation: {x: -348, y: 68}
+    _translation: {x: -385.96484, y: 1.3023112}
     _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 0

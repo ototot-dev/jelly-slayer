@@ -3,8 +3,6 @@ using UnityEditor;
 using System.Linq;
 using System.Collections.Generic;
 using System;
-using FlowCanvas.Nodes;
-using Unity.VisualScripting;
 
 namespace Game
 {
