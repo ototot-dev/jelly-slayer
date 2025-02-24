@@ -72897,26 +72897,9 @@ MonoBehaviour:
     onBlockedAudioClip: {fileID: 8300000, guid: b47bb87ddf4afcc49ba83a4999cf050e, type: 3}
     onGuardBreakAudioClip: {fileID: 8300000, guid: 93fc0b243c8d39441a33d29e6146b688, type: 3}
   attachment:
+    bodyMeshParent: {fileID: 0}
+    bodyMeshRenderers: []
     shieldMeshRenderer: {fileID: 1458070737609187091}
-    bodyMeshRenderers:
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
     jetParticleSystems:
     - {fileID: 466139473167748343}
     - {fileID: 7654458937270146971}

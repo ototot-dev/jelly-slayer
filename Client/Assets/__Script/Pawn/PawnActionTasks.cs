@@ -1870,7 +1870,7 @@ namespace Game.NodeCanvasExtension
                     if (!__pawnActionCtrler.CheckActionRunning() || __pawnActionCtrler.currActionContext.actionInstanceId != __capturedActionInstanceId)
                     {
                         __fxInstance.gameObject.SetActive(false);
-                        __showDisposable.Dispose();
+                        __showDisposable?.Dispose();
                         __showDisposable = null;
                     }
                 }).AddTo(agent);

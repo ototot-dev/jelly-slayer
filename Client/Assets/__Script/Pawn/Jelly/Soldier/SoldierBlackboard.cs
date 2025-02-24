@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using UniRx;
+using Unity.Linq;
 using UnityEngine;
 
 namespace Game
@@ -121,8 +123,9 @@ namespace Game
         [Serializable]
         public class Attachment
         {
-            public Renderer shieldMeshRenderer;
+            public Transform bodyMeshParent;
             public Renderer[] bodyMeshRenderers;
+            public Renderer shieldMeshRenderer;
             public ParticleSystem[] jetParticleSystems;
             public Transform blockingFxAttachPoint;
             public Transform laserAimPoint;
@@ -130,5 +133,18 @@ namespace Game
         }
 
         public Attachment attachment = new();
+
+        protected override void AwakeInternal()
+        {
+            base.AwakeInternal();
+
+            var tempRenderers = new List<Renderer>();
+            foreach (var d in attachment.bodyMeshParent.gameObject.DescendantsAndSelf())
+                if (d.TryGetComponent<SkinnedMeshRenderer>(out var renderer) && renderer.enabled) tempRenderers.Add(renderer);
+
+            attachment.bodyMeshRenderers = tempRenderers.ToArray();
+        }
+
+
     }
 }
