@@ -20,7 +20,14 @@ namespace Game
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {
-
+            if (_pixelCamera == null) 
+            {
+                var obj = GameObject.FindAnyObjectByType<PixelCameraManager>();
+                if(obj != null)
+                {
+                    _pixelCamera = obj.GetComponent<PixelCameraManager>();
+                }
+            }
         }
         void SetTargetZoom(Vector3 vDist)
         {
@@ -31,7 +38,8 @@ namespace Game
         // Update is called once per frame
         void Update()
         {
-            return;
+            if(_pixelCamera == null)
+                return;
             
             if(_playerCtrler == null || _playerCtrler.possessedBrain == null)
                 return;
