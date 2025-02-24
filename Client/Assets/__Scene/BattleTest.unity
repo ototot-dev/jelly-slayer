@@ -1323,30 +1323,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6890239069593880897, guid: 7b3f8ebd86ac24292bee224f67e7f312, type: 3}
-      propertyPath: _boundGraphSource._zoomFactor
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6890239069593880897, guid: 7b3f8ebd86ac24292bee224f67e7f312, type: 3}
-      propertyPath: _boundGraphSource._translation.x
-      value: -385.96484
-      objectReference: {fileID: 0}
-    - target: {fileID: 6890239069593880897, guid: 7b3f8ebd86ac24292bee224f67e7f312, type: 3}
-      propertyPath: _boundGraphSource._translation.y
-      value: 1.3023112
-      objectReference: {fileID: 0}
     - target: {fileID: 7503926518901721585, guid: 7b3f8ebd86ac24292bee224f67e7f312, type: 3}
       propertyPath: m_Name
       value: DroneBot
       objectReference: {fileID: 0}
-    - target: {fileID: 7503926518901721585, guid: 7b3f8ebd86ac24292bee224f67e7f312, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8464232875082258660, guid: 7b3f8ebd86ac24292bee224f67e7f312, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 0e8613e70bd2ac74ab933b72e86924a8, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -18266,7 +18246,7 @@ PrefabInstance:
     - target: {fileID: 9205371885998440386, guid: e96cffa9d00b6b545adfeb26165952cc, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 680082383}
+      objectReference: {fileID: 929708672}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -20900,10 +20880,6 @@ PrefabInstance:
       propertyPath: rigSetup
       value: 
       objectReference: {fileID: 1340816137}
-    - target: {fileID: 509170564454217454, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
-      propertyPath: actionLayerBlendSpeed
-      value: 5
-      objectReference: {fileID: 0}
     - target: {fileID: 791442315315432696, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -20942,14 +20918,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 791442315315432696, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1626602440402030822, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
-      propertyPath: action.leapJumpHeight
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8683783354359918731, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
-      propertyPath: debugActionDisabled
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8861700421523015734, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
@@ -21158,43 +21126,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7821217888551990375, guid: fec6123700ea2aa44a24818e607ed575, type: 3}
   m_PrefabInstance: {fileID: 1203619184}
   m_PrefabAsset: {fileID: 0}
---- !u!84 &680082383
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 640
-  m_Height: 360
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 94
-  m_ColorFormat: 4
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 1
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 0
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1001 &681297730
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -32016,6 +31947,43 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6022904732698307731, guid: b93ed13b9d370c04ba22eb91026adbfa, type: 3}
   m_PrefabInstance: {fileID: 1357504538}
   m_PrefabAsset: {fileID: 0}
+--- !u!84 &929708672
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 640
+  m_Height: 360
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 94
+  m_ColorFormat: 4
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 1
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 0
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!4 &933271059 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7210471230131241780, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
@@ -43649,89 +43617,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 937156682906900337, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: _boundGraphSource._translation.x
-      value: -365
-      objectReference: {fileID: 0}
-    - target: {fileID: 937156682906900337, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: _boundGraphSource._translation.y
-      value: -151
-      objectReference: {fileID: 0}
-    - target: {fileID: 1293864437648779426, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: _EditorCategory
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1293864437648779426, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: _EditorMotionCategory
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1293864437648779426, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: _Editor_OnValidateTrigger
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1293864437648779426, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: BaseLegAnimating.StepMoveDuration
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 4660759323482832590, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: lateUpdateEnabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4660759323482832590, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: fixedUpdateEnabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7843391845829694915, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: moveAccel
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 7843391845829694915, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: moveBrake
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 7843391845829694915, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: rotateSpeed
-      value: 180
-      objectReference: {fileID: 0}
-    - target: {fileID: 8618213255048717452, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: body.runSpeed
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8618213255048717452, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: body.walkSpeed
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 8618213255048717452, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
       propertyPath: body.hostBrain.value
       value: 
       objectReference: {fileID: 672230231}
-    - target: {fileID: 8618213255048717452, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: action.spacingInDistance
-      value: 99
-      objectReference: {fileID: 0}
-    - target: {fileID: 8618213255048717452, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: action.maxSpacingDistance
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8618213255048717452, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: action.minSpacingDistance
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8618213255048717452, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: action.spacingOutDistance
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 8618213255048717452, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: action.minApproachDistance
-      value: 0.1
-      objectReference: {fileID: 0}
     - target: {fileID: 8861700421523015734, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
       propertyPath: m_Name
       value: JellyRoboDog (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 8861700421523015734, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -66563,89 +66455,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 937156682906900337, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: _boundGraphSource._translation.x
-      value: -365
-      objectReference: {fileID: 0}
-    - target: {fileID: 937156682906900337, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: _boundGraphSource._translation.y
-      value: -151
-      objectReference: {fileID: 0}
-    - target: {fileID: 1293864437648779426, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: _EditorCategory
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1293864437648779426, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: _EditorMotionCategory
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1293864437648779426, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: _Editor_OnValidateTrigger
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1293864437648779426, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: BaseLegAnimating.StepMoveDuration
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 4660759323482832590, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: lateUpdateEnabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4660759323482832590, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: fixedUpdateEnabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7843391845829694915, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: moveAccel
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 7843391845829694915, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: moveBrake
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 7843391845829694915, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: rotateSpeed
-      value: 180
-      objectReference: {fileID: 0}
-    - target: {fileID: 8618213255048717452, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: body.runSpeed
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8618213255048717452, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: body.walkSpeed
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 8618213255048717452, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
       propertyPath: body.hostBrain.value
       value: 
       objectReference: {fileID: 672230231}
-    - target: {fileID: 8618213255048717452, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: action.spacingInDistance
-      value: 99
-      objectReference: {fileID: 0}
-    - target: {fileID: 8618213255048717452, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: action.maxSpacingDistance
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8618213255048717452, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: action.minSpacingDistance
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8618213255048717452, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: action.spacingOutDistance
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 8618213255048717452, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: action.minApproachDistance
-      value: 0.1
-      objectReference: {fileID: 0}
     - target: {fileID: 8861700421523015734, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
       propertyPath: m_Name
       value: JellyRoboDog
-      objectReference: {fileID: 0}
-    - target: {fileID: 8861700421523015734, guid: e1464a7fca6864818b3354a02319fce2, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
