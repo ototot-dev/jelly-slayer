@@ -142,6 +142,7 @@ namespace Game
             foreach (var d in attachment.bodyMeshParent.gameObject.DescendantsAndSelf())
                 if (d.TryGetComponent<SkinnedMeshRenderer>(out var renderer) && renderer.enabled) tempRenderers.Add(renderer);
 
+            //* HitColor 하이라이트 bodyMeshRenderers 셋팅
             attachment.bodyMeshRenderers = tempRenderers.ToArray();
         }
 

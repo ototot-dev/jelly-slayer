@@ -180,6 +180,7 @@ namespace Game
             __emittedPosition = transform.position;
             __rigidBody.isKinematic = false;
             __rigidBody.useGravity = true;
+
             isLifeTimeOut = false;
             IsDespawnPending = false;
             transform.localScale = scale;
@@ -211,10 +212,11 @@ namespace Game
 
             isLifeTimeOut = false;
             IsDespawnPending = false;
+            
             __moveStartTimeStamp = Time.time;
             __emittedPosition = position;
             __lastTracedPosition = sensorCollider.transform.position;
-
+            
             if ( __sensorBoxCollider != null) __lastTracedPosition += __sensorBoxCollider.center;
             else if ( __sensorSphereCollider != null) __lastTracedPosition += __sensorSphereCollider.center;
             else if ( __sensorCapsuleCollider != null) __lastTracedPosition += __sensorCapsuleCollider.center;

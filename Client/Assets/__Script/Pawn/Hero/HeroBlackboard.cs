@@ -39,6 +39,14 @@ namespace Game
         public Body body = new();
 
         [Serializable]
+        public class Action
+        {   
+            public float guardParryRootMotionMultiplier = 1f;
+        }
+
+        public Action action = new();
+
+        [Serializable]
         public class Graphics
         {
             public MeshRenderer forceShieldRenderer;
@@ -53,7 +61,11 @@ namespace Game
         [Serializable]
         public class Attachment
         {
-            public Transform BlockingFxAttachPoint;
+            public Transform leftHandBone;
+            public Transform leftElbowBone;
+            public Transform leftMechHandBone;
+            public Transform leftMechElbowBone;
+            public Transform blockingFxAttachPoint;
             public GameObject healingPotion;
         }
 

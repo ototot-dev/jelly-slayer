@@ -84,7 +84,7 @@ namespace Game
                 else
                 {
                     SoundManager.Instance.Play(SoundID.HIT_BLOCK);
-                    EffectManager.Instance.Show(__brain.BB.graphics.onBlockFx, __brain.BB.attachment.BlockingFxAttachPoint.transform.position, Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward, Vector3.up), Vector3.one);
+                    EffectManager.Instance.Show(__brain.BB.graphics.onBlockFx, __brain.BB.attachment.blockingFxAttachPoint.transform.position, Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward, Vector3.up), Vector3.one);
                     //EffectManager.Instance.Show("FX/@Hit 4 yellow arrow", __brain.BB.graphics.forceShieldRenderer.transform.position, Quaternion.identity, Vector3.one, 1f);
                 }
 
@@ -113,7 +113,7 @@ namespace Game
 
                     Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ =>
                     {
-                        EffectManager.Instance.Show(__brain.BB.graphics.onBlockFx, __brain.BB.attachment.BlockingFxAttachPoint.transform.position, Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward, Vector3.up), Vector3.one);
+                        EffectManager.Instance.Show(__brain.BB.graphics.onBlockFx, __brain.BB.attachment.blockingFxAttachPoint.transform.position, Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward, Vector3.up), Vector3.one);
                         SoundManager.Instance.Play(SoundID.HIT_BLOCK);
                     });
                 }

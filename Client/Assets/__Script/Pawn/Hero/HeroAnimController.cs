@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using FIMSpace.BonesStimulation;
+using NodeCanvas.Framework.Internal;
 using UniRx;
 using UnityEditor;
 using UnityEngine;
@@ -58,14 +59,15 @@ namespace Game
             if ((__brain.ActionCtrler.CheckActionRunning() || __watchingStateNames.Contains("OnDown")) && __brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
             {
                 //* 평면 방향 RootMotion에 대한 Constraints가 존재하면 값을 0으로 변경해준다.
-                if (__brain.ActionCtrler.CheckRootMotionConstraint(RootMotionConstraints.FreezePositionX, RootMotionConstraints.FreezePositionZ))
+                if (__brain.ActionCtrler.CheckRootMotionConstraints(RootMotionConstraints.FreezePositionX, RootMotionConstraints.FreezePositionZ))
                     __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition.AdjustXZ(0f, 0f), mainAnimator.deltaRotation, Time.deltaTime);
                 else
                     __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition, mainAnimator.deltaRotation, Time.deltaTime);
             }
             else if (__watchingStateNames.Contains("GuardParry"))
             {
-                __brain.Movement.AddRootMotion(guardParryRootMotionMultiplier * mainAnimator.deltaPosition, Quaternion.identity, Time.deltaTime);
+                // __brain.Movement.AddRootMotion(guardParryRootMotionMultiplier * mainAnimator.deltaPosition, Quaternion.identity, Time.deltaTime);
+                __brain.Movement.AddRootMotion(__brain.BB.action.guardParryRootMotionMultiplier * mainAnimator.deltaPosition, Quaternion.identity, Time.deltaTime);
             }
 
             // mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
@@ -256,6 +258,12 @@ namespace Game
                     legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround && !__brain.BB.IsJumping && (!__brain.ActionCtrler.CheckActionRunning() || __brain.ActionCtrler.currActionContext.legAnimGlueEnabled));
                     legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude > 0f ? -1f : 1f) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.6f : 0.5f, 1f);
                 }
+            };
+
+            __brain.onLateUpdate += () =>
+            {
+                __brain.BB.attachment.leftMechHandBone.transform.SetPositionAndRotation(__brain.BB.attachment.leftHandBone.transform.position, __brain.BB.attachment.leftHandBone.transform.rotation);
+                __brain.BB.attachment.leftMechElbowBone.transform.SetPositionAndRotation(__brain.BB.attachment.leftElbowBone.transform.position, __brain.BB.attachment.leftElbowBone.transform.rotation);
             };
         }
 

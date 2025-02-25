@@ -1,0 +1,593 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!319 &31900000
+AvatarMask:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Hero_MechHand_Mask
+  m_Mask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+  m_Elements:
+  - m_Path: 
+    m_Weight: 1
+  - m_Path: Mesh
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/hips
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/hips/geo_c_cargo_01
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/hips/geo_c_cargo_02
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/hips/geo_c_cargo_03
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/hips/geo_c_hips
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/hips/geo_c_hips_armor_01
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/hips/geo_c_hips_armor_02
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/hips/geo_c_hips_armor_03
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/hips/geo_c_hips_belt_01
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/hips/geo_c_hips_belt_02
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/hips/geo_c_hips_belt_03
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/hips/geo_c_hips_belt_04
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/hips/geo_c_hips_belt_04_saddlebags
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/hips/geo_c_hips_rotor
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_ankle
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_ankle/geo_l_ankle
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_ankle/geo_l_ankle_heel_01
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_ankle/geo_l_ankle_heel_02
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_ankle/geo_l_ankle_heel_03
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_ball
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_ball/geo_l_ball_01
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_ball/geo_l_ball_02
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_ball/geo_l_ball_03
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_ball/geo_l_ball_04
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_ball/geo_l_ball_05
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_lowerleg
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_lowerleg/geo_l_lowerleg
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_lowerleg/geo_l_lowerleg_knee_armor_01
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_lowerleg/geo_l_lowerleg_knee_armor_02
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_lowerleg/geo_l_lowerleg_knee_armor_03
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_lowerleg/geo_l_lowerleg_knee_armor_04
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_lowerleg/geo_l_lowerleg_knee_armor_05
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_lowerleg/geo_l_lowerleg_knee_armor_06
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_lowerleg/geo_l_lowerleg_knee_armor_07
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_lowerleg/geo_l_lowerleg_shin_armor_01
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_lowerleg/geo_l_lowerleg_shin_armor_02
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_lowerleg/geo_l_lowerleg_shin_armor_03
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_lowerleg/geo_l_lowerleg_shin_armor_04
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_lowerleg/geo_l_lowerleg_shin_armor_05
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_lowerleg/geo_l_upperShin_armor_01
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_upperleg
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_upperleg/geo_l_upperleg
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_upperleg/geo_l_upperleg_armor_01
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_upperleg/geo_l_upperleg_armor_02
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_upperleg/geo_l_upperleg_armor_03
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_upperleg/geo_l_upperleg_armor_04
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/l_upperleg/geo_l_upperleg_armor_05
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_ankle
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_ankle/geo_r_ankle
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_ankle/geo_r_ankle_heel_01
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_ankle/geo_r_ankle_heel_02
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_ankle/geo_r_ankle_heel_03
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_ball
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_ball/geo_r_ball_01
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_ball/geo_r_ball_02
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_ball/geo_r_ball_03
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_ball/geo_r_ball_04
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_ball/geo_r_ball_05
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_lowerleg
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_lowerleg/geo_r_lowerleg
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_lowerleg/geo_r_lowerleg_knee_armor_01
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_lowerleg/geo_r_lowerleg_knee_armor_02
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_lowerleg/geo_r_lowerleg_knee_armor_03
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_lowerleg/geo_r_lowerleg_knee_armor_04
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_lowerleg/geo_r_lowerleg_knee_armor_05
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_lowerleg/geo_r_lowerleg_knee_armor_06
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_lowerleg/geo_r_lowerleg_knee_armor_07
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_lowerleg/geo_r_lowerleg_shin_armor_01
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_lowerleg/geo_r_lowerleg_shin_armor_02
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_lowerleg/geo_r_lowerleg_shin_armor_03
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_lowerleg/geo_r_lowerleg_shin_armor_04
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_lowerleg/geo_r_lowerleg_shin_armor_05
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_lowerleg/geo_r_upperShin_armor_01
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_upperleg
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_upperleg/geo_r_upperleg
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_upperleg/geo_r_upperleg_armor_01
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_upperleg/geo_r_upperleg_armor_02
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_upperleg/geo_r_upperleg_armor_03
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_upperleg/geo_r_upperleg_armor_04
+    m_Weight: 0
+  - m_Path: Mesh/lowerbody/r_upperleg/geo_r_upperleg_armor_05
+    m_Weight: 0
+  - m_Path: Mesh/upperbody
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_c_chest
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_c_cockpit_door_01
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_c_cockpit_door_02
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_c_cockpit_door_03
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_c_cockpit_door_saddlebags
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_c_collar_01
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_c_collar_02
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_c_collar_03
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_c_exhaust
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_c_jetpack_intakes_01
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_l_attach_radio
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_l_chest_attach_weapon_01
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_l_chest_attach_weapon_01/geo_l_chest_attach_weapon_02_Launcher_01
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_l_chest_attach_weapon_02
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_l_chest_attach_weapon_03
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_l_chest_attach_weapon_03_Empty
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_l_chest_attach_weapon_04
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_l_chest_attach_weapon_05
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_l_chest_attach_weapon_06
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_l_chest_attach_weapon_06/geo_l_chest_attach_weapon_06_Launcher
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_l_chest_attach_weapon_06/geo_l_chest_attach_weapon_06_Launcher_Emptry
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_l_chest_attach_weapon_07
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_l_chest_attach_weapon_08
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_l_chest_attach_weapon_08_Empty
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_l_exhaust
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_l_jetpack_intakes_02
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_r_attach_radio
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_r_chest_attach_weapon_01
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_r_chest_attach_weapon_01/geo_r_chest_attach_weapon_01_Launcher_01
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_r_chest_attach_weapon_02
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_r_chest_attach_weapon_03
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_r_chest_attach_weapon_03_Empty
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_r_chest_attach_weapon_04
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_r_chest_attach_weapon_05
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_r_chest_attach_weapon_06
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_r_chest_attach_weapon_06/geo_r_chest_attach_weapon_06_Launcher
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_r_chest_attach_weapon_06/geo_r_chest_attach_weapon_06_Launcher_Empty
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_r_chest_attach_weapon_07
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_r_exhaust
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/chest/geo_r_jetpack_intakes_02
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/head
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/head/geo_c_head_01
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/head/geo_c_head_02
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/head/geo_c_head_03
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/head/geo_c_head_04
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/head/geo_c_head_05
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/head/geo_c_head_06
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/head/geo_c_head_07
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/head/geo_c_head_08
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_clavicle
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_clavicle/geo_l_clavicle
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_elbow
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_elbow/geo_l_elbow
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_elbow/geo_L_elbow_armor_01
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_elbow/geo_L_elbow_armor_02
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_elbow/geo_L_elbow_armor_03
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_elbow/geo_L_elbow_armor_04
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_elbow/geo_l_elbow_armor_05
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_elbow/geo_l_elbow_attach_weapon_01
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_elbow/geo_l_elbow_attach_weapon_02
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_elbow/geo_l_elbow_attach_weapon_03
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_elbow/geo_l_elbow_attach_weapon_04
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_elbow/geo_l_elbow_attach_weapon_05
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_elbow/geo_l_elbow_attach_weapon_06
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_elbow/geo_l_elbow_attach_weapon_06_Empty
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_hand
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_hand/geo_l_hand
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_hand/geo_l_hand_armor_01
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_hand/geo_l_hand_armor_02
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_hand/geo_l_hand_armor_03
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_hand/geo_l_hand_armor_04
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_hand/geo_l_index_01
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_hand/geo_l_index_02
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_hand/geo_l_index_03
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_hand/geo_l_mid_01
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_hand/geo_l_mid_02
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_hand/geo_l_mid_03
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_hand/geo_l_thumb_01
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_hand/geo_l_thumb_02
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_shoulder
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_shoulder/geo_l_shoulder
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_shoulder/geo_l_shoulder_armor_01
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_shoulder/geo_l_shoulder_armor_02
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_shoulder/geo_l_shoulder_armor_03
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_shoulder/geo_l_shoulder_armor_04
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_shoulder/geo_l_shoulder_armor_05
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_shoulder/geo_l_shoulder_armor_06
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_shoulder/geo_l_shoulder_armor_07
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_shoulder/geo_l_shoulder_armor_07_energyShields
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_shoulder/geo_l_shoulder_armor_08_heavy
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/l_shoulder/geo_l_shoulder_armor_09
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/neck
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/neck/geo_c_neck
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_clavicle
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_clavicle/geo_r_clavicle
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_elbow
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_elbow/geo_r_elbow
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_elbow/geo_r_elbow_armor_01
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_elbow/geo_r_elbow_armor_02
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_elbow/geo_r_elbow_armor_03
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_elbow/geo_r_elbow_armor_04
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_elbow/geo_r_elbow_armor_05
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_elbow/geo_r_elbow_attach_weapon_01
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_elbow/geo_r_elbow_attach_weapon_02
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_elbow/geo_r_elbow_attach_weapon_03
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_elbow/geo_r_elbow_attach_weapon_04
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_elbow/geo_r_elbow_attach_weapon_05
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_elbow/geo_r_elbow_attach_weapon_06
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_elbow/geo_r_elbow_attach_weapon_06_Empty
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_hand
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_hand/geo_r_hand
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_hand/geo_r_hand_armor_01
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_hand/geo_r_hand_armor_02
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_hand/geo_r_hand_armor_03
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_hand/geo_r_hand_armor_04
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_hand/geo_r_index_01
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_hand/geo_r_index_02
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_hand/geo_r_index_03
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_hand/geo_r_mid_01
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_hand/geo_r_mid_02
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_hand/geo_r_mid_03
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_hand/geo_r_thumb_01
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_hand/geo_r_thumb_02
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_shoulder
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_shoulder/geo_r_shoulder
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_shoulder/geo_r_shoulder_armor_01
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_shoulder/geo_r_shoulder_armor_02
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_shoulder/geo_r_shoulder_armor_03
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_shoulder/geo_r_shoulder_armor_04
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_shoulder/geo_r_shoulder_armor_05
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_shoulder/geo_r_shoulder_armor_06
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_shoulder/geo_r_shoulder_armor_07
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_shoulder/geo_r_shoulder_armor_07_energyShields
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_shoulder/geo_r_shoulder_armor_08_heavy
+    m_Weight: 0
+  - m_Path: Mesh/upperbody/r_shoulder/geo_r_shoulder_armor_09
+    m_Weight: 0
+  - m_Path: Root
+    m_Weight: 0
+  - m_Path: Root/Hips
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Belly_01
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/CockpitDoor
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/CockpitDoor/CockpitStep_01
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/CockpitDoor/CockpitStep_02
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/Finger_L_01
+    m_Weight: 1
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/Finger_L_01/Finger_L_02
+    m_Weight: 1
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/Finger_L_01/Finger_L_02/Finger_L_03
+    m_Weight: 1
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/Finger_L_01/Finger_L_02/Finger_L_03/Finger_L_04
+    m_Weight: 1
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/IndexFinger_L_01
+    m_Weight: 1
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/IndexFinger_L_01/IndexFinger_L_02
+    m_Weight: 1
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/IndexFinger_L_01/IndexFinger_L_02/IndexFinger_L_03
+    m_Weight: 1
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/IndexFinger_L_01/IndexFinger_L_02/IndexFinger_L_03/IndexFinger_L_04
+    m_Weight: 1
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/Thumb_L_01
+    m_Weight: 1
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/Thumb_L_01/Thumb_L_02
+    m_Weight: 1
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_L/Shoulder_L/Elbow_L/Hand_L/Thumb_L_01/Thumb_L_02/Thumb_L_03
+    m_Weight: 1
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/Finger_R_01
+    m_Weight: 1
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/Finger_R_01/Finger_R_02
+    m_Weight: 1
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/Finger_R_01/Finger_R_02/Finger_R_03
+    m_Weight: 1
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/Finger_R_01/Finger_R_02/Finger_R_03/Finger_R_04
+    m_Weight: 1
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/IndexFinger_R_01
+    m_Weight: 1
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/IndexFinger_R_01/IndexFinger_R_02
+    m_Weight: 1
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/IndexFinger_R_01/IndexFinger_R_02/IndexFinger_R_03
+    m_Weight: 1
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/IndexFinger_R_01/IndexFinger_R_02/IndexFinger_R_03/IndexFinger_R_04
+    m_Weight: 1
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/Thumb_R_01
+    m_Weight: 1
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/Thumb_R_01/Thumb_R_02
+    m_Weight: 1
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Clavicle_R/Shoulder_R/Elbow_R/Hand_R/Thumb_R_01/Thumb_R_02/Thumb_R_03
+    m_Weight: 1
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Exhaust_c_01
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Exhaust_c_01/ExhaustFlap_c_01
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Exhaust_c_01/ExhaustFlap_c_02
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Exhaust_c_01/ExhaustFlap_c_03
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Exhaust_c_01/ExhaustFlap_c_04
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Exhaust_l_01
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Exhaust_l_01/ExhaustFlap_l_01
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Exhaust_l_01/ExhaustFlap_l_02
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Exhaust_l_01/ExhaustFlap_l_03
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Exhaust_l_01/ExhaustFlap_l_04
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Exhaust_r_01
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Exhaust_r_01/ExhaustFlap_r_01
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Exhaust_r_01/ExhaustFlap_r_02
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Exhaust_r_01/ExhaustFlap_r_03
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Exhaust_r_01/ExhaustFlap_r_04
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Neck
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Neck/Head
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Neck/Head/Eyebrows
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Neck/Head/Eyes
+    m_Weight: 0
+  - m_Path: Root/Hips/Spine_01/Spine_02/Spine_03/Neck/Head/Jaw
+    m_Weight: 0
+  - m_Path: Root/Hips/UpperLeg_L
+    m_Weight: 0
+  - m_Path: Root/Hips/UpperLeg_L/LowerLeg_L
+    m_Weight: 0
+  - m_Path: Root/Hips/UpperLeg_L/LowerLeg_L/Ankle_L
+    m_Weight: 0
+  - m_Path: Root/Hips/UpperLeg_L/LowerLeg_L/Ankle_L/AnkleReverse_L
+    m_Weight: 0
+  - m_Path: Root/Hips/UpperLeg_L/LowerLeg_L/Ankle_L/Ball_L
+    m_Weight: 0
+  - m_Path: Root/Hips/UpperLeg_L/LowerLeg_L/Ankle_L/Ball_L/Toes_L
+    m_Weight: 0
+  - m_Path: Root/Hips/UpperLeg_R
+    m_Weight: 0
+  - m_Path: Root/Hips/UpperLeg_R/LowerLeg_R
+    m_Weight: 0
+  - m_Path: Root/Hips/UpperLeg_R/LowerLeg_R/Ankle_R
+    m_Weight: 0
+  - m_Path: Root/Hips/UpperLeg_R/LowerLeg_R/Ankle_R/AnkleReverse_R
+    m_Weight: 0
+  - m_Path: Root/Hips/UpperLeg_R/LowerLeg_R/Ankle_R/Ball_R
+    m_Weight: 0
+  - m_Path: Root/Hips/UpperLeg_R/LowerLeg_R/Ankle_R/Ball_R/Toes_R
+    m_Weight: 0

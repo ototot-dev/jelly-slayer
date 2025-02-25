@@ -240,19 +240,28 @@ namespace Game
                 //* Receiver가 'GuardParried' ActionData가 있는지 검증
                 Debug.Assert(damageContext.receiverActionData != null);
 
-                damageContext.senderBrain.PawnBB.stat.stance.Value += damageContext.receiverActionData.groggyAccum;
-
-                __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "ActionResults.GuardParried", "stance", damageContext.senderBrain.PawnBB.stat.stance.Value, "maxStance", damageContext.senderBrain.PawnBB.stat.maxStance.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
-
-                if (damageContext.senderBrain.PawnBB.stat.stance.Value >= damageContext.senderBrain.PawnBB.stat.maxStance.Value)
+                if (damageContext.projectile != null)
                 {
-                    damageContext.senderBrain.PawnBB.stat.stance.Value = 0;
-                    damageContext.senderBrain.PawnBB.stat.knockDown.Value = 0;
-                    damageContext.senderPenalty = new(PawnStatus.Groggy, damageContext.senderBrain.PawnBB.pawnData.groggyDuration);
                 }
                 else
                 {
-                    damageContext.senderPenalty = new(PawnStatus.Staggered, damageContext.receiverActionData.staggerDuration);
+                    damageContext.senderBrain.PawnBB.stat.stance.Value += damageContext.receiverActionData.groggyAccum;
+
+                    __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "ActionResults.GuardParried", "stance", damageContext.senderBrain.PawnBB.stat.stance.Value, "maxStance", damageContext.senderBrain.PawnBB.stat.maxStance.Value, "sender", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
+
+                    if (damageContext.senderBrain.PawnBB.stat.stance.Value >= damageContext.senderBrain.PawnBB.stat.maxStance.Value)
+                    {
+                        damageContext.senderBrain.PawnBB.stat.stance.Value = 0;
+                        damageContext.senderBrain.PawnBB.stat.knockDown.Value = 0;
+                        damageContext.senderPenalty = new(PawnStatus.Groggy, damageContext.senderBrain.PawnBB.pawnData.groggyDuration);
+                    }
+                    else
+                    {
+                        damageContext.senderPenalty = new(PawnStatus.Staggered, damageContext.receiverActionData.staggerDuration);
+                    }
+
+                    // damageContext.senderPenalty = new(PawnStatus.Staggered, damageContext.receiverActionData.staggerDuration);
+                    // damageContext.projectile.Go
                 }
             }
             else if (damageContext.actionResult == ActionResults.Blocked)
@@ -276,23 +285,20 @@ namespace Game
                         //* 'BreakGuard'인 경우 'Staggered' 디버프를 받게 되며, 'Staggered' 지속 시간은 피격 경직 시간과 동일하게 적용함
                         damageContext.receiverPenalty = new(PawnStatus.Staggered, damageContext.senderActionData.staggerDuration);
                     }
-                    else
+                    else if (damageContext.projectile == null)
                     {
-                        if (damageContext.projectile == null)
-                        {
-                            //* Receiver가 'Block' ActionData가 있는지 검증
-                            Debug.Assert(damageContext.receiverActionData != null);
+                        //* Receiver가 'Block' ActionData가 있는지 검증
+                        Debug.Assert(damageContext.receiverActionData != null);
 
-                            //* 'Block' 판정인 경우엔 Sender에게 경직 발생
-                            if (senderActionCtrler == null || !senderActionCtrler.CheckSuperArmorLevel(SuperArmorLevels.CanNotStraggerOnBlacked))
-                                damageContext.senderPenalty = new(PawnStatus.Staggered, damageContext.receiverActionData.staggerDuration);
-                            else
-                                __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "receiverActionCtrler.CheckSuperArmorLevel(CanNotStraggerOnBlacked) returns true. PawnStatus.Staggered is ignored.");
-                            
-                            //* Receiver도 'Block' 반동에 의한 약한 경직 발생함
-                            if (damageContext.receiverBrain.PawnBB.pawnData.guardStaggerDuration > 0f)
-                                damageContext.receiverPenalty = new(PawnStatus.Staggered, damageContext.receiverBrain.PawnBB.pawnData.guardStaggerDuration);
-                        }
+                        //* 'Block' 판정인 경우엔 Sender에게 경직 발생
+                        if (senderActionCtrler == null || !senderActionCtrler.CheckSuperArmorLevel(SuperArmorLevels.CanNotStraggerOnBlacked))
+                            damageContext.senderPenalty = new(PawnStatus.Staggered, damageContext.receiverActionData.staggerDuration);
+                        else
+                            __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "receiverActionCtrler.CheckSuperArmorLevel(CanNotStraggerOnBlacked) returns true. PawnStatus.Staggered is ignored.");
+                        
+                        //* Receiver도 'Block' 반동에 의한 약한 경직 발생함
+                        if (damageContext.receiverBrain.PawnBB.pawnData.guardStaggerDuration > 0f)
+                            damageContext.receiverPenalty = new(PawnStatus.Staggered, damageContext.receiverBrain.PawnBB.pawnData.guardStaggerDuration);
                     }
                 }
             }

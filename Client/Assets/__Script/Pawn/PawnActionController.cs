@@ -114,39 +114,47 @@ namespace Game
             }
         }
 
+#region PendingAction
+        //* Item1: actionName, Item2: preMotionName, Item3: pendingTimeStamp, Item4: delayTime
+        public  Tuple<string, string, float, float> PendingActionData { get; protected set; } = new(string.Empty, string.Empty, 0f, 0f);
+        public string PendingActionName => PendingActionData.Item1;
+        public string PendingPreMotionName => PendingActionData.Item2;
+        public bool CheckActionPending() => !string.IsNullOrEmpty(PendingActionData.Item1);
+        public bool CanStartPendingAction() { Debug.Assert(CheckActionPending()); return !CheckActionRunning() && Time.time > PendingActionData.Item3 + PendingActionData.Item4; }
+        public void SetPendingAction(string actionName) { SetPendingAction(actionName, string.Empty, 0f); }
+        public void SetPendingAction(string actionName, string preMotionName, float delayTime)
+        {
+            if (!string.IsNullOrEmpty(PendingActionData.Item1))
+                __Logger.WarningR2(gameObject, nameof(PendingActionData), "__pendingAction is not empty value!!", "actionName", PendingActionData.Item1);
+
+            PendingActionData = new(actionName, preMotionName, Time.time, delayTime);
+        }
+        public void ClearPendingAction()
+        {
+            PendingActionData = new(string.Empty, string.Empty, 0f, 0f);
+        }
+#endregion
+
         public ActionContext prevActionContext = new(string.Empty, 1f, 0f);
         public ActionContext currActionContext = new(string.Empty, 1f, 0f);
-        public bool CheckActionPending() => !string.IsNullOrEmpty(PendingActionData.Item1);
         public bool CheckActionRunning() => currActionContext.actionData != null || currActionContext.actionDisposable != null;
         public virtual bool CheckAddictiveActionRunning(string actionName) => false;
         public bool CheckActionCanceled() { Debug.Assert(CheckActionRunning()); return currActionContext.actionCanceled; }
         public bool CheckMovementEnabled() { Debug.Assert(CheckActionRunning()); return currActionContext.movementEnabled; }
         public bool CanInterruptAction() { Debug.Assert(CheckActionRunning()); return currActionContext.interruptEnabled; }
-        public bool CanStartPendingAction() { Debug.Assert(CheckActionPending()); return !CheckActionRunning() && Time.time > PendingActionData.Item3 + PendingActionData.Item4; }
         public SuperArmorLevels GetSuperArmorLevel() => (SuperArmorLevels)(currActionContext.actionData?.superArmorLevel?? 0);
-
         public bool CheckSuperArmorLevel(SuperArmorLevels compareLevel) { return (currActionContext.actionData?.superArmorLevel?? 0) >= (int)compareLevel; }
         public bool CheckPendingActionHasPreMotion() => !string.IsNullOrEmpty(PendingActionData.Item2);
         public float LastActionTimeStamp => CheckActionRunning() ? Time.time : prevActionContext.finishTimeStamp;
         public string PreMotionName => currActionContext.preMotionName;
         public string CurrActionName => currActionContext.actionName;
         public string PrevActionName => prevActionContext.actionName;
-        public string PendingActionName => PendingActionData.Item1;
-        public string PendingPreMotionName => PendingActionData.Item2;
-
-        //* Item1: actionName, Item2: preMotionName, Item3: pendingTimeStamp, Item4: delayTime
-        public  Tuple<string, string, float, float> PendingActionData { get; protected set; } = new(string.Empty, string.Empty, 0f, 0f);
-
-        //* Item1: Strength, Item2: Duration
-        protected Dictionary<PawnStatus, Tuple<float, float>> __statusContainer = new();
 
         public Action<ActionContext, PawnHeartPointDispatcher.DamageContext> onActionStart;
         public Action<ActionContext, PawnHeartPointDispatcher.DamageContext> onAddictiveActionStart;
         public Action<ActionContext> onActiveParryEnabled;
         public Action<ActionContext> onActionFinished;
         public Action<ActionContext, float> onActionCanceled;
-
-        //* 프로젝타일 방출
         public Action<ActionContext, ProjectileMovement, Transform, int> onEmitProjectile;
 
 #if UNITY_EDITOR
@@ -155,6 +163,8 @@ namespace Game
 #endif
 
 #region IBuffContainer
+        //* Item1: Strength, Item2: Duration
+        protected Dictionary<PawnStatus, Tuple<float, float>> __statusContainer = new();
         Dictionary<PawnStatus, Tuple<float, float>> IStatusContainer.GetStatusTable() => __statusContainer;
 #if UNITY_EDITOR
         Dictionary<PawnStatus, Tuple<float, float>>.Enumerator IStatusContainer.GetStatusEnumerator() => __statusContainer.GetEnumerator();
@@ -196,11 +206,11 @@ namespace Game
                 return currActionContext.rootMotionMultiplier * currActionContext.rootMotionCurve.Evaluate(Time.time - (currActionContext.preMotionTimeStamp > 0f ? currActionContext.preMotionTimeStamp : currActionContext.startTimeStamp));
         }
 
-        public virtual bool CheckRootMotionConstraint(params RootMotionConstraints[] constraints) 
+        public virtual bool CheckRootMotionConstraints(params RootMotionConstraints[] constraints) 
         {
-            foreach (var c in constraints)
+            for (int i = 0; i < constraints.Length; i++)
             {
-                if ((currActionContext.rootMotionConstraint & (int)c) > 0)
+                if ((currActionContext.rootMotionConstraint & (int)constraints[i]) > 0)
                     return true;
             }
 
@@ -218,22 +228,6 @@ namespace Game
         public virtual IDisposable StartOnGroogyAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false) { return null; }
         public virtual IDisposable StartCustomAction(ref PawnHeartPointDispatcher.DamageContext damageContext, string actionName, bool isAddictiveAction = false) { return null; }
         public virtual void EmitActionHandler(GameObject emitPrefab, Transform emitPoint, int emitIndex) {}
-
-        public void SetPendingAction(string actionName, string preMotionName, float delayTime)
-        {
-            if (!string.IsNullOrEmpty(PendingActionData.Item1))
-                __Logger.WarningR2(gameObject, nameof(PendingActionData), "__pendingAction is not empty value!!", "actionName", PendingActionData.Item1);
-
-            PendingActionData = new(actionName, preMotionName, Time.time, delayTime);
-        }
-        public void SetPendingAction(string actionName)
-        {
-            SetPendingAction(actionName, string.Empty, 0f);
-        }
-        public void ClearPendingAction()
-        {
-            PendingActionData = new(string.Empty, string.Empty, 0f, 0f);
-        }
 
         void Awake()
         {
