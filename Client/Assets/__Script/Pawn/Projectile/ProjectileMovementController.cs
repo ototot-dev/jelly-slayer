@@ -8,7 +8,7 @@ namespace Game
     public class ProjectileMovement : MonoBehaviour
     {
         [Header("Component")]
-        public Collider BodyCollider;
+        public Collider bodyCollider;
         public Collider sensorCollider;
 
         [Header("Parameter")]
@@ -31,10 +31,12 @@ namespace Game
 
         [Header("Emitter")]
         public ReactiveProperty<PawnBrainController> emitterBrain = new();
+        public ReactiveProperty<PawnBrainController> reflectiveBrain = new();
         public Action onStartMove;
         public Action onStopMove;
         public Action onLifeTimeOut;
         public Action<Collider> onHitSomething;
+        public Action<PawnBrainController> onReflected;
         public bool IsDespawnPending { get; private set; }
 
         void Awake()
@@ -44,11 +46,11 @@ namespace Game
 
         protected virtual void AwakeInternal()
         {
-            if (BodyCollider != null) 
+            if (bodyCollider != null) 
             {
-                __rigidBody = BodyCollider.GetComponent<Rigidbody>();
+                __rigidBody = bodyCollider.GetComponent<Rigidbody>();
                 __rigidBody.isKinematic = true;
-                BodyCollider.enabled = false;
+                bodyCollider.enabled = false;
             }
 
             if (sensorCollider != null)
@@ -85,8 +87,8 @@ namespace Game
                 else Debug.Assert(false);
             }
 
-            if ((Time.time - __moveStartTimeStamp) > bodyEnabledTime && BodyCollider != null && !BodyCollider.enabled)
-                if (!BodyCollider.enabled) BodyCollider.enabled = true;
+            if ((Time.time - __moveStartTimeStamp) > bodyEnabledTime && bodyCollider != null && !bodyCollider.enabled)
+                if (!bodyCollider.enabled) bodyCollider.enabled = true;
 
             if (!isLifeTimeOut && lifeTime > 0 && lifeTime < Time.time - __moveStartTimeStamp)
             {
@@ -102,12 +104,12 @@ namespace Game
             if (!sensorCollider.enabled)
                 return;
 
-            var distanceLessThanEpsilon = false;
+            var distanceAlmostZero = false;
             if (__sensorBoxCollider != null)
             {
                 var currPosition = sensorCollider.transform.position + __sensorBoxCollider.center;
 
-                if (distanceLessThanEpsilon = Vector3.Distance(currPosition, __lastTracedPosition) < MathExtension.DEFAULT_EPSILON)
+                if (distanceAlmostZero = Vector3.Distance(currPosition, __lastTracedPosition) < MathExtension.DEFAULT_EPSILON)
                 {
                     __traceCollidersNonAlloc ??= new Collider[__maxTraceCount];
                     __traceCount = Physics.OverlapBoxNonAlloc(currPosition, 0.5f * Vector3.Scale(__sensorBoxCollider.size, sensorCollider.transform.lossyScale), __traceCollidersNonAlloc, sensorCollider.transform.rotation, sensorLayerMask);
@@ -123,7 +125,7 @@ namespace Game
             {
                 var currPosition = sensorCollider.transform.position + __sensorSphereCollider.center;
 
-                if (distanceLessThanEpsilon = Vector3.Distance(currPosition, __lastTracedPosition) < MathExtension.DEFAULT_EPSILON)
+                if (distanceAlmostZero = Vector3.Distance(currPosition, __lastTracedPosition) < MathExtension.DEFAULT_EPSILON)
                 {
                     __traceCollidersNonAlloc ??= new Collider[__maxTraceCount];
                     __traceCount = Physics.OverlapSphereNonAlloc(currPosition, __sensorSphereCollider.radius * Mathf.Max(sensorCollider.transform.lossyScale.x, sensorCollider.transform.lossyScale.y, sensorCollider.transform.lossyScale.z), __traceCollidersNonAlloc, sensorLayerMask);
@@ -140,7 +142,7 @@ namespace Game
                 var halfHeight = Mathf.Max(0, 0.5f * __sensorCapsuleCollider.height * sensorCollider.transform.lossyScale.y - __sensorCapsuleCollider.radius * Mathf.Max(sensorCollider.transform.lossyScale.x, sensorCollider.transform.lossyScale.y, sensorCollider.transform.lossyScale.z));
                 var currPosition = sensorCollider.transform.position + __sensorCapsuleCollider.center;
 
-                if (distanceLessThanEpsilon = Vector3.Distance(currPosition, __lastTracedPosition) < MathExtension.DEFAULT_EPSILON)
+                if (distanceAlmostZero = Vector3.Distance(currPosition, __lastTracedPosition) < MathExtension.DEFAULT_EPSILON)
                 {
                     __traceCollidersNonAlloc ??= new Collider[__maxTraceCount];
                     __traceCount = Physics.OverlapCapsuleNonAlloc(currPosition - halfHeight * sensorCollider.transform.up, currPosition + halfHeight * sensorCollider.transform.up, __sensorCapsuleCollider.radius, __traceCollidersNonAlloc, sensorLayerMask);
@@ -158,7 +160,7 @@ namespace Game
             }
 
             for (int i = 0; i < __traceCount; i++)
-                onHitSomething?.Invoke(distanceLessThanEpsilon ? __traceCollidersNonAlloc[i] : __traceHitsNonAlloc[i].collider);
+                onHitSomething?.Invoke(distanceAlmostZero ? __traceCollidersNonAlloc[i] : __traceHitsNonAlloc[i].collider);
         }
 
         protected Rigidbody __rigidBody;
@@ -237,7 +239,7 @@ namespace Game
                 Observable.EveryFixedUpdate().TakeWhile(_ => !IsDespawnPending).Subscribe(_ => OnFixedUpdateHandler()).AddTo(this);
         }
 
-        public void Go(PawnBrainController emitter, float speed, float scale = 1)
+        public void Go(PawnBrainController emitter, float speed, float scale = 1f)
         {
             Go(emitter, transform.position, transform.forward * speed, Vector3.one * scale);
         }

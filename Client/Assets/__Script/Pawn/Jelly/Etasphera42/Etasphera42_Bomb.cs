@@ -13,7 +13,7 @@ namespace Game
         void IObjectPoolable.OnGetFromPool() {}
         void IObjectPoolable.OnReturnedToPool() 
         {
-            BodyCollider.attachedRigidbody.linearDamping = 0f;
+            bodyCollider.attachedRigidbody.linearDamping = 0f;
             __onCollisionEnterDisposalbe?.Dispose();
             __onCollisionEnterDisposalbe = null;
             __isGrounded = false; 
@@ -41,7 +41,7 @@ namespace Game
 
             onStartMove += () =>
             {
-                __onCollisionEnterDisposalbe = BodyCollider.OnCollisionEnterAsObservable().Subscribe(c =>
+                __onCollisionEnterDisposalbe = bodyCollider.OnCollisionEnterAsObservable().Subscribe(c =>
                 {
                     if (LayerMask.LayerToName(c.gameObject.layer) == "Terrain")
                     {
@@ -50,7 +50,7 @@ namespace Game
                         __onCollisionEnterDisposalbe = null;
 
                         //* 지면에 닿은 후에 멈추도록 linearDamping 값을 수정함
-                        BodyCollider.attachedRigidbody.linearDamping = linearDampingOnGrounded;
+                        bodyCollider.attachedRigidbody.linearDamping = linearDampingOnGrounded;
                     }
                 }).AddTo(this);
             };
@@ -96,7 +96,7 @@ namespace Game
                 }
             }
 
-            EffectManager.Instance.Show(explosionFx, BodyCollider.transform.position + explosionOffset, Quaternion.identity, Vector3.one);
+            EffectManager.Instance.Show(explosionFx, bodyCollider.transform.position + explosionOffset, Quaternion.identity, Vector3.one);
 
             Stop(false);
         }

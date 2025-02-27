@@ -123,8 +123,8 @@ namespace Game
         {
             base.OnUpdateHandler();
 
-            if ((Time.time - __moveStartTimeStamp) > sensorEnabledTime && !BodyCollider.enabled)
-                BodyCollider.enabled = true;
+            if ((Time.time - __moveStartTimeStamp) > sensorEnabledTime && !bodyCollider.enabled)
+                bodyCollider.enabled = true;
 
             if (spriteRenderer != null && GameContext.Instance.cameraCtrler != null)
             {

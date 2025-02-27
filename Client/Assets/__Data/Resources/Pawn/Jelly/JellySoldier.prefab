@@ -43680,7 +43680,7 @@ SkinnedMeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5187097417234023690}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -72755,7 +72755,7 @@ MonoBehaviour:
   lateUpdateEnabled: 1
   fixedUpdateEnabled: 1
   roboDogFormationCtrler: {fileID: 5938920085556766268}
-  debugActionDisabled: 0
+  debugActionDisabled: 1
 --- !u!114 &1626602440402030822
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72897,7 +72897,7 @@ MonoBehaviour:
     onBlockedAudioClip: {fileID: 8300000, guid: b47bb87ddf4afcc49ba83a4999cf050e, type: 3}
     onGuardBreakAudioClip: {fileID: 8300000, guid: 93fc0b243c8d39441a33d29e6146b688, type: 3}
   attachment:
-    bodyMeshParent: {fileID: 0}
+    bodyMeshParent: {fileID: 3880047003858185409}
     bodyMeshRenderers: []
     shieldMeshRenderer: {fileID: 1458070737609187091}
     jetParticleSystems:

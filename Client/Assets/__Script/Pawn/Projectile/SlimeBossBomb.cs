@@ -26,7 +26,7 @@ namespace Game
             }).AddTo(this);
 
             //* Terrain 디텍션 코드
-            BodyCollider.OnCollisionEnterAsObservable().Subscribe(c =>
+            bodyCollider.OnCollisionEnterAsObservable().Subscribe(c =>
             {
                 if ((c.gameObject.layer & LayerMask.NameToLayer("Terrain")) > 0)
                     __isGrounded = true;
@@ -57,7 +57,7 @@ namespace Game
                     miniBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, base.emitterBrain.Value, hitColliderHelper.pawnBrain, actionData, hitColliderHelper.pawnCollider, false));
             }
 
-            EffectManager.Instance.Show("CFXR Explosion 2", BodyCollider.transform.position + Vector3.up * 0.2f, Quaternion.identity, 0.5f * Vector3.one);
+            EffectManager.Instance.Show("CFXR Explosion 2", bodyCollider.transform.position + Vector3.up * 0.2f, Quaternion.identity, 0.5f * Vector3.one);
 
             Stop(true);
         }
@@ -66,10 +66,10 @@ namespace Game
         {
             base.OnUpdateHandler();
 
-            if ((Time.time - __moveStartTimeStamp) > sensorEnabledTime && !BodyCollider.enabled)
-                BodyCollider.enabled = true;
+            if ((Time.time - __moveStartTimeStamp) > sensorEnabledTime && !bodyCollider.enabled)
+                bodyCollider.enabled = true;
 
-            if (!IsDespawnPending && BodyCollider.enabled && __isGrounded && __rigidBody.linearVelocity.sqrMagnitude < 0.1f)
+            if (!IsDespawnPending && bodyCollider.enabled && __isGrounded && __rigidBody.linearVelocity.sqrMagnitude < 0.1f)
                 Explode();
         }
     }

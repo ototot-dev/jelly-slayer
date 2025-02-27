@@ -66,8 +66,9 @@ namespace MainTable
 		public System.Single actionSpeed;
 		public System.Single damageMultiplier;
 		public System.Single damageMultiplierOnGroggy;
+		public System.Single reflectDamageMultiplier;
 		public System.Int32 cannotHitOnJump;
-		public System.Int32 cannotAvoidOnRolling;
+		public System.Int32 cannotHitOnRolling;
 		public System.Int32 cannotGuard;
 		public System.Int32 cannotParry;
 		public System.Int32 superArmorLevel;

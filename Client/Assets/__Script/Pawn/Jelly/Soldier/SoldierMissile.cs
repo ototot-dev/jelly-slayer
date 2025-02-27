@@ -16,6 +16,7 @@ namespace Game
             __homingStartTimeStamp = -1f;
             __homingTargetBrain = null;
             emitterBrain.Value = null;
+            reflectiveBrain.Value = null;
         }
 #endregion
 
@@ -57,14 +58,31 @@ namespace Game
             {
                 if (c.TryGetComponent<PawnColliderHelper>(out var helper))
                 {
-                    if (helper.pawnBrain == __homingTargetBrain)
-                        emitterBrain.Value.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, emitterBrain.Value, __homingTargetBrain, __actionData, __homingTargetBrain.bodyHitColliderHelper.pawnCollider, false));
+                    if (reflectiveBrain.Value != null)
+                    {
+                        if (helper.pawnBrain != emitterBrain.Value) return;
+                        emitterBrain.Value.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, reflectiveBrain.Value, emitterBrain.Value, __actionData, __homingTargetBrain.bodyHitColliderHelper.pawnCollider, false));
+                    }
                     else
-                        return;
+                    {
+                        if (helper.pawnBrain != __homingTargetBrain) return;
+                        emitterBrain.Value.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, emitterBrain.Value, __homingTargetBrain, __actionData, __homingTargetBrain.bodyHitColliderHelper.pawnCollider, false));
+
+                        //* 패링 반사된 경우
+                        if (reflectiveBrain.Value != null) 
+                            return;
+                    }
                 }
 
                 EffectManager.Instance.Show(hitFx, transform.position, Quaternion.identity, Vector3.one);
                 Stop(false);
+            };
+
+            onReflected += (b) =>
+            {
+                reflectiveBrain.Value = b;
+                //* 진행 방향을 emitterBrain 쪽으로 변경
+                transform.rotation = Quaternion.LookRotation(emitterBrain.Value.bodyHitColliderHelper.GetWorldCenter() - transform.position);
             };
 
             onLifeTimeOut += () => { Stop(false); };
@@ -80,6 +98,7 @@ namespace Game
             if (__hoveringStartTimeStamp <= 0f)
             {
                 velocity += Time.deltaTime * gravity;
+
                 //* 정점에 도달했다면 Hovering 시작함
                 if (velocity.y < 0f)
                     __hoveringStartTimeStamp = Time.time;
@@ -99,9 +118,12 @@ namespace Game
                     }
                     else
                     {
-                        transform.rotation = transform.rotation.LerpAngleSpeed(Quaternion.LookRotation(__homingTargetBrain.bodyHitColliderHelper.GetWorldCenter() - transform.position), homingRotateSpeed, Time.deltaTime);
+                        if (reflectiveBrain.Value != null)
+                            transform.rotation = transform.rotation.LerpAngleSpeed(Quaternion.LookRotation(emitterBrain.Value.bodyHitColliderHelper.GetWorldCenter() - transform.position), homingRotateSpeed, Time.deltaTime);
+                        else
+                            transform.rotation = transform.rotation.LerpAngleSpeed(Quaternion.LookRotation(__homingTargetBrain.bodyHitColliderHelper.GetWorldCenter() - transform.position), homingRotateSpeed, Time.deltaTime);
                     }
-                    velocity =  Mathf.Min(homingMaxSpeed, velocity.magnitude + homingAccel * Time.deltaTime) * transform.forward;
+                    velocity = Mathf.Min(homingMaxSpeed, velocity.magnitude + homingAccel * Time.deltaTime) * transform.forward;
                 }
             }
 

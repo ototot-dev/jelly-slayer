@@ -68,6 +68,7 @@ namespace Game
         GuardBreak,
         GuardParried,
         KickParried,
+        ProjectileReflected,
     }
 
     public enum RootMotionConstraints : int
