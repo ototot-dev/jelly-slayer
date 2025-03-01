@@ -65,7 +65,7 @@ namespace Game
             switch (eventName)
             {
                 case "OnJump": break;
-                case "OnHanging": ActionCtrler.StartAddictiveAction(new PawnHeartPointDispatcher.DamageContext(),  "LaserB"); break;
+                case "OnHanging": ActionCtrler.StartAddictiveAction(new PawnHeartPointDispatcher.DamageContext(),  "LaserB", 1f); break;
             }
         }
 

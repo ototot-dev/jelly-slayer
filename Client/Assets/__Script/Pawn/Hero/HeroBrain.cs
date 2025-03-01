@@ -201,7 +201,7 @@ namespace Game
 
             if (damageContext.receiverPenalty.Item1 == Game.PawnStatus.None)
             {
-                ActionCtrler.StartAddictiveAction(damageContext, "!OnHit");
+                ActionCtrler.StartAddictiveAction(damageContext, "!OnHit", AnimCtrler.actionLayerBlendOutSpeed);
             }
             else
             {

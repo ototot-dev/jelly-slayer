@@ -513,10 +513,11 @@ namespace Game.NodeCanvasExtension
         protected override string info => $"Start Action <b>{actionName.value}</b>";
         public BBParameter<string> actionName;
         public BBParameter<bool> manualAdvanceEnabled;
-        public BBParameter<float> animSpeedMultiplier = 1;
-        public BBParameter<float> animClipLength = -1;
+        public BBParameter<float> animSpeedMultiplier = 1f;
+        public BBParameter<float> animBlendSpeed = 1f;
+        public BBParameter<float> animClipLength = -1f;
         public BBParameter<int> animClipFps = -1;
-        public BBParameter<float> rootMotionMultiplier = 1;
+        public BBParameter<float> rootMotionMultiplier = 1f;
         public BBParameter<AnimationCurve> rootMotionCurve;
         public BBParameter<RootMotionConstraints[]> rootMotionConstraints;
 
@@ -534,7 +535,7 @@ namespace Game.NodeCanvasExtension
                         rootMotionConstrainSum |= (int)c;
                 }
 
-                EndAction(actionCtrler.StartAction(actionName.value, string.Empty,animSpeedMultiplier.value, rootMotionMultiplier.value, rootMotionConstrainSum, rootMotionCurve.value, manualAdvanceEnabled.value));
+                EndAction(actionCtrler.StartAction(actionName.value, string.Empty, animBlendSpeed.value, animSpeedMultiplier.value, rootMotionMultiplier.value, rootMotionConstrainSum, rootMotionCurve.value, manualAdvanceEnabled.value));
                 actionCtrler.ClearPendingAction();
 
                 if (animClipLength.value > 0)

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
 using FIMSpace.BonesStimulation;
@@ -27,7 +28,8 @@ namespace Game
         [Header("Parameter")]
         public float rigBlendWeight = 1f;
         public float rigBlendSpeed = 1f;
-        public float actionLayerBlendSpeed = 1f;
+        public float actionLayerBlendInSpeed = 1f;
+        public float actionLayerBlendOutSpeed = 1f;
         public float legAnimGlueBlendSpeed = 1f;
         public float armBoneSimulatorBlendSpeed = 1f;
         public float armBoneSimulatorTargetWeight = 0f;
@@ -35,8 +37,6 @@ namespace Game
         public float legBoneSimulatorTargetWeight = 0f;
         public float headBoneScaleFactor = 1f;
         public Vector3[] moveXmoveY_Table;
-        SoldierBrain __brain;
-        Rig __rig;
 
         //* Animator 레이어 인덱스 값 
         enum LayerIndices : int
@@ -65,8 +65,16 @@ namespace Game
             springMassSystem.coreAttachPoint = jellyMeshSlot;
         }
 
+        SoldierBrain __brain;
+        Rig __rig;
+        HashSet<string> __watchingStateNames = new();
+        public bool CheckWatchingState(string stateName) => __watchingStateNames.Contains(stateName);
+
         void Start()
         {
+            FindObservableStateMachineTriggerEx("OnParried").OnStateEnterAsObservable().Subscribe(s => __watchingStateNames.Add("OnParried")).AddTo(this);
+            FindObservableStateMachineTriggerEx("OnParried").OnStateExitAsObservable().Subscribe(s => __watchingStateNames.Remove("OnParried")).AddTo(this);
+
             __brain.StatusCtrler.onStatusActive += (status) =>
             {
                 if ((status == PawnStatus.Staggered && __brain.StatusCtrler.GetStrength(PawnStatus.Staggered) > 0f) || status == PawnStatus.Groggy)
@@ -124,11 +132,7 @@ namespace Game
 
             __brain.onUpdate += () =>
             {
-                if (__brain.ActionCtrler.CheckActionRunning())
-                    mainAnimator.SetLayerWeight((int)LayerIndices.Action, Mathf.Clamp(mainAnimator.GetLayerWeight((int)LayerIndices.Action) + (__brain.ActionCtrler.currActionContext.animBlendSpeed > 0f ? __brain.ActionCtrler.currActionContext.animBlendSpeed : actionLayerBlendSpeed) * Time.deltaTime, 0f, __brain.ActionCtrler.currActionContext.animBlendWeight));
-                else
-                    mainAnimator.SetLayerWeight((int)LayerIndices.Action, Mathf.Clamp01(mainAnimator.GetLayerWeight((int)LayerIndices.Action) - actionLayerBlendSpeed * Time.deltaTime));
-
+                mainAnimator.SetLayerWeight((int)LayerIndices.Action, __brain.ActionCtrler.GetAdvancedActionLayerWeight(mainAnimator.GetLayerWeight((int)LayerIndices.Action), actionLayerBlendInSpeed, actionLayerBlendOutSpeed, Time.deltaTime));
                 mainAnimator.SetLayerWeight((int)LayerIndices.Addictive, 1f);
                 mainAnimator.SetBool("IsMoving", __brain.Movement.CurrVelocity.sqrMagnitude > 0 && !__brain.ActionCtrler.CheckKnockBackRunning());
                 mainAnimator.SetBool("IsMovingStrafe", __brain.Movement.freezeRotation);
@@ -142,6 +146,9 @@ namespace Game
                 mainAnimator.SetFloat("MoveX", animMoveVecClamped.x / __brain.Movement.moveSpeed);
                 mainAnimator.SetFloat("MoveY", animMoveVecClamped.z / __brain.Movement.moveSpeed);
 
+                if (CheckWatchingState("OnParried"))
+                    armBoneSimulatorTargetWeight = 0f;
+                    
                 if (armBoneSimulatorTargetWeight > 0f)
                 {
                     if (!leftArmBoneSimulator.enabled) leftArmBoneSimulator.enabled = true;
@@ -195,7 +202,13 @@ namespace Game
                     legAnimator.User_SetIsMoving(false);
                     legAnimator.User_SetIsGrounded(true);
                 }
-                else if (__brain.BB.IsDown || __brain.BB.IsJumping || __brain.BB.IsGliding || __brain.BB.IsFalling)
+                else if (__brain.BB.IsDown)
+                {
+                    legAnimator.LegsAnimatorBlend = 0f;
+                    legAnimator.User_SetIsMoving(false);
+                    legAnimator.User_SetIsGrounded(false);
+                }
+                else if (__brain.BB.IsJumping || __brain.BB.IsGliding || __brain.BB.IsFalling)
                 {
                     legAnimator.LegsAnimatorBlend = 0f;
                     legAnimator.User_SetIsMoving(false);
@@ -204,12 +217,12 @@ namespace Game
                 else
                 {
                     legAnimator.LegsAnimatorBlend = 1f;
+                    legAnimator.MainGlueBlend = 1f;
 
-                    if (__brain.BB.IsGuarding || __brain.ActionCtrler.CheckKnockBackRunning())
-                        legAnimator.MainGlueBlend = 1f;
-                    else
-                        legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude > 0 && !__brain.ActionCtrler.CheckActionRunning() ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, 1f, 1);
-                        // legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude > 0 && !__brain.ActionCtrler.CheckActionRunning() ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.8f : 0.9f, 1);
+                    // if (__brain.BB.IsGuarding || __brain.ActionCtrler.CheckKnockBackRunning())
+                    //     legAnimator.MainGlueBlend = 1f;
+                    // else
+                    //     legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude > 0 && !__brain.ActionCtrler.CheckActionRunning() ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.8f : 0.9f, 1);
 
                     legAnimator.User_SetIsMoving(__brain.Movement.CurrVelocity.sqrMagnitude > 0 && !__brain.ActionCtrler.CheckActionRunning() && !__brain.ActionCtrler.CheckKnockBackRunning());
                     legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround);

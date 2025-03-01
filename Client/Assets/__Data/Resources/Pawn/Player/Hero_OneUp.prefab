@@ -977,9 +977,10 @@ MonoBehaviour:
   shieldMeshSlot: {fileID: 3452488443664082073}
   HeadLookAt: {fileID: 3872346485875650652}
   hipBone: {fileID: 3244703593161533285}
-  guardParryRootMotionMultiplier: 1
-  animLayerBlendSpeed: 10
+  actionLayerBlendInSpeed: 5
+  actionLayerBlendOutSpeed: 5
   legAnimGlueBlendSpeed: 1
+  guardParryRootMotionMultiplier: 1
   blockAdditiveAnimClips:
   - {fileID: -1905609392677946133, guid: f0ff99e8eab4a414f9d77bc4eec20c58, type: 3}
   - {fileID: 8952413660455403669, guid: b96a3e38fca3f1f4ab5c7baf1321adad, type: 3}
