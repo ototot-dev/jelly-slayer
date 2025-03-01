@@ -1949,7 +1949,7 @@ namespace Game.NodeCanvasExtension
         protected override string info => soundClip.isNoneOrNull ? base.info : $"Play SoundClip <b>{soundClip.name}</b>";
         public BBParameter<AudioClip> soundClip;
         public BBParameter<SoundType> soundType;
-        public BBParameter<float> volumeRate;
+        public BBParameter<float> volumeRate = 1f;
         public BBParameter<bool> isLooping;
 
         protected override void OnExecute()
