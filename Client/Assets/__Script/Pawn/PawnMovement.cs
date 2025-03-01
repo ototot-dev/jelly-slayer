@@ -112,14 +112,20 @@ namespace Game
 
         public void FaceTo(Vector3 direction)
         {
-            faceVec = direction;
+            faceVec = direction.normalized;
             __ecmMovement.SetRotation(Quaternion.LookRotation(faceVec));
+
+            if (!freezeRotation)
+                moveVec = faceVec;
         }
 
         public void FaceAt(Vector3 target)
         {
             faceVec = (target - capsule.position).Vector2D().normalized;
             __ecmMovement.SetRotation(Quaternion.LookRotation(faceVec));
+            
+            if (!freezeRotation)
+                moveVec = faceVec;
         }
         
         public void AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation, float deltaTime)

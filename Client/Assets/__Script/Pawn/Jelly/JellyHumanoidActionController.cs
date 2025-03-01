@@ -174,8 +174,6 @@ namespace Game
 
         public override IDisposable StartOnGroogyAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
         {
-            __Logger.LogR2(gameObject, nameof(StartOnGroogyAction), "-", "Distance", damageContext.senderBrain.coreColliderHelper.GetDistanceBetween(damageContext.receiverBrain.coreColliderHelper));
-
             if (damageContext.actionResult == ActionResults.GuardParried || damageContext.actionResult == ActionResults.KickParried)
             {
                 Debug.Assert(__humanoidBrain == damageContext.senderBrain);
@@ -214,9 +212,6 @@ namespace Game
             }
             else
             {
-                // __pawnAnimCtrler.mainAnimator.SetBool("IsGroggy", true);
-                // __pawnAnimCtrler.mainAnimator.SetTrigger("OnGroggy");
-
                 if (damageContext.senderActionData.knockBackDistance > 0f)
                 {
                     var knockBackVec = damageContext.senderActionData.actionName == "SpecialKick" ?

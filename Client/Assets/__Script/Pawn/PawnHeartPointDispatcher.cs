@@ -21,7 +21,7 @@ namespace Game
         void Start()
         {
             //* Groggy 종료 후 groggyHitCount 초기화
-            PawnBrain.PawnBB.common.isGroggy.Skip(1).Where(v => !v).Subscribe(_ => 
+            PawnBrain.PawnBB.common.isGroggy.Skip(1).Where(v => !v).Subscribe(_ =>
             {
                 PawnBrain.PawnBB.stat.groggyHitCount.Value = 0;
             }).AddTo(this);
@@ -178,23 +178,27 @@ namespace Game
             if (damageContext.actionResult == ActionResults.Blocked) ProcessActionBlocked(ref damageContext);
             else if (damageContext.actionResult == ActionResults.KickParried) ProcessActionKickParried(ref damageContext);
             else if (damageContext.actionResult == ActionResults.GuardParried) ProcessActionGuardParried(ref damageContext);
-            else if (damageContext.finalDamage > 0 || CalcFinalDamage(ref damageContext) > 0) 
+            else if (damageContext.finalDamage > 0 || CalcFinalDamage(ref damageContext) > 0)
             {
                 damageContext.actionResult = ActionResults.Damaged;
+                __Logger.LogR1(gameObject, nameof(ProcessDamageContext), "actionResult", damageContext.actionResult, "senderBrain", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
+
                 ProcessActionDamaged(ref damageContext);
             }
             else
             {
                 //* 데미지 없는 공격은 Missed 처리한다.
-                damageContext.finalDamage = 0f;
                 damageContext.actionResult = ActionResults.Missed;
+                __Logger.LogR1(gameObject, nameof(ProcessDamageContext), "actionResult", damageContext.actionResult, "senderBrain", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
+
+                damageContext.finalDamage = 0f;
                 damageContext.receiverPenalty = new(PawnStatus.None, 0f);
             }
 
             if (damageContext.receiverBrain.PawnHP.heartPoint.Value <= 0 && !damageContext.receiverBrain.PawnBB.IsDead)
             {
                 __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "Receiver is dead", "receiverBrain", damageContext.receiverBrain);
-                
+
                 //* onDamaged 호출은 isDead가 true롤 셋팅되지 전에 불려야함!!
                 damageContext.receiverBrain.PawnHP.onDamaged?.Invoke(damageContext);
                 damageContext.receiverBrain.PawnBB.common.isDead.Value = true;
@@ -276,7 +280,8 @@ namespace Game
                 }
             }
 
-            __Logger.LogR1(gameObject, nameof(DecideActionResult), "actionResult", damageContext.actionResult, "senderBrain", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
+            if (damageContext.actionResult != ActionResults.None)
+                __Logger.LogR1(gameObject, nameof(DecideActionResult), "actionResult", damageContext.actionResult, "senderBrain", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
         }
 
         void ProcessActionBlocked(ref DamageContext damageContext)
@@ -300,7 +305,7 @@ namespace Game
                     //* 'BreakGuard'인 경우 'Staggered' 디버프를 받게 되며, 'Staggered' 지속 시간은 피격 경직 시간과 동일하게 적용함
                     damageContext.receiverPenalty = new(PawnStatus.Staggered, damageContext.senderActionData.staggerDuration);
                 }
-                else 
+                else
                 {
                     if (damageContext.projectile == null)
                     {
@@ -312,7 +317,7 @@ namespace Game
                             __Logger.LogR2(gameObject, nameof(ProcessActionBlocked), "Sender has SuperArmorLevels.CanNotStraggerOnBlacked", "senderBrain", damageContext.senderBrain);
                         }
                         else
-                        {   
+                        {
                             //* 'Block' 판정인 경우엔 Sender에게 경직 발생
                             damageContext.senderPenalty = new(PawnStatus.Staggered, damageContext.receiverActionData.staggerDuration);
                             __Logger.LogR2(gameObject, nameof(ProcessActionBlocked), "Sender ActionPenalty => Staggered", "staggerDuration", damageContext.receiverActionData.staggerDuration, "senderBrain", damageContext.senderBrain);
@@ -437,7 +442,7 @@ namespace Game
 
             //* KnockDown 처리
             if (damageContext.receiverBrain.TryGetComponent<HeroBlackboard>(out var heroBB) && heroBB.IsHanging)
-            { 
+            {
                 if (heroBB.stat.ReduceStamina(damageContext.senderActionData.hangingStaminaDamage) <= 0 && damageContext.receiverPenalty.Item1 == PawnStatus.None)
                 {
                     damageContext.receiverBrain.PawnBB.stat.knockDown.Value = 0;
@@ -498,7 +503,7 @@ namespace Game
                 __Logger.LogR2(gameObject, nameof(CalcFinalDamage), "Receiver is invincible => No damage", "receiverBrain", damageContext.receiverBrain);
                 return 0f;
             }
-            
+
             if (damageContext.insufficientStamina)
             {
                 damageContext.finalDamage = Mathf.Max(1f, damageContext.finalDamage * 0.1f);

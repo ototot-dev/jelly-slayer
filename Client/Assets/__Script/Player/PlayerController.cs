@@ -473,10 +473,10 @@ namespace Game
                             possessedBrain.ActionCtrler.CancelAction(false);
                             possessedBrain.ActionCtrler.SetPendingAction("Slash#3");
                             break;
-                        case "Slash#3":
-                            possessedBrain.ActionCtrler.CancelAction(false);
-                            possessedBrain.ActionCtrler.SetPendingAction("Slash#4");
-                            break;
+                        // case "Slash#3":
+                        //     possessedBrain.ActionCtrler.CancelAction(false);
+                        //     possessedBrain.ActionCtrler.SetPendingAction("Slash#4");
+                        //     break;
                         case "HeavySlash#1":
                             possessedBrain.ActionCtrler.CancelAction(false);
                             possessedBrain.ActionCtrler.SetPendingAction("HeavySlash#2");
@@ -488,14 +488,14 @@ namespace Game
                     }
 
                     //* 타겟이 없을 경우에도 조준 보정을 해줌
-                    if (possessedBrain.BB.TargetBrain == null && possessedBrain.SensorCtrler.ListeningColliders.Count > 0)
-                    {
-                        var attackPoint = possessedBrain.SensorCtrler.ListeningColliders.Select(c => c.transform.position)
-                            .OrderBy(p => Vector3.Angle(possessedBrain.coreColliderHelper.transform.forward.Vector2D(), (p - possessedBrain.coreColliderHelper.transform.position).Vector2D()))
-                            .FirstOrDefault();
+                    // if (possessedBrain.BB.TargetBrain == null && possessedBrain.SensorCtrler.ListeningColliders.Count > 0)
+                    // {
+                    //     var attackPoint = possessedBrain.SensorCtrler.ListeningColliders.Select(c => c.transform.position)
+                    //         .OrderBy(p => Vector3.Angle(possessedBrain.coreColliderHelper.transform.forward.Vector2D(), (p - possessedBrain.coreColliderHelper.transform.position).Vector2D()))
+                    //         .FirstOrDefault();
 
-                        possessedBrain.Movement.FaceAt(attackPoint);
-                    }
+                    //     possessedBrain.Movement.FaceAt(attackPoint);
+                    // }
                 }
             }
             else
@@ -521,14 +521,14 @@ namespace Game
                     }
 
                     //* 타겟이 없을 경우에도 조준 보정을 해줌
-                    if (possessedBrain.BB.TargetBrain == null && possessedBrain.SensorCtrler.ListeningColliders.Count > 0)
-                    {
-                        var attackPoint = possessedBrain.SensorCtrler.ListeningColliders.Select(c => c.transform.position)
-                            .OrderBy(p => Vector3.Angle(possessedBrain.coreColliderHelper.transform.forward.Vector2D(), (p - possessedBrain.coreColliderHelper.transform.position).Vector2D()))
-                            .FirstOrDefault();
+                    // if (possessedBrain.BB.TargetBrain == null && possessedBrain.SensorCtrler.ListeningColliders.Count > 0)
+                    // {
+                    //     var attackPoint = possessedBrain.SensorCtrler.ListeningColliders.Select(c => c.transform.position)
+                    //         .OrderBy(p => Vector3.Angle(possessedBrain.coreColliderHelper.transform.forward.Vector2D(), (p - possessedBrain.coreColliderHelper.transform.position).Vector2D()))
+                    //         .FirstOrDefault();
 
-                        possessedBrain.Movement.FaceAt(attackPoint);
-                    }
+                    //     possessedBrain.Movement.FaceAt(attackPoint);
+                    // }
                 }
 
                 //* 챠징 어택 판별을 위해서 'isCharging' 값은 제일 마지막에 리셋

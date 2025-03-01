@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UniRx;
+using Unity.Profiling;
 using UnityEngine;
 
 namespace Game
 {
     public class PawnActionController : MonoBehaviour, IStatusContainer
-    {   
+    {       
         public struct ActionContext
         {
             public MainTable.ActionData actionData;
@@ -43,14 +44,14 @@ namespace Game
             static int __actionInstanceIdCounter;
 
             //* 일반적인 Action 초기화
-            public ActionContext(MainTable.ActionData actionData, string preMotionName, float actionSpeedMultiplier, float rootMotionMultiplier, int rootMotionConstraint, AnimationCurve rootMotionCurve, bool manualAdvacneEnabled, float startTimeStamp)
+            public ActionContext(MainTable.ActionData actionData, string preMotionName, float actionSpeedMultiplier, float rootMotionMultiplier, int rootMotionConstraint, AnimationCurve rootMotionCurve, bool manualAdvacneEnabled, float animBlendSpeed, float startTimeStamp)
             {
                 Debug.Assert(actionData != null);
                 this.actionData = actionData;
                 actionInstanceId = ++__actionInstanceIdCounter;
                 this.preMotionName = preMotionName;
                 actionName = actionData.actionName;
-                this.actionSpeed = actionData.actionSpeed * actionSpeedMultiplier;
+                actionSpeed = actionData.actionSpeed * actionSpeedMultiplier;
                 this.rootMotionMultiplier = rootMotionMultiplier;
                 this.rootMotionConstraint = rootMotionConstraint;
                 this.rootMotionCurve = rootMotionCurve;
@@ -64,8 +65,8 @@ namespace Game
                 isTraceRunning = false;
                 this.manualAdvanceEnabled = manualAdvacneEnabled;
                 manualAdvanceTime = 0f;
-                manualAdvanceSpeed = this.actionSpeed;
-                animBlendSpeed = -1f;
+                manualAdvanceSpeed = actionSpeed;
+                this.animBlendSpeed = animBlendSpeed;
                 animBlendWeight = 1f;
                 animClipLength = -1f;
                 animClipFps = -1;
@@ -79,7 +80,7 @@ namespace Game
             }
 
             //* 리액션 및 Addictive 액션 초기화
-            public ActionContext(string actionName, float actionSpeed, float startTimeStamp)
+            public ActionContext(string actionName, float actionSpeed, float animBlendSpeed, float startTimeStamp)
             {
                 actionData = null;
                 actionInstanceId = ++__actionInstanceIdCounter;
@@ -99,8 +100,8 @@ namespace Game
                 isTraceRunning = false;
                 manualAdvanceEnabled = false;
                 manualAdvanceTime = 0f;
-                manualAdvanceSpeed = this.actionSpeed;
-                animBlendSpeed = 1f;
+                manualAdvanceSpeed = actionSpeed;
+                this.animBlendSpeed = animBlendSpeed;
                 animBlendWeight = -1f;
                 animClipLength = -1f;
                 animClipFps = -1;
@@ -135,8 +136,8 @@ namespace Game
         }
 #endregion
 
-        public ActionContext prevActionContext = new(string.Empty, 1f, 0f);
-        public ActionContext currActionContext = new(string.Empty, 1f, 0f);
+        public ActionContext prevActionContext = new(string.Empty, 1f, -1f, 0f);
+        public ActionContext currActionContext = new(string.Empty, 1f, -1f, 0f);
         public bool CheckActionRunning() => currActionContext.actionData != null || currActionContext.actionDisposable != null;
         public virtual bool CheckAddictiveActionRunning(string actionName) => false;
         public bool CheckActionCanceled() { Debug.Assert(CheckActionRunning()); return currActionContext.actionCanceled; }
@@ -195,6 +196,19 @@ namespace Game
             return __pawnBrain.PawnStatusCtrler.GetStrength(buff);
         }
 #endregion
+
+        public virtual float GetAdvancedActionLayerWeight(float currWeight, float blendInSpeed, float blendOutSpeed, float deltaTime)
+        {
+            if (CheckActionRunning())
+            {
+                var blendSpeed = currActionContext.animBlendSpeed >= 0f ? currActionContext.animBlendSpeed : blendInSpeed;
+                return Mathf.Clamp(currWeight + blendSpeed * deltaTime, 0f, currActionContext.animBlendWeight);
+            }
+            else
+            {
+                return Mathf.Clamp01(currWeight - blendOutSpeed * deltaTime);
+            }
+        }
 
         public virtual float GetRootMotionMultiplier()
         {
@@ -403,12 +417,12 @@ namespace Game
             };
         }
 
-        public bool StartAction(string actionName, string preMotionName, float actionSpeedMultiplier = 1, float rootMotionMultiplier = 1, int rootMotionConstraint = 0, AnimationCurve rootMotionCurve = null, bool manualAdvacneEnabled = false)
+        public bool StartAction(string actionName, string preMotionName, float animBlendSpeed = -1f, float actionSpeedMultiplier = 1f, float rootMotionMultiplier = 1f, int rootMotionConstraint = 0, AnimationCurve rootMotionCurve = null, bool manualAdvacneEnabled = false)
         {
-            return StartAction(new PawnHeartPointDispatcher.DamageContext(), actionName, preMotionName, actionSpeedMultiplier, rootMotionMultiplier, rootMotionConstraint, rootMotionCurve, manualAdvacneEnabled);
+            return StartAction(new PawnHeartPointDispatcher.DamageContext(), actionName, preMotionName, animBlendSpeed, actionSpeedMultiplier, rootMotionMultiplier, rootMotionConstraint, rootMotionCurve, manualAdvacneEnabled);
         }
 
-        public bool StartAction(PawnHeartPointDispatcher.DamageContext damageContext, string actionName, string preMotionName, float actionSpeedMultiplier = 1, float rootMotionMultiplier = 1, int rootMotionConstraint = 0, AnimationCurve rootMotionCurve = null, bool manualAdvacneEnabled = false)
+        public bool StartAction(PawnHeartPointDispatcher.DamageContext damageContext, string actionName, string preMotionName, float animBlendSpeed = -1f, float actionSpeedMultiplier = 1, float rootMotionMultiplier = 1, int rootMotionConstraint = 0, AnimationCurve rootMotionCurve = null, bool manualAdvacneEnabled = false)
         {
             if (CheckActionRunning())
             {
@@ -418,7 +432,7 @@ namespace Game
 
             if (actionName.StartsWith('!')) //* '!'로 시작하는 이름은 리액션
             {
-                currActionContext = new(actionName, actionSpeedMultiplier, Time.time);
+                currActionContext = new(actionName, actionSpeedMultiplier, animBlendSpeed, Time.time);
                 onActionStart?.Invoke(currActionContext, damageContext);
 
                 __Logger.LogR1(gameObject, "onActionStart", "actionName", currActionContext.actionName, "actionInstanceId", currActionContext.actionInstanceId);
@@ -459,7 +473,7 @@ namespace Game
                     return false;
                 }
 
-                currActionContext = new(actionData, preMotionName, actionSpeedMultiplier, rootMotionMultiplier, rootMotionConstraint, rootMotionCurve, manualAdvacneEnabled, Time.time);
+                currActionContext = new(actionData, preMotionName, actionSpeedMultiplier, rootMotionMultiplier, rootMotionConstraint, rootMotionCurve, manualAdvacneEnabled, animBlendSpeed, Time.time);
                 if (actionData.staminaCost > 0)
                 {
                     if (__pawnBrain.PawnBB.stat.stamina.Value < actionData.staminaCost)
@@ -496,7 +510,7 @@ namespace Game
         public bool StartAddictiveAction(PawnHeartPointDispatcher.DamageContext damageContext, string actionName, float actionSpeedMultiplier = 1, float rootMotionMultiplier = 1)
         {
             __Logger.LogR2(gameObject, nameof(StartAddictiveAction), "onAddictiveActionStart is invoked.", "actionName", actionName);
-            onAddictiveActionStart?.Invoke(new ActionContext(actionName, 1f, Time.time), damageContext);
+            onAddictiveActionStart?.Invoke(new ActionContext(actionName, 1f, -1f, Time.time), damageContext);
 
             if (actionName.StartsWith('!'))
             {
@@ -567,8 +581,8 @@ namespace Game
 
             if (__pawnAnimCtrler != null && __pawnAnimCtrler.mainAnimator != null)
             {
-                __pawnAnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1);
-                __pawnAnimCtrler.mainAnimator.SetFloat("AnimAdvance", 0);
+                __pawnAnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1f);
+                __pawnAnimCtrler.mainAnimator.SetFloat("AnimAdvance", 0f);
             }
 
             currActionContext.actionDisposable?.Dispose();
@@ -581,7 +595,7 @@ namespace Game
 
             prevActionContext = currActionContext;
             prevActionContext.finishTimeStamp = Time.time;
-            currActionContext = new(string.Empty, 1f, 0f);
+            currActionContext = new(string.Empty, 1f, -1f, 0f);
             onActionFinished?.Invoke(prevActionContext);
 
 #if UNITY_EDITOR

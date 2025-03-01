@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using FIMSpace.BonesStimulation;
-using NodeCanvas.Framework.Internal;
 using UniRx;
 using UnityEditor;
 using UnityEngine;
@@ -18,14 +17,14 @@ namespace Game
         public BonesStimulator leftLegBoneSimulator;
         public BonesStimulator rightLegBoneSimulator;
         public Transform weaponMeshSlot;
-        public Transform shieldMeshSlot;
         public Transform HeadLookAt;
         public Transform hipBone;
 
         [Header("Parameter")]
-        public float guardParryRootMotionMultiplier = 1f;
-        public float animLayerBlendSpeed = 1f;
+        public float actionLayerBlendInSpeed = 1f;
+        public float actionLayerBlendOutSpeed = 1f;
         public float legAnimGlueBlendSpeed = 1f;
+        public float guardParryRootMotionMultiplier = 1f;
         public AnimationClip[] blockAdditiveAnimClips;
 
         //* Animator 레이어 인덱스 값 
@@ -66,22 +65,16 @@ namespace Game
             }
             else if (__watchingStateNames.Contains("GuardParry"))
             {
-                // __brain.Movement.AddRootMotion(guardParryRootMotionMultiplier * mainAnimator.deltaPosition, Quaternion.identity, Time.deltaTime);
                 __brain.Movement.AddRootMotion(__brain.BB.action.guardParryRootMotionMultiplier * mainAnimator.deltaPosition, Quaternion.identity, Time.deltaTime);
             }
-
-            // mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
         }
 
         void Start()
-        {
+        {   
             __brain.BB.body.isGuarding.CombineLatest(__brain.BB.body.isCharging, (a, b) => new Tuple<bool, bool>(a, b)).Subscribe(v =>
             {   
                 if (!v.Item1 && !v.Item2)
-                {
                     mainAnimator.SetBool("IsGuarding", false);
-                    __brain.BB.graphics.forceShieldRenderer.transform.localScale = Vector3.one;
-                }
             }).AddTo(this);
 
             __brain.BB.body.isRolling.Subscribe(v =>
@@ -115,7 +108,6 @@ namespace Game
             {
                 __watchingStateNames.Remove("OnDown");
                 legAnimator.User_FadeEnabled(0.1f);
-                // __brain.Movement.GetCharacterMovement().SetPosition(__brain.AnimCtrler.ragdollAnimator.Handler.DummyReference.transform.GetChild(0).position);
                 ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Off;
             }).AddTo(this);
 
@@ -123,7 +115,7 @@ namespace Game
 
             __brain.onUpdate += () =>
             {
-                //* Down, Dead 상태에선 별도의 Animation 처리를 모두 끈다.
+                //* Down, Dead 상태에선 Animation 처리를 모두 끈다.
                 if (__watchingStateNames.Contains("OnDown") || __watchingStateNames.Contains("OnDead"))
                 {
                     rigSetup.weight = 0f;
@@ -134,17 +126,13 @@ namespace Game
                     legAnimator.User_SetIsGrounded(false);
                     legAnimator.MainGlueBlend = 0f;
 
-                    mainAnimator.transform.SetPositionAndRotation(__brain.coreColliderHelper.transform.position, __brain.coreColliderHelper.transform.rotation);
                     mainAnimator.SetLayerWeight((int)LayerIndices.Arms, 0f);
                     mainAnimator.SetLayerWeight((int)LayerIndices.Upper, 0f);
-                    mainAnimator.SetLayerWeight((int)LayerIndices.Action, 1f);
+                    mainAnimator.SetLayerWeight((int)LayerIndices.Action, __brain.ActionCtrler.GetAdvancedActionLayerWeight(mainAnimator.GetLayerWeight((int)LayerIndices.Action), actionLayerBlendInSpeed, actionLayerBlendOutSpeed, Time.deltaTime));
                     mainAnimator.SetBool("IsGuarding", false);
                     mainAnimator.SetBool("IsMoving", false);
-                     
-                    return;
                 }
-
-                if (__brain.BB.IsRolling)
+                else if (__brain.BB.IsRolling)
                 {
                     rigSetup.weight = 0f;
                     spineOverrideTransform.weight = 0f;
@@ -175,7 +163,7 @@ namespace Game
 
                     mainAnimator.SetLayerWeight((int)LayerIndices.Arms, 0f);
                     mainAnimator.SetLayerWeight((int)LayerIndices.Upper, 0f);
-                    mainAnimator.SetLayerWeight((int)LayerIndices.Action, Mathf.Clamp01(mainAnimator.GetLayerWeight((int)LayerIndices.Action) + (__brain.ActionCtrler.CheckActionRunning() ? animLayerBlendSpeed : -animLayerBlendSpeed) * Time.deltaTime));
+                    mainAnimator.SetLayerWeight((int)LayerIndices.Action, __brain.ActionCtrler.GetAdvancedActionLayerWeight(mainAnimator.GetLayerWeight((int)LayerIndices.Action), actionLayerBlendInSpeed, actionLayerBlendOutSpeed, Time.deltaTime));
                     mainAnimator.SetFloat("MoveSpeed", 0f);
                     mainAnimator.SetFloat("MoveAnimSpeed", 1f);
                     mainAnimator.SetBool("IsMoving", false);
@@ -213,17 +201,6 @@ namespace Game
                     else if (__brain.BB.IsGuarding)
                         mainAnimator.SetBool("IsGuarding", true);
 
-                    if (mainAnimator.GetBool("IsGuarding"))
-                    {
-                        shieldMeshSlot.transform.localEulerAngles = new Vector3(0f, -45f, -90f);
-                        __brain.BB.graphics.forceShieldRenderer.transform.localScale = 2f * Vector3.one;
-                    }
-                    else
-                    {
-                        shieldMeshSlot.transform.localEulerAngles = new Vector3(0f, -90f, -90f);
-                        __brain.BB.graphics.forceShieldRenderer.transform.localScale = Vector3.one;
-                    }
-
                     // TODO: healingPotion Show/Hide 임시 코드
                     if (__watchingStateNames.Contains("DrinkPotion"))
                     {
@@ -241,10 +218,10 @@ namespace Game
 
                     if (__watchingStateNames.Contains("DrinkPotion"))
                         mainAnimator.SetLayerWeight((int)LayerIndices.Action, 0f);
-                    else if (__brain.BB.IsRolling || __watchingStateNames.Contains("GuardParry"))
+                    else if (__watchingStateNames.Contains("GuardParry"))
                         mainAnimator.SetLayerWeight((int)LayerIndices.Action, 1f);
                     else
-                        mainAnimator.SetLayerWeight((int)LayerIndices.Action, Mathf.Clamp01(mainAnimator.GetLayerWeight((int)LayerIndices.Action) + (__brain.ActionCtrler.CheckActionRunning() ? animLayerBlendSpeed : -animLayerBlendSpeed) * Time.deltaTime));
+                        mainAnimator.SetLayerWeight((int)LayerIndices.Action, __brain.ActionCtrler.GetAdvancedActionLayerWeight(mainAnimator.GetLayerWeight((int)LayerIndices.Action), actionLayerBlendInSpeed, actionLayerBlendOutSpeed, Time.deltaTime));
 
                     mainAnimator.SetFloat("MoveSpeed", __brain.Movement.freezeRotation ? -1 : __brain.Movement.CurrVelocity.Vector2D().magnitude / __brain.BB.body.walkSpeed);
                     mainAnimator.SetFloat("MoveAnimSpeed", __brain.Movement.freezeRotation ? (__brain.BB.IsGuarding ? 0.8f : 1.2f) : 1f);
@@ -262,41 +239,10 @@ namespace Game
 
             __brain.onLateUpdate += () =>
             {
+                mainAnimator.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
                 __brain.BB.attachment.leftMechHandBone.transform.SetPositionAndRotation(__brain.BB.attachment.leftHandBone.transform.position, __brain.BB.attachment.leftHandBone.transform.rotation);
                 __brain.BB.attachment.leftMechElbowBone.transform.SetPositionAndRotation(__brain.BB.attachment.leftElbowBone.transform.position, __brain.BB.attachment.leftElbowBone.transform.rotation);
             };
         }
-
-        public bool Jump() 
-        {
-            mainAnimator.SetTrigger("Jump");
-            mainAnimator.SetBool("IsJumping", true);
-
-            return true;
-        }
-
-        public void Dash()
-        {
-            mainAnimator.SetTrigger("Rolling");
-        }
-
-        public void OnEventLand() 
-        {
-            mainAnimator.SetBool("IsJumping", false);
-        }
-        /*
-        public void ChangeWeapon(WEAPONSLOT weaponSlot)
-        {
-            switch (weaponSlot) {
-                case WEAPONSLOT.MAINSLOT:
-                    mainAnimator.runtimeAnimatorController = _animControllers[0];
-                    break;
-                case WEAPONSLOT.SUBSLOT:
-                    mainAnimator.runtimeAnimatorController = _animControllers[1];
-                    break;
-            }
-        }
-        */
     }
-
 }
