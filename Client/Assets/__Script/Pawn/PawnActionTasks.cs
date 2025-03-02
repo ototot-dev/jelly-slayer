@@ -1897,7 +1897,11 @@ namespace Game.NodeCanvasExtension
 
         protected override void OnExecute()
         {
-            if (trailFx.value == null) { EndAction(true); }
+            if (trailFx.value == null) 
+            { 
+                EndAction(true);
+                return;
+            }
             __pawnActionCtrler = agent.GetComponent<PawnActionController>();
 
             if (!startPoint.isNoneOrNull)
