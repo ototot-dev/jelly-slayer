@@ -22105,7 +22105,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5905730780835405055
 Transform:
   m_ObjectHideFlags: 0
@@ -22144,8 +22144,8 @@ MonoBehaviour:
   MaxFrame: 20
   Granularity: 60
   Fps: 60
-  MyColor: {r: 1, g: 1, b: 1, a: 1}
-  MyMaterial: {fileID: 2100000, guid: 892c9edd446a447cbbf12419304b8eb3, type: 2}
+  MyColor: {r: 1, g: 1, b: 1, a: 0.7019608}
+  MyMaterial: {fileID: 2100000, guid: 75f756109f216ad409ff1a5ea7dd7b2c, type: 2}
 --- !u!1 &2562588071773631768
 GameObject:
   m_ObjectHideFlags: 0
@@ -22468,7 +22468,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4341131037163423784
 Transform:
   m_ObjectHideFlags: 0
@@ -72696,7 +72696,7 @@ MonoBehaviour:
   springMassSystem: {fileID: 8495594617367855988}
   rigBlendWeight: 1
   rigBlendSpeed: 1
-  actionLayerBlendInSpeed: 5
+  actionLayerBlendInSpeed: 20
   actionLayerBlendOutSpeed: 5
   legAnimGlueBlendSpeed: 1
   armBoneSimulatorBlendSpeed: 4
@@ -72778,7 +72778,7 @@ MonoBehaviour:
     isSpawnFinished:
       value: 0
     isInvincible:
-      value: 0
+      value: 1
     isDead:
       value: 0
     isDown:
@@ -72830,6 +72830,9 @@ MonoBehaviour:
   target:
     targetPawnHP:
       value: {fileID: 0}
+    trail:
+    - {fileID: 2531984228082749242}
+    - {fileID: 722672261472128924}
   decision:
     currDecision:
       value: -1
@@ -72980,7 +72983,7 @@ MonoBehaviour:
     _version: 3.31
     _category: 
     _comments: 
-    _translation: {x: -735, y: -331}
+    _translation: {x: -547, y: 0}
     _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 0
