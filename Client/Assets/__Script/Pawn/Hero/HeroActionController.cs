@@ -9,7 +9,7 @@ namespace Game
     {
         [Header("Component")]
         public Transform fxAttachPoint;
-        public Collider kickActionCollider;
+        public Collider punchActionCollider;
 
         public override bool CanRootMotion(Vector3 rootMotionVec)
         {

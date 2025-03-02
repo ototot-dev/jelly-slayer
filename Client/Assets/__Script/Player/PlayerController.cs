@@ -399,7 +399,7 @@ namespace Game
                 if (possessedBrain.ActionCtrler.CheckActionRunning())
                     possessedBrain.ActionCtrler.CancelAction(false);
 
-                possessedBrain.ActionCtrler.SetPendingAction("Kick");
+                possessedBrain.ActionCtrler.SetPendingAction("Punch");
             }
         }
 
@@ -473,10 +473,10 @@ namespace Game
                             possessedBrain.ActionCtrler.CancelAction(false);
                             possessedBrain.ActionCtrler.SetPendingAction("Slash#3");
                             break;
-                        // case "Slash#3":
-                        //     possessedBrain.ActionCtrler.CancelAction(false);
-                        //     possessedBrain.ActionCtrler.SetPendingAction("Slash#4");
-                        //     break;
+                        case "Punch":
+                            possessedBrain.ActionCtrler.CancelAction(false);
+                            possessedBrain.ActionCtrler.SetPendingAction("Slash#1");
+                            break;
                         case "HeavySlash#1":
                             possessedBrain.ActionCtrler.CancelAction(false);
                             possessedBrain.ActionCtrler.SetPendingAction("HeavySlash#2");
