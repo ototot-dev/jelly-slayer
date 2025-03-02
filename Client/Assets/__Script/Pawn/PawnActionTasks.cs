@@ -1897,6 +1897,7 @@ namespace Game.NodeCanvasExtension
 
         protected override void OnExecute()
         {
+            if (trailFx.value == null) { EndAction(true); }
             __pawnActionCtrler = agent.GetComponent<PawnActionController>();
 
             if (!startPoint.isNoneOrNull)
@@ -1904,8 +1905,6 @@ namespace Game.NodeCanvasExtension
             if (!endPoint.isNoneOrNull)
                 trailFx.value.PointEnd = endPoint.value;
 
-            EndAction(true);
-            return;
             trailFx.value.Activate();
 
             __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;
@@ -1947,10 +1946,10 @@ namespace Game.NodeCanvasExtension
     [Category("Pawn")]
     public class PlaySoundClip : ActionTask 
     {
-        protected override string info => soundClip.isNoneOrNull ? base.info : $"Play SoundClip <b>{soundClip.value}</b>";
+        protected override string info => soundClip.isNoneOrNull ? base.info : $"Play SoundClip <b>{soundClip.name}</b>";
         public BBParameter<AudioClip> soundClip;
         public BBParameter<SoundType> soundType;
-        public BBParameter<float> volumeRate;
+        public BBParameter<float> volumeRate = 1f;
         public BBParameter<bool> isLooping;
 
         protected override void OnExecute()
