@@ -236,6 +236,9 @@ namespace Game
                 case ActionResults.GuardParried:
                     ActionCtrler.StartAction(damageContext, damageContext.senderPenalty.Item1 == Game.PawnStatus.Groggy ? "!OnGroggy" : "!OnParried", string.Empty); break;
             }
+
+            if (GameContext.Instance.playerCtrler is IPawnEventListener listener) 
+                listener.OnReceivePawnDamageContext(this, damageContext);
         }
 
         // public override void ShowTrail(bool isActive, int trailIndex) 

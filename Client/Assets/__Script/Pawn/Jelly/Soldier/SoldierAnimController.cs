@@ -3,6 +3,7 @@ using System.Linq;
 using DG.Tweening;
 using FIMSpace.BonesStimulation;
 using FIMSpace.FEyes;
+using Game.NodeCanvasExtension;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
@@ -12,12 +13,7 @@ namespace Game
     public class SoldierAnimController : PawnAnimController
     {
         [Header("Component")]
-        public Transform jellyMeshSlot;
-        public Transform shieldMeshSlot;
-        public Transform hookingPoint;
-        public Transform lookAt;
         public Transform headBone;
-        public MeshRenderer shieldMeshRenderer;
         public FEyesAnimator eyeAnimator;
         public BonesStimulator leftArmBoneSimulator;
         public BonesStimulator rightArmBoneSimulator;
@@ -62,7 +58,7 @@ namespace Game
         {
             __brain = GetComponent<SoldierBrain>();
             // __rig = mainAnimator.GetComponent<RigBuilder>().layers.First().rig;
-            springMassSystem.coreAttachPoint = jellyMeshSlot;
+            springMassSystem.coreAttachPoint = GetComponent<SoldierBlackboard>().attachment.jellyMeshAttachPoint;
         }
 
         SoldierBrain __brain;
@@ -83,22 +79,17 @@ namespace Game
                     leftArmBoneSimulator.GravityHeavyness = 4f;
                     leftArmBoneSimulator.StimulatorAmount = 1f;
                     armBoneSimulatorTargetWeight = 1f;
-                    shieldMeshRenderer.material.SetFloat("_Alpha", 0.03f);
                 }
                 else if (status == PawnStatus.KnockDown)
                 {
                     armBoneSimulatorTargetWeight = 0f;
-                    shieldMeshRenderer.material.SetFloat("_Alpha", 0.3f);
                 }
             };
 
             __brain.StatusCtrler.onStatusDeactive += (buff) =>
             {
                 if ((buff == PawnStatus.Staggered || buff == PawnStatus.Groggy) && !__brain.StatusCtrler.CheckStatus(PawnStatus.Staggered) && !__brain.StatusCtrler.CheckStatus(PawnStatus.Groggy))
-                {
                     armBoneSimulatorTargetWeight = 0f;
-                    shieldMeshRenderer.material.SetFloat("_Alpha", 0.3f);
-                }
             };
 
             __brain.BB.body.isJumping.Subscribe(v =>
@@ -146,8 +137,10 @@ namespace Game
                 mainAnimator.SetFloat("MoveX", animMoveVecClamped.x / __brain.Movement.moveSpeed);
                 mainAnimator.SetFloat("MoveY", animMoveVecClamped.z / __brain.Movement.moveSpeed);
 
-                if (CheckWatchingState("OnParried"))
-                    armBoneSimulatorTargetWeight = 0f;
+                if (__brain.ActionCtrler.CheckActionRunning())
+                    armBoneSimulatorTargetWeight = leftArmBoneSimulator.StimulatorAmount = rightArmBoneSimulator.StimulatorAmount = 0f;
+                else if (CheckWatchingState("OnParried"))
+                    armBoneSimulatorTargetWeight = 0f; 
                     
                 if (armBoneSimulatorTargetWeight > 0f)
                 {
@@ -235,15 +228,14 @@ namespace Game
 
                 rigSetup.weight = 1f;
                 if (__brain.ActionCtrler.CheckAddictiveActionRunning("Laser"))
-                    lookAt.position = __brain.BB.attachment.laserAimPoint.position;
+                    __brain.BB.attachment.targetLookAt.position = __brain.BB.attachment.laserAimPoint.position;
                 else if (__brain.BB.TargetBrain != null && __brain.BB.TargetBrain.coreColliderHelper != null)
-                    lookAt.position = __brain.BB.TargetBrain.coreColliderHelper.GetWorldCenter() + 0.5f * Vector3.up;
+                    __brain.BB.attachment.targetLookAt.position = __brain.BB.TargetBrain.coreColliderHelper.GetWorldCenter() + 0.5f * Vector3.up;
                 else
-                    lookAt.position = __brain.coreColliderHelper.GetWorldCenter() + 1000f * __brain.coreColliderHelper.transform.forward;
+                    __brain.BB.attachment.targetLookAt.position = __brain.coreColliderHelper.GetWorldCenter() + 1000f * __brain.coreColliderHelper.transform.forward;
 
                 //* 머리 사이즈 키우기
                 headBone.transform.localScale = headBoneScaleFactor * Vector3.one;
-
                 // __brain.ActionCtrler.hookingPointColliderHelper.transform.position = hookingPoint.transform.position;
             };
 

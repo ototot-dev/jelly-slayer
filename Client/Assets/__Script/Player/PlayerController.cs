@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UGUI.Rx;
 using UniRx;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Game
 {
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : MonoBehaviour, IPawnEventListener
     {
         public CursorController CursorCtrler { get; private set; }
         public KeyboardController KeyboardCtrler { get; private set; }
         public TargetingController TargetingCtrler { get; private set; }
+        public SpecialKeyController SpecialKeyCtrler { get; private set; }
 
         [Header("Possess")]
         public HeroBrain possessedBrain;
@@ -35,25 +37,31 @@ namespace Game
         public bool _isEnable_Guard = true;
         public bool _isEnable_Parry = true;
 
-#region IPlayerActionListener 인터페이스 API
-        HashSet<IPlayerActionListener> __playerActionListeners = new();
-
-        public void RegisterPlayerActionListener(IPlayerActionListener listener) { __playerActionListeners.Add(listener); }
-        public void UnregisterPlayerActionListener(IPlayerActionListener listener) { __playerActionListeners.Remove(listener); }
+#region IPawnEventListener 구현
+        HashSet<IPawnEventListener> __playerActionListeners = new();
+        public void RegisterPlayerActionListener(IPawnEventListener listener) { __playerActionListeners.Add(listener); }
+        public void UnregisterPlayerActionListener(IPawnEventListener listener) { __playerActionListeners.Remove(listener); }
         public void SendPlayerActionEvent(string eventName)
         {
             foreach (var l in __playerActionListeners)
-                l.OnPlayerActionEvent(eventName);
+                l.OnReceivePawnActionStart(possessedBrain, eventName);
         }
         public void SendPlayerActionStatus(PawnStatus status, float strength, float duration)
         {
             foreach (var l in __playerActionListeners)
-                l.OnPlayerActionStatus(status, strength, duration);
+                l.OnReceivePawnStatusChanged(possessedBrain, status, strength, duration);
         }
         public void SendPlayerActionDamage(PawnHeartPointDispatcher.DamageContext damageContext)
         {
             foreach (var l in __playerActionListeners)
-                l.OnPlayerActionDamage(damageContext);
+                l.OnReceivePawnDamageContext(possessedBrain, damageContext);
+        }
+        void IPawnEventListener.OnReceivePawnActionStart(PawnBrainController sender, string actionName) {}
+        void IPawnEventListener.OnReceivePawnStatusChanged(PawnBrainController sender, PawnStatus status, float strength, float duration) {}
+        void IPawnEventListener.OnReceivePawnDamageContext(PawnBrainController sender, PawnHeartPointDispatcher.DamageContext damageContext) 
+        {
+            if (damageContext.actionResult == ActionResults.Damaged && damageContext.receiverPenalty.Item1 == PawnStatus.Groggy && damageContext.projectile != null && damageContext.projectile.reflectiveBrain.Value != null)
+                SpecialKeyCtrler = new SpecialKeyController(damageContext.receiverBrain, "Test").Load().Show(GameContext.Instance.mainCanvasCtrler.body);
         }
 #endregion
 
@@ -546,10 +554,17 @@ namespace Game
             if (value.isPressed)
             {
                 var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsRolling;
-                var canAction2 = canAction1 && (!possessedBrain.ActionCtrler.CheckActionRunning() || possessedBrain.ActionCtrler.CanInterruptAction()) && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
+                var canAction2 = canAction1 && (SpecialKeyCtrler?.reservedActionName ?? string.Empty) != string.Empty;
+                var canAction3 = canAction2 &&  (!possessedBrain.ActionCtrler.CheckActionRunning() || possessedBrain.ActionCtrler.CanInterruptAction()) && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
 
-                if (canAction2)
+                if (canAction3)
                 {
+                    SpecialKeyCtrler.HideAsObservable().Subscribe(_ => 
+                    {
+                        SpecialKeyCtrler.Unload(true);
+                        SpecialKeyCtrler = null;
+                    }).AddTo(this);
+
                     if (possessedBrain.ActionCtrler.CheckActionRunning())
                         possessedBrain.ActionCtrler.CancelAction(false);
 

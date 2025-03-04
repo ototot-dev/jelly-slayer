@@ -13,18 +13,20 @@ using DG.Tweening;
 
 namespace Retween.Rx
 {
-
-    /// <summary>
-    /// 
-    /// </summary>
     public class TweenPlayer : MonoBehaviour
     {
+        public bool clearAnimClips = true;
 
         /// <summary>
-        /// 
+        /// The minimum value of animation elapsed time.
         /// </summary>
-        /// <returns></returns>
-        public bool clearAnimClips = true;
+        public const float MIN_ELAPSED_TIME = 0.001f;
+        
+        /// <summary>
+        /// The counter value to generate new run number.
+        /// </summary>
+        int __runNumCounter = 0;
+        int ReserveRunNumber() { return ++__runNumCounter; }
 
         void Awake()
         {
@@ -42,31 +44,9 @@ namespace Retween.Rx
 
             __anim.playAutomatically = false;
         }
-
+        
         Animation __anim;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        int ReserveRunNumber() { return ++__runCounter; }
-
-        /// <summary>
-        /// The counter value to generate new run number.
-        /// </summary>
-        int __runCounter = 0;
-
-        /// <summary>
-        /// The minimum value of animation elapsed time.
-        /// </summary>
-        public const float MIN_ELAPSED_TIME = 0.001f;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="tweenAnim"></param>
-        /// <param name="resetElapsed"></param>
-        /// <returns></returns>
         public IObservable<TweenAnimRunning> Run(TweenAnim tweenAnim, bool resetElapsed = false)
         {
             if (!animRunnings.ContainsKey(tweenAnim))
@@ -177,11 +157,6 @@ namespace Retween.Rx
                 );
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="tweenAnim"></param>
-        /// <returns></returns>
         public IObservable<TweenAnimRunning> Rewind(TweenAnim tweenAnim)
         {
             if (!animRunnings.ContainsKey(tweenAnim))
@@ -277,12 +252,6 @@ namespace Retween.Rx
                 );
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="tweenAnim"></param>
-        /// <param name="acceptRewinding"></param>
-        /// <returns></returns>
         public IObservable<TweenAnimRunning> Rollback(TweenAnim tweenAnim, bool acceptRewinding = true)
         {
             if (!animRunnings.ContainsKey(tweenAnim))
@@ -420,11 +389,6 @@ namespace Retween.Rx
                 );
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="running"></param>
-        /// <param name="deltaTime"></param>
         public void AdvanceElapsed(TweenAnimRunning running, float deltaTime)
         {
             switch (running.source.transition.loop)
@@ -477,11 +441,6 @@ namespace Retween.Rx
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="running"></param>
-        /// <param name="elapsed"></param>
         void SetAnimation(TweenAnimRunning running)
         {
             if (__anim.clip != null)
@@ -509,10 +468,6 @@ namespace Retween.Rx
             running.animEnabled = true;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="running"></param>
         void UnsetAnimation(TweenAnimRunning running)
         {
             foreach (var c in running.source.animClips)
@@ -524,10 +479,6 @@ namespace Retween.Rx
             running.animEnabled = false;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="running"></param>
         public void UpdateAnimation(TweenAnimRunning running)
         {
             var t = Mathf.Clamp01(running.elapsed / (running.IsRollBack ? running.source.rollbackTransition.duration : running.source.transition.duration));

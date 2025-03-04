@@ -62,10 +62,10 @@ namespace Game
 #endif
     }
 
-    public interface IPlayerActionListener
+    public interface IPawnEventListener
     {
-        void OnPlayerActionEvent(string eventName);
-        void OnPlayerActionStatus(PawnStatus status, float strength, float duration);
-        void OnPlayerActionDamage(PawnHeartPointDispatcher.DamageContext damageContext);
+        void OnReceivePawnActionStart(PawnBrainController sender, string actionName);
+        void OnReceivePawnStatusChanged(PawnBrainController sender, PawnStatus status, float strength, float duration);
+        void OnReceivePawnDamageContext(PawnBrainController sender, PawnHeartPointDispatcher.DamageContext damageContext);
     }
 }

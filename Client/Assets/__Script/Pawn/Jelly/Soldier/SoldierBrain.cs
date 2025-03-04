@@ -1,3 +1,4 @@
+using UGUI.Rx;
 using UniRx;
 using UnityEngine;
 
@@ -37,6 +38,7 @@ namespace Game
         [Header("Debug")]
         public bool debugActionDisabled;
 
+        public override Vector3 GetSpecialKeyPosition() => BB.attachment.specialKeyAttachPoint.transform.position;
         public override PawnColliderHelper GetHookingColliderHelper() => ActionCtrler.hookingPointColliderHelper;
         public SoldierBlackboard BB { get; private set; }
         public SoldierMovement Movement { get; private set; }
@@ -54,6 +56,7 @@ namespace Game
         }
 
         float __coolDownFinishTimeStamp;
+        SpecialKeyController __specialKeyCtrler;
 
         public enum ActionPatterns : int
         {
@@ -143,31 +146,18 @@ namespace Game
                 if (status == PawnStatus.Staggered) ActionDataSelector.ClearSequences();
             };
 
-            // ActionCtrler.onActionStart += (actionContext, __) =>
-            // {
-            //     if (actionContext.actionData == __randomPickActionData)
-            //         __randomPickActionData = null;
-            // };
-
-            // ActionCtrler.onActionFinished += (actionContext) =>
-            // {
-            //     if (__randomPickActionData == null) return;
-
-            //     if ((actionContext.actionData?.actionName ?? string.Empty) == "BackStep")
-            // };
-
             BB.stat.actionPoint.Skip(1).Subscribe(v =>
             {
                 //* ActionPoint 전부 소모하면 CoolDown 상태로 진입
                 if (v <= 0) 
                 {
                     BB.action.sequenceCoolDownTimeLeft = UnityEngine.Random.Range(BB.action.minCoolDownDuration, BB.action.maxCoolDownDuration);
-                    __Logger.LogR1(gameObject, "BB.stat.actionPoint becomes 0 and enters Cooldown.", "BB.action.sequenceCoolTimeLeft", BB.action.sequenceCoolDownTimeLeft);
+                    __Logger.LogR1(gameObject, "Start Cooldown", "sequenceCoolTimeLeft", BB.action.sequenceCoolDownTimeLeft);
 
                     Observable.NextFrame().Subscribe(_ => 
                     {
                         BB.stat.RecoverActionPoint(BB.stat.maxActionPoint.Value);
-                        __Logger.LogR1(gameObject, "Recover by setting ActionPoint to maximum", "BB.stat.maxActionPoint", BB.stat.maxActionPoint.Value);
+                        __Logger.LogR1(gameObject, "Recover ActionPoint", "maxActionPoint", BB.stat.maxActionPoint.Value);
                     }).AddTo(this);
                 }
             }).AddTo(this);

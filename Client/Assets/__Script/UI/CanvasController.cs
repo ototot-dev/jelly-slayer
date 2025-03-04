@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Game
 {
-    public class MainCanvasController : MonoBehaviour
+    public class CanvasController : MonoBehaviour
     {
         public Canvas canvas;
         public RawImage fade;

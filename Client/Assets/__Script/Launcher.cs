@@ -66,7 +66,7 @@ namespace Game
                         GameContext.Instance.terrainManager = GameObject.FindWithTag("TerrainManager").GetComponent<TerrainManager>();
                         GameContext.Instance.jellySpawnManager = gameObject.Children().First(c => c.name == "Manager").GetComponent<SlimeSpawnManager>();
                         GameContext.Instance.heroSpawnManager = gameObject.Children().First(c => c.name == "Manager").GetComponent<HeroSpawnManager>();
-                        GameContext.Instance.mainCanvasCtrler = GameObject.FindWithTag("MainCanvas").GetComponent<MainCanvasController>();
+                        GameContext.Instance.mainCanvasCtrler = GameObject.FindWithTag("MainCanvas").GetComponent<CanvasController>();
 
                         new TitleController().Load().Show(GameContext.Instance.mainCanvasCtrler.body);
                     }
@@ -76,6 +76,7 @@ namespace Game
                         GameContext.Instance.playerCtrler = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
                         GameContext.Instance.playerTargetManager = GameContext.Instance.playerCtrler.GetComponent<TargetingController>();
                         GameContext.Instance.cameraCtrler = GameObject.FindWithTag("MainCamera").GetComponent<CameraController>();
+                        GameContext.Instance.mainCanvasCtrler = GameObject.FindWithTag("MainCanvas").GetComponent<CanvasController>();
                     }
                     break;
                 case GameModes.GameTest:

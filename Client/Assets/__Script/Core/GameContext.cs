@@ -18,7 +18,7 @@ namespace Game
         public TerrainManager terrainManager;
         public SlimeSpawnManager jellySpawnManager;
         public HeroSpawnManager heroSpawnManager;
-        public MainCanvasController mainCanvasCtrler;
+        public CanvasController mainCanvasCtrler;
         
         void Awake()
         {

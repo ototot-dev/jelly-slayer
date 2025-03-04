@@ -13,13 +13,13 @@ namespace Game
         void IPawnSpawnable.OnStartSpawnHandler() {}
         public virtual void OnFinishSpawnHandler() 
         { 
-            if (this is IPlayerActionListener listener)
+            if (this is IPawnEventListener listener)
                 GameContext.Instance.playerCtrler.RegisterPlayerActionListener(listener);
         }
         void IPawnSpawnable.OnDespawnedHandler() {}
         public virtual void OnDeadHandler() 
         { 
-            if (this is IPlayerActionListener listener)
+            if (this is IPawnEventListener listener)
                 GameContext.Instance.playerCtrler.UnregisterPlayerActionListener(listener);
 
             // __pawnAnimCtrler.mainAnimator.SetTrigger("OnDead");

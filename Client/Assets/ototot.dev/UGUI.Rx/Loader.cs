@@ -25,7 +25,7 @@ public class Loader : ototot.dev.Singleton<Loader> {
     /// <typeparam name="T"></typeparam>
     public void Load<T>(T ctrler, Template overrideTemplate, StyleSheet[] overrideStyleSheets) where T : Controller {
         // Prevents multiple loading
-        if (++ctrler.tryLoadCount > 1) {
+        if (++ctrler.loadTryCount > 1) {
             Debug.LogWarning($"Loader => Failed to load. Controller {typeof(T)} is on loading or loaded!!");
             return;
         }
@@ -218,7 +218,7 @@ public class Loader : ototot.dev.Singleton<Loader> {
     /// <returns></returns>
     public IObservable<T> PreLoadAsObservable<T>(T ctrler, Template overrideTemplate, StyleSheet[] overrideStyleSheets, List<IObservable<Controller>> loader) where T : Controller {
         return Observable.Create<T>(observer => {
-            if (++ctrler.tryLoadCount > 1) {
+            if (++ctrler.loadTryCount > 1) {
                 observer.OnError(new Exception($"Loader => Failed to load. Controller {typeof(T)} is on loading or loaded!!"));
                 return Disposable.Empty;
             }
@@ -424,7 +424,7 @@ public class Loader : ototot.dev.Singleton<Loader> {
 
         ctrler.template = null;
         ctrler.isLoaded = false;
-        ctrler.tryLoadCount = 0;
+        ctrler.loadTryCount = 0;
         ctrler.hideCount = 0; 
         ctrler.postHideCount = 0;
     }

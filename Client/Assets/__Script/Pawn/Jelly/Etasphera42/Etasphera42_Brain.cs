@@ -7,7 +7,7 @@ namespace Game
     [RequireComponent(typeof(Etasphera42_Blackboard))]
     [RequireComponent(typeof(Etasphera42_AnimController))]
     [RequireComponent(typeof(Etasphera42_ActionController))]
-    public class Etasphera42_Brain : JellyQuadWalkBrain, IPawnTargetable, IPlayerActionListener
+    public class Etasphera42_Brain : JellyQuadWalkBrain, IPawnTargetable, IPawnEventListener
     {
 #region IPawnTargetable 구현
         public enum HitBoxIndices
@@ -60,7 +60,7 @@ namespace Game
 #endregion
 
 #region IPlayerActionListener 구현
-        void IPlayerActionListener.OnPlayerActionEvent(string eventName)
+        void IPawnEventListener.OnReceivePawnActionStart(PawnBrainController sender, string eventName)
         {
             switch (eventName)
             {
@@ -69,8 +69,8 @@ namespace Game
             }
         }
 
-        void IPlayerActionListener.OnPlayerActionStatus(PawnStatus status, float strength, float duration) {}
-        void IPlayerActionListener.OnPlayerActionDamage(PawnHeartPointDispatcher.DamageContext damageContext) {}
+        void IPawnEventListener.OnReceivePawnStatusChanged(PawnBrainController sender, PawnStatus status, float strength, float duration) {}
+        void IPawnEventListener.OnReceivePawnDamageContext(PawnBrainController sender, PawnHeartPointDispatcher.DamageContext damageContext) {}
 #endregion
 
         [Header("Component")]

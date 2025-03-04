@@ -123,11 +123,15 @@ namespace Game
         [Serializable]
         public class Attachment
         {
+            public Transform targetLookAt;
             public Transform bodyMeshParent;
             public Renderer[] bodyMeshRenderers;
             public Renderer shieldMeshRenderer;
             public ParticleSystem[] jetParticleSystems;
             public Transform blockingFxAttachPoint;
+            public Transform emojiAttachPoint;
+            public Transform jellyMeshAttachPoint;
+            public Transform specialKeyAttachPoint;
             public Transform laserAimPoint;
             public SoldierLaserRenderer laserRenderer;
         }
