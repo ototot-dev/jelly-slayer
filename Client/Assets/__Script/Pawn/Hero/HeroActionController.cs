@@ -77,7 +77,10 @@ namespace Game
 
                     //EffectManager.Instance.Show("@Hit 23 cube", damageContext.hitPoint, Quaternion.identity, Vector3.one, 1f);
                     //EffectManager.Instance.Show("@BloodFX_impact_col", damageContext.hitPoint, Quaternion.identity, 1.5f * Vector3.one, 3f);
-                    EffectManager.Instance.Show(__brain.BB.graphics.onHitFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()) * Quaternion.Euler(90f, 0f, 0f), Vector3.one, 1f);
+                    var pos = __brain.bodyHitColliderHelper.GetWorldCenter();
+                    var rot = Quaternion.LookRotation(damageContext.hitPoint - pos) * Quaternion.Euler(90f, 0f, 0f);
+                    EffectManager.Instance.Show(__brain.BB.graphics.onHitFx, pos, rot, Vector3.one, 1f);
+                    EffectManager.Instance.Show(__brain.BB.graphics.onBleedFx, damageContext.hitPoint + Vector3.up, rot, 6 * Vector3.one, 3f);
                 }
                 else
                 {

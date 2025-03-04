@@ -208,7 +208,9 @@ namespace Game
 
         public EffectInstance Show(GameObject sourcePrefab, Vector3 position, Quaternion rotation, Vector3 scale, float duration = -1f, float waitingTime = 0f, ParticleSystemScalingMode scalingMode = ParticleSystemScalingMode.Local, float playRate = 1f)
         {
-            Debug.Assert(sourcePrefab != null);
+            //Debug.Assert(sourcePrefab != null);
+            if(sourcePrefab == null)
+                return null;
 
             var instance = GetInstance(sourcePrefab, position, rotation, scale, scalingMode);
             if (waitingTime > 0f)

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using UniRx;
 using UnityEngine;
+using XftWeapon;
 
 namespace Game
 {
@@ -76,6 +77,7 @@ namespace Game
         public class Target
         {
             public ReactiveProperty<PawnHeartPointDispatcher> targetPawnHP = new();
+            public XWeaponTrail[] trail = null;
         }
 
         public Target target = new();
