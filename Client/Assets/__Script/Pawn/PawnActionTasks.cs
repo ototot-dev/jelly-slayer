@@ -1903,9 +1903,16 @@ namespace Game.NodeCanvasExtension
             if (trail == null)
             {
                 var board = agent.GetComponent<PawnBlackboard>();
-                trail = board.target.trail[0];
-                if (trail == null)
+                if (board.target.trail != null && board.target.trail.Length > 0)
                 {
+                    trail = board.target.trail[0];
+                    if (trail == null)
+                    {
+                        EndAction(true);
+                        return;
+                    }
+                }
+                else {
                     EndAction(true);
                     return;
                 }
