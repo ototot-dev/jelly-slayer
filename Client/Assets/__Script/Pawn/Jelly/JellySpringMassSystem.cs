@@ -225,7 +225,7 @@ namespace Game
 
         void FixedUpdate()
         {
-            if (coreRigidBody.isKinematic && coreAttachPoint != null)
+            if ((coreRigidBody == null || coreRigidBody.isKinematic) && coreAttachPoint != null)
                 core.SetPositionAndRotation(coreAttachPoint.position, coreAttachPoint.rotation);
                 
             bounds.SetPositionAndRotation(core.position, core.rotation);

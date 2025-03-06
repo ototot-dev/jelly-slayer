@@ -1897,27 +1897,33 @@ namespace Game.NodeCanvasExtension
 
         protected override void OnExecute()
         {
-            __pawnActionCtrler = agent.GetComponent<PawnActionController>();
-            XWeaponTrail trail = null;
-            trail = trailFx.value;
-            if (trail == null)
+            if (trailFx.isNoneOrNull)
             {
-                var board = agent.GetComponent<PawnBlackboard>();
-                trail = board.target.trail[0];
-                if (trail == null)
-                {
-                    EndAction(true);
-                    return;
-                }
+                EndAction(true);
+                return;
             }
+            
+            // __pawnActionCtrler = agent.GetComponent<PawnActionController>();
+            // XWeaponTrail trail = null;
+            // trail = trailFx.value;
+            // if (trail == null)
+            // {
+            //     var board = agent.GetComponent<PawnBlackboard>();
+            //     trail = board.target.trail[0];
+            //     if (trail == null)
+            //     {
+            //         EndAction(true);
+            //         return;
+            //     }
+            // }
             //var trail = trailFx.bb.variables[6];
 
             if (!startPoint.isNoneOrNull)
-                trail.PointStart = startPoint.value;
+                trailFx.value.PointStart = startPoint.value;
             if (!endPoint.isNoneOrNull)
-                trail.PointEnd = endPoint.value;
+                trailFx.value.PointEnd = endPoint.value;
 
-            trail.Activate();
+            trailFx.value.Activate();
 
             __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;
             __showTimeStamp = Time.time;
@@ -1925,14 +1931,14 @@ namespace Game.NodeCanvasExtension
             {
                 if ((Time.time - __showTimeStamp) > duration.value)
                 {
-                    trail.Deactivate();
+                    trailFx.value.Deactivate();
                     __showDisposable.Dispose();
                     __showDisposable = null;
                 }
                 else if (stopWhenActionCanceled && __pawnActionCtrler != null && 
                     (!__pawnActionCtrler.CheckActionRunning() || __pawnActionCtrler.currActionContext.actionInstanceId != __capturedActionInstanceId))
                 {
-                    trail.Deactivate();
+                    trailFx.value.Deactivate();
                     __showDisposable.Dispose();
                     __showDisposable = null;
                 }

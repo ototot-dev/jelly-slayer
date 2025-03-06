@@ -5,6 +5,7 @@ using FIMSpace.BonesStimulation;
 using FIMSpace.FEyes;
 using Game.NodeCanvasExtension;
 using UniRx;
+using Unity.Linq;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
@@ -59,10 +60,25 @@ namespace Game
             __brain = GetComponent<SoldierBrain>();
             // __rig = mainAnimator.GetComponent<RigBuilder>().layers.First().rig;
             springMassSystem.coreAttachPoint = GetComponent<SoldierBlackboard>().attachment.jellyMeshAttachPoint;
+
+            __defaultCoreAttachPointLocalPosition = springMassSystem.coreAttachPoint.transform.localPosition;
+
+            var cubes = springMassSystem.gameObject.Descendants().Where(d => d.name == "Cube").ToArray();
+            foreach (var c in cubes)
+            {
+                c.transform.position = springMassSystem.transform.position + 0.4f * (c.transform.position - springMassSystem.transform.position).normalized;
+                c.transform.localScale = 0.2f * Vector3.one;
+            }
+
+            Observable.EveryUpdate().Subscribe(_ =>
+            {
+                for (int i = 0; i < cubes.Length; i++)
+                    cubes[i].transform.localScale = Mathf.Lerp(0.9f, 1.2f, Mathf.PerlinNoise(Time.time + i, Time.time + i * i)) * 0.2f * Vector3.one;
+            }).AddTo(this);
         }
 
         SoldierBrain __brain;
-        Rig __rig;
+        Vector3 __defaultCoreAttachPointLocalPosition;
         HashSet<string> __watchingStateNames = new();
         public bool CheckWatchingState(string stateName) => __watchingStateNames.Contains(stateName);
 
@@ -88,7 +104,7 @@ namespace Game
 
             __brain.StatusCtrler.onStatusDeactive += (buff) =>
             {
-                if ((buff == PawnStatus.Staggered || buff == PawnStatus.Groggy) && !__brain.StatusCtrler.CheckStatus(PawnStatus.Staggered) && !__brain.StatusCtrler.CheckStatus(PawnStatus.Groggy))
+                if (!__brain.StatusCtrler.CheckStatus(PawnStatus.Staggered) && !__brain.StatusCtrler.CheckStatus(PawnStatus.Groggy))
                     armBoneSimulatorTargetWeight = 0f;
             };
 
@@ -237,6 +253,11 @@ namespace Game
                 //* 머리 사이즈 키우기
                 headBone.transform.localScale = headBoneScaleFactor * Vector3.one;
                 // __brain.ActionCtrler.hookingPointColliderHelper.transform.position = hookingPoint.transform.position;
+
+                var cameraLookVec = -GameContext.Instance.cameraCtrler.viewCamera.transform.forward;
+                springMassSystem.coreAttachPoint.transform.localPosition = __defaultCoreAttachPointLocalPosition;
+                springMassSystem.coreAttachPoint.transform.position += cameraLookVec;
+                springMassSystem.coreAttachPoint.transform.LookAt(springMassSystem.coreAttachPoint.transform.position + cameraLookVec);
             };
 
             __brain.PawnHP.onDead += (_) =>
