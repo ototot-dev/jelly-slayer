@@ -49,11 +49,11 @@ namespace Game
         [Serializable]
         public class Graphics
         {
-            public MeshRenderer forceShieldRenderer;
             public GameObject onHitFx;
             public GameObject onGuardParriedFx;
             public GameObject onBlockFx;
             public GameObject onBleedFx;
+            public Material hitColor;
         }
 
         public Graphics graphics = new();
@@ -61,6 +61,9 @@ namespace Game
         [Serializable]
         public class Attachment
         {
+            public Renderer bodyMeshRenderer;
+            public Renderer swordMeshRenderer;
+            public Renderer[] mechArmRenderers;
             public Transform leftHandBone;
             public Transform leftElbowBone;
             public Transform leftMechHandBone;

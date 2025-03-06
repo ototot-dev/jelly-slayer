@@ -73,26 +73,21 @@ namespace Game
                 if (damageContext.actionResult == ActionResults.Damaged)
                 {
                     SoundManager.Instance.Play(SoundID.HIT_FLESH);
-                    //EffectManager.Instance.Show(__brain.BB.graphics.onBleedFx, damageContext.hitPoint, Quaternion.identity, Vector3.one, 10f);
-
-                    //EffectManager.Instance.Show("@Hit 23 cube", damageContext.hitPoint, Quaternion.identity, Vector3.one, 1f);
-                    //EffectManager.Instance.Show("@BloodFX_impact_col", damageContext.hitPoint, Quaternion.identity, 1.5f * Vector3.one, 3f);
-                    var pos = __brain.bodyHitColliderHelper.GetWorldCenter();
-                    var rot = Quaternion.LookRotation(damageContext.hitPoint - pos) * Quaternion.Euler(90f, 0f, 0f);
-                    EffectManager.Instance.Show(__brain.BB.graphics.onHitFx, pos, rot, Vector3.one, 1f);
-                    EffectManager.Instance.Show(__brain.BB.graphics.onBleedFx, damageContext.hitPoint + Vector3.up, rot, 6 * Vector3.one, 3f);
+                    EffectManager.Instance.Show(__brain.BB.graphics.onBleedFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()), Vector3.one)
+                        .transform.SetParent(__brain.bodyHitColliderHelper.transform, true);
                 }
                 else
                 {
                     SoundManager.Instance.Play(SoundID.HIT_BLOCK);
                     EffectManager.Instance.Show(__brain.BB.graphics.onBlockFx, __brain.BB.attachment.blockingFxAttachPoint.transform.position, Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward, Vector3.up), Vector3.one);
-                    //EffectManager.Instance.Show("FX/@Hit 4 yellow arrow", __brain.BB.graphics.forceShieldRenderer.transform.position, Quaternion.identity, Vector3.one, 1f);
                 }
 
                 var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
                 Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
                     .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity, Time.fixedDeltaTime))
                     .AddTo(this);
+
+                ShowHitColor(__brain.bodyHitColliderHelper);
 
                 //* 구르기 불가 상태 부여
                 var canNotRollDuration = Mathf.Max(0.1f, damageContext.receiverPenalty.Item2 - MainTable.PlayerData.GetList().First().earlyRollOffsetOnStarggerd);
@@ -114,9 +109,11 @@ namespace Game
 
                     Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ =>
                     {
-                        EffectManager.Instance.Show(__brain.BB.graphics.onBlockFx, __brain.BB.attachment.blockingFxAttachPoint.transform.position, Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward, Vector3.up), Vector3.one);
+                        EffectManager.Instance.Show(__brain.BB.graphics.onBlockFx, __brain.BB.attachment.leftMechHandBone.transform.position, Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward, Vector3.up), Vector3.one);
                         SoundManager.Instance.Play(SoundID.HIT_BLOCK);
                     });
+
+                    ShowHitColor();
                 }
                 else if (damageContext.actionResult == ActionResults.GuardParried)
                 {
@@ -125,9 +122,11 @@ namespace Game
 
                     Observable.Timer(TimeSpan.FromMilliseconds(50)).Subscribe(_ =>
                     {
-                        EffectManager.Instance.Show(__brain.BB.graphics.onGuardParriedFx, __brain.BB.graphics.forceShieldRenderer.transform.position + 0.5f * __brain.coreColliderHelper.transform.forward, Quaternion.identity, 0.8f * Vector3.one);
+                        EffectManager.Instance.Show(__brain.BB.graphics.onGuardParriedFx, __brain.BB.attachment.leftMechHandBone.transform.position + 0.5f * __brain.coreColliderHelper.transform.forward, Quaternion.identity, 0.8f * Vector3.one);
                         // SoundManager.Instance.Play(SoundID.HIT_PARRYING);
                     });
+
+                    ShowHitColor();
                 }
                 else if (damageContext.actionResult == ActionResults.KickParried)
                 {
@@ -225,7 +224,53 @@ namespace Game
             return null;
         }
 
+        Material[] __bodyMeshRenderersCached;
+        Material[] __swordMeshRenderersCached;
+        Material[] __hitColorBodyMeshRenderersCached;
+        Material[] __hitColorSwordMeshRenderersCached;
+
+        void ShowHitColor(PawnColliderHelper hitColliderHelper = null)
+        {
+            __bodyMeshRenderersCached ??= __brain.BB.attachment.bodyMeshRenderer.materials;
+            __swordMeshRenderersCached ??= __brain.BB.attachment.swordMeshRenderer.materials;
+            __hitColorBodyMeshRenderersCached ??= new Material[] { __brain.BB.graphics.hitColor, __brain.BB.graphics.hitColor, __brain.BB.graphics.hitColor, __brain.BB.graphics.hitColor };
+            __hitColorSwordMeshRenderersCached ??= new Material[] { __brain.BB.graphics.hitColor, __brain.BB.graphics.hitColor };
+
+            if (hitColliderHelper == __brain.bodyHitColliderHelper)
+            {
+                __brain.BB.attachment.bodyMeshRenderer.materials = __hitColorBodyMeshRenderersCached;
+                __brain.BB.attachment.swordMeshRenderer.materials = __hitColorSwordMeshRenderersCached;
+
+                foreach (var r in __brain.BB.attachment.mechArmRenderers)
+                    r.materials = new Material[] { r.material, new(__brain.BB.graphics.hitColor) };
+
+                __hitColorDisposable?.Dispose();
+                __hitColorDisposable = Observable.Timer(TimeSpan.FromMilliseconds(100)).Subscribe(_ => 
+                {
+                    __hitColorDisposable = null;
+                    __brain.BB.attachment.bodyMeshRenderer.materials = __bodyMeshRenderersCached;
+                    __brain.BB.attachment.swordMeshRenderer.materials = __swordMeshRenderersCached;
+
+                    foreach (var r in __brain.BB.attachment.mechArmRenderers)
+                        r.materials = new Material[] { r.materials[0] };
+                }).AddTo(this);
+            }
+            else
+            {
+                foreach (var r in __brain.BB.attachment.mechArmRenderers)
+                    r.materials = new Material[] { r.material, new(__brain.BB.graphics.hitColor) };
+
+                __hitColorDisposable?.Dispose();
+                __hitColorDisposable = Observable.Timer(TimeSpan.FromMilliseconds(100)).Subscribe(_ => 
+                {
+                    foreach (var r in __brain.BB.attachment.mechArmRenderers)
+                        r.materials = new Material[] { r.materials[0] };
+                }).AddTo(this);
+            }
+        }
+
         HeroBrain __brain;
+        IDisposable __hitColorDisposable;
 
         protected override void AwakeInternal()
         {
