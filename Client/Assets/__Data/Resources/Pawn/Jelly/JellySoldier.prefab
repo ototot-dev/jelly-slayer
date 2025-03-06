@@ -52807,7 +52807,7 @@ SkinnedMeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5825317429846481011}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 0
@@ -84272,7 +84272,6 @@ MonoBehaviour:
   legAnimator: {fileID: 754787376927509189}
   ragdollAnimator: {fileID: 5978158408337654307}
   headBone: {fileID: 5278882544679535675}
-  jellyMesh: {fileID: 1109906978231848430}
   eyeAnimator: {fileID: 6518897691976235552}
   leftArmBoneSimulator: {fileID: 2170937694511617402}
   rightArmBoneSimulator: {fileID: 4265576059615311173}
@@ -85762,13 +85761,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9088278075016988152}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -0.2, y: -0.2, z: 0}
+  m_LocalRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
+  m_LocalPosition: {x: -0.5, y: -0, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5278882544679535675}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 90}
 --- !u!1 &9117720245561101562
 GameObject:
   m_ObjectHideFlags: 0
