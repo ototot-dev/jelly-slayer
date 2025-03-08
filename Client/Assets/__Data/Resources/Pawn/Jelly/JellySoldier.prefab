@@ -55795,9 +55795,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 2.5
+  m_Height: 3
   m_Direction: 1
-  m_Center: {x: 0, y: 1.25, z: 0}
+  m_Center: {x: 0, y: 1.8, z: 0}
 --- !u!114 &1010624364731835310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -84241,7 +84241,7 @@ MonoBehaviour:
   capsuleCollider: {fileID: 2631676355314689051}
   ignoredColliders:
   - {fileID: 7398242047268905765}
-  freezeMovement: 1
+  freezeMovement: 0
   freezeRotation: 0
   rootMotionEnabled: 1
   moveSpeed: 1.6
@@ -84340,7 +84340,7 @@ MonoBehaviour:
   lateUpdateEnabled: 1
   fixedUpdateEnabled: 1
   roboDogFormationCtrler: {fileID: 5938920085556766268}
-  debugActionDisabled: 1
+  debugActionDisabled: 0
 --- !u!114 &1626602440402030822
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -84569,7 +84569,7 @@ MonoBehaviour:
     _version: 3.31
     _category: 
     _comments: 
-    _translation: {x: -362, y: -89}
+    _translation: {x: -623, y: -326}
     _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 0
