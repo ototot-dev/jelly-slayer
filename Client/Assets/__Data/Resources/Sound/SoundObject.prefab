@@ -165,4 +165,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _audio: {fileID: 966938771243804915}
-  randomPercent: 15
+  randomPercent: 10
