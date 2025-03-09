@@ -1973,7 +1973,11 @@ namespace Game.NodeCanvasExtension
 
         protected override void OnExecute()
         {
-            SoundManager.Instance.PlayWithClip(soundClip.value, isLooping.value, soundType.value == SoundType.SFX, volumeRate.value);
+            //SoundManager.Instance.PlayWithClip(soundClip.value, isLooping.value, soundType.value == SoundType.SFX, volumeRate.value);
+            var brain = agent.GetComponent<PawnBrainController>();
+            var pos = brain.coreColliderHelper.transform.position;
+            SoundManager.Instance.PlayWithClipPos(soundClip.value, pos, 
+                isLooping.value, soundType.value == SoundType.SFX, volumeRate.value);
             EndAction(true);
         }
     }

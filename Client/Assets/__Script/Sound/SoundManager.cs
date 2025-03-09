@@ -7,6 +7,7 @@ using Game;
 public class SoundManager : MonoSingleton<SoundManager>
 {
 	public Transform _trRoot;
+	public GameObject _soundPref;
 	public Dictionary<SoundID, SoundData> _dicSoundData = new();
 #if UNITY_EDITOR
 	public List<SoundData> _listSoundData = new();
@@ -91,6 +92,31 @@ public class SoundManager : MonoSingleton<SoundManager>
 #endif
         return sound;
     }
+	public SoundObject PlayWithClipPos(AudioClip i_clip, Vector3 pos, bool i_isLoop = false, bool i_isSFX = true, float i_volumeRate = 1.0f) 
+	{
+        //Debug.Log("SoundPlay : " + i_sfxType + ", " + i_isLoop);
+        SoundObject sound = CreateEmptySoundObject();
+        sound.name = i_clip.name;
+
+        // if (sound._trRoot.parent == null)
+        //     sound._trRoot.SetParent(_trRoot);
+
+        float volume = (i_isSFX == true) ? _volumeSFX : _volumeBGM;
+        volume *= i_volumeRate;
+        sound.Volume = volume;
+        sound.SetLoop(i_isLoop);
+        sound._lifeTime = i_clip.length;
+        sound.transform.position = pos;
+        sound.PlayWithClip(i_clip);
+
+        if (sound.transform.parent == null)
+            sound.transform.SetParent(transform);
+
+#if UNITY_EDITOR
+        _count = transform.childCount;
+#endif
+        return sound;
+	}
     public SoundObject PlayWithClip(AudioClip i_clip, bool i_isLoop = false, bool i_isSFX = true, float i_volumeRate = 1.0f)
     {
         //Debug.Log("SoundPlay : " + i_sfxType + ", " + i_isLoop);
@@ -115,20 +141,30 @@ public class SoundManager : MonoSingleton<SoundManager>
 #endif
         return sound;
     }
-    public static SoundObject CreateSoundObject() 
+    public SoundObject CreateSoundObject() 
     {
-        GameObject prefObj = Resources.Load("Prefabs/SoundObject") as GameObject;
-        GameObject obj = GameObject.Instantiate(prefObj);
-
+		if (_soundPref == null)
+		{
+            _soundPref = Resources.Load("Sound/SoundObject") as GameObject;
+		}
+        GameObject obj = GameObject.Instantiate(_soundPref);
         return obj.GetComponent<SoundObject>();
     }
-    public static SoundObject CreateEmptySoundObject() 
+    public SoundObject CreateEmptySoundObject() 
     {
-		var soundObj = new GameObject().AddComponent<SoundObject>();
-		soundObj._source = soundObj.gameObject.AddComponent<AudioSource>();
-		soundObj._trRoot = soundObj.transform;
+        if (_soundPref == null)
+        {
+            _soundPref = Resources.Load("Sound/SoundObject") as GameObject;
+        }
+        GameObject obj = GameObject.Instantiate(_soundPref);
+        return obj.GetComponent<SoundObject>();
+        /*
+        var soundObj = new GameObject().AddComponent<SoundObject>();
+        soundObj._source = soundObj.gameObject.AddComponent<AudioSource>();
+        soundObj._trRoot = soundObj.transform;
 
-		return soundObj;
+        return soundObj;
+        */
     }
 	public void PlayClickSound()
 	{
