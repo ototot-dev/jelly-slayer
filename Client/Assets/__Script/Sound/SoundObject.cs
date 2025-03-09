@@ -9,7 +9,7 @@ public class SoundObject : MonoBehaviour
     public AudioSource _source;
 
     public Transform _trRoot;
-    public PitchRandomizer _randomPitch;
+    // public PitchRandomizer _randomPitch;
 
     [SerializeField]
     bool _isPlay = false;
@@ -78,7 +78,7 @@ public class SoundObject : MonoBehaviour
                 Debug.Log("Clip Load Failure : " + _data._info.resPath);
             }
         }
-        _randomPitch.Play();
+        // _randomPitch.Play();
         _source.Play();
 
         _isPlay = true;
@@ -90,7 +90,7 @@ public class SoundObject : MonoBehaviour
         {
             _source.clip = Resources.Load(i_resPath) as AudioClip;
         }
-        _randomPitch.Play();
+        // _randomPitch.Play();
         _source.Play();
 
         _isPlay = true;
@@ -99,7 +99,7 @@ public class SoundObject : MonoBehaviour
     public void PlayWithClip(AudioClip i_clip)
     {
         _source.clip = i_clip;
-        _randomPitch.Play();
+        // _randomPitch.Play();
         _source.Play();
 
         _isPlay = true;

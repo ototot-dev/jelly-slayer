@@ -126,9 +126,9 @@ namespace Game
             if ((Time.time - __moveStartTimeStamp) > sensorEnabledTime && !bodyCollider.enabled)
                 bodyCollider.enabled = true;
 
-            if (spriteRenderer != null && GameContext.Instance.cameraCtrler != null)
+            if (spriteRenderer != null && GameContext.Instance.mainCameraCtrler != null)
             {
-                spriteRenderer.transform.rotation = GameContext.Instance.cameraCtrler.SpriteLookRotation;
+                spriteRenderer.transform.rotation = GameContext.Instance.mainCameraCtrler.SpriteLookRotation;
                 spriteRenderer.transform.rotation *= Quaternion.Euler(0, 0, Perlin.Noise(Time.time + __moveStartTimeStamp) * 30);
             }
         }

@@ -237,6 +237,11 @@ namespace Game
                 p.OnFixedUpdate(this);
         }
 
+        public void SetScale(float x, float y, float z)
+        {
+            bounds.localScale = new Vector3(x, y, z);
+        }
+
         public void AddImpulse(Vector3 impluse)
         {
             foreach (var p in points)
@@ -247,11 +252,6 @@ namespace Game
         {
             foreach (var p in points)
                 p.velocity += impluse * Vector3.one.Random();
-        }
-
-        public void SetScale(float x, float y, float z)
-        {
-            bounds.localScale = new Vector3(x, y, z);
         }
 
         [Header("Gizmos")]

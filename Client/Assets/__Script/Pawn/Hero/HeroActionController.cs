@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using UniRx;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Game
 {
@@ -73,6 +74,11 @@ namespace Game
                 if (damageContext.actionResult == ActionResults.Damaged)
                 {
                     SoundManager.Instance.Play(SoundID.HIT_FLESH);
+
+                    var camWorldToLocalMatrix = GameContext.Instance.mainCameraCtrler.cameraTransform.worldToLocalMatrix;
+                    var mirrorBleedBurstFx = camWorldToLocalMatrix.MultiplyPoint(damageContext.hitPoint).x < camWorldToLocalMatrix.MultiplyPoint(damageContext.senderBrain.GetWorldPosition()).x;
+                    EffectManager.Instance.Show(__brain.BB.graphics.onBleedBurstFx, damageContext.hitPoint, GameContext.Instance.mainCameraCtrler.BillboardRotation, 0.8f * (mirrorBleedBurstFx ? new Vector3(-1f, 1f, 1f) :Vector3.one))
+                        .transform.SetParent(__brain.bodyHitColliderHelper.transform, true);
                     EffectManager.Instance.Show(__brain.BB.graphics.onBleedFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()), Vector3.one)
                         .transform.SetParent(__brain.bodyHitColliderHelper.transform, true);
                 }

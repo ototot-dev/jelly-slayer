@@ -168,8 +168,8 @@ namespace Game
         {
             if (_isEnable_Look == false || possessedBrain == null)
                 return;
-            if (GameContext.Instance.cameraCtrler != null && 
-                GameContext.Instance.cameraCtrler.TryGetPickingPointOnTerrain(value.Get<Vector2>(), out var pickingPoint))
+            if (GameContext.Instance.mainCameraCtrler != null && 
+                GameContext.Instance.mainCameraCtrler.TryGetPickingPointOnTerrain(value.Get<Vector2>(), out var pickingPoint))
                 lookVec.Value = (pickingPoint - possessedBrain.Movement.capsule.transform.position).Vector2D().normalized;
         }
         public void OnGuard(InputValue value)

@@ -62,7 +62,7 @@ namespace Game
                 case GameModes.Default:
                     {
                         GameContext.Instance.playerCtrler = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
-                        GameContext.Instance.cameraCtrler = GameObject.FindWithTag("MainCamera").GetComponent<CameraController>();
+                        GameContext.Instance.mainCameraCtrler = GameObject.FindWithTag("MainCamera").GetComponent<CameraController>();
                         GameContext.Instance.terrainManager = GameObject.FindWithTag("TerrainManager").GetComponent<TerrainManager>();
                         GameContext.Instance.jellySpawnManager = gameObject.Children().First(c => c.name == "Manager").GetComponent<SlimeSpawnManager>();
                         GameContext.Instance.heroSpawnManager = gameObject.Children().First(c => c.name == "Manager").GetComponent<HeroSpawnManager>();
@@ -75,14 +75,14 @@ namespace Game
                     {
                         GameContext.Instance.playerCtrler = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
                         GameContext.Instance.playerTargetManager = GameContext.Instance.playerCtrler.GetComponent<TargetingController>();
-                        GameContext.Instance.cameraCtrler = GameObject.FindWithTag("MainCamera").GetComponent<CameraController>();
+                        GameContext.Instance.mainCameraCtrler = GameObject.FindWithTag("MainCamera").GetComponent<CameraController>();
                         GameContext.Instance.mainCanvasCtrler = GameObject.FindWithTag("MainCanvas").GetComponent<CanvasController>();
                     }
                     break;
                 case GameModes.GameTest:
                     {
                         GameContext.Instance.playerCtrler = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
-                        GameContext.Instance.cameraCtrler = GameObject.FindWithTag("MainCamera").GetComponent<CameraController>();
+                        GameContext.Instance.mainCameraCtrler = GameObject.FindWithTag("MainCamera").GetComponent<CameraController>();
 
                         GameManager.Instance.ShowLevel_HackerDen(true);
                         Observable.Timer(TimeSpan.FromSeconds(1f)).Subscribe(_ => GameManager.Instance.SpawnHero(new UnityEngine.Vector3(-2, 0, -3)));
@@ -95,8 +95,8 @@ namespace Game
                     {
                         if (GameContext.Instance.playerCtrler == null)
                             GameContext.Instance.playerCtrler = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
-                        if (GameContext.Instance.cameraCtrler == null)
-                            GameContext.Instance.cameraCtrler = GameObject.FindWithTag("MainCamera").GetComponent<CameraController>();
+                        if (GameContext.Instance.mainCameraCtrler == null)
+                            GameContext.Instance.mainCameraCtrler = GameObject.FindWithTag("MainCamera").GetComponent<CameraController>();
 
                         GameManager.Instance.Activate_Game(true);
                         GameManager.Instance.ShowLevel_ShootingRange(true);
@@ -118,8 +118,8 @@ namespace Game
                     {
                         if (GameContext.Instance.playerCtrler == null)
                             GameContext.Instance.playerCtrler = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
-                        if (GameContext.Instance.cameraCtrler == null)
-                            GameContext.Instance.cameraCtrler = GameObject.FindWithTag("MainCamera").GetComponent<CameraController>();
+                        if (GameContext.Instance.mainCameraCtrler == null)
+                            GameContext.Instance.mainCameraCtrler = GameObject.FindWithTag("MainCamera").GetComponent<CameraController>();
 
                         GameManager.Instance.Activate_Tutorial(true);
                         GameManager.Instance.ShowLevel_HackerDen(true);
