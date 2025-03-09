@@ -11,10 +11,10 @@ namespace Game
             base.OnInspectorGUI();
 
             if (GUILayout.Button("Fade In"))
-                (target as JellyMeshController).FadeIn(1f);
+                (target as JellyMeshController).FadeIn(0.5f);
 
             if (GUILayout.Button("Fade Out"))
-                (target as JellyMeshController).FadeOut(1f);
+                (target as JellyMeshController).FadeOut(0.2f);
         }
     }
 

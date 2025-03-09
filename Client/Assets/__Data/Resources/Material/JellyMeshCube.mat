@@ -20,14 +20,14 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: JellyMesh
+  m_Name: JellyMeshCube
   m_Shader: {fileID: 4800000, guid: e91e5ec4ebe794254b65ae3b5bbfed79, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
-  - _RECEIVE_SHADOWS_OFF
+  m_ValidKeywords: []
   m_InvalidKeywords:
   - _RECEIVESHADOWS_OFF
+  - _RECEIVE_SHADOWS_OFF
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -103,6 +103,7 @@ Material:
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaCutoff: 0.5
+    - _AlphaMultiplier: 1
     - _AlphaToMask: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
@@ -114,12 +115,13 @@ Material:
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DitherAlpha: 0.45
+    - _DitherAlphaMultiplier: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
-    - _FadeAlphaMultiplier: 2
-    - _FadeEndLength: 2
-    - _FadeStartLength: 0.5
+    - _FadeAlphaMultiplier: 1
+    - _FadeEndLength: 1
+    - _FadeStartLength: 0
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
@@ -154,7 +156,7 @@ Material:
     - __dirty: 0
     m_Colors:
     - _BaseColor: {r: 0.74509805, g: 0, b: 0, a: 1}
-    - _CenterPosition: {r: 0, g: 2, b: 2, a: 0}
+    - _CenterPosition: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}

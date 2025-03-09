@@ -26,98 +26,137 @@ namespace Game
         public float tailLength = 1f;
 
         SkinnedMeshRenderer[] __tailMeshRenderers;
-        Transform[] __cubes;
+        MeshRenderer[]  __eyeMeshRenderes;
+        MeshRenderer[] __cubeMeshRenderers;
         Vector3[] __cubeSpreadPositions;
         Vector3 __coreAttachPointLocalPositionCached;
         float __eyeLocalScaleCached;
-        IDisposable __heartBeatDisposable;
-        IDisposable __lookAtDisposable;
+        IDisposable __fadeUpdateDisposable;
 
         void Awake()
         {
+            __eyeMeshRenderes = eyeAnimator.gameObject.Descendants().Select(c => c.GetComponent<MeshRenderer>()).Where(m => m != null).ToArray();
             __tailMeshRenderers = tailAnimators.Select(t => t.gameObject.Children().Select(c => c.GetComponent<SkinnedMeshRenderer>()).First(r => r != null)).ToArray();
-            __cubes = gameObject.Descendants().Where(d => d.name == "Cube").Select(c => c.transform).ToArray();
-            __cubeSpreadPositions = __cubes.Select(c => c.localPosition).ToArray();
+            __cubeMeshRenderers = gameObject.Descendants().Where(d => d.name == "Cube").Select(c => c.GetComponent<MeshRenderer>()).ToArray();
+            __cubeSpreadPositions = __cubeMeshRenderers.Select(c => c.transform.localPosition).ToArray();
 
-            for (int i = 0; i < __cubes.Length; ++i)
-                __cubes[i].localScale = Vector3.zero;
-
-            __eyeLocalScaleCached = eyeAnimator.transform.localScale.x;
+            foreach (var r in __eyeMeshRenderes) { r.enabled = false; }
+            foreach (var r in __cubeMeshRenderers) { r.enabled = false; r.transform.localScale = Vector3.zero; }
+            foreach (var r in __tailMeshRenderers) { r.enabled = false; r.transform.localScale = Vector3.zero; }
+            foreach (var t in tailAnimators) t.enabled = false;
         }
 
         void Start()
         {
             Debug.Assert(springMassSystem.coreAttachPoint != null);
-            __coreAttachPointLocalPositionCached = springMassSystem.coreAttachPoint.localPosition;
 
-            for (int i = 0; i < __cubes.Length; ++i)
+            __coreAttachPointLocalPositionCached = springMassSystem.coreAttachPoint.localPosition;
+            __eyeLocalScaleCached = eyeAnimator.transform.localScale.x;
+
+            for (int i = 0; i < __cubeMeshRenderers.Length; ++i)
             {
-                __cubes[i].position = springMassSystem.core.position + cubeSpreadRadius * (__cubes[i].position - springMassSystem.core.position).normalized;
-                __cubeSpreadPositions[i] = __cubes[i].localPosition;
+                __cubeMeshRenderers[i].transform.position = springMassSystem.core.position + cubeSpreadRadius * (__cubeMeshRenderers[i].transform.position - springMassSystem.core.position).normalized;
+                __cubeSpreadPositions[i] = __cubeMeshRenderers[i].transform.localPosition;
             }
         }
 
         public void FadeIn(float duration)
         {
-            var fadeInTimeStamp = Time.time;
-
-            __heartBeatDisposable?.Dispose();
-            __heartBeatDisposable = Observable.EveryUpdate().Subscribe(_ =>
-            {
-                var fadeScaleMultiplier = Mathf.Clamp01((Time.time - fadeInTimeStamp) / duration);
-
-                for (int i = 0; i < __cubes.Length; i++)
-                    __cubes[i].transform.localScale = fadeScaleMultiplier * Mathf.Lerp(cubeScaleMin, cubeScaleMax, Mathf.PerlinNoise(Time.time + i, Time.time + i * i)) * Vector3.one;
-                for (int i = 0; i < __tailMeshRenderers.Length; i++)
-                    __tailMeshRenderers[i].material.SetVector("_CenterPosition", springMassSystem.core.position);
-            }).AddTo(this);
+            var fadeStartTimeStamp = Time.time;
 
             eyeAnimator.transform.localScale = Vector3.zero;
             eyeAnimator.MinOpenValue = 0f;
             meshBuilder.meshRenderer.enabled = false;
+
+            foreach (var r in __eyeMeshRenderes) r.enabled = true;
+            foreach (var r in __cubeMeshRenderers) r.enabled = true;
+            foreach (var r in __tailMeshRenderers) r.enabled = true;
             foreach (var t in tailAnimators) t.enabled = true;
-            foreach (var r in __tailMeshRenderers) r.enabled = false;
 
-            __lookAtDisposable?.Dispose();
-            __lookAtDisposable = Observable.EveryLateUpdate().Subscribe(_ =>
+            __fadeUpdateDisposable?.Dispose();
+            __fadeUpdateDisposable = Observable.EveryLateUpdate().Subscribe(_ =>
             {
-                var lookAtCameraVec = -GameContext.Instance.mainCameraCtrler.viewCamera.transform.forward;
-                springMassSystem.coreAttachPoint.transform.localPosition = __coreAttachPointLocalPositionCached;
-                springMassSystem.coreAttachPoint.transform.position += lookAtCameraVec;
-                springMassSystem.coreAttachPoint.transform.LookAt(springMassSystem.coreAttachPoint.transform.position + lookAtCameraVec);
+                UpdateCoreAttachPointLookAt();
 
-                for (int i = 0; i < __cubes.Length; ++i)
+                for (int i = 0; i < __cubeMeshRenderers.Length; ++i)
                 {
-                    var cubeAlpha = Mathf.Clamp01((Time.time - fadeInTimeStamp - i * 0.05f) / duration);
-                    __cubes[i].transform.position = Easing.Ease(EaseType.BounceOut, springMassSystem.core.position, __cubes[i].transform.parent.localToWorldMatrix.MultiplyPoint(__cubeSpreadPositions[i]), cubeAlpha);
-
-                    if (i + 1 == __cubes.Length && cubeAlpha >= 1f && !meshBuilder.meshRenderer.enabled)
-                        meshBuilder.meshRenderer.enabled = true;
+                    var cubeFadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp - i * 0.05f) / duration);
+                    __cubeMeshRenderers[i].transform.localScale = cubeFadeAlpha * Mathf.Lerp(cubeScaleMin, cubeScaleMax, Mathf.PerlinNoise(Time.time + i, Time.time + i * i)) * Vector3.one;
+                    __cubeMeshRenderers[i].transform.position = Easing.Ease(EaseType.BounceOut, springMassSystem.core.position, __cubeMeshRenderers[i].transform.parent.localToWorldMatrix.MultiplyPoint(__cubeSpreadPositions[i]), cubeFadeAlpha);
+                    __cubeMeshRenderers[i].material.SetVector("_CenterPosition", springMassSystem.core.position);
+                    __cubeMeshRenderers[i].material.SetFloat("_FadeStartLength", Mathf.Lerp(2f, 0f, cubeFadeAlpha));
+                    // __cubeMeshRenderers[i].material.SetFloat("_AlphaMultiplier", cubeFadeAlpha);
                 }
 
-                var eyeAlpha = Mathf.Clamp01((Time.time - fadeInTimeStamp - __cubes.Length * 0.05f) / duration);
-                eyeAnimator.transform.position = Easing.Ease(EaseType.BounceOut, springMassSystem.core.position, eyeAnimator.transform.parent.localToWorldMatrix.GetPosition(), eyeAlpha);
-                eyeAnimator.transform.localScale = Vector3.Lerp(Vector3.zero, __eyeLocalScaleCached * Vector3.one, eyeAlpha);
+                var eyeFadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp - __cubeMeshRenderers.Length * 0.05f) / duration);
+                eyeAnimator.transform.position = Easing.Ease(EaseType.BounceOut, springMassSystem.core.position, eyeAnimator.transform.parent.localToWorldMatrix.GetPosition(), eyeFadeAlpha);
+                eyeAnimator.transform.localScale = Vector3.Lerp(Vector3.zero, __eyeLocalScaleCached * Vector3.one, eyeFadeAlpha);
 
-                if (eyeAlpha >= 1f)
+                if (eyeFadeAlpha > 0f)
                 {
-                    eyeAnimator.MinOpenValue = Mathf.Clamp01(eyeAnimator.MinOpenValue + eyeOpenSpeed * Time.deltaTime);
-                    if (!__tailMeshRenderers[0].enabled)
-                        foreach (var r in __tailMeshRenderers) r.enabled = true;
+                    if (!meshBuilder.meshRenderer.enabled)
+                        meshBuilder.meshRenderer.enabled = true;
+
+                    for (int i = 0; i < __tailMeshRenderers.Length; i++)
+                    {
+                        __tailMeshRenderers[i].material.SetVector("_CenterPosition", springMassSystem.core.position);
+                        __tailMeshRenderers[i].material.SetFloat("_AlphaMultiplier", eyeFadeAlpha);
+                    }
+
+                    if (eyeFadeAlpha > 0.5f)
+                        eyeAnimator.MinOpenValue = Mathf.Clamp01(eyeAnimator.MinOpenValue + eyeOpenSpeed * Time.deltaTime);
                 }
             }).AddTo(this);
         }
 
         public void FadeOut(float duration)
         {
-            __heartBeatDisposable?.Dispose();
-            __heartBeatDisposable = null;
+            var fadeStartTimeStamp = Time.time;
 
-            __lookAtDisposable?.Dispose();
-            __lookAtDisposable = null;
+            meshBuilder.meshRenderer.enabled = false;
 
-            foreach (var t in tailAnimators) t.enabled = false;
-            foreach (var r in __tailMeshRenderers) r.enabled = false;
+            __fadeUpdateDisposable?.Dispose();
+            __fadeUpdateDisposable = Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(duration +  __cubeMeshRenderers.Length * 0.1f)))
+                .DoOnCompleted(() =>
+                {
+                    foreach (var r in __eyeMeshRenderes) r.enabled = false;
+                    foreach (var r in __cubeMeshRenderers) r.enabled = false;
+                    foreach (var r in __tailMeshRenderers) r.enabled = false;
+                    foreach (var t in tailAnimators) t.enabled = false;
+                })
+                .Subscribe(_ =>
+                {
+                    UpdateCoreAttachPointLookAt();
+
+                    for (int i = 0; i < __cubeMeshRenderers.Length; ++i)
+                    {
+                        var cubeFadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp - (i + 1) * 0.05f) / duration);
+                        __cubeMeshRenderers[i].transform.localScale = (1f - cubeFadeAlpha) * Mathf.Lerp(cubeScaleMin, cubeScaleMax, Mathf.PerlinNoise(Time.time + i, Time.time + i * i)) * Vector3.one;
+                        __cubeMeshRenderers[i].transform.position = Easing.Ease(EaseType.CubicIn, __cubeMeshRenderers[i].transform.parent.localToWorldMatrix.MultiplyPoint(__cubeSpreadPositions[i]), springMassSystem.core.position, cubeFadeAlpha);
+                        __cubeMeshRenderers[i].material.SetVector("_CenterPosition", springMassSystem.core.position);
+                        // __cubeMeshRenderers[i].material.SetFloat("_AlphaMultiplier", 1f - cubeFadeAlpha);
+                    }
+
+                    var eyeFadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp) / duration);
+                    eyeAnimator.transform.position = Easing.Ease(EaseType.CubicIn, eyeAnimator.transform.parent.localToWorldMatrix.GetPosition(), springMassSystem.core.position, eyeFadeAlpha);
+                    eyeAnimator.transform.localScale = Vector3.Lerp(__eyeLocalScaleCached * Vector3.one, Vector3.zero, eyeFadeAlpha);
+
+                    for (int i = 0; i < __tailMeshRenderers.Length; i++)
+                    {
+                        __tailMeshRenderers[i].material.SetVector("_CenterPosition", springMassSystem.core.position);
+                        __tailMeshRenderers[i].material.SetFloat("_AlphaMultiplier", 1f - eyeFadeAlpha);
+                    }
+
+                    eyeAnimator.MinOpenValue = Mathf.Clamp01(eyeAnimator.MinOpenValue - eyeOpenSpeed * Time.deltaTime);
+                }).AddTo(this);
+        }
+
+        void UpdateCoreAttachPointLookAt()
+        {
+            var lookAtCameraVec = -GameContext.Instance.mainCameraCtrler.viewCamera.transform.forward;
+            springMassSystem.coreAttachPoint.transform.localPosition = __coreAttachPointLocalPositionCached;
+            springMassSystem.coreAttachPoint.transform.position += lookAtCameraVec;
+            springMassSystem.coreAttachPoint.transform.LookAt(springMassSystem.coreAttachPoint.transform.position + lookAtCameraVec);
         }
     }
 }
