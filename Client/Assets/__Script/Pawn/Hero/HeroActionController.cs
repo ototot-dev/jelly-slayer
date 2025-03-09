@@ -75,10 +75,19 @@ namespace Game
                 {
                     SoundManager.Instance.Play(SoundID.HIT_FLESH);
 
-                    var camWorldToLocalMatrix = GameContext.Instance.mainCameraCtrler.cameraTransform.worldToLocalMatrix;
-                    var mirrorBleedBurstFx = camWorldToLocalMatrix.MultiplyPoint(damageContext.hitPoint).x < camWorldToLocalMatrix.MultiplyPoint(damageContext.senderBrain.GetWorldPosition()).x;
-                    EffectManager.Instance.Show(__brain.BB.graphics.onBleedBurstFx, damageContext.hitPoint, GameContext.Instance.mainCameraCtrler.BillboardRotation, 0.8f * (mirrorBleedBurstFx ? new Vector3(-1f, 1f, 1f) :Vector3.one))
-                        .transform.SetParent(__brain.bodyHitColliderHelper.transform, true);
+                    var viewMatrix = GameContext.Instance.mainCameraCtrler.cameraTransform.worldToLocalMatrix;
+                    var hitPointOffsetVec = viewMatrix.MultiplyPoint(damageContext.hitPoint.AdjustY(0f)) - viewMatrix.MultiplyPoint(__brain.GetWorldPosition().AdjustY(0f));
+                    if (Mathf.Abs(hitPointOffsetVec.x) > Mathf.Abs(hitPointOffsetVec.y))
+                    {
+                        EffectManager.Instance.Show(__brain.BB.graphics.onBloodBurstFx[0], damageContext.hitPoint, GameContext.Instance.mainCameraCtrler.BillboardRotation, 0.6f * (hitPointOffsetVec.x > 0f ? new Vector3(-1f, 1f, 1f) : Vector3.one))
+                            .transform.SetParent(__brain.bodyHitColliderHelper.transform, true);
+                    }
+                    else
+                    {
+                        EffectManager.Instance.Show(__brain.BB.graphics.onBloodBurstFx[1], damageContext.hitPoint, GameContext.Instance.mainCameraCtrler.BillboardRotation, Vector3.one)
+                            .transform.SetParent(__brain.bodyHitColliderHelper.transform, true);
+                    }
+
                     EffectManager.Instance.Show(__brain.BB.graphics.onBleedFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()), Vector3.one)
                         .transform.SetParent(__brain.bodyHitColliderHelper.transform, true);
                 }

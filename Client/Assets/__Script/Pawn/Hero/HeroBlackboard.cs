@@ -53,7 +53,7 @@ namespace Game
             public GameObject onGuardParriedFx;
             public GameObject onBlockFx;
             public GameObject onBleedFx;
-            public GameObject onBleedBurstFx;
+            public GameObject[] onBloodBurstFx;
             public Material hitColor;
         }
 
