@@ -3,11 +3,9 @@ using System.Linq;
 using DG.Tweening;
 using FIMSpace.BonesStimulation;
 using FIMSpace.FEyes;
-using Game.NodeCanvasExtension;
 using UniRx;
 using Unity.Linq;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
 
 namespace Game
 {
@@ -15,12 +13,11 @@ namespace Game
     {
         [Header("Component")]
         public Transform headBone;
-        public FEyesAnimator eyeAnimator;
         public BonesStimulator leftArmBoneSimulator;
         public BonesStimulator rightArmBoneSimulator;
         public BonesStimulator leftLegBoneSimulator;
         public BonesStimulator rightLegBoneSimulator;
-        public JellySpringMassSystem springMassSystem;
+        public JellyMeshController jellyMeshCtrler;
 
         [Header("Parameter")]
         public float rigBlendWeight = 1f;
@@ -51,34 +48,14 @@ namespace Game
                 __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation, Time.deltaTime);
             else if (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
                 __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition, mainAnimator.deltaRotation, Time.deltaTime);
-
-            // __brain.AnimCtrler.mainAnimator.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
         }
 
         void Awake()
         {
             __brain = GetComponent<SoldierBrain>();
-            // __rig = mainAnimator.GetComponent<RigBuilder>().layers.First().rig;
-            springMassSystem.coreAttachPoint = GetComponent<SoldierBlackboard>().attachment.jellyMeshAttachPoint;
-
-            __defaultCoreAttachPointLocalPosition = springMassSystem.coreAttachPoint.transform.localPosition;
-
-            var cubes = springMassSystem.gameObject.Descendants().Where(d => d.name == "Cube").ToArray();
-            foreach (var c in cubes)
-            {
-                c.transform.position = springMassSystem.transform.position + 0.4f * (c.transform.position - springMassSystem.transform.position).normalized;
-                c.transform.localScale = 0.2f * Vector3.one;
-            }
-
-            Observable.EveryUpdate().Subscribe(_ =>
-            {
-                for (int i = 0; i < cubes.Length; i++)
-                    cubes[i].transform.localScale = Mathf.Lerp(0.9f, 1.2f, Mathf.PerlinNoise(Time.time + i, Time.time + i * i)) * 0.2f * Vector3.one;
-            }).AddTo(this);
         }
 
         SoldierBrain __brain;
-        Vector3 __defaultCoreAttachPointLocalPosition;
         HashSet<string> __watchingStateNames = new();
         public bool CheckWatchingState(string stateName) => __watchingStateNames.Contains(stateName);
 
@@ -200,7 +177,7 @@ namespace Game
 
                 if (__brain.BB.IsDead)
                 {
-                    eyeAnimator.MinOpenValue = Mathf.Clamp01(eyeAnimator.MinOpenValue - legAnimGlueBlendSpeed * Time.deltaTime);
+                    // eyeAnimator.MinOpenValue = Mathf.Clamp01(eyeAnimator.MinOpenValue - legAnimGlueBlendSpeed * Time.deltaTime);
                     legAnimator.LegsAnimatorBlend = Mathf.Clamp01(legAnimator.LegsAnimatorBlend - legAnimGlueBlendSpeed * Time.deltaTime);
                     legAnimator.User_SetIsMoving(false);
                     legAnimator.User_SetIsGrounded(false);
@@ -253,11 +230,6 @@ namespace Game
                 //* 머리 사이즈 키우기
                 headBone.transform.localScale = headBoneScaleFactor * Vector3.one;
                 // __brain.ActionCtrler.hookingPointColliderHelper.transform.position = hookingPoint.transform.position;
-
-                var cameraLookVec = -GameContext.Instance.cameraCtrler.viewCamera.transform.forward;
-                springMassSystem.coreAttachPoint.transform.localPosition = __defaultCoreAttachPointLocalPosition;
-                springMassSystem.coreAttachPoint.transform.position += cameraLookVec;
-                springMassSystem.coreAttachPoint.transform.LookAt(springMassSystem.coreAttachPoint.transform.position + cameraLookVec);
             };
 
             __brain.PawnHP.onDead += (_) =>

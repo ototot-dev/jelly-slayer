@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using UniRx;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Game
 {
@@ -73,6 +74,7 @@ namespace Game
                 if (damageContext.actionResult == ActionResults.Damaged)
                 {
                     SoundManager.Instance.Play(SoundID.HIT_FLESH);
+                    EffectManager.Instance.Show(__brain.BB.graphics.onHitFx, damageContext.hitPoint, Quaternion.identity, Vector3.one);
                     EffectManager.Instance.Show(__brain.BB.graphics.onBleedFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()), Vector3.one)
                         .transform.SetParent(__brain.bodyHitColliderHelper.transform, true);
                 }
