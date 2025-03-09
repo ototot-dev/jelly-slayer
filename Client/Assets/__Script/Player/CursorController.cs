@@ -45,9 +45,9 @@ namespace Game
         /// <returns></returns>
         public bool TryMoveCursorPositionOnTerrain(Vector3 mousePoint)
         {
-            if (GameContext.Instance.cameraCtrler.viewCamera != null)
+            if (GameContext.Instance.mainCameraCtrler.viewCamera != null)
             {
-                var ray = GameContext.Instance.cameraCtrler.viewCamera.ScreenPointToRay(mousePoint);
+                var ray = GameContext.Instance.mainCameraCtrler.viewCamera.ScreenPointToRay(mousePoint);
                 var hitPoints = Physics.RaycastAll(ray, 9999f, LayerMask.GetMask(TerrainManager.LayerName));
 
                 if (hitPoints.Length > 0)
@@ -62,9 +62,9 @@ namespace Game
 
         public bool TryGetPickingPointOnTerrain(Vector3 mousePoint, out Vector3 result)
         {
-            if (GameContext.Instance.cameraCtrler.viewCamera != null)
+            if (GameContext.Instance.mainCameraCtrler.viewCamera != null)
             {
-                var ray = GameContext.Instance.cameraCtrler.viewCamera.ScreenPointToRay(mousePoint);
+                var ray = GameContext.Instance.mainCameraCtrler.viewCamera.ScreenPointToRay(mousePoint);
                 if (Physics.Raycast(ray, out var hit, 9999f, LayerMask.GetMask(TerrainManager.LayerName)))
                 {
                     result = hit.point;

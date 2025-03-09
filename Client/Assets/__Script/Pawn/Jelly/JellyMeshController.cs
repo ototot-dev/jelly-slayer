@@ -68,6 +68,8 @@ namespace Game
 
                 for (int i = 0; i < __cubes.Length; i++)
                     __cubes[i].transform.localScale = fadeScaleMultiplier * Mathf.Lerp(cubeScaleMin, cubeScaleMax, Mathf.PerlinNoise(Time.time + i, Time.time + i * i)) * Vector3.one;
+                for (int i = 0; i < __tailMeshRenderers.Length; i++)
+                    __tailMeshRenderers[i].material.SetVector("_CenterPosition", springMassSystem.core.position);
             }).AddTo(this);
 
             eyeAnimator.transform.localScale = Vector3.zero;
@@ -79,7 +81,7 @@ namespace Game
             __lookAtDisposable?.Dispose();
             __lookAtDisposable = Observable.EveryLateUpdate().Subscribe(_ =>
             {
-                var lookAtCameraVec = -GameContext.Instance.cameraCtrler.viewCamera.transform.forward;
+                var lookAtCameraVec = -GameContext.Instance.mainCameraCtrler.viewCamera.transform.forward;
                 springMassSystem.coreAttachPoint.transform.localPosition = __coreAttachPointLocalPositionCached;
                 springMassSystem.coreAttachPoint.transform.position += lookAtCameraVec;
                 springMassSystem.coreAttachPoint.transform.LookAt(springMassSystem.coreAttachPoint.transform.position + lookAtCameraVec);

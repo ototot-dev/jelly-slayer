@@ -79,9 +79,9 @@ namespace Game
 
                 Observable.EveryUpdate().Subscribe(_ =>
                 {
-                    if (GameContext.Instance.cameraCtrler != null)
+                    if (GameContext.Instance.mainCameraCtrler != null)
                     {
-                        spriteRenderer.transform.rotation = GameContext.Instance.cameraCtrler.SpriteLookRotation;
+                        spriteRenderer.transform.rotation = GameContext.Instance.mainCameraCtrler.SpriteLookRotation;
                         spriteRenderer.transform.rotation *= Quaternion.Euler(0, 0, Perlin.Noise(Time.time + randOffset) * 30);
                     }
                 }).AddTo(this);

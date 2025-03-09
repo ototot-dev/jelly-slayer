@@ -8,7 +8,10 @@ Shader "Game/JellyMeshDither"
 		[HideInInspector] _EmissionColor("Emission Color", Color) = (1,1,1,1)
 		_MainTex("MainTex", 2D) = "white" {}
 		_BaseColor("BaseColor", Color) = (0,0,0,0)
-		_TailLength("TailLength", Range( 1 , 100)) = 1
+		_CenterPosition("CenterPosition", Vector) = (0,0,0,0)
+		_FadeStartLength("FadeStartLength", Range( 0 , 100)) = 0
+		_FadeEndLength("FadeEndLength", Range( 1 , 100)) = 1
+		_FadeAlphaMultiplier("FadeAlphaMultiplier", Range( 0 , 10)) = 1
 		[HideInInspector] _texcoord( "", 2D ) = "white" {}
 
 
@@ -252,6 +255,7 @@ Shader "Game/JellyMeshDither"
 			#endif
 
 			#define ASE_NEEDS_FRAG_SCREEN_POSITION
+			#define ASE_NEEDS_FRAG_WORLD_POSITION
 
 
 			#if defined(ASE_EARLY_Z_DEPTH_OPTIMIZE) && (SHADER_TARGET >= 45)
@@ -295,7 +299,6 @@ Shader "Game/JellyMeshDither"
 					float4 probeOcclusion : TEXCOORD8;
 				#endif
 				float4 ase_texcoord9 : TEXCOORD9;
-				float4 ase_texcoord10 : TEXCOORD10;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -303,7 +306,10 @@ Shader "Game/JellyMeshDither"
 			CBUFFER_START(UnityPerMaterial)
 			float4 _MainTex_ST;
 			float4 _BaseColor;
-			float _TailLength;
+			float3 _CenterPosition;
+			float _FadeStartLength;
+			float _FadeEndLength;
+			float _FadeAlphaMultiplier;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -348,15 +354,19 @@ Shader "Game/JellyMeshDither"
 				return screenPosPixel;
 			}
 			
-			inline float Dither4x4Bayer( int x, int y )
+			inline float Dither8x8Bayer( int x, int y )
 			{
-				const float dither[ 16 ] = {
-				     1,  9,  3, 11,
-				    13,  5, 15,  7,
-				     4, 12,  2, 10,
-				    16,  8, 14,  6 };
-				int r = y * 4 + x;
-				return dither[ r ] / 16; // same # of instructions as pre-dividing due to compiler magic
+				const float dither[ 64 ] = {
+				     1, 49, 13, 61,  4, 52, 16, 64,
+				    33, 17, 45, 29, 36, 20, 48, 32,
+				     9, 57,  5, 53, 12, 60,  8, 56,
+				    41, 25, 37, 21, 44, 28, 40, 24,
+				     3, 51, 15, 63,  2, 50, 14, 62,
+				    35, 19, 47, 31, 34, 18, 46, 30,
+				    11, 59,  7, 55, 10, 58,  6, 54,
+				    43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[ r ] / 64; // same # of instructions as pre-dividing due to compiler magic
 			}
 			
 
@@ -368,7 +378,6 @@ Shader "Game/JellyMeshDither"
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
 				output.ase_texcoord9.xy = input.texcoord.xy;
-				output.ase_texcoord10 = input.positionOS;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
 				output.ase_texcoord9.zw = 0;
@@ -573,7 +582,9 @@ Shader "Game/JellyMeshDither"
 				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
 				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 0.5 ) , ( ase_positionSS_Pixel.y * 0.5 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
 				float4 ditherCustomScreenPos3 = appendResult38;
-				float dither3 = Dither4x4Bayer( fmod( ditherCustomScreenPos3.x, 4 ), fmod( ditherCustomScreenPos3.y, 4 ) );
+				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
+				float clampResult59 = clamp( ( ( max( ( distance( WorldPosition , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
+				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
 				
 
 				float3 BaseColor = ( tex2D( _MainTex, uv_MainTex ).rgb * _BaseColor.rgb );
@@ -583,8 +594,8 @@ Shader "Game/JellyMeshDither"
 				float Metallic = 0;
 				float Smoothness = 0.5;
 				float Occlusion = 1;
-				float Alpha = dither3;
-				float AlphaClipThreshold = ( max( ( ( abs( input.ase_texcoord10.xyz.z ) / _TailLength ) - 0.5 ) , 0.0 ) * 2.0 );
+				float Alpha = lerpResult60;
+				float AlphaClipThreshold = max( 0.45 , clampResult59 );
 				float AlphaClipThresholdShadow = 0.5;
 				float3 BakedGI = 0;
 				float3 RefractionColor = 1;
@@ -885,6 +896,7 @@ Shader "Game/JellyMeshDither"
             #endif
 
 			#define ASE_NEEDS_FRAG_SCREEN_POSITION
+			#define ASE_NEEDS_FRAG_WORLD_POSITION
 
 
 			#if defined(ASE_EARLY_Z_DEPTH_OPTIMIZE) && (SHADER_TARGET >= 45)
@@ -911,7 +923,7 @@ Shader "Game/JellyMeshDither"
 				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
 					float4 shadowCoord : TEXCOORD2;
 				#endif
-				float4 ase_texcoord3 : TEXCOORD3;
+				
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -919,7 +931,10 @@ Shader "Game/JellyMeshDither"
 			CBUFFER_START(UnityPerMaterial)
 			float4 _MainTex_ST;
 			float4 _BaseColor;
-			float _TailLength;
+			float3 _CenterPosition;
+			float _FadeStartLength;
+			float _FadeEndLength;
+			float _FadeAlphaMultiplier;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -963,15 +978,19 @@ Shader "Game/JellyMeshDither"
 				return screenPosPixel;
 			}
 			
-			inline float Dither4x4Bayer( int x, int y )
+			inline float Dither8x8Bayer( int x, int y )
 			{
-				const float dither[ 16 ] = {
-				     1,  9,  3, 11,
-				    13,  5, 15,  7,
-				     4, 12,  2, 10,
-				    16,  8, 14,  6 };
-				int r = y * 4 + x;
-				return dither[ r ] / 16; // same # of instructions as pre-dividing due to compiler magic
+				const float dither[ 64 ] = {
+				     1, 49, 13, 61,  4, 52, 16, 64,
+				    33, 17, 45, 29, 36, 20, 48, 32,
+				     9, 57,  5, 53, 12, 60,  8, 56,
+				    41, 25, 37, 21, 44, 28, 40, 24,
+				     3, 51, 15, 63,  2, 50, 14, 62,
+				    35, 19, 47, 31, 34, 18, 46, 30,
+				    11, 59,  7, 55, 10, 58,  6, 54,
+				    43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[ r ] / 64; // same # of instructions as pre-dividing due to compiler magic
 			}
 			
 
@@ -985,7 +1004,7 @@ Shader "Game/JellyMeshDither"
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO( output );
 
-				output.ase_texcoord3 = input.positionOS;
+				
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = input.positionOS.xyz;
@@ -1135,11 +1154,13 @@ Shader "Game/JellyMeshDither"
 				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
 				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 0.5 ) , ( ase_positionSS_Pixel.y * 0.5 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
 				float4 ditherCustomScreenPos3 = appendResult38;
-				float dither3 = Dither4x4Bayer( fmod( ditherCustomScreenPos3.x, 4 ), fmod( ditherCustomScreenPos3.y, 4 ) );
+				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
+				float clampResult59 = clamp( ( ( max( ( distance( WorldPosition , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
+				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
 				
 
-				float Alpha = dither3;
-				float AlphaClipThreshold = ( max( ( ( abs( input.ase_texcoord3.xyz.z ) / _TailLength ) - 0.5 ) , 0.0 ) * 2.0 );
+				float Alpha = lerpResult60;
+				float AlphaClipThreshold = max( 0.45 , clampResult59 );
 				float AlphaClipThresholdShadow = 0.5;
 
 				#ifdef ASE_DEPTH_WRITE_ON
@@ -1216,6 +1237,7 @@ Shader "Game/JellyMeshDither"
             #endif
 
 			#define ASE_NEEDS_FRAG_SCREEN_POSITION
+			#define ASE_NEEDS_FRAG_WORLD_POSITION
 
 
 			#if defined(ASE_EARLY_Z_DEPTH_OPTIMIZE) && (SHADER_TARGET >= 45)
@@ -1242,7 +1264,7 @@ Shader "Game/JellyMeshDither"
 				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
 					float4 shadowCoord : TEXCOORD2;
 				#endif
-				float4 ase_texcoord3 : TEXCOORD3;
+				
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -1250,7 +1272,10 @@ Shader "Game/JellyMeshDither"
 			CBUFFER_START(UnityPerMaterial)
 			float4 _MainTex_ST;
 			float4 _BaseColor;
-			float _TailLength;
+			float3 _CenterPosition;
+			float _FadeStartLength;
+			float _FadeEndLength;
+			float _FadeAlphaMultiplier;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -1294,15 +1319,19 @@ Shader "Game/JellyMeshDither"
 				return screenPosPixel;
 			}
 			
-			inline float Dither4x4Bayer( int x, int y )
+			inline float Dither8x8Bayer( int x, int y )
 			{
-				const float dither[ 16 ] = {
-				     1,  9,  3, 11,
-				    13,  5, 15,  7,
-				     4, 12,  2, 10,
-				    16,  8, 14,  6 };
-				int r = y * 4 + x;
-				return dither[ r ] / 16; // same # of instructions as pre-dividing due to compiler magic
+				const float dither[ 64 ] = {
+				     1, 49, 13, 61,  4, 52, 16, 64,
+				    33, 17, 45, 29, 36, 20, 48, 32,
+				     9, 57,  5, 53, 12, 60,  8, 56,
+				    41, 25, 37, 21, 44, 28, 40, 24,
+				     3, 51, 15, 63,  2, 50, 14, 62,
+				    35, 19, 47, 31, 34, 18, 46, 30,
+				    11, 59,  7, 55, 10, 58,  6, 54,
+				    43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[ r ] / 64; // same # of instructions as pre-dividing due to compiler magic
 			}
 			
 
@@ -1313,7 +1342,7 @@ Shader "Game/JellyMeshDither"
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
-				output.ase_texcoord3 = input.positionOS;
+				
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = input.positionOS.xyz;
@@ -1449,11 +1478,13 @@ Shader "Game/JellyMeshDither"
 				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
 				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 0.5 ) , ( ase_positionSS_Pixel.y * 0.5 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
 				float4 ditherCustomScreenPos3 = appendResult38;
-				float dither3 = Dither4x4Bayer( fmod( ditherCustomScreenPos3.x, 4 ), fmod( ditherCustomScreenPos3.y, 4 ) );
+				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
+				float clampResult59 = clamp( ( ( max( ( distance( WorldPosition , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
+				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
 				
 
-				float Alpha = dither3;
-				float AlphaClipThreshold = ( max( ( ( abs( input.ase_texcoord3.xyz.z ) / _TailLength ) - 0.5 ) , 0.0 ) * 2.0 );
+				float Alpha = lerpResult60;
+				float AlphaClipThreshold = max( 0.45 , clampResult59 );
 
 				#ifdef ASE_DEPTH_WRITE_ON
 					float DepthValue = input.positionCS.z;
@@ -1517,7 +1548,8 @@ Shader "Game/JellyMeshDither"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/MetaInput.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/ShaderPass.hlsl"
 
-			
+			#define ASE_NEEDS_FRAG_WORLD_POSITION
+
 
 			struct Attributes
 			{
@@ -1545,7 +1577,6 @@ Shader "Game/JellyMeshDither"
 				#endif
 				float4 ase_texcoord4 : TEXCOORD4;
 				float4 ase_texcoord5 : TEXCOORD5;
-				float4 ase_texcoord6 : TEXCOORD6;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -1553,7 +1584,10 @@ Shader "Game/JellyMeshDither"
 			CBUFFER_START(UnityPerMaterial)
 			float4 _MainTex_ST;
 			float4 _BaseColor;
-			float _TailLength;
+			float3 _CenterPosition;
+			float _FadeStartLength;
+			float _FadeEndLength;
+			float _FadeAlphaMultiplier;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -1598,15 +1632,19 @@ Shader "Game/JellyMeshDither"
 				return screenPosPixel;
 			}
 			
-			inline float Dither4x4Bayer( int x, int y )
+			inline float Dither8x8Bayer( int x, int y )
 			{
-				const float dither[ 16 ] = {
-				     1,  9,  3, 11,
-				    13,  5, 15,  7,
-				     4, 12,  2, 10,
-				    16,  8, 14,  6 };
-				int r = y * 4 + x;
-				return dither[ r ] / 16; // same # of instructions as pre-dividing due to compiler magic
+				const float dither[ 64 ] = {
+				     1, 49, 13, 61,  4, 52, 16, 64,
+				    33, 17, 45, 29, 36, 20, 48, 32,
+				     9, 57,  5, 53, 12, 60,  8, 56,
+				    41, 25, 37, 21, 44, 28, 40, 24,
+				     3, 51, 15, 63,  2, 50, 14, 62,
+				    35, 19, 47, 31, 34, 18, 46, 30,
+				    11, 59,  7, 55, 10, 58,  6, 54,
+				    43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[ r ] / 64; // same # of instructions as pre-dividing due to compiler magic
 			}
 			
 
@@ -1622,7 +1660,6 @@ Shader "Game/JellyMeshDither"
 				output.ase_texcoord5 = screenPos;
 				
 				output.ase_texcoord4.xy = input.texcoord0.xy;
-				output.ase_texcoord6 = input.positionOS;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
 				output.ase_texcoord4.zw = 0;
@@ -1784,13 +1821,15 @@ Shader "Game/JellyMeshDither"
 				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
 				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 0.5 ) , ( ase_positionSS_Pixel.y * 0.5 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
 				float4 ditherCustomScreenPos3 = appendResult38;
-				float dither3 = Dither4x4Bayer( fmod( ditherCustomScreenPos3.x, 4 ), fmod( ditherCustomScreenPos3.y, 4 ) );
+				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
+				float clampResult59 = clamp( ( ( max( ( distance( WorldPosition , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
+				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
 				
 
 				float3 BaseColor = ( tex2D( _MainTex, uv_MainTex ).rgb * _BaseColor.rgb );
 				float3 Emission = 0;
-				float Alpha = dither3;
-				float AlphaClipThreshold = ( max( ( ( abs( input.ase_texcoord6.xyz.z ) / _TailLength ) - 0.5 ) , 0.0 ) * 2.0 );
+				float Alpha = lerpResult60;
+				float AlphaClipThreshold = max( 0.45 , clampResult59 );
 
 				#ifdef _ALPHATEST_ON
 					clip(Alpha - AlphaClipThreshold);
@@ -1853,7 +1892,8 @@ Shader "Game/JellyMeshDither"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ShaderGraphFunctions.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/ShaderPass.hlsl"
 
-			
+			#define ASE_NEEDS_FRAG_WORLD_POSITION
+
 
 			struct Attributes
 			{
@@ -1874,7 +1914,6 @@ Shader "Game/JellyMeshDither"
 				#endif
 				float4 ase_texcoord2 : TEXCOORD2;
 				float4 ase_texcoord3 : TEXCOORD3;
-				float4 ase_texcoord4 : TEXCOORD4;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -1882,7 +1921,10 @@ Shader "Game/JellyMeshDither"
 			CBUFFER_START(UnityPerMaterial)
 			float4 _MainTex_ST;
 			float4 _BaseColor;
-			float _TailLength;
+			float3 _CenterPosition;
+			float _FadeStartLength;
+			float _FadeEndLength;
+			float _FadeAlphaMultiplier;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -1927,15 +1969,19 @@ Shader "Game/JellyMeshDither"
 				return screenPosPixel;
 			}
 			
-			inline float Dither4x4Bayer( int x, int y )
+			inline float Dither8x8Bayer( int x, int y )
 			{
-				const float dither[ 16 ] = {
-				     1,  9,  3, 11,
-				    13,  5, 15,  7,
-				     4, 12,  2, 10,
-				    16,  8, 14,  6 };
-				int r = y * 4 + x;
-				return dither[ r ] / 16; // same # of instructions as pre-dividing due to compiler magic
+				const float dither[ 64 ] = {
+				     1, 49, 13, 61,  4, 52, 16, 64,
+				    33, 17, 45, 29, 36, 20, 48, 32,
+				     9, 57,  5, 53, 12, 60,  8, 56,
+				    41, 25, 37, 21, 44, 28, 40, 24,
+				     3, 51, 15, 63,  2, 50, 14, 62,
+				    35, 19, 47, 31, 34, 18, 46, 30,
+				    11, 59,  7, 55, 10, 58,  6, 54,
+				    43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[ r ] / 64; // same # of instructions as pre-dividing due to compiler magic
 			}
 			
 
@@ -1951,7 +1997,6 @@ Shader "Game/JellyMeshDither"
 				output.ase_texcoord3 = screenPos;
 				
 				output.ase_texcoord2.xy = input.ase_texcoord.xy;
-				output.ase_texcoord4 = input.positionOS;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
 				output.ase_texcoord2.zw = 0;
@@ -2093,12 +2138,14 @@ Shader "Game/JellyMeshDither"
 				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
 				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 0.5 ) , ( ase_positionSS_Pixel.y * 0.5 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
 				float4 ditherCustomScreenPos3 = appendResult38;
-				float dither3 = Dither4x4Bayer( fmod( ditherCustomScreenPos3.x, 4 ), fmod( ditherCustomScreenPos3.y, 4 ) );
+				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
+				float clampResult59 = clamp( ( ( max( ( distance( WorldPosition , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
+				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
 				
 
 				float3 BaseColor = ( tex2D( _MainTex, uv_MainTex ).rgb * _BaseColor.rgb );
-				float Alpha = dither3;
-				float AlphaClipThreshold = ( max( ( ( abs( input.ase_texcoord4.xyz.z ) / _TailLength ) - 0.5 ) , 0.0 ) * 2.0 );
+				float Alpha = lerpResult60;
+				float AlphaClipThreshold = max( 0.45 , clampResult59 );
 
 				half4 color = half4(BaseColor, Alpha );
 
@@ -2164,6 +2211,7 @@ Shader "Game/JellyMeshDither"
             #endif
 
 			#define ASE_NEEDS_FRAG_SCREEN_POSITION
+			#define ASE_NEEDS_FRAG_WORLD_POSITION
 
 
 			#if defined(ASE_EARLY_Z_DEPTH_OPTIMIZE) && (SHADER_TARGET >= 45)
@@ -2193,7 +2241,7 @@ Shader "Game/JellyMeshDither"
 				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
 					float4 shadowCoord : TEXCOORD4;
 				#endif
-				float4 ase_texcoord5 : TEXCOORD5;
+				
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -2201,7 +2249,10 @@ Shader "Game/JellyMeshDither"
 			CBUFFER_START(UnityPerMaterial)
 			float4 _MainTex_ST;
 			float4 _BaseColor;
-			float _TailLength;
+			float3 _CenterPosition;
+			float _FadeStartLength;
+			float _FadeEndLength;
+			float _FadeAlphaMultiplier;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -2245,15 +2296,19 @@ Shader "Game/JellyMeshDither"
 				return screenPosPixel;
 			}
 			
-			inline float Dither4x4Bayer( int x, int y )
+			inline float Dither8x8Bayer( int x, int y )
 			{
-				const float dither[ 16 ] = {
-				     1,  9,  3, 11,
-				    13,  5, 15,  7,
-				     4, 12,  2, 10,
-				    16,  8, 14,  6 };
-				int r = y * 4 + x;
-				return dither[ r ] / 16; // same # of instructions as pre-dividing due to compiler magic
+				const float dither[ 64 ] = {
+				     1, 49, 13, 61,  4, 52, 16, 64,
+				    33, 17, 45, 29, 36, 20, 48, 32,
+				     9, 57,  5, 53, 12, 60,  8, 56,
+				    41, 25, 37, 21, 44, 28, 40, 24,
+				     3, 51, 15, 63,  2, 50, 14, 62,
+				    35, 19, 47, 31, 34, 18, 46, 30,
+				    11, 59,  7, 55, 10, 58,  6, 54,
+				    43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[ r ] / 64; // same # of instructions as pre-dividing due to compiler magic
 			}
 			
 
@@ -2264,7 +2319,7 @@ Shader "Game/JellyMeshDither"
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
-				output.ase_texcoord5 = input.positionOS;
+				
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = input.positionOS.xyz;
 				#else
@@ -2414,12 +2469,14 @@ Shader "Game/JellyMeshDither"
 				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
 				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 0.5 ) , ( ase_positionSS_Pixel.y * 0.5 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
 				float4 ditherCustomScreenPos3 = appendResult38;
-				float dither3 = Dither4x4Bayer( fmod( ditherCustomScreenPos3.x, 4 ), fmod( ditherCustomScreenPos3.y, 4 ) );
+				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
+				float clampResult59 = clamp( ( ( max( ( distance( WorldPosition , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
+				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
 				
 
 				float3 Normal = float3(0, 0, 1);
-				float Alpha = dither3;
-				float AlphaClipThreshold = ( max( ( ( abs( input.ase_texcoord5.xyz.z ) / _TailLength ) - 0.5 ) , 0.0 ) * 2.0 );
+				float Alpha = lerpResult60;
+				float AlphaClipThreshold = max( 0.45 , clampResult59 );
 
 				#ifdef ASE_DEPTH_WRITE_ON
 					float DepthValue = input.positionCS.z;
@@ -2547,6 +2604,7 @@ Shader "Game/JellyMeshDither"
 			#endif
 
 			#define ASE_NEEDS_FRAG_SCREEN_POSITION
+			#define ASE_NEEDS_FRAG_WORLD_POSITION
 
 
 			#if defined(ASE_EARLY_Z_DEPTH_OPTIMIZE) && (SHADER_TARGET >= 45)
@@ -2590,7 +2648,6 @@ Shader "Game/JellyMeshDither"
 					float4 probeOcclusion : TEXCOORD8;
 				#endif
 				float4 ase_texcoord9 : TEXCOORD9;
-				float4 ase_texcoord10 : TEXCOORD10;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -2598,7 +2655,10 @@ Shader "Game/JellyMeshDither"
 			CBUFFER_START(UnityPerMaterial)
 			float4 _MainTex_ST;
 			float4 _BaseColor;
-			float _TailLength;
+			float3 _CenterPosition;
+			float _FadeStartLength;
+			float _FadeEndLength;
+			float _FadeAlphaMultiplier;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -2645,15 +2705,19 @@ Shader "Game/JellyMeshDither"
 				return screenPosPixel;
 			}
 			
-			inline float Dither4x4Bayer( int x, int y )
+			inline float Dither8x8Bayer( int x, int y )
 			{
-				const float dither[ 16 ] = {
-				     1,  9,  3, 11,
-				    13,  5, 15,  7,
-				     4, 12,  2, 10,
-				    16,  8, 14,  6 };
-				int r = y * 4 + x;
-				return dither[ r ] / 16; // same # of instructions as pre-dividing due to compiler magic
+				const float dither[ 64 ] = {
+				     1, 49, 13, 61,  4, 52, 16, 64,
+				    33, 17, 45, 29, 36, 20, 48, 32,
+				     9, 57,  5, 53, 12, 60,  8, 56,
+				    41, 25, 37, 21, 44, 28, 40, 24,
+				     3, 51, 15, 63,  2, 50, 14, 62,
+				    35, 19, 47, 31, 34, 18, 46, 30,
+				    11, 59,  7, 55, 10, 58,  6, 54,
+				    43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[ r ] / 64; // same # of instructions as pre-dividing due to compiler magic
 			}
 			
 
@@ -2665,7 +2729,6 @@ Shader "Game/JellyMeshDither"
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
 				output.ase_texcoord9.xy = input.texcoord.xy;
-				output.ase_texcoord10 = input.positionOS;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
 				output.ase_texcoord9.zw = 0;
@@ -2868,7 +2931,9 @@ Shader "Game/JellyMeshDither"
 				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
 				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 0.5 ) , ( ase_positionSS_Pixel.y * 0.5 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
 				float4 ditherCustomScreenPos3 = appendResult38;
-				float dither3 = Dither4x4Bayer( fmod( ditherCustomScreenPos3.x, 4 ), fmod( ditherCustomScreenPos3.y, 4 ) );
+				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
+				float clampResult59 = clamp( ( ( max( ( distance( WorldPosition , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
+				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
 				
 
 				float3 BaseColor = ( tex2D( _MainTex, uv_MainTex ).rgb * _BaseColor.rgb );
@@ -2878,8 +2943,8 @@ Shader "Game/JellyMeshDither"
 				float Metallic = 0;
 				float Smoothness = 0.5;
 				float Occlusion = 1;
-				float Alpha = dither3;
-				float AlphaClipThreshold = ( max( ( ( abs( input.ase_texcoord10.xyz.z ) / _TailLength ) - 0.5 ) , 0.0 ) * 2.0 );
+				float Alpha = lerpResult60;
+				float AlphaClipThreshold = max( 0.45 , clampResult59 );
 				float AlphaClipThresholdShadow = 0.5;
 				float3 BakedGI = 0;
 				float3 RefractionColor = 1;
@@ -3064,7 +3129,10 @@ Shader "Game/JellyMeshDither"
 			CBUFFER_START(UnityPerMaterial)
 			float4 _MainTex_ST;
 			float4 _BaseColor;
-			float _TailLength;
+			float3 _CenterPosition;
+			float _FadeStartLength;
+			float _FadeEndLength;
+			float _FadeAlphaMultiplier;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -3108,15 +3176,19 @@ Shader "Game/JellyMeshDither"
 				return screenPosPixel;
 			}
 			
-			inline float Dither4x4Bayer( int x, int y )
+			inline float Dither8x8Bayer( int x, int y )
 			{
-				const float dither[ 16 ] = {
-				     1,  9,  3, 11,
-				    13,  5, 15,  7,
-				     4, 12,  2, 10,
-				    16,  8, 14,  6 };
-				int r = y * 4 + x;
-				return dither[ r ] / 16; // same # of instructions as pre-dividing due to compiler magic
+				const float dither[ 64 ] = {
+				     1, 49, 13, 61,  4, 52, 16, 64,
+				    33, 17, 45, 29, 36, 20, 48, 32,
+				     9, 57,  5, 53, 12, 60,  8, 56,
+				    41, 25, 37, 21, 44, 28, 40, 24,
+				     3, 51, 15, 63,  2, 50, 14, 62,
+				    35, 19, 47, 31, 34, 18, 46, 30,
+				    11, 59,  7, 55, 10, 58,  6, 54,
+				    43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[ r ] / 64; // same # of instructions as pre-dividing due to compiler magic
 			}
 			
 
@@ -3138,8 +3210,12 @@ Shader "Game/JellyMeshDither"
 				float4 ase_positionCS = TransformObjectToHClip( ( input.positionOS ).xyz );
 				float4 screenPos = ComputeScreenPos( ase_positionCS );
 				output.ase_texcoord = screenPos;
+				float3 ase_positionWS = TransformObjectToWorld( ( input.positionOS ).xyz );
+				output.ase_texcoord1.xyz = ase_positionWS;
 				
-				output.ase_texcoord1 = input.positionOS;
+				
+				//setting value to unused interpolator channels and avoid initialization warnings
+				output.ase_texcoord1.w = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = input.positionOS.xyz;
@@ -3253,11 +3329,14 @@ Shader "Game/JellyMeshDither"
 				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
 				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 0.5 ) , ( ase_positionSS_Pixel.y * 0.5 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
 				float4 ditherCustomScreenPos3 = appendResult38;
-				float dither3 = Dither4x4Bayer( fmod( ditherCustomScreenPos3.x, 4 ), fmod( ditherCustomScreenPos3.y, 4 ) );
+				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
+				float3 ase_positionWS = input.ase_texcoord1.xyz;
+				float clampResult59 = clamp( ( ( max( ( distance( ase_positionWS , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
+				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
 				
 
-				surfaceDescription.Alpha = dither3;
-				surfaceDescription.AlphaClipThreshold = ( max( ( ( abs( input.ase_texcoord1.xyz.z ) / _TailLength ) - 0.5 ) , 0.0 ) * 2.0 );
+				surfaceDescription.Alpha = lerpResult60;
+				surfaceDescription.AlphaClipThreshold = max( 0.45 , clampResult59 );
 
 				#if _ALPHATEST_ON
 					float alphaClipThreshold = 0.01f;
@@ -3347,7 +3426,10 @@ Shader "Game/JellyMeshDither"
 			CBUFFER_START(UnityPerMaterial)
 			float4 _MainTex_ST;
 			float4 _BaseColor;
-			float _TailLength;
+			float3 _CenterPosition;
+			float _FadeStartLength;
+			float _FadeEndLength;
+			float _FadeAlphaMultiplier;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -3391,15 +3473,19 @@ Shader "Game/JellyMeshDither"
 				return screenPosPixel;
 			}
 			
-			inline float Dither4x4Bayer( int x, int y )
+			inline float Dither8x8Bayer( int x, int y )
 			{
-				const float dither[ 16 ] = {
-				     1,  9,  3, 11,
-				    13,  5, 15,  7,
-				     4, 12,  2, 10,
-				    16,  8, 14,  6 };
-				int r = y * 4 + x;
-				return dither[ r ] / 16; // same # of instructions as pre-dividing due to compiler magic
+				const float dither[ 64 ] = {
+				     1, 49, 13, 61,  4, 52, 16, 64,
+				    33, 17, 45, 29, 36, 20, 48, 32,
+				     9, 57,  5, 53, 12, 60,  8, 56,
+				    41, 25, 37, 21, 44, 28, 40, 24,
+				     3, 51, 15, 63,  2, 50, 14, 62,
+				    35, 19, 47, 31, 34, 18, 46, 30,
+				    11, 59,  7, 55, 10, 58,  6, 54,
+				    43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[ r ] / 64; // same # of instructions as pre-dividing due to compiler magic
 			}
 			
 
@@ -3421,8 +3507,12 @@ Shader "Game/JellyMeshDither"
 				float4 ase_positionCS = TransformObjectToHClip( ( input.positionOS ).xyz );
 				float4 screenPos = ComputeScreenPos( ase_positionCS );
 				output.ase_texcoord = screenPos;
+				float3 ase_positionWS = TransformObjectToWorld( ( input.positionOS ).xyz );
+				output.ase_texcoord1.xyz = ase_positionWS;
 				
-				output.ase_texcoord1 = input.positionOS;
+				
+				//setting value to unused interpolator channels and avoid initialization warnings
+				output.ase_texcoord1.w = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = input.positionOS.xyz;
@@ -3535,11 +3625,14 @@ Shader "Game/JellyMeshDither"
 				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
 				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 0.5 ) , ( ase_positionSS_Pixel.y * 0.5 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
 				float4 ditherCustomScreenPos3 = appendResult38;
-				float dither3 = Dither4x4Bayer( fmod( ditherCustomScreenPos3.x, 4 ), fmod( ditherCustomScreenPos3.y, 4 ) );
+				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
+				float3 ase_positionWS = input.ase_texcoord1.xyz;
+				float clampResult59 = clamp( ( ( max( ( distance( ase_positionWS , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
+				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
 				
 
-				surfaceDescription.Alpha = dither3;
-				surfaceDescription.AlphaClipThreshold = ( max( ( ( abs( input.ase_texcoord1.xyz.z ) / _TailLength ) - 0.5 ) , 0.0 ) * 2.0 );
+				surfaceDescription.Alpha = lerpResult60;
+				surfaceDescription.AlphaClipThreshold = max( 0.45 , clampResult59 );
 
 				#if _ALPHATEST_ON
 					float alphaClipThreshold = 0.01f;
@@ -3640,7 +3733,10 @@ Shader "Game/JellyMeshDither"
 			CBUFFER_START(UnityPerMaterial)
 			float4 _MainTex_ST;
 			float4 _BaseColor;
-			float _TailLength;
+			float3 _CenterPosition;
+			float _FadeStartLength;
+			float _FadeEndLength;
+			float _FadeAlphaMultiplier;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -3684,15 +3780,19 @@ Shader "Game/JellyMeshDither"
 				return screenPosPixel;
 			}
 			
-			inline float Dither4x4Bayer( int x, int y )
+			inline float Dither8x8Bayer( int x, int y )
 			{
-				const float dither[ 16 ] = {
-				     1,  9,  3, 11,
-				    13,  5, 15,  7,
-				     4, 12,  2, 10,
-				    16,  8, 14,  6 };
-				int r = y * 4 + x;
-				return dither[ r ] / 16; // same # of instructions as pre-dividing due to compiler magic
+				const float dither[ 64 ] = {
+				     1, 49, 13, 61,  4, 52, 16, 64,
+				    33, 17, 45, 29, 36, 20, 48, 32,
+				     9, 57,  5, 53, 12, 60,  8, 56,
+				    41, 25, 37, 21, 44, 28, 40, 24,
+				     3, 51, 15, 63,  2, 50, 14, 62,
+				    35, 19, 47, 31, 34, 18, 46, 30,
+				    11, 59,  7, 55, 10, 58,  6, 54,
+				    43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[ r ] / 64; // same # of instructions as pre-dividing due to compiler magic
 			}
 			
 
@@ -3706,8 +3806,12 @@ Shader "Game/JellyMeshDither"
 				float4 ase_positionCS = TransformObjectToHClip( ( input.positionOS ).xyz );
 				float4 screenPos = ComputeScreenPos( ase_positionCS );
 				output.ase_texcoord2 = screenPos;
+				float3 ase_positionWS = TransformObjectToWorld( ( input.positionOS ).xyz );
+				output.ase_texcoord3.xyz = ase_positionWS;
 				
-				output.ase_texcoord3 = input.positionOS;
+				
+				//setting value to unused interpolator channels and avoid initialization warnings
+				output.ase_texcoord3.w = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = input.positionOS.xyz;
@@ -3763,11 +3867,14 @@ Shader "Game/JellyMeshDither"
 				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
 				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 0.5 ) , ( ase_positionSS_Pixel.y * 0.5 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
 				float4 ditherCustomScreenPos3 = appendResult38;
-				float dither3 = Dither4x4Bayer( fmod( ditherCustomScreenPos3.x, 4 ), fmod( ditherCustomScreenPos3.y, 4 ) );
+				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
+				float3 ase_positionWS = input.ase_texcoord3.xyz;
+				float clampResult59 = clamp( ( ( max( ( distance( ase_positionWS , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
+				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
 				
 
-				float Alpha = dither3;
-				float AlphaClipThreshold = ( max( ( ( abs( input.ase_texcoord3.xyz.z ) / _TailLength ) - 0.5 ) , 0.0 ) * 2.0 );
+				float Alpha = lerpResult60;
+				float AlphaClipThreshold = max( 0.45 , clampResult59 );
 
 				#ifdef _ALPHATEST_ON
 					clip(Alpha - AlphaClipThreshold);
@@ -3795,25 +3902,32 @@ Shader "Game/JellyMeshDither"
 }
 /*ASEBEGIN
 Version=19801
-Node;AmplifyShaderEditor.PosVertexDataNode;47;-960,576;Inherit;False;0;0;5;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.AbsOpNode;44;-720,576;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;46;-880,752;Inherit;False;Property;_TailLength;TailLength;3;0;Create;True;0;0;0;False;0;False;1;0;1;100;0;1;FLOAT;0
-Node;AmplifyShaderEditor.ScreenPosInputsNode;35;-1040,256;Float;False;4;False;0;5;FLOAT4;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.SimpleDivideOpNode;45;-544,576;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;37;-784,352;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0.5;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;36;-784,256;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0.5;False;1;FLOAT;0
-Node;AmplifyShaderEditor.WireNode;39;-720,496;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.WireNode;40;-720,528;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleSubtractOpNode;48;-512,704;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0.5;False;1;FLOAT;0
-Node;AmplifyShaderEditor.DynamicAppendNode;38;-544,256;Inherit;False;FLOAT4;4;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;1;FLOAT4;0
-Node;AmplifyShaderEditor.SimpleMaxOpNode;49;-352,704;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.ColorNode;42;-544,0;Inherit;False;Property;_BaseColor;BaseColor;2;0;Create;True;0;0;0;False;0;False;0,0,0,0;0,0,0,0;True;True;0;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
+Node;AmplifyShaderEditor.Vector3Node;52;-1680,880;Inherit;False;Property;_CenterPosition;CenterPosition;2;0;Create;True;0;0;0;False;0;False;0,0,0;0,0,0;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
+Node;AmplifyShaderEditor.WorldPosInputsNode;51;-1680,720;Inherit;False;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
+Node;AmplifyShaderEditor.RangedFloatNode;54;-1440,976;Inherit;False;Property;_FadeStartLength;FadeStartLength;3;0;Create;True;0;0;0;False;0;False;0;0;0;100;0;1;FLOAT;0
+Node;AmplifyShaderEditor.DistanceOpNode;53;-1440,800;Inherit;False;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleSubtractOpNode;48;-1200,800;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0.5;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;46;-1440,1056;Inherit;False;Property;_FadeEndLength;FadeEndLength;4;0;Create;True;0;0;0;False;0;False;1;0;1;100;0;1;FLOAT;0
+Node;AmplifyShaderEditor.ScreenPosInputsNode;35;-1296,432;Float;False;4;False;0;5;FLOAT4;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.SimpleMaxOpNode;49;-1024,800;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleSubtractOpNode;55;-1056,960;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;37;-1040,528;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0.5;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;36;-1040,432;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0.5;False;1;FLOAT;0
+Node;AmplifyShaderEditor.WireNode;39;-992,672;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.WireNode;40;-992,704;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleDivideOpNode;45;-832,880;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;57;-864,1040;Inherit;False;Property;_FadeAlphaMultiplier;FadeAlphaMultiplier;5;0;Create;True;0;0;0;False;0;False;1;0;0;10;0;1;FLOAT;0
+Node;AmplifyShaderEditor.DynamicAppendNode;38;-800,432;Inherit;False;FLOAT4;4;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;1;FLOAT4;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;50;-656,880;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;2;False;1;FLOAT;0
+Node;AmplifyShaderEditor.ClampOpNode;59;-480,880;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;1;False;1;FLOAT;0
+Node;AmplifyShaderEditor.DitheringNode;3;-576,432;Inherit;False;1;True;4;0;FLOAT;0;False;1;SAMPLER2D;;False;2;FLOAT4;0,0,0,0;False;3;SAMPLERSTATE;;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;61;-656,672;Inherit;False;Constant;_AlphaClip;AlphaClip;6;0;Create;True;0;0;0;False;0;False;0.45;0;0;1;0;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;41;-256,0;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.SamplerNode;1;-608,-256;Inherit;True;Property;_TextureSample0;Texture Sample 0;0;0;Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
 Node;AmplifyShaderEditor.TexturePropertyNode;2;-896,-256;Inherit;True;Property;_MainTex;MainTex;0;0;Create;True;0;0;0;False;0;False;None;370aac370cd1f40c195d8cd962d67e15;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
-Node;AmplifyShaderEditor.RangedFloatNode;34;-752,1040;Inherit;False;Property;_DitherAlpha;DitherAlpha;1;0;Create;True;0;0;0;False;0;False;0.5;0;0;1;0;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;50;-224,704;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;2;False;1;FLOAT;0
-Node;AmplifyShaderEditor.DitheringNode;3;-320,256;Inherit;False;0;True;4;0;FLOAT;0;False;1;SAMPLER2D;;False;2;FLOAT4;0,0,0,0;False;3;SAMPLERSTATE;;False;1;FLOAT;0
+Node;AmplifyShaderEditor.ColorNode;42;-544,0;Inherit;False;Property;_BaseColor;BaseColor;1;0;Create;True;0;0;0;False;0;False;0,0,0,0;0,0,0,0;True;True;0;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
+Node;AmplifyShaderEditor.LerpOp;60;-272,496;Inherit;False;3;0;FLOAT;1;False;1;FLOAT;0;False;2;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleMaxOpNode;62;-240,672;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;16;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;ExtraPrePass;0;0;ExtraPrePass;5;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;0;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;0;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;18;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;ShadowCaster;0;2;ShadowCaster;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;True;False;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;True;3;False;;False;True;1;LightMode=ShadowCaster;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;19;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;DepthOnly;0;3;DepthOnly;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;True;True;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;False;False;True;1;LightMode=DepthOnly;False;False;0;;0;0;Standard;0;False;0
@@ -3825,26 +3939,36 @@ Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;24;0,0;Float;False;False;-1
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;25;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;ScenePickingPass;0;9;ScenePickingPass;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=Picking;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;26;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;MotionVectors;0;10;MotionVectors;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;False;False;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=MotionVectors;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;17;-48,0;Float;False;True;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;Game/JellyMeshDither;94348b07e5e8bab40bd6c8a1e3df54cd;True;Forward;0;1;Forward;21;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;2;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Transparent=RenderType;Queue=Transparent=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;5;False;;10;False;;1;1;False;;10;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;1;LightMode=UniversalForward;False;False;0;;0;0;Standard;45;Lighting Model;0;0;Workflow;1;0;Surface;1;638769983084912370;  Refraction Model;0;0;  Blend;0;0;Two Sided;1;0;Alpha Clipping;1;0;  Use Shadow Threshold;0;0;Fragment Normal Space,InvertActionOnDeselection;0;0;Forward Only;0;0;Transmission;0;0;  Transmission Shadow;0.5,False,;0;Translucency;0;0;  Translucency Strength;1,False,;0;  Normal Distortion;0.5,False,;0;  Scattering;2,False,;0;  Direct;0.9,False,;0;  Ambient;0.1,False,;0;  Shadow;0.5,False,;0;Cast Shadows;1;0;Receive Shadows;1;0;Receive SSAO;1;0;Motion Vectors;1;0;  Add Precomputed Velocity;0;0;GPU Instancing;1;0;LOD CrossFade;1;0;Built-in Fog;1;0;_FinalColorxAlpha;0;0;Meta Pass;1;0;Override Baked GI;0;0;Extra Pre Pass;0;0;Tessellation;0;0;  Phong;0;0;  Strength;0.5,False,;0;  Type;0;0;  Tess;16,False,;0;  Min;10,False,;0;  Max;25,False,;0;  Edge Length;16,False,;0;  Max Displacement;25,False,;0;Write Depth;0;0;  Early Z;0;0;Vertex Position,InvertActionOnDeselection;1;0;Debug Display;0;0;Clear Coat;0;0;0;11;False;True;True;True;True;True;True;True;True;True;True;False;;False;0
-WireConnection;44;0;47;3
-WireConnection;45;0;44;0
-WireConnection;45;1;46;0
+WireConnection;53;0;51;0
+WireConnection;53;1;52;0
+WireConnection;48;0;53;0
+WireConnection;48;1;54;0
+WireConnection;49;0;48;0
+WireConnection;55;0;46;0
+WireConnection;55;1;54;0
 WireConnection;37;0;35;2
 WireConnection;36;0;35;1
 WireConnection;39;0;35;3
 WireConnection;40;0;35;4
-WireConnection;48;0;45;0
+WireConnection;45;0;49;0
+WireConnection;45;1;55;0
 WireConnection;38;0;36;0
 WireConnection;38;1;37;0
 WireConnection;38;2;39;0
 WireConnection;38;3;40;0
-WireConnection;49;0;48;0
+WireConnection;50;0;45;0
+WireConnection;50;1;57;0
+WireConnection;59;0;50;0
+WireConnection;3;2;38;0
 WireConnection;41;0;1;5
 WireConnection;41;1;42;5
 WireConnection;1;0;2;0
-WireConnection;50;0;49;0
-WireConnection;3;2;38;0
+WireConnection;60;1;3;0
+WireConnection;60;2;59;0
+WireConnection;62;0;61;0
+WireConnection;62;1;59;0
 WireConnection;17;0;41;0
-WireConnection;17;6;3;0
-WireConnection;17;7;50;0
+WireConnection;17;6;60;0
+WireConnection;17;7;62;0
 ASEEND*/
-//CHKSM=1365A924A5AA6BB724014759A92A058E4D6E716E
+//CHKSM=AD0F429AB6A210901A592BDFF24A31E8C2F02573

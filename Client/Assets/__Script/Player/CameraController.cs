@@ -22,6 +22,7 @@ namespace Game
         public float yawAngleOnHanging = 50f;
         public float yawAngleSpeed = 360f;
         public Quaternion SpriteLookRotation => cameraTransform != null ? Quaternion.LookRotation(cameraTransform.forward, Vector3.up) : Quaternion.identity;
+        public Quaternion BillboardRotation => cameraTransform != null ? Quaternion.LookRotation(-cameraTransform.forward, Vector3.up) : Quaternion.identity;
 
         public void Shake(float strength, float duration)
         {

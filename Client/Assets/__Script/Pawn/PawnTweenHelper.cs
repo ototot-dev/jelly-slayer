@@ -60,7 +60,7 @@ namespace Game
 
             __rotateEmoticonDisposable = Observable.EveryLateUpdate().Subscribe(_ =>
             {
-                if (GameContext.Instance.cameraCtrler != null)
+                if (GameContext.Instance.mainCameraCtrler != null)
                 {
                     __emoticonTextMesh.transform.LookAt(GameContext.Instance.MainCamera.transform, Vector3.up);
                     __emoticonTextMesh.transform.rotation = Quaternion.Euler(0, __emoticonTextMesh.transform.rotation.eulerAngles.y + 180, 0);

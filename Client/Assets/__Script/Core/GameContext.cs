@@ -8,13 +8,13 @@ namespace Game
     public class GameContext : MonoSingleton<GameContext>
     {
         public string TerrainLayerName => "Terrain";
-        public Camera MainCamera => cameraCtrler != null ? cameraCtrler.viewCamera : null;
+        public Camera MainCamera => mainCameraCtrler != null ? mainCameraCtrler.viewCamera : null;
         public CursorController CursorCtrler => playerCtrler != null ? playerCtrler.CursorCtrler : null;
         public HeroBrain HeroBrain => playerCtrler != null ? playerCtrler.possessedBrain : null;
         public DroneBotFormationController droneBotFormationCtrler;
         public PlayerController playerCtrler;
         public TargetingController playerTargetManager;
-        public CameraController cameraCtrler;
+        public CameraController mainCameraCtrler;
         public TerrainManager terrainManager;
         public SlimeSpawnManager jellySpawnManager;
         public HeroSpawnManager heroSpawnManager;

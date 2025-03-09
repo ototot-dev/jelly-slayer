@@ -64,15 +64,15 @@ public class HPBarPanel : MonoBehaviour
                 return;
             }
         }
-        if (GameContext.Instance.cameraCtrler == null)
+        if (GameContext.Instance.mainCameraCtrler == null)
             return;
 
-        float rate = 2.5f * (GameContext.Instance.cameraCtrler.zoom / 20.0f);
+        float rate = 2.5f * (GameContext.Instance.mainCameraCtrler.zoom / 20.0f);
         rate = Mathf.Clamp(rate, 2.5f, 4.0f);
         var pos = _pawn.GetWorldPosition() + (rate * Vector3.up);
 
 
-        Vector2 viewportPosition = GameContext.Instance.cameraCtrler.viewCamera.WorldToViewportPoint(pos);
+        Vector2 viewportPosition = GameContext.Instance.mainCameraCtrler.viewCamera.WorldToViewportPoint(pos);
         Vector2 screenPosition = new Vector2(
             ((viewportPosition.x * _rtCanvas.sizeDelta.x) - (_rtCanvas.sizeDelta.x * 0.5f)),
             ((viewportPosition.y * _rtCanvas.sizeDelta.y) - (_rtCanvas.sizeDelta.y * 0.5f)));

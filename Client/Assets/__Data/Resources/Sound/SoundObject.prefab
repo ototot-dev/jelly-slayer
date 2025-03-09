@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 7279229414167964437}
   - component: {fileID: 5679388345117764936}
   - component: {fileID: 966938771243804915}
-  - component: {fileID: 6451255180579245246}
   m_Layer: 0
   m_Name: SoundObject
   m_TagString: Untagged
@@ -51,7 +50,6 @@ MonoBehaviour:
     _listObj: []
   _source: {fileID: 966938771243804915}
   _trRoot: {fileID: 7279229414167964437}
-  _randomPitch: {fileID: 6451255180579245246}
   _isPlay: 0
   _isFadeOut: 0
   _lifeTime: 30
@@ -152,17 +150,3 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &6451255180579245246
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7370380160159939821}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc0f8fc52fac2b8478e9c5b0f115d7a5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _audio: {fileID: 966938771243804915}
-  randomPercent: 10
