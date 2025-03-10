@@ -1260,6 +1260,7 @@ namespace Game.NodeCanvasExtension
         float __halfFanAngle;
         float __stepFanAngle;
         float __lastSampleTimeStamp;
+        IDisposable __traceDisposable;
         MainTable.ActionData __actionData;
         PawnBrainController __pawnBrain;
         PawnActionController __pawnActionCtrler;
@@ -1309,11 +1310,15 @@ namespace Game.NodeCanvasExtension
                 __sampleInterval = __traceDuration / (__sampleNum - 1);
                 __halfFanAngle = 0.5f * fanAngle.value;
                 __stepFanAngle = fanAngle.value / __sampleNum;
+                __lastSampleTimeStamp = 0f;
                 __traceResults = null;
                 __sentDamageBrains.Clear();
 
-                if (TraceSampleInternal() >= __sampleNum)
-                    EndAction(true);
+                __traceDisposable = Observable.EveryLateUpdate().Subscribe(_ =>
+                {
+                    if ((Time.time - __lastSampleTimeStamp) >= __sampleInterval)
+                        TraceSampleInternal();
+                }).AddTo(agent);
             }
             else
             {
@@ -1322,9 +1327,7 @@ namespace Game.NodeCanvasExtension
                 __sampleNum = 1;
                 __traceResults = null;
                 __sentDamageBrains.Clear();
-
-                TraceSampleInternal();
-                EndAction(true);
+                __traceDisposable = Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => TraceSampleInternal()).AddTo(agent);
             }
         }
 
@@ -1333,15 +1336,26 @@ namespace Game.NodeCanvasExtension
             base.OnUpdate();
 
             if (!__pawnActionCtrler.CheckActionRunning() || __capturedActionInstanceId != __pawnActionCtrler.currActionContext.actionInstanceId)
+            {
+                Debug.Assert(__traceDisposable != null);
+                __traceDisposable.Dispose();
+                __traceDisposable = null;
+                
                 EndAction(false);
-            else if (__sampleInterval <= Time.time - __lastSampleTimeStamp && TraceSampleInternal() >= __sampleNum)
+            }
+            else if (__sampleIndex >= __sampleNum)
+            {
+                Debug.Assert(__traceDisposable != null);
+                __traceDisposable.Dispose();
+                __traceDisposable = null;
+                __pawnActionCtrler.SetTraceRunning(false);
+
                 EndAction(true);
+            }
         }
 
         int TraceSampleInternal()
         {   
-            __Logger.LogR1(__pawnBrain.gameObject, nameof(TraceSampleInternal), "__sampleNum", __sampleIndex);
-
             if (traceDirection.value == 0 || __sampleNum == 1)
             {
                 __traceResults = __pawnActionCtrler.TraceActionTargets(offset.value, pitchYawRoll.value, fanRadius.value, fanAngle.value, fanHeight.value, minRadius.value, maxTargetNum.value, null, false, drawGizmos, drawGizmosDuration);

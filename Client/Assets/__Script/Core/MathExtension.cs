@@ -252,26 +252,37 @@ namespace Game
 
         public static bool CheckOverlappedWithFan(this CapsuleCollider collider, float fanAngle, float fanRadius, float fanHeight, Matrix4x4 fanWorldToLocal)
         {
-            var capsuleAxis  = collider.transform.up;
-            var capsuleCenter = collider.transform.position + collider.center;
-            var cylinderHeight = Mathf.Max(0, collider.height - 2 * collider.radius);
-            if (cylinderHeight == 0)
-                return CheckOverlappedWithFan(capsuleCenter, collider.radius, fanAngle, fanRadius, fanHeight, fanWorldToLocal);
-
-            if (CheckOverlappedWithFan(capsuleCenter + 0.5f * cylinderHeight * capsuleAxis, collider.radius, fanAngle, fanRadius, fanHeight, fanWorldToLocal))
+            var (right, up, forward) = (collider.transform.right, collider.transform.up, collider.transform.forward);
+            var capsuleCenter = collider.transform.position + collider.center.x * right + collider.center.y * up + collider.center.z * forward;
+            var capsuleHeight = collider.height * collider.transform.lossyScale.y;
+            var capsuleRadius = collider.radius * Mathf.Max(collider.transform.lossyScale.x, collider.transform.lossyScale.z);
+            var cylinderHeight = Mathf.Max(0, capsuleHeight - 2f * capsuleRadius);
+            
+            if (CheckOverlappedWithFan(capsuleCenter, capsuleRadius, fanAngle, fanRadius, fanHeight, fanWorldToLocal))
                 return true;
-            if (CheckOverlappedWithFan(capsuleCenter - 0.5f * cylinderHeight * capsuleAxis, collider.radius, fanAngle, fanRadius, fanHeight, fanWorldToLocal))
+            if (cylinderHeight <= 0f)
+                return false;
+
+            var upperCapPosition = capsuleCenter + 0.5f * cylinderHeight * up;
+            if (CheckOverlappedWithFan(upperCapPosition, capsuleRadius, fanAngle, fanRadius, fanHeight, fanWorldToLocal))
                 return true;
 
-            var segmentStep = cylinderHeight / (int)(cylinderHeight / collider.radius);
-            var segmentLen = segmentStep;
-            while (segmentLen < cylinderHeight)
-            {
-                if (CheckOverlappedWithFan(capsuleCenter + (segmentLen - 0.5f * cylinderHeight) * capsuleAxis, collider.radius, fanAngle, fanRadius, fanHeight, fanWorldToLocal))
-                    return true;
-                segmentLen += segmentStep;
-            }
+            var lowerCapPosition = capsuleCenter - 0.5f * cylinderHeight * up;
+            if (CheckOverlappedWithFan(lowerCapPosition, capsuleRadius, fanAngle, fanRadius, fanHeight, fanWorldToLocal))
+                return true;
+
+            if (CheckOverlappedWithFan(0.5f * (capsuleCenter + upperCapPosition), capsuleRadius, fanAngle, fanRadius, fanHeight, fanWorldToLocal))
+                return true;
+
+            if (CheckOverlappedWithFan(0.5f * (capsuleCenter + lowerCapPosition), capsuleRadius, fanAngle, fanRadius, fanHeight, fanWorldToLocal))
+                return true;
+
             return false;
+        }
+
+        public static bool CheckOverlappedWithFan(this SphereCollider collider, float fanAngle, float fanRadius, float fanHeight, Matrix4x4 fanWorldToLocal)
+        {
+            return CheckOverlappedWithFan(collider.transform.position + collider.center, collider.radius * Mathf.Max(collider.transform.lossyScale.x, collider.transform.lossyScale.y, collider.transform.lossyScale.z), fanAngle, fanRadius, fanHeight, fanWorldToLocal);
         }
 
         public static bool CheckOverlappedWithFan(Vector3 sphereCenter, float sphereRadius, float fanAngle, float fanRadius, float fanHeight, Matrix4x4 fanWorldToLocal)
@@ -316,11 +327,6 @@ namespace Game
                 return shortestPoint2D.sqrMagnitude < fanRadius * fanRadius;
             else
                 return shortestPoint2D.sqrMagnitude < fanRadius * fanRadius && Vector3.Dot(Vector3.forward, shortestPoint2D_norm) >= Mathf.Cos(Mathf.Deg2Rad * 0.5f * fanAngle);
-        }
-
-        public static bool CheckOverlappedWithFan(this SphereCollider collider, float fanAngle, float fanRadius, float fanHeight, Matrix4x4 fanWorldToLocal)
-        {
-            return CheckOverlappedWithFan(collider.transform.position + collider.center, collider.radius * Mathf.Max(collider.transform.lossyScale.x, collider.transform.lossyScale.y, collider.transform.lossyScale.z), fanAngle, fanRadius, fanHeight, fanWorldToLocal);
         }
     }
 }
