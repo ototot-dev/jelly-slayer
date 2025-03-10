@@ -94,7 +94,9 @@ public class SoundManager : MonoSingleton<SoundManager>
     }
 	public SoundObject PlayWithClipPos(AudioClip i_clip, Vector3 pos, bool i_isLoop = false, bool i_isSFX = true, float i_volumeRate = 1.0f) 
 	{
-        return CreateEmptySoundObject();
+        if (i_clip == null)
+            return null;
+        //return CreateEmptySoundObject();
         //Debug.Log("SoundPlay : " + i_sfxType + ", " + i_isLoop);
         SoundObject sound = CreateEmptySoundObject();
         sound.name = i_clip.name;
