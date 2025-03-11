@@ -84275,7 +84275,7 @@ MonoBehaviour:
   moveSpeed: 1.6
   moveAccel: 10
   moveBrake: 10
-  rotateSpeed: 360
+  rotateSpeed: 90
   gravity: {x: 0, y: -19.81, z: 0}
   moveVec: {x: 0, y: 0, z: 0}
   faceVec: {x: 0, y: 0, z: 1}
@@ -84474,9 +84474,9 @@ MonoBehaviour:
     minJumpAttackDistance: 4
     maxJumpAttackDistance: 6
     counterProbBoostRateOnGuard: 0.2
-    missileEmitNum: 5
-    missileEmitIntervalA: 0.2
-    missileEmitIntervalB: 1
+    missileEmitNum: 3
+    missileEmitIntervalA: 0.1
+    missileEmitIntervalB: 0.5
     missileEmitSpeed: 10
     missileProbBoostRateOnIdle: 0.01
     missileEmitPoint: {fileID: 102119456959228274}

@@ -130,16 +130,16 @@ namespace Game
             {
                 ObjectPoolingSystem.Instance.GetObject<SoldierMissile>(emitPrefab, emitPoint.position, Quaternion.LookRotation(Vector3.up)).Go(__brain, __brain.BB.action.missileEmitSpeed);
 
-                // var intervalEmitNum =  Math.Max(1, __brain.BB.action.missileEmitNum - 2);
-                // __missileEmitDisposable?.Dispose();
-                // __missileEmitDisposable = Observable.Interval(TimeSpan.FromSeconds(__brain.BB.action.missileEmitIntervalA)).Take(intervalEmitNum)
-                //     .Do(_ => ObjectPoolingSystem.Instance.GetObject<SoldierMissile>(emitPrefab, emitPoint.position, Quaternion.LookRotation(Vector3.up)).Go(__brain, __brain.BB.action.missileEmitSpeed))
-                //     .DoOnCompleted(() => 
-                //     {
-                //         __missileEmitDisposable = Observable.Timer(TimeSpan.FromSeconds(__brain.BB.action.missileEmitIntervalB))
-                //             .Subscribe(_ => ObjectPoolingSystem.Instance.GetObject<SoldierMissile>(emitPrefab, emitPoint.position, Quaternion.LookRotation(Vector3.up)).Go(__brain, __brain.BB.action.missileEmitSpeed))
-                //             .AddTo(this);
-                //     }).Subscribe().AddTo(this);
+                var intervalCount = Math.Max(1, __brain.BB.action.missileEmitNum - 2);
+                __missileEmitDisposable?.Dispose();
+                __missileEmitDisposable = Observable.Interval(TimeSpan.FromSeconds(__brain.BB.action.missileEmitIntervalA)).Take(intervalCount)
+                    .Do(_ => ObjectPoolingSystem.Instance.GetObject<SoldierMissile>(emitPrefab, emitPoint.position, Quaternion.LookRotation(Vector3.up)).Go(__brain, __brain.BB.action.missileEmitSpeed))
+                    .DoOnCompleted(() => 
+                    {
+                        __missileEmitDisposable = Observable.Timer(TimeSpan.FromSeconds(__brain.BB.action.missileEmitIntervalB))
+                            .Subscribe(_ => ObjectPoolingSystem.Instance.GetObject<SoldierMissile>(emitPrefab, emitPoint.position, Quaternion.LookRotation(Vector3.up)).Go(__brain, __brain.BB.action.missileEmitSpeed))
+                            .AddTo(this);
+                    }).Subscribe().AddTo(this);
             }
         }
 
