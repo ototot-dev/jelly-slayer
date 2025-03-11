@@ -2892,7 +2892,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 417e358c130ae6c488f2ffe5d6c9830e, type: 3}
   m_Controller: {fileID: 9100000, guid: 0c0e2f817874f4fb2abf3eb0eeb474dc, type: 2}
-  m_CullingMode: 1
+  m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
@@ -84470,6 +84470,9 @@ MonoBehaviour:
     minCoolDownDuration: 4
     maxCoolDownDuration: 5
     sequenceCoolDownTimeLeft: 0
+    comboAttackDistance: 3
+    minJumpAttackDistance: 4
+    maxJumpAttackDistance: 6
     counterProbBoostRateOnGuard: 0.2
     missileEmitNum: 5
     missileEmitIntervalA: 0.2
@@ -84488,9 +84491,9 @@ MonoBehaviour:
     leapRootMotionDistance: 7
     leapRootMotionMultiplier: 1
     leapProbBoostRateOnIdle: 0.004
-    backstepTriggerDistance: 5
-    backstepRootMotionDistance: 7
-    backstepRootMotionMultiplier: 1
+    backstepProb: 0.5
+    backstepTriggerDistance: 1
+    backstepRootMotionDistance: 5
   graphics:
     onHitFx: {fileID: 3011233550371498735, guid: 24e37d54f259141abb7ebbc527b8bf4e, type: 3}
     onBigHitFx: {fileID: 3011233550371498735, guid: 8502543f66322458a81956cdd59fe959, type: 3}

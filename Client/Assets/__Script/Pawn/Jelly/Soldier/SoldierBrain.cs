@@ -81,24 +81,14 @@ namespace Game
             ActionDataSelector.ReserveSequence(ActionPatterns.Missile, "Backstep", "Missile");
             ActionDataSelector.ReserveSequence(ActionPatterns.ComboA, "Attack#1", "Attack#2", "Attack#3");
             ActionDataSelector.ReserveSequence(ActionPatterns.ComboB, "Attack#3", "Attack#3", "Attack#3");
-            ActionDataSelector.ReserveSequence(ActionPatterns.Leap, "BackStep", "Missile", 0.2f, "Leap");
+            ActionDataSelector.ReserveSequence(ActionPatterns.Leap, "Backstep", "Missile", 0.2f, "Leap");
 
-            onTick += (deltaTick) =>
+            onUpdate += () =>
             {
-                if (!BB.IsSpawnFinished || BB.IsDead)
+                if (!BB.IsSpawnFinished || !BB.IsInCombat || BB.IsDead || BB.IsGroggy || BB.IsDown)
                     return;
 
-                ActionDataSelector.UpdateSelection(deltaTick);
-
-                if (BB.action.sequenceCoolDownTimeLeft > 0f)
-                    BB.action.sequenceCoolDownTimeLeft -= deltaTick;
-                
-                if (debugActionDisabled || BB.IsGroggy || BB.IsDown || !BB.IsInCombat || BB.TargetPawn == null)
-                    return;
-                if (ActionCtrler.CheckActionPending()) 
-                    return;
-
-                if (!ActionCtrler.CheckActionRunning() || ActionCtrler.CanInterruptAction())
+                if (!ActionCtrler.CheckActionPending() && (!ActionCtrler.CheckActionRunning() || ActionCtrler.CanInterruptAction()) && BB.TargetPawn != null)
                 {
                     var nextActionData = ActionDataSelector.AdvanceSequence();
                     if (nextActionData != null)
@@ -108,20 +98,32 @@ namespace Game
                         ActionCtrler.SetPendingAction(nextActionData.actionName, string.Empty, ActionDataSelector.CurrSequence().GetPaddingTime());
                         ActionDataSelector.ResetSelection(nextActionData);
                     }
-                    else if (BB.action.sequenceCoolDownTimeLeft <= 0f)
+                } 
+            };
+
+            onTick += (deltaTick) =>
+            {
+                if (!BB.IsSpawnFinished || !BB.IsInCombat || BB.IsDead || BB.IsGroggy || BB.IsDown)
+                    return;
+
+                ActionDataSelector.UpdateSelection(deltaTick);
+
+                if (BB.action.sequenceCoolDownTimeLeft > 0f)
+                    BB.action.sequenceCoolDownTimeLeft -= deltaTick;
+                
+                if (debugActionDisabled)
+                    return;
+
+                if (!ActionCtrler.CheckActionPending() && (!ActionCtrler.CheckActionRunning() || ActionCtrler.CanInterruptAction()) && BB.TargetPawn != null)
+                {
+                    if (BB.action.sequenceCoolDownTimeLeft <= 0f)
                     {
                         if (ActionDataSelector.TryPickRandomSelection(1f, -1f, out var randomActionData))
                         {
                             if (randomActionData == ActionDataSelector.GetSequence(ActionPatterns.Missile).Last())
-                            {
                                 ActionDataSelector.EnqueueSequence(ActionPatterns.Missile);
-                                ActionDataSelector.ResetSelection(randomActionData);
-                            }
                             else if (randomActionData == ActionDataSelector.GetSequence(ActionPatterns.Leap).Last())
-                            {
                                 ActionDataSelector.EnqueueSequence(ActionPatterns.Leap);
-                                ActionDataSelector.ResetSelection(randomActionData);
-                            }
                         }
                         else
                         {
