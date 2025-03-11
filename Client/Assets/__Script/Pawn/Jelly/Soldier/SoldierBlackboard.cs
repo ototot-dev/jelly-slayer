@@ -51,6 +51,13 @@ namespace Game
             public float maxCoolDownDuration= 1f;
             public float sequenceCoolDownTimeLeft;
 
+            [Header("Combo")]
+            public float comboAttackDistance = 1f;
+
+            [Header("JumpAttack")]
+            public float minJumpAttackDistance = 1f;
+            public float maxJumpAttackDistance = 1f;
+
             [Header("Counter")]
             public float counterProbBoostRateOnGuard; //* 가드 후 반격 발생 확률 증가
 
@@ -78,9 +85,9 @@ namespace Game
             public float leapProbBoostRateOnIdle = 0.1f;
 
             [Header("Backstep")]
+            public float backstepProb = 1f;
             public float backstepTriggerDistance = 1f;
             public float backstepRootMotionDistance = 1f;
-            public float backstepRootMotionMultiplier = 1f;
         }
 
         public Action action = new();

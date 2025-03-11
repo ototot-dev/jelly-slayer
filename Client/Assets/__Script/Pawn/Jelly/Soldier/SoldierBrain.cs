@@ -62,9 +62,11 @@ namespace Game
         {
             None = -1,
             JumpAttack,
+            Backstep,
             Counter,
             Missile,
-            Combo,
+            ComboA,
+            ComboB,
             Leap,
             Max,
         }
@@ -74,9 +76,11 @@ namespace Game
             base.StartInternal();
 
             ActionDataSelector.ReserveSequence(ActionPatterns.JumpAttack, "JumpAttack");
+            ActionDataSelector.ReserveSequence(ActionPatterns.Backstep, "Backstep");
             ActionDataSelector.ReserveSequence(ActionPatterns.Counter, "Counter");
-            ActionDataSelector.ReserveSequence(ActionPatterns.Missile, "BackStep", "Missile");
-            ActionDataSelector.ReserveSequence(ActionPatterns.Combo, "Attack#1", "Attack#2", "Attack#3");
+            ActionDataSelector.ReserveSequence(ActionPatterns.Missile, "Backstep", "Missile");
+            ActionDataSelector.ReserveSequence(ActionPatterns.ComboA, "Attack#1", "Attack#2", "Attack#3");
+            ActionDataSelector.ReserveSequence(ActionPatterns.ComboB, "Attack#3", "Attack#3", "Attack#3");
             ActionDataSelector.ReserveSequence(ActionPatterns.Leap, "BackStep", "Missile", 0.2f, "Leap");
 
             onTick += (deltaTick) =>
@@ -97,18 +101,25 @@ namespace Game
                 if (!ActionCtrler.CheckActionRunning() || ActionCtrler.CanInterruptAction())
                 {
                     var nextActionData = ActionDataSelector.AdvanceSequence();
-                    if (nextActionData == null && BB.action.sequenceCoolDownTimeLeft <= 0f)
+                    if (nextActionData != null)
+                    {
+                        if (ActionCtrler.CheckActionRunning()) ActionCtrler.CancelAction(false);
+
+                        ActionCtrler.SetPendingAction(nextActionData.actionName, string.Empty, ActionDataSelector.CurrSequence().GetPaddingTime());
+                        ActionDataSelector.ResetSelection(nextActionData);
+                    }
+                    else if (BB.action.sequenceCoolDownTimeLeft <= 0f)
                     {
                         if (ActionDataSelector.TryPickRandomSelection(1f, -1f, out var randomActionData))
                         {
                             if (randomActionData == ActionDataSelector.GetSequence(ActionPatterns.Missile).Last())
                             {
-                                nextActionData = ActionDataSelector.EnqueueSequence(ActionPatterns.Missile).First();
+                                ActionDataSelector.EnqueueSequence(ActionPatterns.Missile);
                                 ActionDataSelector.ResetSelection(randomActionData);
                             }
                             else if (randomActionData == ActionDataSelector.GetSequence(ActionPatterns.Leap).Last())
                             {
-                                nextActionData = ActionDataSelector.EnqueueSequence(ActionPatterns.Leap).First();
+                                ActionDataSelector.EnqueueSequence(ActionPatterns.Leap);
                                 ActionDataSelector.ResetSelection(randomActionData);
                             }
                         }
@@ -118,25 +129,27 @@ namespace Game
                             ActionDataSelector.BoostSelection("Leap", BB.action.leapProbBoostRateOnIdle);
 
                             var distanceToTarget = coreColliderHelper.GetDistanceBetween(BB.TargetBrain.coreColliderHelper);
-                            if (distanceToTarget < BB.body.maxSpacingDistance && ActionDataSelector.EvaluateSelection(ActionPatterns.Combo) && CheckTargetVisibility())
+                            if (distanceToTarget < BB.action.comboAttackDistance)
                             {
-                                nextActionData = ActionDataSelector.EnqueueSequence(ActionPatterns.Combo).First();
+                                if (ActionDataSelector.EvaluateSelection(ActionPatterns.ComboA) && CheckTargetVisibility())
+                                    ActionDataSelector.EnqueueSequence(ActionPatterns.ComboA);
                             }
-                            else if (distanceToTarget > BB.body.spacingInDistance && ActionDataSelector.EvaluateSelection(ActionPatterns.JumpAttack) && CheckTargetVisibility())
+                            else if (distanceToTarget > BB.action.minJumpAttackDistance && distanceToTarget < BB.action.maxJumpAttackDistance)
                             {
-                                nextActionData = ActionDataSelector.EnqueueSequence(ActionPatterns.JumpAttack).First();
-                                if (ActionDataSelector.EvaluateSelection(ActionPatterns.Combo))
-                                    ActionDataSelector.EnqueueSequence(ActionPatterns.Combo);
+                                if (ActionDataSelector.EvaluateSelection(ActionPatterns.JumpAttack) && CheckTargetVisibility())
+                                {
+                                    ActionDataSelector.EnqueueSequence(ActionPatterns.JumpAttack);
+                                    if (ActionDataSelector.EvaluateSelection(ActionPatterns.ComboA))
+                                        ActionDataSelector.EnqueueSequence(ActionPatterns.ComboA);
+                                }
                             }
                         }
                     }
-
-                    if (nextActionData != null)
+                    else if (!ActionCtrler.CheckActionRunning())
                     {
-                        if (ActionCtrler.CheckActionRunning()) ActionCtrler.CancelAction(false);
-
-                        ActionCtrler.SetPendingAction(nextActionData.actionName, string.Empty, ActionDataSelector.CurrSequence().GetPaddingTime());
-                        ActionDataSelector.ResetSelection(nextActionData);
+                        var distanceToTarget = coreColliderHelper.GetDistanceBetween(BB.TargetBrain.coreColliderHelper);
+                        if (distanceToTarget < BB.action.backstepTriggerDistance && ActionDataSelector.EvaluateSelection(ActionPatterns.Backstep, UnityEngine.Random.Range(0f, 1f)))
+                            ActionDataSelector.EnqueueSequence(ActionPatterns.Backstep);
                     }
                 }
             };
@@ -188,8 +201,8 @@ namespace Game
                     ActionDataSelector.ClearSequences();
 
                     var counterActionData = ActionDataSelector.EnqueueSequence(ActionPatterns.Counter).First();
-                    if (ActionDataSelector.EvaluateSelection(ActionPatterns.Combo))
-                        ActionDataSelector.EnqueueSequence(ActionPatterns.Combo);
+                    if (ActionDataSelector.EvaluateSelection(ActionPatterns.ComboA))
+                        ActionDataSelector.EnqueueSequence(ActionPatterns.ComboA);
 
                     ActionCtrler.SetPendingAction(counterActionData.actionName);
                     ActionDataSelector.ResetSelection(counterActionData);

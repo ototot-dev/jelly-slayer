@@ -255,7 +255,7 @@ Transform:
   m_GameObject: {fileID: 301327927}
   serializedVersion: 2
   m_LocalRotation: {x: 0.35054526, y: -0.5404307, z: -0.6146263, w: 0.45528805}
-  m_LocalPosition: {x: 3.744, y: 4.256, z: -2.495}
+  m_LocalPosition: {x: -2.19, y: 3.13, z: 0.63}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -278,7 +278,7 @@ MonoBehaviour:
   fanHeight: 1
   hitMaterial: {fileID: 2100000, guid: 28fb0f45c326b78408d12bad34b84d15, type: 2}
   noHitMaterial: {fileID: -6202392741857895490, guid: 4fa28b10e3d8ee043aa9752d98f7f01e, type: 3}
-  testBox: {fileID: 1745753192}
+  testBox: {fileID: 550632715}
   testSphere: {fileID: 1036076146}
   testCapsule: {fileID: 211818384}
 --- !u!1 &550632714
@@ -294,7 +294,7 @@ GameObject:
   - component: {fileID: 550632716}
   - component: {fileID: 550632715}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: TestBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -344,7 +344,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 28fb0f45c326b78408d12bad34b84d15, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -384,7 +384,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.8, y: 4, z: 0.8}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -829,5 +829,5 @@ SceneRoots:
   - {fileID: 1730640848}
   - {fileID: 301327929}
   - {fileID: 1036076149}
-  - {fileID: 1007207778}
   - {fileID: 550632718}
+  - {fileID: 1007207778}

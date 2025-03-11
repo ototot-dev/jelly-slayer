@@ -21,7 +21,8 @@ namespace Game
         {
             if (testBox != null)
             {
-                if (testBox.CheckOverlappedWithFan(fanAngle, fanRadius, fanHeight, transform.worldToLocalMatrix))
+                // if (testBox.CheckOverlappedWithFan(fanAngle, fanRadius, fanHeight, transform.worldToLocalMatrix))
+                if (testBox.CheckOverlappedWithBox(Vector3.one, transform.localToWorldMatrix))
                     testBox.GetComponent<MeshRenderer>().sharedMaterial = hitMaterial;
                 else
                     testBox.GetComponent<MeshRenderer>().sharedMaterial = noHitMaterial;
@@ -48,6 +49,7 @@ namespace Game
         {
             Gizmos.color = Color.yellow;
             GizmosDrawExtension.DrawFanCylinder(transform.localToWorldMatrix, fanRadius, fanAngle, fanHeight, 12);
+            GizmosDrawExtension.DrawBox(transform.position, transform.rotation, 0.5f * Vector3.one);
         }
     }
 }

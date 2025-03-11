@@ -157,5 +157,37 @@ namespace Game
             springMassSystem.coreAttachPoint.transform.position += lookAtCameraVec;
             springMassSystem.coreAttachPoint.transform.LookAt(springMassSystem.coreAttachPoint.transform.position + lookAtCameraVec);
         }
+
+        void ShowHitColor()
+        {
+            // if (hitColliderHelper == __brain.bodyHitColliderHelper)
+            // {
+            //     foreach (var r in __brain.BB.attachment.bodyMeshRenderers)
+            //         r.materials = new Material[] { r.material, new(__brain.BB.graphics.hitColor) };
+
+            //     __hitColorDisposable?.Dispose();
+            //     __hitColorDisposable = Observable.Timer(TimeSpan.FromMilliseconds(100)).Subscribe(_ => 
+            //     {
+            //         __hitColorDisposable = null;
+            //         foreach (var r in __brain.BB.attachment.bodyMeshRenderers)
+            //             r.materials = new Material[] { r.materials[0] };
+            //     }).AddTo(this);
+            // }
+            // else if (hitColliderHelper == __brain.shieldHitColliderHelper)
+            // {
+            //     __brain.BB.attachment.shieldMeshRenderer.materials = new Material[] { __brain.BB.attachment.shieldMeshRenderer.material, new(__brain.BB.graphics.hitColor) };
+
+            //     __hitColorDisposable?.Dispose();
+            //     __hitColorDisposable = Observable.Timer(TimeSpan.FromMilliseconds(100)).Subscribe(_ => 
+            //     {
+            //         __hitColorDisposable = null;
+            //         __brain.BB.attachment.shieldMeshRenderer.materials = new Material[] { __brain.BB.attachment.shieldMeshRenderer.material };
+            //     }).AddTo(this);
+            // }
+            // else
+            // {
+            //     Debug.Assert(false);
+            // }
+        }
     }
 }

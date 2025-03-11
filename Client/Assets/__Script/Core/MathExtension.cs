@@ -1,4 +1,6 @@
 using System;
+using NUnit.Framework.Constraints;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Game
@@ -39,25 +41,57 @@ namespace Game
 
         public static Vector3 Abs(this Vector3 vec)
         {
-            return new Vector3(Mathf.Abs(vec.x), Mathf.Abs(vec.y), Mathf.Abs(vec.z));
+            return new(Mathf.Abs(vec.x), Mathf.Abs(vec.y), Mathf.Abs(vec.z));
         }
 
         public static Vector3 AbsRef(this ref Vector3 vec)
         {
-            vec = new Vector3(Mathf.Abs(vec.x), Mathf.Abs(vec.y), Mathf.Abs(vec.z));
-            return vec;
+            return vec = new(Mathf.Abs(vec.x), Mathf.Abs(vec.y), Mathf.Abs(vec.z));
+        }
+
+        public static Vector2 DropX(this Vector3 vec)
+        {
+            return new(vec.y, vec.z);
+        }
+
+        public static Vector2 DropY(this Vector3 vec)
+        {
+            return new(vec.x, vec.z);
+        }
+
+        public static Vector2 DropZ(this Vector3 vec)
+        {
+            return new(vec.x, vec.y);
+        }
+
+        public static Vector3 DropX(this Vector4 vec)
+        {
+            return new(vec.y, vec.z, vec.w);
+        }
+
+        public static Vector3 DropY(this Vector4 vec)
+        {
+            return new(vec.x, vec.z, vec.w);
+        }
+
+        public static Vector3 DropZ(this Vector4 vec)
+        {
+            return new(vec.x, vec.y, vec.w);
+        }
+
+        public static Vector3 DropW(this Vector4 vec)
+        {
+            return new(vec.x, vec.y, vec.z);
         }
 
         public static Vector3 Vector2D(this Vector3 vec)
         {
-            return new Vector3(vec.x, 0, vec.z);
+            return new(vec.x, 0, vec.z);
         }
 
         public static Vector3 VectorRef2D(this ref Vector3 vec)
         {
-            vec = new Vector3(vec.x, 0, vec.z);
-
-            return vec;
+            return vec = new(vec.x, 0, vec.z);
         }
 
         public static Vector3 AdjustX(this Vector3 vec, float x)
@@ -198,56 +232,129 @@ namespace Game
         public static Vector3 Random(this Vector3 vec)
         {
             var rangeVec = vec.Abs();
-            return new Vector3(UnityEngine.Random.Range(-rangeVec.x, rangeVec.x), UnityEngine.Random.Range(-rangeVec.y, rangeVec.y), UnityEngine.Random.Range(-rangeVec.z, rangeVec.z));
+            return new(UnityEngine.Random.Range(-rangeVec.x, rangeVec.x), UnityEngine.Random.Range(-rangeVec.y, rangeVec.y), UnityEngine.Random.Range(-rangeVec.z, rangeVec.z));
         }
 
         public static Vector3 Random(this Vector3 vec, float min, float max)
         {
-            return new Vector3(UnityEngine.Random.Range(min, max), UnityEngine.Random.Range(min, max), UnityEngine.Random.Range(min, max));
+            return new(UnityEngine.Random.Range(min, max), UnityEngine.Random.Range(min, max), UnityEngine.Random.Range(min, max));
         }
 
         public static Vector3 RandomRef(this ref Vector3 vec, float min, float max)
         {
-            vec = new Vector3(UnityEngine.Random.Range(min, max), UnityEngine.Random.Range(min, max), UnityEngine.Random.Range(min, max));
+            vec = new(UnityEngine.Random.Range(min, max), UnityEngine.Random.Range(min, max), UnityEngine.Random.Range(min, max));
             return vec;
         }
 
         public static Vector3 RandomX(this Vector3 vec, float min, float max)
         {
-            return new Vector3(UnityEngine.Random.Range(min, max), vec.y, vec.z);
+            return new(UnityEngine.Random.Range(min, max), vec.y, vec.z);
         }
 
         public static Vector3 RandomY(this Vector3 vec, float min, float max)
         {
-            return new Vector3(vec.x, UnityEngine.Random.Range(min, max), vec.z);
+            return new(vec.x, UnityEngine.Random.Range(min, max), vec.z);
         }
 
         public static Vector3 RandomZ(this Vector3 vec, float min, float max)
         {
-            return new Vector3(vec.x, vec.y, UnityEngine.Random.Range(min, max));
+            return new(vec.x, vec.y, UnityEngine.Random.Range(min, max));
         }
 
         public static Vector3 RandomRefX(this ref Vector3 vec, float min, float max)
         {
-            vec = new Vector3(UnityEngine.Random.Range(min, max), vec.y, vec.z);
-            return vec;
+            return vec = new(UnityEngine.Random.Range(min, max), vec.y, vec.z);
         }
 
         public static Vector3 RandomRefY(this ref Vector3 vec, float min, float max)
         {
-            vec = new Vector3(vec.x, UnityEngine.Random.Range(min, max), vec.z);
-            return vec;
+            return vec = new(vec.x, UnityEngine.Random.Range(min, max), vec.z);
         }
 
         public static Vector3 RandomRefZ(this ref Vector3 vec, float min, float max)
         {
-            vec = new Vector3(vec.x, vec.y, UnityEngine.Random.Range(min, max));
-            return vec;
+            return vec = new(vec.x, vec.y, UnityEngine.Random.Range(min, max));
         }
 
         public static bool CheckOverlappedWithFan(this BoxCollider collider, float fanAngle, float fanRadius, float fanHeight, Matrix4x4 fanWorldToLocal)
         {
             return false;
+        }
+
+        public static bool CheckOverlappedWithBox(this BoxCollider collider, Vector3 boxSize, Matrix4x4 boxWorldToLocal)
+        {
+            // BoxCollider의 월드 변환 정보 가져오기
+            Transform t1 = collider.transform;
+            // Transform t2 = boxCollider2.transform;
+
+            // OBB의 중심 좌표
+            Vector3 c1 = t1.position;
+            Vector3 c2 = boxWorldToLocal.GetPosition();
+
+            // OBB의 반경 (half-extents)
+            Vector3 e1 = collider.size * 0.5f;
+            Vector3 e2 = boxSize * 0.5f;
+
+            // OBB의 로컬 좌표축 (월드 공간 기준)
+            Vector3[] axes1 = {
+                t1.right.normalized,   // X축
+                t1.up.normalized,      // Y축
+                t1.forward.normalized  // Z축
+            };
+
+            Vector3[] axes2 = {
+                boxWorldToLocal.GetColumn(0).DropW().normalized,
+                boxWorldToLocal.GetColumn(1).DropW().normalized,
+                boxWorldToLocal.GetColumn(2).DropW().normalized
+            };
+
+            // 두 박스의 중심 간 벡터
+            Vector3 centerDiff = c2 - c1;
+
+            // 모든 축에 대해 SAT 검사
+            for (int i = 0; i < 3; i++) // 첫 번째 박스의 3축 (X, Y, Z)
+            {
+                if (!OverlapOnAxis(axes1[i], axes1, axes2, e1, e2, centerDiff)) return false;
+            }
+
+            for (int i = 0; i < 3; i++) // 두 번째 박스의 3축 (X, Y, Z)
+            {
+                if (!OverlapOnAxis(axes2[i], axes1, axes2, e1, e2, centerDiff)) return false;
+            }
+
+            for (int i = 0; i < 3; i++) // 9개의 교차 축 (외적)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    Vector3 axis = Vector3.Cross(axes1[i], axes2[j]);
+                    if (axis.sqrMagnitude < 1e-6f) continue; // 축이 0이면 무시 (평행한 경우)
+
+                    if (!OverlapOnAxis(axis.normalized, axes1, axes2, e1, e2, centerDiff)) return false;
+                }
+            }
+
+            return true; // 모든 축에서 분리되지 않았으면 겹쳐 있음
+        }
+
+        private static bool OverlapOnAxis(Vector3 axis, Vector3[] axes1, Vector3[] axes2, Vector3 e1, Vector3 e2, Vector3 centerDiff)
+        {
+            // 축이 충분히 작은 경우(수치적으로 불안정할 경우) 무시
+            if (axis.sqrMagnitude < 1e-6f) return true;
+
+            // 두 박스를 이 축에 투영했을 때의 반경 계산
+            float r1 = Mathf.Abs(Vector3.Dot(axes1[0], axis)) * e1.x +
+                    Mathf.Abs(Vector3.Dot(axes1[1], axis)) * e1.y +
+                    Mathf.Abs(Vector3.Dot(axes1[2], axis)) * e1.z;
+
+            float r2 = Mathf.Abs(Vector3.Dot(axes2[0], axis)) * e2.x +
+                    Mathf.Abs(Vector3.Dot(axes2[1], axis)) * e2.y +
+                    Mathf.Abs(Vector3.Dot(axes2[2], axis)) * e2.z;
+
+            // 중심 거리의 투영값
+            float centerDist = Mathf.Abs(Vector3.Dot(centerDiff, axis));
+
+            // 두 박스가 이 축에서 분리되었는지 확인
+            return centerDist <= (r1 + r2);
         }
 
         public static bool CheckOverlappedWithFan(this CapsuleCollider collider, float fanAngle, float fanRadius, float fanHeight, Matrix4x4 fanWorldToLocal)

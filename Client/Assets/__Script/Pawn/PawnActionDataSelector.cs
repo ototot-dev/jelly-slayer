@@ -29,7 +29,7 @@ namespace Game
             public MainTable.ActionData Last() => __sequenceData[__sequenceData.Length - 1];
             public MainTable.ActionData Curr() => __sequenceData[__currIndex];
             public MainTable.ActionData Next() => ++__currIndex < __sequenceData.Length ? __sequenceData[__currIndex] : null;
-            public void Reset() { __currIndex = 0; }
+            public void Reset() { __currIndex = -1; }
             public float GetPaddingTime() => (__paddingTimeData?.ContainsKey(__currIndex) ?? false) ? __paddingTimeData[__currIndex] : 0f;
             
             readonly MainTable.ActionData[] __sequenceData;
@@ -108,7 +108,7 @@ namespace Game
         public ActionData AdvanceSequence()
         {
             if (__sequenceQueue.TryPeek(out var currSequence))
-                return currSequence.Next() != null ? currSequence.Curr() : (NextSequence()?.Curr() ?? null);
+                return currSequence.Next() != null ? currSequence.Curr() : (NextSequence()?.Next() ?? null);
             else
                 return null;
         }

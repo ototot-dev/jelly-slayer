@@ -257,7 +257,7 @@ namespace Game.NodeCanvasExtension
             if (__pawnActionCtrler == null || !__pawnActionCtrler.CheckActionRunning())
                 __pawnMovable.SetDestination(__targetBrain != null ? __targetBrain.coreColliderHelper.transform.position : target.value.position);
 
-            if (duration.value > 0 && Time.time - __executeTimeStamp > duration.value)
+            if (duration.value > 0f && (Time.time - __executeTimeStamp) > duration.value)
                 EndAction(true);
             else if (__targetBrain != null && __targetBrain.PawnBB.IsDead)
                 EndAction(true);
@@ -320,7 +320,7 @@ namespace Game.NodeCanvasExtension
 
         protected override void OnUpdate()
         {
-            var isDurationExpired = duration.value > 0 && Time.time - __executeTimeStamp > duration.value;
+            var isDurationExpired = duration.value > 0f && (Time.time - __executeTimeStamp) > duration.value;
             if (__moveStrafeDisposable == null && !isDurationExpired)
                 __moveStrafeDisposable = MoveStrafe();
 
@@ -398,10 +398,10 @@ namespace Game.NodeCanvasExtension
     public class Away : ActionTask
     {
         public BBParameter<Transform> target;
-        public BBParameter<float> minDistance = 1;
-        public BBParameter<float> maxDistance = 1;
-        public BBParameter<float> outDistance = 1;
-        public BBParameter<float> duration = -1;
+        public BBParameter<float> minDistance = 1f;
+        public BBParameter<float> maxDistance = 1f;
+        public BBParameter<float> outDistance = 1f;
+        public BBParameter<float> duration = -1f;
         public bool shouldRotateToTarget = true;
         public bool notifyDecisionFinished = false;
         PawnBrainController __targetBrain;
@@ -434,7 +434,7 @@ namespace Game.NodeCanvasExtension
 
         protected override void OnUpdate()
         {
-            var isDurationExpired = duration.value > 0 && Time.time - __executeTimeStamp > duration.value;
+            var isDurationExpired = duration.value > 0f && (Time.time - __executeTimeStamp) > duration.value;
             if (__moveStrafeDisposable == null && !isDurationExpired)
                 __moveStrafeDisposable = MoveStrafe();
 
@@ -538,7 +538,7 @@ namespace Game.NodeCanvasExtension
                 EndAction(actionCtrler.StartAction(actionName.value, string.Empty, animBlendSpeed.value, animSpeedMultiplier.value, rootMotionMultiplier.value, rootMotionConstrainSum, rootMotionCurve.value, manualAdvanceEnabled.value));
                 actionCtrler.ClearPendingAction();
 
-                if (animClipLength.value > 0)
+                if (animClipLength.value > 0f)
                     actionCtrler.currActionContext.animClipLength = animClipLength.value;
                 if (animClipFps.value > 0)
                     actionCtrler.currActionContext.animClipFps = animClipFps.value;
@@ -822,7 +822,7 @@ namespace Game.NodeCanvasExtension
         public BBParameter<float> randomRangeMin = -0.1f;
         public BBParameter<float> randomRangeMax = 0.1f;
         public BBParameter<float> animAdvanceSinusoidalAmplitude = 0.1f;
-        public BBParameter<float> animAdvanceSinusoidalFrequence = 1;
+        public BBParameter<float> animAdvanceSinusoidalFrequence = 1f;
         public bool resetActionStartTime;
         PawnActionController __pawnActionCtrler;
         int __capturedActionInstanceId;
@@ -858,7 +858,7 @@ namespace Game.NodeCanvasExtension
 
                 EndAction(true);
             }
-            else if (animAdvanceSinusoidalAmplitude.value > 0)
+            else if (animAdvanceSinusoidalAmplitude.value > 0f)
             {
                 __animAdvanceSinusoidal += animAdvanceSinusoidalFrequence.value * 2f * Mathf.PI * Time.deltaTime;
                 __pawnActionCtrler.currActionContext.manualAdvanceTime = __manualAdvanceTimeCached + animAdvanceSinusoidalAmplitude.value * Mathf.Sin(__animAdvanceSinusoidal);
@@ -905,7 +905,7 @@ namespace Game.NodeCanvasExtension
             {
                 actionCtrler.WaitAction();
                 __manualAdvanceSpeedCached = actionCtrler.currActionContext.manualAdvanceSpeed;
-                actionCtrler.currActionContext.manualAdvanceSpeed = 0;
+                actionCtrler.currActionContext.manualAdvanceSpeed = 0f;
             }
 
             var executeTimeStamp = Time.time;
@@ -934,7 +934,7 @@ namespace Game.NodeCanvasExtension
                 .Subscribe(_ =>
                 {
                     if (endActionWhenReachToTarget)
-                        actionCtrler.currActionContext.manualAdvanceSpeed = 0;
+                        actionCtrler.currActionContext.manualAdvanceSpeed = 0f;
 
                     if (!actionCtrler.CheckActionRunning() || __capturedActionInstanceId != actionCtrler.currActionContext.actionInstanceId)
                     {
@@ -962,7 +962,7 @@ namespace Game.NodeCanvasExtension
                     if (deltaTime < accelDuration.value)
                         rootMotionSpeed = impulseSpeed.value * ParadoxNotion.Animation.Easing.Ease(accelEase.value, 0f, 1f, deltaTime / accelDuration.value);
                     else if (deltaTime > duration.value + Mathf.Max(0f, breakDuration.value))
-                        rootMotionSpeed = impulseSpeed.value * ParadoxNotion.Animation.Easing.Ease(breakEase.value, 0, 1f, 1f - (deltaTime - duration.value - Mathf.Max(0f, accelDuration.value)) / breakDuration.value);
+                        rootMotionSpeed = impulseSpeed.value * ParadoxNotion.Animation.Easing.Ease(breakEase.value, 0f, 1f, 1f - (deltaTime - duration.value - Mathf.Max(0f, accelDuration.value)) / breakDuration.value);
 
                     var rootMotionVec = rootMotionSpeed * pawnBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
                     if (actionCtrler.CanRootMotion(rootMotionVec))
@@ -1060,7 +1060,7 @@ namespace Game.NodeCanvasExtension
             {
                 pawnActionCtrler.WaitAction();
                 __manualAdvanceSpeedCached = pawnActionCtrler.currActionContext.manualAdvanceSpeed;
-                pawnActionCtrler.currActionContext.manualAdvanceSpeed = 0;
+                pawnActionCtrler.currActionContext.manualAdvanceSpeed = 0f;
             }
 
             var executeTimeStamp = Time.time;
@@ -1089,7 +1089,7 @@ namespace Game.NodeCanvasExtension
                 .Subscribe(_ =>
                 {
                     if (endActionWhenReachToTarget)
-                        pawnActionCtrler.currActionContext.manualAdvanceSpeed = 0;
+                        pawnActionCtrler.currActionContext.manualAdvanceSpeed = 0f;
 
                     //* Action이 취소되었다면 즉시 중지
                     if (!pawnActionCtrler.CheckActionRunning() || __capturedActionInstanceId != pawnActionCtrler.currActionContext.actionInstanceId)
@@ -1119,7 +1119,7 @@ namespace Game.NodeCanvasExtension
                     if (deltaTime < accelDuration.value)
                         rootMotionSpeed = homingSpeed.value * ParadoxNotion.Animation.Easing.Ease(accelEase.value, 0f, 1f, deltaTime / accelDuration.value);
                     else if (deltaTime > duration.value + Mathf.Max(0f, breakDuration.value))
-                        rootMotionSpeed = homingSpeed.value * ParadoxNotion.Animation.Easing.Ease(breakEase.value, 0, 1f, 1f - (deltaTime - duration.value - Mathf.Max(0f, accelDuration.value)) / breakDuration.value);
+                        rootMotionSpeed = homingSpeed.value * ParadoxNotion.Animation.Easing.Ease(breakEase.value, 0f, 1f, 1f - (deltaTime - duration.value - Mathf.Max(0f, accelDuration.value)) / breakDuration.value);
 
                     var rootMotionVec = rootMotionSpeed * pawnBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
                     pawnMovable.AddRootMotion(Time.deltaTime * rootMotionVec, Quaternion.identity, Time.deltaTime);
@@ -1236,9 +1236,9 @@ namespace Game.NodeCanvasExtension
         public BBParameter<string> actionDataName;
         public BBParameter<Vector3> offset;
         public BBParameter<Vector3> pitchYawRoll;
-        public BBParameter<float> fanAngle = 180;
-        public BBParameter<float> fanRadius = 1;
-        public BBParameter<float> fanHeight = 1;
+        public BBParameter<float> fanAngle = 180f;
+        public BBParameter<float> fanRadius = 1f;
+        public BBParameter<float> fanHeight = 1f;
         public BBParameter<float> minRadius = 0.1f;
         public BBParameter<int> maxTargetNum = 1;
         public BBParameter<string[]> traceLayerNames;
@@ -1340,7 +1340,7 @@ namespace Game.NodeCanvasExtension
                 Debug.Assert(__traceDisposable != null);
                 __traceDisposable.Dispose();
                 __traceDisposable = null;
-                
+
                 EndAction(false);
             }
             else if (__sampleIndex >= __sampleNum)
@@ -1362,7 +1362,7 @@ namespace Game.NodeCanvasExtension
             }
             else
             {
-                var sampleYaw =  (traceDirection.value > 0 ? 1f : -1f) * ((__sampleIndex + 0.5f) * __stepFanAngle - __halfFanAngle);
+                var sampleYaw =  (traceDirection.value > 0f ? 1f : -1f) * ((__sampleIndex + 0.5f) * __stepFanAngle - __halfFanAngle);
                 var fanMatrix = Matrix4x4.TRS(offset.value + __pawnBrain.coreColliderHelper.pawnCollider.bounds.center - __pawnBrain.coreColliderHelper.transform.position, Quaternion.Euler(pitchYawRoll.value) * Quaternion.Euler(0f, sampleYaw, 0f), Vector3.one);
                 __traceResults = __pawnActionCtrler.TraceActionTargets(fanMatrix, fanRadius.value, __stepFanAngle, fanHeight.value, minRadius.value, maxTargetNum.value, null, false, drawGizmos, drawGizmosDuration);
             }
@@ -2000,7 +2000,7 @@ namespace Game.NodeCanvasExtension
     public class ZoomCamera : ActionTask
     {
         public BBParameter<bool> isZoom;
-        public BBParameter<float> zoomValue = 1.0f;
+        public BBParameter<float> zoomValue = 1f;
         public BBParameter<float> zoomDuration = 0.5f;
 
         protected override void OnExecute()
@@ -2008,7 +2008,7 @@ namespace Game.NodeCanvasExtension
             if (isZoom.value == true) 
             {
                 float duration = zoomDuration.value;
-                if (duration <= 0)
+                if (duration <= 0f)
                     duration = 0.1f;
 
                 GameContext.Instance.mainCameraCtrler.InterpolateZoom(zoomValue.value, duration);
