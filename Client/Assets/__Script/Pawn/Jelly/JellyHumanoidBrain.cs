@@ -23,10 +23,10 @@ namespace Game
 
         public override void OnDecisionFinishedHandler() 
         { 
-            InvalidateDecision(0.2f); 
+            InvalidateDecision(0.1f); 
         }
 
-        public override void InvalidateDecision(float decisionCoolTime = 0)
+        public override void InvalidateDecision(float decisionCoolTime = 0f)
         {
             __decisionCoolTime = decisionCoolTime;
             JellyBB.decision.currDecision.Value = Decisions.None;
@@ -66,17 +66,19 @@ namespace Game
             PawnStatusCtrler.onStatusActive += (status) =>
             {
                 if (status == PawnStatus.KnockDown || status == PawnStatus.Groggy)
-                    InvalidateDecision(0.2f);
+                    InvalidateDecision(0.1f);
             };
 
             __pawnActionCtrler.onActionStart += (actionContext, damageContext) =>
             {
                 if ((actionContext.actionData?.staminaCost ?? 0) > 0)
                     JellyBB.stat.ReduceStamina(actionContext.actionData.staminaCost);
-
-                //* 리액션 수행 중에 현재 이동 제어를 끔
-                if (actionContext.actionName.StartsWith("!") && damageContext.receiverPenalty.Item1 != PawnStatus.None)
-                    InvalidateDecision(damageContext.receiverPenalty.Item2);
+                
+                //* 액션 수행 중에 현재 이동 제어를 끔
+                if (damageContext.receiverPenalty != null)
+                    InvalidateDecision(damageContext.receiverPenalty.Item1 != PawnStatus.None ? damageContext.receiverPenalty.Item2 : 0.1f);
+                else
+                    InvalidateDecision();
             };
 
             onUpdate += () => 
@@ -161,11 +163,10 @@ namespace Game
                     JellyBB.decision.aggressiveLevel.Value = -1f;
                     InvalidateDecision(1f);
                 }
-                else if (JellyBB.IsDown || JellyBB.IsGroggy)
+                else if (JellyBB.IsGroggy || JellyBB.IsDown)
                 {
                     //* Down이나 Groogy 상태라면 Decision 갱신이 안되도록 공회전시킴
-                    if (__decisionCoolTime <= 0f)
-                        InvalidateDecision(0.2f);
+                    InvalidateDecision();
                 }
                 else if (!ValidateTargetBrain(JellyBB.TargetBrain))
                 {
@@ -196,7 +197,7 @@ namespace Game
                         if (JellyBB.CurrDecision == Decisions.Spacing && distance > JellyHumanoidBB.SpacingOutDistance)
                             InvalidateDecision(1f);
                         else if (JellyBB.CurrDecision == Decisions.Approach && distance <= JellyHumanoidBB.SpacingInDistance)
-                            InvalidateDecision(1f);
+                            InvalidateDecision(0.5f);
                     }
                     else
                     {

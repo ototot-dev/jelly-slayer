@@ -1000,13 +1000,9 @@ namespace Game.NodeCanvasExtension
                 .DoOnCompleted(() => actionCtrler.currActionContext.homingRotationDisposable = null)
                 .Subscribe(_ =>
                 {
-                    var forwardVec = pawnBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-                    var deltaAngle = target.isNoneOrNull ? 0f : Vector3.SignedAngle(forwardVec, (target.value.position - pawnBrain.coreColliderHelper.transform.position).Vector2D().normalized, Vector3.up);
-                    if (Mathf.Abs(deltaAngle) > __MIN_DELTA_ANGLE)
-                    {
-                        var rotateAngle = (deltaAngle > 0f ? 1f : -1f) * Mathf.Min(Mathf.Abs(deltaAngle) * Mathf.Rad2Deg, rotateSpeed.value * Time.deltaTime);
-                        pawnMovable.FaceTo(Quaternion.Euler(0f, rotateAngle, 0f) * forwardVec);
-                    }
+                    var fromRotation = Quaternion.LookRotation(pawnBrain.coreColliderHelper.transform.forward.Vector2D().normalized);
+                    var toRotation = Quaternion.LookRotation((target.value.position - pawnBrain.coreColliderHelper.transform.position).Vector2D().normalized);
+                    pawnMovable.FaceTo(Quaternion.RotateTowards(fromRotation, toRotation, rotateSpeed.value * Time.deltaTime) * Vector3.forward);
                 }).AddTo(agent);
 
             EndAction(true);

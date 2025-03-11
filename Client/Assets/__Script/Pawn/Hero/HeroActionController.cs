@@ -93,8 +93,8 @@ namespace Game
                 }
                 else
                 {
+                    EffectManager.Instance.Show(__brain.BB.graphics.onBlockFx, __brain.BB.attachment.leftMechHandBone.transform.position, Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward, Vector3.up), Vector3.one);
                     SoundManager.Instance.Play(SoundID.HIT_BLOCK);
-                    EffectManager.Instance.Show(__brain.BB.graphics.onBlockFx, __brain.BB.attachment.blockingFxAttachPoint.transform.position, Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward, Vector3.up), Vector3.one);
                 }
 
                 var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
