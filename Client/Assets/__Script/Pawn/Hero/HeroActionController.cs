@@ -137,7 +137,9 @@ namespace Game
 
                     Observable.Timer(TimeSpan.FromMilliseconds(50)).Subscribe(_ =>
                     {
-                        EffectManager.Instance.Show(__brain.BB.graphics.onGuardParriedFx, __brain.BB.attachment.leftMechHandBone.transform.position + 0.5f * __brain.coreColliderHelper.transform.forward, Quaternion.identity, 0.8f * Vector3.one);
+                        var pos = __brain.BB.attachment.leftMechHandBone.transform.position + 0.5f * __brain.coreColliderHelper.transform.forward;
+                        EffectManager.Instance.Show(__brain.BB.graphics.onGuardParriedFx, pos, Quaternion.identity, 0.8f * Vector3.one);
+                        EffectManager.Instance.Show(__brain.BB.graphics.onGuardParriedFx2, pos, Quaternion.identity, 1.5f * Vector3.one);
                         // SoundManager.Instance.Play(SoundID.HIT_PARRYING);
                     });
 
