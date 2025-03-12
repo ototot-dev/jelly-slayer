@@ -70,7 +70,7 @@ namespace Game
 
                 ShowHitColor(__brain.shieldHitColliderHelper);
             }
-            else if (damageContext.actionResult == ActionResults.GuardBreak) 
+            else if (damageContext.actionResult == ActionResults.GuardBreak)
             {
                 Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onGuardBreakFx, __brain.BB.graphics.BlockingFxAttachPoint.transform.position, Quaternion.identity, Vector3.one, 1f)).AddTo(this);
                 SoundManager.Instance.PlayWithClip(__brain.BB.audios.onGuardBreakAudioClip);
@@ -130,6 +130,7 @@ namespace Game
             {
                 ObjectPoolingSystem.Instance.GetObject<SoldierMissile>(emitPrefab, emitPoint.position, Quaternion.LookRotation(Vector3.up)).Go(__brain, __brain.BB.action.missileEmitSpeed);
 
+                //* 첫번째 발사와 마지막 발사를 제외한 갯수
                 var intervalCount = Math.Max(1, __brain.BB.action.missileEmitNum - 2);
                 __missileEmitDisposable?.Dispose();
                 __missileEmitDisposable = Observable.Interval(TimeSpan.FromSeconds(__brain.BB.action.missileEmitIntervalA)).Take(intervalCount)

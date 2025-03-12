@@ -85,6 +85,14 @@ namespace Game
                     armBoneSimulatorTargetWeight = 0f;
             };
 
+            __brain.BB.common.isGroggy.Skip(1).Subscribe(v =>
+            {
+                if (v)
+                    jellyMeshCtrler.FadeIn(1f);
+                else
+                    jellyMeshCtrler.FadeOut(1f);
+            }).AddTo(this);
+
             __brain.BB.body.isJumping.Subscribe(v =>
             {
                 //* 발바닥에서 발사하는 Frame 이펙트 On

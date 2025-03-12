@@ -84304,7 +84304,7 @@ MonoBehaviour:
   rightArmBoneSimulator: {fileID: 4265576059615311173}
   leftLegBoneSimulator: {fileID: 2082995388652011794}
   rightLegBoneSimulator: {fileID: 7126030012253448850}
-  jellyMeshCtrler: {fileID: 0}
+  jellyMeshCtrler: {fileID: 2168992762603302668}
   rigBlendWeight: 1
   rigBlendSpeed: 1
   actionLayerBlendInSpeed: 20
@@ -84476,7 +84476,7 @@ MonoBehaviour:
     counterProbBoostRateOnGuard: 0.2
     missileEmitNum: 3
     missileEmitIntervalA: 0.1
-    missileEmitIntervalB: 0.5
+    missileEmitIntervalB: 1
     missileEmitSpeed: 10
     missileProbBoostRateOnIdle: 0.01
     missileEmitPoint: {fileID: 102119456959228274}
@@ -84599,7 +84599,7 @@ MonoBehaviour:
     _version: 3.31
     _category: 
     _comments: 
-    _translation: {x: -577, y: 30}
+    _translation: {x: -108, y: 38}
     _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 0

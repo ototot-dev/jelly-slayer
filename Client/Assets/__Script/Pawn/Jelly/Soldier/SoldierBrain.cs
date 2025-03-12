@@ -121,9 +121,15 @@ namespace Game
                         if (ActionDataSelector.TryPickRandomSelection(1f, -1f, out var randomActionData))
                         {
                             if (randomActionData == ActionDataSelector.GetSequence(ActionPatterns.Missile).Last())
+                            {
                                 ActionDataSelector.EnqueueSequence(ActionPatterns.Missile);
+                                ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.JumpAttack).First());
+                            }
                             else if (randomActionData == ActionDataSelector.GetSequence(ActionPatterns.Leap).Last())
+                            {
                                 ActionDataSelector.EnqueueSequence(ActionPatterns.Leap);
+                                ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.JumpAttack).First());
+                            }
                         }
                         else
                         {
