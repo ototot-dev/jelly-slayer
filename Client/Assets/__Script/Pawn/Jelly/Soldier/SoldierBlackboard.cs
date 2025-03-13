@@ -68,6 +68,8 @@ namespace Game
             public float missileEmitIntervalA = 1f;
             public float missileEmitIntervalB = 1f;
             public float missileEmitSpeed = 10f;
+            public float hoveringDurationA = 1f;
+            public float hoveringDurationB = 1f;
             public float missileProbBoostRateOnTick = 0.1f;
             public Transform missileEmitPoint;
             public GameObject missilePrefab;

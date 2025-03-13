@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0db9621f159aa421e8d075415a6e4e50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BodyCollider: {fileID: 0}
+  bodyCollider: {fileID: 0}
   sensorCollider: {fileID: 2149588873643281214}
   velocity: {x: 0, y: 0, z: 0}
   gravity: {x: 0, y: -30, z: 0}
@@ -65,8 +65,10 @@ MonoBehaviour:
   fixedUpdateEnabled: 1
   emitterBrain:
     value: {fileID: 0}
+  reflectiveBrain:
+    value: {fileID: 0}
   hitFx: {fileID: 5377929886163509407, guid: 381783eda7657bc46816c29a324f3139, type: 3}
-  hoveringDuration: 5
+  hoveringDuration: 1
   homingAccel: 20
   homingMaxSpeed: 20
   homingRotateSpeed: 60

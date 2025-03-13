@@ -84481,6 +84481,8 @@ MonoBehaviour:
     missileEmitIntervalA: 0.1
     missileEmitIntervalB: 1
     missileEmitSpeed: 10
+    hoveringDurationA: 2
+    hoveringDurationB: 6
     missileProbBoostRateOnTick: 0.05
     missileEmitPoint: {fileID: 102119456959228274}
     missilePrefab: {fileID: 3083626412401777055, guid: 49b1852d94dc5426fb97f6eb2643051b, type: 3}

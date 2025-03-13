@@ -127,19 +127,34 @@ namespace Game
 
         public override void EmitActionHandler(GameObject emitPrefab, Transform emitPoint, int emitNum)
         {
+            var hoveringDuration = __brain.ActionDataSelector.CurrSequence() == __brain.ActionDataSelector.GetSequence(SoldierBrain.ActionPatterns.Leap) ?
+                __brain.BB.action.hoveringDurationB : __brain.BB.action.hoveringDurationA; 
+
             if (emitPrefab == __brain.BB.MissilePrefab)
             {
-                ObjectPoolingSystem.Instance.GetObject<SoldierMissile>(emitPrefab, emitPoint.position, Quaternion.LookRotation(Vector3.up)).Go(__brain, __brain.BB.action.missileEmitSpeed);
+                var missile = ObjectPoolingSystem.Instance.GetObject<SoldierMissile>(emitPrefab, emitPoint.position, Quaternion.LookRotation(Vector3.up));
+                missile.hoveringDuration = hoveringDuration;
+                missile.Go(__brain, __brain.BB.action.missileEmitSpeed);
 
                 //* 첫번째 발사와 마지막 발사를 제외한 갯수
                 var intervalCount = Math.Max(1, __brain.BB.action.missileEmitNum - 2);
                 __missileEmitDisposable?.Dispose();
                 __missileEmitDisposable = Observable.Interval(TimeSpan.FromSeconds(__brain.BB.action.missileEmitIntervalA)).Take(intervalCount)
-                    .Do(_ => ObjectPoolingSystem.Instance.GetObject<SoldierMissile>(emitPrefab, emitPoint.position, Quaternion.LookRotation(Vector3.up)).Go(__brain, __brain.BB.action.missileEmitSpeed))
+                    .Do(_ => 
+                    {
+                        var missile = ObjectPoolingSystem.Instance.GetObject<SoldierMissile>(emitPrefab, emitPoint.position, Quaternion.LookRotation(Vector3.up));
+                        missile.hoveringDuration = hoveringDuration;
+                        missile.Go(__brain, __brain.BB.action.missileEmitSpeed);
+                    })
                     .DoOnCompleted(() => 
                     {
                         __missileEmitDisposable = Observable.Timer(TimeSpan.FromSeconds(__brain.BB.action.missileEmitIntervalB))
-                            .Subscribe(_ => ObjectPoolingSystem.Instance.GetObject<SoldierMissile>(emitPrefab, emitPoint.position, Quaternion.LookRotation(Vector3.up)).Go(__brain, __brain.BB.action.missileEmitSpeed))
+                            .Subscribe(_ =>
+                            { 
+                                var missile = ObjectPoolingSystem.Instance.GetObject<SoldierMissile>(emitPrefab, emitPoint.position, Quaternion.LookRotation(Vector3.up));
+                                missile.hoveringDuration = hoveringDuration;
+                                missile.Go(__brain, __brain.BB.action.missileEmitSpeed);
+                            })
                             .AddTo(this);
                     }).Subscribe().AddTo(this);
             }
