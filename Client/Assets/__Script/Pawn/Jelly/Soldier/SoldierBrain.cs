@@ -1,6 +1,7 @@
 using UGUI.Rx;
 using UniRx;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace Game
 {
@@ -65,8 +66,8 @@ namespace Game
             Backstep,
             Counter,
             Missile,
-            ComboA,
-            ComboB,
+            ComboAttack,
+            CounterCombo,
             Leap,
             Max,
         }
@@ -79,8 +80,8 @@ namespace Game
             ActionDataSelector.ReserveSequence(ActionPatterns.Backstep, "Backstep");
             ActionDataSelector.ReserveSequence(ActionPatterns.Counter, "Counter");
             ActionDataSelector.ReserveSequence(ActionPatterns.Missile, "Backstep", 0.2f, "Missile");
-            ActionDataSelector.ReserveSequence(ActionPatterns.ComboA, "Attack#1", "Attack#2", "Attack#3");
-            ActionDataSelector.ReserveSequence(ActionPatterns.ComboB, "Attack#3", "Attack#3", "Attack#3");
+            ActionDataSelector.ReserveSequence(ActionPatterns.ComboAttack, "Attack#1", "Attack#2", "Attack#3");
+            ActionDataSelector.ReserveSequence(ActionPatterns.CounterCombo, "Counter", "Counter", 0.1f , "Attack#3");
             ActionDataSelector.ReserveSequence(ActionPatterns.Leap, "Backstep", 0.2f, "Missile", "Leap");
 
             onUpdate += () =>
@@ -136,16 +137,27 @@ namespace Game
                         var distanceToTarget = coreColliderHelper.GetDistanceBetween(BB.TargetBrain.coreColliderHelper);
                         if (distanceToTarget < BB.action.comboAttackDistance)
                         {
-                            if (ActionDataSelector.EvaluateSelection(ActionPatterns.ComboA) && CheckTargetVisibility())
-                                ActionDataSelector.EnqueueSequence(ActionPatterns.ComboA);
+                            if (ActionDataSelector.EvaluateSelection(ActionPatterns.ComboAttack) && CheckTargetVisibility())
+                            {
+                                ActionDataSelector.EnqueueSequence(ActionPatterns.ComboAttack);
+                                ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.CounterCombo).First());
+                            }
+                        }
+                        else if (distanceToTarget < BB.action.counterComboAttackDistance)
+                        {
+                            if (ActionDataSelector.EvaluateSelection(ActionPatterns.CounterCombo) && CheckTargetVisibility())
+                            {
+                                ActionDataSelector.EnqueueSequence(ActionPatterns.CounterCombo);
+                                ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.ComboAttack).First());
+                            }
                         }
                         else if (distanceToTarget < BB.action.maxJumpAttackDistance)
                         {
                             if (ActionDataSelector.EvaluateSelection(ActionPatterns.JumpAttack, UnityEngine.Random.Range(0f, 1f)) && CheckTargetVisibility())
                             {
                                 ActionDataSelector.EnqueueSequence(ActionPatterns.JumpAttack);
-                                if (ActionDataSelector.EvaluateSelection(ActionPatterns.ComboA))
-                                    ActionDataSelector.EnqueueSequence(ActionPatterns.ComboA);
+                                if (ActionDataSelector.EvaluateSelection(ActionPatterns.ComboAttack))
+                                    ActionDataSelector.EnqueueSequence(ActionPatterns.ComboAttack);
                             }
                             else
                             {
@@ -204,21 +216,21 @@ namespace Game
             {   
                 if (debugActionDisabled)
                     return;
-                    
-                if (!ActionCtrler.CheckActionPending() && ActionDataSelector.EvaluateSelection(ActionPatterns.Counter, UnityEngine.Random.Range(0f, 1f)))
+
+                if (!ActionCtrler.CheckActionPending() && UnityEngine.Random.Range(0f, 1f) <= BB.action.counterAttackProbOnGuard)
                 {
                     ActionDataSelector.ClearSequences();
 
-                    var counterActionData = ActionDataSelector.EnqueueSequence(ActionPatterns.Counter).First();
-                    if (ActionDataSelector.EvaluateSelection(ActionPatterns.ComboA))
-                        ActionDataSelector.EnqueueSequence(ActionPatterns.ComboA);
-
-                    ActionCtrler.SetPendingAction(counterActionData.actionName);
-                    ActionDataSelector.ResetSelection(counterActionData);
-                }
-                else
-                {
-                    ActionDataSelector.BoostSelection(ActionDataSelector.GetSequenceData(ActionPatterns.Counter), BB.action.counterProbBoostRateOnGuard);
+                    if (UnityEngine.Random.Range(0f, 1f) <= BB.action.counterComboAttachProb)
+                    {                
+                        ActionDataSelector.EnqueueSequence(ActionPatterns.CounterCombo);
+                    }
+                    else
+                    {
+                        ActionDataSelector.EnqueueSequence(ActionPatterns.Counter);
+                        if (ActionDataSelector.EvaluateSelection(ActionPatterns.ComboAttack))
+                            ActionDataSelector.EnqueueSequence(ActionPatterns.ComboAttack);
+                    }
                 }
             }
         }

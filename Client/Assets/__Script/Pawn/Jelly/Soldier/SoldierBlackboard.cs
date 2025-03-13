@@ -53,14 +53,15 @@ namespace Game
 
             [Header("Combo")]
             public float comboAttackDistance = 1f;
+            public float counterComboAttackDistance = 1f;
+            public float counterComboAttachProb = 0.1f;
+            public float counterAttackProbOnGuard = 0.1f;
 
             [Header("JumpAttack")]
             public float minJumpAttackDistance = 1f;
             public float maxJumpAttackDistance = 1f;
             public float jumpAttackProbBoostRateOnTick = 0.1f;
 
-            [Header("Counter")]
-            public float counterProbBoostRateOnGuard; //* 가드 후 반격 발생 확률 증가
 
             [Header("Missile")]
             public int missileEmitNum = 1;

@@ -84471,10 +84471,12 @@ MonoBehaviour:
     maxCoolDownDuration: 5
     sequenceCoolDownTimeLeft: 0
     comboAttackDistance: 3
+    counterComboAttackDistance: 4
+    counterComboAttachProb: 0.4
+    counterAttackProbOnGuard: 0.5
     minJumpAttackDistance: 4
     maxJumpAttackDistance: 6
     jumpAttackProbBoostRateOnTick: 0.1
-    counterProbBoostRateOnGuard: 0.2
     missileEmitNum: 3
     missileEmitIntervalA: 0.1
     missileEmitIntervalB: 1
@@ -84507,6 +84509,7 @@ MonoBehaviour:
     BlockingFxAttachPoint: {fileID: 827300965817690329}
   audios:
     onHitAudioClip: {fileID: 8300000, guid: 32f1fbcafa4244b689704d0ea4aeb822, type: 3}
+    onHitAudioClip2: {fileID: 0}
     onBigHitAudioClip: {fileID: 8300000, guid: bba0a0725054ad0419aecf461293c8e9, type: 3}
     onKickHitAudioClip: {fileID: 8300000, guid: 9cb0b1ad621027a478ebeb3ce2f31faa, type: 3}
     onBleedingAudioClip: {fileID: 8300000, guid: bba0a0725054ad0419aecf461293c8e9, type: 3}
