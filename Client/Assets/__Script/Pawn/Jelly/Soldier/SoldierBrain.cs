@@ -113,23 +113,25 @@ namespace Game
 
                 if (!ActionCtrler.CheckActionPending() && (!ActionCtrler.CheckActionRunning() || ActionCtrler.CanInterruptAction()) && BB.TargetPawn != null)
                 {
-                    if (ActionDataSelector.TryPickRandomSelection(1f, -1f, out var randomActionData))
+                    if (ActionDataSelector.TryPickRandomSelection(UnityEngine.Random.Range(0.5f, 1f), -1f, out var randomActionData))
                     {
                         if (randomActionData == ActionDataSelector.GetSequence(ActionPatterns.Missile).Last())
                         {
                             ActionDataSelector.EnqueueSequence(ActionPatterns.Missile);
+                            ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.Leap).Last());
                             ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.JumpAttack).First());
                         }
                         else if (randomActionData == ActionDataSelector.GetSequence(ActionPatterns.Leap).Last())
                         {
                             ActionDataSelector.EnqueueSequence(ActionPatterns.Leap);
+                            ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.Missile).Last());
                             ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.JumpAttack).First());
                         }
                     }
                     else
                     {
-                        ActionDataSelector.BoostSelection("Missile", BB.action.missileProbBoostRateOnTick * deltaTick);
                         ActionDataSelector.BoostSelection("Leap", BB.action.leapProbBoostRateOnTick * deltaTick);
+                        ActionDataSelector.BoostSelection("Missile", BB.action.missileProbBoostRateOnTick * deltaTick);
 
                         var distanceToTarget = coreColliderHelper.GetDistanceBetween(BB.TargetBrain.coreColliderHelper);
                         if (distanceToTarget < BB.action.comboAttackDistance)
@@ -147,7 +149,7 @@ namespace Game
                             }
                             else
                             {
-                                ActionDataSelector.BoostSelection("Missile", BB.action.jumpAttackProbBoostRateOnTick * deltaTick);
+                                ActionDataSelector.BoostSelection("JumpAttack", BB.action.jumpAttackProbBoostRateOnTick * deltaTick);
                             }
                         }
                     }
