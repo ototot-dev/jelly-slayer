@@ -84367,7 +84367,7 @@ MonoBehaviour:
   lateUpdateEnabled: 1
   fixedUpdateEnabled: 1
   roboDogFormationCtrler: {fileID: 5938920085556766268}
-  debugActionDisabled: 1
+  debugActionDisabled: 0
 --- !u!114 &1626602440402030822
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -84481,7 +84481,7 @@ MonoBehaviour:
     missileEmitIntervalA: 0.1
     missileEmitIntervalB: 1
     missileEmitSpeed: 10
-    missileProbBoostRateOnTick: 0.1
+    missileProbBoostRateOnTick: 0.05
     missileEmitPoint: {fileID: 102119456959228274}
     missilePrefab: {fileID: 3083626412401777055, guid: 49b1852d94dc5426fb97f6eb2643051b, type: 3}
     laserDamageInterval: 0.1
@@ -84493,7 +84493,7 @@ MonoBehaviour:
     leapJumpHeight: 2
     leapRootMotionDistance: 7
     leapRootMotionMultiplier: 1
-    leapProbBoostRateOnTick: 0.1
+    leapProbBoostRateOnTick: 0.02
     backstepProb: 0.5
     backstepTriggerDistance: 1
     backstepRootMotionDistance: 5
