@@ -82,7 +82,7 @@ namespace Game
             ActionDataSelector.ReserveSequence(ActionPatterns.Missile, "Backstep", 0.2f, "Missile");
             ActionDataSelector.ReserveSequence(ActionPatterns.ComboAttack, "Attack#1", "Attack#2", "Attack#3");
             ActionDataSelector.ReserveSequence(ActionPatterns.CounterCombo, "Counter", "Counter", 0.1f , "Attack#3");
-            ActionDataSelector.ReserveSequence(ActionPatterns.Leap, "Backstep", 0.2f, "Missile", "Leap");
+            ActionDataSelector.ReserveSequence(ActionPatterns.Leap, "Backstep", 0.2f, "Missile", 0.2f, "Leap");
 
             onUpdate += () =>
             {
@@ -121,12 +121,12 @@ namespace Game
                             ActionDataSelector.EnqueueSequence(ActionPatterns.Missile);
                             ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.Leap).Last());
                             ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.JumpAttack).First());
+                            ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.ComboAttack).First());
+                            ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.CounterCombo).First());
                         }
                         else if (randomActionData == ActionDataSelector.GetSequence(ActionPatterns.Leap).Last())
                         {
                             ActionDataSelector.EnqueueSequence(ActionPatterns.Leap);
-                            ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.Missile).Last());
-                            ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.JumpAttack).First());
                         }
                     }
                     else
@@ -171,6 +171,17 @@ namespace Game
                     var distanceToTarget = coreColliderHelper.GetDistanceBetween(BB.TargetBrain.coreColliderHelper);
                     if (distanceToTarget < BB.action.backstepTriggerDistance && ActionDataSelector.EvaluateSelection(ActionPatterns.Backstep, UnityEngine.Random.Range(0f, 1f)))
                         ActionDataSelector.EnqueueSequence(ActionPatterns.Backstep);
+                }
+            };
+
+            __pawnActionCtrler.onActionFinished += (actionContext) =>
+            {
+                if (actionContext.actionName == "Leap")
+                {
+                    ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.Missile).Last());
+                    ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.JumpAttack).First());
+                    ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.ComboAttack).First());
+                    ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.CounterCombo).First());
                 }
             };
 
