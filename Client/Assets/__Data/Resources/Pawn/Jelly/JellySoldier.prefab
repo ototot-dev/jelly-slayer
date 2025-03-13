@@ -62279,11 +62279,11 @@ MonoBehaviour:
   - {fileID: 1592567507176832920}
   - {fileID: 968453889228490348}
   - {fileID: 1816198668345070183}
-  cubeSpreadRadius: 0.4
-  cubeScaleMin: 0.2
-  cubeScaleMax: 0.3
+  cubeSpreadRadius: 0.5
+  cubeScaleMin: 0.3
+  cubeScaleMax: 0.5
   eyeOpenSpeed: 5
-  tailLength: 1
+  tailLength: 2
 --- !u!1 &6687845027951194453
 GameObject:
   m_ObjectHideFlags: 0
@@ -84473,12 +84473,13 @@ MonoBehaviour:
     comboAttackDistance: 3
     minJumpAttackDistance: 4
     maxJumpAttackDistance: 6
+    jumpAttackProbBoostRateOnTick: 0.1
     counterProbBoostRateOnGuard: 0.2
     missileEmitNum: 3
     missileEmitIntervalA: 0.1
     missileEmitIntervalB: 1
     missileEmitSpeed: 10
-    missileProbBoostRateOnIdle: 0.01
+    missileProbBoostRateOnTick: 0.1
     missileEmitPoint: {fileID: 102119456959228274}
     missilePrefab: {fileID: 3083626412401777055, guid: 49b1852d94dc5426fb97f6eb2643051b, type: 3}
     laserDamageInterval: 0.1
@@ -84490,7 +84491,7 @@ MonoBehaviour:
     leapJumpHeight: 2
     leapRootMotionDistance: 7
     leapRootMotionMultiplier: 1
-    leapProbBoostRateOnIdle: 0.004
+    leapProbBoostRateOnTick: 0.1
     backstepProb: 0.5
     backstepTriggerDistance: 1
     backstepRootMotionDistance: 5

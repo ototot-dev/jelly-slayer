@@ -78,10 +78,10 @@ namespace Game
             ActionDataSelector.ReserveSequence(ActionPatterns.JumpAttack, "JumpAttack");
             ActionDataSelector.ReserveSequence(ActionPatterns.Backstep, "Backstep");
             ActionDataSelector.ReserveSequence(ActionPatterns.Counter, "Counter");
-            ActionDataSelector.ReserveSequence(ActionPatterns.Missile, "Backstep", "Missile");
+            ActionDataSelector.ReserveSequence(ActionPatterns.Missile, "Backstep", 0.2f, "Missile");
             ActionDataSelector.ReserveSequence(ActionPatterns.ComboA, "Attack#1", "Attack#2", "Attack#3");
             ActionDataSelector.ReserveSequence(ActionPatterns.ComboB, "Attack#3", "Attack#3", "Attack#3");
-            ActionDataSelector.ReserveSequence(ActionPatterns.Leap, "Backstep", "Missile", 0.2f, "Leap");
+            ActionDataSelector.ReserveSequence(ActionPatterns.Leap, "Backstep", 0.2f, "Missile", "Leap");
 
             onUpdate += () =>
             {
@@ -105,60 +105,58 @@ namespace Game
             {
                 if (!BB.IsSpawnFinished || !BB.IsInCombat || BB.IsDead || BB.IsGroggy || BB.IsDown)
                     return;
-
+                
                 ActionDataSelector.UpdateSelection(deltaTick);
 
-                if (BB.action.sequenceCoolDownTimeLeft > 0f)
-                    BB.action.sequenceCoolDownTimeLeft -= deltaTick;
-                
-                if (debugActionDisabled)
+                if (debugActionDisabled || StatusCtrler.CheckStatus(PawnStatus.CanNotAction))
                     return;
 
                 if (!ActionCtrler.CheckActionPending() && (!ActionCtrler.CheckActionRunning() || ActionCtrler.CanInterruptAction()) && BB.TargetPawn != null)
                 {
-                    if (BB.action.sequenceCoolDownTimeLeft <= 0f)
+                    if (ActionDataSelector.TryPickRandomSelection(1f, -1f, out var randomActionData))
                     {
-                        if (ActionDataSelector.TryPickRandomSelection(1f, -1f, out var randomActionData))
+                        if (randomActionData == ActionDataSelector.GetSequence(ActionPatterns.Missile).Last())
                         {
-                            if (randomActionData == ActionDataSelector.GetSequence(ActionPatterns.Missile).Last())
-                            {
-                                ActionDataSelector.EnqueueSequence(ActionPatterns.Missile);
-                                ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.JumpAttack).First());
-                            }
-                            else if (randomActionData == ActionDataSelector.GetSequence(ActionPatterns.Leap).Last())
-                            {
-                                ActionDataSelector.EnqueueSequence(ActionPatterns.Leap);
-                                ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.JumpAttack).First());
-                            }
+                            ActionDataSelector.EnqueueSequence(ActionPatterns.Missile);
+                            ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.JumpAttack).First());
                         }
-                        else
+                        else if (randomActionData == ActionDataSelector.GetSequence(ActionPatterns.Leap).Last())
                         {
-                            ActionDataSelector.BoostSelection("Missile", BB.action.missileProbBoostRateOnIdle);
-                            ActionDataSelector.BoostSelection("Leap", BB.action.leapProbBoostRateOnIdle);
+                            ActionDataSelector.EnqueueSequence(ActionPatterns.Leap);
+                            ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.JumpAttack).First());
+                        }
+                    }
+                    else
+                    {
+                        ActionDataSelector.BoostSelection("Missile", BB.action.missileProbBoostRateOnTick * deltaTick);
+                        ActionDataSelector.BoostSelection("Leap", BB.action.leapProbBoostRateOnTick * deltaTick);
 
-                            var distanceToTarget = coreColliderHelper.GetDistanceBetween(BB.TargetBrain.coreColliderHelper);
-                            if (distanceToTarget < BB.action.comboAttackDistance)
+                        var distanceToTarget = coreColliderHelper.GetDistanceBetween(BB.TargetBrain.coreColliderHelper);
+                        if (distanceToTarget < BB.action.comboAttackDistance)
+                        {
+                            if (ActionDataSelector.EvaluateSelection(ActionPatterns.ComboA) && CheckTargetVisibility())
+                                ActionDataSelector.EnqueueSequence(ActionPatterns.ComboA);
+                        }
+                        else if (distanceToTarget < BB.action.maxJumpAttackDistance)
+                        {
+                            if (ActionDataSelector.EvaluateSelection(ActionPatterns.JumpAttack, UnityEngine.Random.Range(0f, 1f)) && CheckTargetVisibility())
                             {
-                                if (ActionDataSelector.EvaluateSelection(ActionPatterns.ComboA) && CheckTargetVisibility())
+                                ActionDataSelector.EnqueueSequence(ActionPatterns.JumpAttack);
+                                if (ActionDataSelector.EvaluateSelection(ActionPatterns.ComboA))
                                     ActionDataSelector.EnqueueSequence(ActionPatterns.ComboA);
                             }
-                            else if (distanceToTarget > BB.action.minJumpAttackDistance && distanceToTarget < BB.action.maxJumpAttackDistance)
+                            else
                             {
-                                if (ActionDataSelector.EvaluateSelection(ActionPatterns.JumpAttack) && CheckTargetVisibility())
-                                {
-                                    ActionDataSelector.EnqueueSequence(ActionPatterns.JumpAttack);
-                                    if (ActionDataSelector.EvaluateSelection(ActionPatterns.ComboA))
-                                        ActionDataSelector.EnqueueSequence(ActionPatterns.ComboA);
-                                }
+                                ActionDataSelector.BoostSelection("Missile", BB.action.jumpAttackProbBoostRateOnTick * deltaTick);
                             }
                         }
                     }
-                    else if (!ActionCtrler.CheckActionRunning())
-                    {
-                        var distanceToTarget = coreColliderHelper.GetDistanceBetween(BB.TargetBrain.coreColliderHelper);
-                        if (distanceToTarget < BB.action.backstepTriggerDistance && ActionDataSelector.EvaluateSelection(ActionPatterns.Backstep, UnityEngine.Random.Range(0f, 1f)))
-                            ActionDataSelector.EnqueueSequence(ActionPatterns.Backstep);
-                    }
+                }
+                else if (!ActionCtrler.CheckActionRunning())
+                {
+                    var distanceToTarget = coreColliderHelper.GetDistanceBetween(BB.TargetBrain.coreColliderHelper);
+                    if (distanceToTarget < BB.action.backstepTriggerDistance && ActionDataSelector.EvaluateSelection(ActionPatterns.Backstep, UnityEngine.Random.Range(0f, 1f)))
+                        ActionDataSelector.EnqueueSequence(ActionPatterns.Backstep);
                 }
             };
 
@@ -167,20 +165,21 @@ namespace Game
                 if (status == PawnStatus.Staggered) ActionDataSelector.ClearSequences();
             };
 
-            BB.stat.actionPoint.Skip(1).Subscribe(v =>
+            PawnStatusCtrler.onStatusDeactive += (status) =>
             {
-                //* ActionPoint 전부 소모하면 CoolDown 상태로 진입
-                if (v <= 0) 
+                if (status == PawnStatus.CanNotAction && BB.stat.actionPoint.Value <= 0) 
                 {
-                    BB.action.sequenceCoolDownTimeLeft = UnityEngine.Random.Range(BB.action.minCoolDownDuration, BB.action.maxCoolDownDuration);
-                    __Logger.LogR1(gameObject, "Start Cooldown", "sequenceCoolTimeLeft", BB.action.sequenceCoolDownTimeLeft);
-
-                    Observable.NextFrame().Subscribe(_ => 
-                    {
-                        BB.stat.RecoverActionPoint(BB.stat.maxActionPoint.Value);
-                        __Logger.LogR1(gameObject, "Recover ActionPoint", "maxActionPoint", BB.stat.maxActionPoint.Value);
-                    }).AddTo(this);
+                    BB.stat.RecoverActionPoint(BB.stat.maxActionPoint.Value);
+                    __Logger.LogR2(gameObject, "onStatusDeactive(CanNotAction)", "RecoverActionPoint()", "maxActionPoint", BB.stat.maxActionPoint.Value);
                 }
+            };
+
+            BB.stat.actionPoint.Skip(1).Where(v => v <= 0).Subscribe(v =>
+            {
+                var coolDownDuration = UnityEngine.Random.Range(BB.action.minCoolDownDuration, BB.action.maxCoolDownDuration);
+                StatusCtrler.AddStatus(PawnStatus.CanNotAction, coolDownDuration);
+
+                __Logger.LogR1(gameObject, "AddStatus(CanNotAction)", "duration", coolDownDuration);
             }).AddTo(this);
 
             BB.body.isFalling.Skip(1).Subscribe(v =>

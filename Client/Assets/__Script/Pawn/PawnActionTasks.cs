@@ -1260,7 +1260,6 @@ namespace Game.NodeCanvasExtension
         MainTable.ActionData __actionData;
         PawnBrainController __pawnBrain;
         PawnActionController __pawnActionCtrler;
-        List<PawnColliderHelper> __traceResults;
         readonly HashSet<PawnBrainController> __sentDamageBrains = new();
 
         [Serializable]
@@ -1292,9 +1291,6 @@ namespace Game.NodeCanvasExtension
             if (!tracePawnNames.isNull && tracePawnNames.value.Length > 0)
                 __pawnActionCtrler.AddTracePawnNames(tracePawnNames.value);
 
-            //* Trace 활성화
-            __pawnActionCtrler.SetTraceRunning(true);
-
             if (traceSampleNum.value > 1)
             {
                 __traceDuration = traceDuration.value > 0f ? traceDuration.value : 1f / __pawnActionCtrler.currActionContext.animClipFps * traceFrames.value;
@@ -1307,65 +1303,66 @@ namespace Game.NodeCanvasExtension
                 __halfFanAngle = 0.5f * fanAngle.value;
                 __stepFanAngle = fanAngle.value / __sampleNum;
                 __lastSampleTimeStamp = 0f;
-                __traceResults = null;
                 __sentDamageBrains.Clear();
 
-                __traceDisposable = Observable.EveryLateUpdate().Subscribe(_ =>
-                {
-                    if ((Time.time - __lastSampleTimeStamp) >= __sampleInterval)
-                        TraceSampleInternal();
-                }).AddTo(agent);
+                //* Trace 활성화
+                __pawnActionCtrler.SetTraceRunning(true);
+
+                __traceDisposable = Observable.EveryLateUpdate()
+                    .TakeWhile(_ => __pawnActionCtrler.CheckActionRunning() && __pawnActionCtrler.currActionContext.actionInstanceId == __capturedActionInstanceId)
+                    .DoOnCancel(() =>
+                    {
+                        __pawnActionCtrler.SetTraceRunning(false);
+                        __traceDisposable = null;
+                        __sentDamageBrains.Clear();
+                    })
+                    .DoOnCompleted(() =>
+                    {
+                        __pawnActionCtrler.SetTraceRunning(false);
+                        __traceDisposable = null;
+                        __sentDamageBrains.Clear();
+                    })
+                    .Subscribe(_ =>
+                    {
+                        if ((Time.time - __lastSampleTimeStamp) >= __sampleInterval && TraceSampleInternal() >= __sampleNum)
+                            __traceDisposable.Dispose();
+                    }).AddTo(agent);
             }
             else
             {
                 //* Duration 없는 단발성 Trace인 경우엔 Trace 진행 방향은 필요없음
                 traceDirection.value = 0;
                 __sampleNum = 1;
-                __traceResults = null;
                 __sentDamageBrains.Clear();
                 __traceDisposable = Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => TraceSampleInternal()).AddTo(agent);
             }
-        }
 
-        protected override void OnUpdate()
-        {
-            base.OnUpdate();
-
-            if (!__pawnActionCtrler.CheckActionRunning() || __capturedActionInstanceId != __pawnActionCtrler.currActionContext.actionInstanceId)
-            {
-                Debug.Assert(__traceDisposable != null);
-                __traceDisposable.Dispose();
-                __traceDisposable = null;
-
-                EndAction(false);
-            }
-            else if (__sampleIndex >= __sampleNum)
-            {
-                Debug.Assert(__traceDisposable != null);
-                __traceDisposable.Dispose();
-                __traceDisposable = null;
-                __pawnActionCtrler.SetTraceRunning(false);
-
-                EndAction(true);
-            }
+            EndAction(true);
         }
 
         int TraceSampleInternal()
         {   
+            List<PawnColliderHelper> traceResults;
+
             if (traceDirection.value == 0 || __sampleNum == 1)
             {
-                __traceResults = __pawnActionCtrler.TraceActionTargets(offset.value, pitchYawRoll.value, fanRadius.value, fanAngle.value, fanHeight.value, minRadius.value, maxTargetNum.value, null, false, drawGizmos, drawGizmosDuration);
+                traceResults = __pawnActionCtrler.TraceActionTargets(offset.value, pitchYawRoll.value, fanRadius.value, fanAngle.value, fanHeight.value, minRadius.value, maxTargetNum.value, null, false, drawGizmos, drawGizmosDuration);
             }
             else
             {
-                var sampleYaw =  (traceDirection.value > 0f ? 1f : -1f) * ((__sampleIndex + 0.5f) * __stepFanAngle - __halfFanAngle);
-                var fanMatrix = Matrix4x4.TRS(offset.value + __pawnBrain.coreColliderHelper.pawnCollider.bounds.center - __pawnBrain.coreColliderHelper.transform.position, Quaternion.Euler(pitchYawRoll.value) * Quaternion.Euler(0f, sampleYaw, 0f), Vector3.one);
-                __traceResults = __pawnActionCtrler.TraceActionTargets(fanMatrix, fanRadius.value, __stepFanAngle, fanHeight.value, minRadius.value, maxTargetNum.value, null, false, drawGizmos, drawGizmosDuration);
+                var sampleFanAngle = (__sampleIndex + 1) * __stepFanAngle;
+                var sampleOffsetYaw = (traceDirection.value > 0f ? 1f : -1f) * (0.5f * sampleFanAngle - __halfFanAngle);
+                var fanOffsetMatrix = Matrix4x4.TRS(offset.value + __pawnBrain.coreColliderHelper.pawnCollider.bounds.center - __pawnBrain.coreColliderHelper.transform.position, Quaternion.Euler(pitchYawRoll.value) * Quaternion.Euler(0f, sampleOffsetYaw, 0f), Vector3.one);
+                traceResults = __pawnActionCtrler.TraceActionTargets(fanOffsetMatrix, fanRadius.value, sampleFanAngle, fanHeight.value, minRadius.value, maxTargetNum.value, null, false, drawGizmos, drawGizmosDuration);
+
+                // var sampleYaw =  (traceDirection.value > 0f ? 1f : -1f) * ((__sampleIndex + 0.5f) * __stepFanAngle - __halfFanAngle);
+                // var fanOffsetMatrix = Matrix4x4.TRS(offset.value + __pawnBrain.coreColliderHelper.pawnCollider.bounds.center - __pawnBrain.coreColliderHelper.transform.position, Quaternion.Euler(pitchYawRoll.value) * Quaternion.Euler(0f, sampleYaw, 0f), Vector3.one);
+                // __traceResults = __pawnActionCtrler.TraceActionTargets(fanOffsetMatrix, fanRadius.value, __sampleIndex * __stepFanAngle, fanHeight.value, minRadius.value, maxTargetNum.value, null, false, drawGizmos, drawGizmosDuration);
             }
 
             if (__sampleNum == 1)
             {
-                foreach (var r in __traceResults)
+                foreach (var r in traceResults)
                     __pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__pawnBrain, r.pawnBrain, __actionData, r.pawnCollider, __pawnActionCtrler.currActionContext.insufficientStamina));
 
                 return 1;
@@ -1374,7 +1371,7 @@ namespace Game.NodeCanvasExtension
             {
                 __lastSampleTimeStamp = Time.time;
 
-                foreach (var r in __traceResults)
+                foreach (var r in traceResults)
                 {
                     if (!__sentDamageBrains.Contains(r.pawnBrain))
                     {
@@ -1396,19 +1393,6 @@ namespace Game.NodeCanvasExtension
                 }
                 return ++__sampleIndex;
             }
-        }
-
-        protected override void OnStop()
-        {
-            base.OnStop();
-
-            //* Trace 비활성화
-            __pawnActionCtrler.SetTraceRunning(false);
-
-            //* GC 될수도 있으니 Task 종료시에 바로 해제해줌
-            __sentDamageBrains.Clear();
-            __traceResults.Clear();
-            __traceResults = null;
         }
     }
 

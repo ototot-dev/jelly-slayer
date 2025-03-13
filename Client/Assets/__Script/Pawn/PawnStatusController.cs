@@ -132,9 +132,9 @@ namespace Game
                         currTable.Add(new Tuple<float, float>(strength, duration < 0 ? duration : Time.time + duration));
                 }
 
-                if (prevStackCount == 0 && prevStackCount != currTable.Count && !prevValue)
+                if (!prevValue && prevStackCount == 0 && prevStackCount != currTable.Count)
                 {
-                    __Logger.LogR2(gameObject, nameof(AddStatus), "Stackable-Status is activated", "status", status, "stackCount", currTable.Count);
+                    __Logger.LogR2(gameObject, nameof(AddStatus), "Stackable-Status activated", "status", status, "stackCount", currTable.Count);
                     onStatusActive?.Invoke(status);
                 }
             }
@@ -146,7 +146,7 @@ namespace Game
                     __uniqueTable.Add(status, tuple);
                     if (!prevValue)
                     {
-                        __Logger.LogR2(gameObject, nameof(AddStatus), "Unique-Status is activated", "status", status);
+                        __Logger.LogR2(gameObject, nameof(AddStatus), "Unique-Status activated", "status", status);
                         onStatusActive?.Invoke(status);
                     }
                 }
@@ -167,7 +167,7 @@ namespace Game
         {
             if (__immunedStatuses.Contains(status))
             {
-                __Logger.LogR2(gameObject, nameof(AddExternStatus), "__immunedBuffs.Contains(buff) is true.", "status", status);
+                __Logger.LogR2(gameObject, nameof(AddExternStatus), "__immunedBuffs.Contains() is true.", "status", status);
                 return;
             }
 
@@ -181,7 +181,7 @@ namespace Game
                 externTable.Add(status, tuple);
                 if (!prevValue)
                 {
-                    __Logger.LogR2(gameObject, nameof(AddExternStatus), "Extern-Status is activated", "status", status);
+                    __Logger.LogR2(gameObject, nameof(AddExternStatus), "Extern-Status activated", "status", status);
                     onStatusActive?.Invoke(status);
                 }
             }
@@ -205,7 +205,7 @@ namespace Game
 
                 if (prevStackCount != 0 && prevValue && !CheckStatus(status))
                 {
-                    __Logger.LogR2(gameObject, nameof(RemoveStatus), "Stackable-Status is deactivated", "status", status);
+                    __Logger.LogR2(gameObject, nameof(RemoveStatus), "Stackable-Status deactivated", "status", status);
                     onStatusDeactive?.Invoke(status);
                 }
             }
@@ -213,7 +213,7 @@ namespace Game
             {
                 if (__uniqueTable.Remove(status) && prevValue && !CheckStatus(status))
                 {
-                    __Logger.LogR2(gameObject, nameof(RemoveStatus), "Unique-Status is deactivated", "status", status);
+                    __Logger.LogR2(gameObject, nameof(RemoveStatus), "Unique-Status deactivated", "status", status);
                     onStatusDeactive?.Invoke(status);
                 }
             }
@@ -227,7 +227,7 @@ namespace Game
             var prevValue = CheckStatus(status);
             if (externTable.Remove(status) && prevValue && !CheckStatus(status))
             {
-                __Logger.LogR2(gameObject, nameof(RemoveStatus), "Extern-Status is deactivated", "status", status);
+                __Logger.LogR2(gameObject, nameof(RemoveStatus), "Extern-Status deactivated", "status", status);
                 onStatusDeactive?.Invoke(status);
             }
         }
@@ -257,7 +257,7 @@ namespace Game
                     //* 시간이 경관된 Status 삭제
                     if (timeStamp > 0 && timeStamp < Time.time)
                     {
-                        __Logger.LogR2(gameObject, nameof(OnTickHandler), "Stackable-Status is time-out.", "status", t.Key, "stackCount", t.Value.Count);
+                        __Logger.LogR2(gameObject, nameof(OnTickHandler), "Stackable-Status time-out.", "status", t.Key, "stackCount", t.Value.Count);
                         t.Value.RemoveAt(i);
                         continue;
                     }
@@ -265,7 +265,7 @@ namespace Game
 
                 if (prevStackCount != 0 && t.Value.Count == 0 && prevValue && !CheckStatus(t.Key))
                 {
-                    __Logger.LogR2(gameObject, nameof(OnTickHandler), "Stackable-Status is deactivated", "status", t.Key);
+                    __Logger.LogR2(gameObject, nameof(OnTickHandler), "Stackable-Status deactivated", "status", t.Key);
                     onStatusDeactive?.Invoke(t.Key);
                 }
             }
@@ -279,12 +279,12 @@ namespace Game
                 //* 시간이 경관된 buff 삭제
                 if (timeStamp > 0 && timeStamp < Time.time)
                 {
-                    __Logger.LogR2(gameObject, nameof(OnTickHandler), "Unique-Status is time-out.", "status", pair.Key);
+                    __Logger.LogR2(gameObject, nameof(OnTickHandler), "Unique-Status time-out.", "status", pair.Key);
                     __uniqueTable.Remove(pair.Key);
 
                     if (prevValue && !CheckStatus(pair.Key))
                     {
-                        __Logger.LogR2(gameObject, nameof(OnTickHandler), "Unique-Status is deactivated", "status", pair.Key);
+                        __Logger.LogR2(gameObject, nameof(OnTickHandler), "Unique-Status deactivated", "status", pair.Key);
                         onStatusDeactive?.Invoke(pair.Key);
                     }
                 }
@@ -302,11 +302,11 @@ namespace Game
                     if (timeStamp > 0 && timeStamp < Time.time)
                     {
                         p.Value.Remove(pair.Key);
-                        __Logger.LogR2(gameObject, nameof(OnTickHandler), "Extern-Status is time-out.", "status", pair.Key);
+                        __Logger.LogR2(gameObject, nameof(OnTickHandler), "Extern-Status time-out.", "status", pair.Key);
 
                         if (prevValue && !CheckStatus(pair.Key))
                         {
-                            __Logger.LogR2(gameObject, nameof(OnTickHandler), "Extern-Status is deactivated", "status", pair.Key);
+                            __Logger.LogR2(gameObject, nameof(OnTickHandler), "Extern-Status deactivated", "status", pair.Key);
                             onStatusDeactive?.Invoke(pair.Key);
                         }
                     }

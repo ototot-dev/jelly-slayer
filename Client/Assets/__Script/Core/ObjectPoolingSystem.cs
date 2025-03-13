@@ -39,6 +39,10 @@ namespace Game
                 handler.sourcePath = sourcePath;
                 handler.poolableComponent = handler.GetComponent<T>();
                 handler.poolable = handler.poolableComponent as IObjectPoolable;
+                
+#if UNITY_EDITOR
+                handler.gameObject.name = handler.gameObject.name + $"-{++__instanceCount}";
+#endif
             }
 
             handler.transform.SetPositionAndRotation(position, rotation);
@@ -68,6 +72,10 @@ namespace Game
                 handler.sourcePrefab = sourcePrefab;
                 handler.poolableComponent = handler.GetComponent<T>();
                 handler.poolable = handler.poolableComponent as IObjectPoolable;
+
+#if UNITY_EDITOR
+                handler.gameObject.name = handler.gameObject.name + $"-{++__instanceCount}";
+#endif
             }
 
             handler.transform.SetPositionAndRotation(position, rotation);
@@ -101,6 +109,7 @@ namespace Game
             }
         }
 
+        int __instanceCount;
         readonly Dictionary<string, HashSet<ObjectPoolableHandler>> __poolA = new();
         readonly Dictionary<GameObject, HashSet<ObjectPoolableHandler>> __poolB = new();
     }

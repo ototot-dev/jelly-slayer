@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UniRx;
-using Unity.Profiling;
 using UnityEngine;
 
 namespace Game
@@ -755,17 +754,17 @@ namespace Game
             return TraceActionTargets(Matrix4x4.TRS(offset + __pawnBrain.coreColliderHelper.pawnCollider.bounds.center - __pawnBrain.coreColliderHelper.transform.position, Quaternion.Euler(pitchYawRoll), Vector3.one), fanRadius, fanAngle, fanHeight, minRadius, maxTargetNum, debuffParams, sendDamageImmediately, drawGizmosEnabled, drawGizmosDuration);
         }
 
-        public List<PawnColliderHelper> TraceActionTargets(Matrix4x4 fanMatrix, float fanRadius, float fanAngle, float fanHeight, float minRadius, int maxTargetNum = -1, PawnStatusController.StatusParam[] debuffParams = null, bool sendDamageImmediately = false, bool drawGizmosEnabled = false, float drawGizmosDuration = 0)
+        public List<PawnColliderHelper> TraceActionTargets(Matrix4x4 fanOffsetMatrix, float fanRadius, float fanAngle, float fanHeight, float minRadius, int maxTargetNum = -1, PawnStatusController.StatusParam[] debuffParams = null, bool sendDamageImmediately = false, bool drawGizmosEnabled = false, float drawGizmosDuration = 0)
         {
             Debug.Assert(CheckActionRunning() && currActionContext.isTraceRunning, $"Brain: {gameObject}, CheckActionRunning(): {CheckActionRunning()}, currActionContext.traceRunning: {currActionContext.isTraceRunning}");
 
-            var fanCenter = __pawnBrain.coreColliderHelper.pawnCollider.bounds.center + __pawnBrain.coreColliderHelper.transform.rotation * fanMatrix.GetPosition();
+            var fanCenter = __pawnBrain.coreColliderHelper.pawnCollider.bounds.center + __pawnBrain.coreColliderHelper.transform.rotation * fanOffsetMatrix.GetPosition();
             var overlappedCount = __traceLayerNames != null ?
                 Physics.OverlapCapsuleNonAlloc(fanCenter + 0.5f * fanHeight * Vector3.up, fanCenter + 0.5f * fanHeight * Vector3.down, fanRadius, __tempCollidersNonAlloc, LayerMask.GetMask(__traceLayerNames.ToArray())) :
                 Physics.OverlapCapsuleNonAlloc(fanCenter + 0.5f * fanHeight * Vector3.up, fanCenter + 0.5f * fanHeight * Vector3.down, fanRadius, __tempCollidersNonAlloc);
 
-            var localToWorld = __pawnBrain.coreColliderHelper.transform.localToWorldMatrix * fanMatrix;
-            var worldToLocal = localToWorld.inverse;
+            var fanLocalToWorldMatrix = __pawnBrain.coreColliderHelper.transform.localToWorldMatrix * fanOffsetMatrix;
+            var worldToLocal = fanLocalToWorldMatrix.inverse;
             var compareDot = -1f;
             var compareSqrDistance = -1f;
             var compareColliderRadius = 0f;
@@ -855,7 +854,7 @@ namespace Game
                         if (r != null) Gizmos.DrawWireCube(r.pawnCollider.bounds.center, r.pawnCollider.bounds.extents);
 
                     Gizmos.color = Color.yellow;
-                    GizmosDrawExtension.DrawFanCylinder(localToWorld, fanRadius, fanAngle, fanHeight, 12);
+                    GizmosDrawExtension.DrawFanCylinder(fanLocalToWorldMatrix, fanRadius, fanAngle, fanHeight, 12);
                 });
             }
 

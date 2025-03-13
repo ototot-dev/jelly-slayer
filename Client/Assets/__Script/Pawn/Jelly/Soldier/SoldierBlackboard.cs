@@ -57,6 +57,7 @@ namespace Game
             [Header("JumpAttack")]
             public float minJumpAttackDistance = 1f;
             public float maxJumpAttackDistance = 1f;
+            public float jumpAttackProbBoostRateOnTick = 0.1f;
 
             [Header("Counter")]
             public float counterProbBoostRateOnGuard; //* 가드 후 반격 발생 확률 증가
@@ -66,7 +67,7 @@ namespace Game
             public float missileEmitIntervalA = 1f;
             public float missileEmitIntervalB = 1f;
             public float missileEmitSpeed = 10f;
-            public float missileProbBoostRateOnIdle = 0.1f;
+            public float missileProbBoostRateOnTick = 0.1f;
             public Transform missileEmitPoint;
             public GameObject missilePrefab;
 
@@ -82,7 +83,7 @@ namespace Game
             public float leapJumpHeight = 1f;
             public float leapRootMotionDistance = 1f;
             public float leapRootMotionMultiplier = 1f;
-            public float leapProbBoostRateOnIdle = 0.1f;
+            public float leapProbBoostRateOnTick = 0.1f;
 
             [Header("Backstep")]
             public float backstepProb = 1f;

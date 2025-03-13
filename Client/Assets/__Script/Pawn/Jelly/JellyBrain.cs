@@ -99,7 +99,7 @@ namespace Game
                 if ((actionContext.actionData?.actionPoint ?? 0) > 0)
                 {
                     JellyBB.stat.ConsumeActionPoint(actionContext.actionData.actionPoint);
-                    __Logger.LogR1(gameObject, "ActionPoint is consumed.", "stat.actionPoint", JellyBB.stat.actionPoint, "actionData.actionPoint", actionContext.actionData.actionPoint);
+                    __Logger.LogR1(gameObject, "ConsumeActionPoint()", "stat.actionPoint", JellyBB.stat.actionPoint, "actionData.actionPoint", actionContext.actionData.actionPoint);
                 }
             };
         }
