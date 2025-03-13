@@ -25,7 +25,6 @@ namespace Game
             public bool legAnimGlueEnabled;
             public bool interruptEnabled;
             public bool activeParryEnabled;
-            public bool isTraceRunning;
             public bool manualAdvanceEnabled;
             public float manualAdvanceTime;
             public float manualAdvanceSpeed;
@@ -61,7 +60,6 @@ namespace Game
                 legAnimGlueEnabled = true;
                 interruptEnabled = false;
                 activeParryEnabled = false;
-                isTraceRunning = false;
                 this.manualAdvanceEnabled = manualAdvacneEnabled;
                 manualAdvanceTime = 0f;
                 manualAdvanceSpeed = actionSpeed;
@@ -96,7 +94,6 @@ namespace Game
                 legAnimGlueEnabled = true;
                 interruptEnabled = false;
                 activeParryEnabled = false;
-                isTraceRunning = false;
                 manualAdvanceEnabled = false;
                 manualAdvanceTime = 0f;
                 manualAdvanceSpeed = actionSpeed;
@@ -661,17 +658,6 @@ namespace Game
                 onActiveParryEnabled?.Invoke(currActionContext);
             }
         }
-
-        public void SetTraceRunning(bool newValue)
-        {
-            if (!CheckActionRunning())
-            {
-                __Logger.WarningR2(gameObject, nameof(SetTraceRunning), "CheckActionRunning() return false.");
-                return;
-            }
-
-            currActionContext.isTraceRunning = newValue;
-        }
         
         static readonly RaycastHit[] __tempHitsNonAlloc = new RaycastHit[16];
         static readonly Collider[] __tempCollidersNonAlloc = new Collider[16];
@@ -696,8 +682,6 @@ namespace Game
 
         public void StartTraceActionTargets(Collider traceCollider, int samplingRate = 60, bool multiHitEnabled = false, PawnStatusController.StatusParam[] debuffParams = null, bool sendDamageImmediately = false, bool drawGizmosEnabled = false, float drawGizmosDuration = 0)
         {
-            SetTraceRunning(true);
-
             __traceLayerMask = LayerMask.GetMask(__traceLayerNames.ToArray());
             __traceCount = 0;
             __traceSampleInterval = 1f / (float)samplingRate;
@@ -734,8 +718,6 @@ namespace Game
 
         public int FinishTraceActionTargets()
         {
-            SetTraceRunning(false);
-
             __traceCollider = null;
             __traceBoxCollider = null;
             __traceSphereCollider = null;
@@ -756,8 +738,6 @@ namespace Game
 
         public List<PawnColliderHelper> TraceActionTargets(Matrix4x4 fanOffsetMatrix, float fanRadius, float fanAngle, float fanHeight, float minRadius, int maxTargetNum = -1, PawnStatusController.StatusParam[] debuffParams = null, bool sendDamageImmediately = false, bool drawGizmosEnabled = false, float drawGizmosDuration = 0)
         {
-            Debug.Assert(CheckActionRunning() && currActionContext.isTraceRunning, $"Brain: {gameObject}, CheckActionRunning(): {CheckActionRunning()}, currActionContext.traceRunning: {currActionContext.isTraceRunning}");
-
             var fanCenter = __pawnBrain.coreColliderHelper.pawnCollider.bounds.center + __pawnBrain.coreColliderHelper.transform.rotation * fanOffsetMatrix.GetPosition();
             var overlappedCount = __traceLayerNames != null ?
                 Physics.OverlapCapsuleNonAlloc(fanCenter + 0.5f * fanHeight * Vector3.up, fanCenter + 0.5f * fanHeight * Vector3.down, fanRadius, __tempCollidersNonAlloc, LayerMask.GetMask(__traceLayerNames.ToArray())) :

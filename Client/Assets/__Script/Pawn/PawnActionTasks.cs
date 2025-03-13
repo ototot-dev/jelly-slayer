@@ -1305,20 +1305,15 @@ namespace Game.NodeCanvasExtension
                 __lastSampleTimeStamp = 0f;
                 __sentDamageBrains.Clear();
 
-                //* Trace 활성화
-                __pawnActionCtrler.SetTraceRunning(true);
-
                 __traceDisposable = Observable.EveryLateUpdate()
                     .TakeWhile(_ => __pawnActionCtrler.CheckActionRunning() && __pawnActionCtrler.currActionContext.actionInstanceId == __capturedActionInstanceId)
                     .DoOnCancel(() =>
                     {
-                        __pawnActionCtrler.SetTraceRunning(false);
                         __traceDisposable = null;
                         __sentDamageBrains.Clear();
                     })
                     .DoOnCompleted(() =>
                     {
-                        __pawnActionCtrler.SetTraceRunning(false);
                         __traceDisposable = null;
                         __sentDamageBrains.Clear();
                     })

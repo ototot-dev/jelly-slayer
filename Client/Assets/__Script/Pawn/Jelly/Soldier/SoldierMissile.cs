@@ -36,7 +36,7 @@ namespace Game
             emitterBrain.Where(v => v != null).Subscribe(v => 
             {
                 __homingTargetBrain = v.PawnBB.TargetBrain;
-                __actionData ??= v.GetComponent<PawnActionController>().currActionContext.actionData;
+                __actionData ??= DatasheetManager.Instance.GetActionData(PawnId.Soldier, "Missile");
                 Debug.Assert(__actionData != null);
             }).AddTo(this);
 

@@ -82,7 +82,7 @@ namespace Game
             ActionDataSelector.ReserveSequence(ActionPatterns.Missile, "Backstep", 0.2f, "Missile");
             ActionDataSelector.ReserveSequence(ActionPatterns.ComboAttack, "Attack#1", "Attack#2", "Attack#3");
             ActionDataSelector.ReserveSequence(ActionPatterns.CounterCombo, "Counter", "Counter", 0.1f , "Attack#3");
-            ActionDataSelector.ReserveSequence(ActionPatterns.Leap, "Backstep", 0.2f, "Missile", 0.2f, "Leap");
+            ActionDataSelector.ReserveSequence(ActionPatterns.Leap, "Backstep", 0.2f, "Missile", 1f, "Leap");
 
             onUpdate += () =>
             {
@@ -114,12 +114,12 @@ namespace Game
 
                 if (!ActionCtrler.CheckActionPending() && (!ActionCtrler.CheckActionRunning() || ActionCtrler.CanInterruptAction()) && BB.TargetPawn != null)
                 {
-                    if (ActionDataSelector.TryPickRandomSelection(UnityEngine.Random.Range(0.5f, 1f), -1f, out var randomActionData))
+                    if (ActionDataSelector.TryPickRandomSelection(UnityEngine.Random.Range(0.8f, 1f), -1f, out var randomActionData))
                     {
                         if (randomActionData == ActionDataSelector.GetSequence(ActionPatterns.Missile).Last())
                         {
                             ActionDataSelector.EnqueueSequence(ActionPatterns.Missile);
-                            ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.Leap).Last());
+                            // ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.Leap).Last());
                             ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.JumpAttack).First());
                             ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.ComboAttack).First());
                             ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.CounterCombo).First());
