@@ -120,8 +120,8 @@ Material:
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
     - _FadeAlphaMultiplier: 1
-    - _FadeEndLength: 1
-    - _FadeStartLength: 0
+    - _FadeEndLength: 2
+    - _FadeStartLength: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
