@@ -51,6 +51,7 @@ namespace Game
         {
             public GameObject onHitFx;
             public GameObject onGuardParriedFx;
+            public GameObject onGuardParriedFx2;
             public GameObject onBlockFx;
             public GameObject onBleedFx;
             public GameObject[] onBloodBurstFx;

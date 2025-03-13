@@ -50,6 +50,7 @@ namespace Game
                 {
                     EffectManager.Instance.Show(__brain.BB.graphics.onHitFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()) * Quaternion.Euler(90f, 0f, 0f), Vector3.one, 1f);
                     SoundManager.Instance.PlayWithClip(__brain.BB.audios.onHitAudioClip);
+                    SoundManager.Instance.PlayWithClip(__brain.BB.audios.onHitAudioClip2);
                 }
 
                 ShowHitColor(__brain.bodyHitColliderHelper);

@@ -118,6 +118,7 @@ namespace Game
         public class Audios
         {
             public AudioClip onHitAudioClip;
+            public AudioClip onHitAudioClip2;
             public AudioClip onBigHitAudioClip;
             public AudioClip onKickHitAudioClip;
             public AudioClip onBleedingAudioClip;
