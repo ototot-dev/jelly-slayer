@@ -47,65 +47,54 @@ namespace Game
         {
             Debug.Assert(damageContext.receiverBrain == __brain);
 
-            if (damageContext.actionResult == ActionResults.Damaged || damageContext.actionResult == ActionResults.GuardBreak)
+            if (damageContext.actionResult == ActionResults.Damaged)
             {
-                var hitVec = damageContext.receiverBrain.GetWorldPosition() - damageContext.senderBrain.GetWorldPosition();
-                hitVec = damageContext.receiverBrain.GetWorldTransform().InverseTransformDirection(hitVec).Vector2D().normalized;
-                if (Mathf.Abs(hitVec.x) > Mathf.Abs(hitVec.z))
-                {
-                    __brain.AnimCtrler.mainAnimator.SetFloat("HitX", hitVec.x > 0f ? 1f : -1f);
-                    __brain.AnimCtrler.mainAnimator.SetFloat("HitY", 0f);
-                }
-                else
-                {
-                    __brain.AnimCtrler.mainAnimator.SetFloat("HitX", 0f);
-                    __brain.AnimCtrler.mainAnimator.SetFloat("HitY", hitVec.z > 0f ? 1f : -1f);
-                }
+                //* 구르기 불가 상태 부여
+                var cannotRollDuration = Mathf.Max(0.1f, damageContext.receiverPenalty.Item2 - DatasheetManager.Instance.GetPlayerData().earlyRollOffsetOnStarggerd);
+                __brain.StatusCtrler.AddStatus(PawnStatus.CanNotRoll, 1f, cannotRollDuration);
                 __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0);
                 __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
 
+                //* 경직 지속 시간과 맞춰주기 위해서 'AnimSpeed' 값을 조정함
                 if (GetSuperArmorLevel() != SuperArmorLevels.CanNotStarggerOnDamaged)
-                {
-                    //* 경직 지속 시간과 맞춰주기 위해서 'AnimSpeed' 값을 조정함
                     __brain.AnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1f / damageContext.receiverPenalty.Item2);
-                }
-                
-                if (damageContext.actionResult == ActionResults.Damaged)
+
+                var viewMatrix = GameContext.Instance.mainCameraCtrler.cameraTransform.worldToLocalMatrix;
+                var hitPointOffsetVec = viewMatrix.MultiplyPoint(damageContext.hitPoint.AdjustY(0f)) - viewMatrix.MultiplyPoint(__brain.GetWorldPosition().AdjustY(0f));
+                if (Mathf.Abs(hitPointOffsetVec.x) > Mathf.Abs(hitPointOffsetVec.y))
                 {
-                    SoundManager.Instance.Play(SoundID.HIT_FLESH);
-
-                    var viewMatrix = GameContext.Instance.mainCameraCtrler.cameraTransform.worldToLocalMatrix;
-                    var hitPointOffsetVec = viewMatrix.MultiplyPoint(damageContext.hitPoint.AdjustY(0f)) - viewMatrix.MultiplyPoint(__brain.GetWorldPosition().AdjustY(0f));
-                    if (Mathf.Abs(hitPointOffsetVec.x) > Mathf.Abs(hitPointOffsetVec.y))
-                    {
-                        EffectManager.Instance.Show(__brain.BB.graphics.onBloodBurstFx[0], damageContext.hitPoint, GameContext.Instance.mainCameraCtrler.BillboardRotation, 0.6f * (hitPointOffsetVec.x > 0f ? new Vector3(-1f, 1f, 1f) : Vector3.one))
-                            .transform.SetParent(__brain.bodyHitColliderHelper.transform, true);
-                    }
-                    else
-                    {
-                        EffectManager.Instance.Show(__brain.BB.graphics.onBloodBurstFx[1], damageContext.hitPoint, GameContext.Instance.mainCameraCtrler.BillboardRotation, Vector3.one)
-                            .transform.SetParent(__brain.bodyHitColliderHelper.transform, true);
-                    }
-
-                    EffectManager.Instance.Show(__brain.BB.graphics.onBleedFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()), Vector3.one)
+                    EffectManager.Instance.Show(__brain.BB.graphics.onBloodBurstFx[0], damageContext.hitPoint, GameContext.Instance.mainCameraCtrler.BillboardRotation, 0.6f * (hitPointOffsetVec.x > 0f ? new Vector3(-1f, 1f, 1f) : Vector3.one))
                         .transform.SetParent(__brain.bodyHitColliderHelper.transform, true);
                 }
                 else
                 {
-                    EffectManager.Instance.Show(__brain.BB.graphics.onBlockFx, __brain.BB.attachment.leftMechHandBone.transform.position, Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward, Vector3.up), Vector3.one);
-                    SoundManager.Instance.Play(SoundID.HIT_BLOCK);
+                    EffectManager.Instance.Show(__brain.BB.graphics.onBloodBurstFx[1], damageContext.hitPoint, GameContext.Instance.mainCameraCtrler.BillboardRotation, Vector3.one)
+                        .transform.SetParent(__brain.bodyHitColliderHelper.transform, true);
                 }
+                EffectManager.Instance.Show(__brain.BB.graphics.onBleedFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()), Vector3.one)
+                    .transform.SetParent(__brain.bodyHitColliderHelper.transform, true);
+
+                SoundManager.Instance.Play(SoundID.HIT_FLESH);
+                ShowHitColor(__brain.bodyHitColliderHelper);
 
                 var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
                 Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
                     .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity, Time.fixedDeltaTime))
                     .AddTo(this);
+            }
+            else if (damageContext.actionResult == ActionResults.GuardBreak)
+            {
+                __brain.StatusCtrler.AddStatus(PawnStatus.CanNotRoll, 1f, damageContext.receiverPenalty.Item2);
+                __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 2);
+                __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
 
-                ShowHitColor(__brain.bodyHitColliderHelper);
+                EffectManager.Instance.Show(__brain.BB.graphics.onBlockFx, __brain.BB.attachment.leftMechHandBone.transform.position, Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward, Vector3.up), Vector3.one);
+                SoundManager.Instance.Play(SoundID.HIT_BLOCK);
 
-                //* 구르기 불가 상태 부여
-                var cannotRollDuration = Mathf.Max(0.1f, damageContext.receiverPenalty.Item2 - DatasheetManager.Instance.GetPlayerData().earlyRollOffsetOnStarggerd);
-                __brain.StatusCtrler.AddStatus(PawnStatus.CanNotRoll, 1f, cannotRollDuration);
+                var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
+                    .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity, Time.fixedDeltaTime))
+                    .AddTo(this);
             }
             else //* Sender의 액션을 파훼된 경우
             {
