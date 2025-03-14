@@ -384,29 +384,28 @@ namespace Game
                         continue;
                     if (__tracePawnNames.Count > 0 && !__tracePawnNames.Contains(hitColliderHelper.pawnBrain.PawnBB.common.pawnName))
                         continue;
+                    if (!__multiHitEnabled && __tracedPawnBrains.Contains(hitColliderHelper.pawnBrain))
+                        continue;
 
-                    if (__multiHitEnabled || !__tracedPawnBrains.Contains(hitColliderHelper.pawnBrain))
+                    __tracedPawnBrains.Add(hitColliderHelper.pawnBrain);
+
+                    if (__sendDamageOnTrace)
                     {
-                        if (!__multiHitEnabled)
-                            __tracedPawnBrains.Add(hitColliderHelper.pawnBrain);
+                        hitColliderHelper.pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__pawnBrain, hitColliderHelper.pawnBrain, currActionContext.actionData, hitColliderHelper.pawnCollider, currActionContext.insufficientStamina));
 
-                        if (__sendDamageOnTrace)
+                        //* Debuff 할당
+                        if (__debuffParams != null && __debuffParams.Length > 0)
                         {
-                            hitColliderHelper.pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__pawnBrain, hitColliderHelper.pawnBrain, currActionContext.actionData, hitColliderHelper.pawnCollider, currActionContext.insufficientStamina));
-
-                            //* Debuff 할당
-                            if (__debuffParams != null && __debuffParams.Length > 0)
+                            foreach (var p in __debuffParams)
                             {
-                                foreach (var p in __debuffParams)
-                                {
-                                    if (p.isExtern && hitColliderHelper.pawnBrain.TryGetComponent<PawnActionController>(out var receiverActionCtrler))
-                                        hitColliderHelper.pawnBrain.PawnStatusCtrler.AddExternStatus(receiverActionCtrler, p);
-                                    else
-                                        hitColliderHelper.pawnBrain.PawnStatusCtrler.AddStatus(p);
-                                }
+                                if (p.isExtern && hitColliderHelper.pawnBrain.TryGetComponent<PawnActionController>(out var receiverActionCtrler))
+                                    hitColliderHelper.pawnBrain.PawnStatusCtrler.AddExternStatus(receiverActionCtrler, p);
+                                else
+                                    hitColliderHelper.pawnBrain.PawnStatusCtrler.AddStatus(p);
                             }
                         }
                     }
+                    
                 }
 
                 Array.Clear(__tempHitsNonAlloc, 0, __tempHitsNonAlloc.Length);

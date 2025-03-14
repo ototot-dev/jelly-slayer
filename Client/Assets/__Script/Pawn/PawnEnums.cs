@@ -67,7 +67,7 @@ namespace Game
         Blocked,
         GuardBreak,
         GuardParried,
-        KickParried,
+        PunchParried,
         ProjectileReflected,
     }
 

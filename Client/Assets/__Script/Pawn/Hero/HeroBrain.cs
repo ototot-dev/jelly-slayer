@@ -132,6 +132,15 @@ namespace Game
                 ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
             };
 
+            PawnHP.onAvoided += (_, reason) =>
+            {
+                switch (reason)
+                {
+                    case "Jump": TimeManager.Instance.SlomoTime(this, 0.7f, 0.2f); break;
+                    case "Dodge": TimeManager.Instance.SlomoTime(this, 0.7f, 0.2f); break;
+                }
+            };
+
             PawnHP.onDamaged += (damageContext) =>
             {
                 //! Sender와 Recevier가 동일할 수 있기 때문에 반드시 'receiverBrain'을 먼저 체크해야 함
@@ -232,7 +241,7 @@ namespace Game
                 case ActionResults.Blocked: 
                     ActionCtrler.StartAction(damageContext, "!OnBlocked", string.Empty); break;
                     
-                case ActionResults.KickParried:
+                case ActionResults.PunchParried:
                 case ActionResults.GuardParried:
                     ActionCtrler.StartAction(damageContext, damageContext.senderPenalty.Item1 == Game.PawnStatus.Groggy ? "!OnGroggy" : "!OnParried", string.Empty); break;
             }

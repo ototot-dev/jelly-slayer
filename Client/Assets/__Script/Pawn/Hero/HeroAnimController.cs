@@ -77,12 +77,12 @@ namespace Game
                     mainAnimator.SetBool("IsGuarding", false);
             }).AddTo(this);
 
-            __brain.BB.body.isRolling.Subscribe(v =>
+            __brain.BB.body.isRolling.Skip(1).Subscribe(v =>
             {
                 if (v)
-                    legAnimator.User_FadeEnabled(0f);
-                else
                     legAnimator.User_FadeToDisabled(0f);
+                else
+                    legAnimator.User_FadeEnabled(0f);
 
             }).AddTo(this);
 

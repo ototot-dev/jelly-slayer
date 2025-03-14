@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UniRx;
+using UnityEditor.Timeline.Actions;
 using UnityEngine;
 
 namespace Game
@@ -155,6 +156,8 @@ namespace Game
             }
         }
 
+
+        public Action<DamageContext, string> onAvoided;
         public Action<DamageContext> onDamaged;
         public Action<DamageContext> onDead;
 
@@ -173,16 +176,32 @@ namespace Game
             if (!damageContext.receiverBrain.PawnBB.IsSpawnFinished || damageContext.receiverBrain.PawnBB.IsDead || damageContext.receiverBrain.PawnBB.IsDown)
                 return;
 
+            var cannotHitOnJump = (damageContext.senderActionData?.cannotHitOnJump ?? 0) > 0;
+            if (!cannotHitOnJump && damageContext.receiverBrain is IPawnMovable receiverMovable && receiverMovable.IsJumping())
+            {
+                damageContext.receiverBrain.PawnHP.onAvoided.Invoke(damageContext, "Jump");
+                __Logger.LogR2(gameObject, nameof(DecideActionResult), "No ActionResult => receiverMovable.IsJumping()", "senderBrain", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
+                return;
+            }
+
+            var cannotHitOnRolling = (damageContext.senderActionData?.cannotHitOnRolling ?? 0) > 0;
+            if (!cannotHitOnRolling && damageContext.receiverBrain.TryGetComponent<PawnStatusController>(out var receiverBuffCtrler) && receiverBuffCtrler.CheckStatus(PawnStatus.InvincibleDodge))
+            {
+                damageContext.receiverBrain.PawnHP.onAvoided.Invoke(damageContext, "Dodge");
+                __Logger.LogR2(gameObject, nameof(DecideActionResult), "No ActionResult => InvincibleDodge.", "senderBrain", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
+                return;
+            }
+
             DecideActionResult(ref damageContext);
 
             if (damageContext.actionResult == ActionResults.Blocked) ProcessActionBlocked(ref damageContext);
-            else if (damageContext.actionResult == ActionResults.KickParried) ProcessActionKickParried(ref damageContext);
+            else if (damageContext.actionResult == ActionResults.PunchParried) ProcessActionKickParried(ref damageContext);
             else if (damageContext.actionResult == ActionResults.GuardParried) ProcessActionGuardParried(ref damageContext);
-            else if (damageContext.finalDamage > 0 || CalcFinalDamage(ref damageContext) > 0)
+            else  if (damageContext.finalDamage > 0 || CalcFinalDamage(ref damageContext) > 0)
             {
                 damageContext.actionResult = ActionResults.Damaged;
                 __Logger.LogR1(gameObject, nameof(ProcessDamageContext), "actionResult", damageContext.actionResult, "senderBrain", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
-
+                
                 ProcessActionDamaged(ref damageContext);
             }
             else
@@ -236,35 +255,21 @@ namespace Game
 
         void DecideActionResult(ref DamageContext damageContext)
         {
-            var canNotHitOnJump = (damageContext.senderActionData?.cannotHitOnJump ?? 1) > 0;
-            if (canNotHitOnJump && damageContext.receiverBrain is IPawnMovable receiverMovable && receiverMovable.IsJumping())
-            {
-                __Logger.LogR2(gameObject, nameof(DecideActionResult), "No ActionResult => cannotHitOnJump", "senderBrain", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
-                return;
-            }
-
-            var canNotHitOnRolling = (damageContext.senderActionData?.cannotHitOnRolling ?? 0) > 0;
-            if (canNotHitOnRolling && damageContext.receiverBrain.TryGetComponent<PawnStatusController>(out var receiverBuffCtrler) && receiverBuffCtrler.CheckStatus(PawnStatus.InvincibleDodge))
-            {
-                __Logger.LogR2(gameObject, nameof(DecideActionResult), "No ActionResult => cannotHitOnRolling.", "senderBrain", damageContext.senderBrain, "receiver", damageContext.receiverBrain);
-                return;
-            }
-
             var reflectiveDamage = damageContext.projectile != null && damageContext.projectile.reflectiveBrain.Value != null;
             if (reflectiveDamage)
                 Debug.Assert(damageContext.projectile.reflectiveBrain.Value == damageContext.senderBrain);
 
             var senderActionCtrler = damageContext.senderBrain.GetComponent<PawnActionController>();
             var receiverActionCtrler = damageContext.receiverBrain.GetComponent<PawnActionController>();
-            var canNotGuard = (damageContext.senderActionData?.cannotGuard ?? 0) > 0 || reflectiveDamage;
-            var canNotParry = (damageContext.senderActionData?.cannotParry ?? 0) > 0 || reflectiveDamage;
+            var cannotGuard = (damageContext.senderActionData?.cannotGuard ?? 0) > 0 || reflectiveDamage;
+            var cannotParry = (damageContext.senderActionData?.cannotParry ?? 0) > 0 || reflectiveDamage;
             if (receiverActionCtrler != null)
             {
-                if (!canNotParry && receiverActionCtrler.CanParryAction(ref damageContext))
+                if (!cannotParry && receiverActionCtrler.CanParryAction(ref damageContext))
                 {
                     if (damageContext.hitCollider == damageContext.receiverBrain.parryColliderHelper.pawnCollider)
                     {
-                        damageContext.actionResult = ActionResults.KickParried;
+                        damageContext.actionResult = ActionResults.PunchParried;
                         damageContext.receiverActionData = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "Kick");
                     }
                     else
@@ -273,7 +278,7 @@ namespace Game
                         damageContext.receiverActionData = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "GuardParry");
                     }
                 }
-                else if (!canNotGuard && receiverActionCtrler.CanBlockAction(ref damageContext))
+                else if (!cannotGuard && receiverActionCtrler.CanBlockAction(ref damageContext))
                 {
                     damageContext.actionResult = ActionResults.Blocked;
                     damageContext.receiverActionData = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "Blocking");
@@ -490,7 +495,7 @@ namespace Game
                 }
             }
         }
-
+ 
         float CalcFinalDamage(ref DamageContext damageContext)
         {
             var physDamage = Mathf.Max(0f, damageContext.senderBrain.PawnBB.stat.physAttack - damageContext.receiverBrain.PawnBB.stat.physDefence);

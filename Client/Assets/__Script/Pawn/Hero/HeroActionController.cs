@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using UniRx;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace Game
 {
@@ -146,7 +145,7 @@ namespace Game
 
                     ShowHitColor();
                 }
-                else if (damageContext.actionResult == ActionResults.KickParried)
+                else if (damageContext.actionResult == ActionResults.PunchParried)
                 {
                     var hitPoint = damageContext.senderBrain.coreColliderHelper.GetWorldCenter() + 
                         damageContext.senderBrain.coreColliderHelper.GetRadius() * (__brain.coreColliderHelper.GetWorldCenter() - damageContext.senderBrain.coreColliderHelper.GetWorldCenter()).Vector2D().normalized;

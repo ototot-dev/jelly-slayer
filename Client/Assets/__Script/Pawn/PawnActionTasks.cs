@@ -1368,21 +1368,20 @@ namespace Game.NodeCanvasExtension
 
                 foreach (var r in traceResults)
                 {
-                    if (!__sentDamageBrains.Contains(r.pawnBrain))
-                    {
-                        __sentDamageBrains.Add(r.pawnBrain);
-                        __pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__pawnBrain, r.pawnBrain, __actionData, r.pawnCollider, __pawnActionCtrler.currActionContext.insufficientStamina));
+                    if (__sentDamageBrains.Contains(r.pawnBrain)) continue;
+                    
+                    __sentDamageBrains.Add(r.pawnBrain);
+                    __pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__pawnBrain, r.pawnBrain, __actionData, r.pawnCollider, __pawnActionCtrler.currActionContext.insufficientStamina));
 
-                        //* Debuff 할당
-                        if (!debuffParams.isNoneOrNull && debuffParams.value.Length > 0)
+                    //* Debuff 할당
+                    if (!debuffParams.isNoneOrNull && debuffParams.value.Length > 0)
+                    {
+                        foreach (var p in debuffParams.value)
                         {
-                            foreach (var p in debuffParams.value)
-                            {
-                                if (p.isExtern && r.pawnBrain.TryGetComponent<PawnActionController>(out var receiverActionCtrler))
-                                    r.pawnBrain.PawnStatusCtrler.AddExternStatus(receiverActionCtrler, p);
-                                else
-                                    r.pawnBrain.PawnStatusCtrler.AddStatus(p);
-                            }
+                            if (p.isExtern && r.pawnBrain.TryGetComponent<PawnActionController>(out var receiverActionCtrler))
+                                r.pawnBrain.PawnStatusCtrler.AddExternStatus(receiverActionCtrler, p);
+                            else
+                                r.pawnBrain.PawnStatusCtrler.AddStatus(p);
                         }
                     }
                 }
