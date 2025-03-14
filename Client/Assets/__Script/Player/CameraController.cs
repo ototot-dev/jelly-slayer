@@ -84,6 +84,9 @@ namespace Game
             //* 점프 동작과 같이 y축 변화량이 큰 경우엔 카메라가 대상을 따라가는 y축 속도를 살짝 줄여줌
             var interpY = __currFocusPoint.y.LerpSpeed(GameContext.Instance.playerCtrler.possessedBrain.GetWorldPosition().y, 4f, Time.deltaTime);
             __currFocusPoint = GameContext.Instance.playerCtrler.possessedBrain.GetWorldPosition();
+            if (GameContext.Instance.playerCtrler.possessedBrain.BB.TargetBrain != null)
+                __currFocusPoint = 0.5f * (__currFocusPoint + GameContext.Instance.playerCtrler.possessedBrain.BB.TargetBrain.GetWorldPosition());
+
             __currFocusPoint.y = interpY;
 
             //* 고도 처리

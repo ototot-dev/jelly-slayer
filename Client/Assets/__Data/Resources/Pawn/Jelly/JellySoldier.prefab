@@ -84296,7 +84296,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainAnimator: {fileID: 5816116270319112580}
   rigBuilder: {fileID: 3909224498346023959}
-  rigSetup: {fileID: 0}
+  rigSetup: {fileID: 2222767562176998279}
   legAnimator: {fileID: 754787376927509189}
   ragdollAnimator: {fileID: 5978158408337654307}
   headBone: {fileID: 5278882544679535675}

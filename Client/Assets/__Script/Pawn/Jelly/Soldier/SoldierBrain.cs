@@ -1,7 +1,5 @@
-using UGUI.Rx;
 using UniRx;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace Game
 {
@@ -117,17 +115,9 @@ namespace Game
                     if (ActionDataSelector.TryPickRandomSelection(UnityEngine.Random.Range(0.8f, 1f), -1f, out var randomActionData))
                     {
                         if (randomActionData == ActionDataSelector.GetSequence(ActionPatterns.Missile).Last())
-                        {
                             ActionDataSelector.EnqueueSequence(ActionPatterns.Missile);
-                            // ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.Leap).Last());
-                            ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.JumpAttack).First());
-                            ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.ComboAttack).First());
-                            ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.CounterCombo).First());
-                        }
                         else if (randomActionData == ActionDataSelector.GetSequence(ActionPatterns.Leap).Last())
-                        {
                             ActionDataSelector.EnqueueSequence(ActionPatterns.Leap);
-                        }
                     }
                     else
                     {
@@ -176,7 +166,13 @@ namespace Game
 
             __pawnActionCtrler.onActionFinished += (actionContext) =>
             {
-                if (actionContext.actionName == "Leap")
+                if (actionContext.actionName == "Missile")
+                {
+                    ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.JumpAttack).First());
+                    ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.ComboAttack).First());
+                    ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.CounterCombo).First());
+                }
+                else if (actionContext.actionName == "Leap")
                 {
                     ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.Missile).Last());
                     ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.JumpAttack).First());

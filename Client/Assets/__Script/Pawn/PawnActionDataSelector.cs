@@ -25,6 +25,7 @@ namespace Game
                 get => __sequenceData[index];
                 set => __sequenceData[index] = value;
             }
+            public int Size() => __sequenceData.Length;
             public MainTable.ActionData First() => __sequenceData[0];
             public MainTable.ActionData Last() => __sequenceData[__sequenceData.Length - 1];
             public MainTable.ActionData Curr() => __sequenceData[__currIndex];
@@ -212,6 +213,17 @@ namespace Game
                 __Logger.WarningR2(gameObject, nameof(BoostSelection), "SourceActionStates.TryGetValue() return false", "actionName", actionData.actionName);
         }
         
+        public void ResetSelection<T>(T alias, float resetProb = 0f) where T : Enum
+        {
+            var sequence = GetSequence(alias);
+            for (int i = 0; i < sequence.Size(); i++)
+                ResetSelection(sequence[i], resetProb);
+        }
+        public void ResetSelection<T>(T alias, int dataIndex, float resetProb = 0f) where T : Enum
+        {
+            ResetSelection(GetSequenceData(alias, dataIndex), resetProb);
+        }
+
         public void ResetSelection(string actionName, float resetProb = 0f) => ResetSelection(GetActionData(actionName), resetProb);
         public void ResetSelection(MainTable.ActionData actionData, float resetProb = 0f)
         {   
@@ -231,7 +243,11 @@ namespace Game
 
         public bool EvaluateSelection<T>(T alias, float probConstraint = -1f, float staminaConstraint = -1f) where T : Enum
         {
-            return EvaluateSelection(GetSequenceData(alias), probConstraint, staminaConstraint);
+            var sequence = GetSequence(alias);
+            for (int i = 0; i < sequence.Size(); i++)
+                if (!EvaluateSelection(sequence[i], probConstraint, staminaConstraint)) return false;
+
+            return true;
         }
         public bool EvaluateSelection<T>(T alias, int dataIndex, float probConstraint = -1f, float staminaConstraint = -1f) where T : Enum
         {

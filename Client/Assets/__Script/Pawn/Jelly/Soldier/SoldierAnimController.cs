@@ -2,9 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
 using FIMSpace.BonesStimulation;
-using FIMSpace.FEyes;
 using UniRx;
-using Unity.Linq;
 using UnityEngine;
 
 namespace Game
