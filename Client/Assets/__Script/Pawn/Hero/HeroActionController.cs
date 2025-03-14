@@ -134,7 +134,7 @@ namespace Game
                     __brain.AnimCtrler.mainAnimator.SetTrigger("OnGuardParry");
                     SoundManager.Instance.Play(SoundID.HIT_PARRYING);
 
-                    TimeManager.Instance.SlomoTime(this, 0.5f, 0.4f);
+                    TimeManager.Instance.SlomoTime(this, 0.5f, 0.2f);
 
                     Observable.Timer(TimeSpan.FromMilliseconds(50)).Subscribe(_ =>
                     {
