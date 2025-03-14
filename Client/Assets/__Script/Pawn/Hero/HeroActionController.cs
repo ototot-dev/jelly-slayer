@@ -135,11 +135,13 @@ namespace Game
                     __brain.AnimCtrler.mainAnimator.SetTrigger("OnGuardParry");
                     SoundManager.Instance.Play(SoundID.HIT_PARRYING);
 
+                    TimeManager.Instance.SlomoTime(this, 0.5f, 0.4f);
+
                     Observable.Timer(TimeSpan.FromMilliseconds(50)).Subscribe(_ =>
                     {
                         var pos = __brain.BB.attachment.leftMechHandBone.transform.position + 0.5f * __brain.coreColliderHelper.transform.forward;
                         EffectManager.Instance.Show(__brain.BB.graphics.onGuardParriedFx, pos, Quaternion.identity, 0.8f * Vector3.one);
-                        EffectManager.Instance.Show(__brain.BB.graphics.onGuardParriedFx2, pos, Quaternion.identity, 1.5f * Vector3.one);
+                        EffectManager.Instance.Show(__brain.BB.graphics.onGuardParriedFx2, pos, Quaternion.identity, 2.0f * Vector3.one);
                     });
 
                     ShowHitColor();
