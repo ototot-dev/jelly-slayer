@@ -84296,7 +84296,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainAnimator: {fileID: 5816116270319112580}
   rigBuilder: {fileID: 3909224498346023959}
-  rigSetup: {fileID: 2222767562176998279}
+  rigSetup: {fileID: 0}
   legAnimator: {fileID: 754787376927509189}
   ragdollAnimator: {fileID: 5978158408337654307}
   headBone: {fileID: 5278882544679535675}
@@ -84467,16 +84467,13 @@ MonoBehaviour:
     maxSpacingDistance: 3
     minApproachDistance: 1
   action:
-    minCoolDownDuration: 4
-    maxCoolDownDuration: 5
-    sequenceCoolDownTimeLeft: 0
-    comboAttackDistance: 3
+    minCoolDownDuration: 2
+    maxCoolDownDuration: 4
+    comboAttackDistance: 5
     counterComboAttackDistance: 4
     counterComboAttachProb: 0.4
     counterAttackProbOnGuard: 0.5
-    minJumpAttackDistance: 4
-    maxJumpAttackDistance: 6
-    jumpAttackProbBoostRateOnTick: 0.1
+    jumpAttackProbBoostRate: 0.3
     missileEmitNum: 3
     missileEmitIntervalA: 0.1
     missileEmitIntervalB: 1
