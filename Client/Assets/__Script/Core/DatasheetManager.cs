@@ -27,6 +27,11 @@ namespace Game
             IsLoaded = true;
         }
 
+        public MainTable.PlayerData GetPlayerData()
+        {
+            return MainTable.PlayerData.GetList().First();
+        }
+
         public MainTable.ActionData GetActionData(PawnId pawnId, string actionName)
         {
             if (__actionDataMap.TryGetValue(pawnId, out var temp) && temp.TryGetValue(actionName, out var ret))

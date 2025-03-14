@@ -49,7 +49,6 @@ namespace Game
             [Header("CoolDown")]
             public float minCoolDownDuration = 1f;
             public float maxCoolDownDuration= 1f;
-            public float sequenceCoolDownTimeLeft;
 
             [Header("Combo")]
             public float comboAttackDistance = 1f;
@@ -58,10 +57,7 @@ namespace Game
             public float counterAttackProbOnGuard = 0.1f;
 
             [Header("JumpAttack")]
-            public float minJumpAttackDistance = 1f;
-            public float maxJumpAttackDistance = 1f;
-            public float jumpAttackProbBoostRateOnTick = 0.1f;
-
+            public float jumpAttackProbBoostRate = 0.1f;
 
             [Header("Missile")]
             public int missileEmitNum = 1;

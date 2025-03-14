@@ -104,8 +104,8 @@ namespace Game
                 ShowHitColor(__brain.bodyHitColliderHelper);
 
                 //* 구르기 불가 상태 부여
-                var canNotRollDuration = Mathf.Max(0.1f, damageContext.receiverPenalty.Item2 - MainTable.PlayerData.GetList().First().earlyRollOffsetOnStarggerd);
-                __brain.StatusCtrler.AddStatus(PawnStatus.CanNotRoll, 1f, canNotRollDuration);
+                var cannotRollDuration = Mathf.Max(0.1f, damageContext.receiverPenalty.Item2 - DatasheetManager.Instance.GetPlayerData().earlyRollOffsetOnStarggerd);
+                __brain.StatusCtrler.AddStatus(PawnStatus.CanNotRoll, 1f, cannotRollDuration);
             }
             else //* Sender의 액션을 파훼된 경우
             {

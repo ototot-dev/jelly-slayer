@@ -74,7 +74,7 @@ namespace Game
         {
             base.StartInternal();
 
-            ActionDataSelector.ReserveSequence(ActionPatterns.JumpAttack, "JumpAttack");
+            ActionDataSelector.ReserveSequence(ActionPatterns.JumpAttack, 1f, "JumpAttack");
             ActionDataSelector.ReserveSequence(ActionPatterns.Backstep, "Backstep");
             ActionDataSelector.ReserveSequence(ActionPatterns.Counter, "Counter");
             ActionDataSelector.ReserveSequence(ActionPatterns.Missile, "Backstep", 0.2f, "Missile");
@@ -115,9 +115,17 @@ namespace Game
                     if (ActionDataSelector.TryPickRandomSelection(UnityEngine.Random.Range(0.8f, 1f), -1f, out var randomActionData))
                     {
                         if (randomActionData == ActionDataSelector.GetSequence(ActionPatterns.Missile).Last())
+                        {
                             ActionDataSelector.EnqueueSequence(ActionPatterns.Missile);
+                            if (ActionDataSelector.EvaluateSelection(ActionDataSelector.GetSequence(ActionPatterns.JumpAttack).Last(), UnityEngine.Random.Range(0f, 1f)))
+                                ActionDataSelector.EnqueueSequence(ActionPatterns.JumpAttack);
+                            else
+                                ActionDataSelector.BoostSelection(ActionDataSelector.GetSequence(ActionPatterns.JumpAttack).Last(), BB.action.jumpAttackProbBoostRate);
+                        }
                         else if (randomActionData == ActionDataSelector.GetSequence(ActionPatterns.Leap).Last())
+                        {
                             ActionDataSelector.EnqueueSequence(ActionPatterns.Leap);
+                        }
                     }
                     else
                     {
@@ -125,33 +133,20 @@ namespace Game
                         ActionDataSelector.BoostSelection("Missile", BB.action.missileProbBoostRateOnTick * deltaTick);
 
                         var distanceToTarget = coreColliderHelper.GetDistanceBetween(BB.TargetBrain.coreColliderHelper);
-                        if (distanceToTarget < BB.action.comboAttackDistance)
+                        if (distanceToTarget < BB.action.counterComboAttackDistance)
                         {
-                            if (ActionDataSelector.EvaluateSelection(ActionPatterns.ComboAttack) && CheckTargetVisibility())
+                            if (distanceToTarget > BB.action.comboAttackDistance || BB.action.counterComboAttachProb > UnityEngine.Random.Range(0f, 1f))
+                            {
+                                if (ActionDataSelector.EvaluateSelection(ActionPatterns.CounterCombo) && CheckTargetVisibility())
+                                {
+                                    ActionDataSelector.EnqueueSequence(ActionPatterns.CounterCombo);
+                                    ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.ComboAttack).First());
+                                }
+                            }
+                            else if (ActionDataSelector.EvaluateSelection(ActionPatterns.ComboAttack) && CheckTargetVisibility())
                             {
                                 ActionDataSelector.EnqueueSequence(ActionPatterns.ComboAttack);
                                 ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.CounterCombo).First());
-                            }
-                        }
-                        else if (distanceToTarget < BB.action.counterComboAttackDistance)
-                        {
-                            if (ActionDataSelector.EvaluateSelection(ActionPatterns.CounterCombo) && CheckTargetVisibility())
-                            {
-                                ActionDataSelector.EnqueueSequence(ActionPatterns.CounterCombo);
-                                ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.ComboAttack).First());
-                            }
-                        }
-                        else if (distanceToTarget < BB.action.maxJumpAttackDistance)
-                        {
-                            if (ActionDataSelector.EvaluateSelection(ActionPatterns.JumpAttack, UnityEngine.Random.Range(0f, 1f)) && CheckTargetVisibility())
-                            {
-                                ActionDataSelector.EnqueueSequence(ActionPatterns.JumpAttack);
-                                if (ActionDataSelector.EvaluateSelection(ActionPatterns.ComboAttack))
-                                    ActionDataSelector.EnqueueSequence(ActionPatterns.ComboAttack);
-                            }
-                            else
-                            {
-                                ActionDataSelector.BoostSelection("JumpAttack", BB.action.jumpAttackProbBoostRateOnTick * deltaTick);
                             }
                         }
                     }
@@ -168,7 +163,6 @@ namespace Game
             {
                 if (actionContext.actionName == "Missile")
                 {
-                    ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.JumpAttack).First());
                     ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.ComboAttack).First());
                     ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.CounterCombo).First());
                 }
@@ -224,7 +218,7 @@ namespace Game
                 if (debugActionDisabled)
                     return;
 
-                if (!ActionCtrler.CheckActionPending() && UnityEngine.Random.Range(0f, 1f) <= BB.action.counterAttackProbOnGuard)
+                if (!ActionCtrler.CheckActionPending() && BB.action.counterAttackProbOnGuard > UnityEngine.Random.Range(0f, 1f))
                 {
                     ActionDataSelector.ClearSequences();
 
