@@ -97,7 +97,7 @@ namespace Game
                 for(int ia=0; ia<list.Count; ia++) 
                 {
                     pawn = list[ia];
-                    if (pawn != null)
+                    if (pawn != null && pawn.PawnBB.IsDead == false)
                     {
                         count++;
                         vPos += pawn.GetWorldPosition();
