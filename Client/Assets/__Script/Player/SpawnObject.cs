@@ -96,7 +96,11 @@ public class SpawnObject : MonoBehaviour
     }
     GameObject SpawnPawn(string resPath, Vector3 pos) 
     {
-        var pawnObj = Instantiate(Resources.Load<GameObject>(resPath));
+        var resObj = Resources.Load<GameObject>(resPath);
+        if (resObj == null)
+            return null;
+
+        var pawnObj = Instantiate(resObj);
         pawnObj.transform.SetPositionAndRotation(pos, Quaternion.identity);
 
         _pawnList.Add(pawnObj);
