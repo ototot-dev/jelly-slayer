@@ -169,7 +169,6 @@ namespace Game
                 else if (actionContext.actionName == "Leap")
                 {
                     ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.Missile).Last());
-                    ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.JumpAttack).First());
                     ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.ComboAttack).First());
                     ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.CounterCombo).First());
                 }

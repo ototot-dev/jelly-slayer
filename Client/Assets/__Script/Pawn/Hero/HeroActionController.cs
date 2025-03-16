@@ -88,6 +88,9 @@ namespace Game
                 __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 2);
                 __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
 
+                //* 경직 지속 시간과 맞춰주기 위해서 'AnimSpeed' 값을 조정함
+                __brain.AnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1f / damageContext.receiverPenalty.Item2);
+
                 EffectManager.Instance.Show(__brain.BB.graphics.onBlockFx, __brain.BB.attachment.leftMechHandBone.transform.position, Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward, Vector3.up), Vector3.one);
                 SoundManager.Instance.Play(SoundID.HIT_BLOCK);
 
@@ -102,8 +105,11 @@ namespace Game
                 {
                     __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 1);
                     __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
-                    __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", true);
 
+                    //* 경직 지속 시간과 맞춰주기 위해서 'AnimSpeed' 값을 조정함
+                    __brain.AnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1f / damageContext.receiverPenalty.Item2);
+
+                    __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", true);
                     Observable.Timer(TimeSpan.FromSeconds(0.5f)).Subscribe(_ => 
                     {
                         if (!__brain.BB.IsGuarding && !__brain.BB.IsCharging)
@@ -163,6 +169,9 @@ namespace Game
 
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
             __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 3);
+
+            //* 경직 지속 시간과 맞춰주기 위해서 'AnimSpeed' 값을 조정함
+            __brain.AnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1f / damageContext.senderPenalty.Item2);
 
             var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.receiverBrain.GetWorldTransform().forward.Vector2D().normalized;
             Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))

@@ -13,7 +13,7 @@ namespace Game
         public float k = 10;
         public float damping = 1f;
         public float dragging = 2f;
-        public Vector3 gravity = new Vector3(0, -9.8f, 0);
+        public Vector3 gravity = new(0, -9.8f, 0);
         public AnimationCurve coreDraggingCurve;
         public AnimationCurve boundsRadiusCurve;
         public Transform coreAttachPoint;
@@ -215,12 +215,12 @@ namespace Game
             return gridNum * gridNum * z + gridNum * y + x;
         }
 
-        public Tuple<int, int, int> FromIndex(int index)
+        public ValueTuple<int, int, int> FromIndex(int index)
         {
             var x = index % gridNum;
             var z = index / (gridNum * gridNum);
             var y = (index - gridNum * gridNum * z - x) / gridNum;
-            return new Tuple<int, int, int>(x, y, z);
+            return (x, y, z);
         }
 
         void FixedUpdate()

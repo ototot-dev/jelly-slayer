@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: JellyMeshCube
-  m_Shader: {fileID: 4800000, guid: e91e5ec4ebe794254b65ae3b5bbfed79, type: 3}
+  m_Name: jellymesh_cube_hitcolor
+  m_Shader: {fileID: 4800000, guid: 37ad894861ec84968b81dbd3cee38df8, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -120,11 +120,12 @@ Material:
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
     - _FadeAlphaMultiplier: 1
-    - _FadeEndLength: 2
+    - _FadeEndLength: 1
     - _FadeStartLength: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
+    - _HitColorAlpha: 0
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005

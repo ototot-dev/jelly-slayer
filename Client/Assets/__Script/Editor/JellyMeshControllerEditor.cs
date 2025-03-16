@@ -15,6 +15,17 @@ namespace Game
 
             if (GUILayout.Button("Fade Out"))
                 (target as JellyMeshController).FadeOut(0.2f);
+
+            if (GUILayout.Button("Impulse"))
+                (target as JellyMeshController).springMassSystem.AddImpulseRandom((target as JellyMeshController).impulseStrength);
+
+            if (GUILayout.Button("Hit"))
+            {
+                (target as JellyMeshController).springMassSystem.AddImpulseRandom((target as JellyMeshController).impulseStrength);
+                (target as JellyMeshController).ShowHitColor(0.2f);
+
+                EffectManager.Instance.Show((target as JellyMeshController).onHitFx, (target as JellyMeshController).springMassSystem.core.position, Quaternion.identity, Vector3.one);
+            }
         }
     }
 

@@ -13,6 +13,7 @@ Shader "Game/JellyMeshDither"
 		_FadeEndLength("FadeEndLength", Range( 1 , 100)) = 1
 		_FadeAlphaMultiplier("FadeAlphaMultiplier", Range( 0 , 10)) = 1
 		_AlphaMultiplier("AlphaMultiplier", Range( 0 , 1)) = 0
+		_HitColorAlpha("HitColorAlpha", Float) = 0
 		[HideInInspector] _texcoord( "", 2D ) = "white" {}
 
 
@@ -306,6 +307,7 @@ Shader "Game/JellyMeshDither"
 			float4 _MainTex_ST;
 			float4 _BaseColor;
 			float3 _CenterPosition;
+			float _HitColorAlpha;
 			float _AlphaMultiplier;
 			float _FadeStartLength;
 			float _FadeEndLength;
@@ -576,6 +578,8 @@ Shader "Game/JellyMeshDither"
 				WorldViewDirection = SafeNormalize( WorldViewDirection );
 
 				float2 uv_MainTex = input.ase_texcoord9.xy * _MainTex_ST.xy + _MainTex_ST.zw;
+				float4 color67 = IsGammaSpace() ? float4(1,1,1,0) : float4(1,1,1,0);
+				float3 lerpResult68 = lerp( ( tex2D( _MainTex, uv_MainTex ).rgb * _BaseColor.rgb ) , color67.rgb , _HitColorAlpha);
 				
 				float4 ase_positionSSNorm = ScreenPos / ScreenPos.w;
 				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
@@ -587,7 +591,7 @@ Shader "Game/JellyMeshDither"
 				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
 				
 
-				float3 BaseColor = ( tex2D( _MainTex, uv_MainTex ).rgb * _BaseColor.rgb );
+				float3 BaseColor = lerpResult68;
 				float3 Normal = float3(0, 0, 1);
 				float3 Emission = 0;
 				float3 Specular = 0.5;
@@ -932,6 +936,7 @@ Shader "Game/JellyMeshDither"
 			float4 _MainTex_ST;
 			float4 _BaseColor;
 			float3 _CenterPosition;
+			float _HitColorAlpha;
 			float _AlphaMultiplier;
 			float _FadeStartLength;
 			float _FadeEndLength;
@@ -1274,6 +1279,7 @@ Shader "Game/JellyMeshDither"
 			float4 _MainTex_ST;
 			float4 _BaseColor;
 			float3 _CenterPosition;
+			float _HitColorAlpha;
 			float _AlphaMultiplier;
 			float _FadeStartLength;
 			float _FadeEndLength;
@@ -1587,6 +1593,7 @@ Shader "Game/JellyMeshDither"
 			float4 _MainTex_ST;
 			float4 _BaseColor;
 			float3 _CenterPosition;
+			float _HitColorAlpha;
 			float _AlphaMultiplier;
 			float _FadeStartLength;
 			float _FadeEndLength;
@@ -1817,6 +1824,8 @@ Shader "Game/JellyMeshDither"
 				#endif
 
 				float2 uv_MainTex = input.ase_texcoord4.xy * _MainTex_ST.xy + _MainTex_ST.zw;
+				float4 color67 = IsGammaSpace() ? float4(1,1,1,0) : float4(1,1,1,0);
+				float3 lerpResult68 = lerp( ( tex2D( _MainTex, uv_MainTex ).rgb * _BaseColor.rgb ) , color67.rgb , _HitColorAlpha);
 				
 				float4 screenPos = input.ase_texcoord5;
 				float4 ase_positionSSNorm = screenPos / screenPos.w;
@@ -1829,7 +1838,7 @@ Shader "Game/JellyMeshDither"
 				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
 				
 
-				float3 BaseColor = ( tex2D( _MainTex, uv_MainTex ).rgb * _BaseColor.rgb );
+				float3 BaseColor = lerpResult68;
 				float3 Emission = 0;
 				float Alpha = ( _AlphaMultiplier * lerpResult60 );
 				float AlphaClipThreshold = max( 0.45 , clampResult59 );
@@ -1925,6 +1934,7 @@ Shader "Game/JellyMeshDither"
 			float4 _MainTex_ST;
 			float4 _BaseColor;
 			float3 _CenterPosition;
+			float _HitColorAlpha;
 			float _AlphaMultiplier;
 			float _FadeStartLength;
 			float _FadeEndLength;
@@ -2135,6 +2145,8 @@ Shader "Game/JellyMeshDither"
 				#endif
 
 				float2 uv_MainTex = input.ase_texcoord2.xy * _MainTex_ST.xy + _MainTex_ST.zw;
+				float4 color67 = IsGammaSpace() ? float4(1,1,1,0) : float4(1,1,1,0);
+				float3 lerpResult68 = lerp( ( tex2D( _MainTex, uv_MainTex ).rgb * _BaseColor.rgb ) , color67.rgb , _HitColorAlpha);
 				
 				float4 screenPos = input.ase_texcoord3;
 				float4 ase_positionSSNorm = screenPos / screenPos.w;
@@ -2147,7 +2159,7 @@ Shader "Game/JellyMeshDither"
 				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
 				
 
-				float3 BaseColor = ( tex2D( _MainTex, uv_MainTex ).rgb * _BaseColor.rgb );
+				float3 BaseColor = lerpResult68;
 				float Alpha = ( _AlphaMultiplier * lerpResult60 );
 				float AlphaClipThreshold = max( 0.45 , clampResult59 );
 
@@ -2254,6 +2266,7 @@ Shader "Game/JellyMeshDither"
 			float4 _MainTex_ST;
 			float4 _BaseColor;
 			float3 _CenterPosition;
+			float _HitColorAlpha;
 			float _AlphaMultiplier;
 			float _FadeStartLength;
 			float _FadeEndLength;
@@ -2660,6 +2673,7 @@ Shader "Game/JellyMeshDither"
 			float4 _MainTex_ST;
 			float4 _BaseColor;
 			float3 _CenterPosition;
+			float _HitColorAlpha;
 			float _AlphaMultiplier;
 			float _FadeStartLength;
 			float _FadeEndLength;
@@ -2930,6 +2944,8 @@ Shader "Game/JellyMeshDither"
 				WorldViewDirection = SafeNormalize( WorldViewDirection );
 
 				float2 uv_MainTex = input.ase_texcoord9.xy * _MainTex_ST.xy + _MainTex_ST.zw;
+				float4 color67 = IsGammaSpace() ? float4(1,1,1,0) : float4(1,1,1,0);
+				float3 lerpResult68 = lerp( ( tex2D( _MainTex, uv_MainTex ).rgb * _BaseColor.rgb ) , color67.rgb , _HitColorAlpha);
 				
 				float4 ase_positionSSNorm = ScreenPos / ScreenPos.w;
 				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
@@ -2941,7 +2957,7 @@ Shader "Game/JellyMeshDither"
 				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
 				
 
-				float3 BaseColor = ( tex2D( _MainTex, uv_MainTex ).rgb * _BaseColor.rgb );
+				float3 BaseColor = lerpResult68;
 				float3 Normal = float3(0, 0, 1);
 				float3 Emission = 0;
 				float3 Specular = 0.5;
@@ -3135,6 +3151,7 @@ Shader "Game/JellyMeshDither"
 			float4 _MainTex_ST;
 			float4 _BaseColor;
 			float3 _CenterPosition;
+			float _HitColorAlpha;
 			float _AlphaMultiplier;
 			float _FadeStartLength;
 			float _FadeEndLength;
@@ -3433,6 +3450,7 @@ Shader "Game/JellyMeshDither"
 			float4 _MainTex_ST;
 			float4 _BaseColor;
 			float3 _CenterPosition;
+			float _HitColorAlpha;
 			float _AlphaMultiplier;
 			float _FadeStartLength;
 			float _FadeEndLength;
@@ -3741,6 +3759,7 @@ Shader "Game/JellyMeshDither"
 			float4 _MainTex_ST;
 			float4 _BaseColor;
 			float3 _CenterPosition;
+			float _HitColorAlpha;
 			float _AlphaMultiplier;
 			float _FadeStartLength;
 			float _FadeEndLength;
@@ -3932,14 +3951,18 @@ Node;AmplifyShaderEditor.ClampOpNode;59;-416,1040;Inherit;False;3;0;FLOAT;0;Fals
 Node;AmplifyShaderEditor.LerpOp;60;-480,576;Inherit;False;3;0;FLOAT;1;False;1;FLOAT;0;False;2;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RangedFloatNode;61;-496,784;Inherit;False;Constant;_AlphaClip;AlphaClip;6;0;Create;True;0;0;0;False;0;False;0.45;0;0;1;0;1;FLOAT;0
 Node;AmplifyShaderEditor.RangedFloatNode;65;-608,432;Inherit;False;Property;_AlphaMultiplier;AlphaMultiplier;6;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;41;-256,0;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.SamplerNode;1;-608,-256;Inherit;True;Property;_TextureSample0;Texture Sample 0;0;0;Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
-Node;AmplifyShaderEditor.TexturePropertyNode;2;-896,-256;Inherit;True;Property;_MainTex;MainTex;0;0;Create;True;0;0;0;False;0;False;None;370aac370cd1f40c195d8cd962d67e15;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
-Node;AmplifyShaderEditor.ColorNode;42;-544,0;Inherit;False;Property;_BaseColor;BaseColor;1;0;Create;True;0;0;0;False;0;False;0,0,0,0;0,0,0,0;True;True;0;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
-Node;AmplifyShaderEditor.RangedFloatNode;63;-416,224;Inherit;False;Constant;_Metallic;Metallic;6;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
 Node;AmplifyShaderEditor.RangedFloatNode;64;-416,304;Inherit;False;Constant;_Smoothness;Smoothness;6;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;66;-304,496;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMaxOpNode;62;-192,832;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;63;-416,224;Inherit;False;Constant;_Metallic;Metallic;6;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.LerpOp;68;-368,-112;Inherit;False;3;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT;0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.SamplerNode;1;-992,-432;Inherit;True;Property;_TextureSample0;Texture Sample 0;0;0;Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
+Node;AmplifyShaderEditor.TexturePropertyNode;2;-1280,-432;Inherit;True;Property;_MainTex;MainTex;0;0;Create;True;0;0;0;False;0;False;None;370aac370cd1f40c195d8cd962d67e15;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
+Node;AmplifyShaderEditor.ColorNode;42;-928,-176;Inherit;False;Property;_BaseColor;BaseColor;1;0;Create;True;0;0;0;False;0;False;0,0,0,0;0,0,0,0;True;True;0;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
+Node;AmplifyShaderEditor.ColorNode;67;-704,-48;Inherit;False;Constant;_HitColor;HitColor;7;0;Create;True;0;0;0;False;0;False;1,1,1,0;0,0,0,0;True;True;0;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
+Node;AmplifyShaderEditor.WireNode;70;-445.1237,61.38245;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;69;-672,176;Inherit;False;Property;_HitColorAlpha;HitColorAlpha;7;0;Create;True;0;0;0;False;0;False;0;0;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;41;-640,-288;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;16;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;ExtraPrePass;0;0;ExtraPrePass;5;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;0;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;0;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;18;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;ShadowCaster;0;2;ShadowCaster;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;True;False;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;True;3;False;;False;True;1;LightMode=ShadowCaster;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;19;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;DepthOnly;0;3;DepthOnly;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;True;True;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;False;False;True;1;LightMode=DepthOnly;False;False;0;;0;0;Standard;0;False;0
@@ -3974,17 +3997,21 @@ WireConnection;3;2;38;0
 WireConnection;59;0;50;0
 WireConnection;60;1;3;0
 WireConnection;60;2;59;0
-WireConnection;41;0;1;5
-WireConnection;41;1;42;5
-WireConnection;1;0;2;0
 WireConnection;66;0;65;0
 WireConnection;66;1;60;0
 WireConnection;62;0;61;0
 WireConnection;62;1;59;0
-WireConnection;17;0;41;0
+WireConnection;68;0;41;0
+WireConnection;68;1;67;5
+WireConnection;68;2;70;0
+WireConnection;1;0;2;0
+WireConnection;70;0;69;0
+WireConnection;41;0;1;5
+WireConnection;41;1;42;5
+WireConnection;17;0;68;0
 WireConnection;17;3;63;0
 WireConnection;17;4;64;0
 WireConnection;17;6;66;0
 WireConnection;17;7;62;0
 ASEEND*/
-//CHKSM=F45BA6E80258187D208CD1CCAA7E083459C4F15A
+//CHKSM=FDB0AC8F23B57A9B13F3A693EBAEF17BF91EF83D
