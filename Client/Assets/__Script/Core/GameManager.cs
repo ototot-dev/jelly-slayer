@@ -135,6 +135,13 @@ public class GameManager : MonoSingleton<GameManager>
 
     public PawnBrainController _player;
 
+    private ObjManager _objManager;
+
+    private void Awake()
+    {
+        _objManager = gameObject.AddComponent<ObjManager>();
+    }
+
     // Start is called before the first frame update
     void Start()
     {

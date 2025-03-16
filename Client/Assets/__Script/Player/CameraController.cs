@@ -85,8 +85,26 @@ namespace Game
             var interpY = __currFocusPoint.y.LerpSpeed(GameContext.Instance.playerCtrler.possessedBrain.GetWorldPosition().y, 4f, Time.deltaTime);
             __currFocusPoint = GameContext.Instance.playerCtrler.possessedBrain.GetWorldPosition();
             if (GameContext.Instance.playerCtrler.possessedBrain.BB.TargetBrain != null)
+            {
                 __currFocusPoint = 0.5f * (__currFocusPoint + GameContext.Instance.playerCtrler.possessedBrain.BB.TargetBrain.GetWorldPosition());
-
+            }
+            else 
+            {
+                int count = 1;
+                Vector3 vPos = __currFocusPoint;
+                var list = ObjManager.Instance.GetJellyList();
+                PawnBrainController pawn;
+                for(int ia=0; ia<list.Count; ia++) 
+                {
+                    pawn = list[ia];
+                    if (pawn != null && pawn.PawnBB.IsDead == false)
+                    {
+                        count++;
+                        vPos += pawn.GetWorldPosition();
+                    } 
+                }
+                __currFocusPoint = vPos / ((float)count);
+            }
             __currFocusPoint.y = interpY;
 
             //* 고도 처리
