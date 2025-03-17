@@ -73,6 +73,7 @@ namespace Game
         bool __prevIsHanging;
         float __currYawInterpSpeed;
         Vector3 __currFocusPoint;
+        Vector3 __currTargetPoint;
         HashSet<PawnBrainController> __listeningBrains = new();
 
         void LateUpdate()
@@ -95,10 +96,10 @@ namespace Game
                 __listeningBrains.Clear();
                 foreach (var c in GameContext.Instance.playerCtrler.possessedBrain.PawnSensorCtrler.ListeningColliders)
                 {
-                    if (c.TryGetComponent<PawnColliderHelper>(out var colliderHelper) && colliderHelper.pawnBrain != null && !__listeningBrains.Contains(colliderHelper.pawnBrain))
+                    if (c.TryGetComponent<PawnColliderHelper>(out var colliderHelper) && colliderHelper.pawnBrain != null && 
+                        colliderHelper.pawnBrain.CompareTag("Jelly") && !__listeningBrains.Contains(colliderHelper.pawnBrain))
                         __listeningBrains.Add(colliderHelper.pawnBrain);
                 }
-
                 var positionSum = GameContext.Instance.playerCtrler.possessedBrain.GetWorldPosition();
                 foreach (var b in __listeningBrains) positionSum += b.GetWorldPosition();
 
@@ -130,7 +131,7 @@ namespace Game
                 __currYawInterpSpeed = __currYawInterpSpeed.LerpSpeed(yawAngleSpeed, 100f, Time.deltaTime);
                 cameraTransform.rotation = Quaternion.Euler(currEulerAngles.x.LerpSpeed(yawAngleOnGrouned, __currYawInterpSpeed, Time.deltaTime), currEulerAngles.y, currEulerAngles.z);
             }
-
+            //__currTargetPoint += 0.1f * (__currFocusPoint - __currTargetPoint);
             cameraTransform.position = __currFocusPoint - 10f * cameraTransform.transform.forward;
 
             if ((Time.time - __shakeTimeStamp) < __shakeDuration)

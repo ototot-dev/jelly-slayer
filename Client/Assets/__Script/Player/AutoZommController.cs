@@ -1,5 +1,6 @@
 using UnityEngine;
 using PixelCamera;
+using System.Collections.Generic;
 
 namespace Game
 {
@@ -16,6 +17,8 @@ namespace Game
         public float _max = 1.2f;
         public float _limit = 4.0f;
         public float _rate = 0.2f;
+
+        HashSet<PawnBrainController> __listeningBrains = new();
 
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
@@ -49,17 +52,21 @@ namespace Game
             var heroPos = brain.coreColliderHelper.transform.position;
             if (target != null)
             {
-                var vDist = target.coreColliderHelper.transform.position - heroPos;
-                SetTargetZoom(vDist);
+                SetTargetZoom(target.coreColliderHelper.transform.position - heroPos);
             }
             else 
             {
+                __listeningBrains.Clear();
+                foreach (var c in brain.PawnSensorCtrler.ListeningColliders)
+                {
+                    if (c.TryGetComponent<PawnColliderHelper>(out var colliderHelper) && colliderHelper.pawnBrain != null &&
+                        colliderHelper.pawnBrain.CompareTag("Jelly") && !__listeningBrains.Contains(colliderHelper.pawnBrain))
+                        __listeningBrains.Add(colliderHelper.pawnBrain);
+                }
                 float distMax = 0;
                 PawnBrainController findBrain = null;
-                PawnBrainController[] brains = FindObjectsByType<PawnBrainController>(FindObjectsSortMode.None);
-                for (int ia = 0; ia < brains.Length; ia++)
+                foreach (var br in __listeningBrains)
                 {
-                    var br = brains[ia];
                     if(br != null &&  br != brain) 
                     {
                         var vDist = br.coreColliderHelper.transform.position - heroPos;
