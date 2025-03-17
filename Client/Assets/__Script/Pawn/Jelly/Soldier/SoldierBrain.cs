@@ -126,6 +126,11 @@ namespace Game
                         {
                             ActionDataSelector.EnqueueSequence(ActionPatterns.Leap);
                         }
+                        else
+                        {
+                            ActionDataSelector.BoostSelection("Leap", BB.action.leapProbBoostRateOnTick * deltaTick);
+                            ActionDataSelector.BoostSelection("Missile", BB.action.missileProbBoostRateOnTick * deltaTick);
+                        }
                     }
                     else
                     {

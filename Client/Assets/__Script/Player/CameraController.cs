@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using PixelCamera;
 using UniRx;
 using UnityEngine;
+using UnityEngine.Analytics;
 using UnityEngine.Rendering;
 
 namespace Game
@@ -69,9 +71,9 @@ namespace Game
         }
 
         bool __prevIsHanging;
-        // float __isHanging
         float __currYawInterpSpeed;
         Vector3 __currFocusPoint;
+        HashSet<PawnBrainController> __listeningBrains = new();
 
         void LateUpdate()
         {
@@ -90,20 +92,17 @@ namespace Game
             }
             else 
             {
-                int count = 1;
-                Vector3 vPos = __currFocusPoint;
-                var list = ObjManager.Instance.GetJellyList();
-                PawnBrainController pawn;
-                for(int ia=0; ia<list.Count; ia++) 
+                __listeningBrains.Clear();
+                foreach (var c in GameContext.Instance.playerCtrler.possessedBrain.PawnSensorCtrler.ListeningColliders)
                 {
-                    pawn = list[ia];
-                    if (pawn != null && pawn.PawnBB.IsDead == false)
-                    {
-                        count++;
-                        vPos += pawn.GetWorldPosition();
-                    } 
+                    if (c.TryGetComponent<PawnColliderHelper>(out var colliderHelper) && colliderHelper.pawnBrain != null && !__listeningBrains.Contains(colliderHelper.pawnBrain))
+                        __listeningBrains.Add(colliderHelper.pawnBrain);
                 }
-                __currFocusPoint = vPos / ((float)count);
+
+                var positionSum = GameContext.Instance.playerCtrler.possessedBrain.GetWorldPosition();
+                foreach (var b in __listeningBrains) positionSum += b.GetWorldPosition();
+
+                __currFocusPoint = positionSum / (__listeningBrains.Count + 1);
             }
             __currFocusPoint.y = interpY;
 
