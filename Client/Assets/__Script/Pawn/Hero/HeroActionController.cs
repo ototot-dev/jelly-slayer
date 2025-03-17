@@ -91,8 +91,8 @@ namespace Game
                 //* 경직 지속 시간과 맞춰주기 위해서 'AnimSpeed' 값을 조정함
                 __brain.AnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1f / damageContext.receiverPenalty.Item2);
 
-                EffectManager.Instance.Show(__brain.BB.graphics.onBlockFx, __brain.BB.attachment.leftMechHandBone.transform.position, Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward, Vector3.up), Vector3.one);
-                SoundManager.Instance.Play(SoundID.HIT_BLOCK);
+                EffectManager.Instance.Show(__brain.BB.graphics.onGuardBreakFx, __brain.BB.attachment.leftMechHandBone.transform.position, Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward, Vector3.up), Vector3.one);
+                SoundManager.Instance.PlayWithClip(__brain.BB.audios.onGuardBreakAudioClip);
 
                 var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
                 Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))

@@ -53,12 +53,28 @@ namespace Game
             public GameObject onGuardParriedFx;
             public GameObject onGuardParriedFx2;
             public GameObject onBlockFx;
+            public GameObject onGuardBreakFx;
             public GameObject onBleedFx;
             public GameObject[] onBloodBurstFx;
             public Material hitColor;
         }
 
         public Graphics graphics = new();
+
+        [Serializable]
+        public class Audios
+        {
+            public AudioClip onHitAudioClip;
+            public AudioClip onHitAudioClip2;
+            public AudioClip onBigHitAudioClip;
+            public AudioClip onKickHitAudioClip;
+            public AudioClip onBleedingAudioClip;
+            public AudioClip onMissedAudioClip;
+            public AudioClip onBlockedAudioClip;
+            public AudioClip onGuardBreakAudioClip;
+        }
+
+        public Audios audios = new();
 
         [Serializable]
         public class Attachment
