@@ -17,6 +17,7 @@ namespace Game
         public AnimationCurve coreDraggingCurve;
         public AnimationCurve boundsRadiusCurve;
         public Transform coreAttachPoint;
+        public Vector3 coreAttachPointOffset;
 
         [Header("Network")]
         public NetPoint[] points;
@@ -226,7 +227,7 @@ namespace Game
         void FixedUpdate()
         {
             if ((coreRigidBody == null || coreRigidBody.isKinematic) && coreAttachPoint != null)
-                core.SetPositionAndRotation(coreAttachPoint.position, coreAttachPoint.rotation);
+                core.SetPositionAndRotation(coreAttachPoint.position + coreAttachPointOffset, coreAttachPoint.rotation);
                 
             bounds.SetPositionAndRotation(core.position, core.rotation);
             body.SetPositionAndRotation(bounds.position, bounds.rotation);

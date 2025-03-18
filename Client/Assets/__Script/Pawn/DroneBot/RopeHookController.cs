@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine;
 using Obi;
-using UniRx;
 using System;
 
 namespace Game
@@ -17,6 +16,7 @@ namespace Game
         [Range(0, 1)]
         public float hookResolution = 0.5f;
         public float hookExtendRetractSpeed = 2f;
+        public float hookLengthMultilier = 1f;
         public float hookShootSpeed = 30f;
         public int particlePoolSize = 100;
 
@@ -222,7 +222,7 @@ namespace Game
             __obiRope.SetConstraintsDirty(Oni.ConstraintType.Pin);
 
             //* 기본 길이값 셋팅
-            hookingLength = (hookingCollider.transform.position - transform.position).magnitude * 0.7f;
+            hookingLength = (hookingCollider.transform.position - transform.position).magnitude;
             onRopeHooked?.Invoke(hookingCollider);
         }
 
@@ -249,7 +249,7 @@ namespace Game
                 var currLength = __obiRope.CalculateLength();
                 var restLength = __obiRope.restLength;
 
-                var distance = (hookingCollider.transform.position - transform.position).magnitude;
+                var distance = (hookingCollider.transform.position - transform.position).magnitude * hookLengthMultilier;
                 // __Logger.LogR(gameObject, nameof(FixedUpdate), "hookLength", hookLength, "currLength", currLength, "restLength", restLength);
 
                 // restLength - Mathf.Floor(distance);

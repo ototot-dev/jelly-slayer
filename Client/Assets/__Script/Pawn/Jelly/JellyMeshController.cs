@@ -14,10 +14,12 @@ namespace Game
     public class JellyMeshController : MonoBehaviour
     {
         [Header("Component")]
+        public JellyBrain jellyBrain;
         public JellySpringMassSystem springMassSystem;
         public JellyMeshBuilder meshBuilder;
         public FEyesAnimator eyeAnimator;
         public TailAnimator2[] tailAnimators;
+        public RopeHookController ropeHookCtrler;
 
         [Header("Parameter")]
         public float cubeSpreadRadius = 1f;
@@ -28,6 +30,7 @@ namespace Game
         public float impulseStrength = 1f;
 
         [Header("Graphics")]
+        public GameObject hoookingPointFx;
         public GameObject onHitFx;
         public Material cubeHitColorMaterial;
         public Material tailHitColorMaterial;
@@ -185,10 +188,12 @@ namespace Game
 
         void UpdateCoreAttachPointLookAt()
         {
+            springMassSystem.coreAttachPointOffset = 0.2f * Perlin.Noise(Time.time) * Vector3.up;
+
             var lookAtCameraVec = -GameContext.Instance.mainCameraCtrler.viewCamera.transform.forward;
             // springMassSystem.coreAttachPoint.transform.localPosition = __coreAttachPointLocalPositionCached;
             // springMassSystem.coreAttachPoint.transform.position += lookAtCameraVec;
-            springMassSystem.coreAttachPoint.transform.LookAt(springMassSystem.coreAttachPoint.transform.position + lookAtCameraVec);
+            springMassSystem.coreAttachPoint.transform.LookAt(springMassSystem.coreAttachPoint.position + lookAtCameraVec);
         }
 
         Dictionary<int, Material> __defaultCubeMeshMaterials;
@@ -197,6 +202,7 @@ namespace Game
         Material[] __defaultEyeMeshMaterials;
         Material __defaultBodyMeshMaterial;
         Tweener __tweener;
+        IDisposable __hookingPointFxDisposable;
 
         public void ShowHitColor(float duration)
         {
@@ -232,6 +238,28 @@ namespace Game
 
             __tweener?.Complete();
             __tweener = springMassSystem.coreAttachPoint.DOShakePosition(duration, 0.8f);
+        }
+
+        public void StartHook()
+        {
+            ropeHookCtrler.LaunchHook(jellyBrain.GetHookingColliderHelper().pawnCollider);
+
+            var hookingPointFx = EffectManager.Instance.ShowLooping(hoookingPointFx, jellyBrain.GetHookingColliderHelper().transform.position, Quaternion.identity, Vector3.one);
+            __hookingPointFxDisposable = Observable.EveryUpdate()
+                .DoOnCancel(() => hookingPointFx.Stop())
+                .DoOnCompleted(() => hookingPointFx.Stop())
+                .Subscribe(_ =>
+                {
+                    Debug.Assert(ropeHookCtrler.hookingCollider != null);
+                    hookingPointFx.transform.position = ropeHookCtrler.GetLastParticlePosition();
+                    //* 카메라 쪽으로 위치를 당겨서 겹쳐서 안보이게 되는 경우를 완화함
+                    hookingPointFx.transform.position -= GameContext.Instance.mainCameraCtrler.viewCamera.transform.forward;
+                }).AddTo(this);
+        }
+
+        public void FinishHook()
+        {
+            ropeHookCtrler.DetachHook();
         }
     }
 }

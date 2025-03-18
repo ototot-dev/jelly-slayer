@@ -16,6 +16,12 @@ namespace Game
             if (GUILayout.Button("Fade Out"))
                 (target as JellyMeshController).FadeOut(0.2f);
 
+            if (GUILayout.Button("Hook"))
+                (target as JellyMeshController).StartHook();
+
+            if (GUILayout.Button("Unhook"))
+                (target as JellyMeshController).FinishHook();
+
             if (GUILayout.Button("Impulse"))
                 (target as JellyMeshController).springMassSystem.AddImpulseRandom((target as JellyMeshController).impulseStrength);
 

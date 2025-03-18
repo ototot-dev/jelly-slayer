@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UniRx;
 using UnityEngine;
 
@@ -20,6 +21,8 @@ namespace Game
 
         public override bool CanBlockAction(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
+            return false;
+
             if (__brain.BB.IsGroggy)
                 return false;
             else if (__brain.ActionCtrler.CheckActionRunning() || __brain.StatusCtrler.CheckStatus(PawnStatus.Staggered) || __brain.StatusCtrler.CheckStatus(PawnStatus.CanNotGuard))
@@ -33,6 +36,15 @@ namespace Game
         public override IDisposable StartOnHitAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
         {
             Debug.Assert(damageContext.receiverBrain == __brain);
+
+            //* JellyMesh 태깅된 경우엔 별도 처리함
+            if (damageContext.hitCollider.gameObject.CompareTag("Jelly"))
+            {
+                if (damageContext.hitCollider.transform.parent.TryGetComponent<JellyMeshController>(out var jellyMeshCtrler))
+                    jellyMeshCtrler.ShowHitColor(0.1f);
+
+                return null;
+            }
 
             if (damageContext.actionResult == ActionResults.Damaged)
             {

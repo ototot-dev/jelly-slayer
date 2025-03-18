@@ -18294,7 +18294,7 @@ PrefabInstance:
     - target: {fileID: 9205371885998440386, guid: e96cffa9d00b6b545adfeb26165952cc, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 2137156142}
+      objectReference: {fileID: 1097399897}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -20194,6 +20194,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
+--- !u!114 &637793308 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5283667518194876718, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+  m_PrefabInstance: {fileID: 672230230}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95c63fd6887554b57a7853def302b0c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &637870195
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20960,8 +20971,8 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 183002243839654144, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
-      propertyPath: m_LocalPosition.y
+    - target: {fileID: 36127865068610452, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+      propertyPath: m_Radius
       value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 285314224288595747, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
@@ -21012,13 +21023,61 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2168992762603302668, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+      propertyPath: jellyBrain
+      value: 
+      objectReference: {fileID: 672230231}
+    - target: {fileID: 2168992762603302668, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+      propertyPath: ropeHookCtrler
+      value: 
+      objectReference: {fileID: 637793308}
+    - target: {fileID: 3016239198387136505, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 3016239198387136505, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+      propertyPath: m_TagString
+      value: Jelly
+      objectReference: {fileID: 0}
+    - target: {fileID: 5283667518194876718, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+      propertyPath: obiSolver
+      value: 
+      objectReference: {fileID: 1232886020}
+    - target: {fileID: 5283667518194876718, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+      propertyPath: obiCollider
+      value: 
+      objectReference: {fileID: 1232886019}
+    - target: {fileID: 5283667518194876718, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+      propertyPath: ropeMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: 06d7a238e9dbf4c4fb2dc71cdfb8d5f4, type: 2}
+    - target: {fileID: 6274011247229468413, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6274011247229468413, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6274011247229468413, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6518897691976235552, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
       propertyPath: EyesTarget
       value: 
       objectReference: {fileID: 203125858}
+    - target: {fileID: 6659814185532544708, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
     - target: {fileID: 8861700421523015734, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
       propertyPath: m_Name
       value: JellySoldier
+      objectReference: {fileID: 0}
+    - target: {fileID: 8861700421523015734, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -36895,6 +36954,43 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6029872931248605079, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
   m_PrefabInstance: {fileID: 1036703599}
   m_PrefabAsset: {fileID: 0}
+--- !u!84 &1097399897
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 640
+  m_Height: 360
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 94
+  m_ColorFormat: 4
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 1
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 0
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!1001 &1098174485
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -41164,6 +41260,28 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6029872931248605079, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
   m_PrefabInstance: {fileID: 2070444820}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1232886019 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2498935733467756536, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+  m_PrefabInstance: {fileID: 672230230}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6757b231cedd544c583ef8aeaf773b2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1232886020 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6683052773548716921, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+  m_PrefabInstance: {fileID: 672230230}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d174fab52f0c4b8399f25d5c3ea524c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1234178134 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4264307176717572268, guid: 11f4905232e574546b6da712e2a4daae, type: 3}
@@ -66396,43 +66514,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
---- !u!84 &2137156142
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 640
-  m_Height: 360
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 94
-  m_ColorFormat: 4
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 1
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 0
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!4 &2139913149 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7821217888551990375, guid: fec6123700ea2aa44a24818e607ed575, type: 3}
