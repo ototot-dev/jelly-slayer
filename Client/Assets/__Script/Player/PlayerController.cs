@@ -342,6 +342,8 @@ namespace Game
 
         public void OnRoll()
         {
+            if (possessedBrain == null) return;
+
             if (_isEnable_Roll == false)
                 return;
 

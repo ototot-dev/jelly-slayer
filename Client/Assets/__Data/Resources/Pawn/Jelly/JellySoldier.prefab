@@ -81752,7 +81752,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainAnimator: {fileID: 5816116270319112580}
   rigBuilder: {fileID: 3909224498346023959}
-  rigSetup: {fileID: 2222767562176998279}
+  rigSetup: {fileID: 0}
   legAnimator: {fileID: 754787376927509189}
   ragdollAnimator: {fileID: 5978158408337654307}
   headBone: {fileID: 5278882544679535675}
@@ -81999,19 +81999,21 @@ MonoBehaviour:
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"MagicPillarBlastRed":{"_value":2,"_name":"MagicPillarBlastRed","_id":"3b4d98d4-d3a3-4c3d-a537-4a0f468b9cdb","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"GroundSlam":{"_value":3,"_name":"GroundSlam","_id":"3ea2abb1-ff32-453f-9778-983376e1d10e","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"BodySlam":{"_value":4,"_name":"BodySlam","_id":"df6ef16a-add9-47aa-b731-e0971a94ba21","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"LeapFx":{"_value":5,"_name":"LeapFx","_id":"17e845d3-82ed-4c5a-aa9f-c41c25c952b1","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}}}'
   _objectReferences:
   - {fileID: 0}
-  - {fileID: 6209972863228401158, guid: 346845f5ec84256469525d334ac20d56, type: 3}
+  - {fileID: 6209972863228401158, guid: d5e3d90705ce3874fa0f0f63ae0c7726, type: 3}
   - {fileID: 5629602492193098048, guid: 265bf097dd85fb144b689a6ac2211310, type: 3}
   - {fileID: 5741126187209887343, guid: 8d8c1676b1e5dca46b3c777afd3f7e39, type: 3}
   - {fileID: 1541482542063588452, guid: 6103ef73125cad74a80cf8dd0703772c, type: 3}
+  - {fileID: 780422899590546167, guid: 13a4cb697e4720f448fb19f3ebb39c5b, type: 3}
   _serializedVariables:
   - _json: '{"_value":1,"_name":"SlashRoundRed","_id":"812c51af-1b2b-4c18-aa17-0d3fd55b1286","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
       UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
     _references:
     - {fileID: 0}
-    - {fileID: 6209972863228401158, guid: 346845f5ec84256469525d334ac20d56, type: 3}
+    - {fileID: 6209972863228401158, guid: d5e3d90705ce3874fa0f0f63ae0c7726, type: 3}
   - _json: '{"_value":1,"_name":"MagicPillarBlastRed","_id":"3b4d98d4-d3a3-4c3d-a537-4a0f468b9cdb","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
       UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
     _references:
@@ -82027,6 +82029,11 @@ MonoBehaviour:
     _references:
     - {fileID: 0}
     - {fileID: 1541482542063588452, guid: 6103ef73125cad74a80cf8dd0703772c, type: 3}
+  - _json: '{"_value":1,"_name":"LeapFx","_id":"17e845d3-82ed-4c5a-aa9f-c41c25c952b1","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
+    _references:
+    - {fileID: 0}
+    - {fileID: 780422899590546167, guid: 13a4cb697e4720f448fb19f3ebb39c5b, type: 3}
 --- !u!114 &937156682906900337
 MonoBehaviour:
   m_ObjectHideFlags: 0

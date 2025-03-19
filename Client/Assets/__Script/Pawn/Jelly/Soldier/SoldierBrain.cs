@@ -163,15 +163,8 @@ namespace Game
                 }
             };
 
-            __pawnActionCtrler.onActionStart += (_, __) =>
-            {
-                BB.attachment.shieldMeshRenderer.gameObject.layer = LayerMask.GetMask("HitBox");
-            };
-
             __pawnActionCtrler.onActionFinished += (actionContext) =>
             {
-                BB.attachment.shieldMeshRenderer.gameObject.layer = LayerMask.GetMask("HitBoxBlocking");
-
                 if (actionContext.actionName == "Missile")
                 {
                     ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.ComboAttack).First());
