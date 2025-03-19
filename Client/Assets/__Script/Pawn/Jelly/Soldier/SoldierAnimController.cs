@@ -83,6 +83,8 @@ namespace Game
                     armBoneSimulatorTargetWeight = 0f;
             };
 
+            __brain.BB.body.isGuarding.Subscribe(v => __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", v)).AddTo(this);
+
             __brain.BB.common.isGroggy.Skip(1).Subscribe(v =>
             {
                 if (v)

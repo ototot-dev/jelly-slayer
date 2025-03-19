@@ -30,7 +30,7 @@ namespace Game
                 (target as JellyMeshController).springMassSystem.AddImpulseRandom((target as JellyMeshController).impulseStrength);
                 (target as JellyMeshController).ShowHitColor(0.2f);
 
-                EffectManager.Instance.Show((target as JellyMeshController).onHitFx, (target as JellyMeshController).springMassSystem.core.position, Quaternion.identity, Vector3.one);
+                // EffectManager.Instance.Show((target as JellyMeshController).onHitFx, (target as JellyMeshController).springMassSystem.core.position, Quaternion.identity, Vector3.one);
             }
         }
     }

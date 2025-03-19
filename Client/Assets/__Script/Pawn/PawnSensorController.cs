@@ -101,13 +101,12 @@ namespace Game
 
         public void OnTickHandler(float interval)
         {
-            var anyMissingReference = false;
-
+            var foundMissingCollider = false;
             foreach (var l in ListeningColliders)
             {
                 if (l == null)
                 {
-                    anyMissingReference = true;
+                    foundMissingCollider = true;
                 }
                 else if (l.TryGetComponent<PawnColliderHelper>(out var colliderHelper))
                 {
@@ -123,20 +122,20 @@ namespace Game
                         {
                             WatchingColliders.Add(l);
                             onWatchSomething?.Invoke(l);
-                            __Logger.VerboseR(gameObject, "WatchingColliders.Add()", nameof(l.name), l.name);
+                            __Logger.VerboseR1(gameObject, "WatchingColliders.Add()", "name", l.name);
                         }
                     }
                     else
                     {
                         if (WatchingColliders.Remove(l))
-                            __Logger.VerboseR(gameObject, "WatchingColliders.Remove()", nameof(l.name), l.name);
+                            __Logger.VerboseR1(gameObject, "WatchingColliders.Remove()", "name", l.name);
                     }
                 }
             }
 
             __prevTickTimeStamp = Time.time;
 
-            if (anyMissingReference)
+            if (foundMissingCollider)
                 ResolveMissingReference();
         }
 

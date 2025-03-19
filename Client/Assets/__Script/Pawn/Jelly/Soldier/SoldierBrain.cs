@@ -38,7 +38,6 @@ namespace Game
         public bool debugActionDisabled;
 
         public override Vector3 GetSpecialKeyPosition() => BB.attachment.specialKeyAttachPoint.transform.position;
-        public override PawnColliderHelper GetHookingColliderHelper() => ActionCtrler.hookingPointColliderHelper;
         public SoldierBlackboard BB { get; private set; }
         public SoldierMovement Movement { get; private set; }
         public SoldierAnimController AnimCtrler { get; private set; }
@@ -164,8 +163,15 @@ namespace Game
                 }
             };
 
+            __pawnActionCtrler.onActionStart += (_, __) =>
+            {
+                BB.attachment.shieldMeshRenderer.gameObject.layer = LayerMask.GetMask("HitBox");
+            };
+
             __pawnActionCtrler.onActionFinished += (actionContext) =>
             {
+                BB.attachment.shieldMeshRenderer.gameObject.layer = LayerMask.GetMask("HitBoxBlocking");
+
                 if (actionContext.actionName == "Missile")
                 {
                     ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.ComboAttack).First());

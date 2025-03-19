@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NodeCanvas.Framework;
 using UGUI.Rx;
 using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -24,6 +26,7 @@ namespace Game
         public StringReactiveProperty playerName = new();
         public ReactiveProperty<Vector2> moveVec = new();
         public ReactiveProperty<Vector3> lookVec = new();
+        public float attackPointAssistLength = 1f;
         public Action<HeroBrain> onPossessed;
         public Action<HeroBrain> onUnpossessed;
 
@@ -415,6 +418,31 @@ namespace Game
         float __attackPresssedTimeStamp = -1f;
         float __attackReleasedTimeStamp = -1f;
 
+        bool FindAttackPoint(out Vector3 attackPoint)
+        {
+            var jellyCollider = possessedBrain.SensorCtrler.WatchingColliders.FirstOrDefault(c => c.TryGetComponent<PawnColliderHelper>(out var helper) && helper.gameObject.CompareTag("Jelly"));
+            if (jellyCollider != null && (jellyCollider.transform.position - possessedBrain.GetWorldPosition()).Magnitude2D() < attackPointAssistLength)
+            {
+                attackPoint = jellyCollider.transform.position;
+                return true;
+            }
+
+            var found = possessedBrain.SensorCtrler.WatchingColliders.Select(c => c.GetComponent<PawnColliderHelper>()).Where(h => h != null && h == h.pawnBrain.coreColliderHelper)
+                .OrderBy(h => Vector3.Angle(possessedBrain.coreColliderHelper.transform.forward.Vector2D(), (h.transform.position - possessedBrain.GetWorldPosition()).Vector2D()))
+                .FirstOrDefault(h => (h.transform.position - possessedBrain.GetWorldPosition()).Magnitude2D() < attackPointAssistLength);
+
+            if (found != null)
+            {
+                attackPoint = found.transform.position;
+                return true;
+            }
+            else
+            {
+                attackPoint = Vector3.zero;
+                return false;
+            }
+        }
+
         public void OnAttack(InputValue value)
         {
             if(_isEnable_NormalAttack == false)
@@ -495,15 +523,9 @@ namespace Game
                             break;
                     }
 
-                    //* 타겟이 없을 경우에도 조준 보정을 해줌
-                    // if (possessedBrain.BB.TargetBrain == null && possessedBrain.SensorCtrler.ListeningColliders.Count > 0)
-                    // {
-                    //     var attackPoint = possessedBrain.SensorCtrler.ListeningColliders.Select(c => c.transform.position)
-                    //         .OrderBy(p => Vector3.Angle(possessedBrain.coreColliderHelper.transform.forward.Vector2D(), (p - possessedBrain.coreColliderHelper.transform.position).Vector2D()))
-                    //         .FirstOrDefault();
-
-                    //     possessedBrain.Movement.FaceAt(attackPoint);
-                    // }
+                    //* 타겟이 없을 경우엔 주변 타겟으로 공격 방향을 보정해줌
+                    if (possessedBrain.SensorCtrler.WatchingColliders.Count > 0 && FindAttackPoint(out var attackPoint))
+                        possessedBrain.Movement.FaceAt(attackPoint);
                 }
             }
             else
@@ -528,15 +550,9 @@ namespace Game
                         possessedBrain.ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
                     }
 
-                    //* 타겟이 없을 경우에도 조준 보정을 해줌
-                    // if (possessedBrain.BB.TargetBrain == null && possessedBrain.SensorCtrler.ListeningColliders.Count > 0)
-                    // {
-                    //     var attackPoint = possessedBrain.SensorCtrler.ListeningColliders.Select(c => c.transform.position)
-                    //         .OrderBy(p => Vector3.Angle(possessedBrain.coreColliderHelper.transform.forward.Vector2D(), (p - possessedBrain.coreColliderHelper.transform.position).Vector2D()))
-                    //         .FirstOrDefault();
-
-                    //     possessedBrain.Movement.FaceAt(attackPoint);
-                    // }
+                    //* 타겟이 없을 경우엔 주변 타겟으로 공격 방향을 보정해줌
+                    if (possessedBrain.SensorCtrler.WatchingColliders.Count > 0 && FindAttackPoint(out var attackPoint))
+                        possessedBrain.Movement.FaceAt(attackPoint);
                 }
 
                 //* 챠징 어택 판별을 위해서 'isCharging' 값은 제일 마지막에 리셋

@@ -21,6 +21,7 @@ namespace Game
         public float BackstepRootMotionDistance => action.backstepRootMotionDistance;
         public GameObject MissilePrefab => action.missilePrefab;
         public Transform MissileEmitPoint => action.missileEmitPoint;
+        public CapsuleCollider CounterActionTraceCollider => attachment.counterActionTraceColliderHelper.pawnCollider as CapsuleCollider;
 
         [Serializable]
         public class Body
@@ -106,9 +107,6 @@ namespace Game
 
             [Header("Material")]
             public Material hitColor;
-
-            [Header("Attached")]
-            public Transform BlockingFxAttachPoint;
         }
 
         public Graphics graphics = new();
@@ -138,10 +136,11 @@ namespace Game
             public ParticleSystem[] jetParticleSystems;
             public Transform blockingFxAttachPoint;
             public Transform emojiAttachPoint;
-            public Transform jellyMeshAttachPoint;
+            public Transform jellyAttachPoint;
             public Transform specialKeyAttachPoint;
             public Transform laserAimPoint;
             public SoldierLaserRenderer laserRenderer;
+            public PawnColliderHelper counterActionTraceColliderHelper;
         }
 
         public Attachment attachment = new();

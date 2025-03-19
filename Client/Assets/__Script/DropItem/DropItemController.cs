@@ -148,7 +148,7 @@ namespace Game
             if (this.owner.Value == null)
             {
                 this.owner.Value = picker;
-                __Logger.VerboseR(gameObject, nameof(TryPick), nameof(picker), picker.name);
+                __Logger.VerboseR1(gameObject, nameof(TryPick), nameof(picker), picker.name);
 
                 return true;
             }

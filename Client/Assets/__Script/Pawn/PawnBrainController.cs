@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FlowCanvas.Nodes;
 using NodeCanvas.StateMachines;
 using UniRx;
 using UnityEngine;
@@ -21,7 +20,7 @@ namespace Game
         public virtual Vector3 GetWorldPosition() => coreColliderHelper != null ? coreColliderHelper.transform.position : transform.position;
         public virtual Quaternion GetWorldRotation() => coreColliderHelper != null ? coreColliderHelper.transform.rotation : transform.rotation;
         public virtual Transform GetWorldTransform() => coreColliderHelper != null ? coreColliderHelper.transform : transform;
-        public virtual PawnColliderHelper GetHookingColliderHelper() => null;
+        public virtual PawnColliderHelper GetHookingColliderHelper() => hookingPointColliderHelper;
 
         [Header("Component")]
         public PawnColliderHelper coreColliderHelper;
@@ -29,7 +28,7 @@ namespace Game
         public PawnColliderHelper parryColliderHelper;
         public PawnColliderHelper parryHitColliderHelper;
         public PawnColliderHelper shieldHitColliderHelper;
-        public PawnColliderHelper hookingColliderHelper;
+        public PawnColliderHelper hookingPointColliderHelper;
         public SphereCollider visibilityChecker;
         public PlayerController owner;
 

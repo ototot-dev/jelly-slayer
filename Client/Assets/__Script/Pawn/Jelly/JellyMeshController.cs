@@ -238,6 +238,8 @@ namespace Game
 
             __tweener?.Complete();
             __tweener = springMassSystem.coreAttachPoint.DOShakePosition(duration, 0.8f);
+
+            EffectManager.Instance.Show(onHitFx, springMassSystem.core.position, Quaternion.identity, Vector3.one);
         }
 
         public void StartHook()
