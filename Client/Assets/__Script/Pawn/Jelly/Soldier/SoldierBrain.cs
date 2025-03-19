@@ -163,8 +163,15 @@ namespace Game
                 }
             };
 
-            __pawnActionCtrler.onActionFinished += (actionContext) =>
+            ActionCtrler.onActionStart += (_, __) =>
             {
+                shieldHitColliderHelper.gameObject.layer = LayerMask.NameToLayer("HitBox");
+            };
+
+            ActionCtrler.onActionFinished += (actionContext) =>
+            {
+                shieldHitColliderHelper.gameObject.layer = LayerMask.NameToLayer("HitBoxBlocking");
+                
                 if (actionContext.actionName == "Missile")
                 {
                     ActionDataSelector.ResetSelection(ActionDataSelector.GetSequence(ActionPatterns.ComboAttack).First());

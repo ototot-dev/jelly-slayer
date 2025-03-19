@@ -87,10 +87,10 @@ namespace Game
 
             __brain.BB.common.isGroggy.Skip(1).Subscribe(v =>
             {
-                if (v)
-                    jellyMeshCtrler.FadeIn(1f);
-                else
-                    jellyMeshCtrler.FadeOut(1f);
+                // if (v)
+                //     jellyMeshCtrler.FadeIn(1f);
+                // else
+                //     jellyMeshCtrler.FadeOut(1f);
             }).AddTo(this);
 
             __brain.BB.body.isJumping.Subscribe(v =>

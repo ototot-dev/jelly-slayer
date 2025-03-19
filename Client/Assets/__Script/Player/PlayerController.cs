@@ -422,8 +422,8 @@ namespace Game
 
         bool FindAttackPoint(out Vector3 attackPoint)
         {
-            var jellyCollider = possessedBrain.SensorCtrler.WatchingColliders.FirstOrDefault(c => c.TryGetComponent<PawnColliderHelper>(out var helper) && helper.gameObject.CompareTag("Jelly"));
-            if (jellyCollider != null && (jellyCollider.transform.position - possessedBrain.GetWorldPosition()).Magnitude2D() < attackPointAssistLength)
+            var jellyCollider = possessedBrain.SensorCtrler.WatchingColliders.FirstOrDefault(c => c.TryGetComponent<PawnColliderHelper>(out var helper) && helper.gameObject.CompareTag("Jelly") && (helper.transform.position - possessedBrain.GetWorldPosition()).Magnitude2D() < attackPointAssistLength);
+            if (jellyCollider != null)
             {
                 attackPoint = jellyCollider.transform.position;
                 return true;
