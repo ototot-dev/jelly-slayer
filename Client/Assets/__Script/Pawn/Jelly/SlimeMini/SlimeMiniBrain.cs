@@ -191,12 +191,6 @@ namespace Game
                 if (!actionContext.actionCanceled && actionContext.actionName == "Swelling")
                     ActionCtrler.SetPendingAction("Pop");
             };
-
-            onUpdate += () => 
-            {   
-                if (BB.IsSpawnFinished)
-                    ActionDataSelector.UpdateSelection(Time.deltaTime);
-            };
         }
 
         protected virtual void OnReceiveDamageHandler(ref PawnHeartPointDispatcher.DamageContext damageContext)
@@ -264,9 +258,9 @@ namespace Game
                     //* 공격 시작
                     if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && !BB.IsJumping && !ActionCtrler.CheckActionRunning() && !BuffCtrler.CheckStatus(Game.PawnStatus.Staggered) && CheckTargetVisibility())
                     {
-                        var selection = ActionDataSelector.PickRandomSelection(0f, BB.stat.stamina.Value);
-                        if (selection != null)
-                            ActionCtrler.SetPendingAction(selection.actionName);
+                        // var selection = ActionDataSelector.RandomPick(0f, BB.stat.stamina.Value);
+                        // if (selection != null)
+                        //     ActionCtrler.SetPendingAction(selection.actionName);
                     }
                 }
             }

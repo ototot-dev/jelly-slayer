@@ -37,8 +37,6 @@ namespace Game
                 if (!BB.IsSpawnFinished || BB.IsDead || BB.IsGroggy || BB.IsDown || !BB.IsInCombat || BB.TargetPawn == null)
                     return;
                     
-                ActionDataSelector.UpdateSelection(deltaTick);
-                return;
                 //* 공격
                 // if (!ActionCtrler.CheckActionRunning() && string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && !StatusCtrler.CheckStatus(Game.PawnStatus.Staggered) && base.CheckTargetVisibility())
                 // {

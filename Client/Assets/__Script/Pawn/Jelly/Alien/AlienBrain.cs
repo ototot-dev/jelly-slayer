@@ -58,8 +58,6 @@ namespace Game
             {
                 if (!BB.IsSpawnFinished || BB.IsDead || BB.IsGroggy || BB.IsDown || !BB.IsInCombat || BB.TargetPawn == null)
                     return;
-                    
-                ActionDataSelector.UpdateSelection(deltaTick);
 
                 if (debugActionDisabled)
                     return;
@@ -112,17 +110,17 @@ namespace Game
                 }
                 else if (Time.time - PawnHP.LastDamageTimeStamp >= 1f && Time.time - __lastComboAttackRateStepTimeStamp >= 1f)
                 {
-                    var distanceConstraint = BB.TargetBrain != null ? BB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position) : -1f;
-                    if (ActionDataSelector.CheckExecutable(__combo1ActionData) && ActionDataSelector.EvaluateSelection(__combo1ActionData, 0f, 1f) && CheckTargetVisibility())
-                    {
-                        ActionDataSelector.ResetSelection(__combo1ActionData);
-                        ActionCtrler.SetPendingAction(__combo1ActionData.actionName);
-                    }
-                    else
-                    {
-                        __lastComboAttackRateStepTimeStamp = Time.time;
-                        ActionDataSelector.BoostSelection(__combo1ActionData, BB.action.comboAttackRateStep);
-                    }
+                    // var distanceConstraint = BB.TargetBrain != null ? BB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position) : -1f;
+                    // if (ActionDataSelector.CheckCoolTime(__combo1ActionData) && ActionDataSelector.EvaluateSelection(__combo1ActionData, 0f, 1f) && CheckTargetVisibility())
+                    // {
+                    //     ActionDataSelector.ResetCoolTime(__combo1ActionData);
+                    //     ActionCtrler.SetPendingAction(__combo1ActionData.actionName);
+                    // }
+                    // else
+                    // {
+                    //     __lastComboAttackRateStepTimeStamp = Time.time;
+                    //     ActionDataSelector.BoostSelection(__combo1ActionData, BB.action.comboAttackRateStep);
+                    // }
                 }
             };
         }
@@ -140,7 +138,7 @@ namespace Game
                 {
                     __counterActionData ??= ActionDataSelector.GetActionData("Counter");
                     ActionCtrler.SetPendingAction(__counterActionData.actionName);
-                    ActionDataSelector.ResetSelection(__combo1ActionData);
+                    ActionDataSelector.SetCoolTime(__combo1ActionData);
                 }
             }
         }

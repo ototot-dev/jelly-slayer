@@ -101,7 +101,6 @@ namespace Game
                 }
 
                 JellyBB.stat.ReduceStance(PawnHP.LastDamageTimeStamp, Time.deltaTime);
-                ActionDataSelector.UpdateSelection(Time.deltaTime);
             };
         }
 
@@ -241,7 +240,7 @@ namespace Game
         protected virtual Decisions MakeDecision()
         {
             Debug.Assert(JellyBB.TargetPawn != null);
-            return JellyBB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position) < JellyQuadWalkBB.SpacingInDistance ? Decisions.Spacing : Decisions.Approach;
+            return coreColliderHelper.GetApproachDistance(JellyBB.TargetBrain.coreColliderHelper) < JellyQuadWalkBB.SpacingInDistance ? Decisions.Spacing : Decisions.Approach;
         }
         
         protected virtual bool ValidateTargetCollider(Collider otherCollider)

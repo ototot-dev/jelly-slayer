@@ -151,8 +151,6 @@ namespace Game
                 if (!ActionCtrler.CheckActionRunning())
                     BB.stat.RecoverStamina(Mathf.Max(ActionCtrler.prevActionContext.startTimeStamp, ActionCtrler.prevActionContext.finishTimeStamp), Time.deltaTime);
                 BB.stat.ReduceStance(PawnHP.LastDamageTimeStamp, Time.deltaTime);
-
-                ActionDataSelector.UpdateSelection(Time.deltaTime);
             };
         }
 
@@ -240,9 +238,9 @@ namespace Game
                     //* 공격 시작
                     if (canAction3)
                     {
-                        var selection = ActionDataSelector.PickRandomSelection(0f, BB.stat.stamina.Value);
-                        if (selection != null)
-                            ActionCtrler.SetPendingAction(selection.actionName);
+                        // var selection = ActionDataSelector.RandomPick(0f, BB.stat.stamina.Value);
+                        // if (selection != null)
+                        //     ActionCtrler.SetPendingAction(selection.actionName);
                     }
                 }
             }

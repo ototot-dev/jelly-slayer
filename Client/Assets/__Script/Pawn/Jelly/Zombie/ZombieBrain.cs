@@ -34,12 +34,6 @@ namespace Game
             ActionCtrler.onActionFinished += (_) => InvalidateDecision(0.2f);
             ActionCtrler.onActionCanceled += (_, __) => InvalidateDecision(0.2f);
 
-            onUpdate += () => 
-            {
-                if (BB.IsSpawnFinished)
-                    ActionDataSelector.UpdateSelection(Time.deltaTime);
-            };
-
             onTick += (_) =>
             {
                 if (debugActionDisabled)

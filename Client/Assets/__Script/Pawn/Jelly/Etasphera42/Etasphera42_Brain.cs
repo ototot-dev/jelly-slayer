@@ -115,30 +115,30 @@ namespace Game
                 if (!BB.IsSpawnFinished || BB.IsDead || BB.IsGroggy || BB.IsDown || !BB.IsInCombat || BB.TargetPawn == null)
                     return;
                     
-                ActionDataSelector.UpdateSelection(deltaTick);
+                // ActionDataSelector.UpdateExcutables(deltaTick);
 
-                if (debugActionDisabled)
-                    return;
+                // if (debugActionDisabled)
+                //     return;
                 
-                if (!ActionCtrler.CheckActionRunning() && !ActionCtrler.CheckActionPending())
-                {
-                    var distanceConstraint = BB.TargetBrain != null ? coreColliderHelper.GetApproachDistance(BB.TargetBrain.GetWorldPosition()) : -1f;
-                    if (ActionDataSelector.CheckExecutable(__muzzleFireActionData) && ActionDataSelector.EvaluateSelection(__muzzleFireActionData, 0f, 1f) && CheckTargetVisibility())
-                    {
-                        ActionDataSelector.ResetSelection(__muzzleFireActionData);
-                        ActionCtrler.SetPendingAction(__muzzleFireActionData.actionName);
-                    }
-                    else if (ActionDataSelector.CheckExecutable(__torchFireActionData) && ActionDataSelector.EvaluateSelection(__torchFireActionData, 0f, 1f) && CheckTargetVisibility())
-                    {
-                        ActionDataSelector.ResetSelection(__torchFireActionData);
-                        ActionCtrler.SetPendingAction(__torchFireActionData.actionName);
-                    }
-                    // else if (ActionDataSelector.CheckExecutable(__rushActionData) && ActionDataSelector.EvaluateSelection(__rushActionData, distanceConstraint, 1f) && CheckTargetVisibility())
-                    // {
-                    //     ActionDataSelector.ResetSelection(__rushActionData);
-                    //     ActionCtrler.SetPendingAction(__rushActionData.actionName);
-                    // }
-                }
+                // if (!ActionCtrler.CheckActionRunning() && !ActionCtrler.CheckActionPending())
+                // {
+                //     var distanceConstraint = BB.TargetBrain != null ? coreColliderHelper.GetApproachDistance(BB.TargetBrain.GetWorldPosition()) : -1f;
+                //     if (ActionDataSelector.CheckCoolTime(__muzzleFireActionData) && ActionDataSelector.EvaluateSelection(__muzzleFireActionData, 0f, 1f) && CheckTargetVisibility())
+                //     {
+                //         ActionDataSelector.ResetCoolTime(__muzzleFireActionData);
+                //         ActionCtrler.SetPendingAction(__muzzleFireActionData.actionName);
+                //     }
+                //     else if (ActionDataSelector.CheckCoolTime(__torchFireActionData) && ActionDataSelector.EvaluateSelection(__torchFireActionData, 0f, 1f) && CheckTargetVisibility())
+                //     {
+                //         ActionDataSelector.ResetCoolTime(__torchFireActionData);
+                //         ActionCtrler.SetPendingAction(__torchFireActionData.actionName);
+                //     }
+                //     else if (ActionDataSelector.CheckExecutable(__rushActionData) && ActionDataSelector.EvaluateSelection(__rushActionData, distanceConstraint, 1f) && CheckTargetVisibility())
+                //     {
+                //         ActionDataSelector.ResetSelection(__rushActionData);
+                //         ActionCtrler.SetPendingAction(__rushActionData.actionName);
+                //     }
+                // }
             };
 
             // BB.action.isFalling.Skip(1).Subscribe(v =>

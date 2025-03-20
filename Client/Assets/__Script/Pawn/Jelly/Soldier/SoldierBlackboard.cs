@@ -52,13 +52,16 @@ namespace Game
             public float maxCoolDownDuration= 1f;
 
             [Header("Combo")]
+            public float comboAttackInterval = 1f;
             public float comboAttackDistance = 1f;
+            public float counterComboAttackInterval = 1f;
             public float counterComboAttackDistance = 1f;
             public float counterComboAttachProb = 0.1f;
             public float counterAttackProbOnGuard = 0.1f;
 
             [Header("JumpAttack")]
-            public float jumpAttackProbBoostRate = 0.1f;
+            public float jumpAttackInterval = 1f;
+            public float jumpAttackProb = 0.1f;
 
             [Header("Missile")]
             public int missileEmitNum = 1;
@@ -86,6 +89,7 @@ namespace Game
             public float leapProbBoostRateOnTick = 0.1f;
 
             [Header("Backstep")]
+            public float backstepInterval = 1f;
             public float backstepProb = 1f;
             public float backstepTriggerDistance = 1f;
             public float backstepRootMotionDistance = 1f;

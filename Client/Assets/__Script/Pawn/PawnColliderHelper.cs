@@ -27,17 +27,19 @@ namespace Game
         public Vector3 GetWorldCenter() => __capsuleCollider != null ? __capsuleCollider.transform.localToWorldMatrix.MultiplyPoint(__capsuleCollider.center) : pawnCollider.transform.position;
         public float GetRadius() => __capsuleCollider != null ? __capsuleCollider.radius : 0f;
 
+        public float GetDistanceSimple(PawnColliderHelper targetHelper) => Mathf.Max(0f, (targetHelper.transform.position - transform.position).Vector2D().magnitude);
+
         //* sourcePosition에서 자신까지의 거리 (자신의 Collider Raidus 값을 뺀 거리)
-        public float GetApproachDistance(Vector3 sourcePosition) => Mathf.Max(0f, (transform.position - sourcePosition).Vector2D().magnitude - GetRadius());
+        public float GetApproachDistance(PawnColliderHelper targetHelper) => Mathf.Max(0f, (targetHelper.transform.position - transform.position).Vector2D().magnitude - targetHelper.GetRadius());
 
         //* 목표점까지 거리에서 자신과 상대 Collider의 Radius 값을 뺀 거리
-        public float GetDistanceBetween(PawnColliderHelper otherColliderHelper) => Mathf.Max(0f, (otherColliderHelper.transform.position - transform.position).Vector2D().magnitude - GetRadius() - otherColliderHelper.GetRadius());
+        public float GetDistanceBetween(PawnColliderHelper otherHelper) => Mathf.Max(0f, (otherHelper.transform.position - transform.position).Vector2D().magnitude - GetRadius() - otherHelper.GetRadius());
 
         //* deltaVec만큼 움직였을 때 거리이 변화값
-        public float GetDistanceDelta(PawnColliderHelper otherColliderHelper, Vector3 deltaVec)
+        public float GetDistanceDelta(PawnColliderHelper otherHelper, Vector3 deltaVec)
         {
-            var currDistance = (otherColliderHelper.transform.position - transform.position).Magnitude2D();
-            var newDistance = (otherColliderHelper.transform.position - (transform.position + deltaVec)).Magnitude2D();
+            var currDistance = (otherHelper.transform.position - transform.position).Magnitude2D();
+            var newDistance = (otherHelper.transform.position - (transform.position + deltaVec)).Magnitude2D();
             return newDistance - currDistance;
         }
 
