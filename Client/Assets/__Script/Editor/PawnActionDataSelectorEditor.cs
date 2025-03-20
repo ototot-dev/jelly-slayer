@@ -17,17 +17,27 @@ namespace Game
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-                
+             
+            var pawnActionDataSelector = target as PawnActionDataSelector;
+
             GUILayout.BeginVertical();
             {
-                var oldBackgroundColor = GUI.backgroundColor;
-                foreach (var s in (target as PawnActionDataSelector).ActionDataStates)
+                var oldColor = GUI.backgroundColor;
+                GUILayout.Label("Pattern");
+                foreach (var s in pawnActionDataSelector.ReservedSequences)
                 {
-                    // GUI.backgroundColor = s.Value.currProb > 0f && s.Value.__executedTimeStamp <= 0f ? new Color(0.8f, 0.8f, 1) : Color.white;
-                    // if (GUILayout.Button($"{s.Value.actionData.actionName} | Rate:{s.Value.currProb:F2} | CoolTime:{s.Value.__executedTimeStamp:F1}"))
-                    //     (target as PawnActionDataSelector).GetComponent<PawnActionController>().SetPendingAction(s.Value.actionData.actionName);
+                    GUI.backgroundColor = s.Value.currProb > 0f && s.Value == pawnActionDataSelector.CurrSequence() ? new Color(0.8f, 0.8f, 1) : Color.white;
+                    if (GUILayout.Button($"{s.Value.SequenceName} | Rate:{s.Value.currProb:F2} | CoolTime:{s.Value.GetMaxCoolTime():F1}"))
+                        pawnActionDataSelector.EnqueueSequence(s.Value);
                 }
-                GUI.backgroundColor = oldBackgroundColor;
+                GUILayout.Label("Action");
+                foreach (var s in pawnActionDataSelector.ActionDataStates)
+                {
+                    GUI.backgroundColor = s.Value.GetCoolTime() > 0f ? new Color(0.8f, 0.8f, 1) : Color.white;
+                    if (GUILayout.Button($"{s.Value.actionData.actionName} | CoolTime:{s.Value.GetCoolTime():F1}"))
+                        pawnActionDataSelector.GetComponent<PawnActionController>().SetPendingAction(s.Value.actionData.actionName);
+                }
+                GUI.backgroundColor = oldColor;
             }
             GUILayout.EndVertical();
 
@@ -36,7 +46,7 @@ namespace Game
                 __currActionLabelStyle ??= new("U2D.createRect");
                 __prevActionLabelStyle ??= new GUIStyle("RectangleToolSelection");
 
-                if ((target as PawnActionDataSelector).TryGetComponent<PawnActionController>(out var actionCtrler))
+                if (pawnActionDataSelector.TryGetComponent<PawnActionController>(out var actionCtrler))
                 {
                     if (__executedActionTable.Count == 0)
                     {
@@ -69,17 +79,17 @@ namespace Game
                 if (GUILayout.Button("Down"))
                 {
                     var damageConext = new PawnHeartPointDispatcher.DamageContext(null);
-                    (target as PawnActionDataSelector).GetComponent<PawnActionController>().StartOnKnockDownAction(ref damageConext);
+                    pawnActionDataSelector.GetComponent<PawnActionController>().StartOnKnockDownAction(ref damageConext);
                 }
                 if (GUILayout.Button("Groggy"))
                 {
                     var damageConext = new PawnHeartPointDispatcher.DamageContext(null);
-                    (target as PawnActionDataSelector).GetComponent<PawnActionController>().StartOnGroogyAction(ref damageConext);
+                    pawnActionDataSelector.GetComponent<PawnActionController>().StartOnGroogyAction(ref damageConext);
                 }
                 if (GUILayout.Button("Jump"))
-                    ((target as PawnActionDataSelector).GetComponent<PawnBrainController>() as IPawnMovable).StartJump(1f);
+                    (pawnActionDataSelector.GetComponent<PawnBrainController>() as IPawnMovable).StartJump(1f);
                 if (GUILayout.Button("Land"))
-                    ((target as PawnActionDataSelector).GetComponent<PawnBrainController>() as IPawnMovable).FinishJump();
+                    (pawnActionDataSelector.GetComponent<PawnBrainController>() as IPawnMovable).FinishJump();
             }
             GUILayout.EndHorizontal();
         }

@@ -4154,7 +4154,7 @@ GameObject:
   - component: {fileID: 8622950999368912312}
   - component: {fileID: 1976169290552031639}
   - component: {fileID: 4857157336516560132}
-  m_Layer: 12
+  m_Layer: 11
   m_Name: ShieldHitBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4170,7 +4170,7 @@ Transform:
   m_GameObject: {fileID: 1233245462317225483}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -81725,13 +81725,13 @@ MonoBehaviour:
   capsuleCollider: {fileID: 2631676355314689051}
   ignoredColliders:
   - {fileID: 1976169290552031639}
-  freezeMovement: 1
+  freezeMovement: 0
   freezeRotation: 0
   rootMotionEnabled: 1
   moveSpeed: 1.6
   moveAccel: 10
   moveBrake: 10
-  rotateSpeed: 90
+  rotateSpeed: 180
   gravity: {x: 0, y: -19.81, z: 0}
   moveVec: {x: 0, y: 0, z: 0}
   faceVec: {x: 0, y: 0, z: 1}
@@ -81752,7 +81752,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainAnimator: {fileID: 5816116270319112580}
   rigBuilder: {fileID: 3909224498346023959}
-  rigSetup: {fileID: 0}
+  rigSetup: {fileID: 2222767562176998279}
   legAnimator: {fileID: 754787376927509189}
   ragdollAnimator: {fileID: 5978158408337654307}
   headBone: {fileID: 5278882544679535675}
@@ -81818,7 +81818,7 @@ MonoBehaviour:
   lateUpdateEnabled: 1
   fixedUpdateEnabled: 1
   roboDogFormationCtrler: {fileID: 5938920085556766268}
-  debugActionDisabled: 1
+  debugActionDisabled: 0
 --- !u!114 &1626602440402030822
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81920,18 +81920,21 @@ MonoBehaviour:
   action:
     minCoolDownDuration: 2
     maxCoolDownDuration: 4
-    comboAttackDistance: 5
+    comboAttackInterval: 1
+    comboAttackDistance: 3
+    counterComboAttackInterval: 1
     counterComboAttackDistance: 4
-    counterComboAttachProb: 0.4
+    counterComboAttachProb: 0.6
     counterAttackProbOnGuard: 0.5
-    jumpAttackProbBoostRate: 0.5
+    jumpAttackInterval: 1
+    jumpAttackProb: 0.4
     missileEmitNum: 3
     missileEmitIntervalA: 0.1
     missileEmitIntervalB: 1
     missileEmitSpeed: 10
     hoveringDurationA: 2
     hoveringDurationB: 6
-    missileProbBoostRateOnTick: 0.05
+    missileBoostProbOnTick: 0.1
     missileEmitPoint: {fileID: 102119456959228274}
     missilePrefab: {fileID: 3083626412401777055, guid: 49b1852d94dc5426fb97f6eb2643051b, type: 3}
     laserDamageInterval: 0.1
@@ -81943,8 +81946,8 @@ MonoBehaviour:
     leapJumpHeight: 2
     leapRootMotionDistance: 7
     leapRootMotionMultiplier: 1
-    leapProbBoostRateOnTick: 0.02
-    backstepProb: 0.5
+    leapBoostProbOnTick: 0.1
+    backstepBoostProbOnTick: 1
     backstepTriggerDistance: 1
     backstepRootMotionDistance: 5
   graphics:

@@ -76,7 +76,7 @@ namespace Game
             ActionDataSelector.ReserveSequence(ActionPatterns.JumpAttack, "JumpAttack");
             ActionDataSelector.ReserveSequence(ActionPatterns.Backstep, "Backstep");
             ActionDataSelector.ReserveSequence(ActionPatterns.Counter, "Counter");
-            ActionDataSelector.ReserveSequence(ActionPatterns.Missile, "Backstep", 0.2f, "Missile");
+            ActionDataSelector.ReserveSequence(ActionPatterns.Missile, 0.5f, "Missile");
             ActionDataSelector.ReserveSequence(ActionPatterns.ComboAttack, "Attack#1", "Attack#2", "Attack#3");
             ActionDataSelector.ReserveSequence(ActionPatterns.CounterCombo, "Counter", "Counter", 0.1f, "Attack#3");
             ActionDataSelector.ReserveSequence(ActionPatterns.Leap, "Backstep", 0.2f, "Missile", 1f, "Leap");
@@ -109,19 +109,22 @@ namespace Game
 
                 if (!ActionCtrler.CheckActionPending() && (!ActionCtrler.CheckActionRunning() || ActionCtrler.CanInterruptAction()) && BB.TargetPawn != null)
                 {
-                    var randomPick = ActionDataSelector.TryRandomPick<ActionPatterns>(UnityEngine.Random.Range(0.8f, 1f));
+                    var randomPick = ActionDataSelector.TryRandomPick<ActionPatterns>(UnityEngine.Random.Range(0.5f, 1f), -1f, 1f);
                     if (randomPick != ActionPatterns.None)
                     {
+                        ActionDataSelector.ResetProbability(randomPick);
                         ActionDataSelector.EnqueueSequence(randomPick);
-                        ActionDataSelector.ResetProbability(ActionPatterns.Leap);
-                        ActionDataSelector.ResetProbability(ActionPatterns.Missile);
                     }
                     else
                     {
-                        ActionDataSelector.BoostProbability(ActionPatterns.Leap, BB.action.leapProbBoostRateOnTick * deltaTick);
-                        ActionDataSelector.BoostProbability(ActionPatterns.Missile, BB.action.missileProbBoostRateOnTick * deltaTick);
+                        ActionDataSelector.BoostProbability(ActionPatterns.Leap, BB.action.leapBoostProbOnTick * deltaTick, BB.action.leapMaxProb);
+                        ActionDataSelector.BoostProbability(ActionPatterns.Missile, BB.action.missileBoostProbOnTick * deltaTick, BB.action.missileMaxProb);
 
                         var distanceToTarget = coreColliderHelper.GetDistanceSimple(BB.TargetBrain.coreColliderHelper);
+
+                        if (distanceToTarget < BB.action.backstepTriggerDistance) 
+                            ActionDataSelector.BoostProbability(ActionPatterns.Backstep, BB.action.backstepBoostProbOnTick * deltaTick);
+
                         if (distanceToTarget < BB.action.counterComboAttackDistance)
                         {
                             if (distanceToTarget > BB.action.comboAttackDistance || BB.action.counterComboAttachProb > UnityEngine.Random.Range(0f, 1f))
@@ -141,68 +144,65 @@ namespace Game
                         }
                     }
                 }
-                else if (!ActionCtrler.CheckActionRunning())
-                {
-                    var distanceToTarget = coreColliderHelper.GetDistanceBetween(BB.TargetBrain.coreColliderHelper);
-                    if (distanceToTarget < BB.action.backstepTriggerDistance)
-                    {
-                        if (ActionDataSelector.EvaluateSequence(ActionPatterns.Backstep, UnityEngine.Random.Range(0f, 1f)))
-                            ActionDataSelector.EnqueueSequence(ActionPatterns.Backstep);
-                        else
-                            ActionDataSelector.BoostProbability(ActionPatterns.Backstep, 0.1f);
-                    }
-                }
-
-                ActionCtrler.onActionStart += (_, __) =>
-                {
-                    shieldHitColliderHelper.gameObject.layer = LayerMask.NameToLayer("HitBox");
-                };
-
-                ActionCtrler.onActionFinished += (actionContext) =>
-                {
-                    // shieldHitColliderHelper.gameObject.layer = LayerMask.NameToLayer("HitBoxBlocking");
-
-                    if (actionContext.actionName == "Missile")
-                    {
-                        ActionDataSelector.SetCoolTime(ActionDataSelector.GetSequence(ActionPatterns.ComboAttack).First());
-                        ActionDataSelector.SetCoolTime(ActionDataSelector.GetSequence(ActionPatterns.CounterCombo).First());
-                    }
-                    else if (actionContext.actionName == "Leap")
-                    {
-                        ActionDataSelector.SetCoolTime(ActionDataSelector.GetSequence(ActionPatterns.Missile).Last());
-                        ActionDataSelector.SetCoolTime(ActionDataSelector.GetSequence(ActionPatterns.ComboAttack).First());
-                        ActionDataSelector.SetCoolTime(ActionDataSelector.GetSequence(ActionPatterns.CounterCombo).First());
-                    }
-                };
-
-                PawnStatusCtrler.onStatusActive += (status) =>
-                {
-                    if (status == PawnStatus.Staggered) ActionDataSelector.ClearSequences();
-                };
-
-                PawnStatusCtrler.onStatusDeactive += (status) =>
-                {
-                    if (status == PawnStatus.CanNotAction && BB.stat.actionPoint.Value <= 0)
-                    {
-                        BB.stat.RecoverActionPoint(BB.stat.maxActionPoint.Value);
-                        __Logger.LogR2(gameObject, "onStatusDeactive(CanNotAction)", "RecoverActionPoint()", "maxActionPoint", BB.stat.maxActionPoint.Value);
-                    }
-                };
-
-                BB.stat.actionPoint.Skip(1).Where(v => v <= 0).Subscribe(v =>
-                {
-                    var coolDownDuration = UnityEngine.Random.Range(BB.action.minCoolDownDuration, BB.action.maxCoolDownDuration);
-                    StatusCtrler.AddStatus(PawnStatus.CanNotAction, coolDownDuration);
-
-                    __Logger.LogR1(gameObject, "AddStatus(CanNotAction)", "duration", coolDownDuration);
-                }).AddTo(this);
-
-                BB.body.isFalling.Skip(1).Subscribe(v =>
-                {
-                    //* 착지 동작 완료까지 이동을 금지함
-                    if (!v) PawnStatusCtrler.AddStatus(PawnStatus.CanNotMove, 1f, 0.5f);
-                }).AddTo(this);
             };
+
+            ActionCtrler.onActionStart += (_, __) =>
+            {
+                // shieldHitColliderHelper.gameObject.layer = LayerMask.NameToLayer("HitBox");
+            };
+
+            ActionCtrler.onActionFinished += (actionContext) =>
+            {
+                // shieldHitColliderHelper.gameObject.layer = LayerMask.NameToLayer("HitBoxBlocking");
+
+                if (actionContext.actionName == "Missile")
+                {
+                    ActionDataSelector.GetSequence(ActionPatterns.Backstep).SetCoolTime();
+                    ActionDataSelector.GetSequence(ActionPatterns.ComboAttack).SetCoolTime();
+                    ActionDataSelector.GetSequence(ActionPatterns.CounterCombo).SetCoolTime();
+                }
+                else if (actionContext.actionName == "Leap")
+                {
+                    ActionDataSelector.GetSequence(ActionPatterns.JumpAttack).SetCoolTime();
+                    ActionDataSelector.GetSequence(ActionPatterns.Backstep).SetCoolTime();
+                    ActionDataSelector.GetSequence(ActionPatterns.Missile).SetCoolTime();
+                    ActionDataSelector.GetSequence(ActionPatterns.ComboAttack).SetCoolTime();
+                    ActionDataSelector.GetSequence(ActionPatterns.CounterCombo).SetCoolTime();
+                }
+            };
+
+            PawnStatusCtrler.onStatusActive += (status) =>
+            {
+                if (status == PawnStatus.Staggered) 
+                {
+                    ActionDataSelector.ClearSequences();
+                    ActionDataSelector.GetSequence(ActionPatterns.ComboAttack).SetCoolTime();
+                    ActionDataSelector.GetSequence(ActionPatterns.CounterCombo).SetCoolTime();
+                }
+            };
+
+            // PawnStatusCtrler.onStatusDeactive += (status) =>
+            // {
+            //     if (status == PawnStatus.CanNotAction && BB.stat.actionPoint.Value <= 0)
+            //     {
+            //         BB.stat.RecoverActionPoint(BB.stat.maxActionPoint.Value);
+            //         __Logger.LogR2(gameObject, "onStatusDeactive(CanNotAction)", "RecoverActionPoint()", "maxActionPoint", BB.stat.maxActionPoint.Value);
+            //     }
+            // };
+
+            // BB.stat.actionPoint.Skip(1).Where(v => v <= 0).Subscribe(v =>
+            // {
+            //     var coolDownDuration = UnityEngine.Random.Range(BB.action.minCoolDownDuration, BB.action.maxCoolDownDuration);
+            //     StatusCtrler.AddStatus(PawnStatus.CanNotAction, coolDownDuration);
+
+            //     __Logger.LogR1(gameObject, "AddStatus(CanNotAction)", "duration", coolDownDuration);
+            // }).AddTo(this);
+
+            BB.body.isFalling.Skip(1).Subscribe(v =>
+            {
+                //* 착지 동작 완료까지 이동을 금지함
+                if (!v) PawnStatusCtrler.AddStatus(PawnStatus.CanNotMove, 1f, 0.5f);
+            }).AddTo(this);
         }
 
         protected override void OnTickInternal(float interval)

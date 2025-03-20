@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MainTable;
 using UnityEngine;
+using VInspector.Libs;
 
 namespace Game
 {
@@ -32,15 +33,22 @@ namespace Game
             public MainTable.ActionData Next() => ++__currIndex < __sequenceData.Length ? __sequenceData[__currIndex] : null;
             public void Reset() { __currIndex = -1; }
             public float GetPaddingTime() => (__paddingTimeData?.ContainsKey(__currIndex) ?? false) ? __paddingTimeData[__currIndex] : 0f;
-
-            public void IncreaseProbability(float deltaProb)
+            public float GetMaxCoolTime() => __sequenceData.Max(p => __selector.GetCoolTime(p));
+            public void SetCoolTime(int index = 0)
             {
-                currProb += deltaProb;
+                Debug.Assert(index < 0 || index >= __sequenceData.Length);
+                __selector.SetCoolTime(__sequenceData[index]);
+            }
+
+            public void IncreaseProbability(float deltaProb, float maxProb)
+            {
+                currProb = Mathf.Min(currProb + deltaProb, maxProb);
             }
             public void ResetProbability(float resetProb = 0f)
             {
                 currProb = resetProb;
             }
+
             public bool Evaluate(float probConstraint, float staminaConstraint, float intervalConstraint)
             {
                 if ((Time.time - __evaluateTimeStamp) < intervalConstraint) return false;
@@ -107,6 +115,10 @@ namespace Game
             var sequence = GetSequence<T>(alias);
             Debug.Assert(sequence != null);
 
+            return EnqueueSequence(sequence);
+        }
+        public ActionSequence EnqueueSequence(ActionSequence sequence)
+        { 
             if (!__sequenceQueue.Contains(sequence))
             {
                 sequence.Reset();
@@ -115,10 +127,11 @@ namespace Game
             }
             else
             {
-                __Logger.WarningR2(gameObject, nameof(EnqueueSequence), "__actionSequencePatternQueue.Contains() returns true.", "patternAlias", alias);
+                __Logger.WarningR2(gameObject, nameof(EnqueueSequence), "__actionSequencePatternQueue.Contains() returns true.", "sequence", sequence.SequenceName);
                 return null;
             }
         }
+        
 
         public ActionSequence CurrSequence() => __sequenceQueue.TryPeek(out var ret) ? ret : null;
         public ActionSequence NextSequence()
@@ -153,6 +166,7 @@ namespace Game
         };
 
 #if UNITY_EDITOR
+        public Dictionary<int, ActionSequence> ReservedSequences => __reservedSequences;
         public Dictionary<MainTable.ActionData, ActionDataState> ActionDataStates => __actionDataStates;
 #endif
 
@@ -186,20 +200,20 @@ namespace Game
             return ret;
         }
 
-        public void BoostProbability<T>(T alias, float deltaProb) where T : struct, Enum
+        public void BoostProbability<T>(T alias, float deltaProb, float maxProb = 1f) where T : struct, Enum
         {
-            GetSequence(alias)?.IncreaseProbability(deltaProb);
+            GetSequence(alias)?.IncreaseProbability(deltaProb, maxProb);
         }
         public void ResetProbability<T>(T alias, float resetProb = 0f) where T : struct, Enum
         {
             GetSequence(alias)?.ResetProbability(resetProb);
         }
 
-        public void SetCoolTime(string actionName, float resetProb = 0f)
+        public void SetCoolTime(string actionName)
         {
-            SetCoolTime(GetActionData(actionName), resetProb);
+            SetCoolTime(GetActionData(actionName));
         }
-        public void SetCoolTime(MainTable.ActionData actionData, float resetProb = 0f)
+        public void SetCoolTime(MainTable.ActionData actionData)
         {   
             Debug.Assert(actionData != null);
 
@@ -209,21 +223,24 @@ namespace Game
                 __Logger.WarningR2(gameObject, nameof(SetCoolTime), "__actionDataStates.TryGetValue() return false", "actionName", actionData.actionName);
         }
 
-        public bool CheckCoolTime(string actionName) => CheckCoolTime(GetActionData(actionName));
-        public bool CheckCoolTime(ActionData actionData)
+        public float GetCoolTime(string actionName) => GetCoolTime(GetActionData(actionName));
+        public float GetCoolTime(ActionData actionData)
         {
             Debug.Assert(actionData != null);
 
             if (__actionDataStates.TryGetValue(actionData, out var state))
             {
-                return state.GetCoolTime() <= 0f;
+                return state.GetCoolTime();
             }
             else
             {
                 __Logger.WarningR2(gameObject, nameof(SetCoolTime), "__actionDataStates.TryGetValue() return false", "actionName", actionData.actionName);
-                return false;
+                return 0f;
             }
         }
+
+        public bool CheckCoolTime(string actionName) => CheckCoolTime(GetActionData(actionName));
+        public bool CheckCoolTime(ActionData actionData) => GetCoolTime(actionData) <= 0f;
 
         public bool EvaluateSequence<T>(T alias, float probConstraint = -1f, float staminaConstraint = -1f, float intervalConstraint = -1f) where T : struct, Enum
         {
@@ -243,9 +260,9 @@ namespace Game
             return actionState.GetCoolTime() <= 0f && (staminaConstraint < 0f || actionState.actionData.staminaCost <= staminaConstraint);
         }
 
-        public T TryRandomPick<T>(float probConstraint, float staminaConstraint = -1f) where T : struct, Enum
+        public T TryRandomPick<T>(float probConstraint, float staminaConstraint = -1f, float intervalConstraint = -1f) where T : struct, Enum
         {
-            var executables = __reservedSequences.Select(p => p.Value).Where(s => s.currProb > 0f && s.Evaluate(probConstraint, staminaConstraint, -1f)).ToArray();
+            var executables = __reservedSequences.Select(p => p.Value).Where(s => s.currProb > 0f && s.Evaluate(probConstraint, staminaConstraint, intervalConstraint)).ToArray();
             var selectRate = UnityEngine.Random.Range(0, executables.Sum(e => e.currProb));
             var accumRate = 0f;
             foreach (var e in executables)

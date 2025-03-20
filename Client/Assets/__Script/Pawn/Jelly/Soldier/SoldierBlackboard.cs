@@ -70,7 +70,8 @@ namespace Game
             public float missileEmitSpeed = 10f;
             public float hoveringDurationA = 1f;
             public float hoveringDurationB = 1f;
-            public float missileProbBoostRateOnTick = 0.1f;
+            public float missileBoostProbOnTick = 0.1f;
+            public float missileMaxProb = 1f;
             public Transform missileEmitPoint;
             public GameObject missilePrefab;
 
@@ -86,11 +87,11 @@ namespace Game
             public float leapJumpHeight = 1f;
             public float leapRootMotionDistance = 1f;
             public float leapRootMotionMultiplier = 1f;
-            public float leapProbBoostRateOnTick = 0.1f;
+            public float leapBoostProbOnTick = 0.1f;
+            public float leapMaxProb = 1f;
 
             [Header("Backstep")]
-            public float backstepInterval = 1f;
-            public float backstepProb = 1f;
+            public float backstepBoostProbOnTick = 1f;
             public float backstepTriggerDistance = 1f;
             public float backstepRootMotionDistance = 1f;
         }
