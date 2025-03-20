@@ -95,6 +95,9 @@ namespace Game
 
                         ActionCtrler.SetPendingAction(nextActionData.actionName, string.Empty, ActionDataSelector.CurrSequence().GetPaddingTime());
                         ActionDataSelector.SetCoolTime(nextActionData);
+
+                        if (nextActionData.actionName == "Backstep")
+                            BB.action.backstepRootMotionMultiplier = Mathf.Lerp(0.7f, 0.2f, Mathf.Clamp01(GetWorldPosition().Magnitude2D() / 5f));
                     }
                 }
             };

@@ -81935,6 +81935,7 @@ MonoBehaviour:
     hoveringDurationA: 2
     hoveringDurationB: 6
     missileBoostProbOnTick: 0.1
+    missileMaxProb: 0.8
     missileEmitPoint: {fileID: 102119456959228274}
     missilePrefab: {fileID: 3083626412401777055, guid: 49b1852d94dc5426fb97f6eb2643051b, type: 3}
     laserDamageInterval: 0.1
@@ -81946,10 +81947,11 @@ MonoBehaviour:
     leapJumpHeight: 2
     leapRootMotionDistance: 7
     leapRootMotionMultiplier: 1
-    leapBoostProbOnTick: 0.1
+    leapBoostProbOnTick: 0.05
+    leapMaxProb: 1
     backstepBoostProbOnTick: 1
     backstepTriggerDistance: 1
-    backstepRootMotionDistance: 5
+    backstepRootMotionMultiplier: 1
   graphics:
     onHitFx: {fileID: 3011233550371498735, guid: 24e37d54f259141abb7ebbc527b8bf4e, type: 3}
     onBigHitFx: {fileID: 3011233550371498735, guid: 8502543f66322458a81956cdd59fe959, type: 3}

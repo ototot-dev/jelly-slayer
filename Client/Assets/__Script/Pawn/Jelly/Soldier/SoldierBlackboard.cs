@@ -18,7 +18,7 @@ namespace Game
         public override float MaxSpacingDistance => body.maxSpacingDistance;
         public override float MinApproachDistance => body.minApproachDistance;
         public float LeapRootMotionDistance => action.leapRootMotionDistance;
-        public float BackstepRootMotionDistance => action.backstepRootMotionDistance;
+        public float BackstepRootMotionMultiplier => action.backstepRootMotionMultiplier;
         public GameObject MissilePrefab => action.missilePrefab;
         public Transform MissileEmitPoint => action.missileEmitPoint;
         public CapsuleCollider CounterActionTraceCollider => attachment.counterActionTraceColliderHelper.pawnCollider as CapsuleCollider;
@@ -93,7 +93,7 @@ namespace Game
             [Header("Backstep")]
             public float backstepBoostProbOnTick = 1f;
             public float backstepTriggerDistance = 1f;
-            public float backstepRootMotionDistance = 1f;
+            public float backstepRootMotionMultiplier = 1f;
         }
 
         public Action action = new();
