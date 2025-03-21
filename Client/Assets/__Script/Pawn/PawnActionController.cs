@@ -780,17 +780,17 @@ namespace Game
                             var deltaDot = compareDot - currDot;
                             
                             //* 각도 차가 거의 없으면 Radius가 큰 Collider를 압쪽에 추가함
-                            if (Mathf.Abs(deltaDot) < 0.01f && tracedColliderHelper.GetRadius() > compareColliderRadius)
+                            if (Mathf.Abs(deltaDot) < 0.01f && tracedColliderHelper.GetCapsuleRadius() > compareColliderRadius)
                             {
                                 results.Insert(0, tracedColliderHelper);
                                 compareDot = currDot;
-                                compareColliderRadius = tracedColliderHelper.GetRadius();
+                                compareColliderRadius = tracedColliderHelper.GetCapsuleRadius();
                             }
                             else if (deltaDot < 0) //* 각도 차가 작은 타겟은 앞쪽에 추가함
                             {
                                 results.Insert(0, tracedColliderHelper);
                                 compareDot = currDot;
-                                compareColliderRadius = tracedColliderHelper.GetRadius();
+                                compareColliderRadius = tracedColliderHelper.GetCapsuleRadius();
                             }
                             else
                             {

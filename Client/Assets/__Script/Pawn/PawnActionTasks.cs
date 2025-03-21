@@ -312,7 +312,7 @@ namespace Game.NodeCanvasExtension
             Debug.Assert(__pawnMovable != null);
             
             __strafeMoveVec = Vector3.zero;
-            __minApproachDistance = Mathf.Max(0.1f, __pawnBrain.coreColliderHelper.GetRadius() + __targetCapsuleRadius);
+            __minApproachDistance = Mathf.Max(0.1f, __pawnBrain.coreColliderHelper.GetCapsuleRadius() + __targetCapsuleRadius);
             __pawnMovable.SetMinApproachDistance(__minApproachDistance);
             __pawnMovable.FreezeRotation(true);
             __executeTimeStamp = Time.time;
@@ -426,7 +426,7 @@ namespace Game.NodeCanvasExtension
             Debug.Assert(__pawnMovable != null);
             
             __strafeMoveVec = Vector3.zero;
-            __minApproachDistance = Mathf.Max(0.1f, __pawnBrain.coreColliderHelper.GetRadius() + __targetCapsuleRadius);
+            __minApproachDistance = Mathf.Max(0.1f, __pawnBrain.coreColliderHelper.GetCapsuleRadius() + __targetCapsuleRadius);
             __pawnMovable.SetMinApproachDistance(__minApproachDistance);
             __pawnMovable.FreezeRotation(true);
             __executeTimeStamp = Time.time;

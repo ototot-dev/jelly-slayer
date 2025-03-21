@@ -25,15 +25,18 @@ namespace Game
         public bool IsTouchSensorTriggerable => (sensorTrigger & SensorFilters.Touch) > 0;
         public bool IsSoundSensorTriggerable => (sensorTrigger & SensorFilters.Sound) > 0;
         public Vector3 GetWorldCenter() => __capsuleCollider != null ? __capsuleCollider.transform.localToWorldMatrix.MultiplyPoint(__capsuleCollider.center) : pawnCollider.transform.position;
-        public float GetRadius() => __capsuleCollider != null ? __capsuleCollider.radius : 0f;
+        public float GetCapsuleRadius() => __capsuleCollider != null ? __capsuleCollider.radius : 0f;
+        public float GetScaledCapsuleRadius() => GetCapsuleRadius() * pawnCollider.transform.lossyScale.MaxAbsElem();
+        public float GetCapsuleHeight() => __capsuleCollider != null ? __capsuleCollider.height : 0f;
+        public float GetScaledCapsuleHeight() => GetCapsuleHeight() * pawnCollider.transform.lossyScale.MaxAbsElem();
 
         public float GetDistanceSimple(PawnColliderHelper targetHelper) => Mathf.Max(0f, (targetHelper.transform.position - transform.position).Vector2D().magnitude);
 
         //* sourcePosition에서 자신까지의 거리 (자신의 Collider Raidus 값을 뺀 거리)
-        public float GetApproachDistance(PawnColliderHelper targetHelper) => Mathf.Max(0f, (targetHelper.transform.position - transform.position).Vector2D().magnitude - targetHelper.GetRadius());
+        public float GetApproachDistance(PawnColliderHelper targetHelper) => Mathf.Max(0f, (targetHelper.transform.position - transform.position).Vector2D().magnitude - targetHelper.GetCapsuleRadius());
 
         //* 목표점까지 거리에서 자신과 상대 Collider의 Radius 값을 뺀 거리
-        public float GetDistanceBetween(PawnColliderHelper otherHelper) => Mathf.Max(0f, (otherHelper.transform.position - transform.position).Vector2D().magnitude - GetRadius() - otherHelper.GetRadius());
+        public float GetDistanceBetween(PawnColliderHelper otherHelper) => Mathf.Max(0f, (otherHelper.transform.position - transform.position).Vector2D().magnitude - GetCapsuleRadius() - otherHelper.GetCapsuleRadius());
 
         //* deltaVec만큼 움직였을 때 거리이 변화값
         public float GetDistanceDelta(PawnColliderHelper otherHelper, Vector3 deltaVec)
@@ -44,7 +47,7 @@ namespace Game
         }
 
         //* Center 위치에서 senderPosition을 바라보는 방향으로 pawnCollider의 표면과 교차하는 한 점을 HitPoint로 리턴함
-        public Vector3 GetHitPoint(Vector3 senderPosition) => GetWorldCenter() + GetRadius() * (senderPosition - pawnCollider.transform.position).Vector2D().normalized;
+        public Vector3 GetHitPoint(Vector3 senderPosition) => GetWorldCenter() + GetScaledCapsuleRadius() * (senderPosition - pawnCollider.transform.position).Vector2D().normalized;
 
         void Awake()
         {

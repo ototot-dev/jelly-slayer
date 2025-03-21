@@ -143,7 +143,7 @@ namespace Game
                 else if (damageContext.actionResult == ActionResults.PunchParried)
                 {
                     var hitPoint = damageContext.senderBrain.coreColliderHelper.GetWorldCenter() + 
-                        damageContext.senderBrain.coreColliderHelper.GetRadius() * (__brain.coreColliderHelper.GetWorldCenter() - damageContext.senderBrain.coreColliderHelper.GetWorldCenter()).Vector2D().normalized;
+                        damageContext.senderBrain.coreColliderHelper.GetCapsuleRadius() * (__brain.coreColliderHelper.GetWorldCenter() - damageContext.senderBrain.coreColliderHelper.GetWorldCenter()).Vector2D().normalized;
 
                     EffectManager.Instance.Show("FX/Hit 26 blue crystal", hitPoint, Quaternion.identity, 2f * Vector3.one, 1f);
                     SoundManager.Instance.Play(SoundID.HIT_PARRYING);

@@ -12,10 +12,12 @@ namespace Game
 {
     public class PlayerController : MonoBehaviour, IPawnEventListener
     {
-        public CursorController CursorCtrler { get; private set; }
-        public KeyboardController KeyboardCtrler { get; private set; }
-        public TargetingController TargetingCtrler { get; private set; }
-        public SpecialKeyController SpecialKeyCtrler { get; private set; }
+
+        [Header("Component")]
+        public CursorController cursorCtrler;
+        public KeyboardController keyboardCtrler;
+        public TargetingController targetingCtrler;
+        public SpecialKeyController specialKeyCtrler;
 
         [Header("Possess")]
         public HeroBrain possessedBrain;
@@ -64,7 +66,7 @@ namespace Game
         void IPawnEventListener.OnReceivePawnDamageContext(PawnBrainController sender, PawnHeartPointDispatcher.DamageContext damageContext) 
         {
             if (damageContext.actionResult == ActionResults.Damaged && damageContext.receiverPenalty.Item1 == PawnStatus.Groggy && damageContext.projectile != null && damageContext.projectile.reflectiveBrain.Value != null)
-                SpecialKeyCtrler = new SpecialKeyController(damageContext.receiverBrain, "Test").Load().Show(GameContext.Instance.mainCanvasCtrler.body);
+                specialKeyCtrler = new SpecialKeyController(damageContext.receiverBrain, "Test").Load().Show(GameContext.Instance.mainCanvasCtrler.body);
         }
 #endregion
 
@@ -112,9 +114,9 @@ namespace Game
 
         void Awake()
         {
-            CursorCtrler = GetComponent<CursorController>();
-            KeyboardCtrler = GetComponent<KeyboardController>();
-            TargetingCtrler = GetComponent<TargetingController>();
+            cursorCtrler = GetComponent<CursorController>();
+            keyboardCtrler = GetComponent<KeyboardController>();
+            targetingCtrler = GetComponent<TargetingController>();
         }
 
         void Update()
@@ -144,18 +146,10 @@ namespace Game
                 {
                     possessedBrain.AnimCtrler.HeadLookAt.position = possessedBrain.BB.TargetColliderHelper.GetWorldCenter();
                     possessedBrain.Movement.faceVec = (possessedBrain.AnimCtrler.HeadLookAt.position - possessedBrain.Movement.capsule.position).Vector2D().normalized;
-
-                    var targetCapsule = possessedBrain.BB.TargetColliderHelper.GetCapsuleCollider();
-                    if (targetCapsule != null)
-                        CursorCtrler.cursor.position = possessedBrain.AnimCtrler.HeadLookAt.position + (targetCapsule.radius + targetCapsule.height * 0.5f) * Vector3.up;
                 }
                 else
                 {
                     possessedBrain.Movement.faceVec = lookVec.Value;
-                    CursorCtrler.cursor.position = possessedBrain.Movement.capsule.position + lookVec.Value;
-
-                    // if (MyHeroBrain.SensorCtrler.ListeningColliders.Count > 0 && MyHeroBrain.SensorCtrler.ListeningColliders.FirstOrDefault() != null)
-                    //     MyHeroBrain.AnimCtrler.HeadLookAt.position = MyHeroBrain.SensorCtrler.ListeningColliders.FirstOrDefault().transform.position + Vector3.up;
                 }
             }
         }
@@ -572,15 +566,15 @@ namespace Game
             if (value.isPressed)
             {
                 var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsRolling;
-                var canAction2 = canAction1 && (SpecialKeyCtrler?.reservedActionName ?? string.Empty) != string.Empty;
+                var canAction2 = canAction1 && (specialKeyCtrler?.reservedActionName ?? string.Empty) != string.Empty;
                 var canAction3 = canAction2 &&  (!possessedBrain.ActionCtrler.CheckActionRunning() || possessedBrain.ActionCtrler.CanInterruptAction()) && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
 
                 if (canAction3)
                 {
-                    SpecialKeyCtrler.HideAsObservable().Subscribe(_ => 
+                    specialKeyCtrler.HideAsObservable().Subscribe(_ => 
                     {
-                        SpecialKeyCtrler.Unload(true);
-                        SpecialKeyCtrler = null;
+                        specialKeyCtrler.Unload(true);
+                        specialKeyCtrler = null;
                     }).AddTo(this);
 
                     if (possessedBrain.ActionCtrler.CheckActionRunning())

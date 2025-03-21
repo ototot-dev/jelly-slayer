@@ -252,7 +252,7 @@ namespace Game
                         var targetPosition = __assaultActionTargetBrain.GetWorldPosition() + __brain.BB.HostBrain.Movement.capsuleCollider.height * Vector3.up;
 
                         //* 겹치 상태에서 뚫고 가지않도록 접근 최소 거리를 추가함
-                        targetPosition -= __assaultActionTargetBrain.bodyHitColliderHelper.GetRadius() * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                        targetPosition -= __assaultActionTargetBrain.bodyHitColliderHelper.GetCapsuleRadius() * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
 
                         __brain.Movement.GetCharacterMovement().SetPosition(Vector3.Lerp(startPosition, targetPosition, alpha));
                         __brain.Movement.GetCharacterMovement().SetRotation(Quaternion.LookRotation((targetPosition - __brain.GetWorldPosition()).Vector2D().normalized));
