@@ -164,6 +164,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29d0f99007c217a49a87ef444e985204, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cursorCtrler: {fileID: 0}
+  keyboardCtrler: {fileID: 0}
+  targetingCtrler: {fileID: 0}
   possessedBrain: {fileID: 0}
   dronebotFormationCtrler: {fileID: 0}
   playerName:
@@ -239,7 +242,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4811872688274227839}
-  - component: {fileID: 4129288709988085497}
+  - component: {fileID: 2981884840603793464}
   m_Layer: 0
   m_Name: Cursor
   m_TagString: Untagged
@@ -263,7 +266,7 @@ Transform:
   - {fileID: 7781821959776160877}
   m_Father: {fileID: 3008586265635100022}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4129288709988085497
+--- !u!114 &2981884840603793464
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -275,7 +278,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b153c152fcfa2bf4ea7fce84b31237f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cursor: {fileID: 0}
+  forwardCursor: {fileID: 0}
+  targetCursor: {fileID: 0}
 --- !u!1 &8831244492975073760
 GameObject:
   m_ObjectHideFlags: 0

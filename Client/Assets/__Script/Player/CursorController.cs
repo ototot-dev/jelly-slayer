@@ -49,6 +49,7 @@ namespace Game
 
         void LateUpdate()
         {
+            return;
             //* 자전 효과
             // forwardCursor.localRotation *= Quaternion.Euler(0f, 180f * Time.deltaTime, 0f);
             forwardCursor.localScale = (0.1f * Mathf.Sin(Time.time * 10f) + 1f) * Vector3.one;
