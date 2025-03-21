@@ -41,6 +41,7 @@ namespace Game
         [Serializable]
         public class Action
         {   
+            public float guardParryDuration = 0.1f;
             public float guardParryRootMotionMultiplier = 1f;
         }
 

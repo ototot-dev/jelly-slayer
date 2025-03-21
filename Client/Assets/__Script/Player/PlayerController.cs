@@ -185,7 +185,7 @@ namespace Game
                 var canParry2 = canParry1 && (!possessedBrain.ActionCtrler.CheckActionRunning() || possessedBrain.ActionCtrler.CanInterruptAction());
                 var canParry3 = canParry2 && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered) && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.CanNotGuard);
                 if (canParry3)
-                    possessedBrain.StatusCtrler.AddStatus(PawnStatus.GuardParrying, 1f, 0.1f);
+                    possessedBrain.StatusCtrler.AddStatus(PawnStatus.GuardParrying, 1f, possessedBrain.BB.action.guardParryDuration);
             }
         }
 
