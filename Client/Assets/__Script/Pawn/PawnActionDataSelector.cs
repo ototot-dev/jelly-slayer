@@ -36,7 +36,7 @@ namespace Game
             public float GetMaxCoolTime() => __sequenceData.Max(p => __selector.GetCoolTime(p));
             public void SetCoolTime(int index = 0)
             {
-                Debug.Assert(index < 0 || index >= __sequenceData.Length);
+                Debug.Assert(index >= 0 && index < __sequenceData.Length);
                 __selector.SetCoolTime(__sequenceData[index]);
             }
 
