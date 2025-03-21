@@ -7,7 +7,6 @@ namespace Game
     {
         public static int ConsumeActionPoint(this PawnBlackboard.Stat stat, int delta)
         {   
-            Debug.Log($"ConsumeActionPoint() => stat.actionPoint: {stat.actionPoint.Value} - delta: {delta}");
             stat.actionPoint.Value = Math.Max(0, stat.actionPoint.Value - delta);
             return stat.actionPoint.Value;
         }
@@ -20,7 +19,7 @@ namespace Game
 
         public static float ReduceStamina(this PawnBlackboard.Stat stat, float delta)
         {   
-            // stat.stamina.Value = Mathf.Max(0f, stat.stamina.Value -delta);
+            stat.stamina.Value = Mathf.Max(0f, stat.stamina.Value -delta);
             return stat.stamina.Value;
         }
 
