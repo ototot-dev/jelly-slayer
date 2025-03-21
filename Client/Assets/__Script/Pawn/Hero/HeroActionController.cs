@@ -37,7 +37,7 @@ namespace Game
                 return false;
             if (!__brain.SensorCtrler.WatchingColliders.Contains(damageContext.senderBrain.coreColliderHelper.pawnCollider))
                 return false;
-            if (damageContext.receiverBrain.PawnBB.stat.stamina.Value < damageContext.senderActionData.guardStaminaDamage)
+            if (damageContext.receiverBrain.PawnBB.stat.stamina.Value <= 0)
                 return false;
 
             return true;
