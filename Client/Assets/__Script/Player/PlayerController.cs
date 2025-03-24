@@ -14,9 +14,6 @@ namespace Game
     {
 
         [Header("Component")]
-        public CursorController cursorCtrler;
-        public KeyboardController keyboardCtrler;
-        public TargetingController targetingCtrler;
         public SpecialKeyController specialKeyCtrler;
 
         [Header("Possess")]
@@ -110,13 +107,6 @@ namespace Game
 
             Debug.Log($"1?? {PossessedPawn.name} is unpossessed by {gameObject.name}.");
             possessedBrain = null;
-        }
-
-        void Awake()
-        {
-            cursorCtrler = GetComponent<CursorController>();
-            keyboardCtrler = GetComponent<KeyboardController>();
-            targetingCtrler = GetComponent<TargetingController>();
         }
 
         void Update()
@@ -425,7 +415,7 @@ namespace Game
 
             var found = possessedBrain.SensorCtrler.WatchingColliders.Select(c => c.GetComponent<PawnColliderHelper>()).Where(h => h != null && h == h.pawnBrain.coreColliderHelper)
                 .OrderBy(h => Vector3.Angle(possessedBrain.coreColliderHelper.transform.forward.Vector2D(), (h.transform.position - possessedBrain.GetWorldPosition()).Vector2D()))
-                .FirstOrDefault(h => (h.transform.position - possessedBrain.GetWorldPosition()).Magnitude2D() < attackPointAssistLength);
+                .FirstOrDefault(h => possessedBrain.coreColliderHelper.GetApproachDistance(h) < attackPointAssistLength);
 
             if (found != null)
             {

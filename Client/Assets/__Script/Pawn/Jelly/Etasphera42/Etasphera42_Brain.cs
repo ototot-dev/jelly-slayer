@@ -79,9 +79,6 @@ namespace Game
         public PawnColliderHelper rightLeg1_colliderHelper;
         public PawnColliderHelper rightLeg2_colliderHelper;
 
-        [Header("Debug")]
-        public bool debugActionDisabled;
-
         public override PawnColliderHelper GetHookingColliderHelper() => ActionCtrler.hookingPointColliderHelper;
         public Etasphera42_Blackboard BB { get; private set; }
         public Etasphera42_Movement Movement { get; private set; }
@@ -154,9 +151,7 @@ namespace Game
 
             if (damageContext.actionResult == ActionResults.Blocked)
             {   
-                if (debugActionDisabled)
-                    return;
-                    
+    
                 // if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && ActionDataSelector.EvaluateSelection(__counterActionData, -1f, 1f) && CheckTargetVisibility())
                 // {
                 //     ActionDataSelector.ResetSelection(__counterActionData);

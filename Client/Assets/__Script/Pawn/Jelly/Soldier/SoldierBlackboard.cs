@@ -91,6 +91,7 @@ namespace Game
             public float leapMaxProb = 1f;
 
             [Header("Backstep")]
+            public Vector3 backstepDestination;  
             public float backstepBoostProbOnTick = 1f;
             public float backstepTriggerDistance = 1f;
             public float backstepRootMotionMultiplier = 1f;
@@ -135,7 +136,9 @@ namespace Game
         public class Attachment
         {
             public Transform targetLookAt;
-            public Transform bodyMeshParent;
+            public Transform jellyPosition;
+            public Transform spine02;
+            public Transform  bodyMeshParent;
             public Renderer[] bodyMeshRenderers;
             public Renderer shieldMeshRenderer;
             public ParticleSystem[] jetParticleSystems;

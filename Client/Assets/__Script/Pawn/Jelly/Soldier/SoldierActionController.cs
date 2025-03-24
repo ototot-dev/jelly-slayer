@@ -96,6 +96,17 @@ namespace Game
             return base.StartOnKnockDownAction(ref damageContext, isAddictiveAction);
         }
 
+        public override IDisposable StartOnGroogyAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
+        {
+            Observable.Interval(TimeSpan.FromSeconds(0.1f)).Take(3).Subscribe(_ =>
+            {
+                EffectManager.Instance.Show(__brain.BB.graphics.onBleedingFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward), 1.5f * Vector3.one)
+                    .transform.SetParent(__brain.bodyHitColliderHelper.transform, true);
+            }).AddTo(this);
+
+            return base.StartOnGroogyAction(ref damageContext, isAddictiveAction);
+        }
+
         void ShowHitColor(PawnColliderHelper hitColliderHelper)
         {
             if (hitColliderHelper == __brain.bodyHitColliderHelper)

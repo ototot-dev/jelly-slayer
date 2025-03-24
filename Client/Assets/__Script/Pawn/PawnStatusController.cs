@@ -85,6 +85,21 @@ namespace Game
             return ret;
         }
 
+        public float GetDuration(PawnStatus status)
+        {
+            var ret = 0f;
+            if (__uniqueTable.ContainsKey(status))
+                ret =  __uniqueTable[status].Item2;
+            if (__stackableTable.ContainsKey(status) && __stackableTable[status].Count > 0)
+                ret = Mathf.Max(ret, __stackableTable[status].First().Item2);
+
+            //* 디버프가 아닌 경우에만 '__externBuffTables'도 검색한다.
+            if (status < PawnStatus.__DEBUFF__SEPERATOR__ && __externTables.Count > 0 && __externTables.Any(e => e.Value.ContainsKey(status)))
+                ret = Mathf.Max(ret, __externTables.Max(e => e.Value[status].Item2));
+
+            return ret - Time.time;
+        }
+
         public struct StatusParam
         {
             public PawnStatus status;

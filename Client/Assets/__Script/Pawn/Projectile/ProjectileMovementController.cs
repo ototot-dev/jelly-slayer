@@ -109,7 +109,7 @@ namespace Game
             {
                 var currPosition = sensorCollider.transform.position + __sensorBoxCollider.center;
 
-                if (distanceAlmostZero = Vector3.Distance(currPosition, __lastTracedPosition) < MathExtension.DEFAULT_EPSILON)
+                if (distanceAlmostZero = Vector3.Distance(currPosition, __lastTracedPosition) < MathExtension.EPSILON_LENGTH)
                 {
                     __traceCollidersNonAlloc ??= new Collider[__maxTraceCount];
                     __traceCount = Physics.OverlapBoxNonAlloc(currPosition, 0.5f * Vector3.Scale(__sensorBoxCollider.size, sensorCollider.transform.lossyScale), __traceCollidersNonAlloc, sensorCollider.transform.rotation, sensorLayerMask);
@@ -125,7 +125,7 @@ namespace Game
             {
                 var currPosition = sensorCollider.transform.position + __sensorSphereCollider.center;
 
-                if (distanceAlmostZero = Vector3.Distance(currPosition, __lastTracedPosition) < MathExtension.DEFAULT_EPSILON)
+                if (distanceAlmostZero = Vector3.Distance(currPosition, __lastTracedPosition) < MathExtension.EPSILON_LENGTH)
                 {
                     __traceCollidersNonAlloc ??= new Collider[__maxTraceCount];
                     __traceCount = Physics.OverlapSphereNonAlloc(currPosition, __sensorSphereCollider.radius * Mathf.Max(sensorCollider.transform.lossyScale.x, sensorCollider.transform.lossyScale.y, sensorCollider.transform.lossyScale.z), __traceCollidersNonAlloc, sensorLayerMask);
@@ -142,7 +142,7 @@ namespace Game
                 var halfHeight = Mathf.Max(0, 0.5f * __sensorCapsuleCollider.height * sensorCollider.transform.lossyScale.y - __sensorCapsuleCollider.radius * Mathf.Max(sensorCollider.transform.lossyScale.x, sensorCollider.transform.lossyScale.y, sensorCollider.transform.lossyScale.z));
                 var currPosition = sensorCollider.transform.position + __sensorCapsuleCollider.center;
 
-                if (distanceAlmostZero = Vector3.Distance(currPosition, __lastTracedPosition) < MathExtension.DEFAULT_EPSILON)
+                if (distanceAlmostZero = Vector3.Distance(currPosition, __lastTracedPosition) < MathExtension.EPSILON_LENGTH)
                 {
                     __traceCollidersNonAlloc ??= new Collider[__maxTraceCount];
                     __traceCount = Physics.OverlapCapsuleNonAlloc(currPosition - halfHeight * sensorCollider.transform.up, currPosition + halfHeight * sensorCollider.transform.up, __sensorCapsuleCollider.radius, __traceCollidersNonAlloc, sensorLayerMask);

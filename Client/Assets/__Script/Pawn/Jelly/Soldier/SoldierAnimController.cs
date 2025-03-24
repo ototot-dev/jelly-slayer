@@ -15,13 +15,13 @@ namespace Game
         public BonesStimulator rightArmBoneSimulator;
         public BonesStimulator leftLegBoneSimulator;
         public BonesStimulator rightLegBoneSimulator;
-        public JellyMeshController jellyMeshCtrler;
 
         [Header("Parameter")]
         public float rigBlendWeight = 1f;
         public float rigBlendSpeed = 1f;
         public float actionLayerBlendInSpeed = 1f;
         public float actionLayerBlendOutSpeed = 1f;
+        public float lowerLayerBlendSpeed = 1f;
         public float legAnimGlueBlendSpeed = 1f;
         public float armBoneSimulatorBlendSpeed = 1f;
         public float armBoneSimulatorTargetWeight = 0f;
@@ -42,8 +42,11 @@ namespace Game
 
         public override void OnAnimatorMoveHandler()
         {
-            if (__brain.BB.IsDown)
+            if (__brain.BB.IsDown || __brain.BB.IsGroggy)
+            {
+                __Logger.LogR1(gameObject, "IsGroggy", "deltaPosition", mainAnimator.deltaPosition, "deltaRotation", mainAnimator.deltaRotation);
                 __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation, Time.deltaTime);
+            }
             else if (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
                 __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition, mainAnimator.deltaRotation, Time.deltaTime);
         }
@@ -84,15 +87,6 @@ namespace Game
             };
 
             __brain.BB.body.isGuarding.Subscribe(v => __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", v)).AddTo(this);
-
-            __brain.BB.common.isGroggy.Skip(1).Subscribe(v =>
-            {
-                // if (v)
-                //     jellyMeshCtrler.FadeIn(1f);
-                // else
-                //     jellyMeshCtrler.FadeOut(1f);
-            }).AddTo(this);
-
             __brain.BB.body.isJumping.Subscribe(v =>
             {
                 //* 발바닥에서 발사하는 Frame 이펙트 On
@@ -101,7 +95,7 @@ namespace Game
                     foreach (var p in __brain.BB.attachment.jetParticleSystems)
                     {
                         p.transform.parent.GetComponent<MeshRenderer>().enabled = true;
-                        p.transform.parent.DOScale(2f * Vector3.one, 0.5f).OnComplete(() => p.Play());
+                        p.transform.parent.DOScale(5f * Vector3.one, 0.5f).OnComplete(() => p.Play());
                     }
                 }
             }).AddTo(this);
@@ -161,11 +155,14 @@ namespace Game
                         rightArmBoneSimulator.enabled = false;
                 }
 
+                if ((__brain.BB.IsJumping || __brain.BB.IsGliding || __brain.BB.IsFalling) && !__brain.Movement.IsOnGround)
+                    mainAnimator.SetLayerWeight((int)LayerIndices.Lower, Mathf.Clamp01(mainAnimator.GetLayerWeight((int)LayerIndices.Lower) + lowerLayerBlendSpeed * Time.deltaTime));
+                else
+                    mainAnimator.SetLayerWeight((int)LayerIndices.Lower, 0f);
+
                 //* 활공 시에 다리가 자연스럽게 흔들리도록 LegBoneSimulator의 StimulatorAmount 값을 조절함
                 if (__brain.BB.IsGliding)
                 {
-                    mainAnimator.SetLayerWeight((int)LayerIndices.Lower, 1f);
-
                     if (!leftLegBoneSimulator.enabled) leftLegBoneSimulator.enabled = true;
                     if (!rightLegBoneSimulator.enabled) rightLegBoneSimulator.enabled = true;
                     leftLegBoneSimulator.StimulatorAmount = Mathf.Clamp(leftLegBoneSimulator.StimulatorAmount + legBoneSimulatorBlendSpeed * Time.deltaTime, 0f, legBoneSimulatorTargetWeight);
@@ -173,7 +170,6 @@ namespace Game
                 }
                 else
                 {
-                    mainAnimator.SetLayerWeight((int)LayerIndices.Lower, 0f);
                     leftLegBoneSimulator.StimulatorAmount = Mathf.Clamp01(leftLegBoneSimulator.StimulatorAmount - legBoneSimulatorBlendSpeed * Time.deltaTime);
                     rightLegBoneSimulator.StimulatorAmount = Mathf.Clamp01(rightLegBoneSimulator.StimulatorAmount - legBoneSimulatorBlendSpeed * Time.deltaTime);
 

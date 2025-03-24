@@ -743,7 +743,7 @@ namespace Game
                 Physics.OverlapCapsuleNonAlloc(fanCenter + 0.5f * fanHeight * Vector3.up, fanCenter + 0.5f * fanHeight * Vector3.down, fanRadius, __tempCollidersNonAlloc);
 
             var fanLocalToWorldMatrix = __pawnBrain.coreColliderHelper.transform.localToWorldMatrix * fanOffsetMatrix;
-            var worldToLocal = fanLocalToWorldMatrix.inverse;
+            var fanWorldToLocalMatrix = fanLocalToWorldMatrix.inverse;
             var compareDot = -1f;
             var compareSqrDistance = -1f;
             var compareColliderRadius = 0f;
@@ -766,13 +766,13 @@ namespace Game
                             (c.transform.position - __pawnBrain.coreColliderHelper.transform.position).Vector2D().normalized);
 
                         //* 정면 방향에서 'minRadius'만큼 가까이 붙어있는지 체크 (minRadius보다 안쪽에 있는 대상에 대해선 정면 180도 시야각 안에만 존재하면 히트한 것으로 판정함)
-                        var finalOverlapped = currDot >= 0 && tracedColliderHelper.GetDistanceBetween(__pawnBrain.coreColliderHelper) <= minRadius;
+                        var finalOverlapped = currDot >= 0 && __pawnBrain.coreColliderHelper.GetApproachDistance(tracedColliderHelper) <= minRadius;
                         if (!finalOverlapped)
                         {
                             if (c as SphereCollider != null)
-                                finalOverlapped = (c as SphereCollider).CheckOverlappedWithFan(fanAngle, fanRadius, fanHeight, worldToLocal);
+                                finalOverlapped = (c as SphereCollider).CheckOverlappedWithFan(fanAngle, fanRadius, fanHeight, fanWorldToLocalMatrix);
                             else if (c as CapsuleCollider != null)
-                                finalOverlapped = (c as CapsuleCollider).CheckOverlappedWithFan(fanAngle, fanRadius, fanHeight, worldToLocal);
+                                finalOverlapped = (c as CapsuleCollider).CheckOverlappedWithFan(fanAngle, fanRadius, fanHeight, fanWorldToLocalMatrix);
                         }
 
                         if (finalOverlapped)
@@ -802,9 +802,9 @@ namespace Game
                     {
                         var finalOverlapped = false;                        
                         if (c as SphereCollider != null)
-                            finalOverlapped = (c as SphereCollider).CheckOverlappedWithFan(fanAngle, fanRadius, fanHeight, worldToLocal);
+                            finalOverlapped = (c as SphereCollider).CheckOverlappedWithFan(fanAngle, fanRadius, fanHeight, fanWorldToLocalMatrix);
                         else if (c as CapsuleCollider != null)
-                            finalOverlapped = (c as CapsuleCollider).CheckOverlappedWithFan(fanAngle, fanRadius, fanHeight, worldToLocal);
+                            finalOverlapped = (c as CapsuleCollider).CheckOverlappedWithFan(fanAngle, fanRadius, fanHeight, fanWorldToLocalMatrix);
 
                         if (finalOverlapped)
                         {

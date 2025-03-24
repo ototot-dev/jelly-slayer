@@ -119,6 +119,12 @@ namespace Game
         }
         public ActionSequence EnqueueSequence(ActionSequence sequence)
         { 
+            if (debugActionSelectDisabled)
+            {
+                __Logger.LogR2(gameObject, "EnqueueSequence()", "debugEnqueueDisabled", debugActionSelectDisabled);
+                return null;
+            }
+
             if (!__sequenceQueue.Contains(sequence))
             {
                 sequence.Reset();
@@ -166,6 +172,8 @@ namespace Game
         };
 
 #if UNITY_EDITOR
+        [HideInInspector]
+        public bool debugActionSelectDisabled;
         public Dictionary<int, ActionSequence> ReservedSequences => __reservedSequences;
         public Dictionary<MainTable.ActionData, ActionDataState> ActionDataStates => __actionDataStates;
 #endif
@@ -244,11 +252,23 @@ namespace Game
 
         public bool EvaluateSequence<T>(T alias, float probConstraint = -1f, float staminaConstraint = -1f, float intervalConstraint = -1f) where T : struct, Enum
         {
+            if (debugActionSelectDisabled)
+            {
+                __Logger.LogR2(gameObject, "EvaluateSequence()", "debugEnqueueDisabled", debugActionSelectDisabled);
+                return false;
+            }
+
             return GetSequence(alias)?.Evaluate(probConstraint, staminaConstraint, intervalConstraint) ?? false;
         }
         public bool EvaluateActionState(string actionName, float staminaConstraint = -1f) => EvaluateActionState(GetActionData(actionName), staminaConstraint);
         public bool EvaluateActionState(MainTable.ActionData actionData, float staminaConstraint = -1f)
         {
+            if (debugActionSelectDisabled)
+            {
+                __Logger.LogR2(gameObject, "EvaluateActionState()", "debugEnqueueDisabled", debugActionSelectDisabled);
+                return false;
+            }
+
             Debug.Assert(actionData != null);
 
             if (!__actionDataStates.TryGetValue(actionData, out var actionState))
@@ -262,6 +282,12 @@ namespace Game
 
         public T TryRandomPick<T>(float probConstraint, float staminaConstraint = -1f, float intervalConstraint = -1f) where T : struct, Enum
         {
+            if (debugActionSelectDisabled)
+            {
+                __Logger.LogR2(gameObject, "TryRandomPick()", "debugActionSelectDisabled", debugActionSelectDisabled);
+                return Enum.Parse<T>("None");
+            }
+
             var executables = __reservedSequences.Select(p => p.Value).Where(s => s.currProb > 0f && s.Evaluate(probConstraint, staminaConstraint, intervalConstraint)).ToArray();
             var selectRate = UnityEngine.Random.Range(0, executables.Sum(e => e.currProb));
             var accumRate = 0f;

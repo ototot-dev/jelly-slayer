@@ -33,9 +33,7 @@ namespace Game
 
         [Header("Component")]
         public RoboDogFormationController roboDogFormationCtrler;
-
-        [Header("Debug")]
-        public bool debugActionDisabled;
+        public JellyMeshController jellyMeshCtrler;
 
         public override Vector3 GetSpecialKeyPosition() => BB.attachment.specialKeyAttachPoint.transform.position;
         public SoldierBlackboard BB { get; private set; }
@@ -107,8 +105,13 @@ namespace Game
                 if (!BB.IsSpawnFinished || !BB.IsInCombat || BB.IsDead || BB.IsGroggy || BB.IsDown)
                     return;
 
-                if (debugActionDisabled || StatusCtrler.CheckStatus(PawnStatus.CanNotAction))
+                if (StatusCtrler.CheckStatus(PawnStatus.CanNotAction))
                     return;
+
+#if UNITY_EDITOR
+                if (ActionDataSelector.debugActionSelectDisabled)
+                    return;
+#endif
 
                 if (!ActionCtrler.CheckActionPending() && (!ActionCtrler.CheckActionRunning() || ActionCtrler.CanInterruptAction()) && BB.TargetPawn != null)
                 {
@@ -184,14 +187,18 @@ namespace Game
                 }
             };
 
-            // PawnStatusCtrler.onStatusDeactive += (status) =>
-            // {
-            //     if (status == PawnStatus.CanNotAction && BB.stat.actionPoint.Value <= 0)
-            //     {
-            //         BB.stat.RecoverActionPoint(BB.stat.maxActionPoint.Value);
-            //         __Logger.LogR2(gameObject, "onStatusDeactive(CanNotAction)", "RecoverActionPoint()", "maxActionPoint", BB.stat.maxActionPoint.Value);
-            //     }
-            // };
+            PawnStatusCtrler.onStatusDeactive += (status) =>
+            {
+                if (status == PawnStatus.Groggy) 
+                {
+                    ActionDataSelector.GetSequence(ActionPatterns.JumpAttack).SetCoolTime();
+                    ActionDataSelector.GetSequence(ActionPatterns.Backstep).SetCoolTime();
+                    ActionDataSelector.GetSequence(ActionPatterns.Missile).SetCoolTime();
+                    ActionDataSelector.GetSequence(ActionPatterns.Leap).SetCoolTime();
+                    ActionDataSelector.GetSequence(ActionPatterns.ComboAttack).SetCoolTime();
+                    ActionDataSelector.GetSequence(ActionPatterns.CounterCombo).SetCoolTime();
+                }
+            };
 
             // BB.stat.actionPoint.Skip(1).Where(v => v <= 0).Subscribe(v =>
             // {
@@ -200,6 +207,21 @@ namespace Game
 
             //     __Logger.LogR1(gameObject, "AddStatus(CanNotAction)", "duration", coolDownDuration);
             // }).AddTo(this);
+            
+            BB.common.isGroggy.Skip(1).Subscribe(v =>
+            {
+                if (v) 
+                {
+                    BB.attachment.jellyPosition.position = coreColliderHelper.GetWorldCenter();
+                    jellyMeshCtrler.FadeIn(0.5f);
+                    jellyMeshCtrler.StartHook();
+                }
+                else 
+                {
+                    jellyMeshCtrler.FadeOut(0.5f);
+                    jellyMeshCtrler.FinishHook();
+                }
+            }).AddTo(this);
 
             BB.body.isFalling.Skip(1).Subscribe(v =>
             {
@@ -219,9 +241,6 @@ namespace Game
 
             if (damageContext.actionResult == ActionResults.Blocked)
             {
-                if (debugActionDisabled)
-                    return;
-
                 if (!ActionCtrler.CheckActionPending() && BB.action.counterAttackProbOnGuard > UnityEngine.Random.Range(0f, 1f))
                 {
                     ActionDataSelector.ClearSequences();

@@ -84,6 +84,11 @@ namespace Game
             foreach (var r in __tailMeshRenderers) r.enabled = true;
             foreach (var t in tailAnimators) t.enabled = true;
 
+            Observable.Timer(TimeSpan.FromSeconds(duration)).Subscribe(_ =>
+            {
+                springMassSystem.core.gameObject.layer = LayerMask.NameToLayer("HitBoxBlocking");
+            }).AddTo(this);
+
             __fadeUpdateDisposable?.Dispose();
             __fadeUpdateDisposable = Observable.EveryLateUpdate().Subscribe(_ =>
             {
@@ -137,6 +142,7 @@ namespace Game
             var fadeStartTimeStamp = Time.time;
 
             meshBuilder.meshRenderer.enabled = false;
+            springMassSystem.core.gameObject.layer = LayerMask.NameToLayer("Default");
 
             __fadeUpdateDisposable?.Dispose();
             __fadeUpdateDisposable = Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(duration +  __cubeMeshRenderers.Count * 0.1f)))
@@ -247,13 +253,13 @@ namespace Game
             ropeHookCtrler.LaunchHook(jellyBrain.GetHookingColliderHelper().pawnCollider);
 
             var hookingPointFx = EffectManager.Instance.ShowLooping(hoookingPointFx, jellyBrain.GetHookingColliderHelper().transform.position, Quaternion.identity, Vector3.one);
-            __hookingPointFxDisposable = Observable.EveryUpdate()
+            __hookingPointFxDisposable = Observable.EveryLateUpdate()
                 .DoOnCancel(() => hookingPointFx.Stop())
                 .DoOnCompleted(() => hookingPointFx.Stop())
                 .Subscribe(_ =>
                 {
                     Debug.Assert(ropeHookCtrler.hookingCollider != null);
-                    hookingPointFx.transform.position = ropeHookCtrler.GetLastParticlePosition();
+                    hookingPointFx.transform.position = ropeHookCtrler.hookingCollider.transform.position = (jellyBrain as SoldierBrain).BB.attachment.spine02.position;
                     //* 카메라 쪽으로 위치를 당겨서 겹쳐서 안보이게 되는 경우를 완화함
                     hookingPointFx.transform.position -= GameContext.Instance.mainCameraCtrler.viewCamera.transform.forward;
                 }).AddTo(this);
@@ -261,6 +267,8 @@ namespace Game
 
         public void FinishHook()
         {
+            __hookingPointFxDisposable?.Dispose();
+            __hookingPointFxDisposable = null;
             ropeHookCtrler.DetachHook();
         }
     }

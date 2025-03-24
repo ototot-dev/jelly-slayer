@@ -8,9 +8,7 @@ namespace Game
     {
         [Header("Weapon")]
         public WeaponController[] _handWeaponCtrl;
-        
-        [Header("Debug")]
-        public bool debugActionDisabled;
+
 
         public ZombieBlackboard BB { get; private set; }
         public ZombieMovement Movement { get; private set; }
@@ -36,8 +34,6 @@ namespace Game
 
             onTick += (_) =>
             {
-                if (debugActionDisabled)
-                    return;
                 if (!BB.IsSpawnFinished || BB.IsDead || !BB.IsInCombat || BB.TargetPawn == null)
                     return;
 

@@ -12,9 +12,6 @@ namespace Game
     [RequireComponent(typeof(DroneBotActionController))]
     public class DroneBotBrain : PawnBrainController, IPawnSpawnable, IPawnMovable
     {
-        [Header("Debug")]
-        public bool debugActionDisabled;
-
 #region ISpawnable/IMovable 구현
         Vector3 IPawnSpawnable.GetSpawnPosition() => transform.position;
         void IPawnSpawnable.OnStartSpawnHandler() { }

@@ -4,7 +4,6 @@ using UniRx;
 using UGUI.Rx;
 using Unity.Linq;
 using System;
-using System.Numerics;
 
 namespace Game
 {

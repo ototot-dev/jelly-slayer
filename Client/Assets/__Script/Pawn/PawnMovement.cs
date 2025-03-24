@@ -141,7 +141,7 @@ namespace Game
         public void DampenRootMotion(float dampingFactor = 0.5f)
         {
             __rootMotionPosition = Vector3.Lerp(Vector3.zero, __rootMotionPosition, dampingFactor);
-            if (__rootMotionPosition.sqrMagnitude < MathExtension.DEFAULT_EPSILON)
+            if (__rootMotionPosition.sqrMagnitude < MathExtension.EPSILON_LENGTH)
                 __rootMotionPosition = Vector3.zero;
         }
 

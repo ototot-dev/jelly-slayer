@@ -215,14 +215,14 @@ namespace Game
             // Pin both ends of the rope (this enables two-way interaction between character and rope):
             var batch = new ObiPinConstraintsBatch();
             batch.AddConstraint(__obiRope.elements[0].particle1, obiCollider, transform.localPosition, Quaternion.identity, 0, 0, float.PositiveInfinity);
-            batch.AddConstraint(__obiRope.elements[__obiRope.elements.Count - 1].particle2, hookingCollider.GetComponent<ObiColliderBase>(), hookingOffsetPoint, Quaternion.identity, 0, 0, float.PositiveInfinity);
+            batch.AddConstraint(__obiRope.elements[__obiRope.elements.Count - 1].particle2, hookingCollider.GetComponent<ObiColliderBase>(),  hookingOffsetPoint, Quaternion.identity, 0, 0, float.PositiveInfinity);
             batch.activeConstraintCount = 2;
             pinConstraints.AddBatch(batch);
 
             __obiRope.SetConstraintsDirty(Oni.ConstraintType.Pin);
 
             //* 기본 길이값 셋팅
-            hookingLength = (hookingCollider.transform.position - transform.position).magnitude;
+            hookingLength = (hookingCollider.transform.position - transform.position).magnitude * hookLengthMultilier;
             onRopeHooked?.Invoke(hookingCollider);
         }
 
@@ -249,7 +249,7 @@ namespace Game
                 var currLength = __obiRope.CalculateLength();
                 var restLength = __obiRope.restLength;
 
-                var distance = (hookingCollider.transform.position - transform.position).magnitude * hookLengthMultilier;
+                hookingLength = (hookingCollider.transform.position - transform.position).magnitude * hookLengthMultilier;
                 // __Logger.LogR(gameObject, nameof(FixedUpdate), "hookLength", hookLength, "currLength", currLength, "restLength", restLength);
 
                 // restLength - Mathf.Floor(distance);

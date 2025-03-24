@@ -26,9 +26,6 @@ namespace Game
         }
 #endregion
 
-        [Header("Debug")]
-        public bool debugActionDisabled;
-
         public RoboDogBlackboard BB { get; private set; }
         public RoboDogMovement Movement { get; private set; }
         public RoboDogAnimController AnimCtrler { get; private set; }
@@ -67,8 +64,8 @@ namespace Game
                 if (!BB.IsSpawnFinished || BB.IsDead || BB.IsGroggy || BB.IsDown || !BB.IsInCombat || BB.TargetPawn == null)
                     return;
 
-                if (debugActionDisabled)
-                    return;
+                // if (debugActionDisabled)
+                //     return;
 
                 __counterActionData ??= ActionDataSelector.GetActionData("Counter");
                 __chargeActionData ??= ActionDataSelector.GetActionData("Charge");
@@ -139,8 +136,8 @@ namespace Game
 
             if (damageContext.actionResult == ActionResults.Blocked)
             {   
-                if (debugActionDisabled)
-                    return;
+                // if (debugActionDisabled)
+                //     return;
                     
                 if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && CheckTargetVisibility())
                 {

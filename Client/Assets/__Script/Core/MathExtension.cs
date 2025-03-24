@@ -7,7 +7,8 @@ namespace Game
 {
     public static class MathExtension
     {
-        public const float DEFAULT_EPSILON = 0.00001f;
+        public const float EPSILON_LENGTH = 0.0001f;
+        public const float EPSILON_ANGLE = 0.01f;
 
         public static float MaxElem(this Vector3 vec)
         {

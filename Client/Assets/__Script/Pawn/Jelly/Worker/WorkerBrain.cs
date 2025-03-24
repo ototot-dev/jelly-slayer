@@ -12,9 +12,6 @@ namespace Game
     [RequireComponent(typeof(WorkerActionController))]
     public class WorkerBrain : JellyHumanoidBrain
     {
-        [Header("Debug")]
-        public bool debugActionDisabled;
-
         public WorkerBlackboard BB { get; private set; }
         public WorkerMovement Movement { get; private set; }
         public WorkerAnimController AnimCtrler { get; private set; }
@@ -51,9 +48,6 @@ namespace Game
             onTick += (deltaTick) =>
             {
                 if (!BB.IsSpawnFinished || BB.IsDead || BB.IsGroggy || BB.IsDown || !BB.IsInCombat || BB.TargetPawn == null)
-                    return;
-
-                if (debugActionDisabled)
                     return;
 
                 __counterActionData ??= ActionDataSelector.GetActionData("Counter");
@@ -134,10 +128,7 @@ namespace Game
             base.DamageReceiverHandler(ref damageContext);
 
             if (damageContext.actionResult == ActionResults.Blocked)
-            {   
-                if (debugActionDisabled)
-                    return;
-                    
+            {       
                 if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && CheckTargetVisibility())
                 {
                     __counterActionData ??= ActionDataSelector.GetActionData("Counter");

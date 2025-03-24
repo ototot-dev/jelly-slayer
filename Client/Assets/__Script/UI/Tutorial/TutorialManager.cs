@@ -12,12 +12,12 @@ public enum TutorialStatus
 { 
     None,
     Text,
-    EnableInput,        // ÀÔ·Â Enable
-    DisableInput,       // ÀÔ·Â Disable
-    ActiveTarget,       // °´Ã¼ Active
-    SetMode,            // ¸ðµå
+    EnableInput,        // ï¿½Ô·ï¿½ Enable
+    DisableInput,       // ï¿½Ô·ï¿½ Disable
+    ActiveTarget,       // ï¿½ï¿½Ã¼ Active
+    SetMode,            // ï¿½ï¿½ï¿½
     ActiveTargetAttack, // Target Attack Active
-    End,                // Æ©Åä¸®¾ó Á¾·á
+    End,                // Æ©ï¿½ä¸®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 }
 
 public enum TutorialAction 
@@ -148,20 +148,20 @@ public class TutorialManager : MonoBehaviour
     }
     void LoadXML()
     {
-        // XML ÆÄÀÏ °æ·Î ¼³Á¤
+        // XML ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         //string filePath = Application.dataPath + "/Players.xml";
         TextAsset xmlFile = Resources.Load<TextAsset>("Tutorial/tutorial");
         if (xmlFile == null)
             return;
 
-        // XmlDocument·Î XML ÆÄÀÏ ÀÐ±â
+        // XmlDocumentï¿½ï¿½ XML ï¿½ï¿½ï¿½ï¿½ ï¿½Ð±ï¿½
         XmlDocument xmlDoc = new XmlDocument();
         xmlDoc.LoadXml(xmlFile.text);
 
-        // Root ³ëµå °¡Á®¿À±â
+        // Root ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         XmlNodeList tutorialList = xmlDoc.GetElementsByTagName("item");
 
-        // °¢ Player Á¤º¸ Ãâ·Â
+        // ï¿½ï¿½ Player ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         foreach (XmlNode node in tutorialList)
         {
             TutorialItem item = new();
@@ -291,12 +291,12 @@ public class TutorialManager : MonoBehaviour
             }
             _delActivateItem?.Invoke(item);
 
-            // ¹Ù·Î ½ÃÀÛ
+            // ï¿½Ù·ï¿½ ï¿½ï¿½ï¿½ï¿½
             if (item._isActivateNextOnStart == true)
             {
                 GoNext();
             }
-            // ÀÏÁ¤ ½Ã°£ ÀÌÈÄ ½ÃÀÛ
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             else if (item._nextActivateTime > 0)
             {
                 Invoke(nameof(GoNext), item._nextActivateTime);
@@ -320,7 +320,7 @@ public class TutorialManager : MonoBehaviour
 
         var obj = _targetObj[index];
         var brain = obj.GetComponent<SoldierBrain>();
-        brain.debugActionDisabled = !isEnable;
+        // brain.debugActionDisabled = !isEnable;
 
         if (_heroBrain == null)
         {

@@ -10,9 +10,6 @@ namespace Game
     [RequireComponent(typeof(WarriorActionController))]
     public class WarriorBrain : JellyBrain
     {
-        [Header("Debug")]
-        public bool debugActionDisabled;
-
         public WarriorBlackboard BB { get; private set; }
         public WarrirorMovement Movement { get; private set; }
         public WarriorAnimController AnimCtrler { get; private set; }

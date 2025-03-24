@@ -16,7 +16,7 @@ namespace Game
             __brain.BB.body.isFalling.Value = false;
             __brain.BB.body.isGliding.Value = false;
 
-            Observable.Timer(TimeSpan.FromMilliseconds(40)).Subscribe(_ =>
+            Observable.Timer(TimeSpan.FromMilliseconds(500)).Subscribe(_ =>
             {            
                 if (__brain.BB.IsJumping)
                 {
