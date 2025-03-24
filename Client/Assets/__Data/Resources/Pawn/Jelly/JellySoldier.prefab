@@ -383,8 +383,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b153c152fcfa2bf4ea7fce84b31237f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  drawForward: 0
+  drawAttackPoint: 0
   drawTargetInfo: 0
-  drawAttackPointInfo: 0
+  drawActionInfo: 0
+  drawSensorInfo: 0
+  drawPawnStatus: 0
   sourceCubeMesh: {fileID: 7406120393106311}
   sourceConeMesh: {fileID: 3994708709932071286}
   sourceLineRenderer: {fileID: 7417534694961851422}
@@ -1566,7 +1570,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7417534694961851422
 Transform:
   m_ObjectHideFlags: 0
@@ -6804,7 +6808,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1537560372872914153
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6821,7 +6825,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 1.998}
   m_SizeDelta: {x: 5, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &8986150608970491939
@@ -6876,7 +6880,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1870144864149696292}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
   m_Name: 
@@ -26730,7 +26734,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3994708709932071286
 Transform:
   m_ObjectHideFlags: 0
@@ -55412,7 +55416,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7406120393106311
 Transform:
   m_ObjectHideFlags: 0
@@ -82284,6 +82288,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51753b4002b0d48c299cb80bc4ef44cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debugActionSelectDisabled: 0
 --- !u!114 &4331524929035653262
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82426,7 +82431,6 @@ MonoBehaviour:
   fixedUpdateEnabled: 1
   roboDogFormationCtrler: {fileID: 5938920085556766268}
   jellyMeshCtrler: {fileID: 2168992762603302668}
-  debugActionDisabled: 0
 --- !u!114 &1626602440402030822
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82582,6 +82586,7 @@ MonoBehaviour:
   attachment:
     targetLookAt: {fileID: 2628180316295316148}
     jellyPosition: {fileID: 8903968180106700030}
+    spine02: {fileID: 2264891595277319075}
     bodyMeshParent: {fileID: 3880047003858185409}
     bodyMeshRenderers: []
     shieldMeshRenderer: {fileID: 1458070737609187091}
