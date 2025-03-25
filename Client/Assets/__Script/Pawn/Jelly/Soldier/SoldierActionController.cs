@@ -32,6 +32,8 @@ namespace Game
                 if (damageContext.hitCollider.transform.parent.TryGetComponent<JellyMeshController>(out var jellyMeshCtrler))
                     jellyMeshCtrler.ShowHitColor(0.1f);
 
+                SoundManager.Instance.PlayWithClip(__brain.BB.audios.onHitFleshClip);
+
                 return null;
             }
 
