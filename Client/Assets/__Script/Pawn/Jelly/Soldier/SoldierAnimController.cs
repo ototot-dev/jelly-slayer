@@ -53,7 +53,7 @@ namespace Game
         public override void OnAnimatorFootHandler(bool isRight) 
         {
             var pos = __brain.BB.TargetColliderHelper.GetWorldCenter();
-            SoundManager.Instance.PlayWithClipPos(__brain.BB.audios.onFootstepClip, pos, false, true, 0.5f);
+            SoundManager.Instance.PlayWithClipPos(__brain.BB.audios.onFootstepClip, pos, false, true, 0.2f);
         }
 
         void Awake()
