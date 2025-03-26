@@ -141,16 +141,14 @@ namespace Game
         public class Attachment
         {
             public Transform targetLookAt;
-            public Transform jellyPosition;
             public Transform spine02;
             public Transform  bodyMeshParent;
             public Renderer[] bodyMeshRenderers;
             public Renderer shieldMeshRenderer;
             public ParticleSystem[] jetParticleSystems;
             public Transform blockingFxAttachPoint;
-            public Transform emojiAttachPoint;
-            public Transform jellyAttachPoint;
             public Transform specialKeyAttachPoint;
+            public Transform jellyMeshAttactPoint;
             public Transform laserAimPoint;
             public SoldierLaserRenderer laserRenderer;
             public PawnColliderHelper counterActionTraceColliderHelper;

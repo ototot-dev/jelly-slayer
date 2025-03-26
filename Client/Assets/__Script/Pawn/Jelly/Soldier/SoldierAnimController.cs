@@ -44,7 +44,7 @@ namespace Game
 
         public override void OnAnimatorMoveHandler()
         {
-            if (__brain.BB.IsDown || __brain.BB.IsGroggy)
+            if (__brain.BB.IsDown || CheckAnimStateRunning("OnGroggy (Break)"))
                 __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation, Time.deltaTime);
             else if (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
                 __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition, mainAnimator.deltaRotation, Time.deltaTime);
@@ -69,8 +69,10 @@ namespace Game
         {
             FindObservableStateMachineTriggerEx("OnParried").OnStateEnterAsObservable().Subscribe(s => __runningAnimStateNames.Add("OnParried")).AddTo(this);
             FindObservableStateMachineTriggerEx("OnParried").OnStateExitAsObservable().Subscribe(s => __runningAnimStateNames.Remove("OnParried")).AddTo(this);
-            FindObservableStateMachineTriggerEx("OnGroggy (Loop)").OnStateEnterAsObservable().Subscribe(s => __runningAnimStateNames.Add("OnGroggy")).AddTo(this);
-            FindObservableStateMachineTriggerEx("OnGroggy (Loop)").OnStateExitAsObservable().Subscribe(s => __runningAnimStateNames.Remove("OnGroggy")).AddTo(this);
+            FindObservableStateMachineTriggerEx("OnGroggy (Loop)").OnStateEnterAsObservable().Subscribe(s => __runningAnimStateNames.Add("OnGroggy (Loop)")).AddTo(this);
+            FindObservableStateMachineTriggerEx("OnGroggy (Loop)").OnStateExitAsObservable().Subscribe(s => __runningAnimStateNames.Remove("OnGroggy (Loop)")).AddTo(this);
+            FindObservableStateMachineTriggerEx("OnGroggy (Break)").OnStateEnterAsObservable().Subscribe(s => __runningAnimStateNames.Add("OnGroggy (Break)")).AddTo(this);
+            FindObservableStateMachineTriggerEx("OnGroggy (Break)").OnStateExitAsObservable().Subscribe(s => __runningAnimStateNames.Remove("OnGroggy (Break)")).AddTo(this);
 
             __brain.StatusCtrler.onStatusActive += (status) =>
             {
@@ -141,7 +143,7 @@ namespace Game
 
                 if (__brain.ActionCtrler.CheckActionRunning())
                     armBoneSimulatorTargetWeight = leftArmBoneSimulator.StimulatorAmount = rightArmBoneSimulator.StimulatorAmount = 0f;
-                else if (CheckAnimStateRunning("OnParried") || CheckAnimStateRunning("OnGroggy"))
+                else if (CheckAnimStateRunning("OnParried") || CheckAnimStateRunning("OnGroggy (Loop)"))
                     armBoneSimulatorTargetWeight = 1f;
                 else
                     armBoneSimulatorTargetWeight = 0f;
@@ -199,17 +201,9 @@ namespace Game
                 else if (__brain.BB.IsGroggy)
                 {
                     headAim.weight = 0f;
-                    legAnimator.LegsAnimatorBlend = CheckAnimStateRunning("Kneeling") ? 0f : 1f;
+                    legAnimator.LegsAnimatorBlend = 1f;
                     legAnimator.User_SetIsMoving(false);
                     legAnimator.User_SetIsGrounded(true);
-
-                    // TODO: (임시 코드) JellyMesh와 Pawn간의 최대 거리 제한을 줌
-                    var distanceVec = (__brain.BB.attachment.jellyPosition.position - __brain.coreColliderHelper.GetWorldCenter()).Vector2D();
-                    if (distanceVec.magnitude > 2f)
-                    {
-                        var newPosition = __brain.coreColliderHelper.GetWorldCenter() + 2f * distanceVec.normalized;
-                        __brain.BB.attachment.jellyPosition.position = newPosition.AdjustY(__brain.BB.attachment.jellyPosition.position.y);
-                    }
                 }
                 else if (__brain.BB.IsDown)
                 {

@@ -74,7 +74,7 @@ namespace Game
         {
             var fadeStartTimeStamp = Time.time;
 
-            springMassSystem.coreAttachPoint.position = jellyBrain.coreColliderHelper.GetWorldCenter(); 
+            // springMassSystem.coreAttachPoint.position = jellyBrain.coreColliderHelper.GetWorldCenter(); 
             eyeAnimator.transform.localScale = Vector3.zero;
             eyeAnimator.MinOpenValue = 0f;
             meshBuilder.meshRenderer.enabled = false;
@@ -87,7 +87,7 @@ namespace Game
 
             Observable.Timer(TimeSpan.FromSeconds(duration)).Subscribe(_ =>
             {
-                springMassSystem.core.gameObject.layer = LayerMask.NameToLayer("HitBoxBlocking");
+                springMassSystem.core.gameObject.layer = LayerMask.NameToLayer("HitBox");
             }).AddTo(this);
 
             __fadeUpdateDisposable?.Dispose();
@@ -252,7 +252,7 @@ namespace Game
         public void StartHook()
         {
             ropeHookCtrler.LaunchHook(jellyBrain.GetHookingColliderHelper().pawnCollider);
-
+            return;
             var hookingPointFx = EffectManager.Instance.ShowLooping(hoookingPointFx, jellyBrain.GetHookingColliderHelper().transform.position, Quaternion.identity, Vector3.one);
             __hookingPointFxDisposable = Observable.EveryLateUpdate()
                 .DoOnCancel(() => hookingPointFx.Stop())
