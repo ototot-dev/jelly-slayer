@@ -1287,6 +1287,7 @@ Transform:
   - {fileID: 1291023932344901000}
   - {fileID: 5781964363949412845}
   - {fileID: 6783572122253413391}
+  - {fileID: 183002243839654144}
   m_Father: {fileID: 791442315315432696}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &7402423699649128735
@@ -49518,38 +49519,6 @@ Transform:
   - {fileID: 5211222938039059963}
   m_Father: {fileID: 7147085219341165418}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &5084022268350964153
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8903968180106700030}
-  m_Layer: 0
-  m_Name: JellyMeshPosition
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8903968180106700030
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5084022268350964153}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 183002243839654144}
-  m_Father: {fileID: 449075468460741826}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5167645683814263353
 GameObject:
   m_ObjectHideFlags: 0
@@ -50784,7 +50753,6 @@ Transform:
   - {fileID: 3951605572449696136}
   - {fileID: 2628180316295316148}
   - {fileID: 1833178852971390075}
-  - {fileID: 8903968180106700030}
   m_Father: {fileID: 791442315315432696}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5714955399461472243
@@ -82584,9 +82552,10 @@ MonoBehaviour:
     onMissedAudioClip: {fileID: 8300000, guid: b47bb87ddf4afcc49ba83a4999cf050e, type: 3}
     onBlockedAudioClip: {fileID: 8300000, guid: b47bb87ddf4afcc49ba83a4999cf050e, type: 3}
     onGuardBreakAudioClip: {fileID: 8300000, guid: 93fc0b243c8d39441a33d29e6146b688, type: 3}
+    onHitFleshClip: {fileID: 0}
+    onFootstepClip: {fileID: 0}
   attachment:
     targetLookAt: {fileID: 2628180316295316148}
-    jellyPosition: {fileID: 8903968180106700030}
     spine02: {fileID: 2264891595277319075}
     bodyMeshParent: {fileID: 3880047003858185409}
     bodyMeshRenderers: []
@@ -82597,9 +82566,8 @@ MonoBehaviour:
     - {fileID: 333168883402409231}
     - {fileID: 7347361148877445648}
     blockingFxAttachPoint: {fileID: 827300965817690329}
-    emojiAttachPoint: {fileID: 5781964363949412845}
-    jellyAttachPoint: {fileID: 0}
     specialKeyAttachPoint: {fileID: 6783572122253413391}
+    jellyMeshAttactPoint: {fileID: 0}
     laserAimPoint: {fileID: 5689320857391352882}
     laserRenderer: {fileID: 0}
     counterActionTraceColliderHelper: {fileID: 1010624364731835310}
@@ -83873,12 +83841,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9088278075016988152}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.5, z: 1.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8903968180106700030}
+  m_Father: {fileID: 6920421996920446943}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9117720245561101562
 GameObject:

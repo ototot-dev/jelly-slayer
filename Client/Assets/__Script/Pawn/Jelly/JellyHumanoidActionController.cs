@@ -51,7 +51,10 @@ namespace Game
                     __pawnAnimCtrler.mainAnimator.SetFloat("HitY", hitVec.z > 0f ? 1f : -1f);
                 }
 
-                __pawnAnimCtrler.mainAnimator.SetInteger("HitType", damageContext.receiverBrain.PawnBB.IsGroggy ? 3 : 0);
+                if (damageContext.receiverBrain.PawnBB.IsGroggy)
+                    __pawnAnimCtrler.mainAnimator.SetInteger("HitType", damageContext.groggyBreakHit ? 4 : 3);
+                else
+                    __pawnAnimCtrler.mainAnimator.SetInteger("HitType", 0);
                 __pawnAnimCtrler.mainAnimator.SetTrigger("OnHit");
             }
             else if (damageContext.actionResult == ActionResults.Blocked)
