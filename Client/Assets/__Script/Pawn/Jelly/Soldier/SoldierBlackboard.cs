@@ -130,6 +130,7 @@ namespace Game
             public AudioClip onGuardBreakAudioClip;
 
             public AudioClip onHitFleshClip;
+            public AudioClip onEnterGroggy;
 
             public AudioClip onFootstepClip;
         }

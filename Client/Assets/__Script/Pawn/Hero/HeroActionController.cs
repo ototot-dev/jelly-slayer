@@ -92,7 +92,7 @@ namespace Game
                 __brain.AnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1f / damageContext.receiverPenalty.Item2);
 
                 EffectManager.Instance.Show(__brain.BB.graphics.onGuardBreakFx, __brain.BB.attachment.leftMechHandBone.transform.position, Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward, Vector3.up), Vector3.one);
-                SoundManager.Instance.PlayWithClip(__brain.BB.audios.onGuardBreakAudioClip);
+                SoundManager.Instance.PlayWithClipPos(__brain.BB.audios.onGuardBreakAudioClip, __brain.BB.attachment.leftMechHandBone.transform.position);
 
                 var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
                 Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))

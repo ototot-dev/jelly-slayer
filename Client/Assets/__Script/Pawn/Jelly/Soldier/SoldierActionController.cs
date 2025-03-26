@@ -32,7 +32,7 @@ namespace Game
                 if (damageContext.hitCollider.transform.parent.TryGetComponent<JellyMeshController>(out var jellyMeshCtrler))
                     jellyMeshCtrler.ShowHitColor(0.1f);
 
-                SoundManager.Instance.PlayWithClip(__brain.BB.audios.onHitFleshClip);
+                SoundManager.Instance.PlayWithClipPos(__brain.BB.audios.onHitFleshClip, damageContext.hitPoint);
 
                 return null;
             }
@@ -42,19 +42,19 @@ namespace Game
                 if (damageContext.senderActionData.actionName.StartsWith("Kick"))
                 {
                     EffectManager.Instance.Show(__brain.BB.graphics.onKickHitFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.identity, Vector3.one, 1f);
-                    SoundManager.Instance.PlayWithClip(__brain.BB.audios.onKickHitAudioClip);
+                    SoundManager.Instance.PlayWithClipPos(__brain.BB.audios.onKickHitAudioClip, damageContext.hitPoint);
                 }
                 else if (damageContext.senderActionData.actionName.StartsWith("Heavy"))
                 {
                     EffectManager.Instance.Show(__brain.BB.graphics.onBigHitFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()) * Quaternion.Euler(90f, 0f, 0f), Vector3.one, 1f);
-                    SoundManager.Instance.PlayWithClip(__brain.BB.audios.onBigHitAudioClip);
-                    SoundManager.Instance.PlayWithClip(__brain.BB.audios.onHitAudioClip2);
+                    SoundManager.Instance.PlayWithClipPos(__brain.BB.audios.onBigHitAudioClip, damageContext.hitPoint);
+                    SoundManager.Instance.PlayWithClipPos(__brain.BB.audios.onHitAudioClip2, damageContext.hitPoint);
                 }
                 else
                 {
                     EffectManager.Instance.Show(__brain.BB.graphics.onHitFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()) * Quaternion.Euler(90f, 0f, 0f), Vector3.one, 1f);
-                    SoundManager.Instance.PlayWithClip(__brain.BB.audios.onHitAudioClip);
-                    SoundManager.Instance.PlayWithClip(__brain.BB.audios.onHitAudioClip2);
+                    SoundManager.Instance.PlayWithClipPos(__brain.BB.audios.onHitAudioClip, damageContext.hitPoint);
+                    SoundManager.Instance.PlayWithClipPos(__brain.BB.audios.onHitAudioClip2, damageContext.hitPoint);
                 }
 
                 ShowHitColor(__brain.bodyHitColliderHelper);
@@ -62,7 +62,7 @@ namespace Game
             else if (damageContext.actionResult == ActionResults.Missed)
             {
                 Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onMissedFx, __brain.BB.attachment.blockingFxAttachPoint.position, Quaternion.identity, 0.8f * Vector3.one, 1f)).AddTo(this);
-                SoundManager.Instance.PlayWithClip(__brain.BB.audios.onMissedAudioClip);
+                SoundManager.Instance.PlayWithClipPos(__brain.BB.audios.onMissedAudioClip, damageContext.hitPoint);
             }
             else if (damageContext.actionResult == ActionResults.Blocked)
             {
@@ -71,14 +71,14 @@ namespace Game
                 
                 Observable.Timer(TimeSpan.FromSeconds(0.5f)).Subscribe(_ => __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", false)).AddTo(this);
                 Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onBlockedFx, __brain.BB.attachment.blockingFxAttachPoint.position, Quaternion.identity, 0.8f * Vector3.one, 1f)).AddTo(this);
-                SoundManager.Instance.PlayWithClip(__brain.BB.audios.onBlockedAudioClip);
+                SoundManager.Instance.PlayWithClipPos(__brain.BB.audios.onBlockedAudioClip, damageContext.hitPoint);
 
                 ShowHitColor(__brain.shieldHitColliderHelper);
             }
             else if (damageContext.actionResult == ActionResults.GuardBreak)
             {
                 Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onGuardBreakFx, __brain.BB.attachment.blockingFxAttachPoint.position, Quaternion.identity, Vector3.one, 1f)).AddTo(this);
-                SoundManager.Instance.PlayWithClip(__brain.BB.audios.onGuardBreakAudioClip);
+                SoundManager.Instance.PlayWithClipPos(__brain.BB.audios.onGuardBreakAudioClip, damageContext.hitPoint);
             }
 
             return base.StartOnHitAction(ref damageContext, isAddictiveAction);
@@ -105,6 +105,8 @@ namespace Game
                 EffectManager.Instance.Show(__brain.BB.graphics.onBleedingFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward), 1.5f * Vector3.one)
                     .transform.SetParent(__brain.bodyHitColliderHelper.transform, true);
             }).AddTo(this);
+
+            SoundManager.Instance.PlayWithClipPos(__brain.BB.audios.onEnterGroggy, __brain.bodyHitColliderHelper.GetWorldCenter());
 
             return base.StartOnGroogyAction(ref damageContext, isAddictiveAction);
         }
