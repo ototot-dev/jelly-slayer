@@ -71,9 +71,9 @@ namespace Game
 
         void Start()
         {   
-            __brain.BB.body.isGuarding.CombineLatest(__brain.BB.body.isCharging, (a, b) => new Tuple<bool, bool>(a, b)).Subscribe(v =>
+            __brain.BB.body.isGuarding.CombineLatest(__brain.BB.action.punchChargeLevel, (a, b) => new Tuple<bool, int>(a, b)).Subscribe(v =>
             {   
-                if (!v.Item1 && !v.Item2)
+                if (!v.Item1 && v.Item2 < 0)
                     mainAnimator.SetBool("IsGuarding", false);
             }).AddTo(this);
 
@@ -111,7 +111,7 @@ namespace Game
                 ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Off;
             }).AddTo(this);
 
-            spineOverrideTransform.weight = 1f;
+            spineOverrideTransform.weight = 0f;
 
             __brain.onUpdate += () =>
             {
@@ -180,8 +180,10 @@ namespace Game
 
                     if (__brain.ActionCtrler.CheckActionRunning() || mainAnimator.GetBool("IsGuarding") || __watchingStateNames.Contains("GuardParry") || __watchingStateNames.Contains("DrinkPotion"))
                         spineOverrideTransform.weight = 0f;
+                    else if (__brain.Movement.moveSpeed > 0f)
+                        spineOverrideTransform.weight = Mathf.Clamp01(__brain.Movement.CurrVelocity.magnitude / __brain.Movement.moveSpeed);
                     else
-                        spineOverrideTransform.weight = 1f;
+                        spineOverrideTransform.weight = Mathf.Max(0f, spineOverrideTransform.weight - Time.deltaTime);
 
                     if (__brain.ActionCtrler.CheckActionRunning())
                     {
@@ -223,8 +225,8 @@ namespace Game
                     else
                         mainAnimator.SetLayerWeight((int)LayerIndices.Action, __brain.ActionCtrler.GetAdvancedActionLayerWeight(mainAnimator.GetLayerWeight((int)LayerIndices.Action), actionLayerBlendInSpeed, actionLayerBlendOutSpeed, Time.deltaTime));
 
-                    mainAnimator.SetFloat("MoveSpeed", __brain.Movement.freezeRotation ? -1 : __brain.Movement.CurrVelocity.Vector2D().magnitude / __brain.BB.body.walkSpeed);
-                    mainAnimator.SetFloat("MoveAnimSpeed", __brain.Movement.freezeRotation ? (__brain.BB.IsGuarding ? 0.8f : 1.2f) : 1f);
+                    mainAnimator.SetFloat("MoveForward", __brain.Movement.freezeRotation ? -1 : __brain.Movement.CurrVelocity.Vector2D().magnitude / __brain.BB.body.walkSpeed);
+                    mainAnimator.SetFloat("MoveAnimSpeed", __brain.Movement.freezeRotation ? (__brain.BB.IsGuarding ? 1f : 1.5f) : 1.2f);
                     mainAnimator.SetBool("IsMoving", __brain.Movement.CurrVelocity.sqrMagnitude > 0f);
 
                     var animMoveVec = __brain.coreColliderHelper.transform.InverseTransformDirection(__brain.Movement.CurrVelocity).Vector2D();

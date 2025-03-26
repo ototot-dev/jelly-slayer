@@ -52,7 +52,7 @@ namespace Game
                     if (colliderHelper.pawnBrain != null && colliderHelper.pawnBrain != emitterBrain.Value)
                     {
                         if (colliderHelper.pawnBrain.PawnBB.common.pawnId == PawnId.Hero)
-                            emitterBrain.Value.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, emitterBrain.Value, colliderHelper.pawnBrain, actionData, collider, false));
+                            emitterBrain.Value.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, emitterBrain.Value, colliderHelper.pawnBrain, actionData, string.Empty, collider, false));
 
                         bulletExplosionFx.Play();
                         Stop(false);

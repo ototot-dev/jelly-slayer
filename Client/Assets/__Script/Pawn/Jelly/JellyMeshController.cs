@@ -74,6 +74,7 @@ namespace Game
         {
             var fadeStartTimeStamp = Time.time;
 
+            springMassSystem.coreAttachPoint.position = jellyBrain.coreColliderHelper.GetWorldCenter(); 
             eyeAnimator.transform.localScale = Vector3.zero;
             eyeAnimator.MinOpenValue = 0f;
             meshBuilder.meshRenderer.enabled = false;

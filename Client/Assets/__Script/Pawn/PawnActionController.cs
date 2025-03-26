@@ -14,6 +14,7 @@ namespace Game
             public int actionInstanceId;
             public string preMotionName;
             public string actionName;
+            public string specialTag;
             public float actionSpeed;
             public float rootMotionMultiplier;
             public int rootMotionConstraint;
@@ -42,11 +43,12 @@ namespace Game
             static int __actionInstanceIdCounter;
 
             //* 일반적인 Action 초기화
-            public ActionContext(MainTable.ActionData actionData, string preMotionName, float actionSpeedMultiplier, float rootMotionMultiplier, int rootMotionConstraint, AnimationCurve rootMotionCurve, bool manualAdvacneEnabled, float animBlendSpeed, float startTimeStamp)
+            public ActionContext(MainTable.ActionData actionData, string specialTag, string preMotionName, float actionSpeedMultiplier, float rootMotionMultiplier, int rootMotionConstraint, AnimationCurve rootMotionCurve, bool manualAdvacneEnabled, float animBlendSpeed, float startTimeStamp)
             {
                 Debug.Assert(actionData != null);
                 this.actionData = actionData;
                 actionInstanceId = ++__actionInstanceIdCounter;
+                this.specialTag = specialTag;
                 this.preMotionName = preMotionName;
                 actionName = actionData.actionName;
                 actionSpeed = actionData.actionSpeed * actionSpeedMultiplier;
@@ -81,6 +83,7 @@ namespace Game
             {
                 actionData = null;
                 actionInstanceId = ++__actionInstanceIdCounter;
+                specialTag = string.Empty;
                 preMotionName = string.Empty;
                 this.actionName = actionName;
                 this.actionSpeed = actionSpeed;
@@ -112,23 +115,23 @@ namespace Game
         }
 
 #region PendingAction
-        //* Item1: actionName, Item2: preMotionName, Item3: pendingTimeStamp, Item4: delayTime
-        public  Tuple<string, string, float, float> PendingActionData { get; protected set; } = new(string.Empty, string.Empty, 0f, 0f);
+        //* Item1: actionName, Item2: specialTag, Item3: preMotionName, Item4: pendingTimeStamp, Item5: delayTime
+        public  Tuple<string, string, string, float, float> PendingActionData { get; protected set; } = new(string.Empty, string.Empty, string.Empty, 0f, 0f);
         public string PendingActionName => PendingActionData.Item1;
         public string PendingPreMotionName => PendingActionData.Item2;
         public bool CheckActionPending() => !string.IsNullOrEmpty(PendingActionData.Item1);
-        public bool CanStartPendingAction() { Debug.Assert(CheckActionPending()); return !CheckActionRunning() && Time.time > PendingActionData.Item3 + PendingActionData.Item4; }
-        public void SetPendingAction(string actionName) { SetPendingAction(actionName, string.Empty, 0f); }
-        public void SetPendingAction(string actionName, string preMotionName, float delayTime)
+        public bool CanStartPendingAction() { Debug.Assert(CheckActionPending()); return !CheckActionRunning() && Time.time > PendingActionData.Item4 + PendingActionData.Item5; }
+        public void SetPendingAction(string actionName) { SetPendingAction(actionName, string.Empty, string.Empty, 0f); }
+        public void SetPendingAction(string actionName, string specialTag, string preMotionName, float delayTime)
         {
             if (!string.IsNullOrEmpty(PendingActionData.Item1))
                 __Logger.WarningR2(gameObject, nameof(PendingActionData), "__pendingAction is not empty value!!", "actionName", PendingActionData.Item1);
 
-            PendingActionData = new(actionName, preMotionName, Time.time, delayTime);
+            PendingActionData = new(actionName, specialTag, preMotionName, Time.time, delayTime);
         }
         public void ClearPendingAction()
         {
-            PendingActionData = new(string.Empty, string.Empty, 0f, 0f);
+            PendingActionData = new(string.Empty, string.Empty, string.Empty, 0f, 0f);
         }
 #endregion
 
@@ -391,7 +394,7 @@ namespace Game
 
                     if (__sendDamageOnTrace)
                     {
-                        hitColliderHelper.pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__pawnBrain, hitColliderHelper.pawnBrain, currActionContext.actionData, hitColliderHelper.pawnCollider, currActionContext.insufficientStamina));
+                        hitColliderHelper.pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__pawnBrain, hitColliderHelper.pawnBrain, currActionContext.actionData, currActionContext.specialTag, hitColliderHelper.pawnCollider, currActionContext.insufficientStamina));
 
                         //* Debuff 할당
                         if (__debuffParams != null && __debuffParams.Length > 0)
@@ -412,12 +415,12 @@ namespace Game
             };
         }
 
-        public bool StartAction(string actionName, string preMotionName, float animBlendSpeed = -1f, float actionSpeedMultiplier = 1f, float rootMotionMultiplier = 1f, int rootMotionConstraint = 0, AnimationCurve rootMotionCurve = null, bool manualAdvacneEnabled = false)
+        public bool StartAction(string actionName, string specialTag, string preMotionName, float animBlendSpeed = -1f, float actionSpeedMultiplier = 1f, float rootMotionMultiplier = 1f, int rootMotionConstraint = 0, AnimationCurve rootMotionCurve = null, bool manualAdvacneEnabled = false)
         {
-            return StartAction(new PawnHeartPointDispatcher.DamageContext(), actionName, preMotionName, animBlendSpeed, actionSpeedMultiplier, rootMotionMultiplier, rootMotionConstraint, rootMotionCurve, manualAdvacneEnabled);
+            return StartAction(new PawnHeartPointDispatcher.DamageContext(), actionName, specialTag, preMotionName, animBlendSpeed, actionSpeedMultiplier, rootMotionMultiplier, rootMotionConstraint, rootMotionCurve, manualAdvacneEnabled);
         }
 
-        public bool StartAction(PawnHeartPointDispatcher.DamageContext damageContext, string actionName, string preMotionName, float animBlendSpeed = -1f, float actionSpeedMultiplier = 1, float rootMotionMultiplier = 1, int rootMotionConstraint = 0, AnimationCurve rootMotionCurve = null, bool manualAdvacneEnabled = false)
+        public bool StartAction(PawnHeartPointDispatcher.DamageContext damageContext, string actionName, string specialTag, string preMotionName, float animBlendSpeed = -1f, float actionSpeedMultiplier = 1, float rootMotionMultiplier = 1, int rootMotionConstraint = 0, AnimationCurve rootMotionCurve = null, bool manualAdvacneEnabled = false)
         {
             if (CheckActionRunning())
             {
@@ -468,7 +471,7 @@ namespace Game
                     return false;
                 }
 
-                currActionContext = new(actionData, preMotionName, actionSpeedMultiplier, rootMotionMultiplier, rootMotionConstraint, rootMotionCurve, manualAdvacneEnabled, animBlendSpeed, Time.time);
+                currActionContext = new(actionData, specialTag, preMotionName, actionSpeedMultiplier, rootMotionMultiplier, rootMotionConstraint, rootMotionCurve, manualAdvacneEnabled, animBlendSpeed, Time.time);
                 if (actionData.staminaCost > 0)
                 {
                     if (__pawnBrain.PawnBB.stat.stamina.Value < actionData.staminaCost)
@@ -844,7 +847,7 @@ namespace Game
             {
                 foreach (var r in results)
                 {
-                    __pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__pawnBrain, r.pawnBrain, currActionContext.actionData, r.pawnCollider, currActionContext.insufficientStamina));
+                    __pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__pawnBrain, r.pawnBrain, currActionContext.actionData, currActionContext.specialTag, r.pawnCollider, currActionContext.insufficientStamina));
 
                     //* Debuff 할당
                     if (debuffParams != null && debuffParams.Length > 0)

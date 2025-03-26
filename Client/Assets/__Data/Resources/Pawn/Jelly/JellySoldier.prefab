@@ -4781,7 +4781,7 @@ MonoBehaviour:
   FadeOutDistance: 0
   DistanceFrom: {fileID: 0}
   AutoHelperOffset: 1
-  HelperOffset: {x: -0.05114861, y: -0.7855519, z: -0.022953324}
+  HelperOffset: {x: -0.0511486, y: -0.7855518, z: -0.022953399}
   GravityEffectForce: {x: 0, y: 0, z: 0}
   GravityHeavyness: 2
   _editor_Title: ' Bones Stimulator'
@@ -27054,7 +27054,7 @@ SkinnedMeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3444107840419112127}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -82368,6 +82368,7 @@ MonoBehaviour:
   legAnimator: {fileID: 754787376927509189}
   ragdollAnimator: {fileID: 5978158408337654307}
   headBone: {fileID: 5278882544679535675}
+  headAim: {fileID: 7982289961256393618}
   leftArmBoneSimulator: {fileID: 2170937694511617402}
   rightArmBoneSimulator: {fileID: 4265576059615311173}
   leftLegBoneSimulator: {fileID: 2082995388652011794}
@@ -82818,7 +82819,7 @@ SkinnedMeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8894552556560009894}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1

@@ -122,9 +122,9 @@ namespace Game
                 {
                     switch (status)
                     {
-                        case Game.PawnStatus.KnockDown:
+                        case PawnStatus.KnockDown:
                             PawnBB.common.isDown.Value = true; break;
-                        case Game.PawnStatus.Groggy:
+                        case PawnStatus.Groggy:
                             PawnBB.common.isGroggy.Value = true; break;
                     }
                 };
@@ -133,9 +133,9 @@ namespace Game
                 {
                     switch (status)
                     {
-                        case Game.PawnStatus.KnockDown:
+                        case PawnStatus.KnockDown:
                             PawnBB.common.isDown.Value = false; break;
-                        case Game.PawnStatus.Groggy:
+                        case PawnStatus.Groggy:
                             PawnBB.common.isGroggy.Value = false; break;
                     }
                 };

@@ -4,6 +4,7 @@ using DG.Tweening;
 using FIMSpace.BonesStimulation;
 using UniRx;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 namespace Game
 {
@@ -11,6 +12,7 @@ namespace Game
     {
         [Header("Component")]
         public Transform headBone;
+        public MultiAimConstraint headAim;
         public BonesStimulator leftArmBoneSimulator;
         public BonesStimulator rightArmBoneSimulator;
         public BonesStimulator leftLegBoneSimulator;
@@ -43,10 +45,7 @@ namespace Game
         public override void OnAnimatorMoveHandler()
         {
             if (__brain.BB.IsDown || __brain.BB.IsGroggy)
-            {
-                __Logger.LogR1(gameObject, "IsGroggy", "deltaPosition", mainAnimator.deltaPosition, "deltaRotation", mainAnimator.deltaRotation);
                 __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation, Time.deltaTime);
-            }
             else if (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
                 __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition, mainAnimator.deltaRotation, Time.deltaTime);
         }
@@ -63,17 +62,19 @@ namespace Game
         }
 
         SoldierBrain __brain;
-        HashSet<string> __watchingStateNames = new();
-        public bool CheckWatchingState(string stateName) => __watchingStateNames.Contains(stateName);
+        HashSet<string> __runningAnimStateNames = new();
+        public bool CheckAnimStateRunning(string stateName) => __runningAnimStateNames.Contains(stateName);
 
         void Start()
         {
-            FindObservableStateMachineTriggerEx("OnParried").OnStateEnterAsObservable().Subscribe(s => __watchingStateNames.Add("OnParried")).AddTo(this);
-            FindObservableStateMachineTriggerEx("OnParried").OnStateExitAsObservable().Subscribe(s => __watchingStateNames.Remove("OnParried")).AddTo(this);
+            FindObservableStateMachineTriggerEx("OnParried").OnStateEnterAsObservable().Subscribe(s => __runningAnimStateNames.Add("OnParried")).AddTo(this);
+            FindObservableStateMachineTriggerEx("OnParried").OnStateExitAsObservable().Subscribe(s => __runningAnimStateNames.Remove("OnParried")).AddTo(this);
+            FindObservableStateMachineTriggerEx("OnGroggy (Loop)").OnStateEnterAsObservable().Subscribe(s => __runningAnimStateNames.Add("OnGroggy")).AddTo(this);
+            FindObservableStateMachineTriggerEx("OnGroggy (Loop)").OnStateExitAsObservable().Subscribe(s => __runningAnimStateNames.Remove("OnGroggy")).AddTo(this);
 
             __brain.StatusCtrler.onStatusActive += (status) =>
             {
-                if ((status == PawnStatus.Staggered && __brain.StatusCtrler.GetStrength(PawnStatus.Staggered) > 0f) || status == PawnStatus.Groggy)
+                if (status == PawnStatus.Staggered && __brain.StatusCtrler.GetStrength(PawnStatus.Staggered) > 0f)
                 {
                     leftArmBoneSimulator.GravityEffectForce = rightArmBoneSimulator.GravityEffectForce = 9.8f * Vector3.down;
                     leftArmBoneSimulator.GravityHeavyness = 4f;
@@ -88,7 +89,7 @@ namespace Game
 
             __brain.StatusCtrler.onStatusDeactive += (buff) =>
             {
-                if (!__brain.StatusCtrler.CheckStatus(PawnStatus.Staggered) && !__brain.StatusCtrler.CheckStatus(PawnStatus.Groggy))
+                if (buff == PawnStatus.Staggered && !__brain.StatusCtrler.CheckStatus(PawnStatus.Staggered))
                     armBoneSimulatorTargetWeight = 0f;
             };
 
@@ -140,8 +141,10 @@ namespace Game
 
                 if (__brain.ActionCtrler.CheckActionRunning())
                     armBoneSimulatorTargetWeight = leftArmBoneSimulator.StimulatorAmount = rightArmBoneSimulator.StimulatorAmount = 0f;
-                else if (CheckWatchingState("OnParried"))
-                    armBoneSimulatorTargetWeight = 0f; 
+                else if (CheckAnimStateRunning("OnParried") || CheckAnimStateRunning("OnGroggy"))
+                    armBoneSimulatorTargetWeight = 1f;
+                else
+                    armBoneSimulatorTargetWeight = 0f;
                     
                 if (armBoneSimulatorTargetWeight > 0f)
                 {
@@ -188,18 +191,29 @@ namespace Game
                 if (__brain.BB.IsDead)
                 {
                     // eyeAnimator.MinOpenValue = Mathf.Clamp01(eyeAnimator.MinOpenValue - legAnimGlueBlendSpeed * Time.deltaTime);
+                    headAim.weight = 0f;
                     legAnimator.LegsAnimatorBlend = Mathf.Clamp01(legAnimator.LegsAnimatorBlend - legAnimGlueBlendSpeed * Time.deltaTime);
                     legAnimator.User_SetIsMoving(false);
                     legAnimator.User_SetIsGrounded(false);
                 }
                 else if (__brain.BB.IsGroggy)
                 {
-                    legAnimator.LegsAnimatorBlend = 1f;
+                    headAim.weight = 0f;
+                    legAnimator.LegsAnimatorBlend = CheckAnimStateRunning("Kneeling") ? 0f : 1f;
                     legAnimator.User_SetIsMoving(false);
                     legAnimator.User_SetIsGrounded(true);
+
+                    // TODO: (임시 코드) JellyMesh와 Pawn간의 최대 거리 제한을 줌
+                    var distanceVec = (__brain.BB.attachment.jellyPosition.position - __brain.coreColliderHelper.GetWorldCenter()).Vector2D();
+                    if (distanceVec.magnitude > 2f)
+                    {
+                        var newPosition = __brain.coreColliderHelper.GetWorldCenter() + 2f * distanceVec.normalized;
+                        __brain.BB.attachment.jellyPosition.position = newPosition.AdjustY(__brain.BB.attachment.jellyPosition.position.y);
+                    }
                 }
                 else if (__brain.BB.IsDown)
                 {
+                    headAim.weight = 0f;
                     legAnimator.LegsAnimatorBlend = 0f;
                     legAnimator.User_SetIsMoving(false);
                     legAnimator.User_SetIsGrounded(false);
@@ -212,6 +226,7 @@ namespace Game
                 }
                 else
                 {
+                    headAim.weight = 1f;
                     legAnimator.LegsAnimatorBlend = 1f;
                     legAnimator.MainGlueBlend = 1f;
 

@@ -535,7 +535,7 @@ namespace Game.NodeCanvasExtension
                         rootMotionConstrainSum |= (int)c;
                 }
 
-                EndAction(actionCtrler.StartAction(actionName.value, string.Empty, animBlendSpeed.value, animSpeedMultiplier.value, rootMotionMultiplier.value, rootMotionConstrainSum, rootMotionCurve.value, manualAdvanceEnabled.value));
+                EndAction(actionCtrler.StartAction(actionName.value, actionCtrler.PendingActionData.Item2, string.Empty, animBlendSpeed.value, animSpeedMultiplier.value, rootMotionMultiplier.value, rootMotionConstrainSum, rootMotionCurve.value, manualAdvanceEnabled.value));
                 actionCtrler.ClearPendingAction();
 
                 if (animClipLength.value > 0f)
@@ -1229,6 +1229,7 @@ namespace Game.NodeCanvasExtension
         protected override string info => traceSampleNum.value == 1 ? "Trace <b>One-Frame</b>" : (traceDuration.value > 0 ? $"Trace for <b>{traceDuration.value}</b> secs" : $"Trace for <b>{traceFrames.value}</b> frames");
         
         public BBParameter<string> actionName;
+        public BBParameter<string> specialTag;
         public BBParameter<Vector3> offset;
         public BBParameter<Vector3> pitchYawRoll;
         public BBParameter<float> fanAngle = 180f;
@@ -1363,7 +1364,7 @@ namespace Game.NodeCanvasExtension
             if (__sampleNum == 1)
             {
                 foreach (var r in traceResults)
-                    __pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__pawnBrain, r.pawnBrain, __actionData, r.pawnCollider, __pawnActionCtrler.currActionContext.insufficientStamina));
+                    __pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__pawnBrain, r.pawnBrain, __actionData, specialTag.value, r.pawnCollider, __pawnActionCtrler.currActionContext.insufficientStamina));
 
                 return 1;
             }
@@ -1376,7 +1377,7 @@ namespace Game.NodeCanvasExtension
                     if (__sentDamageBrains.Contains(r.pawnBrain)) continue;
                     
                     __sentDamageBrains.Add(r.pawnBrain);
-                    __pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__pawnBrain, r.pawnBrain, __actionData, r.pawnCollider, __pawnActionCtrler.currActionContext.insufficientStamina));
+                    __pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__pawnBrain, r.pawnBrain, __actionData, specialTag.value, r.pawnCollider, __pawnActionCtrler.currActionContext.insufficientStamina));
 
                     //* Debuff 할당
                     if (!debuffParams.isNoneOrNull && debuffParams.value.Length > 0)
@@ -1395,32 +1396,32 @@ namespace Game.NodeCanvasExtension
         }
     }
 
-    [Category("Pawn")]
-    public class SendDamage : ActionTask
-    {
-        public BBParameter<string> actionDataName;
-        public BBParameter<GameObject> actionTarget;
+    // [Category("Pawn")]
+    // public class SendDamage : ActionTask
+    // {
+    //     public BBParameter<string> actionDataName;
+    //     public BBParameter<GameObject> actionTarget;
 
-        protected override void OnExecute()
-        {
-            var pawnBrain = agent.GetComponent<PawnBrainController>();
-            var pawnActionCtrler = agent.GetComponent<PawnActionController>();
+    //     protected override void OnExecute()
+    //     {
+    //         var pawnBrain = agent.GetComponent<PawnBrainController>();
+    //         var pawnActionCtrler = agent.GetComponent<PawnActionController>();
 
-            var actionData = pawnActionCtrler.currActionContext.actionData;
-            if (!actionDataName.isNoneOrNull && !string.IsNullOrEmpty(actionDataName.value))
-                actionData = DatasheetManager.Instance.GetActionData(pawnBrain.PawnBB.common.pawnId, actionDataName.value);
+    //         var actionData = pawnActionCtrler.currActionContext.actionData;
+    //         if (!actionDataName.isNoneOrNull && !string.IsNullOrEmpty(actionDataName.value))
+    //             actionData = DatasheetManager.Instance.GetActionData(pawnBrain.PawnBB.common.pawnId, actionDataName.value);
 
-            Debug.Assert(actionData != null);
-            Debug.Assert(!actionTarget.isNoneOrNull);
+    //         Debug.Assert(actionData != null);
+    //         Debug.Assert(!actionTarget.isNoneOrNull);
 
-            var targetBrain = actionTarget.value.GetComponent<PawnBrainController>();
-            Debug.Assert(targetBrain != null);
+    //         var targetBrain = actionTarget.value.GetComponent<PawnBrainController>();
+    //         Debug.Assert(targetBrain != null);
 
-            pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(pawnBrain, targetBrain, actionData, null, false));
+    //         pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(pawnBrain, targetBrain, actionData, null, false));
             
-            EndAction(true);
-        }
-    }
+    //         EndAction(true);
+    //     }
+    // }
 
     [Category("Pawn")]
     public class EmitProjectile : ActionTask

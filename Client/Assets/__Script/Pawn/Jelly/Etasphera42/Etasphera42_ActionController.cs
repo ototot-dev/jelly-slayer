@@ -208,7 +208,7 @@ namespace Game
                     //* 데미지 처리
                     if ((Time.time - sendDamageTimeStamp) > __brain.BB.action.laserA_damageInterval && __hitsNonAlloc[hitIndex].collider.TryGetComponent<PawnColliderHelper>(out var hitColliderHelper) && hitColliderHelper.pawnBrain == __brain.BB.TargetColliderHelper.pawnBrain)
                     {
-                        __brain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__brain, hitColliderHelper.pawnBrain, currActionContext.actionData, hitColliderHelper.pawnCollider, false));
+                        __brain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__brain, hitColliderHelper.pawnBrain, currActionContext.actionData, string.Empty, hitColliderHelper.pawnCollider, false));
                         sendDamageTimeStamp = Time.time;
                     }
 
@@ -242,7 +242,7 @@ namespace Game
                     //* 데미지 처리
                     if ((Time.time - sendDamageTimeStamp) > __brain.BB.action.laserA_damageInterval)
                     {
-                        __brain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__brain, hitColliderHelper.pawnBrain, currActionContext.actionData, hitColliderHelper.pawnCollider, false));
+                        __brain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__brain, hitColliderHelper.pawnBrain, currActionContext.actionData, string.Empty, hitColliderHelper.pawnCollider, false));
                         sendDamageTimeStamp = Time.time;
                     }
 
@@ -300,7 +300,7 @@ namespace Game
                         var actionData = DatasheetManager.Instance.GetActionData(PawnId.Etasphera42, "LaserB");
                         Debug.Assert(actionData != null);
 
-                        __brain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__brain, hitColliderHelper.pawnBrain, actionData, hitColliderHelper.pawnCollider, false));
+                        __brain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__brain, hitColliderHelper.pawnBrain, actionData, string.Empty, hitColliderHelper.pawnCollider, false));
                         sendDamageTimeStamp = Time.time;
                     }
 

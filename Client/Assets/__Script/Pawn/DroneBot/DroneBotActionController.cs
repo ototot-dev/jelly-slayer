@@ -233,7 +233,7 @@ namespace Game
                     var assaultActionData = DatasheetManager.Instance.GetActionData(__brain.BB.HostBrain.BB.common.pawnId, "Assault");
                     Debug.Assert(assaultActionData != null);
 
-                    __brain.BB.HostBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__brain.BB.HostBrain, __assaultActionTargetBrain, assaultActionData, __assaultActionTargetBrain.bodyHitColliderHelper.pawnCollider, false));
+                    __brain.BB.HostBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__brain.BB.HostBrain, __assaultActionTargetBrain, assaultActionData, currActionContext.specialTag, __assaultActionTargetBrain.bodyHitColliderHelper.pawnCollider, false));
                     __brain.BB.HostBrain.Movement.FinishHanging();
                     __brain.BB.HostBrain.Movement.StartJump(1f);
                     __brain.BB.HostBrain.BB.body.isJumping.Take(2).Skip(1).Subscribe(v =>
@@ -251,7 +251,7 @@ namespace Game
                         var alpha = ParadoxNotion.Animation.Easing.Ease(ParadoxNotion.Animation.EaseType.ExponentialIn, 0, 1f, v);
                         var targetPosition = __assaultActionTargetBrain.GetWorldPosition() + __brain.BB.HostBrain.Movement.capsuleCollider.height * Vector3.up;
 
-                        //* 겹치 상태에서 뚫고 가지않도록 접근 최소 거리를 추가함
+                        //* 겹친 상태에서 뚫고 가지않도록 접근 최소 거리를 추가함
                         targetPosition -= __assaultActionTargetBrain.bodyHitColliderHelper.GetCapsuleRadius() * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
 
                         __brain.Movement.GetCharacterMovement().SetPosition(Vector3.Lerp(startPosition, targetPosition, alpha));

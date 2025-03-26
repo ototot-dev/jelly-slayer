@@ -31,7 +31,7 @@ namespace Game
 
         public override bool CanBlockAction(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
-            if (__brain.BB.IsCharging || __brain.BB.IsRolling || __brain.BB.IsJumping || (!__brain.BB.IsGuarding && !__brain.BB.IsAutoGuardEnabled))
+            if (__brain.BB.IsPunchCharging || __brain.BB.IsRolling || __brain.BB.IsJumping || (!__brain.BB.IsGuarding && !__brain.BB.IsAutoGuardEnabled))
                 return false;
             if (__brain.ActionCtrler.CheckActionRunning() || __brain.StatusCtrler.CheckStatus(PawnStatus.Staggered) || __brain.StatusCtrler.CheckStatus(PawnStatus.CanNotGuard))
                 return false;
@@ -112,7 +112,7 @@ namespace Game
                     __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", true);
                     Observable.Timer(TimeSpan.FromSeconds(0.5f)).Subscribe(_ => 
                     {
-                        if (!__brain.BB.IsGuarding && !__brain.BB.IsCharging)
+                        if (!__brain.BB.IsGuarding && !__brain.BB.IsPunchCharging)
                             __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", false);
                     }).AddTo(this);
 

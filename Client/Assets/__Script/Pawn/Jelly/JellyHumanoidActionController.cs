@@ -8,7 +8,7 @@ namespace Game
     public class JellyHumanoidActionController : PawnActionController
     {
         public override bool CheckKnockBackRunning() => __knockBackDisposable != null;
-        IDisposable __knockBackDisposable;
+        protected IDisposable __knockBackDisposable;
 
         public override bool CanRootMotion(Vector3 rootMotionVec)
         {
@@ -37,29 +37,22 @@ namespace Game
 
             if (damageContext.actionResult == ActionResults.Damaged)
             {
-                if (damageContext.receiverBrain.PawnBB.IsGroggy)
+                var hitVec = damageContext.receiverBrain.GetWorldPosition() - damageContext.senderBrain.GetWorldPosition();
+                hitVec = damageContext.receiverBrain.GetWorldTransform().InverseTransformDirection(hitVec).Vector2D().normalized;
+
+                if (Mathf.Abs(hitVec.x) > Mathf.Abs(hitVec.z))
                 {
-                    __pawnAnimCtrler.mainAnimator.SetInteger("HitType", 3);
-                    __pawnAnimCtrler.mainAnimator.SetTrigger("OnHit");
+                    __pawnAnimCtrler.mainAnimator.SetFloat("HitX", hitVec.x > 0f ? 1f : -1f);
+                    __pawnAnimCtrler.mainAnimator.SetFloat("HitY", 0f);
                 }
                 else
                 {
-                    var hitVec = damageContext.receiverBrain.GetWorldPosition() - damageContext.senderBrain.GetWorldPosition();
-                    hitVec = damageContext.receiverBrain.GetWorldTransform().InverseTransformDirection(hitVec).Vector2D().normalized;
-
-                    if (Mathf.Abs(hitVec.x) > Mathf.Abs(hitVec.z))
-                    {
-                        __pawnAnimCtrler.mainAnimator.SetFloat("HitX", hitVec.x > 0f ? 1f : -1f);
-                        __pawnAnimCtrler.mainAnimator.SetFloat("HitY", 0f);
-                    }
-                    else
-                    {
-                        __pawnAnimCtrler.mainAnimator.SetFloat("HitX", 0f);
-                        __pawnAnimCtrler.mainAnimator.SetFloat("HitY", hitVec.z > 0f ? 1f : -1f);
-                    }
-                    __pawnAnimCtrler.mainAnimator.SetInteger("HitType", 0);
-                    __pawnAnimCtrler.mainAnimator.SetTrigger("OnHit");
+                    __pawnAnimCtrler.mainAnimator.SetFloat("HitX", 0f);
+                    __pawnAnimCtrler.mainAnimator.SetFloat("HitY", hitVec.z > 0f ? 1f : -1f);
                 }
+
+                __pawnAnimCtrler.mainAnimator.SetInteger("HitType", damageContext.receiverBrain.PawnBB.IsGroggy ? 3 : 0);
+                __pawnAnimCtrler.mainAnimator.SetTrigger("OnHit");
             }
             else if (damageContext.actionResult == ActionResults.Blocked)
             {
@@ -246,45 +239,7 @@ namespace Game
         protected override void AwakeInternal()
         {
             base.AwakeInternal();
-            
             __humanoidBrain = GetComponent<JellyHumanoidBrain>();
-        }
-
-        protected override void StartInternal()
-        {
-            base.StartInternal();
-
-            // __brain.JellyBB.decision.isGuarding.Subscribe(v =>
-            // {
-            //     __pawnAnimCtrler.mainAnimator.SetBool("IsGuarding", v);
-            // }).AddTo(this);
-
-            __humanoidBrain.JellyBB.common.isDown.Skip(1).Subscribe(v =>
-            {
-                if (v)
-                {
-                    __pawnAnimCtrler.mainAnimator.SetBool("IsDown", true);
-                    __pawnAnimCtrler.mainAnimator.SetTrigger("OnDown");
-                }
-                else
-                {
-                    //* 일어나는 모션동안은 무적
-                    __humanoidBrain.PawnStatusCtrler.AddStatus(PawnStatus.Invincible, 1f, 1f);
-                    __pawnAnimCtrler.mainAnimator.SetBool("IsDown", false);
-                    __humanoidBrain.InvalidateDecision(2f);
-                }
-            }).AddTo(this);
-
-            __humanoidBrain.JellyBB.common.isGroggy.Skip(1).Where(v => !v).Subscribe(v =>
-            {
-                if (!__humanoidBrain.PawnStatusCtrler.CheckStatus(PawnStatus.KnockDown))
-                {
-                    //* 일어나는 모션동안은 무적
-                    __humanoidBrain.PawnStatusCtrler.AddStatus(PawnStatus.Invincible, 1f, 1f);
-                    __pawnAnimCtrler.mainAnimator.SetBool("IsGroggy", false);
-                    __humanoidBrain.InvalidateDecision(1f);
-                }
-            }).AddTo(this);
         }
     }
 }

@@ -1056,10 +1056,6 @@ MonoBehaviour:
       value: 0
     isAutoGuardEnabled:
       value: 1
-    isCharging:
-      value: 0
-    chargingLevel:
-      value: 0
     walkSpeed: 1
     runSpeed: 2
     sprintSpeed: 3
@@ -1069,6 +1065,10 @@ MonoBehaviour:
     jumpHeight: 1.6
     smashingHeight: 1
   action:
+    encounterBrain:
+      value: {fileID: 0}
+    punchChargeLevel:
+      value: -1
     guardParryDuration: 0.1
     guardParryRootMotionMultiplier: 1
   graphics:
@@ -28399,7 +28399,7 @@ MonoBehaviour:
     m_ConstrainedObject: {fileID: 3244703593161533085}
     m_OverrideSource: {fileID: 0}
     m_OverridePosition: {x: 0, y: 0, z: 0}
-    m_OverrideRotation: {x: 5, y: 25, z: 0}
+    m_OverrideRotation: {x: 0, y: 30, z: 0}
     m_PositionWeight: 0
     m_RotationWeight: 1
     m_Space: 2

@@ -8,13 +8,15 @@ namespace Game
     [Template(path: "UI/template/special-key")]
     public class SpecialKeyController : Controller
     {
-        public string reservedActionName;
+        public string actionName;
+        public string specialTag;
         PawnBrainController __targetBrain;
         RectTransform __bodyRect;
 
-        public SpecialKeyController(PawnBrainController targetBrain, string reservedActionName)
+        public SpecialKeyController(PawnBrainController targetBrain, string actionName, string specialTag)
         {
-            this.reservedActionName = reservedActionName;
+            this.actionName = actionName;
+            this.specialTag = specialTag;
             __targetBrain = targetBrain;
         }
 

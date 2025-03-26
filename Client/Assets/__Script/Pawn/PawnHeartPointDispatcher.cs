@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UniRx;
+using Unity.VisualScripting;
 using UnityEditor.Timeline.Actions;
 using UnityEngine;
 
@@ -73,17 +74,20 @@ namespace Game
             public Vector3 hitPoint;
             public Collider hitCollider;
             public bool insufficientStamina;
+            public ProjectileMovement projectile;
+            public string senderActionSpecialTag;
+            public string receiverActionSpecialTag;
             public MainTable.ActionData senderActionData;
             public MainTable.ActionData receiverActionData;
             public PawnBrainController senderBrain;
             public PawnBrainController receiverBrain;
-            public ProjectileMovement projectile;
             public readonly FloatReactiveProperty SenderCurrHeartPoint => senderBrain.PawnHP.heartPoint;
             public readonly FloatReactiveProperty ReceiverCurrHeartPoint => receiverBrain.PawnHP.heartPoint;
-            public ActionResults actionResult;
             public Tuple<PawnStatus, float> senderPenalty;
             public Tuple<PawnStatus, float> receiverPenalty;
+            public ActionResults actionResult;
             public float finalDamage;
+            public bool groggyBreakHit;
 
 #if UNITY_EDITOR
             public DamageContext(Collider hitCollider)
@@ -92,79 +96,90 @@ namespace Game
                 hitPoint = hitCollider != null ? hitCollider.transform.position : Vector3.zero;
                 this.hitCollider = hitCollider;
                 insufficientStamina = false;
+                projectile = null;
+                senderActionSpecialTag = string.Empty;
+                receiverActionSpecialTag = string.Empty;
                 senderActionData = null;
                 receiverActionData = null;
                 senderBrain = null;
                 receiverBrain = null;
-                projectile = null;
-                actionResult = ActionResults.None;
                 senderPenalty = new(PawnStatus.None, -1);
                 receiverPenalty = new(PawnStatus.None, -1);
+                actionResult = ActionResults.None;
+                groggyBreakHit = false;
                 finalDamage = -1;
             }
 #endif
 
-            public DamageContext(PawnBrainController senderBrain, PawnBrainController receiverBrain, MainTable.ActionData actionData, Collider hitCollider, bool insufficientStamina)
+            public DamageContext(PawnBrainController senderBrain, PawnBrainController receiverBrain, MainTable.ActionData actionData, string specialTag, Collider hitCollider, bool insufficientStamina)
             {
                 timeStamp = Time.time;
                 hitPoint = hitCollider.TryGetComponent<PawnColliderHelper>(out var hitCollierHelper) ? hitCollierHelper.GetHitPoint(senderBrain.GetWorldPosition()) : receiverBrain.bodyHitColliderHelper.GetHitPoint(senderBrain.GetWorldPosition());
                 this.hitCollider = hitCollider;
                 this.insufficientStamina = insufficientStamina;
-                this.senderActionData = actionData;
+                projectile = null;
+                senderActionSpecialTag = specialTag;
+                receiverActionSpecialTag = string.Empty;
+                senderActionData = actionData;
                 receiverActionData = null;
                 this.senderBrain = senderBrain;
                 this.receiverBrain = receiverBrain;
-                projectile = null;
-                actionResult = ActionResults.None;
                 senderPenalty = new(PawnStatus.None, -1);
                 receiverPenalty = new(PawnStatus.None, -1);
+                actionResult = ActionResults.None;
+                groggyBreakHit = false;
                 finalDamage = -1;
             }
 
-            public DamageContext(PawnBrainController senderBrain, string actionName, float finalDamage, PawnStatus penalty = PawnStatus.None, float penaltyDuration = -1)
+            public DamageContext(PawnBrainController senderBrain, string specialTag, float finalDamage, PawnStatus penalty = PawnStatus.None, float penaltyDuration = -1)
             {
                 timeStamp = Time.time;
                 hitPoint = senderBrain.bodyHitColliderHelper.GetWorldCenter();
                 hitCollider = null;
                 insufficientStamina = false;
+                projectile = null;
+                senderActionSpecialTag = specialTag;
+                receiverActionSpecialTag = string.Empty;
                 senderActionData = null;
                 receiverActionData = null;
                 this.senderBrain = senderBrain;
-                this.receiverBrain = null;
-                projectile = null;
-                actionResult = ActionResults.None;
+                receiverBrain = null;
                 senderPenalty = new(PawnStatus.None, -1);
                 receiverPenalty = new(PawnStatus.None, -1);
+                actionResult = ActionResults.None;
+                groggyBreakHit = false;
                 this.finalDamage = finalDamage;
             }
 
-            public DamageContext(ProjectileMovement projectile, PawnBrainController senderBrain, PawnBrainController receiverBrain, MainTable.ActionData senderActionData, Collider hitCollider, bool insufficientStamina)
+            public DamageContext(ProjectileMovement projectile, PawnBrainController senderBrain, PawnBrainController receiverBrain, MainTable.ActionData actionData, string specialTag, Collider hitCollider, bool insufficientStamina)
             {
                 timeStamp = Time.time;
                 hitPoint = projectile.transform.position;
                 this.hitCollider = hitCollider;
                 this.insufficientStamina = insufficientStamina;
-                this.senderActionData = senderActionData;
+                this.projectile = projectile;
+                senderActionSpecialTag = specialTag;
+                receiverActionSpecialTag = string.Empty;
+                this.senderActionData = actionData;
                 receiverActionData = null;
                 this.senderBrain = senderBrain;
-                this.receiverBrain = receiverBrain.GetComponent<PawnBrainController>();
-                this.projectile = projectile;
-                actionResult = ActionResults.None;
+                this.receiverBrain = receiverBrain;
                 senderPenalty = new(PawnStatus.None, -1);
                 receiverPenalty = new(PawnStatus.None, -1);
+                actionResult = ActionResults.None;
+                groggyBreakHit = false;
                 finalDamage = -1;
             }
         }
-
 
         public Action<DamageContext, string> onAvoided;
         public Action<DamageContext> onDamaged;
         public Action<DamageContext> onDead;
 
-        public void Die(string reasonName)
+        public void Die(string causeOfDeath)
         {
             heartPoint.Value = 0;
-            onDead?.Invoke(new DamageContext(PawnBrain, reasonName, heartPoint.Value));
+            onDead?.Invoke(new DamageContext(PawnBrain, causeOfDeath, heartPoint.Value));
             PawnBrain.PawnBB.common.isDead.Value = true;
         }
 
@@ -229,13 +244,16 @@ namespace Game
                 {
                     //* 'Block' 판정인 경우엔 strength 값에 0을 대입하여 구분이 될 수 있도록 함
                     damageContext.receiverBrain.PawnStatusCtrler.AddStatus(damageContext.receiverPenalty.Item1, damageContext.actionResult == ActionResults.Blocked ? 0f : 1f, damageContext.receiverPenalty.Item2);
-
-                    //* Groggy 상태에서 KnockDown이 발생하면 Groggy는 종료시킴
-                    if (damageContext.receiverPenalty.Item1 == PawnStatus.KnockDown && damageContext.receiverBrain.PawnStatusCtrler.CheckStatus(PawnStatus.Groggy))
-                        damageContext.receiverBrain.PawnStatusCtrler.RemoveStatus(PawnStatus.Groggy);
                 }
 
                 damageContext.receiverBrain.PawnHP.onDamaged?.Invoke(damageContext);
+
+                //* groggyHitCount에 의한 Groggy 종료 처리
+                if (damageContext.groggyBreakHit)
+                {
+                    Debug.Assert(damageContext.receiverBrain.PawnStatusCtrler.CheckStatus(PawnStatus.Groggy));
+                    damageContext.receiverBrain.PawnStatusCtrler.RemoveStatus(PawnStatus.Groggy);
+                }
             }
 
             if (damageContext.senderBrain != damageContext.receiverBrain)
@@ -249,7 +267,11 @@ namespace Game
                 damageContext.senderBrain.PawnHP.onDamaged?.Invoke(damageContext);
             }
 
-            // 현재 Block 시간 기록
+            if (!string.IsNullOrEmpty(damageContext.senderActionSpecialTag))
+                PawnEventManager.Instance.SendPawnDamageEvent(damageContext.senderBrain, damageContext);
+            if (!string.IsNullOrEmpty(damageContext.receiverActionSpecialTag))
+                PawnEventManager.Instance.SendPawnDamageEvent(damageContext.receiverBrain, damageContext);
+
             damageContext.receiverBrain.PawnHP.LastDamageTimeStamp = Time.time;
         }
 
@@ -443,42 +465,41 @@ namespace Game
 
                     __Logger.LogR2(gameObject, nameof(ProcessActionDamaged), "Receiver ActionPenalty => Groggy", "groggyDuration", damageContext.receiverBrain.PawnBB.pawnData.groggyDuration, "senderBrain", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
                 }
-            }
-
-            //* KnockDown 처리
-            if (damageContext.receiverBrain.TryGetComponent<HeroBlackboard>(out var heroBB) && heroBB.IsHanging)
-            {
-                if (heroBB.stat.ReduceStamina(damageContext.senderActionData.hangingStaminaDamage) <= 0 && damageContext.receiverPenalty.Item1 == PawnStatus.None)
+                else if (damageContext.senderActionData.knockDown >= damageContext.receiverBrain.PawnBB.stat.poise && !damageContext.receiverBrain.PawnBB.IsDown)
                 {
-                    damageContext.receiverBrain.PawnBB.stat.knockDown.Value = 0;
-                    damageContext.receiverPenalty = new(PawnStatus.KnockDown, damageContext.receiverBrain.PawnBB.pawnData.knockDownDuration);
+                    damageContext.receiverBrain.PawnBB.stat.knockDown.Value += damageContext.senderActionData.knockDownAccum;
 
-                    __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "Receiver ActionPenalty => KnockDown (from Haning)", "knockDownDuration", damageContext.receiverBrain.PawnBB.pawnData.knockDownDuration, "senderActionData.haningStaminaDamage", damageContext.senderActionData.hangingStaminaDamage, "senderBrain", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
+                    if (damageContext.receiverPenalty.Item1 == PawnStatus.None && damageContext.receiverBrain.PawnBB.stat.knockDown.Value >= damageContext.receiverBrain.PawnBB.stat.maxKnockDown.Value)
+                    {
+                        damageContext.receiverBrain.PawnBB.stat.knockDown.Value = 0;
+                        damageContext.receiverPenalty = new(PawnStatus.KnockDown, damageContext.receiverBrain.PawnBB.pawnData.knockDownDuration);
+
+                        __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "Receiver ActionPenalty => KnockDown", "knockDownDuration", damageContext.receiverBrain.PawnBB.pawnData.knockDownDuration, "senderBrain", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
+                    }
+                }
+
+                //* Hero 전용 공중 KnockDown 처리
+                if (damageContext.receiverPenalty.Item1 != PawnStatus.KnockBack && damageContext.receiverBrain.TryGetComponent<HeroBlackboard>(out var heroBB) && heroBB.IsHanging)
+                {
+                    if (heroBB.stat.ReduceStamina(damageContext.senderActionData.hangingStaminaDamage) <= 0 && damageContext.receiverPenalty.Item1 == PawnStatus.None)
+                    {
+                        damageContext.receiverBrain.PawnBB.stat.knockDown.Value = 0;
+                        damageContext.receiverPenalty = new(PawnStatus.KnockDown, damageContext.receiverBrain.PawnBB.pawnData.knockDownDuration);
+
+                        __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "Receiver ActionPenalty => KnockDown (from Haning)", "knockDownDuration", damageContext.receiverBrain.PawnBB.pawnData.knockDownDuration, "senderActionData.haningStaminaDamage", damageContext.senderActionData.hangingStaminaDamage, "senderBrain", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
+                    }
                 }
             }
-            else if (damageContext.receiverBrain.PawnBB.IsGroggy)
+            else
             {
                 damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value += damageContext.senderActionData.groggyHit;
-                Debug.Assert(damageContext.receiverPenalty.Item1 == PawnStatus.None);
 
-                if (damageContext.receiverPenalty.Item1 == PawnStatus.None && damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value >= damageContext.receiverBrain.PawnBB.stat.maxGroggyHitCount.Value)
+                //* groggyHitCount에 의한 Groggy는 종료 체크
+                if (damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value >= damageContext.receiverBrain.PawnBB.stat.maxGroggyHitCount.Value)
                 {
+                    Debug.Assert(damageContext.receiverBrain.PawnStatusCtrler.CheckStatus(PawnStatus.Groggy));
                     damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value = 0;
-                    damageContext.receiverPenalty = new(PawnStatus.KnockDown, damageContext.receiverBrain.PawnBB.pawnData.knockDownDuration);
-
-                    __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "Receiver ActionPenalty => KnockDown (from Groggy)", "knockDownDuration", damageContext.receiverBrain.PawnBB.pawnData.knockDownDuration, "groggyHitCount", damageContext.receiverBrain.PawnBB.stat.groggyHitCount.Value, "senderBrain", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
-                }
-            }
-            else if (damageContext.senderActionData.knockDown >= damageContext.receiverBrain.PawnBB.stat.poise && !damageContext.receiverBrain.PawnBB.IsDown)
-            {
-                damageContext.receiverBrain.PawnBB.stat.knockDown.Value += damageContext.senderActionData.knockDownAccum;
-
-                if (damageContext.receiverPenalty.Item1 == PawnStatus.None && damageContext.receiverBrain.PawnBB.stat.knockDown.Value >= damageContext.receiverBrain.PawnBB.stat.maxKnockDown.Value)
-                {
-                    damageContext.receiverBrain.PawnBB.stat.knockDown.Value = 0;
-                    damageContext.receiverPenalty = new(PawnStatus.KnockDown, damageContext.receiverBrain.PawnBB.pawnData.knockDownDuration);
-
-                    __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "Receiver ActionPenalty => KnockDown", "knockDownDuration", damageContext.receiverBrain.PawnBB.pawnData.knockDownDuration, "senderBrain", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
+                    damageContext.groggyBreakHit = true;
                 }
             }
 
