@@ -17,8 +17,14 @@ public class PawnAnimatorHandler : MonoBehaviour
     public void OnEventStartLand() {}
     public void OnEventRollingGround() {}
     public void Hit() { }
-    public void FootR() { }
-    public void FootL() { }
+    public void FootR() 
+    {
+        __animCtrler?.OnAnimatorFootHandler(true);
+    }
+    public void FootL() 
+    {
+        __animCtrler?.OnAnimatorFootHandler(false);
+    }
     public void Land() { }
     public void f_start() { }
     public void f_hit() { }

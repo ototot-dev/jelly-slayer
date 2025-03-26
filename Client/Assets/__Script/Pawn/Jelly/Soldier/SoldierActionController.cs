@@ -27,7 +27,10 @@ namespace Game
 
             //* JellyMesh 별도 처리
             if (damageContext.hitCollider.gameObject.CompareTag("Jelly"))
+            {
                 __brain.jellyMeshCtrler.ShowHitColor(0.1f);
+                SoundManager.Instance.PlayWithClip(__brain.BB.audios.onHitFleshClip);
+            }
                 
             if (damageContext.actionResult == ActionResults.Damaged)
             {

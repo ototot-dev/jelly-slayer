@@ -30,5 +30,7 @@ namespace Game
         }
 
         public virtual void OnAnimatorMoveHandler() {}
+
+        public virtual void OnAnimatorFootHandler(bool isRight) {}
     }
 }

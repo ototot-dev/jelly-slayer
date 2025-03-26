@@ -50,6 +50,12 @@ namespace Game
                 __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition, mainAnimator.deltaRotation, Time.deltaTime);
         }
 
+        public override void OnAnimatorFootHandler(bool isRight) 
+        {
+            var pos = __brain.BB.TargetColliderHelper.GetWorldCenter();
+            SoundManager.Instance.PlayWithClipPos(__brain.BB.audios.onFootstepClip, pos, false, true, 0.5f);
+        }
+
         void Awake()
         {
             __brain = GetComponent<SoldierBrain>();
