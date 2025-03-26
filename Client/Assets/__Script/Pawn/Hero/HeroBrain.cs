@@ -32,9 +32,16 @@ namespace Game
         Vector3 IPawnSpawnable.GetSpawnPosition() => Vector3.zero;
         void IPawnSpawnable.OnDespawnedHandler() {}
         void IPawnSpawnable.OnStartSpawnHandler() {}
-        void IPawnSpawnable.OnFinishSpawnHandler() {}
+        void IPawnSpawnable.OnFinishSpawnHandler() 
+        {
+            if (this is IPawnEventListener listener)
+                PawnEventManager.Instance.RegisterEventListener(listener);
+        }
         void IPawnSpawnable.OnDeadHandler() 
-        { 
+        {
+            if (this is IPawnEventListener listener)
+                PawnEventManager.Instance.UnregisterEventListener(listener);
+                 
             var droneBotBrain = droneBotFormationCtrler.PickDroneBot();
             droneBotFormationCtrler.ReleaseDroneBot(droneBotBrain);
             Destroy(droneBotBrain.gameObject);
@@ -168,12 +175,17 @@ namespace Game
                     BB.stat.poise = BB.pawnData.poise;
             };
 
-            BB.body.isCharging.Subscribe(v => 
+            BB.action.punchChargeLevel.Skip(1).Subscribe(v => 
             {
-                if (v)
-                    StatusCtrler.AddStatus(PawnStatus.IncreasePoise, 50);
+                if (v >= 0)
+                {
+                    if (StatusCtrler.GetStrength(PawnStatus.IncreasePoise) < 50f)
+                        StatusCtrler.AddStatus(PawnStatus.IncreasePoise, 50f);
+                }
                 else
+                {
                     StatusCtrler.RemoveStatus(PawnStatus.IncreasePoise);
+                }
             });
 
             onTick += (_) =>
@@ -219,9 +231,9 @@ namespace Game
 
                 switch (damageContext.receiverPenalty.Item1)
                 {
-                    case Game.PawnStatus.Staggered: ActionCtrler.StartAction(damageContext, "!OnHit", string.Empty); break;
-                    case Game.PawnStatus.KnockDown: ActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty); break;
-                    case Game.PawnStatus.Groggy: ActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty); break;
+                    case Game.PawnStatus.Staggered: ActionCtrler.StartAction(damageContext, "!OnHit", string.Empty, string.Empty); break;
+                    case Game.PawnStatus.KnockDown: ActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty, string.Empty); break;
+                    case Game.PawnStatus.Groggy: ActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty, string.Empty); break;
                 }
             }
 
@@ -239,58 +251,14 @@ namespace Game
             switch (damageContext.actionResult)
             {
                 case ActionResults.Blocked: 
-                    ActionCtrler.StartAction(damageContext, "!OnBlocked", string.Empty); break;
+                    ActionCtrler.StartAction(damageContext, "!OnBlocked", string.Empty, string.Empty); break;
                     
                 case ActionResults.PunchParried:
                 case ActionResults.GuardParried:
-                    ActionCtrler.StartAction(damageContext, damageContext.senderPenalty.Item1 == Game.PawnStatus.Groggy ? "!OnGroggy" : "!OnParried", string.Empty); break;
+                    ActionCtrler.StartAction(damageContext, damageContext.senderPenalty.Item1 == Game.PawnStatus.Groggy ? "!OnGroggy" : "!OnParried", string.Empty, string.Empty); break;
             }
-
-            if (GameContext.Instance.playerCtrler is IPawnEventListener listener) 
-                listener.OnReceivePawnDamageContext(this, damageContext);
         }
 
-        // public override void ShowTrail(bool isActive, int trailIndex) 
-        // {
-        //     if (_weaponCtrlRightHand != null)
-        //     {
-        //         _weaponCtrlRightHand.ShowTrail(isActive);
-        //     }
-        // }
-
-        // public void Bind(PawnBrainController pawn, bool isBind = true) 
-        // {
-        //     _isBind = isBind;
-        //     if (_isBind == true)
-        //     {
-        //         pawn.PawnStatusCtrler.AddStatus(Game.PawnStatus.Bind);
-        //         _bindLIst.Add(pawn);
-        //     }
-        //     else 
-        //     {
-        //         if (pawn != null)
-        //         {
-        //             pawn.PawnStatusCtrler.RemoveStatus(Game.PawnStatus.Bind);
-        //         }
-        //         _bindLIst.Clear();
-        //     }
-        // }
-
-        // public void ChainRolling(bool isRolling) 
-        // {
-        //     _chainCtrl.Rolling(isRolling);
-        // }
-
-        // public void ChainShoot() 
-        // {
-        //     Debug.Log("ChainShoot");
-        //     _chainCtrl.Shoot(TargetPawn);
-        // }
-
-        void ResetToMainWeapon() 
-        {
-            ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
-        }
         public void SetTarget(PawnBrainController newBrain) 
         {
             BB.target.targetPawnHP.Value = newBrain.PawnHP;

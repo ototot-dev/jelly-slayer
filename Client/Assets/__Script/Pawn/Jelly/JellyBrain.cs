@@ -14,15 +14,14 @@ namespace Game
         public virtual void OnFinishSpawnHandler() 
         { 
             if (this is IPawnEventListener listener)
-                GameContext.Instance.playerCtrler.RegisterPlayerActionListener(listener);
+                PawnEventManager.Instance.RegisterEventListener(listener);
         }
         void IPawnSpawnable.OnDespawnedHandler() {}
         public virtual void OnDeadHandler() 
         { 
             if (this is IPawnEventListener listener)
-                GameContext.Instance.playerCtrler.UnregisterPlayerActionListener(listener);
+                PawnEventManager.Instance.UnregisterEventListener(listener);
 
-            // __pawnAnimCtrler.mainAnimator.SetTrigger("OnDead");
             __pawnMovement.SetMovementEnabled(false);
         }
         void IPawnSpawnable.OnLifeTimeOutHandler() { PawnHP.Die("TimeOut"); }

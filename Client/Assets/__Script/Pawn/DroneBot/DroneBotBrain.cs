@@ -110,10 +110,7 @@ namespace Game
 
                 //* Catch 단계가 완료됨을 확인 후에 Hanging 시작
                 if (!BB.IsHanging && BB.CurrDecision == Decisions.Catch && Movement.CheckPrepareHangingDone())
-                {
                     GameContext.Instance.playerCtrler.possessedBrain.Movement.StartHanging(Movement.prepareHangingDuration > 0.1f);
-                    GameContext.Instance.playerCtrler.SendPlayerActionEvent("OnHanging");
-                }
             };
         }
 

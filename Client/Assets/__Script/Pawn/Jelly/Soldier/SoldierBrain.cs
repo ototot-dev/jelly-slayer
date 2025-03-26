@@ -91,7 +91,7 @@ namespace Game
                     {
                         if (ActionCtrler.CheckActionRunning()) ActionCtrler.CancelAction(false);
 
-                        ActionCtrler.SetPendingAction(nextActionData.actionName, string.Empty, ActionDataSelector.CurrSequence().GetPaddingTime());
+                        ActionCtrler.SetPendingAction(nextActionData.actionName, string.Empty, string.Empty, ActionDataSelector.CurrSequence().GetPaddingTime());
                         ActionDataSelector.SetCoolTime(nextActionData);
 
                         if (nextActionData.actionName == "Backstep")
@@ -185,11 +185,15 @@ namespace Game
                     ActionDataSelector.GetSequence(ActionPatterns.ComboAttack).SetCoolTime();
                     ActionDataSelector.GetSequence(ActionPatterns.CounterCombo).SetCoolTime();
                 }
+                else if (status == PawnStatus.Groggy)
+                {
+                    PawnEventManager.Instance.SendPawnStatusEvent(this, PawnStatus.Groggy, 1f, PawnStatusCtrler.GetDuration(PawnStatus.Groggy));
+                }
             };
 
             PawnStatusCtrler.onStatusDeactive += (status) =>
             {
-                if (status == PawnStatus.Groggy) 
+                if (status == PawnStatus.Groggy)
                 {
                     ActionDataSelector.GetSequence(ActionPatterns.JumpAttack).SetCoolTime();
                     ActionDataSelector.GetSequence(ActionPatterns.Backstep).SetCoolTime();
@@ -197,32 +201,12 @@ namespace Game
                     ActionDataSelector.GetSequence(ActionPatterns.Leap).SetCoolTime();
                     ActionDataSelector.GetSequence(ActionPatterns.ComboAttack).SetCoolTime();
                     ActionDataSelector.GetSequence(ActionPatterns.CounterCombo).SetCoolTime();
-                }
-            };
 
-            // BB.stat.actionPoint.Skip(1).Where(v => v <= 0).Subscribe(v =>
-            // {
-            //     var coolDownDuration = UnityEngine.Random.Range(BB.action.minCoolDownDuration, BB.action.maxCoolDownDuration);
-            //     StatusCtrler.AddStatus(PawnStatus.CanNotAction, coolDownDuration);
-
-            //     __Logger.LogR1(gameObject, "AddStatus(CanNotAction)", "duration", coolDownDuration);
-            // }).AddTo(this);
-            
-            BB.common.isGroggy.Skip(1).Subscribe(v =>
-            {
-                if (v) 
-                {
-                    BB.attachment.jellyPosition.position = coreColliderHelper.GetWorldCenter();
-                    jellyMeshCtrler.FadeIn(0.5f);
-                    jellyMeshCtrler.StartHook();
-                }
-                else 
-                {
                     jellyMeshCtrler.FadeOut(0.5f);
                     jellyMeshCtrler.FinishHook();
                 }
-            }).AddTo(this);
-
+            };
+            
             BB.body.isFalling.Skip(1).Subscribe(v =>
             {
                 //* 착지 동작 완료까지 이동을 금지함

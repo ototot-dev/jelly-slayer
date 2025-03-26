@@ -3,8 +3,6 @@ using Game;
 using System.Collections.Generic;
 using System.Xml;
 using System;
-using System.Linq;
-using NodeCanvas.StateMachines;
 using System.Collections;
 using UnityEngine.SceneManagement;
 

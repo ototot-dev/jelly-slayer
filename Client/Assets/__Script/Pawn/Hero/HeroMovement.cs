@@ -70,6 +70,8 @@ namespace Game
                     .DoOnCompleted(() => __hangingLerpDisposable = null)
                     .Subscribe(_ => __ecmMovement.SetPosition(capsule.transform.position.LerpSpeed(__brain.BB.body.hangingBrain.Value.AnimCtrler.hangingAttachPoint.position, moveSpeed, Time.deltaTime))).AddTo(this);
             }
+
+            PawnEventManager.Instance.SendPawnActionEvent(__brain, "OnHanging");
         }
 
         public DroneBotBrain ReservedHangingBrain { get; private set; }

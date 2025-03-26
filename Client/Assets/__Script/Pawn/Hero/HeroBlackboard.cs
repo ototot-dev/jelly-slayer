@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using UniRx;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Game
@@ -13,7 +14,8 @@ namespace Game
         public bool IsGuarding => body.isGuarding.Value;
         public bool IsGuardBroken => body.isGuardBroken.Value;
         public bool IsAutoGuardEnabled => body.isAutoGuardEnabled.Value;
-        public bool IsCharging => body.isCharging.Value;
+        public bool IsPunchCharging => action.punchChargeLevel.Value >= 0;
+        public bool IsEncounterRunning => action.encounterBrain.Value != null;
 
         [Serializable]
         public class Body
@@ -24,8 +26,6 @@ namespace Game
             public BoolReactiveProperty isGuarding = new();
             public BoolReactiveProperty isGuardBroken = new();
             public BoolReactiveProperty isAutoGuardEnabled = new(true);
-            public BoolReactiveProperty isCharging = new();
-            public IntReactiveProperty chargingLevel = new();
             public float walkSpeed = 1f;
             public float runSpeed = 1f;
             public float sprintSpeed = 0.1f;
@@ -41,6 +41,8 @@ namespace Game
         [Serializable]
         public class Action
         {   
+            public ReactiveProperty<PawnBrainController> encounterBrain = new();
+            public IntReactiveProperty punchChargeLevel = new(-1);
             public float guardParryDuration = 0.1f;
             public float guardParryRootMotionMultiplier = 1f;
         }

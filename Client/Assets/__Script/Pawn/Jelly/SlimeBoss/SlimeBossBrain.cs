@@ -166,9 +166,9 @@ namespace Game
 
                 switch (damageContext.receiverPenalty.Item1)
                 {
-                    case Game.PawnStatus.Groggy: ActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty); break;
-                    case Game.PawnStatus.Staggered: ActionCtrler.StartAction(damageContext, "!OnHit", string.Empty); break;
-                    case Game.PawnStatus.KnockDown: ActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty); break;
+                    case Game.PawnStatus.Groggy: ActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty, string.Empty); break;
+                    case Game.PawnStatus.Staggered: ActionCtrler.StartAction(damageContext, "!OnHit", string.Empty, string.Empty); break;
+                    case Game.PawnStatus.KnockDown: ActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty, string.Empty); break;
                 }
             }
             else if (damageContext.finalDamage > 0 || damageContext.actionResult == ActionResults.Blocked || damageContext.actionResult == ActionResults.GuardParried)
@@ -187,8 +187,8 @@ namespace Game
 
             switch (damageContext.actionResult)
             {
-                case ActionResults.GuardParried: ActionCtrler.StartAction(damageContext, "!OnParried", string.Empty); break;
-                case ActionResults.Blocked: ActionCtrler.StartAction(damageContext, "!OnBlocked", string.Empty); break;
+                case ActionResults.GuardParried: ActionCtrler.StartAction(damageContext, "!OnParried", string.Empty, string.Empty); break;
+                case ActionResults.Blocked: ActionCtrler.StartAction(damageContext, "!OnBlocked", string.Empty, string.Empty); break;
             }
         }
 

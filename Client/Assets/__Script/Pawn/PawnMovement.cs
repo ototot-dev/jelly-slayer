@@ -127,7 +127,9 @@ namespace Game
             if (!freezeRotation)
                 moveVec = faceVec;
         }
-        
+
+        // public void Push() 
+
         public void AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation, float deltaTime)
         {
             var preserveVelocityY = __ecmMovement.velocity.y;
