@@ -267,7 +267,7 @@ namespace Game
                 damageContext.senderBrain.PawnHP.onDamaged?.Invoke(damageContext);
             }
 
-            if (!string.IsNullOrEmpty(damageContext.senderActionSpecialTag))
+            if (!string.IsNullOrEmpty(damageContext.senderActionSpecialTag) || damageContext.groggyBreakHit)
                 PawnEventManager.Instance.SendPawnDamageEvent(damageContext.senderBrain, damageContext);
             if (!string.IsNullOrEmpty(damageContext.receiverActionSpecialTag))
                 PawnEventManager.Instance.SendPawnDamageEvent(damageContext.receiverBrain, damageContext);

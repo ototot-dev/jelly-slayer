@@ -25,27 +25,29 @@ namespace Game
         {
             Debug.Assert(damageContext.receiverBrain == __brain);
 
-            //* JellyMesh 별도 처리
-            if (damageContext.hitCollider.gameObject.CompareTag("Jelly"))
-            {
-                __brain.jellyMeshCtrler.ShowHitColor(0.1f);
-                // SoundManager.Instance.PlayWithClip(__brain.BB.audios.onHitFleshClip);
-            }
-                
             if (damageContext.actionResult == ActionResults.Damaged)
             {
-                if (damageContext.groggyBreakHit || (__brain.BB.IsGroggy && damageContext.senderActionData.actionName == "Assault"))
+                if (__brain.BB.IsGroggy)
                 {
-                    Observable.Interval(TimeSpan.FromSeconds(0.1f)).Take(3).Subscribe(_ =>
+                    if (damageContext.groggyBreakHit || damageContext.senderActionData.actionName == "Assault")
                     {
-                        EffectManager.Instance.Show(__brain.BB.graphics.onBleedingFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward), 1.5f * Vector3.one)
-                            .transform.SetParent(__brain.bodyHitColliderHelper.transform, true);
-                    }).AddTo(this);
+                        Observable.Interval(TimeSpan.FromSeconds(0.1f)).Take(3).Subscribe(_ =>
+                        {
+                            EffectManager.Instance.Show(__brain.BB.graphics.onBleedingFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward), 1.5f * Vector3.one)
+                                .transform.SetParent(__brain.bodyHitColliderHelper.transform, true);
+                        }).AddTo(this);
+                    }
 
-                    if (__brain.BB.IsGroggy && damageContext.senderActionData.actionName == "Assault")
+                    if (damageContext.senderActionData.actionName == "Assault")
                     {
+                        __brain.jellyMeshCtrler.springMassSystem.coreAttachPoint.parent.position = __brain.coreColliderHelper.GetWorldCenter();
                         __brain.jellyMeshCtrler.FadeIn(0.5f);
                         __brain.jellyMeshCtrler.StartHook();
+                    }
+                    else
+                    {
+                        __brain.jellyMeshCtrler.ShowHitColor(0.1f);
+                        // SoundManager.Instance.PlayWithClip(__brain.BB.audios.onHitFleshClip);
                     }
 
                     SoundManager.Instance.PlayWithClip(__brain.BB.audios.onHitAudioClip);
@@ -80,7 +82,7 @@ namespace Game
             {
                 __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", true);
                 __brain.AnimCtrler.mainAnimator.SetTrigger("OnGuard");
-                
+
                 Observable.Timer(TimeSpan.FromSeconds(0.5f)).Subscribe(_ => __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", false)).AddTo(this);
                 Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onBlockedFx, __brain.BB.attachment.blockingFxAttachPoint.position, Quaternion.identity, 0.8f * Vector3.one, 1f)).AddTo(this);
                 SoundManager.Instance.PlayWithClip(__brain.BB.audios.onBlockedAudioClip);
@@ -100,59 +102,11 @@ namespace Game
         {
             Debug.Assert(damageContext.receiverBrain == __brain);
 
-            //* JellyMesh 태깅된 경우엔 별도 처리함
-            if (damageContext.hitCollider.gameObject.CompareTag("Jelly"))
-            {
-                Debug.Assert(damageContext.actionResult == ActionResults.Damaged);
-
-                if (damageContext.hitCollider.transform.parent.TryGetComponent<JellyMeshController>(out var jellyMeshCtrler))
-                    jellyMeshCtrler.ShowHitColor(0.1f);
-
-                Observable.Interval(TimeSpan.FromSeconds(0.1f)).Take(3).Subscribe(_ =>
-                {
-                    EffectManager.Instance.Show(__brain.BB.graphics.onBleedingFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward), 1.5f * Vector3.one)
-                        .transform.SetParent(__brain.bodyHitColliderHelper.transform, true);
-                }).AddTo(this);
-
-                __pawnAnimCtrler.mainAnimator.SetFloat("HitX", UnityEngine.Random.Range(0, 2) == 0 ? 1f: -1f);
-                __pawnAnimCtrler.mainAnimator.SetFloat("HitY", UnityEngine.Random.Range(0, 2) == 0 ? 1f: -1f);
-                __pawnAnimCtrler.mainAnimator.SetInteger("HitType", 3);
-                __pawnAnimCtrler.mainAnimator.SetTrigger("OnHit");
-
-                var knockBackVec = __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-                if (damageContext.actionResult == ActionResults.Missed || damageContext.actionResult == ActionResults.Blocked)
-                {
-                    __knockBackDisposable?.Dispose();
-                    __knockBackDisposable = Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(1f / __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed)))
-                        .DoOnCancel(() => __knockBackDisposable = null)
-                        .DoOnCompleted(() => __knockBackDisposable = null)
-                        .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity, Time.fixedDeltaTime)).AddTo(this);
-                }
-                else
-                {            
-                    __knockBackDisposable?.Dispose();
-                    __knockBackDisposable = Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed)))
-                        .DoOnCancel(() => 
-                        {
-                            __pawnBrain.InvalidateDecision(0.5f);
-                            __knockBackDisposable = null;
-                        })
-                        .DoOnCompleted(() => 
-                        {
-                            __pawnBrain.InvalidateDecision(0.5f);
-                            __knockBackDisposable = null;
-                        })
-                        .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity, Time.fixedDeltaTime)).AddTo(this);
-                }
-
-                return null;
-            }
-
             if (damageContext.actionResult == ActionResults.Damaged)
             {
                 EffectManager.Instance.Show(__brain.BB.graphics.onBigHitFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()) * Quaternion.Euler(90f, 0f, 0f), Vector3.one, 1f);
                 SoundManager.Instance.PlayWithClip(__brain.BB.audios.onBigHitAudioClip);
-                SoundManager.Instance.PlayWithClip(__brain.BB.audios.onHitAudioClip2); 
+                SoundManager.Instance.PlayWithClip(__brain.BB.audios.onHitAudioClip2);
             }
 
             return base.StartOnKnockDownAction(ref damageContext, isAddictiveAction);
@@ -166,7 +120,7 @@ namespace Game
                     r.materials = new Material[] { r.material, new(__brain.BB.graphics.hitColor) };
 
                 __hitColorDisposable?.Dispose();
-                __hitColorDisposable = Observable.Timer(TimeSpan.FromMilliseconds(100)).Subscribe(_ => 
+                __hitColorDisposable = Observable.Timer(TimeSpan.FromMilliseconds(100)).Subscribe(_ =>
                 {
                     __hitColorDisposable = null;
                     foreach (var r in __brain.BB.attachment.bodyMeshRenderers)
@@ -178,7 +132,7 @@ namespace Game
                 __brain.BB.attachment.shieldMeshRenderer.materials = new Material[] { __brain.BB.attachment.shieldMeshRenderer.material, new(__brain.BB.graphics.hitColor) };
 
                 __hitColorDisposable?.Dispose();
-                __hitColorDisposable = Observable.Timer(TimeSpan.FromMilliseconds(100)).Subscribe(_ => 
+                __hitColorDisposable = Observable.Timer(TimeSpan.FromMilliseconds(100)).Subscribe(_ =>
                 {
                     __hitColorDisposable = null;
                     __brain.BB.attachment.shieldMeshRenderer.materials = new Material[] { __brain.BB.attachment.shieldMeshRenderer.material };
@@ -193,7 +147,7 @@ namespace Game
         public override void EmitActionHandler(GameObject emitPrefab, Transform emitPoint, int emitNum)
         {
             var hoveringDuration = __brain.ActionDataSelector.CurrSequence() == __brain.ActionDataSelector.GetSequence(SoldierBrain.ActionPatterns.Leap) ?
-                __brain.BB.action.hoveringDurationB : __brain.BB.action.hoveringDurationA; 
+                __brain.BB.action.hoveringDurationB : __brain.BB.action.hoveringDurationA;
 
             if (emitPrefab == __brain.BB.MissilePrefab)
             {
@@ -205,17 +159,17 @@ namespace Game
                 var intervalCount = Math.Max(1, __brain.BB.action.missileEmitNum - 2);
                 __missileEmitDisposable?.Dispose();
                 __missileEmitDisposable = Observable.Interval(TimeSpan.FromSeconds(__brain.BB.action.missileEmitIntervalA)).Take(intervalCount)
-                    .Do(_ => 
+                    .Do(_ =>
                     {
                         var missile = ObjectPoolingSystem.Instance.GetObject<SoldierMissile>(emitPrefab, emitPoint.position, Quaternion.LookRotation(Vector3.up));
                         missile.hoveringDuration = hoveringDuration;
                         missile.Go(__brain, __brain.BB.action.missileEmitSpeed);
                     })
-                    .DoOnCompleted(() => 
+                    .DoOnCompleted(() =>
                     {
                         __missileEmitDisposable = Observable.Timer(TimeSpan.FromSeconds(__brain.BB.action.missileEmitIntervalB))
                             .Subscribe(_ =>
-                            { 
+                            {
                                 var missile = ObjectPoolingSystem.Instance.GetObject<SoldierMissile>(emitPrefab, emitPoint.position, Quaternion.LookRotation(Vector3.up));
                                 missile.hoveringDuration = hoveringDuration;
                                 missile.Go(__brain, __brain.BB.action.missileEmitSpeed);
@@ -239,7 +193,7 @@ namespace Game
 
                 __laserDisposable?.Dispose();
                 __laserDisposable = Observable.FromCoroutine(LaserActionCoroutine)
-                    .DoOnCancel(() => 
+                    .DoOnCancel(() =>
                     {
                         __laserDisposable = null;
                         __brain.BB.attachment.laserRenderer.flashFx.Stop();
@@ -255,7 +209,7 @@ namespace Game
 
             return null;
         }
-        
+
         IEnumerator LaserActionCoroutine()
         {
             var laserRenderer = __brain.BB.attachment.laserRenderer;
@@ -369,7 +323,7 @@ namespace Game
                 __humanoidBrain.PawnStatusCtrler.AddStatus(PawnStatus.Invincible, 1f, 1f);
                 __humanoidBrain.PawnStatusCtrler.AddStatus(PawnStatus.CanNotMove, 1f, 2f);
                 __humanoidBrain.InvalidateDecision(2f);
-                
+
                 //* 막타 Hit 애님이 오전히 출력되는 시간 딜레이 
                 Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(_ => __pawnAnimCtrler.mainAnimator.SetBool("IsGroggy", false)).AddTo(this);
             }).AddTo(this);

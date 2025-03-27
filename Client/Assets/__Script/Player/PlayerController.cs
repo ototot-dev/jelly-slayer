@@ -51,13 +51,17 @@ namespace Game
             if (damageContext.senderActionSpecialTag == "Encounter")
             {
                 Debug.Assert(sender == possessedBrain);
-
-                if (damageContext.receiverBrain.TryGetComponent<PawnAnimController>(out var receiverAnimCtrler))
-                    receiverAnimCtrler.mainAnimator.SetTrigger("OnKnees");
-
                 possessedBrain.BB.action.encounterBrain.Value = damageContext.receiverBrain;
-            }
 
+                __Logger.LogR2(gameObject, "OnReceivePawnDamageContext", "Groggy-Encounter", "encounterBrain", damageContext.receiverBrain);
+            }
+            else if (damageContext.groggyBreakHit)
+            {
+                Debug.Assert(sender == possessedBrain);
+                possessedBrain.BB.action.encounterBrain.Value = null;
+
+                __Logger.LogR2(gameObject, "OnReceivePawnDamageContext", "Groggy-Break");
+            }
         }
 #endregion
 

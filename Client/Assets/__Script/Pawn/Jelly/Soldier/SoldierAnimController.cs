@@ -44,7 +44,7 @@ namespace Game
 
         public override void OnAnimatorMoveHandler()
         {
-            if (__brain.BB.IsDown || CheckAnimStateRunning("OnGroggy (Break)"))
+            if (__brain.BB.IsDown || CheckAnimStateRunning("OnGroggy (Start)") || CheckAnimStateRunning("OnGroggy (Break)"))
                 __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation, Time.deltaTime);
             else if (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
                 __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition, mainAnimator.deltaRotation, Time.deltaTime);
@@ -69,6 +69,8 @@ namespace Game
         {
             FindObservableStateMachineTriggerEx("OnParried").OnStateEnterAsObservable().Subscribe(s => __runningAnimStateNames.Add("OnParried")).AddTo(this);
             FindObservableStateMachineTriggerEx("OnParried").OnStateExitAsObservable().Subscribe(s => __runningAnimStateNames.Remove("OnParried")).AddTo(this);
+            FindObservableStateMachineTriggerEx("OnGroggy (Start)").OnStateEnterAsObservable().Subscribe(s => __runningAnimStateNames.Add("OnGroggy (Start)")).AddTo(this);
+            FindObservableStateMachineTriggerEx("OnGroggy (Start)").OnStateExitAsObservable().Subscribe(s => __runningAnimStateNames.Remove("OnGroggy (Start)")).AddTo(this);
             FindObservableStateMachineTriggerEx("OnGroggy (Loop)").OnStateEnterAsObservable().Subscribe(s => __runningAnimStateNames.Add("OnGroggy (Loop)")).AddTo(this);
             FindObservableStateMachineTriggerEx("OnGroggy (Loop)").OnStateExitAsObservable().Subscribe(s => __runningAnimStateNames.Remove("OnGroggy (Loop)")).AddTo(this);
             FindObservableStateMachineTriggerEx("OnGroggy (Break)").OnStateEnterAsObservable().Subscribe(s => __runningAnimStateNames.Add("OnGroggy (Break)")).AddTo(this);

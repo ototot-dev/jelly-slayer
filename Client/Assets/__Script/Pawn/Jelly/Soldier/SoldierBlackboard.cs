@@ -137,6 +137,16 @@ namespace Game
 
         public Audios audios = new();
 
+
+        [Serializable]
+        public class Children
+        {
+            public Transform jellyMeshAttactPoint;
+        }
+
+        public Children children = new();
+
+
         [Serializable]
         public class Attachment
         {
@@ -148,7 +158,7 @@ namespace Game
             public ParticleSystem[] jetParticleSystems;
             public Transform blockingFxAttachPoint;
             public Transform specialKeyAttachPoint;
-            public Transform jellyMeshAttactPoint;
+            public Transform jellyMeshAttactPointParent;
             public Transform laserAimPoint;
             public SoldierLaserRenderer laserRenderer;
             public PawnColliderHelper counterActionTraceColliderHelper;

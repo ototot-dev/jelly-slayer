@@ -175,6 +175,12 @@ namespace Game
                     BB.stat.poise = BB.pawnData.poise;
             };
 
+            BB.action.encounterBrain.Skip(1).Subscribe(v =>
+            {
+                // if (v != null)
+
+            }).AddTo(this);
+
             BB.action.punchChargeLevel.Skip(1).Subscribe(v => 
             {
                 if (v >= 0)

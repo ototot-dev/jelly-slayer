@@ -9483,9 +9483,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   handler:
-    _Editor_SelectedChain: 0
-    _Editor_ChainCategory: 0
-    _EditorCategory: 2
+    _Editor_SelectedChain: 3
+    _Editor_ChainCategory: 1
+    _EditorCategory: 1
     _EditorMainCategory: 0
     _EditorMotionCategory: 0
     m_hemi: {fileID: -2508796484986968503, guid: 44d994eaad14fdf49a2dd378b4d62094, type: 3}

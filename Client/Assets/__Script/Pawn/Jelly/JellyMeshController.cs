@@ -22,6 +22,8 @@ namespace Game
         public RopeHookController ropeHookCtrler;
 
         [Header("Parameter")]
+        public float maintainDistance = 1f;
+        public float mainDistanceRecoverySpeed = 1f;
         public float cubeSpreadRadius = 1f;
         public float cubeScaleMin = 1f;
         public float cubeScaleMax = 1f;
@@ -74,7 +76,6 @@ namespace Game
         {
             var fadeStartTimeStamp = Time.time;
 
-            // springMassSystem.coreAttachPoint.position = jellyBrain.coreColliderHelper.GetWorldCenter(); 
             eyeAnimator.transform.localScale = Vector3.zero;
             eyeAnimator.MinOpenValue = 0f;
             meshBuilder.meshRenderer.enabled = false;
@@ -93,7 +94,7 @@ namespace Game
             __fadeUpdateDisposable?.Dispose();
             __fadeUpdateDisposable = Observable.EveryLateUpdate().Subscribe(_ =>
             {
-                UpdateCoreAttachPointLookAt();
+                UpdateBodyOffsetPointAndAttachPoint();
 
                 foreach (var p in __cubeMeshRenderers)
                 {
@@ -157,7 +158,7 @@ namespace Game
                 })
                 .Subscribe(_ =>
                 {
-                    UpdateCoreAttachPointLookAt();
+                    UpdateBodyOffsetPointAndAttachPoint();
 
                     foreach (var p in __cubeMeshRenderers)
                     {
@@ -193,14 +194,15 @@ namespace Game
                 }).AddTo(this);
         }
 
-        void UpdateCoreAttachPointLookAt()
+        void UpdateBodyOffsetPointAndAttachPoint()
         {
-            springMassSystem.coreAttachPointOffset = 0.2f * Perlin.Noise(Time.time) * Vector3.up;
-
             var lookAtCameraVec = -GameContext.Instance.mainCameraCtrler.viewCamera.transform.forward;
-            // springMassSystem.coreAttachPoint.transform.localPosition = __coreAttachPointLocalPositionCached;
-            // springMassSystem.coreAttachPoint.transform.position += lookAtCameraVec;
-            springMassSystem.coreAttachPoint.transform.LookAt(springMassSystem.coreAttachPoint.position + lookAtCameraVec);
+            springMassSystem.bodyOffsetPoint.transform.LookAt(springMassSystem.core.position + lookAtCameraVec);
+            springMassSystem.bodyOffsetPoint.localPosition = 0.2f * Perlin.Noise(Time.time) * Vector3.up;
+
+            var distance = (springMassSystem.coreAttachPoint.parent.position - jellyBrain.coreColliderHelper.GetWorldCenter()).Vector2D().magnitude;
+            if (distance > maintainDistance)
+                springMassSystem.coreAttachPoint.parent.position = springMassSystem.coreAttachPoint.parent.position.LerpSpeed(jellyBrain.coreColliderHelper.GetWorldCenter(), mainDistanceRecoverySpeed * (distance - maintainDistance), Time.deltaTime);
         }
 
         Dictionary<int, Material> __defaultCubeMeshMaterials;
@@ -244,7 +246,7 @@ namespace Game
             }).AddTo(this);
 
             __tweener?.Complete();
-            __tweener = springMassSystem.coreAttachPoint.DOShakePosition(duration, 0.8f);
+            __tweener = springMassSystem.bodyOffsetPoint.DOShakePosition(duration, 0.8f);
 
             EffectManager.Instance.Show(onHitFx, springMassSystem.core.position, Quaternion.identity, Vector3.one);
         }
