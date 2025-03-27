@@ -111,6 +111,14 @@ namespace Game
 
             return base.StartOnKnockDownAction(ref damageContext, isAddictiveAction);
         }
+        public override IDisposable StartOnGroogyAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
+        {
+            base.StartOnGroogyAction(ref damageContext, isAddictiveAction);
+
+            SoundManager.Instance.PlayWithClipPos(__brain.BB.audios.onEnterGroggy, __brain.bodyHitColliderHelper.GetWorldCenter());
+
+            return null;
+        }
 
         void ShowHitColor(PawnColliderHelper hitColliderHelper)
         {
