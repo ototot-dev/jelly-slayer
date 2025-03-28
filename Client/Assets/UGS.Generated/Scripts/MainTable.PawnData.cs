@@ -64,6 +64,7 @@ namespace MainTable
 		public System.Int32 stamina;
 		public System.Int32 stance;
 		public System.Int32 knockDown;
+		public System.Int32 rage;
 		public System.Int32 poise;
 		public System.Int32 physAttack;
 		public System.Int32 magicAttack;

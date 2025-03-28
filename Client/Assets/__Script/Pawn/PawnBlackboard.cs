@@ -102,6 +102,7 @@ namespace Game
             stat.maxHeartPoint.Value = stat.heartPoint.Value = pawnData.health;
             stat.maxActionPoint.Value = stat.actionPoint.Value = pawnData.actionPoint;
             stat.maxStamina.Value = stat.stamina.Value = pawnData.stamina;
+            stat.maxStamina.Value = pawnData.stamina;
             stat.maxStance.Value = pawnData.stance;
             stat.maxKnockDown.Value = pawnData.knockDown;
             stat.maxGroggyHitCount.Value = pawnData.groggyHitCount;
