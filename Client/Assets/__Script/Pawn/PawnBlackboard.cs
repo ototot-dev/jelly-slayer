@@ -49,6 +49,7 @@ namespace Game
             public FloatReactiveProperty maxStamina = new(1);
             public FloatReactiveProperty maxStance = new(1);
             public FloatReactiveProperty maxKnockDown = new(1);
+            public FloatReactiveProperty maxRage = new(1);
             public IntReactiveProperty maxGroggyHitCount = new();
             public FloatReactiveProperty heartPoint = null;
             public IntReactiveProperty actionPoint = new(1);
@@ -56,6 +57,7 @@ namespace Game
             public FloatReactiveProperty stance = new();
             public FloatReactiveProperty knockDown = new();
             public IntReactiveProperty groggyHitCount = new();
+            public FloatReactiveProperty rage = new();
             public float poise;
             public float guardStrength;
             public float guardEfficiency;
@@ -100,6 +102,7 @@ namespace Game
             stat.maxHeartPoint.Value = stat.heartPoint.Value = pawnData.health;
             stat.maxActionPoint.Value = stat.actionPoint.Value = pawnData.actionPoint;
             stat.maxStamina.Value = stat.stamina.Value = pawnData.stamina;
+            stat.maxRage.Value = pawnData.rage;
             stat.maxStance.Value = pawnData.stance;
             stat.maxKnockDown.Value = pawnData.knockDown;
             stat.maxGroggyHitCount.Value = pawnData.groggyHitCount;

@@ -144,7 +144,7 @@ namespace Game
                 switch (reason)
                 {
                     case "Jump": TimeManager.Instance.SlomoTime(this, 0.7f, 0.2f); break;
-                    case "Dodge": TimeManager.Instance.SlomoTime(this, 0.7f, 0.2f); break;
+                    case "Dodge": TimeManager.Instance.SlomoTime(this, 0.6f, 0.3f); break;
                 }
             };
 
