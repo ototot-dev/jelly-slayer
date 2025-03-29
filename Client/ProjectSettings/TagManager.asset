@@ -29,8 +29,8 @@ TagManager:
   - HitBoxBlocking
   - Obstacle
   - Ceil
-  - 
-  - 
+  - JellyMesh
+  - PawnMesh
   - 
   - 
   - 

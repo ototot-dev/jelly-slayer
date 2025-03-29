@@ -41,7 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8780919484856273512}
   - component: {fileID: 526436558251049302}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_head_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -86,7 +86,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -161,7 +161,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5832298863091756723}
   - component: {fileID: 1706200521295139014}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_hand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -206,7 +206,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -490,7 +490,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1023218117430714453}
   - component: {fileID: 2529163552897760252}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_lowerleg_shin_armor_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -535,7 +535,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -721,7 +721,7 @@ GameObject:
   m_Component:
   - component: {fileID: 203339777904333331}
   - component: {fileID: 3653163406098518834}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_shoulder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -766,7 +766,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1044,7 +1044,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4306398907190999959}
   - component: {fileID: 5366686258839446751}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_lowerleg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1089,7 +1089,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1133,7 +1133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6920385894196851884}
   - component: {fileID: 928852404498949650}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_ankle_heel_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1178,7 +1178,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1418,7 +1418,7 @@ GameObject:
   - component: {fileID: 975154189500928472}
   - component: {fileID: 4190504916145462909}
   - component: {fileID: 2144660433765673655}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: SM_Mech_Cockpit_01_Frame_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1734,7 +1734,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2091912500787525606}
   - component: {fileID: 7308947776045086585}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_collar_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1779,7 +1779,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1889,7 +1889,7 @@ GameObject:
   m_Component:
   - component: {fileID: 21944078063032323}
   - component: {fileID: 2477921536084319940}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_mid_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1934,7 +1934,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1978,7 +1978,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1309445646801291511}
   - component: {fileID: 2263737250512948283}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_chest_attach_weapon_01_Launcher_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2023,7 +2023,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2163,7 +2163,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8805375540342398042}
   - component: {fileID: 6568430762389786541}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_index_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2208,7 +2208,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2252,7 +2252,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1972078572869923230}
   - component: {fileID: 3020704946842453546}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_thumb_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2297,7 +2297,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2405,7 +2405,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3681373205162340619}
   - component: {fileID: 2652685935540206979}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_elbow_attach_weapon_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2450,7 +2450,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2611,7 +2611,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3427511962881483290}
   - component: {fileID: 6627763707209342911}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_chest_attach_weapon_03_Empty
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2656,7 +2656,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2764,7 +2764,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5025082782286227304}
   - component: {fileID: 507613117320460956}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_cockpit_door_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2809,7 +2809,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4819,7 +4819,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1464153525753643792}
   - component: {fileID: 8931391220677414925}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_shoulder_armor_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4864,7 +4864,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4939,7 +4939,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3366822833813182542}
   - component: {fileID: 1262116078126966293}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_hips_armor_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4984,7 +4984,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5028,7 +5028,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7228366320740169644}
   - component: {fileID: 1258126041913202543}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_chest_attach_weapon_06_Launcher_Empty
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5073,7 +5073,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5118,7 +5118,7 @@ GameObject:
   - component: {fileID: 321786650567484540}
   - component: {fileID: 3735996293672512473}
   - component: {fileID: 1458070737609187091}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: SM_Prop_Shield_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5268,7 +5268,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6495751645039595011}
   - component: {fileID: 8008477169007064335}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_elbow_attach_weapon_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5313,7 +5313,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5357,7 +5357,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4263590670737301292}
   - component: {fileID: 4555013200068593267}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_mid_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5402,7 +5402,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5446,7 +5446,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6254146541313466402}
   - component: {fileID: 1388912442452632552}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_ankle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5491,7 +5491,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5608,7 +5608,7 @@ GameObject:
   m_Component:
   - component: {fileID: 549429523389259196}
   - component: {fileID: 1241360532556555169}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_lowerleg_shin_armor_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5653,7 +5653,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5697,7 +5697,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9205220874286939168}
   - component: {fileID: 1567932285306367296}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_chest_attach_weapon_06_Launcher
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5742,7 +5742,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6172,7 +6172,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7165972139008456817}
   - component: {fileID: 8832122086158446560}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_ball_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6217,7 +6217,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6332,7 +6332,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6020616711779858825
 Transform:
   m_ObjectHideFlags: 0
@@ -6379,7 +6379,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e600b338198602a449203a6e59c0e794, type: 2}
+  - {fileID: 2100000, guid: c884ce288b2de4a19a94de48741a8f46, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6411,7 +6411,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7677522398704170070}
   - component: {fileID: 8070986713856178878}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_shoulder_armor_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6456,7 +6456,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6810,7 +6810,7 @@ GameObject:
   m_Component:
   - component: {fileID: 196497481791447657}
   - component: {fileID: 7901841359853027035}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_lowerleg_knee_armor_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6855,7 +6855,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6899,7 +6899,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4458014439817541535}
   - component: {fileID: 4039873923242081386}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_elbow_armor_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6944,7 +6944,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6988,7 +6988,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4358031539398896331}
   - component: {fileID: 8945163222985410300}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_shoulder_armor_08_heavy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7033,7 +7033,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7077,7 +7077,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8288103853052308971}
   - component: {fileID: 1112622732325868030}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_chest_attach_weapon_08_Empty
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7122,7 +7122,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7230,7 +7230,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2274133821683513328}
   - component: {fileID: 6600441616038801362}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_lowerleg_knee_armor_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7275,7 +7275,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7319,7 +7319,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3166646237519915099}
   - component: {fileID: 5919009996302943951}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_shoulder_armor_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7364,7 +7364,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7477,7 +7477,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7528965267046311007}
   - component: {fileID: 2303309926925754084}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_index_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7522,7 +7522,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7566,7 +7566,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8244852242120366291}
   - component: {fileID: 8348306005469606046}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_elbow_armor_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7611,7 +7611,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7687,7 +7687,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9151677622933002030}
   - component: {fileID: 1323815753962867660}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_shoulder_armor_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7732,7 +7732,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7776,7 +7776,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5312721881602429969}
   - component: {fileID: 139533533696934756}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_hips_armor_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7821,7 +7821,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7865,7 +7865,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1934838778955543533}
   - component: {fileID: 2752352560776984402}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_lowerleg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7910,7 +7910,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8194,7 +8194,7 @@ GameObject:
   m_Component:
   - component: {fileID: 780478293692900682}
   - component: {fileID: 4232978784191815728}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_hand_armor_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8239,7 +8239,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8283,7 +8283,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3824891516644273348}
   - component: {fileID: 3725911901352116157}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_ankle_heel_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8328,7 +8328,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8372,7 +8372,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2036036030714632649}
   - component: {fileID: 7087415036226510726}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_head_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8417,7 +8417,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8492,7 +8492,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8199889536397636983}
   - component: {fileID: 7041203217320974171}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_shoulder_armor_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8537,7 +8537,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8614,7 +8614,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5959013576365520312}
   - component: {fileID: 448982544795735147}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_chest_attach_weapon_03_Empty
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8659,7 +8659,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8703,7 +8703,7 @@ GameObject:
   m_Component:
   - component: {fileID: 90640868476913061}
   - component: {fileID: 7828713756733509684}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_chest_attach_weapon_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8748,7 +8748,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8792,7 +8792,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4853984976467838549}
   - component: {fileID: 4718579367257816074}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_hand_armor_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8837,7 +8837,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8944,7 +8944,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6353576834590544051}
   - component: {fileID: 5080439713216832378}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_cockpit_door_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8989,7 +8989,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -14513,7 +14513,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3757036337894805296}
   - component: {fileID: 960676326360521251}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_lowerleg_knee_armor_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14558,7 +14558,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -14669,7 +14669,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6364319326261845996}
   - component: {fileID: 5610508120714537814}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_elbow_attach_weapon_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14714,7 +14714,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -14793,7 +14793,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7363827031460811470}
   - component: {fileID: 4772092020799743675}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_shoulder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14838,7 +14838,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -14882,7 +14882,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1902940676976851047}
   - component: {fileID: 6927895993239242655}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_shoulder_armor_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14927,7 +14927,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -14971,7 +14971,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8420928895998924253}
   - component: {fileID: 3096803760180007609}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_chest_attach_weapon_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15017,7 +15017,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -20163,7 +20163,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3775292801025153567}
   - component: {fileID: 7782606603652490083}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_elbow_attach_weapon_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20208,7 +20208,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -25141,7 +25141,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6510321362686161803}
   - component: {fileID: 5931649386989919181}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_elbow_attach_weapon_06_Empty
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25186,7 +25186,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -25230,7 +25230,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9091317175701083182}
   - component: {fileID: 243176512512100820}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_shoulder_armor_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25275,7 +25275,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -25443,7 +25443,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4039209465750257587}
   - component: {fileID: 3621997168049934136}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_lowerleg_knee_armor_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25488,7 +25488,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -25629,7 +25629,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5810764850805702330}
   - component: {fileID: 2034303418302868460}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_jetpack_intakes_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25674,7 +25674,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -25903,7 +25903,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7235357057103893151}
   - component: {fileID: 7014371341665381159}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_lowerleg_shin_armor_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25948,7 +25948,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -25992,7 +25992,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3116727947962957725}
   - component: {fileID: 5019167844757700796}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_hips_belt_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26037,7 +26037,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -26252,7 +26252,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5389417824852309246}
   - component: {fileID: 7444280105061642427}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_elbow_attach_weapon_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26297,7 +26297,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -26427,7 +26427,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8119278778892088697}
   - component: {fileID: 3452207640289439174}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_elbow_armor_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26472,7 +26472,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -26933,7 +26933,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1463948114410681208}
   - component: {fileID: 7286815176705650925}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_chest_attach_weapon_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26978,7 +26978,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -27193,7 +27193,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1615347325600903936}
   - component: {fileID: 6142972148428988322}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_shoulder_armor_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27238,7 +27238,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -27576,7 +27576,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9200411343714952592}
   - component: {fileID: 7991549655160984879}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_L_elbow_armor_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27621,7 +27621,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -27665,7 +27665,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2266051814974510679}
   - component: {fileID: 1617277981379148601}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_L_elbow_armor_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27710,7 +27710,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -27754,7 +27754,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6611984490401709019}
   - component: {fileID: 4616801160144238479}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_thumb_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27799,7 +27799,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -27947,7 +27947,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3315785703138093503}
   - component: {fileID: 5713574180085121781}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_lowerleg_knee_armor_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27992,7 +27992,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -28122,7 +28122,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3675174247938868673}
   - component: {fileID: 4458631142534386}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_jetpack_intakes_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28167,7 +28167,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -28211,7 +28211,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3371938997603218204}
   - component: {fileID: 5772061915402926366}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_lowerleg_knee_armor_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28256,7 +28256,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -28300,7 +28300,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6589248304765831714}
   - component: {fileID: 6033054288383342919}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_chest_attach_weapon_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28345,7 +28345,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -28420,7 +28420,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6263104504336434836}
   - component: {fileID: 8001230486162228854}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_ankle_heel_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28465,7 +28465,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -28509,7 +28509,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7195582330094056803}
   - component: {fileID: 7981608255289199607}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_shoulder_armor_08_heavy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28554,7 +28554,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -29199,7 +29199,7 @@ GameObject:
   m_Component:
   - component: {fileID: 85463609965130011}
   - component: {fileID: 1435562051200411920}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Tail_Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29293,7 +29293,7 @@ GameObject:
   m_Component:
   - component: {fileID: 73825963704129199}
   - component: {fileID: 2823505494953512169}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_hand_armor_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29338,7 +29338,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -29503,7 +29503,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6922917065529099935}
   - component: {fileID: 2772352623418666377}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_chest_attach_weapon_06_Launcher
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29548,7 +29548,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -29711,7 +29711,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8936959855165721939}
   - component: {fileID: 7318397518907431051}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_upperleg_armor_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29756,7 +29756,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -29800,7 +29800,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7559392666299892961}
   - component: {fileID: 715558427433232908}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_head_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29845,7 +29845,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -34864,7 +34864,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4885112742777321301}
   - component: {fileID: 8714402679726396200}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_chest_attach_weapon_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34909,7 +34909,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -34953,7 +34953,7 @@ GameObject:
   m_Component:
   - component: {fileID: 187938258745078868}
   - component: {fileID: 5441042572712482396}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_elbow_armor_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34998,7 +34998,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -35106,7 +35106,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8882379667991502125}
   - component: {fileID: 3983002554318444602}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_chest_attach_weapon_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35151,7 +35151,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -35195,7 +35195,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7199430055189412238}
   - component: {fileID: 2899850618682872385}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_lowerleg_shin_armor_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35240,7 +35240,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -35315,7 +35315,7 @@ GameObject:
   m_Component:
   - component: {fileID: 766636191177449647}
   - component: {fileID: 3280792634673779167}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_ankle_heel_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35360,7 +35360,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -36069,7 +36069,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2260064536366397449}
   - component: {fileID: 7927674931554492790}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_ball_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36114,7 +36114,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -36158,7 +36158,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8717774932068819087}
   - component: {fileID: 6888842128901010346}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Tail_Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36252,7 +36252,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5004202193538919738}
   - component: {fileID: 6839271152892694605}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_elbow_attach_weapon_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36297,7 +36297,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -36454,7 +36454,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1544556090676532464}
   - component: {fileID: 7989359815764733004}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_ball_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36499,7 +36499,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -36660,7 +36660,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2716851049445366351}
   - component: {fileID: 7982989443960154506}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_ankle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36705,7 +36705,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -36750,7 +36750,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6827690984640522060}
   - component: {fileID: 4471589964540512393}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_hips_belt_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36795,7 +36795,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -36839,7 +36839,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2970964584387426655}
   - component: {fileID: 6377755903603131143}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_chest_attach_weapon_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36885,7 +36885,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -36929,7 +36929,7 @@ GameObject:
   m_Component:
   - component: {fileID: 39537698896915839}
   - component: {fileID: 208595149813139449}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_cockpit_door_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36974,7 +36974,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -37137,7 +37137,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6048513735316132134}
   - component: {fileID: 5509640479348057243}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_elbow_attach_weapon_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37182,7 +37182,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -37344,7 +37344,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1453349776114957000}
   - component: {fileID: 6312703968729461103}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_thumb_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37389,7 +37389,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -37464,7 +37464,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1595540628410196015}
   - component: {fileID: 8325566251563389010}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_exhaust
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37509,7 +37509,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -37557,7 +37557,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8560754590822224327}
   - component: {fileID: 5754302489310022046}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_elbow_attach_weapon_06_Empty
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37602,7 +37602,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -37646,7 +37646,7 @@ GameObject:
   m_Component:
   - component: {fileID: 14975870989735067}
   - component: {fileID: 7603468531908630712}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_lowerleg_knee_armor_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37691,7 +37691,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -37735,7 +37735,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1835972993057618909}
   - component: {fileID: 1256079044257018496}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_lowerleg_shin_armor_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37780,7 +37780,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -37824,7 +37824,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6845479492733642977}
   - component: {fileID: 9131351184432101773}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_ball_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37869,7 +37869,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -37913,7 +37913,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4345914189265145190}
   - component: {fileID: 2386433470467196964}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Tail_Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43088,7 +43088,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7728909279996406390}
   - component: {fileID: 3578675336464646229}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_collar_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43133,7 +43133,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -43253,7 +43253,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2410224520755903626}
   - component: {fileID: 2544181829771057698}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_thumb_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43298,7 +43298,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -43342,7 +43342,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5425308372020417848}
   - component: {fileID: 2923869156493173423}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_lowerleg_shin_armor_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43387,7 +43387,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -44144,7 +44144,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6154625950064225208}
   - component: {fileID: 7976126090461923097}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_hips_belt_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44189,7 +44189,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -44233,7 +44233,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8310808509265298546}
   - component: {fileID: 6829229317849472740}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_hips_rotor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44278,7 +44278,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -44353,7 +44353,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1072025010293093554}
   - component: {fileID: 4971879798630571316}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_elbow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44398,7 +44398,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -44442,7 +44442,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4823719120238195987}
   - component: {fileID: 4006396698050229172}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_cargo_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44487,7 +44487,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -44531,7 +44531,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4646340034106209918}
   - component: {fileID: 3768489630133768462}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_upperleg_armor_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44576,7 +44576,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -44706,7 +44706,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9114237912795400519}
   - component: {fileID: 4908894691489886755}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_collar_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44751,7 +44751,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -44826,7 +44826,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1808649282012987294}
   - component: {fileID: 6943820691635456933}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_hand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44871,7 +44871,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -45001,7 +45001,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9172510432038652202}
   - component: {fileID: 322660633991343588}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_hips
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45046,7 +45046,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -45230,7 +45230,7 @@ GameObject:
   m_Component:
   - component: {fileID: 963198464759738853}
   - component: {fileID: 2444106945538369192}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_chest_attach_weapon_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45275,7 +45275,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -50335,7 +50335,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6090416553985704242
 Transform:
   m_ObjectHideFlags: 0
@@ -50415,7 +50415,7 @@ GameObject:
   m_Component:
   - component: {fileID: 495760174668679658}
   - component: {fileID: 7699379374323602019}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_ankle_heel_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -50460,7 +50460,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -50504,7 +50504,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3142008742891350377}
   - component: {fileID: 8015981003376996861}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_chest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -50549,7 +50549,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -50593,7 +50593,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2825090202621502568}
   - component: {fileID: 6533019359003739020}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_chest_attach_weapon_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -50638,7 +50638,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -50745,7 +50745,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1398428267037790117}
   - component: {fileID: 7649868624513274862}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_hand_armor_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -50790,7 +50790,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -51013,7 +51013,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2565250337534933378}
   - component: {fileID: 7968282166432519047}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_ball_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -51058,7 +51058,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -51160,7 +51160,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3720821010434908133}
   - component: {fileID: 4330268113703934565}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Tail_Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -51254,7 +51254,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5620629868518326485}
   - component: {fileID: 6324392329488789761}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_head_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -51299,7 +51299,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -51382,7 +51382,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5746378825299487964
 Transform:
   m_ObjectHideFlags: 0
@@ -51430,7 +51430,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e600b338198602a449203a6e59c0e794, type: 2}
+  - {fileID: 2100000, guid: c884ce288b2de4a19a94de48741a8f46, type: 2}
   - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -51463,7 +51463,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6355851311896775139}
   - component: {fileID: 8051319430508875398}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_clavicle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -51508,7 +51508,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -51652,7 +51652,7 @@ GameObject:
   - component: {fileID: 7898665492948941312}
   - component: {fileID: 975823368838399146}
   - component: {fileID: 1093716954239719769}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -51737,7 +51737,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4427769316300487211}
   - component: {fileID: 1770983836541065663}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_upperleg_armor_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -51782,7 +51782,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -51826,7 +51826,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8527358358218344603}
   - component: {fileID: 6303771831019834179}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_elbow_attach_weapon_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -51871,7 +51871,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -52842,7 +52842,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8545026088658544121}
   - component: {fileID: 7413189344453797639}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_hand_armor_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -52887,7 +52887,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -52962,7 +52962,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1197033746522664674}
   - component: {fileID: 285314224288595747}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53008,7 +53008,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 06d7a238e9dbf4c4fb2dc71cdfb8d5f4, type: 2}
+  - {fileID: 2100000, guid: 30bd9d87bf81d412388c7e74bca2e3ac, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -53079,7 +53079,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2886841052477600435}
   - component: {fileID: 7730702792172888491}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_head_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53124,7 +53124,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -53175,7 +53175,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1513936779046940430
 Transform:
   m_ObjectHideFlags: 0
@@ -53222,7 +53222,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e600b338198602a449203a6e59c0e794, type: 2}
+  - {fileID: 2100000, guid: c884ce288b2de4a19a94de48741a8f46, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -53254,7 +53254,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4548628018855758595}
   - component: {fileID: 7890618818441603377}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_upperleg_armor_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53299,7 +53299,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -53374,7 +53374,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8943750193486715972}
   - component: {fileID: 2948309968414774957}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_hand_armor_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53419,7 +53419,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -53463,7 +53463,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1369011665425598725}
   - component: {fileID: 4842638851471097851}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_ankle_heel_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53508,7 +53508,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -53552,7 +53552,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4577340468445119417}
   - component: {fileID: 8519663633246374267}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_hips_belt_04_saddlebags
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53597,7 +53597,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -53641,7 +53641,7 @@ GameObject:
   m_Component:
   - component: {fileID: 968038241866512456}
   - component: {fileID: 1728688346526973410}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_chest_attach_weapon_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53688,7 +53688,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -53768,7 +53768,7 @@ GameObject:
   - component: {fileID: 6341947184674742915}
   - component: {fileID: 8047022998564941094}
   - component: {fileID: 5208469601063295468}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: SM_Wep_Sword_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53823,7 +53823,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -53855,7 +53855,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5021275497402392504}
   - component: {fileID: 2967319721022015074}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_cargo_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53900,7 +53900,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -53944,7 +53944,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4932666505389305470}
   - component: {fileID: 2444313894108316948}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_elbow_attach_weapon_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53989,7 +53989,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -54040,7 +54040,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7768654701710282242
 Transform:
   m_ObjectHideFlags: 0
@@ -54120,7 +54120,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4945428382705037033}
   - component: {fileID: 4786636240497650964}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_hips_belt_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54165,7 +54165,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -54209,7 +54209,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4918758423347193034}
   - component: {fileID: 7057390798957333423}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_lowerleg_knee_armor_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54254,7 +54254,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -54298,7 +54298,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8563952522174466177}
   - component: {fileID: 6785189157053423187}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_elbow_attach_weapon_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54343,7 +54343,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -54419,7 +54419,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5283425609243889300}
   - component: {fileID: 3762196321869388642}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_head_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54464,7 +54464,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -54539,7 +54539,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3966169629415547789}
   - component: {fileID: 8904249072064544493}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_elbow_armor_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54584,7 +54584,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -54714,7 +54714,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4145873282955961385}
   - component: {fileID: 4106356597662541772}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_cargo_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54759,7 +54759,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -54921,7 +54921,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5380322497808453077}
   - component: {fileID: 6963837682905538261}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_chest_attach_weapon_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54966,7 +54966,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -55213,7 +55213,7 @@ GameObject:
   m_Component:
   - component: {fileID: 844526750869163730}
   - component: {fileID: 3444044173924941044}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_attach_radio
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55258,7 +55258,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -55716,7 +55716,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5510115929884673633}
   - component: {fileID: 3394354191222730164}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_upperShin_armor_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55761,7 +55761,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -55805,7 +55805,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4225457647142632833}
   - component: {fileID: 5829734961525634486}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_lowerleg_knee_armor_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55850,7 +55850,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -55959,7 +55959,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1732978230430289511}
   - component: {fileID: 6669273897172150244}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_upperleg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56004,7 +56004,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -56177,7 +56177,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7261201686457713078}
   - component: {fileID: 3654974417509311301}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_lowerleg_knee_armor_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56222,7 +56222,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -56266,7 +56266,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9047080980581239663}
   - component: {fileID: 2874920365858594747}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_elbow_armor_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56311,7 +56311,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -56418,7 +56418,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4189020185228256320}
   - component: {fileID: 7652350120958084081}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_ball_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56463,7 +56463,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -56507,7 +56507,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4030830083572709600}
   - component: {fileID: 335905922198653227}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_lowerleg_shin_armor_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56552,7 +56552,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -56628,7 +56628,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6632842294125074039}
   - component: {fileID: 5406069809836690064}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_shoulder_armor_09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56673,7 +56673,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -56717,7 +56717,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4169788696880557666}
   - component: {fileID: 2597594175183621383}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_mid_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56762,7 +56762,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -56807,7 +56807,7 @@ GameObject:
   - component: {fileID: 6625106928464700106}
   - component: {fileID: 6600572679131110380}
   - component: {fileID: 6607719098038776066}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: EyeIris
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56893,7 +56893,7 @@ GameObject:
   - component: {fileID: 6624939199137891478}
   - component: {fileID: 6599769199937065114}
   - component: {fileID: 6607505528872935270}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: EyelidUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56946,7 +56946,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 06d7a238e9dbf4c4fb2dc71cdfb8d5f4, type: 2}
+  - {fileID: 2100000, guid: 30bd9d87bf81d412388c7e74bca2e3ac, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -56979,7 +56979,7 @@ GameObject:
   - component: {fileID: 6624311558465513408}
   - component: {fileID: 6600327560485802388}
   - component: {fileID: 6607562675117611740}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: EyeMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -57066,7 +57066,7 @@ GameObject:
   - component: {fileID: 6624748409893037738}
   - component: {fileID: 6599903942497592734}
   - component: {fileID: 6607502804666742090}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: EyelidDown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -57119,7 +57119,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 06d7a238e9dbf4c4fb2dc71cdfb8d5f4, type: 2}
+  - {fileID: 2100000, guid: 30bd9d87bf81d412388c7e74bca2e3ac, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -62399,7 +62399,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2445020411361712445}
   - component: {fileID: 8366962994799887180}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_upperleg_armor_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62444,7 +62444,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -62519,7 +62519,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3310442329153340115}
   - component: {fileID: 1676396461934249839}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_shoulder_armor_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62564,7 +62564,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -62640,7 +62640,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2843096872332766931}
   - component: {fileID: 1319216146294846280}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_hand_armor_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62685,7 +62685,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -72428,7 +72428,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5823906686910864900}
   - component: {fileID: 8696360791938831513}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_L_elbow_armor_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72473,7 +72473,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -72517,7 +72517,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2129501969073104680}
   - component: {fileID: 5583994800871404174}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_neck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72562,7 +72562,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -72606,7 +72606,7 @@ GameObject:
   m_Component:
   - component: {fileID: 639696537991052959}
   - component: {fileID: 9021798944288099299}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_shoulder_armor_07_energyShields
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72651,7 +72651,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -72695,7 +72695,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7158177667375210732}
   - component: {fileID: 4526537524136317683}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_jetpack_intakes_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72740,7 +72740,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -72870,7 +72870,7 @@ GameObject:
   m_Component:
   - component: {fileID: 288593064929288711}
   - component: {fileID: 3325010345279673612}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_elbow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72915,7 +72915,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -72959,7 +72959,7 @@ GameObject:
   m_Component:
   - component: {fileID: 827070110376113952}
   - component: {fileID: 3250220231203404615}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_mid_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73004,7 +73004,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -73079,7 +73079,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7667900360340307133}
   - component: {fileID: 7594170227723833555}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_hips_armor_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73124,7 +73124,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -73168,7 +73168,7 @@ GameObject:
   m_Component:
   - component: {fileID: 420588835365623883}
   - component: {fileID: 6499447788981652495}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_cockpit_door_saddlebags
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73213,7 +73213,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -73257,7 +73257,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7810303557049081313}
   - component: {fileID: 876400566176532163}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_shoulder_armor_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73302,7 +73302,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -73346,7 +73346,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5256238310351657278}
   - component: {fileID: 4850525951662574353}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_index_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73391,7 +73391,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -73510,7 +73510,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4063448324779507906}
   - component: {fileID: 7683442771220773187}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_chest_attach_weapon_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73555,7 +73555,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -73630,7 +73630,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5610793483257964999}
   - component: {fileID: 1026674152652094634}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_upperleg_armor_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73675,7 +73675,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -73750,7 +73750,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1971180854405626785}
   - component: {fileID: 5655008887532814640}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_upperleg_armor_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73795,7 +73795,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -73839,7 +73839,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5067791643023923232}
   - component: {fileID: 6080295332277432245}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_ball_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73884,7 +73884,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -74085,7 +74085,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2491738524516472962}
   - component: {fileID: 6284688335720641787}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_elbow_attach_weapon_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74130,7 +74130,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -74174,7 +74174,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2794542213089690138}
   - component: {fileID: 1162656736664146493}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_lowerleg_shin_armor_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74219,7 +74219,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -74263,7 +74263,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7347758998503275104}
   - component: {fileID: 7619273037302462302}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_clavicle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74308,7 +74308,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -74669,7 +74669,7 @@ GameObject:
   m_Component:
   - component: {fileID: 122799636271536565}
   - component: {fileID: 5419057527996032303}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_lowerleg_knee_armor_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74714,7 +74714,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -74758,7 +74758,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7320391976586399112}
   - component: {fileID: 7659797525768595767}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_lowerleg_shin_armor_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74803,7 +74803,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -74854,7 +74854,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4298195627370871298
 Transform:
   m_ObjectHideFlags: 0
@@ -75084,7 +75084,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6491582127536930693}
   - component: {fileID: 3190381323257175202}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_head_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -75129,7 +75129,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -75259,7 +75259,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4222139564142915465}
   - component: {fileID: 6226420818291993319}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_mid_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -75304,7 +75304,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -75348,7 +75348,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3808932944556832603}
   - component: {fileID: 55420143755662826}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_hand_armor_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -75393,7 +75393,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -75702,7 +75702,7 @@ GameObject:
   m_Component:
   - component: {fileID: 581529505167468646}
   - component: {fileID: 2369481876972951281}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_chest_attach_weapon_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -75747,7 +75747,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -75791,7 +75791,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6074149089825395373}
   - component: {fileID: 9014335156657377387}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_chest_attach_weapon_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -75836,7 +75836,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -75880,7 +75880,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7874147458048217009}
   - component: {fileID: 1288741381726197050}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_index_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -75925,7 +75925,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -75969,7 +75969,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6743125910503452658}
   - component: {fileID: 2330157452848561673}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_attach_radio
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -76014,7 +76014,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -76368,7 +76368,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8676488277260322612}
   - component: {fileID: 5840082900252728560}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_shoulder_armor_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -76413,7 +76413,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -76526,7 +76526,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3688821316651413735}
   - component: {fileID: 2614602086393496612}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_ball_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -76571,7 +76571,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -76615,7 +76615,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8850757652575557473}
   - component: {fileID: 9195719299750543277}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Tail_Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -76741,7 +76741,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8796665244581435923}
   - component: {fileID: 4930002180184623381}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_chest_attach_weapon_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -76788,7 +76788,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -76832,7 +76832,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6197137357966989062}
   - component: {fileID: 2958909749280572284}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_index_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -76877,7 +76877,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -76921,7 +76921,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6559898044162152349}
   - component: {fileID: 3816994283389594986}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_mid_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -76966,7 +76966,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -77010,7 +77010,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1548207664558900051}
   - component: {fileID: 6703860096919033111}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_shoulder_armor_09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -77055,7 +77055,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -77099,7 +77099,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5664560977386385887}
   - component: {fileID: 4990665353722777917}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_upperShin_armor_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -77144,7 +77144,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -77188,7 +77188,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8303668075331080245}
   - component: {fileID: 1585640285797727942}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_chest_attach_weapon_02_Launcher_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -77233,7 +77233,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -82259,7 +82259,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2587387478255308163}
   - component: {fileID: 526978695608408849}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_ball_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -82304,7 +82304,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -82466,7 +82466,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2581415975154184302}
   - component: {fileID: 8098330228693071992}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_exhaust
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -82511,7 +82511,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -82590,7 +82590,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5522869822630211210}
   - component: {fileID: 5014557035226625311}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_shoulder_armor_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -82635,7 +82635,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -82742,7 +82742,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4211486712676701132}
   - component: {fileID: 349785809265916411}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_upperleg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -82787,7 +82787,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -82831,7 +82831,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5180669300098508733}
   - component: {fileID: 4770363752355626672}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_L_elbow_armor_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -82876,7 +82876,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -83080,7 +83080,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8829169656379263787}
   - component: {fileID: 3141474854473987029}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_elbow_attach_weapon_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83125,7 +83125,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -83200,7 +83200,7 @@ GameObject:
   m_Component:
   - component: {fileID: 524344982487818785}
   - component: {fileID: 3318788917150749770}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_upperleg_armor_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83245,7 +83245,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -83321,7 +83321,7 @@ GameObject:
   m_Component:
   - component: {fileID: 778065515684108485}
   - component: {fileID: 833240109783493342}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_lowerleg_knee_armor_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83366,7 +83366,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -83954,7 +83954,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5218234517321176900}
   - component: {fileID: 417492125850763519}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_lowerleg_shin_armor_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83999,7 +83999,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -84043,7 +84043,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4302562176840132501}
   - component: {fileID: 2194537865249829923}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_lowerleg_knee_armor_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -84088,7 +84088,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -84163,7 +84163,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9190123070455576244}
   - component: {fileID: 5468579484007373227}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_index_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -84208,7 +84208,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -84252,7 +84252,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3278248059805347340}
   - component: {fileID: 6266126641968808570}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_shoulder_armor_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -84297,7 +84297,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -84341,7 +84341,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5740341311717771352}
   - component: {fileID: 2918377180802823764}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_ball_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -84386,7 +84386,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -84430,7 +84430,7 @@ GameObject:
   m_Component:
   - component: {fileID: 760066650333188098}
   - component: {fileID: 7229454888040817353}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_chest_attach_weapon_06_Launcher_Emptry
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -84475,7 +84475,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -84519,7 +84519,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4633067051207937641}
   - component: {fileID: 8825479160642149869}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_c_head_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -84564,7 +84564,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -84608,7 +84608,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1393574002899294989}
   - component: {fileID: 6383246556945859163}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_shoulder_armor_07_energyShields
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -84653,7 +84653,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -84930,7 +84930,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5686702525720997664}
   - component: {fileID: 4799865035712851879}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_exhaust
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -84975,7 +84975,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -85023,7 +85023,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1078883862254865833}
   - component: {fileID: 1106286410898404737}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_lowerleg_knee_armor_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85068,7 +85068,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -85144,7 +85144,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1568932124927546475}
   - component: {fileID: 2229402693003584759}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_upperleg_armor_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85189,7 +85189,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -85332,7 +85332,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6246622348158344796}
   - component: {fileID: 2457628183017211210}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_l_upperleg_armor_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85377,7 +85377,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -85421,7 +85421,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1649331947143141457}
   - component: {fileID: 1331878208208852343}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: geo_r_shoulder_armor_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85466,7 +85466,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e0018d5010f41eb449dc4386c028d808, type: 2}
+  - {fileID: 2100000, guid: 58d94e9c848b2466aa0082d998ce9e0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
