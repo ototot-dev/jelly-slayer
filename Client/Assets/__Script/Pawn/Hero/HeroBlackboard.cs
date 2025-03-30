@@ -77,6 +77,7 @@ namespace Game
             public AudioClip onMissedAudioClip;
             public AudioClip onBlockedAudioClip;
             public AudioClip onGuardBreakAudioClip;
+            public AudioClip onEvadeClip;
         }
 
         public Audios audios = new();

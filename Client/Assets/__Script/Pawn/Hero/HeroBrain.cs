@@ -147,11 +147,14 @@ namespace Game
                     case "Jump": TimeManager.Instance.SlomoTime(this, 0.7f, 0.2f); break;
                     case "Dodge":
                         {
-                            TimeManager.Instance.SlomoTime(this, 0.6f, 0.2f);
+                            TimeManager.Instance.SlomoTime(this, 0.6f, 0.1f);
 
                             // 분노 게이지 (회피)
                             var rage = MainTable.PlayerData.GetList().First().evadeRage;
                             AddRagePoint(rage);
+
+                            // 회피 사운드
+                            SoundManager.Instance.PlayWithClipPos(BB.audios.onEvadeClip, GetWorldPosition());
                             break;
                         }
                 }
