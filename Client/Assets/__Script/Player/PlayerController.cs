@@ -236,11 +236,6 @@ namespace Game
             }
         }
 
-        public void OnBurst(InputValue value) 
-        {
-            Debug.Log("OnBurst");
-        }
-
         /*
         public void OnSwap() 
         {
@@ -568,8 +563,9 @@ namespace Game
             possessedBrain.ActionCtrler.SetPendingAction("DrinkPotion");
         }
 
-        public void OnBurst() 
+        public void OnBurst(InputValue value)
         {
+            Debug.Log("OnBurst");
             if (possessedBrain.BB.stat.rage.Value < possessedBrain.BB.stat.maxRage.Value)
                 return;
 
