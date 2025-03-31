@@ -236,6 +236,11 @@ namespace Game
             }
         }
 
+        public void OnBurst(InputValue value) 
+        {
+            Debug.Log("OnBurst");
+        }
+
         /*
         public void OnSwap() 
         {
@@ -556,10 +561,20 @@ namespace Game
                 }
             }
         }
+
         public void OnDrink() 
         {
             Debug.Log("<color=red>OnDrink</color>");
             possessedBrain.ActionCtrler.SetPendingAction("DrinkPotion");
+        }
+
+        public void OnBurst() 
+        {
+            if (possessedBrain.BB.stat.rage.Value < possessedBrain.BB.stat.maxRage.Value)
+                return;
+
+            possessedBrain.BB.stat.rage.Value = 0;
+            possessedBrain.ActionCtrler.SetPendingAction("Burst");
         }
     }
 }
