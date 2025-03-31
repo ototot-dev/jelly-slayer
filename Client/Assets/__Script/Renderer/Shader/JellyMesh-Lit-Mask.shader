@@ -1,17 +1,19 @@
 // Made with Amplify Shader Editor v1.9.8.1
 // Available at the Unity Asset Store - http://u3d.as/y3X 
-Shader "Game/Lit"
+Shader "Game/JellyMesh-Lit-Mask"
 {
 	Properties
 	{
 		[HideInInspector] _AlphaCutoff("Alpha Cutoff ", Range(0, 1)) = 0.5
 		[HideInInspector] _EmissionColor("Emission Color", Color) = (1,1,1,1)
-		_BaseMap("BaseMap", 2D) = "white" {}
-		_BaseColor("BaseColor", Color) = (1,1,1,1)
-		_MetallicGlossMap("MetallicGlossMap", 2D) = "white" {}
-		_Cutoff("Cutoff", Range( 0 , 1)) = 0
-		_Metallic("Metallic", Range( 0 , 1)) = 0
-		_Texture0("Texture 0", 2D) = "white" {}
+		_MainTex("MainTex", 2D) = "white" {}
+		_BaseColor("BaseColor", Color) = (0,0,0,0)
+		_CenterPosition("CenterPosition", Vector) = (0,0,0,0)
+		_FadeStartLength("FadeStartLength", Range( 0 , 100)) = 0
+		_FadeEndLength("FadeEndLength", Range( 1 , 100)) = 1
+		_FadeAlphaMultiplier("FadeAlphaMultiplier", Range( 0 , 10)) = 1
+		_AlphaMultiplier("AlphaMultiplier", Range( 0 , 1)) = 0
+		_HitColorAlpha("HitColorAlpha", Float) = 0
 		[HideInInspector] _texcoord( "", 2D ) = "white" {}
 
 
@@ -49,7 +51,7 @@ Shader "Game/Lit"
 
 		
 
-		Tags { "RenderPipeline"="UniversalPipeline" "RenderType"="Opaque" "Queue"="Geometry" "UniversalMaterialType"="Lit" }
+		Tags { "RenderPipeline"="UniversalPipeline" "RenderType"="TransparentCutout" "Queue"="AlphaTest" "UniversalMaterialType"="Lit" }
 
 		Cull Back
 		ZWrite On
@@ -178,19 +180,25 @@ Shader "Game/Lit"
 			Tags { "LightMode"="UniversalForward" }
 
 			Blend One Zero, One Zero
-			ZWrite On
-			ZTest LEqual
+			ZWrite Off
+			ZTest Always
 			Offset 0 , 0
 			ColorMask RGBA
 
-			
+			Stencil
+			{
+				Ref 16
+				ReadMask 16
+				Comp Equal
+				Pass Keep
+				Fail Keep
+				ZFail Keep
+			}
 
 			HLSLPROGRAM
 
 			#pragma multi_compile_fragment _ALPHATEST_ON
 			#define _NORMAL_DROPOFF_TS 1
-			#pragma shader_feature_local _RECEIVE_SHADOWS_OFF
-			#pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
 			#pragma multi_compile_instancing
 			#pragma instancing_options renderinglayer
 			#pragma multi_compile _ LOD_FADE_CROSSFADE
@@ -254,7 +262,9 @@ Shader "Game/Lit"
 				#define ENABLE_TERRAIN_PERPIXEL_NORMAL
 			#endif
 
-			
+			#define ASE_NEEDS_FRAG_SCREEN_POSITION
+			#define ASE_NEEDS_FRAG_WORLD_POSITION
+
 
 			#if defined(ASE_EARLY_Z_DEPTH_OPTIMIZE) && (SHADER_TARGET >= 45)
 				#define ASE_SV_DEPTH SV_DepthLessEqual
@@ -297,15 +307,20 @@ Shader "Game/Lit"
 					float4 probeOcclusion : TEXCOORD8;
 				#endif
 				float4 ase_texcoord9 : TEXCOORD9;
+				float3 ase_normal : NORMAL;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float4 _MainTex_ST;
 			float4 _BaseColor;
-			float4 _Texture0_ST;
-			float _Metallic;
-			float _Cutoff;
+			float3 _CenterPosition;
+			float _HitColorAlpha;
+			float _AlphaMultiplier;
+			float _FadeStartLength;
+			float _FadeEndLength;
+			float _FadeAlphaMultiplier;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -336,12 +351,36 @@ Shader "Game/Lit"
 				int _PassValue;
 			#endif
 
-			sampler2D _BaseMap;
-			sampler2D _Texture0;
-			sampler2D _MetallicGlossMap;
+			sampler2D _MainTex;
 
 
+			float4 ASEScreenPositionNormalizedToPixel( float4 screenPosNorm )
+			{
+				float4 screenPosPixel = screenPosNorm * float4( _ScreenParams.xy, 1, 1 );
+				#if UNITY_UV_STARTS_AT_TOP
+					screenPosPixel.xy = float2( screenPosPixel.x, ( _ProjectionParams.x < 0 ) ? _ScreenParams.y - screenPosPixel.y : screenPosPixel.y );
+				#else
+					screenPosPixel.xy = float2( screenPosPixel.x, ( _ProjectionParams.x > 0 ) ? _ScreenParams.y - screenPosPixel.y : screenPosPixel.y );
+				#endif
+				return screenPosPixel;
+			}
 			
+			inline float Dither8x8Bayer( int x, int y )
+			{
+				const float dither[ 64 ] = {
+				     1, 49, 13, 61,  4, 52, 16, 64,
+				    33, 17, 45, 29, 36, 20, 48, 32,
+				     9, 57,  5, 53, 12, 60,  8, 56,
+				    41, 25, 37, 21, 44, 28, 40, 24,
+				     3, 51, 15, 63,  2, 50, 14, 62,
+				    35, 19, 47, 31, 34, 18, 46, 30,
+				    11, 59,  7, 55, 10, 58,  6, 54,
+				    43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[ r ] / 64; // same # of instructions as pre-dividing due to compiler magic
+			}
+			
+
 			PackedVaryings VertexFunction( Attributes input  )
 			{
 				PackedVaryings output = (PackedVaryings)0;
@@ -350,6 +389,7 @@ Shader "Game/Lit"
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
 				output.ase_texcoord9.xy = input.texcoord.xy;
+				output.ase_normal = input.normalOS;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
 				output.ase_texcoord9.zw = 0;
@@ -547,23 +587,29 @@ Shader "Game/Lit"
 
 				WorldViewDirection = SafeNormalize( WorldViewDirection );
 
-				float2 texCoord15 = input.ase_texcoord9.xy * float2( 1,1 ) + float2( 0,0 );
-				float4 tex2DNode14 = tex2D( _BaseMap, texCoord15 );
+				float2 uv_MainTex = input.ase_texcoord9.xy * _MainTex_ST.xy + _MainTex_ST.zw;
+				float4 color67 = IsGammaSpace() ? float4(1,1,1,0) : float4(1,1,1,0);
+				float3 lerpResult68 = lerp( ( tex2D( _MainTex, uv_MainTex ).rgb * _BaseColor.rgb ) , color67.rgb , _HitColorAlpha);
 				
-				float2 uv_Texture0 = input.ase_texcoord9.xy * _Texture0_ST.xy + _Texture0_ST.zw;
-				float3 tex2DNode25 = UnpackNormalScale( tex2D( _Texture0, uv_Texture0 ), 1.0f );
-				float3 objToWorldDir26 = mul( GetObjectToWorldMatrix(), float4( tex2DNode25, 0.0 ) ).xyz;
+				float4 ase_positionSSNorm = ScreenPos / ScreenPos.w;
+				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
+				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
+				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 0.5 ) , ( ase_positionSS_Pixel.y * 0.5 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
+				float4 ditherCustomScreenPos3 = appendResult38;
+				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
+				float clampResult59 = clamp( ( ( max( ( distance( WorldPosition , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
+				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
 				
 
-				float3 BaseColor = ( tex2DNode14.rgb * _BaseColor.rgb );
-				float3 Normal = objToWorldDir26;
+				float3 BaseColor = lerpResult68;
+				float3 Normal = input.ase_normal;
 				float3 Emission = 0;
 				float3 Specular = 0.5;
-				float Metallic = ( tex2D( _MetallicGlossMap, texCoord15 ).r * _Metallic );
-				float Smoothness = 0.5;
-				float Occlusion = tex2DNode25.x;
-				float Alpha = ( tex2DNode14.a * _BaseColor.a );
-				float AlphaClipThreshold = _Cutoff;
+				float Metallic = 0.0;
+				float Smoothness = 0.0;
+				float Occlusion = 1;
+				float Alpha = ( _AlphaMultiplier * lerpResult60 );
+				float AlphaClipThreshold = max( 0.45 , clampResult59 );
 				float AlphaClipThresholdShadow = 0.5;
 				float3 BakedGI = 0;
 				float3 RefractionColor = 1;
@@ -863,7 +909,9 @@ Shader "Game/Lit"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
             #endif
 
-			
+			#define ASE_NEEDS_FRAG_SCREEN_POSITION
+			#define ASE_NEEDS_FRAG_WORLD_POSITION
+
 
 			#if defined(ASE_EARLY_Z_DEPTH_OPTIMIZE) && (SHADER_TARGET >= 45)
 				#define ASE_SV_DEPTH SV_DepthLessEqual
@@ -877,7 +925,7 @@ Shader "Game/Lit"
 			{
 				float4 positionOS : POSITION;
 				float3 normalOS : NORMAL;
-				float4 ase_texcoord : TEXCOORD0;
+				
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -889,16 +937,20 @@ Shader "Game/Lit"
 				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
 					float4 shadowCoord : TEXCOORD2;
 				#endif
-				float4 ase_texcoord3 : TEXCOORD3;
+				
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float4 _MainTex_ST;
 			float4 _BaseColor;
-			float4 _Texture0_ST;
-			float _Metallic;
-			float _Cutoff;
+			float3 _CenterPosition;
+			float _HitColorAlpha;
+			float _AlphaMultiplier;
+			float _FadeStartLength;
+			float _FadeEndLength;
+			float _FadeAlphaMultiplier;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -929,10 +981,35 @@ Shader "Game/Lit"
 				int _PassValue;
 			#endif
 
-			sampler2D _BaseMap;
-
-
 			
+
+			float4 ASEScreenPositionNormalizedToPixel( float4 screenPosNorm )
+			{
+				float4 screenPosPixel = screenPosNorm * float4( _ScreenParams.xy, 1, 1 );
+				#if UNITY_UV_STARTS_AT_TOP
+					screenPosPixel.xy = float2( screenPosPixel.x, ( _ProjectionParams.x < 0 ) ? _ScreenParams.y - screenPosPixel.y : screenPosPixel.y );
+				#else
+					screenPosPixel.xy = float2( screenPosPixel.x, ( _ProjectionParams.x > 0 ) ? _ScreenParams.y - screenPosPixel.y : screenPosPixel.y );
+				#endif
+				return screenPosPixel;
+			}
+			
+			inline float Dither8x8Bayer( int x, int y )
+			{
+				const float dither[ 64 ] = {
+				     1, 49, 13, 61,  4, 52, 16, 64,
+				    33, 17, 45, 29, 36, 20, 48, 32,
+				     9, 57,  5, 53, 12, 60,  8, 56,
+				    41, 25, 37, 21, 44, 28, 40, 24,
+				     3, 51, 15, 63,  2, 50, 14, 62,
+				    35, 19, 47, 31, 34, 18, 46, 30,
+				    11, 59,  7, 55, 10, 58,  6, 54,
+				    43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[ r ] / 64; // same # of instructions as pre-dividing due to compiler magic
+			}
+			
+
 			float3 _LightDirection;
 			float3 _LightPosition;
 
@@ -943,10 +1020,7 @@ Shader "Game/Lit"
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO( output );
 
-				output.ase_texcoord3.xy = input.ase_texcoord.xy;
 				
-				//setting value to unused interpolator channels and avoid initialization warnings
-				output.ase_texcoord3.zw = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = input.positionOS.xyz;
@@ -995,8 +1069,7 @@ Shader "Game/Lit"
 			{
 				float4 positionOS : INTERNALTESSPOS;
 				float3 normalOS : NORMAL;
-				float4 ase_texcoord : TEXCOORD0;
-
+				
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -1013,7 +1086,7 @@ Shader "Game/Lit"
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				output.positionOS = input.positionOS;
 				output.normalOS = input.normalOS;
-				output.ase_texcoord = input.ase_texcoord;
+				
 				return output;
 			}
 
@@ -1052,7 +1125,7 @@ Shader "Game/Lit"
 				Attributes output = (Attributes) 0;
 				output.positionOS = patch[0].positionOS * bary.x + patch[1].positionOS * bary.y + patch[2].positionOS * bary.z;
 				output.normalOS = patch[0].normalOS * bary.x + patch[1].normalOS * bary.y + patch[2].normalOS * bary.z;
-				output.ase_texcoord = patch[0].ase_texcoord * bary.x + patch[1].ase_texcoord * bary.y + patch[2].ase_texcoord * bary.z;
+				
 				#if defined(ASE_PHONG_TESSELLATION)
 				float3 pp[3];
 				for (int i = 0; i < 3; ++i)
@@ -1092,12 +1165,18 @@ Shader "Game/Lit"
 					#endif
 				#endif
 
-				float2 texCoord15 = input.ase_texcoord3.xy * float2( 1,1 ) + float2( 0,0 );
-				float4 tex2DNode14 = tex2D( _BaseMap, texCoord15 );
+				float4 ase_positionSSNorm = ScreenPos / ScreenPos.w;
+				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
+				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
+				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 0.5 ) , ( ase_positionSS_Pixel.y * 0.5 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
+				float4 ditherCustomScreenPos3 = appendResult38;
+				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
+				float clampResult59 = clamp( ( ( max( ( distance( WorldPosition , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
+				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
 				
 
-				float Alpha = ( tex2DNode14.a * _BaseColor.a );
-				float AlphaClipThreshold = _Cutoff;
+				float Alpha = ( _AlphaMultiplier * lerpResult60 );
+				float AlphaClipThreshold = max( 0.45 , clampResult59 );
 				float AlphaClipThresholdShadow = 0.5;
 
 				#ifdef ASE_DEPTH_WRITE_ON
@@ -1173,7 +1252,9 @@ Shader "Game/Lit"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
             #endif
 
-			
+			#define ASE_NEEDS_FRAG_SCREEN_POSITION
+			#define ASE_NEEDS_FRAG_WORLD_POSITION
+
 
 			#if defined(ASE_EARLY_Z_DEPTH_OPTIMIZE) && (SHADER_TARGET >= 45)
 				#define ASE_SV_DEPTH SV_DepthLessEqual
@@ -1187,7 +1268,7 @@ Shader "Game/Lit"
 			{
 				float4 positionOS : POSITION;
 				float3 normalOS : NORMAL;
-				float4 ase_texcoord : TEXCOORD0;
+				
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -1199,16 +1280,20 @@ Shader "Game/Lit"
 				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
 					float4 shadowCoord : TEXCOORD2;
 				#endif
-				float4 ase_texcoord3 : TEXCOORD3;
+				
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float4 _MainTex_ST;
 			float4 _BaseColor;
-			float4 _Texture0_ST;
-			float _Metallic;
-			float _Cutoff;
+			float3 _CenterPosition;
+			float _HitColorAlpha;
+			float _AlphaMultiplier;
+			float _FadeStartLength;
+			float _FadeEndLength;
+			float _FadeAlphaMultiplier;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -1239,10 +1324,35 @@ Shader "Game/Lit"
 				int _PassValue;
 			#endif
 
-			sampler2D _BaseMap;
-
-
 			
+
+			float4 ASEScreenPositionNormalizedToPixel( float4 screenPosNorm )
+			{
+				float4 screenPosPixel = screenPosNorm * float4( _ScreenParams.xy, 1, 1 );
+				#if UNITY_UV_STARTS_AT_TOP
+					screenPosPixel.xy = float2( screenPosPixel.x, ( _ProjectionParams.x < 0 ) ? _ScreenParams.y - screenPosPixel.y : screenPosPixel.y );
+				#else
+					screenPosPixel.xy = float2( screenPosPixel.x, ( _ProjectionParams.x > 0 ) ? _ScreenParams.y - screenPosPixel.y : screenPosPixel.y );
+				#endif
+				return screenPosPixel;
+			}
+			
+			inline float Dither8x8Bayer( int x, int y )
+			{
+				const float dither[ 64 ] = {
+				     1, 49, 13, 61,  4, 52, 16, 64,
+				    33, 17, 45, 29, 36, 20, 48, 32,
+				     9, 57,  5, 53, 12, 60,  8, 56,
+				    41, 25, 37, 21, 44, 28, 40, 24,
+				     3, 51, 15, 63,  2, 50, 14, 62,
+				    35, 19, 47, 31, 34, 18, 46, 30,
+				    11, 59,  7, 55, 10, 58,  6, 54,
+				    43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[ r ] / 64; // same # of instructions as pre-dividing due to compiler magic
+			}
+			
+
 			PackedVaryings VertexFunction( Attributes input  )
 			{
 				PackedVaryings output = (PackedVaryings)0;
@@ -1250,10 +1360,7 @@ Shader "Game/Lit"
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
-				output.ase_texcoord3.xy = input.ase_texcoord.xy;
 				
-				//setting value to unused interpolator channels and avoid initialization warnings
-				output.ase_texcoord3.zw = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = input.positionOS.xyz;
@@ -1288,8 +1395,7 @@ Shader "Game/Lit"
 			{
 				float4 positionOS : INTERNALTESSPOS;
 				float3 normalOS : NORMAL;
-				float4 ase_texcoord : TEXCOORD0;
-
+				
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -1306,7 +1412,7 @@ Shader "Game/Lit"
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				output.positionOS = input.positionOS;
 				output.normalOS = input.normalOS;
-				output.ase_texcoord = input.ase_texcoord;
+				
 				return output;
 			}
 
@@ -1345,7 +1451,7 @@ Shader "Game/Lit"
 				Attributes output = (Attributes) 0;
 				output.positionOS = patch[0].positionOS * bary.x + patch[1].positionOS * bary.y + patch[2].positionOS * bary.z;
 				output.normalOS = patch[0].normalOS * bary.x + patch[1].normalOS * bary.y + patch[2].normalOS * bary.z;
-				output.ase_texcoord = patch[0].ase_texcoord * bary.x + patch[1].ase_texcoord * bary.y + patch[2].ase_texcoord * bary.z;
+				
 				#if defined(ASE_PHONG_TESSELLATION)
 				float3 pp[3];
 				for (int i = 0; i < 3; ++i)
@@ -1385,12 +1491,18 @@ Shader "Game/Lit"
 					#endif
 				#endif
 
-				float2 texCoord15 = input.ase_texcoord3.xy * float2( 1,1 ) + float2( 0,0 );
-				float4 tex2DNode14 = tex2D( _BaseMap, texCoord15 );
+				float4 ase_positionSSNorm = ScreenPos / ScreenPos.w;
+				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
+				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
+				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 0.5 ) , ( ase_positionSS_Pixel.y * 0.5 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
+				float4 ditherCustomScreenPos3 = appendResult38;
+				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
+				float clampResult59 = clamp( ( ( max( ( distance( WorldPosition , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
+				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
 				
 
-				float Alpha = ( tex2DNode14.a * _BaseColor.a );
-				float AlphaClipThreshold = _Cutoff;
+				float Alpha = ( _AlphaMultiplier * lerpResult60 );
+				float AlphaClipThreshold = max( 0.45 , clampResult59 );
 
 				#ifdef ASE_DEPTH_WRITE_ON
 					float DepthValue = input.positionCS.z;
@@ -1454,7 +1566,8 @@ Shader "Game/Lit"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/MetaInput.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/ShaderPass.hlsl"
 
-			
+			#define ASE_NEEDS_FRAG_WORLD_POSITION
+
 
 			struct Attributes
 			{
@@ -1481,15 +1594,20 @@ Shader "Game/Lit"
 					float4 LightCoord : TEXCOORD3;
 				#endif
 				float4 ase_texcoord4 : TEXCOORD4;
+				float4 ase_texcoord5 : TEXCOORD5;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float4 _MainTex_ST;
 			float4 _BaseColor;
-			float4 _Texture0_ST;
-			float _Metallic;
-			float _Cutoff;
+			float3 _CenterPosition;
+			float _HitColorAlpha;
+			float _AlphaMultiplier;
+			float _FadeStartLength;
+			float _FadeEndLength;
+			float _FadeAlphaMultiplier;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -1520,10 +1638,36 @@ Shader "Game/Lit"
 				int _PassValue;
 			#endif
 
-			sampler2D _BaseMap;
+			sampler2D _MainTex;
 
 
+			float4 ASEScreenPositionNormalizedToPixel( float4 screenPosNorm )
+			{
+				float4 screenPosPixel = screenPosNorm * float4( _ScreenParams.xy, 1, 1 );
+				#if UNITY_UV_STARTS_AT_TOP
+					screenPosPixel.xy = float2( screenPosPixel.x, ( _ProjectionParams.x < 0 ) ? _ScreenParams.y - screenPosPixel.y : screenPosPixel.y );
+				#else
+					screenPosPixel.xy = float2( screenPosPixel.x, ( _ProjectionParams.x > 0 ) ? _ScreenParams.y - screenPosPixel.y : screenPosPixel.y );
+				#endif
+				return screenPosPixel;
+			}
 			
+			inline float Dither8x8Bayer( int x, int y )
+			{
+				const float dither[ 64 ] = {
+				     1, 49, 13, 61,  4, 52, 16, 64,
+				    33, 17, 45, 29, 36, 20, 48, 32,
+				     9, 57,  5, 53, 12, 60,  8, 56,
+				    41, 25, 37, 21, 44, 28, 40, 24,
+				     3, 51, 15, 63,  2, 50, 14, 62,
+				    35, 19, 47, 31, 34, 18, 46, 30,
+				    11, 59,  7, 55, 10, 58,  6, 54,
+				    43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[ r ] / 64; // same # of instructions as pre-dividing due to compiler magic
+			}
+			
+
 			PackedVaryings VertexFunction( Attributes input  )
 			{
 				PackedVaryings output = (PackedVaryings)0;
@@ -1531,6 +1675,10 @@ Shader "Game/Lit"
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
+				float4 ase_positionCS = TransformObjectToHClip( ( input.positionOS ).xyz );
+				float4 screenPos = ComputeScreenPos( ase_positionCS );
+				output.ase_texcoord5 = screenPos;
+				
 				output.ase_texcoord4.xy = input.texcoord0.xy;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
@@ -1685,14 +1833,25 @@ Shader "Game/Lit"
 					#endif
 				#endif
 
-				float2 texCoord15 = input.ase_texcoord4.xy * float2( 1,1 ) + float2( 0,0 );
-				float4 tex2DNode14 = tex2D( _BaseMap, texCoord15 );
+				float2 uv_MainTex = input.ase_texcoord4.xy * _MainTex_ST.xy + _MainTex_ST.zw;
+				float4 color67 = IsGammaSpace() ? float4(1,1,1,0) : float4(1,1,1,0);
+				float3 lerpResult68 = lerp( ( tex2D( _MainTex, uv_MainTex ).rgb * _BaseColor.rgb ) , color67.rgb , _HitColorAlpha);
+				
+				float4 screenPos = input.ase_texcoord5;
+				float4 ase_positionSSNorm = screenPos / screenPos.w;
+				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
+				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
+				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 0.5 ) , ( ase_positionSS_Pixel.y * 0.5 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
+				float4 ditherCustomScreenPos3 = appendResult38;
+				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
+				float clampResult59 = clamp( ( ( max( ( distance( WorldPosition , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
+				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
 				
 
-				float3 BaseColor = ( tex2DNode14.rgb * _BaseColor.rgb );
+				float3 BaseColor = lerpResult68;
 				float3 Emission = 0;
-				float Alpha = ( tex2DNode14.a * _BaseColor.a );
-				float AlphaClipThreshold = _Cutoff;
+				float Alpha = ( _AlphaMultiplier * lerpResult60 );
+				float AlphaClipThreshold = max( 0.45 , clampResult59 );
 
 				#ifdef _ALPHATEST_ON
 					clip(Alpha - AlphaClipThreshold);
@@ -1719,8 +1878,8 @@ Shader "Game/Lit"
 			Tags { "LightMode"="Universal2D" }
 
 			Blend One Zero, One Zero
-			ZWrite On
-			ZTest LEqual
+			ZWrite Off
+			ZTest Always
 			Offset 0 , 0
 			ColorMask RGBA
 
@@ -1755,7 +1914,8 @@ Shader "Game/Lit"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ShaderGraphFunctions.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/ShaderPass.hlsl"
 
-			
+			#define ASE_NEEDS_FRAG_WORLD_POSITION
+
 
 			struct Attributes
 			{
@@ -1775,15 +1935,20 @@ Shader "Game/Lit"
 					float4 shadowCoord : TEXCOORD1;
 				#endif
 				float4 ase_texcoord2 : TEXCOORD2;
+				float4 ase_texcoord3 : TEXCOORD3;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float4 _MainTex_ST;
 			float4 _BaseColor;
-			float4 _Texture0_ST;
-			float _Metallic;
-			float _Cutoff;
+			float3 _CenterPosition;
+			float _HitColorAlpha;
+			float _AlphaMultiplier;
+			float _FadeStartLength;
+			float _FadeEndLength;
+			float _FadeAlphaMultiplier;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -1814,10 +1979,36 @@ Shader "Game/Lit"
 				int _PassValue;
 			#endif
 
-			sampler2D _BaseMap;
+			sampler2D _MainTex;
 
 
+			float4 ASEScreenPositionNormalizedToPixel( float4 screenPosNorm )
+			{
+				float4 screenPosPixel = screenPosNorm * float4( _ScreenParams.xy, 1, 1 );
+				#if UNITY_UV_STARTS_AT_TOP
+					screenPosPixel.xy = float2( screenPosPixel.x, ( _ProjectionParams.x < 0 ) ? _ScreenParams.y - screenPosPixel.y : screenPosPixel.y );
+				#else
+					screenPosPixel.xy = float2( screenPosPixel.x, ( _ProjectionParams.x > 0 ) ? _ScreenParams.y - screenPosPixel.y : screenPosPixel.y );
+				#endif
+				return screenPosPixel;
+			}
 			
+			inline float Dither8x8Bayer( int x, int y )
+			{
+				const float dither[ 64 ] = {
+				     1, 49, 13, 61,  4, 52, 16, 64,
+				    33, 17, 45, 29, 36, 20, 48, 32,
+				     9, 57,  5, 53, 12, 60,  8, 56,
+				    41, 25, 37, 21, 44, 28, 40, 24,
+				     3, 51, 15, 63,  2, 50, 14, 62,
+				    35, 19, 47, 31, 34, 18, 46, 30,
+				    11, 59,  7, 55, 10, 58,  6, 54,
+				    43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[ r ] / 64; // same # of instructions as pre-dividing due to compiler magic
+			}
+			
+
 			PackedVaryings VertexFunction( Attributes input  )
 			{
 				PackedVaryings output = (PackedVaryings)0;
@@ -1825,6 +2016,10 @@ Shader "Game/Lit"
 				UNITY_TRANSFER_INSTANCE_ID( input, output );
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO( output );
 
+				float4 ase_positionCS = TransformObjectToHClip( ( input.positionOS ).xyz );
+				float4 screenPos = ComputeScreenPos( ase_positionCS );
+				output.ase_texcoord3 = screenPos;
+				
 				output.ase_texcoord2.xy = input.ase_texcoord.xy;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
@@ -1959,13 +2154,24 @@ Shader "Game/Lit"
 					#endif
 				#endif
 
-				float2 texCoord15 = input.ase_texcoord2.xy * float2( 1,1 ) + float2( 0,0 );
-				float4 tex2DNode14 = tex2D( _BaseMap, texCoord15 );
+				float2 uv_MainTex = input.ase_texcoord2.xy * _MainTex_ST.xy + _MainTex_ST.zw;
+				float4 color67 = IsGammaSpace() ? float4(1,1,1,0) : float4(1,1,1,0);
+				float3 lerpResult68 = lerp( ( tex2D( _MainTex, uv_MainTex ).rgb * _BaseColor.rgb ) , color67.rgb , _HitColorAlpha);
+				
+				float4 screenPos = input.ase_texcoord3;
+				float4 ase_positionSSNorm = screenPos / screenPos.w;
+				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
+				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
+				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 0.5 ) , ( ase_positionSS_Pixel.y * 0.5 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
+				float4 ditherCustomScreenPos3 = appendResult38;
+				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
+				float clampResult59 = clamp( ( ( max( ( distance( WorldPosition , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
+				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
 				
 
-				float3 BaseColor = ( tex2DNode14.rgb * _BaseColor.rgb );
-				float Alpha = ( tex2DNode14.a * _BaseColor.a );
-				float AlphaClipThreshold = _Cutoff;
+				float3 BaseColor = lerpResult68;
+				float Alpha = ( _AlphaMultiplier * lerpResult60 );
+				float AlphaClipThreshold = max( 0.45 , clampResult59 );
 
 				half4 color = half4(BaseColor, Alpha );
 
@@ -2030,7 +2236,9 @@ Shader "Game/Lit"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
             #endif
 
-			
+			#define ASE_NEEDS_FRAG_SCREEN_POSITION
+			#define ASE_NEEDS_FRAG_WORLD_POSITION
+
 
 			#if defined(ASE_EARLY_Z_DEPTH_OPTIMIZE) && (SHADER_TARGET >= 45)
 				#define ASE_SV_DEPTH SV_DepthLessEqual
@@ -2045,7 +2253,7 @@ Shader "Game/Lit"
 				float4 positionOS : POSITION;
 				float3 normalOS : NORMAL;
 				float4 tangentOS : TANGENT;
-				float4 ase_texcoord : TEXCOORD0;
+				
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -2059,16 +2267,20 @@ Shader "Game/Lit"
 				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
 					float4 shadowCoord : TEXCOORD4;
 				#endif
-				float4 ase_texcoord5 : TEXCOORD5;
+				float3 ase_normal : NORMAL;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float4 _MainTex_ST;
 			float4 _BaseColor;
-			float4 _Texture0_ST;
-			float _Metallic;
-			float _Cutoff;
+			float3 _CenterPosition;
+			float _HitColorAlpha;
+			float _AlphaMultiplier;
+			float _FadeStartLength;
+			float _FadeEndLength;
+			float _FadeAlphaMultiplier;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -2099,11 +2311,35 @@ Shader "Game/Lit"
 				int _PassValue;
 			#endif
 
-			sampler2D _Texture0;
-			sampler2D _BaseMap;
-
-
 			
+
+			float4 ASEScreenPositionNormalizedToPixel( float4 screenPosNorm )
+			{
+				float4 screenPosPixel = screenPosNorm * float4( _ScreenParams.xy, 1, 1 );
+				#if UNITY_UV_STARTS_AT_TOP
+					screenPosPixel.xy = float2( screenPosPixel.x, ( _ProjectionParams.x < 0 ) ? _ScreenParams.y - screenPosPixel.y : screenPosPixel.y );
+				#else
+					screenPosPixel.xy = float2( screenPosPixel.x, ( _ProjectionParams.x > 0 ) ? _ScreenParams.y - screenPosPixel.y : screenPosPixel.y );
+				#endif
+				return screenPosPixel;
+			}
+			
+			inline float Dither8x8Bayer( int x, int y )
+			{
+				const float dither[ 64 ] = {
+				     1, 49, 13, 61,  4, 52, 16, 64,
+				    33, 17, 45, 29, 36, 20, 48, 32,
+				     9, 57,  5, 53, 12, 60,  8, 56,
+				    41, 25, 37, 21, 44, 28, 40, 24,
+				     3, 51, 15, 63,  2, 50, 14, 62,
+				    35, 19, 47, 31, 34, 18, 46, 30,
+				    11, 59,  7, 55, 10, 58,  6, 54,
+				    43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[ r ] / 64; // same # of instructions as pre-dividing due to compiler magic
+			}
+			
+
 			PackedVaryings VertexFunction( Attributes input  )
 			{
 				PackedVaryings output = (PackedVaryings)0;
@@ -2111,10 +2347,7 @@ Shader "Game/Lit"
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
-				output.ase_texcoord5.xy = input.ase_texcoord.xy;
-				
-				//setting value to unused interpolator channels and avoid initialization warnings
-				output.ase_texcoord5.zw = 0;
+				output.ase_normal = input.normalOS;
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = input.positionOS.xyz;
 				#else
@@ -2155,8 +2388,7 @@ Shader "Game/Lit"
 				float4 positionOS : INTERNALTESSPOS;
 				float3 normalOS : NORMAL;
 				float4 tangentOS : TANGENT;
-				float4 ase_texcoord : TEXCOORD0;
-
+				
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -2174,7 +2406,7 @@ Shader "Game/Lit"
 				output.positionOS = input.positionOS;
 				output.normalOS = input.normalOS;
 				output.tangentOS = input.tangentOS;
-				output.ase_texcoord = input.ase_texcoord;
+				
 				return output;
 			}
 
@@ -2214,7 +2446,7 @@ Shader "Game/Lit"
 				output.positionOS = patch[0].positionOS * bary.x + patch[1].positionOS * bary.y + patch[2].positionOS * bary.z;
 				output.normalOS = patch[0].normalOS * bary.x + patch[1].normalOS * bary.y + patch[2].normalOS * bary.z;
 				output.tangentOS = patch[0].tangentOS * bary.x + patch[1].tangentOS * bary.y + patch[2].tangentOS * bary.z;
-				output.ase_texcoord = patch[0].ase_texcoord * bary.x + patch[1].ase_texcoord * bary.y + patch[2].ase_texcoord * bary.z;
+				
 				#if defined(ASE_PHONG_TESSELLATION)
 				float3 pp[3];
 				for (int i = 0; i < 3; ++i)
@@ -2260,17 +2492,19 @@ Shader "Game/Lit"
 					#endif
 				#endif
 
-				float2 uv_Texture0 = input.ase_texcoord5.xy * _Texture0_ST.xy + _Texture0_ST.zw;
-				float3 tex2DNode25 = UnpackNormalScale( tex2D( _Texture0, uv_Texture0 ), 1.0f );
-				float3 objToWorldDir26 = mul( GetObjectToWorldMatrix(), float4( tex2DNode25, 0.0 ) ).xyz;
-				
-				float2 texCoord15 = input.ase_texcoord5.xy * float2( 1,1 ) + float2( 0,0 );
-				float4 tex2DNode14 = tex2D( _BaseMap, texCoord15 );
+				float4 ase_positionSSNorm = ScreenPos / ScreenPos.w;
+				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
+				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
+				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 0.5 ) , ( ase_positionSS_Pixel.y * 0.5 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
+				float4 ditherCustomScreenPos3 = appendResult38;
+				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
+				float clampResult59 = clamp( ( ( max( ( distance( WorldPosition , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
+				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
 				
 
-				float3 Normal = objToWorldDir26;
-				float Alpha = ( tex2DNode14.a * _BaseColor.a );
-				float AlphaClipThreshold = _Cutoff;
+				float3 Normal = input.ase_normal;
+				float Alpha = ( _AlphaMultiplier * lerpResult60 );
+				float AlphaClipThreshold = max( 0.45 , clampResult59 );
 
 				#ifdef ASE_DEPTH_WRITE_ON
 					float DepthValue = input.positionCS.z;
@@ -2326,17 +2560,24 @@ Shader "Game/Lit"
 			Tags { "LightMode"="UniversalGBuffer" }
 
 			Blend One Zero, One Zero
-			ZWrite On
-			ZTest LEqual
+			ZWrite Off
+			ZTest Always
 			Offset 0 , 0
 			ColorMask RGBA
-			
+			Stencil
+			{
+				Ref 16
+				ReadMask 16
+				Comp Equal
+				Pass Keep
+				Fail Keep
+				ZFail Keep
+			}
 
 			HLSLPROGRAM
 
 			#pragma multi_compile_fragment _ALPHATEST_ON
 			#define _NORMAL_DROPOFF_TS 1
-			#pragma shader_feature_local _RECEIVE_SHADOWS_OFF
 			#pragma multi_compile_instancing
 			#pragma instancing_options renderinglayer
 			#pragma multi_compile _ LOD_FADE_CROSSFADE
@@ -2397,7 +2638,9 @@ Shader "Game/Lit"
 				#define ENABLE_TERRAIN_PERPIXEL_NORMAL
 			#endif
 
-			
+			#define ASE_NEEDS_FRAG_SCREEN_POSITION
+			#define ASE_NEEDS_FRAG_WORLD_POSITION
+
 
 			#if defined(ASE_EARLY_Z_DEPTH_OPTIMIZE) && (SHADER_TARGET >= 45)
 				#define ASE_SV_DEPTH SV_DepthLessEqual
@@ -2440,15 +2683,20 @@ Shader "Game/Lit"
 					float4 probeOcclusion : TEXCOORD8;
 				#endif
 				float4 ase_texcoord9 : TEXCOORD9;
+				float3 ase_normal : NORMAL;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float4 _MainTex_ST;
 			float4 _BaseColor;
-			float4 _Texture0_ST;
-			float _Metallic;
-			float _Cutoff;
+			float3 _CenterPosition;
+			float _HitColorAlpha;
+			float _AlphaMultiplier;
+			float _FadeStartLength;
+			float _FadeEndLength;
+			float _FadeAlphaMultiplier;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -2479,14 +2727,38 @@ Shader "Game/Lit"
 				int _PassValue;
 			#endif
 
-			sampler2D _BaseMap;
-			sampler2D _Texture0;
-			sampler2D _MetallicGlossMap;
+			sampler2D _MainTex;
 
 
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/UnityGBuffer.hlsl"
 
+			float4 ASEScreenPositionNormalizedToPixel( float4 screenPosNorm )
+			{
+				float4 screenPosPixel = screenPosNorm * float4( _ScreenParams.xy, 1, 1 );
+				#if UNITY_UV_STARTS_AT_TOP
+					screenPosPixel.xy = float2( screenPosPixel.x, ( _ProjectionParams.x < 0 ) ? _ScreenParams.y - screenPosPixel.y : screenPosPixel.y );
+				#else
+					screenPosPixel.xy = float2( screenPosPixel.x, ( _ProjectionParams.x > 0 ) ? _ScreenParams.y - screenPosPixel.y : screenPosPixel.y );
+				#endif
+				return screenPosPixel;
+			}
 			
+			inline float Dither8x8Bayer( int x, int y )
+			{
+				const float dither[ 64 ] = {
+				     1, 49, 13, 61,  4, 52, 16, 64,
+				    33, 17, 45, 29, 36, 20, 48, 32,
+				     9, 57,  5, 53, 12, 60,  8, 56,
+				    41, 25, 37, 21, 44, 28, 40, 24,
+				     3, 51, 15, 63,  2, 50, 14, 62,
+				    35, 19, 47, 31, 34, 18, 46, 30,
+				    11, 59,  7, 55, 10, 58,  6, 54,
+				    43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[ r ] / 64; // same # of instructions as pre-dividing due to compiler magic
+			}
+			
+
 			PackedVaryings VertexFunction( Attributes input  )
 			{
 				PackedVaryings output = (PackedVaryings)0;
@@ -2495,6 +2767,7 @@ Shader "Game/Lit"
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
 				output.ase_texcoord9.xy = input.texcoord.xy;
+				output.ase_normal = input.normalOS;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
 				output.ase_texcoord9.zw = 0;
@@ -2690,23 +2963,29 @@ Shader "Game/Lit"
 
 				WorldViewDirection = SafeNormalize( WorldViewDirection );
 
-				float2 texCoord15 = input.ase_texcoord9.xy * float2( 1,1 ) + float2( 0,0 );
-				float4 tex2DNode14 = tex2D( _BaseMap, texCoord15 );
+				float2 uv_MainTex = input.ase_texcoord9.xy * _MainTex_ST.xy + _MainTex_ST.zw;
+				float4 color67 = IsGammaSpace() ? float4(1,1,1,0) : float4(1,1,1,0);
+				float3 lerpResult68 = lerp( ( tex2D( _MainTex, uv_MainTex ).rgb * _BaseColor.rgb ) , color67.rgb , _HitColorAlpha);
 				
-				float2 uv_Texture0 = input.ase_texcoord9.xy * _Texture0_ST.xy + _Texture0_ST.zw;
-				float3 tex2DNode25 = UnpackNormalScale( tex2D( _Texture0, uv_Texture0 ), 1.0f );
-				float3 objToWorldDir26 = mul( GetObjectToWorldMatrix(), float4( tex2DNode25, 0.0 ) ).xyz;
+				float4 ase_positionSSNorm = ScreenPos / ScreenPos.w;
+				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
+				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
+				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 0.5 ) , ( ase_positionSS_Pixel.y * 0.5 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
+				float4 ditherCustomScreenPos3 = appendResult38;
+				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
+				float clampResult59 = clamp( ( ( max( ( distance( WorldPosition , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
+				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
 				
 
-				float3 BaseColor = ( tex2DNode14.rgb * _BaseColor.rgb );
-				float3 Normal = objToWorldDir26;
+				float3 BaseColor = lerpResult68;
+				float3 Normal = input.ase_normal;
 				float3 Emission = 0;
 				float3 Specular = 0.5;
-				float Metallic = ( tex2D( _MetallicGlossMap, texCoord15 ).r * _Metallic );
-				float Smoothness = 0.5;
-				float Occlusion = tex2DNode25.x;
-				float Alpha = ( tex2DNode14.a * _BaseColor.a );
-				float AlphaClipThreshold = _Cutoff;
+				float Metallic = 0.0;
+				float Smoothness = 0.0;
+				float Occlusion = 1;
+				float Alpha = ( _AlphaMultiplier * lerpResult60 );
+				float AlphaClipThreshold = max( 0.45 , clampResult59 );
 				float AlphaClipThresholdShadow = 0.5;
 				float3 BakedGI = 0;
 				float3 RefractionColor = 1;
@@ -2875,7 +3154,7 @@ Shader "Game/Lit"
 			{
 				float4 positionOS : POSITION;
 				float3 normalOS : NORMAL;
-				float4 ase_texcoord : TEXCOORD0;
+				
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -2883,15 +3162,20 @@ Shader "Game/Lit"
 			{
 				float4 positionCS : SV_POSITION;
 				float4 ase_texcoord : TEXCOORD0;
+				float4 ase_texcoord1 : TEXCOORD1;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float4 _MainTex_ST;
 			float4 _BaseColor;
-			float4 _Texture0_ST;
-			float _Metallic;
-			float _Cutoff;
+			float3 _CenterPosition;
+			float _HitColorAlpha;
+			float _AlphaMultiplier;
+			float _FadeStartLength;
+			float _FadeEndLength;
+			float _FadeAlphaMultiplier;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -2922,10 +3206,35 @@ Shader "Game/Lit"
 				int _PassValue;
 			#endif
 
-			sampler2D _BaseMap;
-
-
 			
+
+			float4 ASEScreenPositionNormalizedToPixel( float4 screenPosNorm )
+			{
+				float4 screenPosPixel = screenPosNorm * float4( _ScreenParams.xy, 1, 1 );
+				#if UNITY_UV_STARTS_AT_TOP
+					screenPosPixel.xy = float2( screenPosPixel.x, ( _ProjectionParams.x < 0 ) ? _ScreenParams.y - screenPosPixel.y : screenPosPixel.y );
+				#else
+					screenPosPixel.xy = float2( screenPosPixel.x, ( _ProjectionParams.x > 0 ) ? _ScreenParams.y - screenPosPixel.y : screenPosPixel.y );
+				#endif
+				return screenPosPixel;
+			}
+			
+			inline float Dither8x8Bayer( int x, int y )
+			{
+				const float dither[ 64 ] = {
+				     1, 49, 13, 61,  4, 52, 16, 64,
+				    33, 17, 45, 29, 36, 20, 48, 32,
+				     9, 57,  5, 53, 12, 60,  8, 56,
+				    41, 25, 37, 21, 44, 28, 40, 24,
+				     3, 51, 15, 63,  2, 50, 14, 62,
+				    35, 19, 47, 31, 34, 18, 46, 30,
+				    11, 59,  7, 55, 10, 58,  6, 54,
+				    43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[ r ] / 64; // same # of instructions as pre-dividing due to compiler magic
+			}
+			
+
 			struct SurfaceDescription
 			{
 				float Alpha;
@@ -2941,10 +3250,15 @@ Shader "Game/Lit"
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
-				output.ase_texcoord.xy = input.ase_texcoord.xy;
+				float4 ase_positionCS = TransformObjectToHClip( ( input.positionOS ).xyz );
+				float4 screenPos = ComputeScreenPos( ase_positionCS );
+				output.ase_texcoord = screenPos;
+				float3 ase_positionWS = TransformObjectToWorld( ( input.positionOS ).xyz );
+				output.ase_texcoord1.xyz = ase_positionWS;
+				
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
-				output.ase_texcoord.zw = 0;
+				output.ase_texcoord1.w = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = input.positionOS.xyz;
@@ -2974,8 +3288,7 @@ Shader "Game/Lit"
 			{
 				float4 positionOS : INTERNALTESSPOS;
 				float3 normalOS : NORMAL;
-				float4 ase_texcoord : TEXCOORD0;
-
+				
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -2992,7 +3305,7 @@ Shader "Game/Lit"
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				output.positionOS = input.positionOS;
 				output.normalOS = input.normalOS;
-				output.ase_texcoord = input.ase_texcoord;
+				
 				return output;
 			}
 
@@ -3031,7 +3344,7 @@ Shader "Game/Lit"
 				Attributes output = (Attributes) 0;
 				output.positionOS = patch[0].positionOS * bary.x + patch[1].positionOS * bary.y + patch[2].positionOS * bary.z;
 				output.normalOS = patch[0].normalOS * bary.x + patch[1].normalOS * bary.y + patch[2].normalOS * bary.z;
-				output.ase_texcoord = patch[0].ase_texcoord * bary.x + patch[1].ase_texcoord * bary.y + patch[2].ase_texcoord * bary.z;
+				
 				#if defined(ASE_PHONG_TESSELLATION)
 				float3 pp[3];
 				for (int i = 0; i < 3; ++i)
@@ -3053,12 +3366,20 @@ Shader "Game/Lit"
 			{
 				SurfaceDescription surfaceDescription = (SurfaceDescription)0;
 
-				float2 texCoord15 = input.ase_texcoord.xy * float2( 1,1 ) + float2( 0,0 );
-				float4 tex2DNode14 = tex2D( _BaseMap, texCoord15 );
+				float4 screenPos = input.ase_texcoord;
+				float4 ase_positionSSNorm = screenPos / screenPos.w;
+				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
+				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
+				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 0.5 ) , ( ase_positionSS_Pixel.y * 0.5 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
+				float4 ditherCustomScreenPos3 = appendResult38;
+				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
+				float3 ase_positionWS = input.ase_texcoord1.xyz;
+				float clampResult59 = clamp( ( ( max( ( distance( ase_positionWS , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
+				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
 				
 
-				surfaceDescription.Alpha = ( tex2DNode14.a * _BaseColor.a );
-				surfaceDescription.AlphaClipThreshold = _Cutoff;
+				surfaceDescription.Alpha = ( _AlphaMultiplier * lerpResult60 );
+				surfaceDescription.AlphaClipThreshold = max( 0.45 , clampResult59 );
 
 				#if _ALPHATEST_ON
 					float alphaClipThreshold = 0.01f;
@@ -3132,7 +3453,7 @@ Shader "Game/Lit"
 			{
 				float4 positionOS : POSITION;
 				float3 normalOS : NORMAL;
-				float4 ase_texcoord : TEXCOORD0;
+				
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -3140,15 +3461,20 @@ Shader "Game/Lit"
 			{
 				float4 positionCS : SV_POSITION;
 				float4 ase_texcoord : TEXCOORD0;
+				float4 ase_texcoord1 : TEXCOORD1;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float4 _MainTex_ST;
 			float4 _BaseColor;
-			float4 _Texture0_ST;
-			float _Metallic;
-			float _Cutoff;
+			float3 _CenterPosition;
+			float _HitColorAlpha;
+			float _AlphaMultiplier;
+			float _FadeStartLength;
+			float _FadeEndLength;
+			float _FadeAlphaMultiplier;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -3179,10 +3505,35 @@ Shader "Game/Lit"
 				int _PassValue;
 			#endif
 
-			sampler2D _BaseMap;
-
-
 			
+
+			float4 ASEScreenPositionNormalizedToPixel( float4 screenPosNorm )
+			{
+				float4 screenPosPixel = screenPosNorm * float4( _ScreenParams.xy, 1, 1 );
+				#if UNITY_UV_STARTS_AT_TOP
+					screenPosPixel.xy = float2( screenPosPixel.x, ( _ProjectionParams.x < 0 ) ? _ScreenParams.y - screenPosPixel.y : screenPosPixel.y );
+				#else
+					screenPosPixel.xy = float2( screenPosPixel.x, ( _ProjectionParams.x > 0 ) ? _ScreenParams.y - screenPosPixel.y : screenPosPixel.y );
+				#endif
+				return screenPosPixel;
+			}
+			
+			inline float Dither8x8Bayer( int x, int y )
+			{
+				const float dither[ 64 ] = {
+				     1, 49, 13, 61,  4, 52, 16, 64,
+				    33, 17, 45, 29, 36, 20, 48, 32,
+				     9, 57,  5, 53, 12, 60,  8, 56,
+				    41, 25, 37, 21, 44, 28, 40, 24,
+				     3, 51, 15, 63,  2, 50, 14, 62,
+				    35, 19, 47, 31, 34, 18, 46, 30,
+				    11, 59,  7, 55, 10, 58,  6, 54,
+				    43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[ r ] / 64; // same # of instructions as pre-dividing due to compiler magic
+			}
+			
+
 			struct SurfaceDescription
 			{
 				float Alpha;
@@ -3198,10 +3549,15 @@ Shader "Game/Lit"
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
-				output.ase_texcoord.xy = input.ase_texcoord.xy;
+				float4 ase_positionCS = TransformObjectToHClip( ( input.positionOS ).xyz );
+				float4 screenPos = ComputeScreenPos( ase_positionCS );
+				output.ase_texcoord = screenPos;
+				float3 ase_positionWS = TransformObjectToWorld( ( input.positionOS ).xyz );
+				output.ase_texcoord1.xyz = ase_positionWS;
+				
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
-				output.ase_texcoord.zw = 0;
+				output.ase_texcoord1.w = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = input.positionOS.xyz;
@@ -3230,8 +3586,7 @@ Shader "Game/Lit"
 			{
 				float4 positionOS : INTERNALTESSPOS;
 				float3 normalOS : NORMAL;
-				float4 ase_texcoord : TEXCOORD0;
-
+				
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -3248,7 +3603,7 @@ Shader "Game/Lit"
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				output.positionOS = input.positionOS;
 				output.normalOS = input.normalOS;
-				output.ase_texcoord = input.ase_texcoord;
+				
 				return output;
 			}
 
@@ -3287,7 +3642,7 @@ Shader "Game/Lit"
 				Attributes output = (Attributes) 0;
 				output.positionOS = patch[0].positionOS * bary.x + patch[1].positionOS * bary.y + patch[2].positionOS * bary.z;
 				output.normalOS = patch[0].normalOS * bary.x + patch[1].normalOS * bary.y + patch[2].normalOS * bary.z;
-				output.ase_texcoord = patch[0].ase_texcoord * bary.x + patch[1].ase_texcoord * bary.y + patch[2].ase_texcoord * bary.z;
+				
 				#if defined(ASE_PHONG_TESSELLATION)
 				float3 pp[3];
 				for (int i = 0; i < 3; ++i)
@@ -3309,12 +3664,20 @@ Shader "Game/Lit"
 			{
 				SurfaceDescription surfaceDescription = (SurfaceDescription)0;
 
-				float2 texCoord15 = input.ase_texcoord.xy * float2( 1,1 ) + float2( 0,0 );
-				float4 tex2DNode14 = tex2D( _BaseMap, texCoord15 );
+				float4 screenPos = input.ase_texcoord;
+				float4 ase_positionSSNorm = screenPos / screenPos.w;
+				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
+				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
+				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 0.5 ) , ( ase_positionSS_Pixel.y * 0.5 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
+				float4 ditherCustomScreenPos3 = appendResult38;
+				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
+				float3 ase_positionWS = input.ase_texcoord1.xyz;
+				float clampResult59 = clamp( ( ( max( ( distance( ase_positionWS , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
+				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
 				
 
-				surfaceDescription.Alpha = ( tex2DNode14.a * _BaseColor.a );
-				surfaceDescription.AlphaClipThreshold = _Cutoff;
+				surfaceDescription.Alpha = ( _AlphaMultiplier * lerpResult60 );
+				surfaceDescription.AlphaClipThreshold = max( 0.45 , clampResult59 );
 
 				#if _ALPHATEST_ON
 					float alphaClipThreshold = 0.01f;
@@ -3397,7 +3760,7 @@ Shader "Game/Lit"
 				#if _ADD_PRECOMPUTED_VELOCITY
 					float3 alembicMotionVector : TEXCOORD5;
 				#endif
-				float4 ase_texcoord : TEXCOORD0;
+				
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -3407,15 +3770,20 @@ Shader "Game/Lit"
 				float4 positionCSNoJitter : TEXCOORD0;
 				float4 previousPositionCSNoJitter : TEXCOORD1;
 				float4 ase_texcoord2 : TEXCOORD2;
+				float4 ase_texcoord3 : TEXCOORD3;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float4 _MainTex_ST;
 			float4 _BaseColor;
-			float4 _Texture0_ST;
-			float _Metallic;
-			float _Cutoff;
+			float3 _CenterPosition;
+			float _HitColorAlpha;
+			float _AlphaMultiplier;
+			float _FadeStartLength;
+			float _FadeEndLength;
+			float _FadeAlphaMultiplier;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -3446,10 +3814,35 @@ Shader "Game/Lit"
 				int _PassValue;
 			#endif
 
-			sampler2D _BaseMap;
-
-
 			
+
+			float4 ASEScreenPositionNormalizedToPixel( float4 screenPosNorm )
+			{
+				float4 screenPosPixel = screenPosNorm * float4( _ScreenParams.xy, 1, 1 );
+				#if UNITY_UV_STARTS_AT_TOP
+					screenPosPixel.xy = float2( screenPosPixel.x, ( _ProjectionParams.x < 0 ) ? _ScreenParams.y - screenPosPixel.y : screenPosPixel.y );
+				#else
+					screenPosPixel.xy = float2( screenPosPixel.x, ( _ProjectionParams.x > 0 ) ? _ScreenParams.y - screenPosPixel.y : screenPosPixel.y );
+				#endif
+				return screenPosPixel;
+			}
+			
+			inline float Dither8x8Bayer( int x, int y )
+			{
+				const float dither[ 64 ] = {
+				     1, 49, 13, 61,  4, 52, 16, 64,
+				    33, 17, 45, 29, 36, 20, 48, 32,
+				     9, 57,  5, 53, 12, 60,  8, 56,
+				    41, 25, 37, 21, 44, 28, 40, 24,
+				     3, 51, 15, 63,  2, 50, 14, 62,
+				    35, 19, 47, 31, 34, 18, 46, 30,
+				    11, 59,  7, 55, 10, 58,  6, 54,
+				    43, 27, 39, 23, 42, 26, 38, 22};
+				int r = y * 8 + x;
+				return dither[ r ] / 64; // same # of instructions as pre-dividing due to compiler magic
+			}
+			
+
 			PackedVaryings VertexFunction( Attributes input  )
 			{
 				PackedVaryings output = (PackedVaryings)0;
@@ -3457,10 +3850,15 @@ Shader "Game/Lit"
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
-				output.ase_texcoord2.xy = input.ase_texcoord.xy;
+				float4 ase_positionCS = TransformObjectToHClip( ( input.positionOS ).xyz );
+				float4 screenPos = ComputeScreenPos( ase_positionCS );
+				output.ase_texcoord2 = screenPos;
+				float3 ase_positionWS = TransformObjectToWorld( ( input.positionOS ).xyz );
+				output.ase_texcoord3.xyz = ase_positionWS;
+				
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
-				output.ase_texcoord2.zw = 0;
+				output.ase_texcoord3.w = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = input.positionOS.xyz;
@@ -3510,12 +3908,20 @@ Shader "Game/Lit"
 				UNITY_SETUP_INSTANCE_ID(input);
 				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX( input );
 
-				float2 texCoord15 = input.ase_texcoord2.xy * float2( 1,1 ) + float2( 0,0 );
-				float4 tex2DNode14 = tex2D( _BaseMap, texCoord15 );
+				float4 screenPos = input.ase_texcoord2;
+				float4 ase_positionSSNorm = screenPos / screenPos.w;
+				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
+				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
+				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 0.5 ) , ( ase_positionSS_Pixel.y * 0.5 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
+				float4 ditherCustomScreenPos3 = appendResult38;
+				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
+				float3 ase_positionWS = input.ase_texcoord3.xyz;
+				float clampResult59 = clamp( ( ( max( ( distance( ase_positionWS , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
+				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
 				
 
-				float Alpha = ( tex2DNode14.a * _BaseColor.a );
-				float AlphaClipThreshold = _Cutoff;
+				float Alpha = ( _AlphaMultiplier * lerpResult60 );
+				float AlphaClipThreshold = max( 0.45 , clampResult59 );
 
 				#ifdef _ALPHATEST_ON
 					clip(Alpha - AlphaClipThreshold);
@@ -3543,48 +3949,91 @@ Shader "Game/Lit"
 }
 /*ASEBEGIN
 Version=19801
-Node;AmplifyShaderEditor.TexturePropertyNode;12;-1008,-208;Inherit;True;Property;_BaseMap;BaseMap;0;0;Create;True;0;0;0;False;0;False;None;None;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
-Node;AmplifyShaderEditor.TextureCoordinatesNode;15;-976,128;Inherit;False;0;-1;2;3;2;SAMPLER2D;;False;0;FLOAT2;1,1;False;1;FLOAT2;0,0;False;5;FLOAT2;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.ColorNode;13;-624,80;Inherit;False;Property;_BaseColor;BaseColor;1;0;Create;True;0;0;0;False;0;False;1,1,1,1;0,0,0,0;True;True;0;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
-Node;AmplifyShaderEditor.SamplerNode;14;-688,-128;Inherit;True;Property;_TextureSample0;Texture Sample 0;1;0;Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
-Node;AmplifyShaderEditor.SamplerNode;20;-688,320;Inherit;True;Property;_TextureSample1;Texture Sample 1;5;0;Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
-Node;AmplifyShaderEditor.TexturePropertyNode;17;-1008,400;Inherit;True;Property;_MetallicGlossMap;MetallicGlossMap;2;0;Create;True;0;0;0;False;0;False;None;None;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;21;-304,400;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;19;-672,560;Inherit;False;Property;_Metallic;Metallic;4;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;18;-320,224;Inherit;False;Property;_Cutoff;Cutoff;3;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;16;-304,-16;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;23;-304,96;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.TexturePropertyNode;24;-624,688;Inherit;True;Property;_Texture0;Texture 0;5;0;Create;True;0;0;0;False;0;False;None;None;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
-Node;AmplifyShaderEditor.SamplerNode;25;-363.6268,763.7512;Inherit;True;Property;_TextureSample2;Texture Sample 2;6;0;Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;white;Auto;True;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;6;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
-Node;AmplifyShaderEditor.TransformDirectionNode;26;14.37366,858.2145;Inherit;False;Object;World;False;Fast;False;1;0;FLOAT3;0,0,0;False;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;1;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;1;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;ExtraPrePass;0;0;ExtraPrePass;5;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;0;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;0;False;False;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;3;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;1;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;ShadowCaster;0;2;ShadowCaster;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;True;False;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;True;3;False;;False;True;1;LightMode=ShadowCaster;False;False;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;4;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;1;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;DepthOnly;0;3;DepthOnly;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;True;True;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;False;False;True;1;LightMode=DepthOnly;False;False;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;5;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;1;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;Meta;0;4;Meta;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;2;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=Meta;False;False;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;6;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;1;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;Universal2D;0;5;Universal2D;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;1;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;1;LightMode=Universal2D;False;False;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;7;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;1;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;DepthNormals;0;6;DepthNormals;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;0;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;False;;True;3;False;;False;True;1;LightMode=DepthNormals;False;False;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;8;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;1;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;GBuffer;0;7;GBuffer;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;1;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;1;LightMode=UniversalGBuffer;False;False;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;9;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;1;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;SceneSelectionPass;0;8;SceneSelectionPass;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;2;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=SceneSelectionPass;False;False;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;10;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;1;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;ScenePickingPass;0;9;ScenePickingPass;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=Picking;False;False;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;11;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;1;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;MotionVectors;0;10;MotionVectors;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;False;False;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=MotionVectors;False;False;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;2;0,-16;Float;False;True;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;Game/Lit;94348b07e5e8bab40bd6c8a1e3df54cd;True;Forward;0;1;Forward;21;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;1;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;1;LightMode=UniversalForward;False;False;0;;0;0;Standard;45;Lighting Model;0;0;Workflow;1;0;Surface;0;0;  Refraction Model;0;0;  Blend;0;0;Two Sided;1;0;Alpha Clipping;1;0;  Use Shadow Threshold;0;0;Fragment Normal Space,InvertActionOnDeselection;0;0;Forward Only;0;0;Transmission;0;0;  Transmission Shadow;0.5,False,;0;Translucency;0;0;  Translucency Strength;1,False,;0;  Normal Distortion;0.5,False,;0;  Scattering;2,False,;0;  Direct;0.9,False,;0;  Ambient;0.1,False,;0;  Shadow;0.5,False,;0;Cast Shadows;1;0;Receive Shadows;1;0;Receive SSAO;1;0;Motion Vectors;1;0;  Add Precomputed Velocity;0;0;GPU Instancing;1;0;LOD CrossFade;1;0;Built-in Fog;1;0;_FinalColorxAlpha;0;0;Meta Pass;1;0;Override Baked GI;0;0;Extra Pre Pass;0;0;Tessellation;0;0;  Phong;0;0;  Strength;0.5,False,;0;  Type;0;0;  Tess;16,False,;0;  Min;10,False,;0;  Max;25,False,;0;  Edge Length;16,False,;0;  Max Displacement;25,False,;0;Write Depth;0;0;  Early Z;0;0;Vertex Position,InvertActionOnDeselection;1;0;Debug Display;0;0;Clear Coat;0;0;0;11;False;True;True;True;True;True;True;True;True;True;True;False;;False;0
-WireConnection;14;0;12;0
-WireConnection;14;1;15;0
-WireConnection;20;0;17;0
-WireConnection;20;1;15;0
-WireConnection;21;0;20;1
-WireConnection;21;1;19;0
-WireConnection;16;0;14;5
-WireConnection;16;1;13;5
-WireConnection;23;0;14;4
-WireConnection;23;1;13;4
-WireConnection;25;0;24;0
-WireConnection;26;0;25;0
-WireConnection;2;0;16;0
-WireConnection;2;1;26;0
-WireConnection;2;3;21;0
-WireConnection;2;5;25;0
-WireConnection;2;6;23;0
-WireConnection;2;7;18;0
+Node;AmplifyShaderEditor.Vector3Node;52;-1616,1040;Inherit;False;Property;_CenterPosition;CenterPosition;2;0;Create;True;0;0;0;False;0;False;0,0,0;0,0,0;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
+Node;AmplifyShaderEditor.WorldPosInputsNode;51;-1616,880;Inherit;False;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
+Node;AmplifyShaderEditor.RangedFloatNode;54;-1376,1136;Inherit;False;Property;_FadeStartLength;FadeStartLength;3;0;Create;True;0;0;0;False;0;False;0;1;0;100;0;1;FLOAT;0
+Node;AmplifyShaderEditor.DistanceOpNode;53;-1376,960;Inherit;False;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleSubtractOpNode;48;-1136,960;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0.5;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;46;-1376,1216;Inherit;False;Property;_FadeEndLength;FadeEndLength;4;0;Create;True;0;0;0;False;0;False;1;1;1;100;0;1;FLOAT;0
+Node;AmplifyShaderEditor.ScreenPosInputsNode;35;-1520,576;Float;False;4;False;0;5;FLOAT4;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.SimpleMaxOpNode;49;-960,960;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleSubtractOpNode;55;-992,1120;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;37;-1264,672;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0.5;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;36;-1264,576;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0.5;False;1;FLOAT;0
+Node;AmplifyShaderEditor.WireNode;39;-1216,816;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.WireNode;40;-1216,848;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleDivideOpNode;45;-768,1040;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;57;-800,1200;Inherit;False;Property;_FadeAlphaMultiplier;FadeAlphaMultiplier;5;0;Create;True;0;0;0;False;0;False;1;1;0;10;0;1;FLOAT;0
+Node;AmplifyShaderEditor.DynamicAppendNode;38;-1024,576;Inherit;False;FLOAT4;4;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;1;FLOAT4;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;50;-592,1040;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;2;False;1;FLOAT;0
+Node;AmplifyShaderEditor.DitheringNode;3;-768,576;Inherit;False;1;True;4;0;FLOAT;0;False;1;SAMPLER2D;;False;2;FLOAT4;0,0,0,0;False;3;SAMPLERSTATE;;False;1;FLOAT;0
+Node;AmplifyShaderEditor.ClampOpNode;59;-400,928;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;1;False;1;FLOAT;0
+Node;AmplifyShaderEditor.LerpOp;60;-480,576;Inherit;False;3;0;FLOAT;1;False;1;FLOAT;0;False;2;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;61;-496,784;Inherit;False;Constant;_AlphaClip;AlphaClip;6;0;Create;True;0;0;0;False;0;False;0.45;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;65;-608,432;Inherit;False;Property;_AlphaMultiplier;AlphaMultiplier;6;0;Create;True;0;0;0;False;0;False;0;1;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;64;-416,304;Inherit;False;Constant;_Smoothness;Smoothness;6;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;66;-304,496;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleMaxOpNode;62;-192,832;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;63;-416,224;Inherit;False;Constant;_Metallic;Metallic;6;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.LerpOp;68;-368,-112;Inherit;False;3;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT;0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.SamplerNode;1;-992,-432;Inherit;True;Property;_TextureSample0;Texture Sample 0;0;0;Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
+Node;AmplifyShaderEditor.TexturePropertyNode;2;-1280,-432;Inherit;True;Property;_MainTex;MainTex;0;0;Create;True;0;0;0;False;0;False;None;None;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
+Node;AmplifyShaderEditor.ColorNode;42;-928,-176;Inherit;False;Property;_BaseColor;BaseColor;1;0;Create;True;0;0;0;False;0;False;0,0,0,0;0.7450981,0,0,1;True;True;0;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
+Node;AmplifyShaderEditor.ColorNode;67;-704,-48;Inherit;False;Constant;_HitColor;HitColor;7;0;Create;True;0;0;0;False;0;False;1,1,1,0;0,0,0,0;True;True;0;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
+Node;AmplifyShaderEditor.WireNode;70;-445.1237,61.38245;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;69;-672,176;Inherit;False;Property;_HitColorAlpha;HitColorAlpha;7;0;Create;True;0;0;0;False;0;False;0;0;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;41;-640,-288;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.NormalVertexDataNode;71;-336,48;Inherit;False;0;5;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;16;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;ExtraPrePass;0;0;ExtraPrePass;5;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;0;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;0;False;False;0;;0;0;Standard;0;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;18;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;ShadowCaster;0;2;ShadowCaster;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;True;False;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;True;3;False;;False;True;1;LightMode=ShadowCaster;False;False;0;;0;0;Standard;0;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;19;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;DepthOnly;0;3;DepthOnly;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;True;True;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;False;False;True;1;LightMode=DepthOnly;False;False;0;;0;0;Standard;0;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;20;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;Meta;0;4;Meta;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;2;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=Meta;False;False;0;;0;0;Standard;0;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;21;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;Universal2D;0;5;Universal2D;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;1;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;False;False;True;2;False;;True;7;False;;True;True;0;False;;0;False;;True;1;LightMode=Universal2D;False;False;0;;0;0;Standard;0;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;22;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;DepthNormals;0;6;DepthNormals;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;0;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;False;;True;3;False;;False;True;1;LightMode=DepthNormals;False;False;0;;0;0;Standard;0;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;23;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;GBuffer;0;7;GBuffer;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;1;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;True;16;False;;16;False;;255;False;;5;False;;1;False;;1;False;;1;False;;0;False;;0;False;;0;False;;0;False;;False;True;2;False;;True;7;False;;True;True;0;False;;0;False;;True;1;LightMode=UniversalGBuffer;False;False;0;;0;0;Standard;0;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;24;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;SceneSelectionPass;0;8;SceneSelectionPass;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;2;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=SceneSelectionPass;False;False;0;;0;0;Standard;0;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;25;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;ScenePickingPass;0;9;ScenePickingPass;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=Picking;False;False;0;;0;0;Standard;0;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;26;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;MotionVectors;0;10;MotionVectors;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;False;False;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=MotionVectors;False;False;0;;0;0;Standard;0;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;17;-48,0;Float;False;True;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;Game/JellyMesh-Lit-Mask;94348b07e5e8bab40bd6c8a1e3df54cd;True;Forward;0;1;Forward;21;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=TransparentCutout=RenderType;Queue=AlphaTest=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;1;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;True;True;True;16;False;;16;False;;255;False;;5;False;;1;False;;1;False;;1;False;;0;False;;0;False;;0;False;;0;False;;True;True;2;False;;True;7;False;;True;True;0;False;;0;False;;True;1;LightMode=UniversalForward;False;False;0;;0;0;Standard;45;Lighting Model;0;638771425634120880;Workflow;1;638771425680015470;Surface;0;638789158035071090;  Refraction Model;0;0;  Blend;0;0;Two Sided;1;0;Alpha Clipping;1;0;  Use Shadow Threshold;0;0;Fragment Normal Space,InvertActionOnDeselection;0;0;Forward Only;0;0;Transmission;0;0;  Transmission Shadow;0.5,False,;0;Translucency;0;0;  Translucency Strength;1,False,;0;  Normal Distortion;0.5,False,;0;  Scattering;2,False,;0;  Direct;0.9,False,;0;  Ambient;0.1,False,;0;  Shadow;0.5,False,;0;Cast Shadows;1;0;Receive Shadows;0;638771425011409430;Receive SSAO;0;638771424983508510;Motion Vectors;1;0;  Add Precomputed Velocity;0;0;GPU Instancing;1;0;LOD CrossFade;1;0;Built-in Fog;1;0;_FinalColorxAlpha;0;0;Meta Pass;1;0;Override Baked GI;0;0;Extra Pre Pass;0;0;Tessellation;0;0;  Phong;0;0;  Strength;0.5,False,;0;  Type;0;0;  Tess;16,False,;0;  Min;10,False,;0;  Max;25,False,;0;  Edge Length;16,False,;0;  Max Displacement;25,False,;0;Write Depth;0;0;  Early Z;0;0;Vertex Position,InvertActionOnDeselection;1;0;Debug Display;0;0;Clear Coat;0;0;0;11;False;True;True;True;True;True;True;True;True;True;True;False;;False;0
+WireConnection;53;0;51;0
+WireConnection;53;1;52;0
+WireConnection;48;0;53;0
+WireConnection;48;1;54;0
+WireConnection;49;0;48;0
+WireConnection;55;0;46;0
+WireConnection;55;1;54;0
+WireConnection;37;0;35;2
+WireConnection;36;0;35;1
+WireConnection;39;0;35;3
+WireConnection;40;0;35;4
+WireConnection;45;0;49;0
+WireConnection;45;1;55;0
+WireConnection;38;0;36;0
+WireConnection;38;1;37;0
+WireConnection;38;2;39;0
+WireConnection;38;3;40;0
+WireConnection;50;0;45;0
+WireConnection;50;1;57;0
+WireConnection;3;2;38;0
+WireConnection;59;0;50;0
+WireConnection;60;1;3;0
+WireConnection;60;2;59;0
+WireConnection;66;0;65;0
+WireConnection;66;1;60;0
+WireConnection;62;0;61;0
+WireConnection;62;1;59;0
+WireConnection;68;0;41;0
+WireConnection;68;1;67;5
+WireConnection;68;2;70;0
+WireConnection;1;0;2;0
+WireConnection;70;0;69;0
+WireConnection;41;0;1;5
+WireConnection;41;1;42;5
+WireConnection;17;0;68;0
+WireConnection;17;1;71;0
+WireConnection;17;3;63;0
+WireConnection;17;4;64;0
+WireConnection;17;6;66;0
+WireConnection;17;7;62;0
 ASEEND*/
-//CHKSM=D61E60B51318434D0142352FEAC9A0D4219D9B1F
+//CHKSM=144B13E58B9EA10BDFDF4EDF3F6471BCA7AAC6AF

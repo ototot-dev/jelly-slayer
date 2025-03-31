@@ -101,9 +101,11 @@ namespace Game
                     var cubeFadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp - p.Key * 0.05f) / duration);
                     p.Value.Item1.transform.localScale = cubeFadeAlpha * Mathf.Lerp(cubeScaleMin, cubeScaleMax, Mathf.PerlinNoise(Time.time + p.Key, Time.time + p.Key * p.Key)) * Vector3.one;
                     p.Value.Item1.transform.position = Easing.Ease(EaseType.BounceOut, springMassSystem.core.position, springMassSystem.points[p.Key].linkedBone.localToWorldMatrix.MultiplyPoint(p.Value.Item2), cubeFadeAlpha);
-                    p.Value.Item1.material.SetVector("_CenterPosition", springMassSystem.core.position);
-                    p.Value.Item1.material.SetFloat("_FadeStartLength", Mathf.Lerp(2f, 0f, cubeFadeAlpha));
-                    // __cubeMeshRenderers[i].material.SetFloat("_AlphaMultiplier", cubeFadeAlpha);
+                    foreach (var m in p.Value.Item1.materials)
+                    {
+                        m.SetVector("_CenterPosition", springMassSystem.core.position);
+                        m.SetFloat("_FadeStartLength", Mathf.Lerp(2f, 0f, cubeFadeAlpha));
+                    }
                 }
                 foreach (var p in __edgeCubeMeshRenderers)
                 {
@@ -111,8 +113,11 @@ namespace Game
                     var cubeFadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp - key * 0.05f) / duration);
                     p.Value.transform.localScale = cubeFadeAlpha * Mathf.Lerp(cubeScaleMin, cubeScaleMax, Mathf.PerlinNoise(Time.time + key, Time.time + key * key)) * Vector3.one;
                     p.Value.transform.position = Easing.Ease(EaseType.BounceOut, springMassSystem.core.position, 0.5f * (__cubeMeshRenderers[p.Key.Item1].Item1.transform.position + __cubeMeshRenderers[p.Key.Item2].Item1.transform.position), cubeFadeAlpha);
-                    p.Value.material.SetVector("_CenterPosition", springMassSystem.core.position);
-                    p.Value.material.SetFloat("_FadeStartLength", Mathf.Lerp(2f, 0f, cubeFadeAlpha));
+                    foreach (var m in p.Value.materials)
+                    {
+                        m.SetVector("_CenterPosition", springMassSystem.core.position);
+                        m.SetFloat("_FadeStartLength", Mathf.Lerp(2f, 0f, cubeFadeAlpha));
+                    }
                 }
 
                 var eyeFadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp - __cubeMeshRenderers.Count * 0.05f) / duration);
@@ -129,8 +134,11 @@ namespace Game
 
                     for (int i = 0; i < __tailMeshRenderers.Length; i++)
                     {
-                        __tailMeshRenderers[i].material.SetVector("_CenterPosition", springMassSystem.core.position);
-                        __tailMeshRenderers[i].material.SetFloat("_AlphaMultiplier", eyeFadeAlpha);
+                        foreach (var m in __tailMeshRenderers[i].materials)
+                        {
+                            m.SetVector("_CenterPosition", springMassSystem.core.position);
+                            m.SetFloat("_AlphaMultiplier", eyeFadeAlpha);
+                        }
                     }
 
                     if (eyeFadeAlpha > 0.5f)
@@ -165,8 +173,8 @@ namespace Game
                         var cubeFadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp - (p.Key + 1f) * 0.05f) / duration);
                         p.Value.Item1.transform.localScale = (1f - cubeFadeAlpha) * Mathf.Lerp(cubeScaleMin, cubeScaleMax, Mathf.PerlinNoise(Time.time + p.Key, Time.time + p.Key * p.Key)) * Vector3.one;
                         p.Value.Item1.transform.position = Easing.Ease(EaseType.CubicIn, springMassSystem.points[p.Key].linkedBone.localToWorldMatrix.MultiplyPoint(p.Value.Item2), springMassSystem.core.position, cubeFadeAlpha);
-                        p.Value.Item1.material.SetVector("_CenterPosition", springMassSystem.core.position);
-                        // __cubeMeshRenderers[i].material.SetFloat("_AlphaMultiplier", 1f - cubeFadeAlpha);
+                        foreach (var m in p.Value.Item1.materials)
+                            m.SetVector("_CenterPosition", springMassSystem.core.position);
                     }
                     foreach (var p in __edgeCubeMeshRenderers)
                     {
@@ -174,7 +182,8 @@ namespace Game
                         var cubeFadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp - (key + 1f) * 0.05f) / duration);
                         p.Value.transform.localScale = (1f - cubeFadeAlpha) * Mathf.Lerp(cubeScaleMin, cubeScaleMax, Mathf.PerlinNoise(Time.time + key, Time.time + key * key)) * Vector3.one;
                         p.Value.transform.position = Easing.Ease(EaseType.BounceOut, springMassSystem.core.position, 0.5f * (__cubeMeshRenderers[p.Key.Item1].Item1.transform.position + __cubeMeshRenderers[p.Key.Item2].Item1.transform.position), cubeFadeAlpha);
-                        p.Value.material.SetVector("_CenterPosition", springMassSystem.core.position);
+                        foreach (var m in p.Value.materials)
+                            p.Value.material.SetVector("_CenterPosition", springMassSystem.core.position);
                     }
 
                     var eyeFadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp) / duration);
@@ -186,8 +195,11 @@ namespace Game
 
                     for (int i = 0; i < __tailMeshRenderers.Length; i++)
                     {
-                        __tailMeshRenderers[i].material.SetVector("_CenterPosition", springMassSystem.core.position);
-                        __tailMeshRenderers[i].material.SetFloat("_AlphaMultiplier", 1f - eyeFadeAlpha);
+                        foreach (var m in __tailMeshRenderers[i].materials)
+                        {
+                            m.SetVector("_CenterPosition", springMassSystem.core.position);
+                            m.SetFloat("_AlphaMultiplier", 1f - eyeFadeAlpha);
+                        }
                     }
 
                     eyeAnimator.MinOpenValue = Mathf.Clamp01(eyeAnimator.MinOpenValue - eyeOpenSpeed * Time.deltaTime);
@@ -205,10 +217,10 @@ namespace Game
                 springMassSystem.coreAttachPoint.parent.position = springMassSystem.coreAttachPoint.parent.position.LerpSpeed(jellyBrain.coreColliderHelper.GetWorldCenter(), mainDistanceRecoverySpeed * (distance - maintainDistance), Time.deltaTime);
         }
 
-        Dictionary<int, Material> __defaultCubeMeshMaterials;
-        Dictionary<ValueTuple<int, int>, Material> __defaultEdgeCubeMeshMaterials;
-        Material[] __defaultTailMeshMaterials;
-        Material[] __defaultEyeMeshMaterials;
+        Dictionary<int, Material[]> __defaultCubeMeshMaterials;
+        Dictionary<ValueTuple<int, int>, Material[]> __defaultEdgeCubeMeshMaterials;
+        Material[][] __defaultTailMeshMaterials;
+        Material[][] __defaultEyeMeshMaterials;
         Material __defaultBodyMeshMaterial;
         Tweener __tweener;
         IDisposable __hookingPointFxDisposable;
@@ -218,15 +230,15 @@ namespace Game
             if (__defaultCubeMeshMaterials == null)
             {
                 __defaultCubeMeshMaterials = new();
-                foreach (var p in __cubeMeshRenderers) __defaultCubeMeshMaterials.Add(p.Key, p.Value.Item1.material);
+                foreach (var p in __cubeMeshRenderers) __defaultCubeMeshMaterials.Add(p.Key, p.Value.Item1.materials);
             }
             if (__defaultEdgeCubeMeshMaterials == null)
             {
                 __defaultEdgeCubeMeshMaterials = new();
-                foreach (var p in __edgeCubeMeshRenderers) __defaultEdgeCubeMeshMaterials.Add(p.Key, p.Value.material);
+                foreach (var p in __edgeCubeMeshRenderers) __defaultEdgeCubeMeshMaterials.Add(p.Key, p.Value.materials);
             }
-            __defaultTailMeshMaterials ??= __tailMeshRenderers.Select(r => r.material).ToArray();
-            __defaultEyeMeshMaterials ??= __eyeMeshRenderes.Select(r => r.material).ToArray();
+            __defaultTailMeshMaterials ??= __tailMeshRenderers.Select(r => r.materials).ToArray();
+            __defaultEyeMeshMaterials ??= __eyeMeshRenderes.Select(r => r.materials).ToArray();
             __defaultBodyMeshMaterial ??= meshBuilder.meshRenderer.material;
 
             foreach (var p in __cubeMeshRenderers) p.Value.Item1.material = cubeHitColorMaterial;
@@ -238,10 +250,10 @@ namespace Game
             __hitColorDisposable?.Dispose();
             __hitColorDisposable = Observable.Timer(TimeSpan.FromSeconds(duration)).Subscribe(_ =>
             {
-                foreach (var p in __cubeMeshRenderers) p.Value.Item1.material = __defaultCubeMeshMaterials[p.Key];
-                foreach (var p in __edgeCubeMeshRenderers) p.Value.material = __defaultEdgeCubeMeshMaterials[p.Key];
-                for (int i = 0; i < __tailMeshRenderers.Length; i++) __tailMeshRenderers[i].material = __defaultTailMeshMaterials[i];
-                for (int i = 0; i < __eyeMeshRenderes.Length; i++) __eyeMeshRenderes[i].material = __defaultEyeMeshMaterials[i];
+                foreach (var p in __cubeMeshRenderers) p.Value.Item1.materials = __defaultCubeMeshMaterials[p.Key];
+                foreach (var p in __edgeCubeMeshRenderers) p.Value.materials = __defaultEdgeCubeMeshMaterials[p.Key];
+                for (int i = 0; i < __tailMeshRenderers.Length; i++) __tailMeshRenderers[i].materials = __defaultTailMeshMaterials[i];
+                for (int i = 0; i < __eyeMeshRenderes.Length; i++) __eyeMeshRenderes[i].materials = __defaultEyeMeshMaterials[i];
                 meshBuilder.meshRenderer.material = __defaultBodyMeshMaterial;
             }).AddTo(this);
 
