@@ -8,6 +8,8 @@ namespace Game
 {
     public class HeroBlackboard : PawnBlackboard
     {
+        public int _id = 0;  // PlayerData ID (당장은 캐릭 한개라 큰 의미는 없음)
+
         public bool IsJumping => body.isJumping.Value;
         public bool IsHanging => body.hangingBrain.Value != null;
         public bool IsRolling => body.isRolling.Value;
@@ -75,6 +77,7 @@ namespace Game
             public AudioClip onMissedAudioClip;
             public AudioClip onBlockedAudioClip;
             public AudioClip onGuardBreakAudioClip;
+            public AudioClip onEvadeClip;
         }
 
         public Audios audios = new();

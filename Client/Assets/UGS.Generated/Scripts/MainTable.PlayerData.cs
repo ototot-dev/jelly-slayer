@@ -60,6 +60,10 @@ namespace MainTable
 		public System.Single actionInputTimePadding;
 		public System.Single postGuardDelayOnStaggered;
 		public System.Single earlyRollOffsetOnStarggerd;
+		public System.Single guardRage;
+		public System.Single parryRage;
+		public System.Single evadeRage;
+		public System.Single damageRage;
   
 
 #region fuctions

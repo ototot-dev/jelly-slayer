@@ -81,6 +81,10 @@ namespace Game
                 Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
                     .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity, Time.fixedDeltaTime))
                     .AddTo(this);
+
+                // 분노 게이지
+                var rage = MainTable.PlayerData.GetList().First().damageRage;
+                __brain.AddRagePoint(rage);
             }
             else if (damageContext.actionResult == ActionResults.GuardBreak)
             {
@@ -98,6 +102,10 @@ namespace Game
                 Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
                     .Subscribe(_ => __brain.Movement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity, Time.fixedDeltaTime))
                     .AddTo(this);
+
+                // 분노 게이지
+                var rage = MainTable.PlayerData.GetList().First().damageRage;
+                __brain.AddRagePoint(rage);
             }
             else //* Sender의 액션을 파훼된 경우
             {
@@ -123,6 +131,10 @@ namespace Game
                     });
 
                     ShowHitColor();
+
+                    // 분노 게이지 (가드)
+                    var rage = MainTable.PlayerData.GetList().First().guardRage;
+                    __brain.AddRagePoint(rage);
                 }
                 else if (damageContext.actionResult == ActionResults.GuardParried)
                 {
@@ -139,6 +151,10 @@ namespace Game
                     });
 
                     ShowHitColor();
+
+                    // 분노 게이지 (패리)
+                    var rage = MainTable.PlayerData.GetList().First().parryRage;
+                    __brain.AddRagePoint(rage);
                 }
                 else if (damageContext.actionResult == ActionResults.PunchParried)
                 {
@@ -147,6 +163,10 @@ namespace Game
 
                     EffectManager.Instance.Show("FX/Hit 26 blue crystal", hitPoint, Quaternion.identity, 2f * Vector3.one, 1f);
                     SoundManager.Instance.Play(SoundID.HIT_PARRYING);
+
+                    // 분노 게이지 (패리)
+                    var rage = MainTable.PlayerData.GetList().First().parryRage;
+                    __brain.AddRagePoint(rage);
                 }
 
                 if (damageContext.actionResult == ActionResults.Blocked || damageContext.actionResult == ActionResults.GuardParried)
@@ -157,7 +177,6 @@ namespace Game
                         .AddTo(this);
                 }
             }
-
             return null;
         }
 

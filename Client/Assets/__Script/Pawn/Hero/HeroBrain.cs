@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UniRx;
 using UnityEngine;
 
@@ -144,7 +145,18 @@ namespace Game
                 switch (reason)
                 {
                     case "Jump": TimeManager.Instance.SlomoTime(this, 0.7f, 0.2f); break;
-                    case "Dodge": TimeManager.Instance.SlomoTime(this, 0.6f, 0.3f); break;
+                    case "Dodge":
+                        {
+                            TimeManager.Instance.SlomoTime(this, 0.7f, 0.2f);
+
+                            // 분노 게이지 (회피)
+                            var rage = MainTable.PlayerData.GetList().First().evadeRage;
+                            AddRagePoint(rage);
+
+                            // 회피 사운드
+                            SoundManager.Instance.PlayWithClipPos(BB.audios.onEvadeClip, GetWorldPosition());
+                            break;
+                        }
                 }
             };
 
@@ -262,6 +274,17 @@ namespace Game
                 case ActionResults.PunchParried:
                 case ActionResults.GuardParried:
                     ActionCtrler.StartAction(damageContext, damageContext.senderPenalty.Item1 == Game.PawnStatus.Groggy ? "!OnGroggy" : "!OnParried", string.Empty, string.Empty); break;
+            }
+        }
+        public void AddRagePoint(float rage)
+        {
+            if (BB.stat.rage.Value >= BB.stat.maxRage.Value)
+                return;
+
+            BB.stat.rage.Value += rage;
+            if (BB.stat.rage.Value >= BB.stat.maxRage.Value) 
+            {
+                BB.stat.rage.Value = BB.stat.maxRage.Value;
             }
         }
 
