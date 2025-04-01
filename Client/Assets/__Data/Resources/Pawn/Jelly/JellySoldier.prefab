@@ -707,7 +707,8 @@ MonoBehaviour:
   hookLengthMultilier: 2.5
   hookShootSpeed: 80
   particlePoolSize: 100
-  ropeMaterial: {fileID: 2100000, guid: 06d7a238e9dbf4c4fb2dc71cdfb8d5f4, type: 2}
+  ropeMaterial: {fileID: 2100000, guid: 30bd9d87bf81d412388c7e74bca2e3ac, type: 2}
+  renderingLayerMask: 1
   hookingLength: 0
   hookingOffsetPoint: {x: 0, y: 0, z: 0}
   hookingCollider: {fileID: 0}
@@ -5118,7 +5119,7 @@ GameObject:
   - component: {fileID: 321786650567484540}
   - component: {fileID: 3735996293672512473}
   - component: {fileID: 1458070737609187091}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: SM_Prop_Shield_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29389,7 +29390,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &270110004782133395
 Transform:
   m_ObjectHideFlags: 0
@@ -53033,7 +53034,7 @@ SkinnedMeshRenderer:
   m_Quality: 4
   m_UpdateWhenOffscreen: 0
   m_SkinnedMotionVectors: 0
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: 4300000, guid: ba9ebd79037094bdb9cff4428c309577, type: 2}
   m_Bones:
   - {fileID: 7147085219341165418}
   - {fileID: 3002243436441181307}
@@ -56946,7 +56947,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 06d7a238e9dbf4c4fb2dc71cdfb8d5f4, type: 2}
+  - {fileID: 2100000, guid: 30bd9d87bf81d412388c7e74bca2e3ac, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -57119,7 +57120,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 06d7a238e9dbf4c4fb2dc71cdfb8d5f4, type: 2}
+  - {fileID: 2100000, guid: 30bd9d87bf81d412388c7e74bca2e3ac, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
