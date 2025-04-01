@@ -47,6 +47,7 @@ namespace Game
         ActionSpeedDown,
         ActionStaminaLow,
         Bind,               // 끈에 묶임
+        Burst,              // 분노 폭발 상태
     }
 
     [UGS(typeof(HitTypes))]
