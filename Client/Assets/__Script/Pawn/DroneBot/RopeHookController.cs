@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using Obi;
 using System;
+using Linework.Common.Attributes;
 
 namespace Game
 {
@@ -22,6 +23,8 @@ namespace Game
 
         [Header("Rendering")]
         public Material ropeMaterial;
+        [RenderingLayerMask]
+        public uint renderingLayerMask = 1;
 
         [Header("Hook")]
         public float hookingLength;
@@ -71,6 +74,8 @@ namespace Game
             __obiRopeRenderer.uvAnchor = 1;
             __obiRopeRenderer.thicknessScale = 0.4f;
             __obiRopeRenderer.material = ropeMaterial;
+            __obiRopeRenderer.renderParameters.receiveShadows = false;
+            __obiRopeRenderer.renderParameters.renderingLayerMask = renderingLayerMask;
 
             // Setup a blueprint for the rope:
             __obiRopeBlueprint = ScriptableObject.CreateInstance<ObiRopeBlueprint>();

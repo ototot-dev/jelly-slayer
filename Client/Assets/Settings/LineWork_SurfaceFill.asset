@@ -16,11 +16,11 @@ MonoBehaviour:
   isActive: 1
   RenderingLayer:
     serializedVersion: 0
-    m_Bits: 1
+    m_Bits: 128
   layerMask:
     serializedVersion: 2
-    m_Bits: 131072
-  renderQueue: 0
+    m_Bits: 4294967295
+  renderQueue: 2
   occlusion: 1
   blendMode: 0
   alphaCutout: 0
@@ -28,12 +28,12 @@ MonoBehaviour:
   alphaCutoutThreshold: 0.5
   materialType: 0
   customMaterial: {fileID: 0}
-  pattern: 1
-  primaryColor: {r: 0, g: 1, b: 0, a: 1}
+  pattern: 0
+  primaryColor: {r: 1, g: 1, b: 1, a: 0.2509804}
   secondaryColor: {r: 1, g: 0, b: 0, a: 1}
   texture: {fileID: 0}
   channel: 0
-  frequencyX: 80
+  frequencyX: 53
   frequencyY: 2
   density: 0.5
   rotation: 0
@@ -54,9 +54,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bde5f93f258b40fd8d875a3300bd357a, type: 3}
-  m_Name: Surface Fill Settings
+  m_Name: LineWork_SurfaceFill
   m_EditorClassIdentifier: 
-  injectionPoint: 600
+  injectionPoint: 550
   showInSceneView: 1
   fills:
   - {fileID: -7588336342744659844}

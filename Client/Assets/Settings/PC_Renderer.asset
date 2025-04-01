@@ -320,9 +320,9 @@ MonoBehaviour:
   - {fileID: 7833122117494664109}
   - {fileID: -8918925750689531554}
   - {fileID: -8575872223914958770}
-  - {fileID: 6134285725648833527}
   - {fileID: -7073512217561340440}
-  m_RendererFeatureMap: ad6b866f10d7b46c5ef910c4489c39844ee06836a661fc88f74b0cdc5d5c2155e8e5de7d1dd6d59d
+  - {fileID: 6134285725648833527}
+  m_RendererFeatureMap: ad6b866f10d7b46c5ef910c4489c39844ee06836a661fc88e8e5de7d1dd6d59df74b0cdc5d5c2155
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -360,7 +360,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 521933c422ef94aa58e7d435b6f8921a, type: 3}
   m_Name: WideOutline
   m_EditorClassIdentifier: 
-  m_Active: 0
+  m_Active: 1
   settings: {fileID: 11400000, guid: bc53399852596449a8bbbf58087e0e0d, type: 2}
   shaders:
     mask: {fileID: 4800000, guid: 1ed7bc804a124d559675facf61722b63, type: 3}

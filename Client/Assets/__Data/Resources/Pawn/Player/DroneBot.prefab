@@ -347,10 +347,10 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 129
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0e8613e70bd2ac74ab933b72e86924a8, type: 2}
+  - {fileID: 2100000, guid: 9b39e28ebff7647879221fc3919a16a9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -30016,10 +30016,10 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 129
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0e8613e70bd2ac74ab933b72e86924a8, type: 2}
+  - {fileID: 2100000, guid: 9b39e28ebff7647879221fc3919a16a9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -35155,10 +35155,10 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 129
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0e8613e70bd2ac74ab933b72e86924a8, type: 2}
+  - {fileID: 2100000, guid: 9b39e28ebff7647879221fc3919a16a9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -40182,10 +40182,10 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 129
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0e8613e70bd2ac74ab933b72e86924a8, type: 2}
+  - {fileID: 2100000, guid: 9b39e28ebff7647879221fc3919a16a9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -40391,10 +40391,10 @@ SkinnedMeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 129
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0e8613e70bd2ac74ab933b72e86924a8, type: 2}
+  - {fileID: 2100000, guid: 9b39e28ebff7647879221fc3919a16a9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -45754,10 +45754,10 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 129
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0e8613e70bd2ac74ab933b72e86924a8, type: 2}
+  - {fileID: 2100000, guid: 9b39e28ebff7647879221fc3919a16a9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -45904,10 +45904,10 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 129
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0e8613e70bd2ac74ab933b72e86924a8, type: 2}
+  - {fileID: 2100000, guid: 9b39e28ebff7647879221fc3919a16a9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -50964,10 +50964,10 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 129
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0e8613e70bd2ac74ab933b72e86924a8, type: 2}
+  - {fileID: 2100000, guid: 9b39e28ebff7647879221fc3919a16a9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -51050,10 +51050,10 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 129
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0e8613e70bd2ac74ab933b72e86924a8, type: 2}
+  - {fileID: 2100000, guid: 9b39e28ebff7647879221fc3919a16a9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -51168,10 +51168,10 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 129
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0e8613e70bd2ac74ab933b72e86924a8, type: 2}
+  - {fileID: 2100000, guid: 9b39e28ebff7647879221fc3919a16a9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -51245,10 +51245,10 @@ SkinnedMeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 129
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0e8613e70bd2ac74ab933b72e86924a8, type: 2}
+  - {fileID: 2100000, guid: 9b39e28ebff7647879221fc3919a16a9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -61809,10 +61809,10 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 129
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0e8613e70bd2ac74ab933b72e86924a8, type: 2}
+  - {fileID: 2100000, guid: 9b39e28ebff7647879221fc3919a16a9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -62038,10 +62038,10 @@ SkinnedMeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 129
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0e8613e70bd2ac74ab933b72e86924a8, type: 2}
+  - {fileID: 2100000, guid: 9b39e28ebff7647879221fc3919a16a9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -62137,10 +62137,10 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 129
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0e8613e70bd2ac74ab933b72e86924a8, type: 2}
+  - {fileID: 2100000, guid: 9b39e28ebff7647879221fc3919a16a9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -72027,10 +72027,10 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 129
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0e8613e70bd2ac74ab933b72e86924a8, type: 2}
+  - {fileID: 2100000, guid: 9b39e28ebff7647879221fc3919a16a9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -86553,6 +86553,7 @@ MonoBehaviour:
   obiRopeSection: {fileID: 11400000, guid: a0bc36a59515f413e90e10895929c938, type: 2}
   hookResolution: 1
   hookExtendRetractSpeed: 4
+  hookLengthMultilier: 1
   hookShootSpeed: 80
   particlePoolSize: 100
   ropeMaterial: {fileID: 2100000, guid: edc856900ac3941a98996e21e91e215e, type: 2}
@@ -86611,10 +86612,10 @@ SkinnedMeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 129
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0e8613e70bd2ac74ab933b72e86924a8, type: 2}
+  - {fileID: 2100000, guid: 9b39e28ebff7647879221fc3919a16a9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -86766,10 +86767,10 @@ SkinnedMeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 129
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0e8613e70bd2ac74ab933b72e86924a8, type: 2}
+  - {fileID: 2100000, guid: 9b39e28ebff7647879221fc3919a16a9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -96746,6 +96747,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51753b4002b0d48c299cb80bc4ef44cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debugActionSelectDisabled: 0
 --- !u!114 &5718703480896788745
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -96872,7 +96874,7 @@ MonoBehaviour:
   parryColliderHelper: {fileID: 0}
   parryHitColliderHelper: {fileID: 0}
   shieldHitColliderHelper: {fileID: 0}
-  hookingColliderHelper: {fileID: 0}
+  hookingPointColliderHelper: {fileID: 0}
   visibilityChecker: {fileID: 0}
   owner: {fileID: 0}
   tickInterval: 0.1
@@ -96880,7 +96882,6 @@ MonoBehaviour:
   updateEnabled: 1
   lateUpdateEnabled: 1
   fixedUpdateEnabled: 1
-  debugActionDisabled: 0
 --- !u!114 &3882167974122995971
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -96924,6 +96925,8 @@ MonoBehaviour:
       value: 1
     maxKnockDown:
       value: 1
+    maxRage:
+      value: 1
     maxGroggyHitCount:
       value: 0
     heartPoint:
@@ -96937,6 +96940,8 @@ MonoBehaviour:
     knockDown:
       value: 0
     groggyHitCount:
+      value: 0
+    rage:
       value: 0
     poise: 0
     guardStrength: 0
@@ -96954,6 +96959,7 @@ MonoBehaviour:
   target:
     targetPawnHP:
       value: {fileID: 0}
+    trail: []
   body:
     normalSpeed: 2
     boostSpeed: 4
@@ -97006,7 +97012,7 @@ MonoBehaviour:
     _version: 3.31
     _category: 
     _comments: 
-    _translation: {x: -385.96484, y: 1.3023112}
+    _translation: {x: 52, y: -28}
     _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 0
@@ -102520,10 +102526,10 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 129
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0e8613e70bd2ac74ab933b72e86924a8, type: 2}
+  - {fileID: 2100000, guid: 9b39e28ebff7647879221fc3919a16a9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -102747,10 +102753,10 @@ SkinnedMeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 129
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0e8613e70bd2ac74ab933b72e86924a8, type: 2}
+  - {fileID: 2100000, guid: 9b39e28ebff7647879221fc3919a16a9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
