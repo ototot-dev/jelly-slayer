@@ -36920,6 +36920,59 @@ SkinnedMeshRenderer:
     m_Center: {x: -1.3236716, y: -0.17176574, z: -0.6623105}
     m_Extent: {x: 0.43956065, y: 0.5689129, z: 0.27968192}
   m_DirtyAABB: 0
+--- !u!1 &4047656981793822958
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9089527304999494470}
+  - component: {fileID: 4004980512063358650}
+  m_Layer: 0
+  m_Name: Hand_L-Override
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9089527304999494470
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4047656981793822958}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5654105046072744691}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4004980512063358650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4047656981793822958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf219326d2292de48a0c671da18d402b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Weight: 0
+  m_Data:
+    m_ConstrainedObject: {fileID: 3865302999386843124}
+    m_OverrideSource: {fileID: 0}
+    m_OverridePosition: {x: 0, y: 0, z: 0}
+    m_OverrideRotation: {x: -55, y: -50, z: 15}
+    m_PositionWeight: 0
+    m_RotationWeight: 1
+    m_Space: 2
 --- !u!1 &4054189536419899533
 GameObject:
   m_ObjectHideFlags: 0
@@ -74374,6 +74427,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6221223454713415208}
+  - {fileID: 9089527304999494470}
   m_Father: {fileID: 456783560079068158}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2222767562176998279
@@ -83556,8 +83610,9 @@ MonoBehaviour:
   visionLen: 7
   visionAngle: 120
   nearVisionLen: 2
-  touchSensorTrigger: {fileID: 6441958913384127248}
   soundSensorTrigger: {fileID: 7034759996533335061}
+  touchSensorTrigger: {fileID: 6441958913384127248}
+  touchSensorTriggers: []
   drawGizmosEnabled: 0
 --- !u!114 &9129796806968136233
 MonoBehaviour:
@@ -83620,6 +83675,7 @@ MonoBehaviour:
   ragdollAnimator: {fileID: 5978158408337654307}
   headBone: {fileID: 5278882544679535675}
   headAim: {fileID: 7982289961256393618}
+  leftHandOverride: {fileID: 4004980512063358650}
   leftArmBoneSimulator: {fileID: 2170937694511617402}
   rightArmBoneSimulator: {fileID: 4265576059615311173}
   leftLegBoneSimulator: {fileID: 2082995388652011794}
@@ -83796,6 +83852,8 @@ MonoBehaviour:
     counterAttackProbOnGuard: 0.5
     jumpAttackInterval: 1
     jumpAttackProb: 0.4
+    shieldAttackRigBlendInSpeed: 5
+    shieldAttackRigBlendOutSpeed: 10
     missileEmitNum: 3
     missileEmitIntervalA: 0.1
     missileEmitIntervalB: 1

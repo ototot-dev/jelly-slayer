@@ -881,8 +881,9 @@ MonoBehaviour:
   visionLen: 7
   visionAngle: 120
   nearVisionLen: 1
-  touchSensorTrigger: {fileID: 2816493633811847595}
   soundSensorTrigger: {fileID: 1174811389787285577}
+  touchSensorTrigger: {fileID: 2816493633811847595}
+  touchSensorTriggers: []
   drawGizmosEnabled: 1
 --- !u!114 &3540552371793380332
 MonoBehaviour:

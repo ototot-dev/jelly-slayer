@@ -13,6 +13,7 @@ namespace Game
         [Header("Component")]
         public Transform headBone;
         public MultiAimConstraint headAim;
+        public OverrideTransform leftHandOverride;
         public BonesStimulator leftArmBoneSimulator;
         public BonesStimulator rightArmBoneSimulator;
         public BonesStimulator leftLegBoneSimulator;
@@ -144,11 +145,20 @@ namespace Game
                 mainAnimator.SetFloat("MoveY", animMoveVecClamped.z / __brain.Movement.moveSpeed);
 
                 if (__brain.ActionCtrler.CheckActionRunning())
+                {
                     armBoneSimulatorTargetWeight = leftArmBoneSimulator.StimulatorAmount = rightArmBoneSimulator.StimulatorAmount = 0f;
+                    if (__brain.ActionCtrler.CurrActionName == "ShieldAttack") leftHandOverride.weight = Mathf.Clamp01(leftHandOverride.weight + __brain.BB.action.shieldAttackRigBlendInSpeed * Time.deltaTime);
+                }
                 else if (CheckAnimStateRunning("OnParried") || CheckAnimStateRunning("OnGroggy (Loop)"))
+                {
                     armBoneSimulatorTargetWeight = 1f;
+                    if (__brain.ActionCtrler.CurrActionName != "ShieldAttack") leftHandOverride.weight = Mathf.Clamp01(leftHandOverride.weight - __brain.BB.action.shieldAttackRigBlendOutSpeed * Time.deltaTime);
+                }
                 else
+                {
                     armBoneSimulatorTargetWeight = 0f;
+                    if (__brain.ActionCtrler.CurrActionName != "ShieldAttack") leftHandOverride.weight = Mathf.Clamp01(leftHandOverride.weight - __brain.BB.action.shieldAttackRigBlendOutSpeed * Time.deltaTime);
+                }
                     
                 if (armBoneSimulatorTargetWeight > 0f)
                 {

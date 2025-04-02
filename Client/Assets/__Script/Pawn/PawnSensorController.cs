@@ -15,8 +15,9 @@ namespace Game
         public float nearVisionLen = 1;
 
         [Header("Component")]
-        public BoxCollider touchSensorTrigger;
         public CapsuleCollider soundSensorTrigger;
+        public BoxCollider touchSensorTrigger;
+        public List<Collider> touchSensorTriggers = new();
         public HashSet<Collider> TouchingColliders { get; private set; } = new();
         public HashSet<Collider> ListeningColliders { get; private set; } = new();
         public HashSet<Collider> WatchingColliders { get; private set; } = new();

@@ -217,10 +217,10 @@ namespace Game
                 springMassSystem.coreAttachPoint.parent.position = springMassSystem.coreAttachPoint.parent.position.LerpSpeed(jellyBrain.coreColliderHelper.GetWorldCenter(), mainDistanceRecoverySpeed * (distance - maintainDistance), Time.deltaTime);
         }
 
-        Dictionary<int, Material[]> __defaultCubeMeshMaterials;
-        Dictionary<ValueTuple<int, int>, Material[]> __defaultEdgeCubeMeshMaterials;
-        Material[][] __defaultTailMeshMaterials;
-        Material[][] __defaultEyeMeshMaterials;
+        Dictionary<int, Material> __defaultCubeMeshMaterials;
+        Dictionary<ValueTuple<int, int>, Material> __defaultEdgeCubeMeshMaterials;
+        Material[] __defaultTailMeshMaterials;
+        Material[] __defaultEyeMeshMaterials;
         Material __defaultBodyMeshMaterial;
         Tweener __tweener;
         IDisposable __hookingPointFxDisposable;
@@ -230,15 +230,15 @@ namespace Game
             if (__defaultCubeMeshMaterials == null)
             {
                 __defaultCubeMeshMaterials = new();
-                foreach (var p in __cubeMeshRenderers) __defaultCubeMeshMaterials.Add(p.Key, p.Value.Item1.materials);
+                foreach (var p in __cubeMeshRenderers) __defaultCubeMeshMaterials.Add(p.Key, p.Value.Item1.material);
             }
             if (__defaultEdgeCubeMeshMaterials == null)
             {
                 __defaultEdgeCubeMeshMaterials = new();
-                foreach (var p in __edgeCubeMeshRenderers) __defaultEdgeCubeMeshMaterials.Add(p.Key, p.Value.materials);
+                foreach (var p in __edgeCubeMeshRenderers) __defaultEdgeCubeMeshMaterials.Add(p.Key, p.Value.material);
             }
-            __defaultTailMeshMaterials ??= __tailMeshRenderers.Select(r => r.materials).ToArray();
-            __defaultEyeMeshMaterials ??= __eyeMeshRenderes.Select(r => r.materials).ToArray();
+            __defaultTailMeshMaterials ??= __tailMeshRenderers.Select(r => r.material).ToArray();
+            __defaultEyeMeshMaterials ??= __eyeMeshRenderes.Select(r => r.material).ToArray();
             __defaultBodyMeshMaterial ??= meshBuilder.meshRenderer.material;
 
             foreach (var p in __cubeMeshRenderers) p.Value.Item1.material = cubeHitColorMaterial;
@@ -250,10 +250,10 @@ namespace Game
             __hitColorDisposable?.Dispose();
             __hitColorDisposable = Observable.Timer(TimeSpan.FromSeconds(duration)).Subscribe(_ =>
             {
-                foreach (var p in __cubeMeshRenderers) p.Value.Item1.materials = __defaultCubeMeshMaterials[p.Key];
-                foreach (var p in __edgeCubeMeshRenderers) p.Value.materials = __defaultEdgeCubeMeshMaterials[p.Key];
-                for (int i = 0; i < __tailMeshRenderers.Length; i++) __tailMeshRenderers[i].materials = __defaultTailMeshMaterials[i];
-                for (int i = 0; i < __eyeMeshRenderes.Length; i++) __eyeMeshRenderes[i].materials = __defaultEyeMeshMaterials[i];
+                foreach (var p in __cubeMeshRenderers) p.Value.Item1.material = __defaultCubeMeshMaterials[p.Key];
+                foreach (var p in __edgeCubeMeshRenderers) p.Value.material = __defaultEdgeCubeMeshMaterials[p.Key];
+                for (int i = 0; i < __tailMeshRenderers.Length; i++) __tailMeshRenderers[i].material = __defaultTailMeshMaterials[i];
+                for (int i = 0; i < __eyeMeshRenderes.Length; i++) __eyeMeshRenderes[i].material = __defaultEyeMeshMaterials[i];
                 meshBuilder.meshRenderer.material = __defaultBodyMeshMaterial;
             }).AddTo(this);
 

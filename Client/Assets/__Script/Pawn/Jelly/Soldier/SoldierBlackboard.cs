@@ -63,6 +63,10 @@ namespace Game
             public float jumpAttackInterval = 1f;
             public float jumpAttackProb = 0.1f;
 
+            [Header("ShieldAttack")]
+            public float shieldAttackRigBlendInSpeed = 1f;
+            public float shieldAttackRigBlendOutSpeed = 1f;
+
             [Header("Missile")]
             public int missileEmitNum = 1;
             public float missileEmitIntervalA = 1f;

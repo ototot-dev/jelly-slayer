@@ -20,14 +20,14 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: JellyMesh_Cube
-  m_Shader: {fileID: 4800000, guid: 274e52b18ff244b73b02b0c0451cdb86, type: 3}
+  m_Name: JellyMesh_Tail_Dither
+  m_Shader: {fileID: 4800000, guid: e91e5ec4ebe794254b65ae3b5bbfed79, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
-  - _RECEIVE_SHADOWS_OFF
+  m_ValidKeywords: []
   m_InvalidKeywords:
   - _RECEIVESHADOWS_OFF
+  - _RECEIVE_SHADOWS_OFF
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -125,9 +125,9 @@ Material:
     - _DstBlendAlpha: 0
     - _Emission: 0
     - _EnvironmentReflections: 1
-    - _FadeAlphaMultiplier: 1
-    - _FadeEndLength: 1
-    - _FadeStartLength: 1
+    - _FadeAlphaMultiplier: 1.5
+    - _FadeEndLength: 2
+    - _FadeStartLength: 0.5
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
