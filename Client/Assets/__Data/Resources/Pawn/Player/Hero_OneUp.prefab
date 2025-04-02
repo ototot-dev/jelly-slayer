@@ -1097,7 +1097,7 @@ MonoBehaviour:
     onMissedAudioClip: {fileID: 0}
     onBlockedAudioClip: {fileID: 0}
     onGuardBreakAudioClip: {fileID: 8300000, guid: 93fc0b243c8d39441a33d29e6146b688, type: 3}
-    onEvadeClip: {fileID: 0}
+    onEvadeClip: {fileID: 8300000, guid: 85b52aa0c9bf8c24cb323e74251fdad1, type: 3}
   attachment:
     bodyMeshRenderer: {fileID: 3244703593147971087}
     swordMeshRenderer: {fileID: 7268340508694672973}
