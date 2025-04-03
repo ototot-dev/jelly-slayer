@@ -296,8 +296,8 @@ namespace Game.NodeCanvasExtension
         IDisposable __moveStrafeDisposable;
         Vector3 __strafeMoveVec;
         float __strafeDuration;
+        float __pawnCapsuleRadius;
         float __targetCapsuleRadius;
-        float __minApproachDistance;
         float __executeTimeStamp;
 
         protected override void OnExecute()
@@ -312,8 +312,8 @@ namespace Game.NodeCanvasExtension
             Debug.Assert(__pawnMovable != null);
             
             __strafeMoveVec = Vector3.zero;
-            __minApproachDistance = Mathf.Max(0.1f, __pawnBrain.coreColliderHelper.GetCapsuleRadius() + __targetCapsuleRadius);
-            __pawnMovable.SetMinApproachDistance(__minApproachDistance);
+            __pawnCapsuleRadius = __pawnBrain.coreColliderHelper.GetCapsuleRadius();
+            __pawnMovable.SetMinApproachDistance(__pawnMovable.GetDefaultMinApproachDistance());
             __pawnMovable.FreezeRotation(true);
             __executeTimeStamp = Time.time;
         }
@@ -361,7 +361,7 @@ namespace Game.NodeCanvasExtension
                 {
                     if (__strafeMoveVec != Vector3.zero)
                     {
-                        var newDestination = __pawnBrain.GetWorldPosition() + __minApproachDistance * 2f * (__pawnBrain.GetWorldRotation() * __strafeMoveVec).Vector2D().normalized;
+                        var newDestination = __pawnBrain.GetWorldPosition() + 2f * __pawnCapsuleRadius * (__pawnBrain.GetWorldRotation() * __strafeMoveVec).Vector2D().normalized;
                         if (__targetBrain != null)
                             newDestination = __targetBrain.GetWorldPosition() + (spacingDistance + __targetCapsuleRadius) * (newDestination - __targetBrain.GetWorldPosition()).Vector2D().normalized;
                         else

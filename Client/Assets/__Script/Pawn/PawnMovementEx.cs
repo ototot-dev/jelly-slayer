@@ -9,7 +9,7 @@ namespace Game
         [Header("Destination")]
         public Vector3 destination;
         public float minApproachDistance = 1f;
-        public virtual float GetDefaultMinApproachDistance() => 1f;
+        public virtual float GetDefaultMinApproachDistance() => __pawnBrain != null ? Mathf.Max(0.1f, __pawnBrain.coreColliderHelper.GetCapsuleRadius() * 0.5f) : 0.1f;
         public virtual bool CanMove()
         {
                 var canMove1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsGroggy && !__pawnBrain.PawnBB.IsDown && !CheckReachToDestination();
