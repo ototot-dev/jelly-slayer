@@ -84058,9 +84058,9 @@ MonoBehaviour:
     onMissedAudioClip: {fileID: 8300000, guid: b47bb87ddf4afcc49ba83a4999cf050e, type: 3}
     onBlockedAudioClip: {fileID: 8300000, guid: b47bb87ddf4afcc49ba83a4999cf050e, type: 3}
     onGuardBreakAudioClip: {fileID: 8300000, guid: 93fc0b243c8d39441a33d29e6146b688, type: 3}
-    onHitFleshClip: {fileID: 0}
-    onEnterGroggy: {fileID: 0}
-    onFootstepClip: {fileID: 0}
+    onHitFleshClip: {fileID: 8300000, guid: 1fb5c72a8e42f4b4ca01ef6f874b7b04, type: 3}
+    onEnterGroggy: {fileID: 8300000, guid: f86dc17312fb0bf418624499b31be97d, type: 3}
+    onFootstepClip: {fileID: 8300000, guid: 8e8064bfe8a8f884b9066b34381a5b77, type: 3}
   children:
     jellyMeshAttactPoint: {fileID: 6549141343366498079}
   attachment:
