@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 1532677598533230704}
   serializedVersion: 2
   m_LocalRotation: {x: 0.33860296, y: 0.3560554, z: -0.14025393, w: 0.8595938}
-  m_LocalPosition: {x: -7.91, y: 8.01, z: -7.91}
+  m_LocalPosition: {x: -7.44, y: 8.72, z: -7.44}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -114,7 +114,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 14.933332, y: 8.4, z: 1}
+  m_LocalScale: {x: 14.222222, y: 8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8987800775158610402}
@@ -212,7 +212,7 @@ Transform:
   m_GameObject: {fileID: 4231759119073248400}
   serializedVersion: 2
   m_LocalRotation: {x: 0.33860296, y: 0.3560554, z: -0.14025393, w: 0.8595938}
-  m_LocalPosition: {x: -7.9142146, y: 8.012342, z: -7.9142127}
+  m_LocalPosition: {x: -7.4419565, y: 8.720406, z: -7.441955}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -254,7 +254,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 4.2
+  orthographic size: 4
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -289,7 +289,7 @@ MonoBehaviour:
   resolutionSynchronizationMode: 0
   GameResolution: {x: 640, y: 360}
   ControlGameZoom: 1
-  GameCameraZoom: 4.2
+  GameCameraZoom: 4
   ViewCameraZoom: 1
 --- !u!114 &4103191127918928509
 MonoBehaviour:
@@ -364,7 +364,7 @@ Transform:
   m_GameObject: {fileID: 6842119547268722464}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.000001780192, y: 0.0023511886, z: -1}
+  m_LocalPosition: {x: 0.000001695421, y: 0.0015897751, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -405,7 +405,7 @@ Camera:
   far clip plane: 1001
   field of view: 60
   orthographic: 1
-  orthographic size: 4.1766663
+  orthographic size: 3.9777777
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
