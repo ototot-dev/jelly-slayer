@@ -304,37 +304,5 @@ namespace Game
             base.AwakeInternal();
             __brain = GetComponent<SoldierBrain>();
         }
-
-        protected override void StartInternal()
-        {
-            base.StartInternal();
-
-            __brain.JellyBB.common.isDown.Skip(1).Subscribe(v =>
-            {
-                if (v)
-                {
-                    __pawnAnimCtrler.mainAnimator.SetBool("IsDown", true);
-                    __pawnAnimCtrler.mainAnimator.SetTrigger("OnDown");
-                }
-                else
-                {
-                    //* 일어나는 모션동안은 무적
-                    __humanoidBrain.PawnStatusCtrler.AddStatus(PawnStatus.Invincible, 1f, 1f);
-                    __pawnAnimCtrler.mainAnimator.SetBool("IsDown", false);
-                    __humanoidBrain.InvalidateDecision(2f);
-                }
-            }).AddTo(this);
-
-            __brain.JellyBB.common.isGroggy.Skip(1).Where(v => !v).Subscribe(_ =>
-            {
-                //* 일어나는 모션동안은 무적
-                __humanoidBrain.PawnStatusCtrler.AddStatus(PawnStatus.Invincible, 1f, 1f);
-                __humanoidBrain.PawnStatusCtrler.AddStatus(PawnStatus.CanNotMove, 1f, 2f);
-                __humanoidBrain.InvalidateDecision(2f);
-
-                //* 막타 Hit 애님이 오전히 출력되는 시간 딜레이 
-                Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(_ => __pawnAnimCtrler.mainAnimator.SetBool("IsGroggy", false)).AddTo(this);
-            }).AddTo(this);
-        }
     }
 }

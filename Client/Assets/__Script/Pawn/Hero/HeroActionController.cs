@@ -49,6 +49,20 @@ namespace Game
 
             if (damageContext.actionResult == ActionResults.Damaged)
             {
+                var hitVec = damageContext.receiverBrain.GetWorldPosition() - damageContext.senderBrain.GetWorldPosition();
+                hitVec = damageContext.receiverBrain.GetWorldTransform().InverseTransformDirection(hitVec).Vector2D().normalized;
+
+                if (Mathf.Abs(hitVec.x) > Mathf.Abs(hitVec.z))
+                {
+                    __pawnAnimCtrler.mainAnimator.SetFloat("HitX", hitVec.x > 0f ? 1f : -1f);
+                    __pawnAnimCtrler.mainAnimator.SetFloat("HitY", 0f);
+                }
+                else
+                {
+                    __pawnAnimCtrler.mainAnimator.SetFloat("HitX", 0f);
+                    __pawnAnimCtrler.mainAnimator.SetFloat("HitY", hitVec.z > 0f ? 1f : -1f);
+                }
+
                 //* 구르기 불가 상태 부여
                 var cannotRollDuration = Mathf.Max(0.1f, damageContext.receiverPenalty.Item2 - DatasheetManager.Instance.GetPlayerData().earlyRollOffsetOnStarggerd);
                 __brain.StatusCtrler.AddStatus(PawnStatus.CanNotRoll, 1f, cannotRollDuration);

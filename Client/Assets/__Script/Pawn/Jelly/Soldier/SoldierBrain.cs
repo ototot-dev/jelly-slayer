@@ -1,3 +1,4 @@
+using System;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
@@ -134,8 +135,36 @@ namespace Game
 
                     jellyMeshCtrler.FadeOut(0.5f);
                     jellyMeshCtrler.FinishHook();
+
+                    //* 막타 Hit 애님이 오전히 출력되는 시간 딜레이 
+                    Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(_ => __pawnAnimCtrler.mainAnimator.SetBool("IsGroggy", false)).AddTo(this);
+
+                    //* 일어나는 모션 동안은 무적
+                    PawnStatusCtrler.AddStatus(PawnStatus.Invincible, 1f, 2f);
+                    PawnStatusCtrler.AddStatus(PawnStatus.CanNotMove, 1f, 3f);
+                    PawnStatusCtrler.AddStatus(PawnStatus.CanNotAction, 1f, 3f);
+                    InvalidateDecision(4f);
                 }
             };
+
+            BB.common.isDown.Skip(1).Subscribe(v =>
+            {
+                if (v)
+                {
+                    AnimCtrler.mainAnimator.SetBool("IsDown", true);
+                    AnimCtrler.mainAnimator.SetTrigger("OnDown");
+                }
+                else
+                {
+                    AnimCtrler.mainAnimator.SetBool("IsDown", false);
+
+                    //* 일어나는 모션 동안은 무적
+                    PawnStatusCtrler.AddStatus(PawnStatus.Invincible, 1f, 1f);
+                    PawnStatusCtrler.AddStatus(PawnStatus.CanNotMove, 1f, 2f);
+                    PawnStatusCtrler.AddStatus(PawnStatus.CanNotAction, 1f, 2f);
+                    InvalidateDecision(3f);
+                }
+            }).AddTo(this);
 
             BB.body.isFalling.Skip(1).Subscribe(v =>
             {
@@ -188,7 +217,7 @@ namespace Game
             if (!BB.IsSpawnFinished || !BB.IsInCombat || BB.IsDead || BB.IsGroggy || BB.IsDown)
                 return;
 
-            if (StatusCtrler.CheckStatus(PawnStatus.CanNotAction))
+            if (StatusCtrler.CheckStatus(PawnStatus.CanNotAction) || StatusCtrler.CheckStatus(PawnStatus.Staggered))
                 return;
 
 #if UNITY_EDITOR
