@@ -29,7 +29,7 @@ namespace Game
                 foreach (var s in actionDataSelector.ReservedSequences)
                 {
                     GUI.backgroundColor = s.Value.currProb > 0f && s.Value == actionDataSelector.CurrSequence() ? new Color(0.8f, 0.8f, 1) : Color.white;
-                    if (GUILayout.Button($"{s.Value.SequenceName} | Rate:{s.Value.currProb:F2} | CoolTime:{s.Value.GetMaxCoolTime():F1}"))
+                    if (GUILayout.Button($"{s.Value.SequenceName} | Rate:{s.Value.currProb:F2} | CoolTime:{s.Value.GetCoolTime():F1}"))
                         actionDataSelector.EnqueueSequence(s.Value);
                 }
                 GUILayout.Label("Action");

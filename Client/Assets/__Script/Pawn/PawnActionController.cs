@@ -291,8 +291,8 @@ namespace Game
                 if (__traceBoxCollider != null)
                 {
                     var halfExtent = 0.5f * __traceBoxCollider.size;
-                    var interpRotation = Quaternion.Lerp(__prevTraceRotation, __traceCollider.transform.rotation, 0.5f);
-                    var currPosition = __traceBoxCollider.transform.localToWorldMatrix.MultiplyPoint(__traceSphereCollider.center);
+                    var interpRotation = Quaternion.Lerp(__prevTraceRotation, __traceBoxCollider.transform.rotation, 0.5f);
+                    var currPosition = __traceBoxCollider.transform.localToWorldMatrix.MultiplyPoint(__traceBoxCollider.center);
                     var deltaVec = currPosition - __prevTracePosition;
 
                     if (__traceCount == 0)

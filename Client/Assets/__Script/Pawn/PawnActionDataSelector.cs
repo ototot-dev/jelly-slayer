@@ -33,7 +33,7 @@ namespace Game
             public MainTable.ActionData Next() => ++__currIndex < __sequenceData.Length ? __sequenceData[__currIndex] : null;
             public void Reset() { __currIndex = -1; }
             public float GetPaddingTime() => (__paddingTimeData?.ContainsKey(__currIndex) ?? false) ? __paddingTimeData[__currIndex] : 0f;
-            public float GetMaxCoolTime() => __sequenceData.Max(p => __selector.GetCoolTime(p));
+            public float GetCoolTime() => __sequenceData.Max(p => __selector.GetCoolTime(p));
             public void SetCoolTime(int index = 0)
             {
                 Debug.Assert(index >= 0 && index < __sequenceData.Length);

@@ -220,6 +220,7 @@ MonoBehaviour:
   Eyes:
   - {fileID: 5187100240829141937}
   OptimizeWithMesh: {fileID: 0}
+  OptimizeAtDistance: 0
   EyesAnimatorAmount: 1
   FollowTargetAmount: 1
   EyesSpeed: 1
@@ -243,6 +244,8 @@ MonoBehaviour:
   IndividualClamping: 0
   headReferenceLookForward: {x: 0, y: 0, z: 0}
   headReferenceUp: {x: 0, y: 0, z: 0}
+  headUp: {x: 0, y: 0, z: 0}
+  headUpDynamic: {x: 0, y: 0, z: 0}
   WorldUpIsBaseTransformUp: 0
   StaticLookStartPosition: 0
 --- !u!1 &191985242539026500
@@ -26020,6 +26023,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51753b4002b0d48c299cb80bc4ef44cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debugActionSelectDisabled: 0
 --- !u!114 &8335698861385494397
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26036,8 +26040,9 @@ MonoBehaviour:
   visionLen: 7
   visionAngle: 120
   nearVisionLen: 2
-  touchSensorTrigger: {fileID: 3531390869193977627}
   soundSensorTrigger: {fileID: 2921741053752323708}
+  touchSensorTrigger: {fileID: 3531390869193977627}
+  touchSensorTriggers: []
   drawGizmosEnabled: 0
 --- !u!114 &723816571671492862
 MonoBehaviour:
@@ -26150,6 +26155,9 @@ MonoBehaviour:
   coreColliderHelper: {fileID: 2304260753377672933}
   bodyHitColliderHelper: {fileID: 7762583263965785145}
   parryColliderHelper: {fileID: 0}
+  parryHitColliderHelper: {fileID: 0}
+  shieldHitColliderHelper: {fileID: 0}
+  hookingPointColliderHelper: {fileID: 0}
   visibilityChecker: {fileID: 0}
   owner: {fileID: 0}
   tickInterval: 0.1
@@ -26161,7 +26169,6 @@ MonoBehaviour:
   leftLeg2_colliderHelper: {fileID: 7901147414094264253}
   rightLeg1_colliderHelper: {fileID: 1953545904694058999}
   rightLeg2_colliderHelper: {fileID: 3804915358910090961}
-  debugActionDisabled: 1
 --- !u!114 &2127815980358740746
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26177,6 +26184,7 @@ MonoBehaviour:
   common:
     pawnId: 6
     pawnName: Etasphera42
+    displayName: 
     spawnWaitingTime: 1
     despawnWaitingTime: 1
     isSpawnFinished:
@@ -26196,7 +26204,7 @@ MonoBehaviour:
   stat:
     maxHeartPoint:
       value: 1
-    maxMagicPoint:
+    maxActionPoint:
       value: 1
     maxStamina:
       value: 1
@@ -26204,11 +26212,13 @@ MonoBehaviour:
       value: 1
     maxKnockDown:
       value: 1
+    maxRage:
+      value: 1
     maxGroggyHitCount:
       value: 0
     heartPoint:
       value: 0
-    magicPoint:
+    actionPoint:
       value: 1
     stamina:
       value: 1
@@ -26217,6 +26227,8 @@ MonoBehaviour:
     knockDown:
       value: 0
     groggyHitCount:
+      value: 0
+    rage:
       value: 0
     poise: 0
     guardStrength: 0
@@ -26234,6 +26246,7 @@ MonoBehaviour:
   target:
     targetPawnHP:
       value: {fileID: 0}
+    trail: []
   decision:
     currDecision:
       value: -1
@@ -26258,21 +26271,25 @@ MonoBehaviour:
       value: 0
     isJumping:
       value: 0
-    isGuarding:
-      value: 0
-    comboAttackRateBoostAfterCounterAttack: 0
-    allAttackFixedRateAfterLeapHit: 0
-    comboAttackRateStep: 0
-    counterAttackRateStep: 0
-    leapRateStep: 0
     bulletPrefab: {fileID: 5195597221496436211, guid: 41c245f423d1f47dc8a1f148fb6d93ce, type: 3}
+    bulletTurretRotateSpeed: 1
+    bulletMaxShakeAngle: 1
     framePrefab: {fileID: 5195597221496436211, guid: 42a3d4a3e7cc14b60a4d1509837bd83e, type: 3}
-    torch_baseRotateSpeed: 30
-    laserA_baseRotateSpeed: 3600
+    torchTurretRotateSpeed: 1
+    bombPrefab: {fileID: 0}
+    laserA_damageInterval: 0.1
+    laserA_maxDistance: 1
+    laserA_forwardSpeed: 1
+    laserA_turretRotateSpeed: 1
+    laserA_charingDuration: 1
     laserA_approachSpeed: 2
-    laserA_sweepDistance: 20
-    laserB_topRotateSpeed: 3600
+    laserA_approachDuration: 1
+    laserA_sweepDuration: 1
+    laserB_stayDuration: 1
     laserB_maxDistance: 20
+    laserB_forwardSpeed: 1
+    laserB_turretRotateSpeed: 1
+    laserB_charingDuration: 1
   graphics:
     hitColor: {fileID: 2100000, guid: a352a16cd87054b82af9135444ad0122, type: 2}
     onHitFx: {fileID: 3011233550371498735, guid: 24e37d54f259141abb7ebbc527b8bf4e, type: 3}
@@ -26332,7 +26349,7 @@ MonoBehaviour:
     - {fileID: 3930799030225362276}
     - {fileID: 7582083278417983294}
     - {fileID: 4329359356516953012}
-    laserA_aimPoint: {fileID: 8249829599663094313}
+    laserAimPoint: {fileID: 0}
     laserA_Renderer: {fileID: 9022285480948331079}
     laserB_Renderer: {fileID: 1607441678788026250}
 --- !u!114 &2909659972003230112
@@ -26348,23 +26365,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _parentBlackboard: {fileID: 0}
-  _serializedBlackboard: '{"_variables":{"SlashRoundRed":{"_value":1,"_name":"SlashRoundRed","_id":"812c51af-1b2b-4c18-aa17-0d3fd55b1286","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
-    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"MagicPillarBlastRed":{"_value":2,"_name":"MagicPillarBlastRed","_id":"3b4d98d4-d3a3-4c3d-a537-4a0f468b9cdb","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
-    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"GroundSlam":{"_value":3,"_name":"GroundSlam","_id":"3ea2abb1-ff32-453f-9778-983376e1d10e","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
-    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"BodySlam":{"_value":4,"_name":"BodySlam","_id":"df6ef16a-add9-47aa-b731-e0971a94ba21","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
-    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"Bullet":{"_value":5,"_name":"Bullet","_id":"b4b1c665-d528-4f5b-9391-88cf5e3ae8ca","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
-    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"weapon_emit_r":{"_value":6,"_name":"weapon_emit_r","_id":"42ce7270-e0e0-47de-b83e-0f92dc692e93","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Transform,
-    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"weapon_emit_l":{"_value":7,"_name":"weapon_emit_l","_id":"bee3cf50-f733-4c4b-8167-73034be3d7ec","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Transform,
-    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"Flame":{"_value":8,"_name":"Flame","_id":"af5e9e1b-f677-4b58-af3d-5b442beb5d4f","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
-    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"turret_emit_c":{"_value":9,"_name":"turret_emit_c","_id":"c345c25e-2d17-47cc-a248-c779f5c637bb","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Transform,
-    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"FlamethrowerFastALT":{"_value":10,"_name":"FlamethrowerFastALT","_id":"a3aabf31-8162-432b-aa7e-e48d714ffc58","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
-    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"FireGasLeak":{"_value":11,"_name":"FireGasLeak","_id":"95d8ed05-6304-45d4-9b7f-ea3d93e30e55","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
-    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"LaserBeam4":{"_value":12,"_name":"LaserBeam4","_id":"2779c46e-5cce-479d-9967-ffdf5d2bb984","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
-    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"Bomb":{"_value":13,"_name":"Bomb","_id":"c15b3f3d-1ec1-4e1c-81bc-1b67dc89d71f","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+  _serializedBlackboard: '{"_variables":{"SlashRoundRed":{"_name":"SlashRoundRed","_id":"812c51af-1b2b-4c18-aa17-0d3fd55b1286","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"MagicPillarBlastRed":{"_value":1,"_name":"MagicPillarBlastRed","_id":"3b4d98d4-d3a3-4c3d-a537-4a0f468b9cdb","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"GroundSlam":{"_value":2,"_name":"GroundSlam","_id":"3ea2abb1-ff32-453f-9778-983376e1d10e","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"BodySlam":{"_value":3,"_name":"BodySlam","_id":"df6ef16a-add9-47aa-b731-e0971a94ba21","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"Bullet":{"_value":4,"_name":"Bullet","_id":"b4b1c665-d528-4f5b-9391-88cf5e3ae8ca","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"weapon_emit_r":{"_value":5,"_name":"weapon_emit_r","_id":"42ce7270-e0e0-47de-b83e-0f92dc692e93","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Transform,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"weapon_emit_l":{"_value":6,"_name":"weapon_emit_l","_id":"bee3cf50-f733-4c4b-8167-73034be3d7ec","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Transform,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"Flame":{"_value":7,"_name":"Flame","_id":"af5e9e1b-f677-4b58-af3d-5b442beb5d4f","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"turret_emit_c":{"_value":8,"_name":"turret_emit_c","_id":"c345c25e-2d17-47cc-a248-c779f5c637bb","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Transform,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"FlamethrowerFastALT":{"_value":9,"_name":"FlamethrowerFastALT","_id":"a3aabf31-8162-432b-aa7e-e48d714ffc58","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"FireGasLeak":{"_value":10,"_name":"FireGasLeak","_id":"95d8ed05-6304-45d4-9b7f-ea3d93e30e55","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"LaserBeam4":{"_value":11,"_name":"LaserBeam4","_id":"2779c46e-5cce-479d-9967-ffdf5d2bb984","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"Bomb":{"_value":12,"_name":"Bomb","_id":"c15b3f3d-1ec1-4e1c-81bc-1b67dc89d71f","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}}}'
   _objectReferences:
   - {fileID: 0}
-  - {fileID: 6209972863228401158, guid: 346845f5ec84256469525d334ac20d56, type: 3}
   - {fileID: 5629602492193098048, guid: 265bf097dd85fb144b689a6ac2211310, type: 3}
   - {fileID: 5741126187209887343, guid: 8d8c1676b1e5dca46b3c777afd3f7e39, type: 3}
   - {fileID: 1541482542063588452, guid: 6103ef73125cad74a80cf8dd0703772c, type: 3}
@@ -26378,11 +26394,9 @@ MonoBehaviour:
   - {fileID: 3715311985180013520}
   - {fileID: 3083626412401777055, guid: 14a40d111e678473c881515177c08a54, type: 3}
   _serializedVariables:
-  - _json: '{"_value":1,"_name":"SlashRoundRed","_id":"812c51af-1b2b-4c18-aa17-0d3fd55b1286","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+  - _json: '{"_name":"SlashRoundRed","_id":"812c51af-1b2b-4c18-aa17-0d3fd55b1286","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
       UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
-    _references:
-    - {fileID: 0}
-    - {fileID: 6209972863228401158, guid: 346845f5ec84256469525d334ac20d56, type: 3}
+    _references: []
   - _json: '{"_value":1,"_name":"MagicPillarBlastRed","_id":"3b4d98d4-d3a3-4c3d-a537-4a0f468b9cdb","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
       UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
     _references:
@@ -47472,6 +47486,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   coreAttachPoint: {fileID: 0}
+  bodyOffsetPoint: {fileID: 0}
   points: []
   connections: []
   body: {fileID: 2709918242723436746}
@@ -139187,6 +139202,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
+    DoStepAnimationOnDistanceFactor: 0.055
   UseGluing: 1
   MainGlueBlend: 1
   GlueRangeThreshold: 1
@@ -139213,6 +139229,14 @@ MonoBehaviour:
   _EditorSetupCategory: 0
   _EditorMotionCategory: 0
   _EditorExtraCategory: 0
+  setupPose:
+    MainHipsPose:
+      SourceTransform: {fileID: 0}
+      RotationInRoot: {x: 0, y: 0, z: 0, w: 0}
+      PositionInRoot: {x: 0, y: 0, z: 0}
+    HipsPoses: []
+    LegPoses: []
+  ExtraSetupPoses: []
   IKHintMode: 0
   LimitLegStretch: 0.99
   FeetYOffset: 0
@@ -139228,6 +139252,7 @@ MonoBehaviour:
   AnimatePhysics: 0
   UnscaledDeltaTime: 0
   DisableIfInvisible: {fileID: 0}
+  DisableIfInvisibleExtraRenderers: []
   FadeOffAtDistance: 0
   GroundMask:
     serializedVersion: 2

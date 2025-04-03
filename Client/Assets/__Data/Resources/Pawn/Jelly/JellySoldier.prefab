@@ -1284,6 +1284,7 @@ Transform:
   - {fileID: 2869710111818139488}
   - {fileID: 7979756587045458682}
   - {fileID: 8622950999368912312}
+  - {fileID: 5930645049433172802}
   - {fileID: 8100486106525040855}
   - {fileID: 1291023932344901000}
   - {fileID: 5781964363949412845}
@@ -1694,6 +1695,78 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!1 &505564162174231988
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5930645049433172802}
+  - component: {fileID: 2163100872818072530}
+  - component: {fileID: 3812672800434732794}
+  m_Layer: 0
+  m_Name: ShieldAttackCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5930645049433172802
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 505564162174231988}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 1.5, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6920421996920446943}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!136 &2163100872818072530
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 505564162174231988}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.8
+  m_Height: 3
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!114 &3812672800434732794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 505564162174231988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c93af81a158ff4ebbb764993c3a8ac91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pawnRigidbody: {fileID: 0}
+  pawnCollider: {fileID: 0}
+  pawnBrain: {fileID: 0}
+  sensorTrigger: 0
 --- !u!1 &541457249301622428
 GameObject:
   m_ObjectHideFlags: 0
@@ -5140,6 +5213,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 827300965817690329}
+  - {fileID: 6217386981729276549}
   m_Father: {fileID: 3865302999386843124}
   m_LocalEulerAnglesHint: {x: -29, y: 95, z: 113.4}
 --- !u!33 &3735996293672512473
@@ -26517,6 +26591,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4378005441249247064}
   - component: {fileID: 7034759996533335061}
+  - component: {fileID: 2334095637358316027}
   m_Layer: 8
   m_Name: SoundSensor
   m_TagString: Untagged
@@ -26562,6 +26637,22 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2334095637358316027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2955553695786588464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c93af81a158ff4ebbb764993c3a8ac91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pawnRigidbody: {fileID: 0}
+  pawnCollider: {fileID: 0}
+  pawnBrain: {fileID: 0}
+  sensorTrigger: 0
 --- !u!1 &2958284405313336860
 GameObject:
   m_ObjectHideFlags: 0
@@ -55741,9 +55832,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 3
+  m_Height: 4
   m_Direction: 1
-  m_Center: {x: 0, y: 1.9, z: 0}
+  m_Center: {x: 0, y: 1.5, z: 0}
 --- !u!114 &1010624364731835310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82635,6 +82726,76 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5278882544679535675}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8523015176339145289
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6217386981729276549}
+  - component: {fileID: 376781739002393882}
+  - component: {fileID: 6740015920269783370}
+  m_Layer: 8
+  m_Name: ShieldTouchSensor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6217386981729276549
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8523015176339145289}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 321786650567484540}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &376781739002393882
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8523015176339145289}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 6672
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.5, y: 1, z: 0.2}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6740015920269783370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8523015176339145289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c93af81a158ff4ebbb764993c3a8ac91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pawnRigidbody: {fileID: 0}
+  pawnCollider: {fileID: 0}
+  pawnBrain: {fileID: 0}
+  sensorTrigger: 0
 --- !u!1 &8556310593912091269
 GameObject:
   m_ObjectHideFlags: 0
@@ -83612,7 +83773,6 @@ MonoBehaviour:
   nearVisionLen: 2
   soundSensorTrigger: {fileID: 7034759996533335061}
   touchSensorTrigger: {fileID: 6441958913384127248}
-  touchSensorTriggers: []
   drawGizmosEnabled: 0
 --- !u!114 &9129796806968136233
 MonoBehaviour:
@@ -83854,6 +84014,7 @@ MonoBehaviour:
     jumpAttackProb: 0.4
     shieldAttackRigBlendInSpeed: 5
     shieldAttackRigBlendOutSpeed: 10
+    shieldTouchSensor: {fileID: 376781739002393882}
     missileEmitNum: 3
     missileEmitIntervalA: 0.1
     missileEmitIntervalB: 1
@@ -83937,7 +84098,8 @@ MonoBehaviour:
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"GroundSlam":{"_value":3,"_name":"GroundSlam","_id":"3ea2abb1-ff32-453f-9778-983376e1d10e","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"BodySlam":{"_value":4,"_name":"BodySlam","_id":"df6ef16a-add9-47aa-b731-e0971a94ba21","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"LeapFx":{"_value":5,"_name":"LeapFx","_id":"17e845d3-82ed-4c5a-aa9f-c41c25c952b1","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
-    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}}}'
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"ShieldAttackCollider":{"_value":6,"_name":"ShieldAttackCollider","_id":"6116a8ff-eb33-448e-b22e-9f0afd9a965c","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Collider,
+    UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}}}'
   _objectReferences:
   - {fileID: 0}
   - {fileID: 6209972863228401158, guid: d5e3d90705ce3874fa0f0f63ae0c7726, type: 3}
@@ -83945,6 +84107,7 @@ MonoBehaviour:
   - {fileID: 5741126187209887343, guid: 8d8c1676b1e5dca46b3c777afd3f7e39, type: 3}
   - {fileID: 1541482542063588452, guid: 6103ef73125cad74a80cf8dd0703772c, type: 3}
   - {fileID: 780422899590546167, guid: 13a4cb697e4720f448fb19f3ebb39c5b, type: 3}
+  - {fileID: 2163100872818072530}
   _serializedVariables:
   - _json: '{"_value":1,"_name":"SlashRoundRed","_id":"812c51af-1b2b-4c18-aa17-0d3fd55b1286","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
       UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
@@ -83971,6 +84134,11 @@ MonoBehaviour:
     _references:
     - {fileID: 0}
     - {fileID: 780422899590546167, guid: 13a4cb697e4720f448fb19f3ebb39c5b, type: 3}
+  - _json: '{"_value":1,"_name":"ShieldAttackCollider","_id":"6116a8ff-eb33-448e-b22e-9f0afd9a965c","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Collider,
+      UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
+    _references:
+    - {fileID: 0}
+    - {fileID: 2163100872818072530}
 --- !u!114 &937156682906900337
 MonoBehaviour:
   m_ObjectHideFlags: 0

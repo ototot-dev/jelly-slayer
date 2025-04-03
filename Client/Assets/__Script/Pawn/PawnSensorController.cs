@@ -17,7 +17,6 @@ namespace Game
         [Header("Component")]
         public CapsuleCollider soundSensorTrigger;
         public BoxCollider touchSensorTrigger;
-        public List<Collider> touchSensorTriggers = new();
         public HashSet<Collider> TouchingColliders { get; private set; } = new();
         public HashSet<Collider> ListeningColliders { get; private set; } = new();
         public HashSet<Collider> WatchingColliders { get; private set; } = new();

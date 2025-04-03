@@ -66,6 +66,7 @@ namespace Game
             [Header("ShieldAttack")]
             public float shieldAttackRigBlendInSpeed = 1f;
             public float shieldAttackRigBlendOutSpeed = 1f;
+            public BoxCollider shieldTouchSensor;
 
             [Header("Missile")]
             public int missileEmitNum = 1;

@@ -1,4 +1,5 @@
 using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 
 namespace Game
@@ -58,6 +59,7 @@ namespace Game
         {
             None = -1,
             JumpAttack,
+            ShieldAttack,
             Backstep,
             Counter,
             Missile,
@@ -72,85 +74,13 @@ namespace Game
             base.StartInternal();
 
             ActionDataSelector.ReserveSequence(ActionPatterns.JumpAttack, "JumpAttack");
+            ActionDataSelector.ReserveSequence(ActionPatterns.ShieldAttack, "ShieldAttack");
             ActionDataSelector.ReserveSequence(ActionPatterns.Backstep, "Backstep");
             ActionDataSelector.ReserveSequence(ActionPatterns.Counter, "Counter");
             ActionDataSelector.ReserveSequence(ActionPatterns.Missile, 0.5f, "Missile");
             ActionDataSelector.ReserveSequence(ActionPatterns.ComboAttack, "Attack#1", "Attack#2", "Attack#3");
             ActionDataSelector.ReserveSequence(ActionPatterns.CounterCombo, "Counter", "Counter", 0.1f, "Attack#3");
             ActionDataSelector.ReserveSequence(ActionPatterns.Leap, "Backstep", 0.2f, "Missile", 1f, "Leap");
-
-            onUpdate += () =>
-            {
-                if (!BB.IsSpawnFinished || !BB.IsInCombat || BB.IsDead || BB.IsGroggy || BB.IsDown)
-                    return;
-
-                if (!ActionCtrler.CheckActionPending() && (!ActionCtrler.CheckActionRunning() || ActionCtrler.CanInterruptAction()) && BB.TargetPawn != null)
-                {
-                    var nextActionData = ActionDataSelector.AdvanceSequence();
-                    if (nextActionData != null)
-                    {
-                        if (ActionCtrler.CheckActionRunning()) ActionCtrler.CancelAction(false);
-
-                        ActionCtrler.SetPendingAction(nextActionData.actionName, string.Empty, string.Empty, ActionDataSelector.CurrSequence().GetPaddingTime());
-                        ActionDataSelector.SetCoolTime(nextActionData);
-
-                        if (nextActionData.actionName == "Backstep")
-                            BB.action.backstepRootMotionMultiplier = Mathf.Lerp(0.7f, 0.2f, Mathf.Clamp01(GetWorldPosition().Magnitude2D() / 5f));
-                    }
-                }
-            };
-
-            onTick += (deltaTick) =>
-            {
-                if (!BB.IsSpawnFinished || !BB.IsInCombat || BB.IsDead || BB.IsGroggy || BB.IsDown)
-                    return;
-
-                if (StatusCtrler.CheckStatus(PawnStatus.CanNotAction))
-                    return;
-
-#if UNITY_EDITOR
-                if (ActionDataSelector.debugActionSelectDisabled)
-                    return;
-#endif
-
-                if (!ActionCtrler.CheckActionPending() && (!ActionCtrler.CheckActionRunning() || ActionCtrler.CanInterruptAction()) && BB.TargetPawn != null)
-                {
-                    var randomPick = ActionDataSelector.TryRandomPick<ActionPatterns>(UnityEngine.Random.Range(0.5f, 1f), -1f, 1f);
-                    if (randomPick != ActionPatterns.None)
-                    {
-                        ActionDataSelector.ResetProbability(randomPick);
-                        ActionDataSelector.EnqueueSequence(randomPick);
-                    }
-                    else
-                    {
-                        ActionDataSelector.BoostProbability(ActionPatterns.Leap, BB.action.leapBoostProbOnTick * deltaTick, BB.action.leapMaxProb);
-                        ActionDataSelector.BoostProbability(ActionPatterns.Missile, BB.action.missileBoostProbOnTick * deltaTick, BB.action.missileMaxProb);
-
-                        var distanceToTarget = coreColliderHelper.GetDistanceSimple(BB.TargetBrain.coreColliderHelper);
-
-                        if (distanceToTarget < BB.action.backstepTriggerDistance) 
-                            ActionDataSelector.BoostProbability(ActionPatterns.Backstep, BB.action.backstepBoostProbOnTick * deltaTick);
-
-                        if (distanceToTarget < BB.action.counterComboAttackDistance)
-                        {
-                            if (distanceToTarget > BB.action.comboAttackDistance || BB.action.counterComboAttachProb > UnityEngine.Random.Range(0f, 1f))
-                            {
-                                if (CheckTargetVisibility() && ActionDataSelector.EvaluateSequence(ActionPatterns.CounterCombo, -1f, -1f, BB.action.counterComboAttackInterval))
-                                    ActionDataSelector.EnqueueSequence(ActionPatterns.CounterCombo);
-                            }
-                            else if (CheckTargetVisibility() && ActionDataSelector.EvaluateSequence(ActionPatterns.ComboAttack, -1f, -1f, BB.action.comboAttackInterval))
-                            {
-                                ActionDataSelector.EnqueueSequence(ActionPatterns.ComboAttack);
-                            }
-                        }
-                        else if (BB.action.jumpAttackProb > UnityEngine.Random.Range(0f, 1f))
-                        {
-                            if (CheckTargetVisibility() && ActionDataSelector.EvaluateSequence(ActionPatterns.JumpAttack, -1f, -1f, BB.action.jumpAttackInterval))
-                                ActionDataSelector.EnqueueSequence(ActionPatterns.JumpAttack);
-                        }
-                    }
-                }
-            };
 
             ActionCtrler.onActionStart += (_, __) =>
             {
@@ -179,7 +109,7 @@ namespace Game
 
             PawnStatusCtrler.onStatusActive += (status) =>
             {
-                if (status == PawnStatus.Staggered) 
+                if (status == PawnStatus.Staggered)
                 {
                     ActionDataSelector.ClearSequences();
                     ActionDataSelector.GetSequence(ActionPatterns.ComboAttack).SetCoolTime();
@@ -206,17 +136,103 @@ namespace Game
                     jellyMeshCtrler.FinishHook();
                 }
             };
-            
+
             BB.body.isFalling.Skip(1).Subscribe(v =>
             {
                 //* 착지 동작 완료까지 이동을 금지함
                 if (!v) PawnStatusCtrler.AddStatus(PawnStatus.CanNotMove, 1f, 0.5f);
             }).AddTo(this);
+
+            //* 방패 터치 시에 ShieldAttack 발동 조건
+            BB.action.shieldTouchSensor.OnTriggerStayAsObservable().Subscribe(c =>
+            {
+                if (ActionCtrler.CheckActionPending() || (ActionCtrler.CheckActionRunning() && !ActionCtrler.CanInterruptAction()))
+                    return;
+                if (!ActionDataSelector.EvaluateSequence(ActionPatterns.ShieldAttack))
+                    return;
+
+                if (c.TryGetComponent<PawnColliderHelper>(out var colliderHelper) && colliderHelper.pawnBrain.PawnBB.common.pawnName == "Hero")
+                {
+                    ActionDataSelector.EnqueueSequence(ActionPatterns.ShieldAttack);
+                    ActionDataSelector.EnqueueSequence(ActionPatterns.CounterCombo);
+                }
+            }).AddTo(this);
+
+            onUpdate += () =>
+            {
+                if (!BB.IsSpawnFinished || !BB.IsInCombat || BB.IsDead || BB.IsGroggy || BB.IsDown)
+                    return;
+
+                if (!ActionCtrler.CheckActionPending() && (!ActionCtrler.CheckActionRunning() || ActionCtrler.CanInterruptAction()) && BB.TargetPawn != null)
+                {
+                    var nextActionData = ActionDataSelector.AdvanceSequence();
+                    if (nextActionData != null)
+                    {
+                        if (ActionCtrler.CheckActionRunning()) ActionCtrler.CancelAction(false);
+
+                        ActionCtrler.SetPendingAction(nextActionData.actionName, string.Empty, string.Empty, ActionDataSelector.CurrSequence().GetPaddingTime());
+                        ActionDataSelector.SetCoolTime(nextActionData);
+
+                        if (nextActionData.actionName == "Backstep")
+                            BB.action.backstepRootMotionMultiplier = Mathf.Lerp(0.7f, 0.2f, Mathf.Clamp01(GetWorldPosition().Magnitude2D() / 5f));
+                    }
+                }
+            };
+
         }
 
         protected override void OnTickInternal(float interval)
         {
             base.OnTickInternal(interval);
+
+            if (!BB.IsSpawnFinished || !BB.IsInCombat || BB.IsDead || BB.IsGroggy || BB.IsDown)
+                return;
+
+            if (StatusCtrler.CheckStatus(PawnStatus.CanNotAction))
+                return;
+
+#if UNITY_EDITOR
+            if (ActionDataSelector.debugActionSelectDisabled)
+                return;
+#endif
+
+            if (!ActionCtrler.CheckActionPending() && (!ActionCtrler.CheckActionRunning() || ActionCtrler.CanInterruptAction()) && BB.TargetPawn != null)
+            {
+                var randomPick = ActionDataSelector.TryRandomPick<ActionPatterns>(UnityEngine.Random.Range(0.5f, 1f), -1f, 1f);
+                if (randomPick != ActionPatterns.None)
+                {
+                    ActionDataSelector.ResetProbability(randomPick);
+                    ActionDataSelector.EnqueueSequence(randomPick);
+                }
+                else
+                {
+                    ActionDataSelector.BoostProbability(ActionPatterns.Leap, BB.action.leapBoostProbOnTick * interval, BB.action.leapMaxProb);
+                    ActionDataSelector.BoostProbability(ActionPatterns.Missile, BB.action.missileBoostProbOnTick * interval, BB.action.missileMaxProb);
+
+                    var distanceToTarget = coreColliderHelper.GetDistanceSimple(BB.TargetBrain.coreColliderHelper);
+
+                    if (distanceToTarget < BB.action.backstepTriggerDistance)
+                        ActionDataSelector.BoostProbability(ActionPatterns.Backstep, BB.action.backstepBoostProbOnTick * interval);
+
+                    if (distanceToTarget < BB.action.counterComboAttackDistance)
+                    {
+                        if (distanceToTarget > BB.action.comboAttackDistance || BB.action.counterComboAttachProb > UnityEngine.Random.Range(0f, 1f))
+                        {
+                            if (CheckTargetVisibility() && ActionDataSelector.EvaluateSequence(ActionPatterns.CounterCombo, -1f, -1f, BB.action.counterComboAttackInterval))
+                                ActionDataSelector.EnqueueSequence(ActionPatterns.CounterCombo);
+                        }
+                        else if (CheckTargetVisibility() && ActionDataSelector.EvaluateSequence(ActionPatterns.ComboAttack, -1f, -1f, BB.action.comboAttackInterval))
+                        {
+                            ActionDataSelector.EnqueueSequence(ActionPatterns.ComboAttack);
+                        }
+                    }
+                    else if (BB.action.jumpAttackProb > UnityEngine.Random.Range(0f, 1f))
+                    {
+                        if (CheckTargetVisibility() && ActionDataSelector.EvaluateSequence(ActionPatterns.JumpAttack, -1f, -1f, BB.action.jumpAttackInterval))
+                            ActionDataSelector.EnqueueSequence(ActionPatterns.JumpAttack);
+                    }
+                }
+            }
         }
 
         protected override void DamageReceiverHandler(ref PawnHeartPointDispatcher.DamageContext damageContext)
