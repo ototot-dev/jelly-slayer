@@ -118,6 +118,7 @@ namespace Game
                 }
                 else if (status == PawnStatus.Groggy)
                 {
+                    ActionDataSelector.ClearSequences();
                     PawnEventManager.Instance.SendPawnStatusEvent(this, PawnStatus.Groggy, 1f, PawnStatusCtrler.GetDuration(PawnStatus.Groggy));
                 }
             };
@@ -175,12 +176,14 @@ namespace Game
             //* 방패 터치 시에 ShieldAttack 발동 조건
             BB.action.shieldTouchSensor.OnTriggerStayAsObservable().Subscribe(c =>
             {
+                if (!BB.IsSpawnFinished || !BB.IsInCombat || BB.IsDead || BB.IsDown || BB.IsGroggy)
+                    return;
                 if (ActionCtrler.CheckActionPending() || (ActionCtrler.CheckActionRunning() && !ActionCtrler.CanInterruptAction()))
                     return;
-                if (!ActionDataSelector.EvaluateSequence(ActionPatterns.ShieldAttack))
+                if (StatusCtrler.CheckStatus(PawnStatus.CanNotAction) || StatusCtrler.CheckStatus(PawnStatus.Staggered))
                     return;
 
-                if (c.TryGetComponent<PawnColliderHelper>(out var colliderHelper) && colliderHelper.pawnBrain.PawnBB.common.pawnName == "Hero")
+                if (ActionDataSelector.EvaluateSequence(ActionPatterns.ShieldAttack) && c.TryGetComponent<PawnColliderHelper>(out var colliderHelper) && colliderHelper.pawnBrain.PawnBB.common.pawnName == "Hero")
                 {
                     ActionDataSelector.EnqueueSequence(ActionPatterns.ShieldAttack);
                     ActionDataSelector.EnqueueSequence(ActionPatterns.CounterCombo);
@@ -189,14 +192,14 @@ namespace Game
 
             onUpdate += () =>
             {
-                if (!BB.IsSpawnFinished || !BB.IsInCombat || BB.IsDead || BB.IsGroggy || BB.IsDown)
+                if (!BB.IsSpawnFinished || !BB.IsInCombat || BB.IsDead)
                     return;
 
-                if (!ActionCtrler.CheckActionPending() && (!ActionCtrler.CheckActionRunning() || ActionCtrler.CanInterruptAction()) && BB.TargetPawn != null)
+                if (!ActionCtrler.CheckActionPending() && (!ActionCtrler.CheckActionRunning() || ActionCtrler.CanInterruptAction()))
                 {
                     var nextActionData = ActionDataSelector.AdvanceSequence();
                     if (nextActionData != null)
-                    {
+                    {   
                         if (ActionCtrler.CheckActionRunning()) ActionCtrler.CancelAction(false);
 
                         ActionCtrler.SetPendingAction(nextActionData.actionName, string.Empty, string.Empty, ActionDataSelector.CurrSequence().GetPaddingTime());
