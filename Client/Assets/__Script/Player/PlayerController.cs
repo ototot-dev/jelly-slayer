@@ -517,10 +517,12 @@ namespace Game
                         possessedBrain.ActionCtrler.SetPendingAction("HeavySlash#1");
                         possessedBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
                     }
-                    else
+                    else 
                     {
-                        //possessedBrain.ActionCtrler.SetPendingAction("GroggyAttack#1");
-                        possessedBrain.ActionCtrler.SetPendingAction("Slash#1");
+                        if (possessedBrain.BB.TargetBrain != null && possessedBrain.BB.TargetBrain.PawnBB.IsGroggy)
+                            possessedBrain.ActionCtrler.SetPendingAction("GroggyAttack#1");
+                        else
+                            possessedBrain.ActionCtrler.SetPendingAction("Slash#1");
                         possessedBrain.ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
                     }
 
