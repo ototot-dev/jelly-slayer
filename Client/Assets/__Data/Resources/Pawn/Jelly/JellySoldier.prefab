@@ -9136,7 +9136,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2162563180506068083}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.8660254, z: 0.5, w: 0}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0.7071068, w: 0}
   m_LocalPosition: {x: 0, y: -0.036333323, z: 0.036333203}
   m_LocalScale: {x: 0.20000005, y: 0.20000002, z: 0.2}
   m_ConstrainProportionsScale: 0
@@ -9144,7 +9144,7 @@ Transform:
   - {fileID: 6879010672387503051}
   - {fileID: 4345914189265145190}
   m_Father: {fileID: 7445155660636810008}
-  m_LocalEulerAnglesHint: {x: -60, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 180, z: 0}
 --- !u!114 &8986328612903501066
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28694,7 +28694,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3501934747128105368}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.8660254, z: 0.5, w: 0}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0.7071068, w: 0}
   m_LocalPosition: {x: 0.046666697, y: -0.036333337, z: 0.03633319}
   m_LocalScale: {x: 0.20000005, y: 0.20000002, z: 0.2}
   m_ConstrainProportionsScale: 0
@@ -28702,7 +28702,7 @@ Transform:
   - {fileID: 1593260686219354985}
   - {fileID: 8850757652575557473}
   m_Father: {fileID: 2710930548157459308}
-  m_LocalEulerAnglesHint: {x: -60, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 180, z: 0}
 --- !u!114 &1816198668345070183
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35532,7 +35532,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3823124532071812603}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.8660254, z: 0.5, w: 0}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0.7071068, w: 0}
   m_LocalPosition: {x: 0.050000016, y: -0.036333337, z: 0.03633319}
   m_LocalScale: {x: 0.20000005, y: 0.20000002, z: 0.2}
   m_ConstrainProportionsScale: 0
@@ -35540,7 +35540,7 @@ Transform:
   - {fileID: 7864021162531166679}
   - {fileID: 8717774932068819087}
   m_Father: {fileID: 7445155660636810008}
-  m_LocalEulerAnglesHint: {x: -60, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 180, z: 0}
 --- !u!114 &1592567507176832920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43611,7 +43611,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4660704758458545866}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.8660254, z: 0.5, w: 0}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0.7071068, w: 0}
   m_LocalPosition: {x: -0.049999986, y: -0.036333308, z: 0.03633322}
   m_LocalScale: {x: 0.20000005, y: 0.20000002, z: 0.2}
   m_ConstrainProportionsScale: 0
@@ -43619,7 +43619,7 @@ Transform:
   - {fileID: 3406711093788270098}
   - {fileID: 3720821010434908133}
   m_Father: {fileID: 7445155660636810008}
-  m_LocalEulerAnglesHint: {x: -60, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 180, z: 0}
 --- !u!114 &968453889228490348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -51804,7 +51804,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
+  m_DynamicOccludee: 0
   m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
@@ -52196,7 +52196,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5748218332856280278}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.8660254, z: 0.5, w: 0}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0.7071068, w: 0}
   m_LocalPosition: {x: -0.046666652, y: -0.036333308, z: 0.03633322}
   m_LocalScale: {x: 0.20000005, y: 0.20000002, z: 0.2}
   m_ConstrainProportionsScale: 0
@@ -52204,7 +52204,7 @@ Transform:
   - {fileID: 8098390800444062215}
   - {fileID: 85463609965130011}
   m_Father: {fileID: 4222419883354516231}
-  m_LocalEulerAnglesHint: {x: -60, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 180, z: 0}
 --- !u!114 &5686564755846925915
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -83809,7 +83809,7 @@ MonoBehaviour:
   rightLegBoneSimulator: {fileID: 7126030012253448850}
   rigBlendWeight: 1
   rigBlendSpeed: 1
-  actionLayerBlendInSpeed: 20
+  actionLayerBlendInSpeed: 5
   actionLayerBlendOutSpeed: 5
   lowerLayerBlendSpeed: 10
   legAnimGlueBlendSpeed: 1
