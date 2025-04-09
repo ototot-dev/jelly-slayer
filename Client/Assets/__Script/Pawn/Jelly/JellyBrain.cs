@@ -10,7 +10,7 @@ namespace Game
     {
 #region IPawnSpawnable / IPawnMovable 구현
         Vector3 IPawnSpawnable.GetSpawnPosition() => transform.position;
-        void IPawnSpawnable.OnStartSpawnHandler() {}
+        public virtual void OnStartSpawnHandler() {}
         public virtual void OnFinishSpawnHandler() 
         { 
             if (this is IPawnEventListener listener)

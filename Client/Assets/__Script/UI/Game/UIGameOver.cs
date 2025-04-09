@@ -13,7 +13,7 @@ public class UIGameOver : MonoBehaviour
         gameObject.SetActive(false);
         GameManager.Instance.CloseGame();
 
-        GameObject.Find("Launcher").GetComponent<Launcher>().SetMode(Launcher.GameModes.Title);
+        // GameObject.Find("Launcher").GetComponent<Launcher>().SetMode(Launcher.GameModes.Title);
 
     }
 }

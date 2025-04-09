@@ -3,8 +3,10 @@ using System.Linq;
 using DG.Tweening;
 using FIMSpace.BonesStimulation;
 using UniRx;
+using Unity.Linq;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using VInspector.Libs;
 
 namespace Game
 {
@@ -51,11 +53,31 @@ namespace Game
                 __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition, mainAnimator.deltaRotation, Time.deltaTime);
         }
 
+        public override void OnAnimatorStateEnterHandler(AnimatorStateInfo stateInfo, int layerIndex)
+        {
+            __runningAnimStateNames.Add(stateInfo.shortNameHash);
+        }
+
+        public override void OnAniamtorStateExitHandler(AnimatorStateInfo stateInfo, int layerIndex)
+        {
+            __runningAnimStateNames.Remove(stateInfo.shortNameHash);
+
+            if (stateInfo.shortNameHash == Animator.StringToHash("Spawning"))
+            {
+                ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Off;
+
+                //* isSpawnFinished 값 갱신
+               __brain. BB.common.isSpawnFinished.Value = true;
+            }
+        }
+
         public override void OnAnimatorFootHandler(bool isRight) 
         {
             var pos = __brain.BB.TargetColliderHelper.GetWorldCenter();
             SoundManager.Instance.PlayWithClipPos(__brain.BB.audios.onFootstepClip, pos, false, true, 0.2f);
         }
+
+        public bool CheckAnimStateRunning(string stateName) => __runningAnimStateNames.Contains(Animator.StringToHash(stateName));
 
         void Awake()
         {
@@ -63,19 +85,20 @@ namespace Game
         }
 
         SoldierBrain __brain;
-        HashSet<string> __runningAnimStateNames = new();
-        public bool CheckAnimStateRunning(string stateName) => __runningAnimStateNames.Contains(stateName);
+        HashSet<int> __runningAnimStateNames = new();
 
         void Start()
         {
-            FindObservableStateMachineTriggerEx("OnParried").OnStateEnterAsObservable().Subscribe(s => __runningAnimStateNames.Add("OnParried")).AddTo(this);
-            FindObservableStateMachineTriggerEx("OnParried").OnStateExitAsObservable().Subscribe(s => __runningAnimStateNames.Remove("OnParried")).AddTo(this);
-            FindObservableStateMachineTriggerEx("OnGroggy (Start)").OnStateEnterAsObservable().Subscribe(s => __runningAnimStateNames.Add("OnGroggy (Start)")).AddTo(this);
-            FindObservableStateMachineTriggerEx("OnGroggy (Start)").OnStateExitAsObservable().Subscribe(s => __runningAnimStateNames.Remove("OnGroggy (Start)")).AddTo(this);
-            FindObservableStateMachineTriggerEx("OnGroggy (Loop)").OnStateEnterAsObservable().Subscribe(s => __runningAnimStateNames.Add("OnGroggy (Loop)")).AddTo(this);
-            FindObservableStateMachineTriggerEx("OnGroggy (Loop)").OnStateExitAsObservable().Subscribe(s => __runningAnimStateNames.Remove("OnGroggy (Loop)")).AddTo(this);
-            FindObservableStateMachineTriggerEx("OnGroggy (Break)").OnStateEnterAsObservable().Subscribe(s => __runningAnimStateNames.Add("OnGroggy (Break)")).AddTo(this);
-            FindObservableStateMachineTriggerEx("OnGroggy (Break)").OnStateExitAsObservable().Subscribe(s => __runningAnimStateNames.Remove("OnGroggy (Break)")).AddTo(this);
+            //* Ragdoll이 사용하는 PhysicsBody 레이어는 
+            ragdollAnimator.Handler.TargetParentForRagdollDummy.gameObject.Descendants()
+                .Select(d => d.GetComponent<Rigidbody>()).Where(r => r != null).ForEach(r => 
+                {
+                    r.excludeLayers |= LayerMask.GetMask("HitBoxBlocking");
+                    if (r.TryGetComponent<Collider>(out var collider))
+                        collider.excludeLayers |= LayerMask.GetMask("HitBoxBlocking");
+                        
+                    __Logger.LogR1(gameObject, "Add 'HitBoxBlocking' to excludeLayers", "gameObject", r);
+                });
 
             __brain.StatusCtrler.onStatusActive += (status) =>
             {
@@ -138,11 +161,11 @@ namespace Game
                 mainAnimator.SetFloat("MoveAnimSpeed", 1f);
 
                 var animMoveVec = __brain.coreColliderHelper.transform.InverseTransformDirection(__brain.Movement.CurrVelocity).Vector2D();
-                var animMoveVecClamped = moveXmoveY_Table.OrderBy(v => Vector3.Angle(v, animMoveVec)).First();
+                // var animMoveVecClamped = moveXmoveY_Table.OrderBy(v => Vector3.Angle(v, animMoveVec)).First();
 
-                animMoveVecClamped = Vector3.Lerp(animMoveVec, animMoveVecClamped, 0.5f);
-                mainAnimator.SetFloat("MoveX", animMoveVecClamped.x / __brain.Movement.moveSpeed);
-                mainAnimator.SetFloat("MoveY", animMoveVecClamped.z / __brain.Movement.moveSpeed);
+                // animMoveVecClamped = Vector3.Lerp(animMoveVec, animMoveVecClamped, 0.5f);
+                mainAnimator.SetFloat("MoveX", animMoveVec.x / __brain.Movement.moveSpeed);
+                mainAnimator.SetFloat("MoveY", animMoveVec.z / __brain.Movement.moveSpeed);
 
                 if (__brain.ActionCtrler.CheckActionRunning())
                 {

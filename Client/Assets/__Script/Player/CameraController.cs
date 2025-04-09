@@ -4,8 +4,6 @@ using System.Linq;
 using PixelCamera;
 using UniRx;
 using UnityEngine;
-using UnityEngine.Analytics;
-using UnityEngine.Rendering;
 
 namespace Game
 {

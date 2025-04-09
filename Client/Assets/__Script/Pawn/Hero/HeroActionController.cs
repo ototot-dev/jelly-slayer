@@ -73,16 +73,16 @@ namespace Game
                 if (GetSuperArmorLevel() != SuperArmorLevels.CanNotStarggerOnDamaged)
                     __brain.AnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1f / damageContext.receiverPenalty.Item2);
 
-                var viewMatrix = GameContext.Instance.mainCameraCtrler.cameraTransform.worldToLocalMatrix;
+                var viewMatrix = GameContext.Instance.cameraCtrler.cameraTransform.worldToLocalMatrix;
                 var hitPointOffsetVec = viewMatrix.MultiplyPoint(damageContext.hitPoint.AdjustY(0f)) - viewMatrix.MultiplyPoint(__brain.GetWorldPosition().AdjustY(0f));
                 if (Mathf.Abs(hitPointOffsetVec.x) > Mathf.Abs(hitPointOffsetVec.y))
                 {
-                    EffectManager.Instance.Show(__brain.BB.graphics.onBloodBurstFx[0], damageContext.hitPoint, GameContext.Instance.mainCameraCtrler.BillboardRotation, 0.6f * (hitPointOffsetVec.x > 0f ? new Vector3(-1f, 1f, 1f) : Vector3.one))
+                    EffectManager.Instance.Show(__brain.BB.graphics.onBloodBurstFx[0], damageContext.hitPoint, GameContext.Instance.cameraCtrler.BillboardRotation, 0.6f * (hitPointOffsetVec.x > 0f ? new Vector3(-1f, 1f, 1f) : Vector3.one))
                         .transform.SetParent(__brain.bodyHitColliderHelper.transform, true);
                 }
                 else
                 {
-                    EffectManager.Instance.Show(__brain.BB.graphics.onBloodBurstFx[1], damageContext.hitPoint, GameContext.Instance.mainCameraCtrler.BillboardRotation, Vector3.one)
+                    EffectManager.Instance.Show(__brain.BB.graphics.onBloodBurstFx[1], damageContext.hitPoint, GameContext.Instance.cameraCtrler.BillboardRotation, Vector3.one)
                         .transform.SetParent(__brain.bodyHitColliderHelper.transform, true);
                 }
                 EffectManager.Instance.Show(__brain.BB.graphics.onBleedFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()), Vector3.one)

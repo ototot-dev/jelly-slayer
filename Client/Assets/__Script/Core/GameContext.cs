@@ -7,17 +7,23 @@ namespace Game
 {
     public class GameContext : MonoSingleton<GameContext>
     {
-        public string TerrainLayerName => "Terrain";
-        public Camera MainCamera => mainCameraCtrler != null ? mainCameraCtrler.viewCamera : null;
-        public HeroBrain HeroBrain => playerCtrler != null ? playerCtrler.possessedBrain : null;
-        public DroneBotFormationController droneBotFormationCtrler;
         public PlayerController playerCtrler;
-        public TargetingController playerTargetManager;
-        public CameraController mainCameraCtrler;
+        public CameraController cameraCtrler;
         public TerrainManager terrainManager;
         public SlimeSpawnManager jellySpawnManager;
         public HeroSpawnManager heroSpawnManager;
         public CanvasController mainCanvasCtrler;
+
+        public RectTransform MainCanvas
+        {
+            get
+            {
+                __mainCanvas ??= GameObject.FindWithTag("MainCanvas").GetComponent<RectTransform>();
+                return __mainCanvas;
+            }
+        }
+
+        RectTransform __mainCanvas;
         
         void Awake()
         {

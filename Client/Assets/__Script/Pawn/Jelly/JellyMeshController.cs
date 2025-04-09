@@ -208,7 +208,7 @@ namespace Game
 
         void UpdateBodyOffsetPointAndAttachPoint()
         {
-            var lookAtCameraVec = -GameContext.Instance.mainCameraCtrler.viewCamera.transform.forward;
+            var lookAtCameraVec = -GameContext.Instance.cameraCtrler.viewCamera.transform.forward;
             springMassSystem.bodyOffsetPoint.transform.LookAt(springMassSystem.core.position + lookAtCameraVec);
             springMassSystem.bodyOffsetPoint.localPosition = 0.2f * Perlin.Noise(Time.time) * Vector3.up;
 
@@ -276,7 +276,7 @@ namespace Game
                     Debug.Assert(ropeHookCtrler.hookingCollider != null);
                     hookingPointFx.transform.position = ropeHookCtrler.hookingCollider.transform.position = (jellyBrain as SoldierBrain).BB.attachment.spine02.position;
                     //* 카메라 쪽으로 위치를 당겨서 겹쳐서 안보이게 되는 경우를 완화함
-                    hookingPointFx.transform.position -= GameContext.Instance.mainCameraCtrler.viewCamera.transform.forward;
+                    hookingPointFx.transform.position -= GameContext.Instance.cameraCtrler.viewCamera.transform.forward;
                 }).AddTo(this);
         }
 

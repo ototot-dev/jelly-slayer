@@ -30,6 +30,7 @@ namespace Game
             public BoolReactiveProperty isGliding = new();
             public BoolReactiveProperty isFalling = new();
             public BoolReactiveProperty isGuarding = new();
+            public float getUpWaitTime = 1f;
             public float walkSpeed = 1f;
             public float jumpHeight = 1f;
             public float glidingDuration = 1f;

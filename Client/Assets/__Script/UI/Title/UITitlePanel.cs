@@ -22,7 +22,7 @@ public class UITitlePanel : MonoBehaviour
     public GameObject _cutSceneObj;
     public Volume _volume;
 
-    public float _duration = 1f; // ¾Ö´Ï¸ÞÀÌ¼Ç Áö¼Ó ½Ã°£
+    public float _duration = 1f; // ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½
     private bool _isGlitch = false;
     private float _value = 0f;
 
@@ -112,12 +112,12 @@ public class UITitlePanel : MonoBehaviour
         {
             case 0:
                 _cutSceneObj.SetActive(false);
-                GameObject.Find("Launcher").GetComponent<Launcher>().SetMode(Launcher.GameModes.Game);
+                // GameObject.Find("Launcher").GetComponent<Launcher>().SetMode(Launcher.GameModes.Game);
                 DoCloseAction();
                 break;
             case 1:
                 _cutSceneObj.SetActive(false);
-                GameObject.Find("Launcher").GetComponent<Launcher>().SetMode(Launcher.GameModes.Tutorial);
+                // GameObject.Find("Launcher").GetComponent<Launcher>().SetMode(Launcher.GameModes.Tutorial);
                 DoCloseAction();
                 break;
             case 2: Application.Quit(); break;

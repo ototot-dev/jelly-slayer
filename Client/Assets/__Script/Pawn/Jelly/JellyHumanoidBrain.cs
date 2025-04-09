@@ -2,6 +2,7 @@ using System.Linq;
 using UniRx;
 using Unity.Linq;
 using UnityEngine;
+using ZLinq;
 
 namespace Game
 {
@@ -261,10 +262,10 @@ namespace Game
 
         protected virtual PawnBrainController NextTargetBrain()
         {
-            if (SensorCtrler.WatchingColliders.Count > 0 && SensorCtrler.WatchingColliders.Any(w => w.GetComponent<PawnColliderHelper>() != null))
+            if (SensorCtrler.WatchingColliders.Count > 0 && SensorCtrler.WatchingColliders.AsValueEnumerable().Any(w => w.GetComponent<PawnColliderHelper>() != null))
             {
                 //* 시야 안에 있는 Hero 찾기 (중복이 있다면 가장 가까운 것 선택)
-                var colliderHelper = SensorCtrler.WatchingColliders
+                var colliderHelper = SensorCtrler.WatchingColliders.AsValueEnumerable()
                     .Where(w => ValidateTargetCollider(w))
                     .Select(w => w.GetComponent<PawnColliderHelper>()).Where(h => h.pawnBrain != null)
                     .OrderBy(h => (h.transform.position - transform.position).SqrMagnitude2D())

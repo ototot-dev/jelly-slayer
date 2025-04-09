@@ -17,8 +17,8 @@ namespace Game
         void IPawnSpawnable.OnStartSpawnHandler() { }
         void IPawnSpawnable.OnFinishSpawnHandler() 
         { 
-            if (GameContext.Instance.HeroBrain.droneBotFormationCtrler.AssignDroneBot(this))
-                BB.decision.hostBrain.Value = GameContext.Instance.HeroBrain;
+            if (GameContext.Instance.playerCtrler.possessedBrain.droneBotFormationCtrler.AssignDroneBot(this))
+                BB.decision.hostBrain.Value = GameContext.Instance.playerCtrler.possessedBrain;
         }
         void IPawnSpawnable.OnDespawnedHandler() { }
         void IPawnSpawnable.OnDeadHandler() 

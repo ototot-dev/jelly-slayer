@@ -12,6 +12,16 @@ public class PawnAnimatorHandler : MonoBehaviour
         __animCtrler ??= gameObject.Ancestors().First(a => a.GetComponent<PawnAnimController>() != null).GetComponent<PawnAnimController>();
         __animCtrler.OnAnimatorMoveHandler();
     }
+    public void OnAnimatorStateEnter(AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        __animCtrler ??= gameObject.Ancestors().First(a => a.GetComponent<PawnAnimController>() != null).GetComponent<PawnAnimController>();
+        __animCtrler.OnAnimatorStateEnterHandler(stateInfo, layerIndex);
+    }
+    public void OnAniamtorStateExit(AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        __animCtrler ??= gameObject.Ancestors().First(a => a.GetComponent<PawnAnimController>() != null).GetComponent<PawnAnimController>();
+        __animCtrler.OnAniamtorStateExitHandler(stateInfo, layerIndex);
+    }
 
     public void OnEventStartJump() {}
     public void OnEventStartLand() {}

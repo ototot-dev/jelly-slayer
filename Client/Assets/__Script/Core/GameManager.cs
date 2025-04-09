@@ -61,33 +61,33 @@ public class GameManager : MonoSingleton<GameManager>
 
     public void ShowLevel_HackerDen(bool isShow)
     {
-        GameObject.Find("Launcher").GetComponent<Launcher>().hackerDen?.SetActive(isShow);
+        // GameObject.Find("Launcher").GetComponent<Launcher>().hackerDen?.SetActive(isShow);
     }
 
     public void ShowLevel_ShootingRange(bool isShow)
     {
-        GameObject.Find("Launcher").GetComponent<Launcher>().shootingRange?.SetActive(isShow);
+        // GameObject.Find("Launcher").GetComponent<Launcher>().shootingRange?.SetActive(isShow);
     }
 
     public void ShowLevel_TrainingRoom(bool isShow)
     {
-        GameObject.Find("Launcher").GetComponent<Launcher>().trainingRoom?.SetActive(isShow);
+        // GameObject.Find("Launcher").GetComponent<Launcher>().trainingRoom?.SetActive(isShow);
     }
 
     public void Activate_Title(bool isActive)
     {
         var launcher = GameObject.Find("Launcher").GetComponent<Launcher>();
-        Activate_ObjList(isActive, launcher._objTitleList);
+        // Activate_ObjList(isActive, launcher._objTitleList);
     }
     public void Activate_Game(bool isActive)
     {
         var launcher = GameObject.Find("Launcher").GetComponent<Launcher>();
-        Activate_ObjList(isActive, launcher._objGameList);
+        // Activate_ObjList(isActive, launcher._objGameList);
     }
     public void Activate_Tutorial(bool isActive)
     {
         var launcher = GameObject.Find("Launcher").GetComponent<Launcher>();
-        Activate_ObjList(isActive, launcher._objTutorialList);
+        // Activate_ObjList(isActive, launcher._objTutorialList);
     }
 
     void Activate_ObjList(bool isActive, GameObject[] objList) 
@@ -103,8 +103,8 @@ public class GameManager : MonoSingleton<GameManager>
         var launcherObj = GameObject.Find("Launcher");
         var launcher = launcherObj.GetComponent<Launcher>();
 
-        launcher.hackerDen.SetActive(false);
-        launcher.shootingRange.SetActive(false);
+        // launcher.hackerDen.SetActive(false);
+        // launcher.shootingRange.SetActive(false);
     }
 
     // 주석    

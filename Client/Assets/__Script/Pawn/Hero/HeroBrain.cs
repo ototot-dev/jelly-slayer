@@ -114,9 +114,7 @@ namespace Game
         {
             base.StartInternal();
 
-            ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
-
-            Observable.Timer(TimeSpan.FromSeconds(0.2f)).Subscribe(_ => GameContext.Instance.playerCtrler.Possess(this));
+            // ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
 
             ActionCtrler.onActionStart += (actionContext, _) =>
             {
@@ -226,7 +224,7 @@ namespace Game
                         PawnHP.heartPoint.Value += hpAdd;
                         Debug.Log("<color=green>HP Regen : " + (100 * rate) + "%, " + hpAdd + "</green>");
 
-                        var viewVec = GameContext.Instance.MainCamera.transform.forward;
+                        var viewVec = GameContext.Instance.cameraCtrler.viewCamera.transform.forward;
                         EffectManager.Instance.Show("FX/HealSingle", GetWorldPosition() + Vector3.up - viewVec, Quaternion.identity, Vector3.one, 1f);
                     }
                 }

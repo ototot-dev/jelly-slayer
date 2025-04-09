@@ -1991,7 +1991,7 @@ namespace Game.NodeCanvasExtension
                 if (duration <= 0f)
                     duration = 0.1f;
 
-                GameContext.Instance.mainCameraCtrler.InterpolateZoom(zoomValue.value, duration);
+                GameContext.Instance.cameraCtrler.InterpolateZoom(zoomValue.value, duration);
             }
             EndAction(true);
         }

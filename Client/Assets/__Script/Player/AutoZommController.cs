@@ -82,7 +82,7 @@ namespace Game
                 }
                 else _targetZoom = 1;
             }
-            _pixelCamera.GameCameraZoom = _targetZoom * 4.2f;
+            // _pixelCamera.GameCameraZoom = _targetZoom * 4.2f;
             //_cameraCtrler.zoom = _targetZoom;
         }
     }

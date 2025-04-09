@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Linq;
+using ZLinq;
 
 namespace Game
 {
@@ -17,10 +18,9 @@ namespace Game
 
         public static PawnColliderHelper FindTarget(HeroBrain heroBrain) 
         {
-            var newTarget = heroBrain.SensorCtrler.ListeningColliders
+            var newTarget = heroBrain.SensorCtrler.ListeningColliders.AsValueEnumerable()
                 .Select(l => l.GetComponent<PawnColliderHelper>())
                 .Where(p => p != null && p.pawnBrain != null && p.pawnBrain.PawnBB.IsDead == false)
-                    // p.pawnBrain.PawnBB.IsBind == false && p.pawnBrain.PawnBB.IsDead == false)
                 .OrderBy(p => (p.transform.position - heroBrain.GetWorldPosition()).sqrMagnitude).FirstOrDefault();
 
             return newTarget;
@@ -28,10 +28,9 @@ namespace Game
 
         public static PawnColliderHelper FindStunnedTarget(HeroBrain heroBrain)
         {
-            var newTarget = heroBrain.SensorCtrler.ListeningColliders
+            var newTarget = heroBrain.SensorCtrler.ListeningColliders.AsValueEnumerable()
                 .Select(l => l.GetComponent<PawnColliderHelper>())
-                .Where(p => p != null && p.pawnBrain != null &&
-                    p.pawnBrain.PawnBB.IsGroggy == true)
+                .Where(p => p != null && p.pawnBrain != null && p.pawnBrain.PawnBB.IsGroggy == true)
                 .OrderBy(p => (p.transform.position - heroBrain.GetWorldPosition()).sqrMagnitude).FirstOrDefault();
 
             return newTarget;

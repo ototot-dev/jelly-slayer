@@ -16,7 +16,7 @@ namespace Game
         public Rig rigSetup;
         public LegsAnimator legAnimator;
         public RagdollAnimator2 ragdollAnimator;
-        Dictionary<string, ObservableStateMachineTriggerEx> __observableStateMachineTriggersCached = new();
+        readonly Dictionary<string, ObservableStateMachineTriggerEx> __observableStateMachineTriggersCached = new();
         
         public ObservableStateMachineTriggerEx FindObservableStateMachineTriggerEx(string stateName)
         {
@@ -28,9 +28,10 @@ namespace Game
 
             return found;
         }
-
+    
         public virtual void OnAnimatorMoveHandler() {}
-
+        public virtual void OnAnimatorStateEnterHandler(AnimatorStateInfo stateInfo, int layerIndex) {}
+        public virtual void OnAniamtorStateExitHandler(AnimatorStateInfo stateInfo, int layerIndex) {}
         public virtual void OnAnimatorFootHandler(bool isRight) {}
     }
 }

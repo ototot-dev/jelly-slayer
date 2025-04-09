@@ -118,7 +118,7 @@ namespace Game
             {
                 Debug.Assert(__brain.BB.HostBrain.BB.TargetBrain != null);
 
-                var targetColliderHelper = GameContext.Instance.HeroBrain.BB.TargetBrain.GetHookingColliderHelper();
+                var targetColliderHelper = GameContext.Instance.playerCtrler.possessedBrain.BB.TargetBrain.GetHookingColliderHelper();
                 if (ropeHookCtrler.LaunchHook(targetColliderHelper.pawnCollider))
                 {
                     __brain.BB.target.targetPawnHP.Value = targetColliderHelper.pawnBrain.PawnHP;
@@ -144,7 +144,7 @@ namespace Game
                         // __hookingPointFx.transform.position = ropeHookCtrler.hookingCollider.transform.position;
                         __hookingPointFx.transform.position = ropeHookCtrler.GetLastParticlePosition();
                         //* 카메라 쪽으로 위치를 당겨서 겹쳐서 안보이게 되는 경우를 완화함
-                        __hookingPointFx.transform.position -= GameContext.Instance.mainCameraCtrler.viewCamera.transform.forward;
+                        __hookingPointFx.transform.position -= GameContext.Instance.cameraCtrler.viewCamera.transform.forward;
                     }).AddTo(this);
 
                 return null;

@@ -3037,7 +3037,7 @@ MonoBehaviour:
   ChestBone: {fileID: 0}
   RagdolledParameter: 
   SwingHelper: 0.005
-  GluingFloorLevel: 0.05
+  GluingFloorLevel: 0.3
   GluingFloorLevelUseOnMoving: 0
   GluingFloorLevelOnMoving: 0
   StepPointsOverlapRadius: 0
@@ -3489,9 +3489,9 @@ MonoBehaviour:
   GlueRangeThreshold: 1
   GlueFadeInSpeed: 0.9
   AllowGlueBelowFoot: 0.2
-  GlueFadeOutSpeed: 0.8
-  UnglueOn: 15
-  AllowGlueDrag: 0.1
+  GlueFadeOutSpeed: 0.4
+  UnglueOn: 90
+  AllowGlueDrag: 0.2
   GlueMode: 2
   OnlyLocalAnimation: 0
   SmoothSuddenSteps: 0.5
@@ -3598,17 +3598,17 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 944914343700468036}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 104179351ca7dd24a8f5bd7beecf8d06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   handler:
-    _Editor_SelectedChain: 1
+    _Editor_SelectedChain: 2
     _Editor_ChainCategory: 1
-    _EditorCategory: 1
-    _EditorMainCategory: 0
-    _EditorMotionCategory: 2
+    _EditorCategory: 3
+    _EditorMainCategory: 1
+    _EditorMotionCategory: 0
     m_hemi: {fileID: -2508796484986968503, guid: 44d994eaad14fdf49a2dd378b4d62094, type: 3}
     m_cyli: {fileID: 2534964839176971238, guid: 2ea99bbc50a9266448416f21d645a771, type: 3}
     m_sphere: {fileID: 4711208715938537054, guid: b43618aedd7473a4eb1aaa5e80012a1d, type: 3}
@@ -3736,7 +3736,7 @@ MonoBehaviour:
     IsHumanoid: 1
     dummyContainer: {fileID: 0}
     skeletonFillExtraBonesList: []
-    MusclesPower: 1
+    MusclesPower: 0.5
     SpringsValue: 1500
     SpringsOnFall: 0
     DampingValue: 40
@@ -4206,7 +4206,7 @@ MonoBehaviour:
         LocalUp: {x: 0, y: 1, z: 0}
         LocalForward: {x: 0, y: 0, z: 1}
         ToBase: {x: 0, y: 0, z: 0}
-        _EditorCollFoldout: 1
+        _EditorCollFoldout: 0
         _EditorCollPosSliders: 0
         _EditorBoxCollSliders: 0
         _EditorMeshCollSliders: 0
@@ -4379,6 +4379,17 @@ MonoBehaviour:
           ColliderRadius: 0.083333254
           ColliderLength: 0.47847742
           ColliderBoxSize: {x: 0.276543, y: 0.47847742, z: 0.56496775}
+          ColliderMesh: {fileID: 0}
+          OtherReference: {fileID: 0}
+          RotationCorrection: {x: 0, y: 0, z: 0}
+          ColliderExtraTransform: {fileID: 0}
+        - ColliderType: 2
+          ColliderCenter: {x: 0.14, y: -0.22, z: -2}
+          ColliderSizeMultiply: 1
+          CapsuleDirection: 1
+          ColliderRadius: 0.083333254
+          ColliderLength: 0.47847742
+          ColliderBoxSize: {x: 0.37, y: 0.62, z: 3}
           ColliderMesh: {fileID: 0}
           OtherReference: {fileID: 0}
           RotationCorrection: {x: 0, y: 0, z: 0}
@@ -6679,16 +6690,16 @@ MonoBehaviour:
   FadeOutDistance: 0
   DistanceFrom: {fileID: 0}
   AutoHelperOffset: 1
-  HelperOffset: {x: 0.32502928, y: 0.8974269, z: -0.68834054}
+  HelperOffset: {x: 0.32502922, y: 0.8974269, z: -0.68834054}
   GravityEffectForce: {x: 0, y: 0, z: 0}
   GravityHeavyness: 2
   _editor_Title: ' Bones Stimulator'
   _editor_DrawSetup: 1
-  _editor_DrawTweaking: 0
+  _editor_DrawTweaking: 1
   _editor_DisplayedPreset: 0
   _editor_DrawGizmos: 1
   DrawGizmos: 1
-  _editor_SelCategory: 0
+  _editor_SelCategory: 1
   UpdateRate: 0
   MovementMuscles: 1
   MusclesRapidity: 0.6
@@ -26188,7 +26199,6 @@ GameObject:
   - component: {fileID: 2522011389627654015}
   - component: {fileID: 171654919971930481}
   - component: {fileID: 6709574620569721706}
-  - component: {fileID: 98003635374870298}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -26264,27 +26274,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &98003635374870298
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2864403103571602757}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2874076815996914914
 GameObject:
   m_ObjectHideFlags: 0
@@ -45236,7 +45225,6 @@ GameObject:
   - component: {fileID: 3556638343202916220}
   - component: {fileID: 3640996276726235120}
   - component: {fileID: 5387407916670901239}
-  - component: {fileID: 6094473613762115819}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -45312,27 +45300,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &6094473613762115819
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4879671160735207867}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4883750430946126748
 GameObject:
   m_ObjectHideFlags: 0
@@ -55583,7 +55550,7 @@ MonoBehaviour:
   FadeOutDistance: 0
   DistanceFrom: {fileID: 0}
   AutoHelperOffset: 1
-  HelperOffset: {x: -0.3250291, y: -0.8974267, z: 0.68834054}
+  HelperOffset: {x: -0.32502905, y: -0.8974267, z: 0.68834054}
   GravityEffectForce: {x: 0, y: 0, z: 0}
   GravityHeavyness: 2
   _editor_Title: ' Bones Stimulator'
@@ -76308,7 +76275,7 @@ MonoBehaviour:
   FadeOutDistance: 0
   DistanceFrom: {fileID: 0}
   AutoHelperOffset: 1
-  HelperOffset: {x: 0.051146325, y: 0.78555334, z: 0.022953518}
+  HelperOffset: {x: 0.051146287, y: 0.7855533, z: 0.022953525}
   GravityEffectForce: {x: 0, y: 0, z: 0}
   GravityHeavyness: 2
   _editor_Title: ' Bones Stimulator'
@@ -83915,8 +83882,8 @@ MonoBehaviour:
     pawnId: 3
     pawnName: Soldier
     displayName: 
-    spawnWaitingTime: 1
-    despawnWaitingTime: 1
+    spawnWaitingTime: -1
+    despawnWaitingTime: 5
     isSpawnFinished:
       value: 0
     isInvincible:
@@ -83991,6 +83958,7 @@ MonoBehaviour:
       value: 0
     isGuarding:
       value: 0
+    getUpWaitTime: 1
     walkSpeed: 1
     jumpHeight: 2
     glidingDuration: -1

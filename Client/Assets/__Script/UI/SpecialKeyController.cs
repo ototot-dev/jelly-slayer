@@ -28,7 +28,7 @@ namespace Game
             __bodyRect.anchorMin = __bodyRect.anchorMax = Vector2.zero;
             Observable.EveryLateUpdate().TakeWhile(_ => hideCount <= 0).Subscribe(_ =>
             {
-                __bodyRect.anchoredPosition =  GameContext.Instance.MainCamera.WorldToScreenPoint(__targetBrain.GetSpecialKeyPosition());
+                __bodyRect.anchoredPosition =  GameContext.Instance.cameraCtrler.viewCamera.WorldToScreenPoint(__targetBrain.GetSpecialKeyPosition());
             }).AddTo(template);
         }
 

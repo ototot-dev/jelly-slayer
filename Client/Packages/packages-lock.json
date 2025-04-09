@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.cysharp.zlinq": {
+      "version": "https://github.com/Cysharp/ZLinq.git?path=src/ZLinq.Unity/Assets/ZLinq.Unity",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "ac83290c79fc2b220a791e4c24716ddb37a0d468"
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
