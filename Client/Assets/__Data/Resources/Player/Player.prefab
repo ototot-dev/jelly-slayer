@@ -162,7 +162,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29d0f99007c217a49a87ef444e985204, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cursorCtrler: {fileID: 2981884840603793464}
   possessedBrain: {fileID: 0}
   dronebotFormationCtrler: {fileID: 0}
   playerName:
@@ -198,7 +197,7 @@ MonoBehaviour:
   _targetZoom: 1
   _dist: 0
   _min: 0.9
-  _max: 1.1
+  _max: 2
   _limit: 6
   _rate: 0.2
 --- !u!1 &937048620446195801
@@ -560,10 +559,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b153c152fcfa2bf4ea7fce84b31237f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  drawForward: 0
+  drawAttackPoint: 0
+  drawTargetInfo: 0
+  drawActionInfo: 0
+  drawSensorInfo: 0
+  drawPawnStatus: 0
   sourceCubeMesh: {fileID: 7781821959776160877}
   sourceConeMesh: {fileID: 8677253210991032733}
   sourceLineRenderer: {fileID: 5420305180625639804}
   sourceTextMesh: {fileID: 2383647337804600679}
+  hostBrain: {fileID: 0}
 --- !u!1 &6599524773956351911
 GameObject:
   m_ObjectHideFlags: 0

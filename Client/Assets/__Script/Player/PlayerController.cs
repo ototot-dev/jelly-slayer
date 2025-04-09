@@ -482,6 +482,14 @@ namespace Game
                             possessedBrain.ActionCtrler.CancelAction(false);
                             possessedBrain.ActionCtrler.SetPendingAction("Slash#3");
                             break;
+                        case "GroggyAttack#1":
+                            possessedBrain.ActionCtrler.CancelAction(false);
+                            possessedBrain.ActionCtrler.SetPendingAction("GroggyAttack#2");
+                            break;
+                        case "GroggyAttack#2":
+                            possessedBrain.ActionCtrler.CancelAction(false);
+                            possessedBrain.ActionCtrler.SetPendingAction("GroggyAttack#3");
+                            break;
                         case "Punch":
                             possessedBrain.ActionCtrler.CancelAction(false);
                             possessedBrain.ActionCtrler.SetPendingAction("Slash#1");
@@ -517,9 +525,12 @@ namespace Game
                         possessedBrain.ActionCtrler.SetPendingAction("HeavySlash#1");
                         possessedBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
                     }
-                    else
+                    else 
                     {
-                        possessedBrain.ActionCtrler.SetPendingAction("Slash#1");
+                        if (possessedBrain.BB.TargetBrain != null && possessedBrain.BB.TargetBrain.PawnBB.IsGroggy)
+                            possessedBrain.ActionCtrler.SetPendingAction("GroggyAttack#1");
+                        else
+                            possessedBrain.ActionCtrler.SetPendingAction("Slash#1");
                         possessedBrain.ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
                     }
 
