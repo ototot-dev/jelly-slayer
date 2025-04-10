@@ -35,7 +35,6 @@ namespace Game
 
         [Header("Component")]
         public RoboDogFormationController roboDogFormationCtrler;
-        public JellyMeshController jellyMeshCtrler;
 
         public override Vector3 GetSpecialKeyPosition() => BB.attachment.specialKeyAttachPoint.transform.position;
         public SoldierBlackboard BB { get; private set; }

@@ -19,8 +19,8 @@ namespace Game
             {
                 this.HideAsObservable().Subscribe(_ =>
                 {
-                    GameContext.Instance.mainCanvasCtrler.FadeOut(1);
-                    new GameOverlayController().Load().Show(GameContext.Instance.mainCanvasCtrler.body);
+                    GameContext.Instance.MainCanvasCtrler.FadeOut(1);
+                    new GameOverlayController().Load().Show(GameContext.Instance.MainCanvasCtrler.body);
                 });
             });
 

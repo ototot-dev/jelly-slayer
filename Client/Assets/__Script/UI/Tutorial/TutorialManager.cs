@@ -123,7 +123,7 @@ public class TutorialManager : MonoBehaviour
         _playerCtrler._isEnable_Roll = false;
         _playerCtrler._isEnable_SpecialAttack = false;
 
-        _playerCtrler.lookVec.Value = new Vector3(-1, 0, -1);
+        _playerCtrler.inputLookVec.Value = new Vector3(-1, 0, -1);
 
         LoadXML();
 

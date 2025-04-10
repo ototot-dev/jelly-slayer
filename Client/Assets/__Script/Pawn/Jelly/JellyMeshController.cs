@@ -145,6 +145,9 @@ namespace Game
                         eyeAnimator.MinOpenValue = Mathf.Clamp01(eyeAnimator.MinOpenValue + eyeOpenSpeed * Time.deltaTime);
                 }
             }).AddTo(this);
+
+            //* Jelly 나타남 이벤트 생성
+            PawnEventManager.Instance.SendPawnActionEvent(jellyBrain, "OnJellyOut");
         }
 
         public void FadeOut(float duration)
@@ -204,6 +207,9 @@ namespace Game
 
                     eyeAnimator.MinOpenValue = Mathf.Clamp01(eyeAnimator.MinOpenValue - eyeOpenSpeed * Time.deltaTime);
                 }).AddTo(this);
+
+            //* Jelly 사라짐 이벤트 생ㅓ
+            PawnEventManager.Instance.SendPawnActionEvent(jellyBrain, "OnJellyOff");
         }
 
         void UpdateBodyOffsetPointAndAttachPoint()

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AmplifyShaderEditor;
+using Packets;
 using UnityEngine;
 
 namespace Game
@@ -48,6 +49,9 @@ namespace Game
         void IPawnMovable.FaceTo(Vector3 direction) { __pawnMovement.FaceTo(direction); }
         void IPawnMovable.Stop() { __pawnMovement.Stop(); }
 #endregion
+
+        [Header("Component")]
+        public JellyMeshController jellyMeshCtrler;
 
         public enum Decisions : int
         {

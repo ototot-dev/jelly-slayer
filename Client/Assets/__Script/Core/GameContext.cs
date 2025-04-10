@@ -12,7 +12,6 @@ namespace Game
         public TerrainManager terrainManager;
         public SlimeSpawnManager jellySpawnManager;
         public HeroSpawnManager heroSpawnManager;
-        public CanvasController mainCanvasCtrler;
 
         public RectTransform MainCanvas
         {
@@ -23,7 +22,17 @@ namespace Game
             }
         }
 
+        public MainCanvasController MainCanvasCtrler
+        {
+            get
+            {
+                __mainCanvasCtrler ??= MainCanvas.GetComponent<MainCanvasController>();
+                return __mainCanvasCtrler;
+            }
+        }
+
         RectTransform __mainCanvas;
+        MainCanvasController __mainCanvasCtrler;
         
         void Awake()
         {

@@ -3,6 +3,7 @@ using System.Buffers;
 using System.Linq;
 using UGUI.Rx;
 using UniRx;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using ZLinq;
@@ -11,20 +12,17 @@ namespace Game
 {
     public class PlayerController : MonoBehaviour, IPawnEventListener
     {
-
-        [Header("Component")]
+        [Header("Input")]
+        public float attackPointAssistRange = 1f;
+        public ReactiveProperty<Vector2> inputMoveVec = new();
+        public ReactiveProperty<Vector3> inputLookVec = new();
+        public ReactiveProperty<JellyMeshController> boundJellyMesh = new();
         public SpecialKeyController specialKeyCtrler;
 
         [Header("Possess")]
-        public HeroBrain possessedBrain;
-        public DroneBotFormationController dronebotFormationCtrler;
-        public GameObject PossessedPawn => possessedBrain != null ? possessedBrain.gameObject : null;
-
-        [Header("Parameter")]
         public StringReactiveProperty playerName = new();
-        public ReactiveProperty<Vector2> moveVec = new();
-        public ReactiveProperty<Vector3> lookVec = new();
-        public float attackPointAssistLength = 1f;
+        public HeroBrain possessedBrain;
+        public GameObject PossessedPawn => possessedBrain != null ? possessedBrain.gameObject : null;
         public Action<HeroBrain> onPossessed;
         public Action<HeroBrain> onUnpossessed;
 
@@ -39,11 +37,31 @@ namespace Game
         public bool _isEnable_Parry = true;
 
 #region IPawnEventListener 구현
-        void IPawnEventListener.OnReceivePawnActionStart(PawnBrainController sender, string actionName) {}
+        void IPawnEventListener.OnReceivePawnActionStart(PawnBrainController sender, string actionName) 
+        {
+            if (actionName == "OnJellyOut")
+            {
+                Debug.Assert(boundJellyMesh.Value == null);
+
+                boundJellyMesh.Value = (sender as JellyBrain).jellyMeshCtrler;
+                __Logger.LogR2(gameObject, nameof(IPawnEventListener.OnReceivePawnActionStart), "jellyBrain", sender, "OnJellyOut", "boundJellyMesh", boundJellyMesh.Value);
+            }
+            else if (actionName == "OnJellyOff")
+            {
+                Debug.Assert(boundJellyMesh.Value.jellyBrain == sender);
+
+                boundJellyMesh.Value = null;
+                __Logger.LogR2(gameObject, nameof(IPawnEventListener.OnReceivePawnActionStart), "OnJellOff", "jellyBrain", sender);
+            }
+        }
+
         void IPawnEventListener.OnReceivePawnStatusChanged(PawnBrainController sender, PawnStatus status, float strength, float duration) 
         {
             if (sender is JellyBrain && status == PawnStatus.Groggy && strength > 0f)
-                specialKeyCtrler = new SpecialKeyController(sender, "Assault", "Encounter").Load().Show(GameContext.Instance.mainCanvasCtrler.body);
+            {
+                Debug.Assert(specialKeyCtrler == null);
+                specialKeyCtrler = new SpecialKeyController(sender, "Assault", "Encounter").Load().Show(GameContext.Instance.MainCanvasCtrler.body);
+            }
         }
         void IPawnEventListener.OnReceivePawnDamageContext(PawnBrainController sender, PawnHeartPointDispatcher.DamageContext damageContext) 
         {
@@ -116,11 +134,11 @@ namespace Game
             if (possessedBrain == null)
                 return;
 
-            if (moveVec.Value.sqrMagnitude > 0)
+            if (inputMoveVec.Value.sqrMagnitude > 0)
             {
                 var isAction = possessedBrain.BB.IsGuarding || possessedBrain.BB.IsPunchCharging;
                 possessedBrain.Movement.moveSpeed = isAction ? possessedBrain.BB.body.guardSpeed : possessedBrain.BB.body.walkSpeed;
-                possessedBrain.Movement.moveVec = Quaternion.AngleAxis(45, Vector3.up) * new Vector3(moveVec.Value.x, 0, moveVec.Value.y);
+                possessedBrain.Movement.moveVec = Quaternion.AngleAxis(45, Vector3.up) * new Vector3(inputMoveVec.Value.x, 0, inputMoveVec.Value.y);
 
                 //* Strafe 모드가 아닌 경우엔 이동 방향과 회전 방향이 동일함
                 if (!possessedBrain.Movement.freezeRotation)
@@ -141,7 +159,7 @@ namespace Game
                 }
                 else
                 {
-                    possessedBrain.Movement.faceVec = lookVec.Value;
+                    possessedBrain.Movement.faceVec = inputLookVec.Value;
                 }
             }
         }
@@ -150,7 +168,7 @@ namespace Game
         {
             if (_isEnable_Move == false)
                 return;
-            moveVec.Value = value.Get<Vector2>();
+            inputMoveVec.Value = value.Get<Vector2>();
         }
 
         public void OnLook(InputValue value)
@@ -159,7 +177,7 @@ namespace Game
                 return;
             if (GameContext.Instance.cameraCtrler != null && 
                 GameContext.Instance.cameraCtrler.TryGetPickingPointOnTerrain(value.Get<Vector2>(), out var pickingPoint))
-                lookVec.Value = (pickingPoint - possessedBrain.Movement.capsule.transform.position).Vector2D().normalized;
+                inputLookVec.Value = (pickingPoint - possessedBrain.Movement.capsule.transform.position).Vector2D().normalized;
         }
         public void OnGuard(InputValue value)
         {
@@ -415,17 +433,10 @@ namespace Game
 
         bool FindAttackPoint(out Vector3 attackPoint)
         {
-            var jellyCollider = possessedBrain.SensorCtrler.WatchingColliders.FirstOrDefault(c => c.TryGetComponent<PawnColliderHelper>(out var helper) && helper.gameObject.CompareTag("Jelly") && (helper.transform.position - possessedBrain.GetWorldPosition()).Magnitude2D() < attackPointAssistLength);
-            if (jellyCollider != null)
-            {
-                attackPoint = jellyCollider.transform.position;
-                return true;
-            }
-
             var found = possessedBrain.SensorCtrler.WatchingColliders.AsValueEnumerable()
                 .Select(c => c.GetComponent<PawnColliderHelper>()).Where(h => h != null && h == h.pawnBrain.coreColliderHelper)
                 .OrderBy(h => Vector3.Angle(possessedBrain.coreColliderHelper.transform.forward.Vector2D(), (h.transform.position - possessedBrain.GetWorldPosition()).Vector2D()))
-                .FirstOrDefault(h => possessedBrain.coreColliderHelper.GetApproachDistance(h) < attackPointAssistLength);
+                .FirstOrDefault(h => possessedBrain.coreColliderHelper.GetApproachDistance(h) < attackPointAssistRange);
 
             if (found != null)
             {
@@ -564,11 +575,8 @@ namespace Game
 
                     possessedBrain.droneBotFormationCtrler.PickDroneBot().ActionCtrler.SetPendingAction(specialKeyCtrler.actionName, specialKeyCtrler.specialTag, string.Empty, 0f);
 
-                    specialKeyCtrler.HideAsObservable().Subscribe(_ => 
-                    {
-                        specialKeyCtrler.Unload(true);
-                        specialKeyCtrler = null;
-                    }).AddTo(this);
+                    specialKeyCtrler.HideAsObservable().Subscribe(c =>  c.Unload(true)).AddTo(this);
+                    specialKeyCtrler = null;
 
                     // if (possessedBrain.BB.IsJumping && (possessedBrain.Movement.LastFinishHangingTimeStamp - Time.time) < 0.2f)
                     //     possessedBrain.ActionCtrler.SetPendingAction("SpecialKick");
