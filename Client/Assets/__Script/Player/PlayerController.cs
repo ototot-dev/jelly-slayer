@@ -497,14 +497,6 @@ namespace Game
                             possessedBrain.ActionCtrler.CancelAction(false);
                             possessedBrain.ActionCtrler.SetPendingAction("Slash#1");
                             break;
-                        case "HeavySlash#1":
-                            possessedBrain.ActionCtrler.CancelAction(false);
-                            possessedBrain.ActionCtrler.SetPendingAction("HeavySlash#2");
-                            break;
-                        case "HeavySlash#2":
-                            possessedBrain.ActionCtrler.CancelAction(false);
-                            possessedBrain.ActionCtrler.SetPendingAction("HeavySlash#3");
-                            break;
                     }
 
                     //* 타겟이 없을 경우엔 주변 타겟으로 공격 방향을 보정해줌
@@ -551,7 +543,7 @@ namespace Game
                 return;
 
             var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsRolling && !possessedBrain.BB.IsHanging; ;
-            var canAction2 = canAction1 && (boundJellyMesh != null);
+            var canAction2 = canAction1 && (boundJellyMesh.Value != null);
             var canAction3 = canAction2 && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
 
             if (value.isPressed)
@@ -560,50 +552,30 @@ namespace Game
 
                 var baseActionName = possessedBrain.ActionCtrler.CheckActionRunning() ? possessedBrain.ActionCtrler.CurrActionName : possessedBrain.ActionCtrler.PrevActionName;
                 var canNextAction = possessedBrain.ActionCtrler.CheckActionRunning() ? possessedBrain.ActionCtrler.CanInterruptAction() : (Time.time - possessedBrain.ActionCtrler.prevActionContext.finishTimeStamp) < MainTable.PlayerData.GetList().First().actionInputTimePadding;
-                if (canAction3 && canNextAction)
+                if (canAction3)
                 {
-                    switch (baseActionName)
+                    if (canNextAction)
                     {
-                        case "GroggyAttack#1":
-                            possessedBrain.ActionCtrler.CancelAction(false);
-                            possessedBrain.ActionCtrler.SetPendingAction("GroggyAttack#2");
-                            break;
-                        case "GroggyAttack#2":
-                            possessedBrain.ActionCtrler.CancelAction(false);
-                            possessedBrain.ActionCtrler.SetPendingAction("GroggyAttack#3");
-                            break;
+                        switch (baseActionName)
+                        {
+                            case "GroggyAttack#1":
+                                possessedBrain.ActionCtrler.CancelAction(false);
+                                possessedBrain.ActionCtrler.SetPendingAction("GroggyAttack#2");
+                                possessedBrain.Movement.FaceAt(boundJellyMesh.Value.springMassSystem.core.position);
+                                break;
+                            case "GroggyAttack#2":
+                                possessedBrain.ActionCtrler.CancelAction(false);
+                                possessedBrain.ActionCtrler.SetPendingAction("GroggyAttack#3");
+                                possessedBrain.Movement.FaceAt(boundJellyMesh.Value.springMassSystem.core.position);
+                                break;
+                        }
                     }
-                    //* 타겟이 없을 경우엔 주변 타겟으로 공격 방향을 보정해줌
-                    if (possessedBrain.SensorCtrler.WatchingColliders.Count > 0 && FindAttackPoint(out var attackPoint))
-                        possessedBrain.Movement.FaceAt(attackPoint);
+                    else if (!possessedBrain.ActionCtrler.CheckActionRunning())
+                    {
+                        possessedBrain.ActionCtrler.SetPendingAction("GroggyAttack#1");
+                        possessedBrain.Movement.FaceAt(boundJellyMesh.Value.springMassSystem.core.position);
+                    }
                 }
-            }
-            else
-            {
-                __attackReleasedTimeStamp = Time.time;
-
-                if (canAction3 && !possessedBrain.ActionCtrler.CheckActionRunning())
-                {
-                    if (possessedBrain.BB.IsJumping)
-                    {
-                    }
-                    else if (possessedBrain.BB.action.punchChargeLevel.Value >= 1)
-                    {
-                    }
-                    else
-                    {
-                        if (possessedBrain.BB.TargetBrain != null && possessedBrain.BB.TargetBrain.PawnBB.IsGroggy)
-                            possessedBrain.ActionCtrler.SetPendingAction("GroggyAttack#1");
-                        possessedBrain.ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
-                    }
-
-                    //* 타겟이 없을 경우엔 주변 타겟으로 공격 방향을 보정해줌
-                    if (possessedBrain.SensorCtrler.WatchingColliders.Count > 0 && FindAttackPoint(out var attackPoint))
-                        possessedBrain.Movement.FaceAt(attackPoint);
-                }
-
-                //* 챠징 어택 판별을 위해서 'punchChargeLevel' 값은 제일 마지막에 리셋
-                possessedBrain.BB.action.punchChargeLevel.Value = -1;
             }
         }
         public void OnSpecialAttack(InputValue value)
