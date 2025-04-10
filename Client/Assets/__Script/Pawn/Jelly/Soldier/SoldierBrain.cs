@@ -143,6 +143,7 @@ namespace Game
                     PawnStatusCtrler.AddStatus(PawnStatus.Invincible, 1f, 2f);
                     PawnStatusCtrler.AddStatus(PawnStatus.CanNotMove, 1f, 3f);
                     PawnStatusCtrler.AddStatus(PawnStatus.CanNotAction, 1f, 3f);
+                    
                     InvalidateDecision(4f);
                 }
             };

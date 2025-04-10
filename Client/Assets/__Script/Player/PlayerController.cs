@@ -3,7 +3,6 @@ using System.Buffers;
 using System.Linq;
 using UGUI.Rx;
 using UniRx;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using ZLinq;
@@ -45,6 +44,8 @@ namespace Game
 
                 boundJellyMesh.Value = (sender as JellyBrain).jellyMeshCtrler;
                 __Logger.LogR2(gameObject, nameof(IPawnEventListener.OnReceivePawnActionStart), "jellyBrain", sender, "OnJellyOut", "boundJellyMesh", boundJellyMesh.Value);
+
+                specialKeyCtrler = new SpecialKeyController(sender, "GroggyAttack", "Groggy").Load().Show(GameContext.Instance.MainCanvasCtrler.body);
             }
             else if (actionName == "OnJellyOff")
             {
@@ -52,6 +53,9 @@ namespace Game
 
                 boundJellyMesh.Value = null;
                 __Logger.LogR2(gameObject, nameof(IPawnEventListener.OnReceivePawnActionStart), "OnJellOff", "jellyBrain", sender);
+
+                specialKeyCtrler.HideAsObservable().Subscribe(c =>  c.Unload(true)).AddTo(this);
+                specialKeyCtrler = null;
             }
         }
 
@@ -580,14 +584,12 @@ namespace Game
         }
         public void OnSpecialAttack(InputValue value)
         {
-            if (_isEnable_SpecialAttack == false)
-                return;
             if (possessedBrain == null)
                 return;
 
             if (value.isPressed)
             {
-                var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsRolling && !possessedBrain.BB.IsHanging;;
+                var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsRolling && !possessedBrain.BB.IsHanging;
                 var canAction2 = canAction1 && (specialKeyCtrler?.actionName ?? string.Empty) != string.Empty;
                 var canAction3 = canAction2 &&  (!possessedBrain.ActionCtrler.CheckActionRunning() || possessedBrain.ActionCtrler.CanInterruptAction()) && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
 
@@ -596,13 +598,17 @@ namespace Game
                     if (possessedBrain.ActionCtrler.CheckActionRunning())
                         possessedBrain.ActionCtrler.CancelAction(false);
 
-                    possessedBrain.droneBotFormationCtrler.PickDroneBot().ActionCtrler.SetPendingAction(specialKeyCtrler.actionName, specialKeyCtrler.specialTag, string.Empty, 0f);
-
-                    specialKeyCtrler.HideAsObservable().Subscribe(c =>  c.Unload(true)).AddTo(this);
-                    specialKeyCtrler = null;
-
-                    // if (possessedBrain.BB.IsJumping && (possessedBrain.Movement.LastFinishHangingTimeStamp - Time.time) < 0.2f)
-                    //     possessedBrain.ActionCtrler.SetPendingAction("SpecialKick");
+                    if (specialKeyCtrler.actionName == "Assault")
+                    {
+                        possessedBrain.droneBotFormationCtrler.PickDroneBot().ActionCtrler.SetPendingAction(specialKeyCtrler.actionName, specialKeyCtrler.specialTag, string.Empty, 0f);
+                        specialKeyCtrler.HideAsObservable().Subscribe(c =>  c.Unload(true)).AddTo(this);
+                        specialKeyCtrler = null;
+                    }
+                    else if (specialKeyCtrler.actionName == "GroggyAttack")
+                    {
+                        possessedBrain.ActionCtrler.SetPendingAction($"GroggyAttack#{++specialKeyCtrler.actionCount}");
+                        possessedBrain.Movement.FaceAt(boundJellyMesh.Value.springMassSystem.core.position);
+                    }
                 }
             }
         }

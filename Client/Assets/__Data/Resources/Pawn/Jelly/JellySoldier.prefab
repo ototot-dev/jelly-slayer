@@ -62323,7 +62323,7 @@ MonoBehaviour:
   cubeScaleMax: 0.3
   eyeOpenSpeed: 5
   tailLength: 2
-  impulseStrength: 1
+  impulseStrength: 4
   hoookingPointFx: {fileID: 5813854032995505637, guid: b9e66537ec87ed84d8fceb2864cdd90a, type: 3}
   onHitFx: {fileID: 7555031585622908223, guid: dbd0a9584b295d04f9d828d2def2dcba, type: 3}
   cubeHitColorMaterial: {fileID: 2100000, guid: ed00abc7c672048bbbe3aae2e45b51c5, type: 2}
@@ -83864,8 +83864,8 @@ MonoBehaviour:
   updateEnabled: 1
   lateUpdateEnabled: 1
   fixedUpdateEnabled: 1
-  roboDogFormationCtrler: {fileID: 5938920085556766268}
   jellyMeshCtrler: {fileID: 2168992762603302668}
+  roboDogFormationCtrler: {fileID: 5938920085556766268}
 --- !u!114 &1626602440402030822
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -216,7 +216,9 @@ namespace Game
         {
             var lookAtCameraVec = -GameContext.Instance.cameraCtrler.viewCamera.transform.forward;
             springMassSystem.bodyOffsetPoint.transform.LookAt(springMassSystem.core.position + lookAtCameraVec);
-            springMassSystem.bodyOffsetPoint.localPosition = 0.2f * Perlin.Noise(Time.time) * Vector3.up;
+
+            if (__tweener?.IsComplete() ?? true)
+                springMassSystem.bodyOffsetPoint.localPosition = 0.2f * Perlin.Noise(Time.time) * Vector3.up;
 
             var distance = (springMassSystem.coreAttachPoint.parent.position - jellyBrain.coreColliderHelper.GetWorldCenter()).Vector2D().magnitude;
             if (distance > maintainDistance)
@@ -264,7 +266,7 @@ namespace Game
             }).AddTo(this);
 
             __tweener?.Complete();
-            __tweener = springMassSystem.bodyOffsetPoint.DOShakePosition(duration, 0.8f);
+            __tweener = springMassSystem.bodyOffsetPoint.DOShakePosition(duration, 1f);
 
             EffectManager.Instance.Show(onHitFx, springMassSystem.core.position, Quaternion.identity, Vector3.one);
         }

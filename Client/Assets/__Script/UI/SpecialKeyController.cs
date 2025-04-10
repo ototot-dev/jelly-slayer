@@ -2,6 +2,7 @@ using UniRx;
 using UGUI.Rx;
 using System.Linq;
 using UnityEngine;
+using TMPro;
 
 namespace Game
 {
@@ -10,7 +11,9 @@ namespace Game
     {
         public string actionName;
         public string specialTag;
+        public int actionCount;
         PawnBrainController __targetBrain;
+        JellyMeshController __targetJellyMesh;
         RectTransform __bodyRect;
 
         public SpecialKeyController(PawnBrainController targetBrain, string actionName, string specialTag)
@@ -18,6 +21,7 @@ namespace Game
             this.actionName = actionName;
             this.specialTag = specialTag;
             __targetBrain = targetBrain;
+            if (targetBrain is JellyBrain jellyBrain) __targetJellyMesh = jellyBrain.jellyMeshCtrler;
         }
 
         public override void OnPreShow()
@@ -26,9 +30,14 @@ namespace Game
 
             if (__bodyRect == null) __bodyRect = template.transform as RectTransform;
             __bodyRect.anchorMin = __bodyRect.anchorMax = Vector2.zero;
+
+            var attachToJellyMesh = specialTag == "Groggy";
+
             Observable.EveryLateUpdate().TakeWhile(_ => hideCount <= 0).Subscribe(_ =>
             {
-                __bodyRect.anchoredPosition =  GameContext.Instance.cameraCtrler.viewCamera.WorldToScreenPoint(__targetBrain.GetSpecialKeyPosition());
+                __bodyRect.anchoredPosition = attachToJellyMesh ?
+                    GameContext.Instance.cameraCtrler.viewCamera.WorldToScreenPoint(__targetJellyMesh.springMassSystem.core.position + Vector3.up) :
+                    GameContext.Instance.cameraCtrler.viewCamera.WorldToScreenPoint(__targetBrain.GetSpecialKeyPosition());
             }).AddTo(template);
         }
 
