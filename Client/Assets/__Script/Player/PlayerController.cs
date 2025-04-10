@@ -554,7 +554,22 @@ namespace Game
                 possessedBrain.BB.action.punchChargeLevel.Value = -1;
             }
         }
+        public void OnGroggyAttack(InputValue value)
+        {
+            if (_isEnable_NormalAttack == false)
+                return;
+            if (possessedBrain == null)
+                return;
 
+            var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsRolling && !possessedBrain.BB.IsHanging; ;
+            // var canAction2 = canAction1 && !MyHeroBrain.PawnBB.IsThrowing && !MyHeroBrain.PawnBB.IsGrabbed;
+            var canAction3 = canAction1 && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
+
+            if (value.isPressed)
+            {
+
+            }
+        }
         public void OnSpecialAttack(InputValue value)
         {
             if (_isEnable_SpecialAttack == false)

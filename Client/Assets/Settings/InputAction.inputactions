@@ -69,15 +69,6 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Swap",
-                    "type": "Button",
-                    "id": "a046bbf7-2925-411f-b331-72488583a048",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Parry",
                     "type": "Button",
                     "id": "d629aeec-d76f-45e8-b1f4-e3628a03963c",
@@ -90,6 +81,15 @@
                     "name": "Attack",
                     "type": "Value",
                     "id": "a156257a-fc80-44ee-92b0-793ab800d248",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "GroggyAttack",
+                    "type": "Value",
+                    "id": "2ea824f5-0257-49eb-a5a8-88bd5ce5209f",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -336,7 +336,7 @@
                 {
                     "name": "",
                     "id": "818e4f7f-bdc1-4087-b541-af58fbcd74c3",
-                    "path": "<Keyboard>/k",
+                    "path": "<Keyboard>/rightBracket",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -479,7 +479,7 @@
                 {
                     "name": "",
                     "id": "b3cf26f5-ef8f-4646-a1d3-02f36f9fface",
-                    "path": "<Keyboard>/u",
+                    "path": "<Keyboard>/leftBracket",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
@@ -506,6 +506,17 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "Burst",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "af015ec1-0e00-47da-8a77-8d0de7dbffb8",
+                    "path": "<Keyboard>/k",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "GroggyAttack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
