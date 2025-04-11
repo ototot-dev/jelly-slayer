@@ -24,7 +24,7 @@ namespace Game
             base.OnPreShow();
 
             GameContext.Instance.playerCtrler.Possess(GameObject.FindWithTag("Hero").GetComponent<HeroBrain>());
-            new GamePanelController().Load().Show(GameContext.Instance.MainCanvasCtrler.body);
+            new GamePanelController().Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
         }
     }
 }

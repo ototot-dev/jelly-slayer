@@ -22,17 +22,17 @@ namespace Game
             }
         }
 
-        public MainCanvasController MainCanvasCtrler
+        public CanvasManager canvasManager
         {
             get
             {
-                __mainCanvasCtrler ??= MainCanvas.GetComponent<MainCanvasController>();
+                __mainCanvasCtrler ??= MainCanvas.GetComponent<CanvasManager>();
                 return __mainCanvasCtrler;
             }
         }
 
         RectTransform __mainCanvas;
-        MainCanvasController __mainCanvasCtrler;
+        CanvasManager __mainCanvasCtrler;
         
         void Awake()
         {

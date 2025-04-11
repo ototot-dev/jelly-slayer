@@ -12,7 +12,7 @@ namespace Game
         {
             base.OnPreShow();
 
-            GameContext.Instance.MainCanvasCtrler.FadeInImmediately(Color.black);
+            GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
         }
 
         public override void OnPostShow()
@@ -25,7 +25,7 @@ namespace Game
             {
                 this.Hide().Unload();
                 loadingCtrler = new LoadingPageController().Load();
-                loadingCtrler.Show(GameContext.Instance.MainCanvasCtrler.body);
+                loadingCtrler.Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
             }).AddToHide(this);
         }
     }

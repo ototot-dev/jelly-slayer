@@ -14,7 +14,7 @@ namespace Game
     {
         public string sourcePath;
         public GameObject sourcePrefab;
-        public MonoBehaviour poolableComponent;
+        public MonoBehaviour targetComponent;
         public IObjectPoolable poolable;
     }
 
@@ -37,8 +37,8 @@ namespace Game
             {
                 handler = Instantiate(Resources.Load<GameObject>(sourcePath), position, rotation).AddComponent<ObjectPoolableHandler>();
                 handler.sourcePath = sourcePath;
-                handler.poolableComponent = handler.GetComponent<T>();
-                handler.poolable = handler.poolableComponent as IObjectPoolable;
+                handler.targetComponent = handler.GetComponent<T>();
+                handler.poolable = handler.targetComponent as IObjectPoolable;
                 
 #if UNITY_EDITOR
                 handler.gameObject.name = handler.gameObject.name + $"-{++__instanceCount}";
@@ -49,7 +49,7 @@ namespace Game
             handler.gameObject.SetActive(true);
             handler.poolable?.OnGetFromPool();
 
-            var ret = handler.poolableComponent as T;
+            var ret = handler.targetComponent as T;
             Debug.Assert(ret != null);
 
             return ret;
@@ -70,8 +70,8 @@ namespace Game
             {
                 handler = Instantiate(sourcePrefab, position, rotation).AddComponent<ObjectPoolableHandler>();
                 handler.sourcePrefab = sourcePrefab;
-                handler.poolableComponent = handler.GetComponent<T>();
-                handler.poolable = handler.poolableComponent as IObjectPoolable;
+                handler.targetComponent = handler.GetComponent<T>();
+                handler.poolable = handler.targetComponent as IObjectPoolable;
 
 #if UNITY_EDITOR
                 handler.gameObject.name = handler.gameObject.name + $"-{++__instanceCount}";
@@ -82,7 +82,7 @@ namespace Game
             handler.gameObject.SetActive(true);
             handler.poolable?.OnGetFromPool();
 
-            var ret = handler.poolableComponent as T;
+            var ret = handler.targetComponent as T;
             Debug.Assert(ret != null);
 
             return ret;

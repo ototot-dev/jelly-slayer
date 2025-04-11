@@ -45,7 +45,7 @@ namespace Game
                 boundJellyMesh.Value = (sender as JellyBrain).jellyMeshCtrler;
                 __Logger.LogR2(gameObject, nameof(IPawnEventListener.OnReceivePawnActionStart), "jellyBrain", sender, "OnJellyOut", "boundJellyMesh", boundJellyMesh.Value);
 
-                specialKeyCtrler = new SpecialKeyController(sender, "GroggyAttack", "Groggy").Load().Show(GameContext.Instance.MainCanvasCtrler.body);
+                specialKeyCtrler = new SpecialKeyController(sender, "GroggyAttack", "Groggy").Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
             }
             else if (actionName == "OnJellyOff")
             {
@@ -64,7 +64,7 @@ namespace Game
             if (sender is JellyBrain && status == PawnStatus.Groggy && strength > 0f)
             {
                 Debug.Assert(specialKeyCtrler == null);
-                specialKeyCtrler = new SpecialKeyController(sender, "Assault", "Encounter").Load().Show(GameContext.Instance.MainCanvasCtrler.body);
+                specialKeyCtrler = new SpecialKeyController(sender, "Assault", "Encounter").Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
             }
         }
         void IPawnEventListener.OnReceivePawnDamageContext(PawnBrainController sender, PawnHeartPointDispatcher.DamageContext damageContext) 

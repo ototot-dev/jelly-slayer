@@ -37,7 +37,7 @@ namespace Game
         public Action onLifeTimeOut;
         public Action<Collider> onHitSomething;
         public Action<PawnBrainController> onReflected;
-        public bool IsDespawnPending { get; private set; }
+        public bool IsDespawnPending { get; protected set; }
 
         void Awake()
         {

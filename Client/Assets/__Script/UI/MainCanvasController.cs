@@ -5,16 +5,16 @@ using UnityEngine.UI;
 
 namespace Game
 {
-    public class MainCanvasController : MonoBehaviour
+    public class CanvasManager : MonoBehaviour
     {
-        public Canvas canvas;
-        public RawImage fade;
-        public RectTransform body;
-        public RectTransform dimmed;
+        public Canvas overlay;
+        public Canvas body;
+        public Canvas fade;
+        public Canvas dimmed;
 
         void Awake()
         {
-            Debug.Assert(canvas != null);
+            Debug.Assert(overlay != null);
             Debug.Assert(fade != null);
             Debug.Assert(body != null);
             Debug.Assert(dimmed != null);
@@ -26,7 +26,7 @@ namespace Game
             __fadeDisposable = null;
 
             fade.gameObject.SetActive(true);
-            fade.color = color;
+            fade.GetComponent<RawImage>().color = color;
         }
 
         public void FadeOutImmediately()
@@ -35,7 +35,7 @@ namespace Game
             __fadeDisposable = null;
 
             fade.gameObject.SetActive(false);
-            fade.color = Color.clear;
+            fade.GetComponent<RawImage>().color = Color.clear;
         }
 
         IDisposable __fadeDisposable;
@@ -57,12 +57,13 @@ namespace Game
 
             fade.gameObject.SetActive(true);
 
-            var fromColor = fade.color;
+            var fill = fade.GetComponent<RawImage>();
+            var fromColor = fill.color;
             var fromTimeStamp = Time.timeSinceLevelLoad;
 
             return Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(duration)))
-                .Do(_ => fade.color = Color.Lerp(fromColor, color, Mathf.Clamp01((Time.timeSinceLevelLoad - fromTimeStamp) / duration)))
-                .DoOnCompleted(() => fade.color = color);
+                .Do(_ => fill.color = Color.Lerp(fromColor, color, Mathf.Clamp01((Time.timeSinceLevelLoad - fromTimeStamp) / duration)))
+                .DoOnCompleted(() => fill.color = color);
         }
 
         IObservable<long> FadeOutAsObservable(float duration)
@@ -70,11 +71,12 @@ namespace Game
             __fadeDisposable?.Dispose();
             __fadeDisposable = null;
 
-            var fromColor = fade.color;
+            var fill = fade.GetComponent<RawImage>();
+            var fromColor = fill.color;
             var fromTimeStamp = Time.timeSinceLevelLoad;
             
             return Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(duration)))
-                .Do(_ => fade.color = Color.Lerp(fromColor, Color.clear, Mathf.Clamp01((Time.timeSinceLevelLoad - fromTimeStamp) / duration)))
+                .Do(_ => fill.color = Color.Lerp(fromColor, Color.clear, Mathf.Clamp01((Time.timeSinceLevelLoad - fromTimeStamp) / duration)))
                 .DoOnCompleted(() => fade.gameObject.SetActive(false));
         }
     }
