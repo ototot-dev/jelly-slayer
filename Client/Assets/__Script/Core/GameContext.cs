@@ -12,6 +12,7 @@ namespace Game
         public TerrainManager terrainManager;
         public SlimeSpawnManager jellySpawnManager;
         public HeroSpawnManager heroSpawnManager;
+        public DamageTextManager damageTextManager;
 
         public RectTransform MainCanvas
         {

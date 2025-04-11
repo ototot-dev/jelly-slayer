@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 using Game;
 
 public class DamageTextManager : MonoBehaviour
@@ -12,14 +9,6 @@ public class DamageTextManager : MonoBehaviour
     RectTransform _canvasRect;
     [SerializeField]
     Transform _trRoot;
-
-    Stack<DamageText> _stack = new();
-
-    [Space(10)]
-    public float _xDamp = 0.01f;
-    public float _yDamp = 0.03f;
-    public float _yMin = 2.0f;
-    public float _yMax = 2.5f;
 
 #if UNITY_EDITOR
     [Space(10)]
@@ -33,40 +22,21 @@ public class DamageTextManager : MonoBehaviour
     {
 
     }
-    DamageText Alloc()
-    {
-        if (_stack.Count > 0)
-        {
-            return _stack.Pop();
-        }
-        GameObject obj = GameObject.Instantiate(_prefDamageText);
 
-        var dmgText = obj.GetComponent<DamageText>();
-        dmgText.Manager = this;
+    void Awake()
+    {
+        GameContext.Instance.damageTextManager = this;
+    }
+
+    public DamageText Create(string text, Vector3 vPos, float scale, Color color) 
+    {
+        var dmgText = ObjectPoolingSystem.Instance.GetObject<DamageText>(_prefDamageText, Vector3.zero, Quaternion.identity);
+        dmgText.SetText(text, vPos, scale, color);
         dmgText._rtRoot.SetParent(_trRoot);
 
         return dmgText;
     }
-    
-    public DamageText Create(string text, Vector3 vPos, float scale, Color color) 
-    {
-        var dmgText = Alloc();
-        if (dmgText == null)
-            return null;
 
-        //float scale = 0.2f;
-        //vPos.x += scale * Random.Range(-1.0f, 1.0f);
-        //vPos.y += 0.3f * scale * Random.Range(-1.0f, 1.0f);
-        //vPos.z += 0.3f * scale * Random.Range(-1.0f, 1.0f);             
-
-        dmgText.SetText(text, vPos, scale, color);
-
-        return dmgText;
-    }
-    public void Die(DamageText damageText) 
-    {
-        _stack.Push(damageText);
-    }
     public Vector3 GetCanvasPos(Vector3 pos)
     {
         //first you need the RectTransform component of your canvas
@@ -85,6 +55,7 @@ public class DamageTextManager : MonoBehaviour
         //now you can set the position of the ui element
         return WorldObject_ScreenPosition;
     }
+
 #if UNITY_EDITOR
     private void Update()
     {

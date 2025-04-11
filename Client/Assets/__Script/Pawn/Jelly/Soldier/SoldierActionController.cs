@@ -11,6 +11,8 @@ namespace Game
 
         public override bool CanBlockAction(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
+            return false;
+            
             if (__brain.BB.IsGroggy)
                 return false;
             else if (__brain.ActionCtrler.CheckActionRunning() || __brain.StatusCtrler.CheckStatus(PawnStatus.Staggered) || __brain.StatusCtrler.CheckStatus(PawnStatus.CanNotGuard))

@@ -1,12 +1,14 @@
+using System;
+using Game;
 using TMPro;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DamageText : MonoBehaviour
+public class DamageText : MonoBehaviour, IObjectPoolable
 {
-    public DamageTextManager Manager { get; set; }
-
     public RectTransform _rtRoot;
+
     [SerializeField]
     private TextMeshProUGUI _textTmp;
     [SerializeField]
@@ -26,13 +28,6 @@ public class DamageText : MonoBehaviour
     float _yMax = 150.0f; // �ִ� ����
     bool _isYDamp = true;
 
-    bool _isDie = false;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
     public void SetText(string text, Vector3 vPos, float scale, Color color) 
     {
         _text.text = text;
@@ -41,12 +36,9 @@ public class DamageText : MonoBehaviour
         _xPos = 0;
         _yPos = 0;
         _yAdd = 0;
-        _isDie = false;
         _isYDamp = true;
         _color = color;
         _text.color = _color;
-
-        gameObject.SetActive(true);
 
         _yMax = UnityEngine.Random.Range(140, 240);
         _xAdd = UnityEngine.Random.Range(90, 180);
@@ -54,27 +46,14 @@ public class DamageText : MonoBehaviour
         {
             _xAdd *= -1;
         }
+
         _vWorldPos = vPos;
-        _rtRoot.localPosition = Manager.GetCanvasPos(_vWorldPos);
+        _rtRoot.localPosition = GameContext.Instance.damageTextManager.GetCanvasPos(_vWorldPos);
         _rtRoot.localScale = scale * Vector3.one;
     }
-    void Die() 
+
+    void UpdateInternal()
     {
-        if (_isDie == true)
-            return;
-
-        _isDie = true;
-        gameObject.SetActive(false);
-
-        Manager.Die(this);
-        //Destroy(gameObject);
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        if (_isDie == true) 
-            return;
-
         _xPos += _xAdd * Time.deltaTime;
         _xAdd -= 0.01f * _xAdd;
 
@@ -92,7 +71,7 @@ public class DamageText : MonoBehaviour
             _yPos -= _yAdd;
             _yAdd += 2.0f * Time.deltaTime;
         }
-        var pos = Manager.GetCanvasPos(_vWorldPos);
+        var pos = GameContext.Instance.damageTextManager.GetCanvasPos(_vWorldPos);
         pos.x += _xPos;
         pos.y += _yPos;
 
@@ -102,7 +81,7 @@ public class DamageText : MonoBehaviour
         _lifeTimeCur -= Time.deltaTime;
         if (_lifeTimeCur <= 0) 
         {
-            Die();
+            ObjectPoolingSystem.Instance.ReturnObject(gameObject);
             return;
         }
         // Alpha
@@ -111,5 +90,18 @@ public class DamageText : MonoBehaviour
             _color.a = 2.0f * _lifeTimeCur;
             _text.color = _color;
         }
+    }
+
+    IDisposable __updateDisposable;
+
+    public void OnGetFromPool()
+    {
+        __updateDisposable = Observable.EveryUpdate().Subscribe(_ => UpdateInternal()).AddTo(this);
+    }
+
+    public void OnReturnedToPool()
+    {
+        __updateDisposable?.Dispose();
+        __updateDisposable = null;
     }
 }

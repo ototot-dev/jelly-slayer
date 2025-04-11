@@ -271,7 +271,11 @@ namespace Game
         {
             base.DamageReceiverHandler(ref damageContext);
 
-            if (damageContext.actionResult == ActionResults.Blocked)
+            if (damageContext.actionResult == ActionResults.Damaged)
+            {
+                GameContext.Instance.damageTextManager.Create(damageContext.finalDamage.ToString("0"), damageContext.hitPoint, 1f, Color.white);
+            }
+            else if (damageContext.actionResult == ActionResults.Blocked)
             {
                 if (!ActionCtrler.CheckActionPending() && BB.action.counterAttackProbOnGuard > UnityEngine.Random.Range(0f, 1f))
                 {
