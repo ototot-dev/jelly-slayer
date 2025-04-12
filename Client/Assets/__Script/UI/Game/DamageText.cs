@@ -40,8 +40,8 @@ public class DamageText : MonoBehaviour, IObjectPoolable
         _color = color;
         _text.color = _color;
 
-        _yMax = UnityEngine.Random.Range(140, 240);
-        _xAdd = UnityEngine.Random.Range(90, 180);
+        _yMax = UnityEngine.Random.Range(140, 180);
+        _xAdd = UnityEngine.Random.Range(40, 90);
         if (UnityEngine.Random.Range(0, 1000) % 2 == 0) 
         {
             _xAdd *= -1;
@@ -69,7 +69,7 @@ public class DamageText : MonoBehaviour, IObjectPoolable
         else
         {
             _yPos -= _yAdd;
-            _yAdd += 2.0f * Time.deltaTime;
+            _yAdd += 1.4f * Time.deltaTime;
         }
         var pos = GameContext.Instance.damageTextManager.GetCanvasPos(_vWorldPos);
         pos.x += _xPos;
@@ -77,7 +77,7 @@ public class DamageText : MonoBehaviour, IObjectPoolable
 
         _rtRoot.localPosition = pos;
 
-        // ����
+        // Life Time
         _lifeTimeCur -= Time.deltaTime;
         if (_lifeTimeCur <= 0) 
         {
