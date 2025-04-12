@@ -29,14 +29,14 @@ namespace Game
                 foreach (var s in actionDataSelector.ReservedSequences)
                 {
                     GUI.backgroundColor = s.Value.currProb > 0f && s.Value == actionDataSelector.CurrSequence() ? new Color(0.8f, 0.8f, 1) : Color.white;
-                    if (GUILayout.Button($"{s.Value.SequenceName} | Rate:{s.Value.currProb:F2} | CoolTime:{s.Value.GetCoolTime():F1}"))
+                    if (GUILayout.Button($"{s.Value.SequenceName} | Rate:{s.Value.currProb:F2} | CoolTime:{s.Value.GetRemainCoolTime():F1}"))
                         actionDataSelector.EnqueueSequence(s.Value);
                 }
                 GUILayout.Label("Action");
                 foreach (var s in actionDataSelector.ActionDataStates)
                 {
-                    GUI.backgroundColor = s.Value.GetCoolTime() > 0f ? new Color(0.8f, 0.8f, 1) : Color.white;
-                    if (GUILayout.Button($"{s.Value.actionData.actionName} | CoolTime:{s.Value.GetCoolTime():F1}"))
+                    GUI.backgroundColor = Color.white;
+                    if (GUILayout.Button($"{s.Value.actionData.actionName}"))
                         actionDataSelector.GetComponent<PawnActionController>().SetPendingAction(s.Value.actionData.actionName);
                 }
                 GUI.backgroundColor = oldColor;

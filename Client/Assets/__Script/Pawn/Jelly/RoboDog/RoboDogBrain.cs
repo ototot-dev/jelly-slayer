@@ -143,7 +143,6 @@ namespace Game
                 {
                     __counterActionData ??= ActionDataSelector.GetActionData("Counter");
                     ActionCtrler.SetPendingAction(__counterActionData.actionName);
-                    ActionDataSelector.SetCoolTime(__combo1ActionData);
                 }
             }
         }

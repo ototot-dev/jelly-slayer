@@ -53895,15 +53895,15 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6001275140089051193}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0.70710677, z: 0.70710677, w: 0}
-  m_LocalPosition: {x: 0.164, y: -0.373, z: -0}
+  m_LocalRotation: {x: 0.00000002534942, y: -0.5903791, z: 0.80712605, w: 0.00000011548393}
+  m_LocalPosition: {x: 0.058, y: -0.373, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5905730780835405055}
   - {fileID: 4341131037163423784}
   m_Father: {fileID: 2236536508931878524}
-  m_LocalEulerAnglesHint: {x: 90, y: -90, z: 90}
+  m_LocalEulerAnglesHint: {x: 72.368, y: 0, z: 180}
 --- !u!33 &8047022998564941094
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -82745,8 +82745,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.5, y: 1, z: 0.2}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.5, y: 1, z: 0.5}
+  m_Center: {x: 0, y: 0, z: 0.1}
 --- !u!114 &6740015920269783370
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -83972,17 +83972,18 @@ MonoBehaviour:
   action:
     minCoolDownDuration: 2
     maxCoolDownDuration: 4
-    comboAttackInterval: 1
-    comboAttackDistance: 3
+    counterCoolTime: 1
+    comboAttackCoolTime: 1
+    comboAttackDistance: 5
     counterComboAttackInterval: 1
     counterComboAttackDistance: 4
     counterComboAttachProb: 0.6
     counterAttackProbOnGuard: 0.5
-    jumpAttackInterval: 1
-    jumpAttackProb: 0.4
+    jumpAttackCoolTime: 10
     shieldAttackRigBlendInSpeed: 5
     shieldAttackRigBlendOutSpeed: 10
     shieldTouchSensor: {fileID: 376781739002393882}
+    missileCoolTime: 30
     missileEmitNum: 3
     missileEmitIntervalA: 0.1
     missileEmitIntervalB: 1
@@ -83999,6 +84000,7 @@ MonoBehaviour:
     laserForwardSpeed: 1
     laserRotateSpeed: 1
     laserCharingDuration: 1
+    leapCoolTime: 50
     leapJumpHeight: 3
     leapRootMotionDistance: 7
     leapRootMotionMultiplier: 1
@@ -84006,7 +84008,7 @@ MonoBehaviour:
     leapMaxProb: 1
     backstepDestination: {x: 0, y: 0, z: 0}
     backstepBoostProbOnTick: 1
-    backstepTriggerDistance: 1
+    backstepTriggerDistance: 4
     backstepRootMotionMultiplier: 1
   graphics:
     onHitFx: {fileID: 3011233550371498735, guid: 24e37d54f259141abb7ebbc527b8bf4e, type: 3}

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MainTable;
 using UnityEngine;
-using VInspector.Libs;
+using ZLinq;
 
 namespace Game
 {
@@ -27,33 +27,18 @@ namespace Game
                 set => __sequenceData[index] = value;
             }
             public int Size() => __sequenceData.Length;
+            public void Reset() { __currIndex = -1; }
             public MainTable.ActionData First() => __sequenceData[0];
             public MainTable.ActionData Last() => __sequenceData[__sequenceData.Length - 1];
             public MainTable.ActionData Curr() => __sequenceData[__currIndex];
             public MainTable.ActionData Next() => ++__currIndex < __sequenceData.Length ? __sequenceData[__currIndex] : null;
-            public void Reset() { __currIndex = -1; }
             public float GetPaddingTime() => (__paddingTimeData?.ContainsKey(__currIndex) ?? false) ? __paddingTimeData[__currIndex] : 0f;
-            public float GetCoolTime() => __sequenceData.Max(p => __selector.GetCoolTime(p));
-            public void SetCoolTime(int index = 0)
+            public float GetRemainCoolTime() => maxCoolTime > 0f ? Mathf.Max(0f, maxCoolTime + __beginTimeStamp - Time.time) : 0f;
+            public void BeginCoolTime(float coolTime) { __beginTimeStamp = Time.time; maxCoolTime = coolTime; }
+            public bool Evaluate(float probConstraint, float staminaConstraint)
             {
-                Debug.Assert(index >= 0 && index < __sequenceData.Length);
-                __selector.SetCoolTime(__sequenceData[index]);
-            }
-
-            public void IncreaseProbability(float deltaProb, float maxProb)
-            {
-                currProb = Mathf.Min(currProb + deltaProb, maxProb);
-            }
-            public void ResetProbability(float resetProb = 0f)
-            {
-                currProb = resetProb;
-            }
-
-            public bool Evaluate(float probConstraint, float staminaConstraint, float intervalConstraint)
-            {
-                if ((Time.time - __evaluateTimeStamp) < intervalConstraint) return false;
-
-                __evaluateTimeStamp = Time.time;
+                if (GetRemainCoolTime() > 0f) 
+                    return false;
 
                 if (currProb < probConstraint) 
                     return false;
@@ -71,7 +56,8 @@ namespace Game
             readonly Dictionary<int, float> __paddingTimeData;
             PawnActionDataSelector __selector;
             int __currIndex;
-            float __evaluateTimeStamp;
+            float __beginTimeStamp;
+            public float maxCoolTime;
             public float currProb;
             public int HashCode { get; private set; }
             public string SequenceName { get; private set; }
@@ -127,8 +113,8 @@ namespace Game
 
             if (!__sequenceQueue.Contains(sequence))
             {
-                sequence.Reset();
                 __sequenceQueue.Enqueue(sequence);
+                sequence.Reset();
                 return sequence;
             }
             else
@@ -153,7 +139,7 @@ namespace Game
                 return null;
         }
 
-        public void ClearSequences() { __sequenceQueue.Clear(); }
+        public void CancelSequences() { __sequenceQueue.Clear(); }
 
         readonly Queue<ActionSequence> __sequenceQueue = new();
         readonly Dictionary<int, ActionSequence> __reservedSequences = new();
@@ -161,9 +147,6 @@ namespace Game
         public class ActionDataState
         {
             public MainTable.ActionData actionData;
-            float __executedTimeStamp;
-            public float GetCoolTime() => actionData.coolTime <= 0f ? 0f : Mathf.Max(0f, actionData.coolTime + __executedTimeStamp - Time.time);
-            public void ResetCoolTime() { __executedTimeStamp = Time.time; }
 
             public ActionDataState(MainTable.ActionData actionData)
             {
@@ -210,47 +193,26 @@ namespace Game
 
         public void BoostProbability<T>(T alias, float deltaProb, float maxProb = 1f) where T : struct, Enum
         {
-            GetSequence(alias)?.IncreaseProbability(deltaProb, maxProb);
+            GetSequence(alias).currProb = Mathf.Min(GetSequence(alias).currProb + deltaProb, maxProb);
         }
         public void ResetProbability<T>(T alias, float resetProb = 0f) where T : struct, Enum
         {
-            GetSequence(alias)?.ResetProbability(resetProb);
+            GetSequence(alias).currProb = resetProb;
         }
-
-        public void SetCoolTime(string actionName)
+        public void BeginCoolTime<T>(T alias, float coolTime) where T : struct, Enum
         {
-            SetCoolTime(GetActionData(actionName));
+            GetSequence(alias).BeginCoolTime(coolTime);
         }
-        public void SetCoolTime(MainTable.ActionData actionData)
-        {   
-            Debug.Assert(actionData != null);
-
-            if (__actionDataStates.TryGetValue(actionData, out var state))
-                state.ResetCoolTime();
-            else
-                __Logger.WarningR2(gameObject, nameof(SetCoolTime), "__actionDataStates.TryGetValue() return false", "actionName", actionData.actionName);
-        }
-
-        public float GetCoolTime(string actionName) => GetCoolTime(GetActionData(actionName));
-        public float GetCoolTime(ActionData actionData)
+        public void ReduceCoolTime<T>(T alias, float deltaTime) where T : struct, Enum
         {
-            Debug.Assert(actionData != null);
-
-            if (__actionDataStates.TryGetValue(actionData, out var state))
-            {
-                return state.GetCoolTime();
-            }
-            else
-            {
-                __Logger.WarningR2(gameObject, nameof(SetCoolTime), "__actionDataStates.TryGetValue() return false", "actionName", actionData.actionName);
-                return 0f;
-            }
+            GetSequence(alias).maxCoolTime = Mathf.Max(0f, GetSequence(alias).maxCoolTime - deltaTime);
+        }
+        public void CancelCoolTime<T>(T alias) where T : struct, Enum
+        {
+            GetSequence(alias).maxCoolTime = 0f;
         }
 
-        public bool CheckCoolTime(string actionName) => CheckCoolTime(GetActionData(actionName));
-        public bool CheckCoolTime(ActionData actionData) => GetCoolTime(actionData) <= 0f;
-
-        public bool EvaluateSequence<T>(T alias, float probConstraint = -1f, float staminaConstraint = -1f, float intervalConstraint = -1f) where T : struct, Enum
+        public bool EvaluateSequence<T>(T alias, float probConstraint = -1f, float staminaConstraint = -1f) where T : struct, Enum
         {
             if (debugActionSelectDisabled)
             {
@@ -258,7 +220,7 @@ namespace Game
                 return false;
             }
 
-            return GetSequence(alias)?.Evaluate(probConstraint, staminaConstraint, intervalConstraint) ?? false;
+            return GetSequence(alias).Evaluate(probConstraint, staminaConstraint);
         }
         public bool EvaluateActionState(string actionName, float staminaConstraint = -1f) => EvaluateActionState(GetActionData(actionName), staminaConstraint);
         public bool EvaluateActionState(MainTable.ActionData actionData, float staminaConstraint = -1f)
@@ -277,10 +239,10 @@ namespace Game
                 return false;
             }
 
-            return actionState.GetCoolTime() <= 0f && (staminaConstraint < 0f || actionState.actionData.staminaCost <= staminaConstraint);
+            return staminaConstraint < 0f || actionState.actionData.staminaCost <= staminaConstraint;
         }
 
-        public T TryRandomPick<T>(float probConstraint, float staminaConstraint = -1f, float intervalConstraint = -1f) where T : struct, Enum
+        public T TryRandomPick<T>(float probConstraint = 0f, float staminaConstraint = -1f) where T : struct, Enum
         {
             if (debugActionSelectDisabled)
             {
@@ -288,7 +250,7 @@ namespace Game
                 return Enum.Parse<T>("None");
             }
 
-            var executables = __reservedSequences.Select(p => p.Value).Where(s => s.currProb > 0f && s.Evaluate(probConstraint, staminaConstraint, intervalConstraint)).ToArray();
+            var executables = __reservedSequences.AsValueEnumerable().Select(p => p.Value).Where(s => s.currProb > 0f && s.Evaluate(probConstraint, staminaConstraint));
             var selectRate = UnityEngine.Random.Range(0, executables.Sum(e => e.currProb));
             var accumRate = 0f;
             foreach (var e in executables)

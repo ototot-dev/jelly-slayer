@@ -53,7 +53,8 @@ namespace Game
             public float maxCoolDownDuration= 1f;
 
             [Header("Combo")]
-            public float comboAttackInterval = 1f;
+            public float counterCoolTime = 1f;
+            public float comboAttackCoolTime = 1f;
             public float comboAttackDistance = 1f;
             public float counterComboAttackInterval = 1f;
             public float counterComboAttackDistance = 1f;
@@ -61,8 +62,7 @@ namespace Game
             public float counterAttackProbOnGuard = 0.1f;
 
             [Header("JumpAttack")]
-            public float jumpAttackInterval = 1f;
-            public float jumpAttackProb = 0.1f;
+            public float jumpAttackCoolTime = 10f;
 
             [Header("ShieldAttack")]
             public float shieldAttackRigBlendInSpeed = 1f;
@@ -70,6 +70,7 @@ namespace Game
             public BoxCollider shieldTouchSensor;
 
             [Header("Missile")]
+            public float missileCoolTime = 1f;
             public int missileEmitNum = 1;
             public float missileEmitIntervalA = 1f;
             public float missileEmitIntervalB = 1f;
@@ -90,6 +91,7 @@ namespace Game
             public float laserCharingDuration = 1f;
 
             [Header("Leap")]
+            public float leapCoolTime = 1f;
             public float leapJumpHeight = 1f;
             public float leapRootMotionDistance = 1f;
             public float leapRootMotionMultiplier = 1f;
@@ -97,7 +99,7 @@ namespace Game
             public float leapMaxProb = 1f;
 
             [Header("Backstep")]
-            public Vector3 backstepDestination;  
+            public Vector3 backstepDestination;
             public float backstepBoostProbOnTick = 1f;
             public float backstepTriggerDistance = 1f;
             public float backstepRootMotionMultiplier = 1f;
