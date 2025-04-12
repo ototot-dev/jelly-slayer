@@ -479,6 +479,8 @@ namespace Game
             // var canAction2 = canAction1 && !MyHeroBrain.PawnBB.IsThrowing && !MyHeroBrain.PawnBB.IsGrabbed;
             var canAction3 = canAction1 && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
 
+            var isJellyActive = (boundJellyMesh.Value != null);
+
             if (value.isPressed)
             {
                 __attackPresssedTimeStamp = Time.time;
@@ -500,6 +502,22 @@ namespace Game
                         case "Punch":
                             possessedBrain.ActionCtrler.CancelAction(false);
                             possessedBrain.ActionCtrler.SetPendingAction("Slash#1");
+                            break;
+                        case "GroggyAttack#1":
+                            if (isJellyActive == true)
+                            {
+                                possessedBrain.ActionCtrler.CancelAction(false);
+                                possessedBrain.ActionCtrler.SetPendingAction("GroggyAttack#2");
+                                possessedBrain.Movement.FaceAt(boundJellyMesh.Value.springMassSystem.core.position);
+                            }
+                            break;
+                        case "GroggyAttack#2":
+                            if (isJellyActive == true)
+                            {
+                                possessedBrain.ActionCtrler.CancelAction(false);
+                                possessedBrain.ActionCtrler.SetPendingAction("GroggyAttack#3");
+                                possessedBrain.Movement.FaceAt(boundJellyMesh.Value.springMassSystem.core.position);
+                            }
                             break;
                     }
 
@@ -526,8 +544,16 @@ namespace Game
                     }
                     else 
                     {
-                        possessedBrain.ActionCtrler.SetPendingAction("Slash#1");
-                        possessedBrain.ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
+                        if (isJellyActive == true)
+                        {
+                            possessedBrain.ActionCtrler.SetPendingAction("GroggyAttack#1");
+                            possessedBrain.Movement.FaceAt(boundJellyMesh.Value.springMassSystem.core.position);
+                        }
+                        else
+                        {
+                            possessedBrain.ActionCtrler.SetPendingAction("Slash#1");
+                            possessedBrain.ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
+                        }
                     }
 
                     //* 타겟이 없을 경우엔 주변 타겟으로 공격 방향을 보정해줌
