@@ -84,6 +84,7 @@ namespace Game
                 __Logger.LogR2(gameObject, "OnReceivePawnDamageContext", "Groggy-Break");
             }
         }
+        void IPawnEventListener.OnReceivePawnSpawningStateChanged(PawnBrainController sender, PawnSpawnStates state) {}
 #endregion
 
         public GameObject SpawnHeroPawn(GameObject heroPrefab, bool possessImmediately = false)

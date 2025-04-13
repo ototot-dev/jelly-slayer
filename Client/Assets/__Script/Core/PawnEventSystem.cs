@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game
-{ 
+{   
     public class PawnEventManager : MonoSingleton<PawnEventManager>
     {
         HashSet<IPawnEventListener> __eventListeners = new();
@@ -26,6 +26,12 @@ namespace Game
 
             foreach (var l in __eventListeners)
                 l.OnReceivePawnDamageContext(sender, damageContext);
+        }
+
+        public void SendPawnSpawningEvent(PawnBrainController sender, PawnSpawnStates state)
+        {
+            foreach (var l in __eventListeners)
+                l.OnReceivePawnSpawningStateChanged(sender, state);
         }
     }
 }

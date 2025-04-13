@@ -40,4 +40,5 @@ public class PawnAnimatorHandler : MonoBehaviour
     public void f_hit() { }
     public void f_fire() { }
     public void f_afterFire() { }
+    public void Shoot() {}
 }

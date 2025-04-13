@@ -56,19 +56,13 @@ namespace Game
         public override void OnAnimatorStateEnterHandler(AnimatorStateInfo stateInfo, int layerIndex)
         {
             __runningAnimStateNames.Add(stateInfo.shortNameHash);
+            base.OnAnimatorStateEnterHandler(stateInfo, layerIndex);
         }
 
         public override void OnAniamtorStateExitHandler(AnimatorStateInfo stateInfo, int layerIndex)
         {
             __runningAnimStateNames.Remove(stateInfo.shortNameHash);
-
-            if (stateInfo.shortNameHash == Animator.StringToHash("Spawning"))
-            {
-                ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Off;
-
-                //* isSpawnFinished 값 갱신
-               __brain. BB.common.isSpawnFinished.Value = true;
-            }
+            base.OnAniamtorStateExitHandler(stateInfo, layerIndex);
         }
 
         public override void OnAnimatorFootHandler(bool isRight) 

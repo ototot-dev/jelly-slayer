@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using Game.NodeCanvasExtension;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
@@ -52,9 +54,6 @@ namespace Game
             ActionCtrler = GetComponent<SoldierActionController>();
         }
 
-        float __coolDownFinishTimeStamp;
-        SpecialKeyController __specialKeyCtrler;
-
         public enum ActionPatterns : int
         {
             None = -1,
@@ -73,9 +72,41 @@ namespace Game
             Max,
         }
 
+        IEnumerator SpawningCoroutine()
+        {
+            PawnEventManager.Instance.SendPawnSpawningEvent(this, PawnSpawnStates.SpawnStart);
+            Movement.gravity = Vector3.down;
+            Movement.StartJump(0f);
+
+            yield return new WaitForSeconds(1f);
+
+            AnimCtrler.ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Off;
+            Movement.gravity = 20f * Vector3.down;
+            Movement.StartFalling();
+
+            yield return new WaitUntil(() => Movement.IsOnGround);
+
+            GameContext.Instance.cameraCtrler.Shake(0.2f, 0.5f);
+
+            yield return new WaitForSeconds(1f);
+
+            BB.common.isSpawnFinished.Value = true;
+            PawnEventManager.Instance.SendPawnSpawningEvent(this, PawnSpawnStates.SpawnFinished);
+        }
+
+        IDisposable __spawningDisposable;
+
         protected override void StartInternal()
         {
             base.StartInternal();
+
+            //* Spawning 연출 시작
+            Observable.Timer(TimeSpan.FromSeconds(1f)).Subscribe(_ =>
+            {
+                __spawningDisposable = Observable.FromCoroutine(SpawningCoroutine)
+                    .DoOnCompleted(() => __spawningDisposable = null)
+                    .Subscribe().AddTo(this);
+            }).AddTo(this);
 
             ActionDataSelector.ReserveSequence(ActionPatterns.JumpAttackA, "JumpAttack").BeginCoolTime(BB.action.jumpAttackCoolTime);
             ActionDataSelector.ReserveSequence(ActionPatterns.JumpAttackB, "Missile", 1f, "JumpAttack").BeginCoolTime(BB.action.jumpAttackCoolTime);
@@ -121,13 +152,16 @@ namespace Game
                     jellyMeshCtrler.FadeOut(0.5f);
                     jellyMeshCtrler.FinishHook();
 
-                    //* 막타 Hit 애님이 오전히 출력되는 시간 딜레이 
+                    //* 막타 Hit 애님이 온전 출력되는 시간 딜레이 
                     Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(_ => __pawnAnimCtrler.mainAnimator.SetBool("IsGroggy", false)).AddTo(this);
 
                     //* 일어나는 모션 동안은 무적
                     PawnStatusCtrler.AddStatus(PawnStatus.Invincible, 1f, 2f);
                     PawnStatusCtrler.AddStatus(PawnStatus.CanNotMove, 1f, 3f);
                     PawnStatusCtrler.AddStatus(PawnStatus.CanNotAction, 1f, 3f);
+
+                    ActionDataSelector.BeginCoolTime(ActionPatterns.ShieldAttackA, BB.action.shieldAttackCoolTime);
+                    ActionDataSelector.BeginCoolTime(ActionPatterns.ShieldAttackB, BB.action.shieldAttackCoolTime);
 
                     InvalidateDecision(3f);
                 }

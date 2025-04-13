@@ -6,6 +6,9 @@ namespace Game
 {
     public class SoldierMovement : PawnMovementEx
     {
+        [Header("Movement")]
+        public Vector3 glideVec;
+
         public void StartJump(float jumpHeight)
         {
             __jumpTimeStamp = Time.time;
@@ -104,7 +107,7 @@ namespace Game
 
                     //* 공중에 뜬 상태에서 자연스러운 업다운 모션을 생성함
                     moveVec = moveVec.AdjustY(__brain.BB.body.glidingAmplitude * Perlin.Noise(__brain.BB.body.glidingFrequency * glidingElapsedTime + __glidingTimeStamp));
-                    __ecmMovement.SimpleMove(moveSpeed * moveVec, moveSpeed, moveAccel, moveBrake, 1f, 1f, Vector3.zero, false, Time.fixedDeltaTime);
+                    __ecmMovement.SimpleMove(moveSpeed * (moveVec + glideVec), moveSpeed, moveAccel, moveBrake, 1f, 1f, Vector3.zero, false, Time.fixedDeltaTime);
 
                     if (__brain.BB.body.glidingDuration >= 0f && glidingElapsedTime > __brain.BB.body.glidingDuration)
                         StartFalling();

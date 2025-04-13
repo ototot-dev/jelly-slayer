@@ -75,9 +75,9 @@ namespace Game
             //     LevelVisibilityManager.Instance.RegisterChecker(visibilityChecker);
 
             //* 지형 위로 y값 보정
-            var hit = TerrainManager.GetTerrainHitPoint(transform.position);
-            if (hit.collider != null)
-                transform.position = hit.point;
+            // var hit = TerrainManager.GetTerrainHitPoint(transform.position);
+            // if (hit.collider != null)
+            //     transform.position = hit.point;
 
             if (FSM != null)
                 Observable.Timer(TimeSpan.FromSeconds(0.1f)).Subscribe(_ => FSM.enabled = true).AddTo(this);

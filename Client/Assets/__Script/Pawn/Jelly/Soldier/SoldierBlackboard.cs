@@ -48,37 +48,32 @@ namespace Game
         [Serializable]
         public class Action
         {
-            [Header("CoolDown")]
-            public float minCoolDownDuration = 1f;
-            public float maxCoolDownDuration= 1f;
-
-            [Header("Combo")]
-            public float counterCoolTime = 1f;
+            [Header("ComboAttack")]
             public float comboAttackCoolTime = 1f;
             public float comboAttackDistance = 1f;
-            public float counterComboAttackInterval = 1f;
-            public float counterComboAttackDistance = 1f;
-            public float counterComboAttachProb = 0.1f;
-            public float counterAttackProbOnGuard = 0.1f;
 
             [Header("JumpAttack")]
             public float jumpAttackCoolTime = 10f;
 
             [Header("ShieldAttack")]
+            public float shieldAttackCoolTime = 1f;
             public float shieldAttackRigBlendInSpeed = 1f;
             public float shieldAttackRigBlendOutSpeed = 1f;
             public BoxCollider shieldTouchSensor;
 
+            [Header("Counter")]
+            public float counterCoolTime = 1f;
+
             [Header("Missile")]
             public float missileCoolTime = 1f;
+            public float backstepTriggerDistance = 1f;
+            public float backstepRootMotionMultiplier = 1f;
             public int missileEmitNum = 1;
             public float missileEmitIntervalA = 1f;
             public float missileEmitIntervalB = 1f;
             public float missileEmitSpeed = 10f;
             public float hoveringDurationA = 1f;
             public float hoveringDurationB = 1f;
-            public float missileBoostProbOnTick = 0.1f;
-            public float missileMaxProb = 1f;
             public Transform missileEmitPoint;
             public GameObject missilePrefab;
 
@@ -94,15 +89,6 @@ namespace Game
             public float leapCoolTime = 1f;
             public float leapJumpHeight = 1f;
             public float leapRootMotionDistance = 1f;
-            public float leapRootMotionMultiplier = 1f;
-            public float leapBoostProbOnTick = 0.1f;
-            public float leapMaxProb = 1f;
-
-            [Header("Backstep")]
-            public Vector3 backstepDestination;
-            public float backstepBoostProbOnTick = 1f;
-            public float backstepTriggerDistance = 1f;
-            public float backstepRootMotionMultiplier = 1f;
         }
 
         public Action action = new();

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FIMSpace.FProceduralAnimation;
@@ -16,8 +17,10 @@ namespace Game
         public Rig rigSetup;
         public LegsAnimator legAnimator;
         public RagdollAnimator2 ragdollAnimator;
+        public Action<AnimatorStateInfo, int> onAnimStateEnter;
+        public Action<AnimatorStateInfo, int> onAnimStateExit;
+
         readonly Dictionary<string, ObservableStateMachineTriggerEx> __observableStateMachineTriggersCached = new();
-        
         public ObservableStateMachineTriggerEx FindObservableStateMachineTriggerEx(string stateName)
         {
             if (__observableStateMachineTriggersCached.TryGetValue(stateName, out var ret))
@@ -30,8 +33,8 @@ namespace Game
         }
     
         public virtual void OnAnimatorMoveHandler() {}
-        public virtual void OnAnimatorStateEnterHandler(AnimatorStateInfo stateInfo, int layerIndex) {}
-        public virtual void OnAniamtorStateExitHandler(AnimatorStateInfo stateInfo, int layerIndex) {}
+        public virtual void OnAnimatorStateEnterHandler(AnimatorStateInfo stateInfo, int layerIndex) { onAnimStateEnter?.Invoke(stateInfo, layerIndex); }
+        public virtual void OnAniamtorStateExitHandler(AnimatorStateInfo stateInfo, int layerIndex) { onAnimStateExit?.Invoke(stateInfo, layerIndex); }
         public virtual void OnAnimatorFootHandler(bool isRight) {}
     }
 }

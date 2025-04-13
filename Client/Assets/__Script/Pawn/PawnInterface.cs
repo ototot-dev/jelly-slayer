@@ -4,6 +4,17 @@ using UnityEngine;
 
 namespace Game
 {
+    public enum PawnSpawnStates
+    {
+        None,
+        SpawnStart,
+        SpawnFinished,
+        Dead,
+        DespawningStart,
+        DespawnFinished,
+        Max
+    }
+    
     public interface IPawnSpawnable
     {
         Vector3 GetSpawnPosition();
@@ -66,5 +77,6 @@ namespace Game
         void OnReceivePawnActionStart(PawnBrainController sender, string actionName);
         void OnReceivePawnStatusChanged(PawnBrainController sender, PawnStatus status, float strength, float duration);
         void OnReceivePawnDamageContext(PawnBrainController sender, PawnHeartPointDispatcher.DamageContext damageContext);
+        void OnReceivePawnSpawningStateChanged(PawnBrainController sender, PawnSpawnStates state);
     }
 }

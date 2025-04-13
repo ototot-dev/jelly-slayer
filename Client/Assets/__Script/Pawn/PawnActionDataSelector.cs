@@ -123,7 +123,6 @@ namespace Game
                 return null;
             }
         }
-        
 
         public ActionSequence CurrSequence() => __sequenceQueue.TryPeek(out var ret) ? ret : null;
         public ActionSequence NextSequence()
@@ -131,6 +130,7 @@ namespace Game
             __sequenceQueue.Dequeue();
             return CurrSequence();
         }
+        
         public ActionData AdvanceSequence()
         {
             if (__sequenceQueue.TryPeek(out var currSequence))
