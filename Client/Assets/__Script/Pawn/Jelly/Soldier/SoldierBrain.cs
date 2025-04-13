@@ -108,6 +108,7 @@ namespace Game
                     .Subscribe().AddTo(this);
             }).AddTo(this);
 
+            //* 액션 패턴 등록
             ActionDataSelector.ReserveSequence(ActionPatterns.JumpAttackA, "JumpAttack").BeginCoolTime(BB.action.jumpAttackCoolTime);
             ActionDataSelector.ReserveSequence(ActionPatterns.JumpAttackB, "Missile", 1f, "JumpAttack").BeginCoolTime(BB.action.jumpAttackCoolTime);
             ActionDataSelector.ReserveSequence(ActionPatterns.ShieldAttackA, "ShieldAttack", "Counter", "Counter", 0.1f, "Attack#3");
@@ -121,6 +122,7 @@ namespace Game
             ActionDataSelector.ReserveSequence(ActionPatterns.ComboAttackC, "Counter", "Counter", 0.1f, "Attack#1", "Attack#2", 0.1f, "Attack#3");
             ActionDataSelector.ReserveSequence(ActionPatterns.Leap, "Backstep", 0.5f, "Missile", 0.2f, "Missile", 0.2f, "Leap").BeginCoolTime(BB.action.leapCoolTime);
 
+            //* 
             ActionDataSelector.ResetProbability(ActionPatterns.MissileA, 1f);
             ActionDataSelector.ResetProbability(ActionPatterns.MissileB, 1f);
             ActionDataSelector.ResetProbability(ActionPatterns.Leap, 1f);
@@ -155,7 +157,7 @@ namespace Game
                     //* 막타 Hit 애님이 온전 출력되는 시간 딜레이 
                     Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(_ => __pawnAnimCtrler.mainAnimator.SetBool("IsGroggy", false)).AddTo(this);
 
-                    //* 일어나는 모션 동안은 무적
+                    //* 리커버 동작 동안은 무적 및 이동, 액션 금지
                     PawnStatusCtrler.AddStatus(PawnStatus.Invincible, 1f, 2f);
                     PawnStatusCtrler.AddStatus(PawnStatus.CanNotMove, 1f, 3f);
                     PawnStatusCtrler.AddStatus(PawnStatus.CanNotAction, 1f, 3f);
@@ -194,7 +196,7 @@ namespace Game
             }).AddTo(this);
 
             //* 방패 터치 시에 ShieldAttack 발동 조건
-            BB.action.shieldTouchSensor.OnTriggerStayAsObservable().Subscribe(c =>
+            BB.action.shieldTouchSensor.OnTriggerEnterAsObservable().Subscribe(c =>
             {
                 if (!BB.IsSpawnFinished || !BB.IsInCombat || BB.IsDead || BB.IsDown || BB.IsGroggy)
                     return;
@@ -279,7 +281,6 @@ namespace Game
                             ActionDataSelector.BeginCoolTime(ActionPatterns.ComboAttackB, BB.action.comboAttackCoolTime);
                             ActionDataSelector.BeginCoolTime(ActionPatterns.ComboAttackC, BB.action.comboAttackCoolTime);
                         }
-
                     }
                     else
                     {

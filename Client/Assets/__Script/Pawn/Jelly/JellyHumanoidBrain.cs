@@ -81,23 +81,6 @@ namespace Game
                 else
                     InvalidateDecision();
             };
-
-            onUpdate += () => 
-            {   
-                if (!JellyBB.IsSpawnFinished)
-                    return;
-
-                if (!__pawnActionCtrler.CheckActionRunning())
-                {
-                    JellyBB.stat.RecoverStamina(Mathf.Max(__pawnActionCtrler.prevActionContext.startTimeStamp, __pawnActionCtrler.prevActionContext.finishTimeStamp), Time.deltaTime);
-
-                    //* 스테미너 회복 후 액션 수행 가능으로 변경
-                    if (JellyBB.stat.stamina.Value == JellyBB.stat.maxStamina.Value && PawnStatusCtrler.CheckStatus(Game.PawnStatus.CanNotAction))
-                        PawnStatusCtrler.RemoveStatus(Game.PawnStatus.CanNotAction);
-                }
-
-                JellyBB.stat.ReduceStance(PawnHP.LastDamageTimeStamp, Time.deltaTime);
-            };
         }
 
         protected override void DamageReceiverHandler(ref PawnHeartPointDispatcher.DamageContext damageContext)

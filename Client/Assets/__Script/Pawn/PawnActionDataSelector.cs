@@ -191,25 +191,35 @@ namespace Game
             return ret;
         }
 
-        public void BoostProbability<T>(T alias, float deltaProb, float maxProb = 1f) where T : struct, Enum
+        public ActionSequence BoostProbability<T>(T alias, float deltaProb, float maxProb = 1f) where T : struct, Enum
         {
-            GetSequence(alias).currProb = Mathf.Min(GetSequence(alias).currProb + deltaProb, maxProb);
+            var seq = GetSequence(alias);
+            seq.currProb = Mathf.Min(seq.currProb + deltaProb, maxProb);
+            return seq;
         }
-        public void ResetProbability<T>(T alias, float resetProb = 0f) where T : struct, Enum
+        public ActionSequence ResetProbability<T>(T alias, float resetProb = 0f) where T : struct, Enum
         {
-            GetSequence(alias).currProb = resetProb;
+            var seq = GetSequence(alias);
+            seq.currProb = resetProb;
+            return seq;
         }
-        public void BeginCoolTime<T>(T alias, float coolTime) where T : struct, Enum
+        public ActionSequence BeginCoolTime<T>(T alias, float coolTime) where T : struct, Enum
         {
-            GetSequence(alias).BeginCoolTime(coolTime);
+            var seq = GetSequence(alias);
+            seq.BeginCoolTime(coolTime);
+            return seq;
         }
-        public void ReduceCoolTime<T>(T alias, float deltaTime) where T : struct, Enum
+        public ActionSequence ReduceCoolTime<T>(T alias, float deltaTime) where T : struct, Enum
         {
-            GetSequence(alias).maxCoolTime = Mathf.Max(0f, GetSequence(alias).maxCoolTime - deltaTime);
+            var seq = GetSequence(alias);
+            seq.maxCoolTime = Mathf.Max(0f, seq.maxCoolTime - deltaTime);
+            return seq;
         }
-        public void CancelCoolTime<T>(T alias) where T : struct, Enum
+        public ActionSequence CancelCoolTime<T>(T alias) where T : struct, Enum
         {
-            GetSequence(alias).maxCoolTime = 0f;
+            var seq = GetSequence(alias);
+            seq.maxCoolTime = 0f;
+            return seq;
         }
 
         public bool EvaluateSequence<T>(T alias, float probConstraint = -1f, float staminaConstraint = -1f) where T : struct, Enum
