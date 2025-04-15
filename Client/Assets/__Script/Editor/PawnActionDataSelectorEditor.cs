@@ -96,6 +96,9 @@ namespace Game
                     (actionDataSelector.GetComponent<PawnBrainController>() as IPawnMovable).StartJump(1f);
                 if (GUILayout.Button("Land"))
                     (actionDataSelector.GetComponent<PawnBrainController>() as IPawnMovable).FinishJump();
+
+                if (GUILayout.Button("Hold"))
+                    actionDataSelector.GetComponent<PawnBrainController>().InvalidateDecision(4f);
             }
             GUILayout.EndHorizontal();
             

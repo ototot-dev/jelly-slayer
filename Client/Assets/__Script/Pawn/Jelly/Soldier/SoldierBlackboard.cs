@@ -17,7 +17,7 @@ namespace Game
         public override float MinSpacingDistance => body.minSpacingDistance;
         public override float MaxSpacingDistance => body.maxSpacingDistance;
         public override float MinApproachDistance => body.minApproachDistance;
-        public float LeapRootMotionDistance => action.leapRootMotionDistance;
+        public float LeapRootMotionMultiplier => action.leapRootMotionMultiplier;
         public float BackstepRootMotionMultiplier => action.backstepRootMotionMultiplier;
         public GameObject MissilePrefab => action.missilePrefab;
         public Transform MissileEmitPoint => action.missileEmitPoint;
@@ -89,6 +89,7 @@ namespace Game
             public float leapCoolTime = 1f;
             public float leapJumpHeight = 1f;
             public float leapRootMotionDistance = 1f;
+            public float leapRootMotionMultiplier = 1f;
         }
 
         public Action action = new();
@@ -104,6 +105,7 @@ namespace Game
             public GameObject onMissedFx;
             public GameObject onBlockedFx;
             public GameObject onGuardBreakFx;
+            public GameObject onHomingDecalFx;
 
             [Header("Material")]
             public Material hitColor;

@@ -71,7 +71,7 @@ namespace Game
 
         void Start()
         {   
-            __brain.BB.body.isGuarding.CombineLatest(__brain.BB.action.punchChargeLevel, (a, b) => new Tuple<bool, int>(a, b)).Subscribe(v =>
+            __brain.BB.body.isGuarding.CombineLatest(__brain.BB.action.punchChargingLevel, (a, b) => new Tuple<bool, int>(a, b)).Subscribe(v =>
             {   
                 if (!v.Item1 && v.Item2 < 0)
                     mainAnimator.SetBool("IsGuarding", false);

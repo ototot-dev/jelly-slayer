@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using NodeCanvas.Framework.Internal;
 using UniRx;
 using UnityEngine;
 
@@ -11,8 +12,6 @@ namespace Game
 
         public override bool CanBlockAction(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
-            return false;
-            
             if (__brain.BB.IsGroggy)
                 return false;
             else if (__brain.ActionCtrler.CheckActionRunning() || __brain.StatusCtrler.CheckStatus(PawnStatus.Staggered) || __brain.StatusCtrler.CheckStatus(PawnStatus.CanNotGuard))
@@ -305,6 +304,32 @@ namespace Game
         {
             base.AwakeInternal();
             __brain = GetComponent<SoldierBrain>();
+        }
+
+        protected override void StartInternal()
+        {
+            base.StartInternal();
+
+            onHomingRotationStarted += (_) =>
+            {
+                if (currActionContext.actionName == "Leap")
+                {
+                    var homingDecalFx = GameObject.Instantiate(__brain.BB.graphics.onHomingDecalFx);
+                    homingDecalFx.transform.position = __brain.BB.TargetBrain.GetWorldPosition() + 0.1f * Vector3.up;
+                    
+                    Observable.EveryUpdate().TakeWhile(_ => CheckActionRunning())
+                        .DoOnCancel(() => Destroy(homingDecalFx))
+                        .DoOnCompleted(() => Destroy(homingDecalFx))
+                        .Subscribe(_ =>
+                        {
+                            if (currActionContext.homingRotationDisposable != null)
+                            {
+                                homingDecalFx.transform.position = __brain.BB.TargetBrain.GetWorldPosition() + 0.1f * Vector3.up;
+                                __brain.BB.action.leapRootMotionMultiplier = (__brain.BB.TargetBrain.GetWorldPosition() - __brain.GetWorldPosition()).Magnitude2D() / __brain.BB.action.leapRootMotionDistance;
+                            }
+                        }).AddTo(this);
+                }
+            };
         }
     }
 }

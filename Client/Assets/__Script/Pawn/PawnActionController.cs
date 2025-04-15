@@ -155,6 +155,10 @@ namespace Game
         public Action<ActionContext> onActiveParryEnabled;
         public Action<ActionContext> onActionFinished;
         public Action<ActionContext, float> onActionCanceled;
+        public Action<ActionContext> onHomingRotationStarted;
+        public Action<ActionContext> onHomingRotationFinished;
+        public Action<ActionContext> onRootMotionStarted;
+        public Action<ActionContext> onRootMotionFinished;
         public Action<ActionContext, ProjectileMovement, Transform, int> onEmitProjectile;
 
 #if UNITY_EDITOR

@@ -466,13 +466,13 @@ namespace Game
             {
                 if (possessedBrain.ActionCtrler.CheckActionRunning())
                 {
-                    possessedBrain.BB.action.punchChargeLevel.Value = -1;
+                    possessedBrain.BB.action.punchChargingLevel.Value = -1;
                     __attackReleasedTimeStamp = Time.time;
                     __Logger.LogR2(gameObject, nameof(OnAttack), "Charging canceled.", "CurrActionName", possessedBrain.ActionCtrler.CurrActionName);
                 }
                 else
                 {
-                    possessedBrain.BB.action.punchChargeLevel.Value = Mathf.FloorToInt(Time.time - __attackPresssedTimeStamp);
+                    possessedBrain.BB.action.punchChargingLevel.Value = Mathf.FloorToInt(Time.time - __attackPresssedTimeStamp);
                 }
             }).AddTo(this);
 
@@ -538,7 +538,7 @@ namespace Game
                         possessedBrain.ActionCtrler.SetPendingAction("JumpAttack");
                         possessedBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
                     }
-                    else if (possessedBrain.BB.action.punchChargeLevel.Value >= 1)
+                    else if (possessedBrain.BB.action.punchChargingLevel.Value >= 1)
                     {
                         possessedBrain.ActionCtrler.SetPendingAction("HeavySlash#1");
                         possessedBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
@@ -563,7 +563,7 @@ namespace Game
                 }
 
                 //* 챠징 어택 판별을 위해서 'punchChargeLevel' 값은 제일 마지막에 리셋
-                possessedBrain.BB.action.punchChargeLevel.Value = -1;
+                possessedBrain.BB.action.punchChargingLevel.Value = -1;
             }
         }
         public void OnGroggyAttack(InputValue value)

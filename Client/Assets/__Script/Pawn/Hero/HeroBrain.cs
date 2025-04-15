@@ -188,10 +188,9 @@ namespace Game
             BB.action.encounterBrain.Skip(1).Subscribe(v =>
             {
                 // if (v != null)
-
             }).AddTo(this);
 
-            BB.action.punchChargeLevel.Skip(1).Subscribe(v => 
+            BB.action.punchChargingLevel.Skip(1).Subscribe(v => 
             {
                 if (v >= 0)
                 {

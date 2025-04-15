@@ -8,7 +8,7 @@ namespace Game
 {
     public class HeroBlackboard : PawnBlackboard
     {
-        public int _id = 0;  // PlayerData ID (´çÀåÀº Ä³¸¯ ÇÑ°³¶ó Å« ÀÇ¹Ì´Â ¾øÀ½)
+        public int _id = 0;  // PlayerData ID (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ ï¿½Ñ°ï¿½ï¿½ï¿½ Å« ï¿½Ç¹Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½)
 
         public bool IsJumping => body.isJumping.Value;
         public bool IsHanging => body.hangingBrain.Value != null;
@@ -16,7 +16,7 @@ namespace Game
         public bool IsGuarding => body.isGuarding.Value;
         public bool IsGuardBroken => body.isGuardBroken.Value;
         public bool IsAutoGuardEnabled => body.isAutoGuardEnabled.Value;
-        public bool IsPunchCharging => action.punchChargeLevel.Value >= 0;
+        public bool IsPunchCharging => action.punchChargingLevel.Value >= 0;
         public bool IsEncounterRunning => action.encounterBrain.Value != null;
 
         [Serializable]
@@ -44,7 +44,7 @@ namespace Game
         public class Action
         {   
             public ReactiveProperty<PawnBrainController> encounterBrain = new();
-            public IntReactiveProperty punchChargeLevel = new(-1);
+            public IntReactiveProperty punchChargingLevel = new(-1);
             public float guardParryDuration = 0.1f;
             public float guardParryRootMotionMultiplier = 1f;
         }

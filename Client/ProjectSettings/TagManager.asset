@@ -29,9 +29,9 @@ TagManager:
   - HitBoxBlocking
   - Obstacle
   - Ceil
-  - JellyMesh
-  - PawnMesh
-  - CharMesh
+  - 
+  - 
+  - 
   - 
   - 
   - 
@@ -59,3 +59,4 @@ TagManager:
   - Light Layer 5
   - Light Layer 6
   - Outline Layer
+  - Decal Layer

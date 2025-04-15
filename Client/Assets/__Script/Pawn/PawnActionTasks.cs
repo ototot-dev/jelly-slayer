@@ -337,7 +337,12 @@ namespace Game.NodeCanvasExtension
         {
             var spacingDistance = UnityEngine.Random.Range(minDistance.value, maxDistance.value);
             
-            __strafeMoveVec = __strafeMoveVec == Vector3.zero ? new Vector3(UnityEngine.Random.Range(-1, 2), 0f, 0f) : Vector3.zero;
+            //* __strafeMoveVec가 2번 연속으로 Vector3.zero 값을 갖지 못함
+            if (__strafeMoveVec == Vector3.zero)
+                __strafeMoveVec = UnityEngine.Random.Range(0, 2) > 0 ? Vector3.left : Vector3.right;
+            else
+                __strafeMoveVec = new Vector3(UnityEngine.Random.Range(-1, 2), 0f, 0f);
+
             if (__strafeMoveVec == Vector3.zero)
             {
                 __strafeDuration = UnityEngine.Random.Range(1f, 2f);
@@ -815,6 +820,18 @@ namespace Game.NodeCanvasExtension
     }
 
     [Category("Pawn")]
+    public class ResetActionStartTime : ActionTask
+    {
+        protected override void OnExecute()
+        {
+            if (agent.TryGetComponent<PawnActionController>(out var actionCtrler))
+                actionCtrler.currActionContext.startTimeStamp = Time.time;
+
+            EndAction(true);
+        }
+    }
+
+    [Category("Pawn")]
     public class DelayAction : ActionTask
     {
         protected override string info => $"Delay {delayTime} secs";
@@ -823,7 +840,6 @@ namespace Game.NodeCanvasExtension
         public BBParameter<float> randomRangeMax = 0.1f;
         public BBParameter<float> animAdvanceSinusoidalAmplitude = 0.1f;
         public BBParameter<float> animAdvanceSinusoidalFrequence = 1f;
-        public bool resetActionStartTime;
         PawnActionController __pawnActionCtrler;
         int __capturedActionInstanceId;
         float __waitDuration;
@@ -853,9 +869,6 @@ namespace Game.NodeCanvasExtension
             }
             else if (!__pawnActionCtrler.CheckWaitAction(__waitDuration))
             {   
-                if (resetActionStartTime)
-                    __pawnActionCtrler.currActionContext.startTimeStamp = Time.time;
-
                 EndAction(true);
             }
             else if (animAdvanceSinusoidalAmplitude.value > 0f)
@@ -894,14 +907,24 @@ namespace Game.NodeCanvasExtension
             var executeTimeStamp = Time.time;
             actionCtrler.currActionContext.homingRotationDisposable?.Dispose();
             actionCtrler.currActionContext.homingRotationDisposable = Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds((duration.value > 0f ? duration.value : 3600f))))
-                .DoOnCancel(() => actionCtrler.currActionContext.homingRotationDisposable = null)
-                .DoOnCompleted(() => actionCtrler.currActionContext.homingRotationDisposable = null)
+                .DoOnCancel(() => 
+                {
+                    actionCtrler.currActionContext.homingRotationDisposable = null;
+                    actionCtrler.onHomingRotationFinished?.Invoke(actionCtrler.currActionContext);
+                })
+                .DoOnCompleted(() => 
+                {
+                    actionCtrler.currActionContext.homingRotationDisposable = null;
+                    actionCtrler.onHomingRotationFinished?.Invoke(actionCtrler.currActionContext);
+                })
                 .Subscribe(_ =>
                 {
                     var fromRotation = Quaternion.LookRotation(pawnBrain.coreColliderHelper.transform.forward.Vector2D().normalized);
                     var toRotation = Quaternion.LookRotation((target.value.position - pawnBrain.coreColliderHelper.transform.position).Vector2D().normalized);
                     pawnMovable.FaceTo(Quaternion.RotateTowards(fromRotation, toRotation, rotateSpeed.value * Time.deltaTime) * Vector3.forward);
                 }).AddTo(agent);
+
+            actionCtrler.onHomingRotationStarted?.Invoke(actionCtrler.currActionContext);
 
             EndAction(true);
         }
@@ -917,6 +940,7 @@ namespace Game.NodeCanvasExtension
 
             actionCtrler.currActionContext.homingRotationDisposable?.Dispose();
             actionCtrler.currActionContext.homingRotationDisposable = null;
+            actionCtrler.onHomingRotationFinished?.Invoke(actionCtrler.currActionContext);
 
             EndAction(true);
         }
@@ -943,54 +967,56 @@ namespace Game.NodeCanvasExtension
             var pawnBrain = agent.GetComponent<PawnBrainController>();
             Debug.Assert(pawnBrain != null);
 
-            var pawnActionCtrler = pawnBrain.GetComponent<PawnActionController>();
-            Debug.Assert(pawnActionCtrler != null);
+            var actionCtrler = pawnBrain.GetComponent<PawnActionController>();
+            Debug.Assert(actionCtrler != null);
 
             var pawnMovable = pawnBrain as IPawnMovable;
             Debug.Assert(pawnMovable != null);
 
-            __capturedActionInstanceId =  pawnActionCtrler.currActionContext.actionInstanceId;
+            __capturedActionInstanceId =  actionCtrler.currActionContext.actionInstanceId;
             if (endActionWhenReachToTarget)
             {
-                pawnActionCtrler.WaitAction();
-                __manualAdvanceSpeedCached = pawnActionCtrler.currActionContext.manualAdvanceSpeed;
-                pawnActionCtrler.currActionContext.manualAdvanceSpeed = 0f;
+                actionCtrler.WaitAction();
+                __manualAdvanceSpeedCached = actionCtrler.currActionContext.manualAdvanceSpeed;
+                actionCtrler.currActionContext.manualAdvanceSpeed = 0f;
             }
 
             var executeTimeStamp = Time.time;
 
-            pawnActionCtrler.currActionContext.rootMotionDisposable?.Dispose();
-            pawnActionCtrler.currActionContext.rootMotionDisposable = __rootMotionDisposable = Observable.EveryUpdate()
+            actionCtrler.currActionContext.rootMotionDisposable?.Dispose();
+            actionCtrler.currActionContext.rootMotionDisposable = __rootMotionDisposable = Observable.EveryUpdate()
                 .TakeUntil(Observable.Timer(TimeSpan.FromSeconds((duration.value > 0f ? duration.value : 3600f) + Mathf.Max(0f, accelDuration.value) + Mathf.Max(0f, breakDuration.value))))
                 .DoOnCancel(() => 
                 {
-                    pawnActionCtrler.currActionContext.rootMotionDisposable = __rootMotionDisposable = null;
+                    actionCtrler.currActionContext.rootMotionDisposable = __rootMotionDisposable = null;
+                    actionCtrler.onRootMotionFinished?.Invoke(actionCtrler.currActionContext);
                     if (endActionWhenReachToTarget)
                     {
-                        pawnActionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
+                        actionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
                         EndAction(true);
                     }
                 })
                 .DoOnCompleted(() =>
                 {
-                    pawnActionCtrler.currActionContext.rootMotionDisposable = __rootMotionDisposable = null;
+                    actionCtrler.currActionContext.rootMotionDisposable = __rootMotionDisposable = null;
+                    actionCtrler.onRootMotionFinished?.Invoke(actionCtrler.currActionContext);
                     if (endActionWhenReachToTarget)
                     {
-                        pawnActionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
+                        actionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
                         EndAction(true);
                     }
                 })
                 .Subscribe(_ =>
                 {
                     if (endActionWhenReachToTarget)
-                        pawnActionCtrler.currActionContext.manualAdvanceSpeed = 0f;
+                        actionCtrler.currActionContext.manualAdvanceSpeed = 0f;
 
                     //* Action이 취소되었다면 즉시 중지
-                    if (!pawnActionCtrler.CheckActionRunning() || __capturedActionInstanceId != pawnActionCtrler.currActionContext.actionInstanceId)
+                    if (!actionCtrler.CheckActionRunning() || __capturedActionInstanceId != actionCtrler.currActionContext.actionInstanceId)
                     {
-                        Debug.Assert(__rootMotionDisposable != null && __rootMotionDisposable == pawnActionCtrler.currActionContext.rootMotionDisposable);
+                        Debug.Assert(__rootMotionDisposable != null && __rootMotionDisposable == actionCtrler.currActionContext.rootMotionDisposable);
                         __rootMotionDisposable.Dispose();
-                        __rootMotionDisposable = pawnActionCtrler.currActionContext.rootMotionDisposable = null;
+                        __rootMotionDisposable = actionCtrler.currActionContext.rootMotionDisposable = null;
 
                         return;
                     }
@@ -999,9 +1025,9 @@ namespace Game.NodeCanvasExtension
                     {
                         if (endActionWhenReachToTarget)
                         {
-                            Debug.Assert(__rootMotionDisposable != null && __rootMotionDisposable == pawnActionCtrler.currActionContext.rootMotionDisposable);
+                            Debug.Assert(__rootMotionDisposable != null && __rootMotionDisposable == actionCtrler.currActionContext.rootMotionDisposable);
                             __rootMotionDisposable.Dispose();
-                            __rootMotionDisposable = pawnActionCtrler.currActionContext.rootMotionDisposable = null;
+                            __rootMotionDisposable = actionCtrler.currActionContext.rootMotionDisposable = null;
                         }
 
                         //* 타겟에 도달했다면 RootMotion은 적용하지 않도록 리턴함
@@ -1018,6 +1044,8 @@ namespace Game.NodeCanvasExtension
                     var rootMotionVec = rootMotionSpeed * pawnBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
                     pawnMovable.AddRootMotion(Time.deltaTime * rootMotionVec, Quaternion.identity, Time.deltaTime);
                 }).AddTo(agent);
+
+            actionCtrler.onRootMotionStarted?.Invoke(actionCtrler.currActionContext);
 
             if (!endActionWhenReachToTarget)
                 EndAction(true);
@@ -1067,6 +1095,7 @@ namespace Game.NodeCanvasExtension
                 .DoOnCancel(() => 
                 {
                     __rootMotionDisposable = actionCtrler.currActionContext.rootMotionDisposable = null;
+                    actionCtrler.onRootMotionFinished?.Invoke(actionCtrler.currActionContext);
                     if (endActionWhenReachToTarget)
                     {
                         actionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
@@ -1076,6 +1105,7 @@ namespace Game.NodeCanvasExtension
                 .DoOnCompleted(() =>
                 {
                     __rootMotionDisposable = actionCtrler.currActionContext.rootMotionDisposable = null;
+                    actionCtrler.onRootMotionFinished?.Invoke(actionCtrler.currActionContext);
                     if (endActionWhenReachToTarget)
                     {
                         actionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
@@ -1119,6 +1149,8 @@ namespace Game.NodeCanvasExtension
                     if (actionCtrler.CanRootMotion(rootMotionVec))
                         pawnMovable.AddRootMotion(Time.deltaTime * rootMotionVec, Quaternion.identity, Time.deltaTime);
                 }).AddTo(agent);
+
+            actionCtrler.onRootMotionStarted?.Invoke(actionCtrler.currActionContext);
 
             if (!endActionWhenReachToTarget)
                 EndAction(true);
