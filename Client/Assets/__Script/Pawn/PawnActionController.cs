@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UniRx;
 using UnityEngine;
+using ZLinq;
 
 namespace Game
 {
@@ -30,6 +31,7 @@ namespace Game
             public float manualAdvanceTime;
             public float manualAdvanceSpeed;
             public float animBlendSpeed;
+            public float animBlendOffset;
             public float animBlendWeight;
             public float animClipLength;
             public int animClipFps;
@@ -43,7 +45,7 @@ namespace Game
             static int __actionInstanceIdCounter;
 
             //* 일반적인 Action 초기화
-            public ActionContext(MainTable.ActionData actionData, string specialTag, string preMotionName, float actionSpeedMultiplier, float rootMotionMultiplier, int rootMotionConstraint, AnimationCurve rootMotionCurve, bool manualAdvacneEnabled, float animBlendSpeed, float startTimeStamp)
+            public ActionContext(MainTable.ActionData actionData, string specialTag, string preMotionName, float actionSpeedMultiplier, float rootMotionMultiplier, int rootMotionConstraint, AnimationCurve rootMotionCurve, bool manualAdvacneEnabled, float animBlendSpeed, float animBlendOffset, float startTimeStamp)
             {
                 Debug.Assert(actionData != null);
                 this.actionData = actionData;
@@ -66,6 +68,7 @@ namespace Game
                 manualAdvanceTime = 0f;
                 manualAdvanceSpeed = actionSpeed;
                 this.animBlendSpeed = animBlendSpeed;
+                this.animBlendOffset = animBlendOffset;
                 animBlendWeight = 1f;
                 animClipLength = -1f;
                 animClipFps = -1;
@@ -79,7 +82,7 @@ namespace Game
             }
 
             //* 리액션 및 Addictive 액션 초기화
-            public ActionContext(string actionName, float actionSpeed, float animBlendSpeed, float startTimeStamp)
+            public ActionContext(string actionName, float actionSpeed, float animBlendSpeed, float animBlendOffset, float startTimeStamp)
             {
                 actionData = null;
                 actionInstanceId = ++__actionInstanceIdCounter;
@@ -101,6 +104,7 @@ namespace Game
                 manualAdvanceTime = 0f;
                 manualAdvanceSpeed = actionSpeed;
                 this.animBlendSpeed = animBlendSpeed;
+                this.animBlendOffset = animBlendOffset;
                 animBlendWeight = -1f;
                 animClipLength = -1f;
                 animClipFps = -1;
@@ -135,8 +139,8 @@ namespace Game
         }
 #endregion
 
-        public ActionContext prevActionContext = new(string.Empty, 1f, -1f, 0f);
-        public ActionContext currActionContext = new(string.Empty, 1f, -1f, 0f);
+        public ActionContext prevActionContext = new(string.Empty, 1f, -1f, 0f, 0f);
+        public ActionContext currActionContext = new(string.Empty, 1f, -1f, 0f, 0f);
         public bool CheckActionRunning() => currActionContext.actionData != null || currActionContext.actionDisposable != null;
         public virtual bool CheckAddictiveActionRunning(string actionName) => false;
         public bool CheckActionCanceled() { Debug.Assert(CheckActionRunning()); return currActionContext.actionCanceled; }
@@ -419,12 +423,12 @@ namespace Game
             };
         }
 
-        public bool StartAction(string actionName, string specialTag, string preMotionName, float animBlendSpeed = -1f, float actionSpeedMultiplier = 1f, float rootMotionMultiplier = 1f, int rootMotionConstraint = 0, AnimationCurve rootMotionCurve = null, bool manualAdvacneEnabled = false)
+        public bool StartAction(string actionName, string specialTag, string preMotionName, float animBlendSpeed = -1f, float animBlendOffset = 0f, float actionSpeedMultiplier = 1f, float rootMotionMultiplier = 1f, int rootMotionConstraint = 0, AnimationCurve rootMotionCurve = null, bool manualAdvacneEnabled = false)
         {
-            return StartAction(new PawnHeartPointDispatcher.DamageContext(), actionName, specialTag, preMotionName, animBlendSpeed, actionSpeedMultiplier, rootMotionMultiplier, rootMotionConstraint, rootMotionCurve, manualAdvacneEnabled);
+            return StartAction(new PawnHeartPointDispatcher.DamageContext(), actionName, specialTag, preMotionName, animBlendSpeed, animBlendOffset, actionSpeedMultiplier, rootMotionMultiplier, rootMotionConstraint, rootMotionCurve, manualAdvacneEnabled);
         }
 
-        public bool StartAction(PawnHeartPointDispatcher.DamageContext damageContext, string actionName, string specialTag, string preMotionName, float animBlendSpeed = -1f, float actionSpeedMultiplier = 1, float rootMotionMultiplier = 1, int rootMotionConstraint = 0, AnimationCurve rootMotionCurve = null, bool manualAdvacneEnabled = false)
+        public bool StartAction(PawnHeartPointDispatcher.DamageContext damageContext, string actionName, string specialTag, string preMotionName, float animBlendSpeed = -1f, float animBlendOffset = 0f, float actionSpeedMultiplier = 1, float rootMotionMultiplier = 1, int rootMotionConstraint = 0, AnimationCurve rootMotionCurve = null, bool manualAdvacneEnabled = false)
         {
             if (CheckActionRunning())
             {
@@ -434,7 +438,7 @@ namespace Game
 
             if (actionName.StartsWith('!')) //* '!'로 시작하는 이름은 리액션
             {
-                currActionContext = new(actionName, actionSpeedMultiplier, animBlendSpeed, Time.time);
+                currActionContext = new(actionName, actionSpeedMultiplier, animBlendSpeed, animBlendOffset, Time.time);
                 onActionStart?.Invoke(currActionContext, damageContext);
 
                 __Logger.LogR1(gameObject, "onActionStart", "actionName", currActionContext.actionName, "actionInstanceId", currActionContext.actionInstanceId);
@@ -475,7 +479,7 @@ namespace Game
                     return false;
                 }
 
-                currActionContext = new(actionData, specialTag, preMotionName, actionSpeedMultiplier, rootMotionMultiplier, rootMotionConstraint, rootMotionCurve, manualAdvacneEnabled, animBlendSpeed, Time.time);
+                currActionContext = new(actionData, specialTag, preMotionName, actionSpeedMultiplier, rootMotionMultiplier, rootMotionConstraint, rootMotionCurve, manualAdvacneEnabled, animBlendSpeed, animBlendOffset, Time.time);
                 if (actionData.staminaCost > 0)
                 {
                     if (__pawnBrain.PawnBB.stat.stamina.Value < actionData.staminaCost)
@@ -512,7 +516,7 @@ namespace Game
         public bool StartAddictiveAction(PawnHeartPointDispatcher.DamageContext damageContext, string actionName, float actionSpeedMultiplier = 1, float rootMotionMultiplier = 1)
         {
             __Logger.LogR2(gameObject, nameof(StartAddictiveAction), "onAddictiveActionStart is invoked.", "actionName", actionName);
-            onAddictiveActionStart?.Invoke(new ActionContext(actionName, 1f, -1f, Time.time), damageContext);
+            onAddictiveActionStart?.Invoke(new ActionContext(actionName, 1f, -1f, 0f, Time.time), damageContext);
 
             if (actionName.StartsWith('!'))
             {
@@ -597,7 +601,7 @@ namespace Game
 
             prevActionContext = currActionContext;
             prevActionContext.finishTimeStamp = Time.time;
-            currActionContext = new(string.Empty, 1f, -1f, 0f);
+            currActionContext = new(string.Empty, 1f, -1f, 0f, 0f);
             onActionFinished?.Invoke(prevActionContext);
 
 #if UNITY_EDITOR
@@ -755,6 +759,7 @@ namespace Game
             var compareSqrDistance = -1f;
             var compareColliderRadius = 0f;
             var results = new List<PawnColliderHelper>();
+            var parryHitResults = new List<PawnColliderHelper>();
 
             if (overlappedCount > 0)
             {
@@ -784,24 +789,32 @@ namespace Game
 
                         if (finalOverlapped)
                         {
-                            var deltaDot = compareDot - currDot;
-                            
-                            //* 각도 차가 거의 없으면 Radius가 큰 Collider를 압쪽에 추가함
-                            if (Mathf.Abs(deltaDot) < 0.01f && tracedColliderHelper.GetCapsuleRadius() > compareColliderRadius)
+                            if (tracedColliderHelper.IsParryHitCollider)
                             {
-                                results.Insert(0, tracedColliderHelper);
-                                compareDot = currDot;
-                                compareColliderRadius = tracedColliderHelper.GetCapsuleRadius();
-                            }
-                            else if (deltaDot < 0) //* 각도 차가 작은 타겟은 앞쪽에 추가함
-                            {
-                                results.Insert(0, tracedColliderHelper);
-                                compareDot = currDot;
-                                compareColliderRadius = tracedColliderHelper.GetCapsuleRadius();
+                                //* ParryHitCollider는 별로로 추가함
+                                parryHitResults.Add(tracedColliderHelper);
                             }
                             else
                             {
-                                results.Add(tracedColliderHelper);
+                                var deltaDot = compareDot - currDot;
+                                
+                                //* 각도 차가 거의 없으면 Radius가 큰 Collider를 앞쪽에 추가함
+                                if (Mathf.Abs(deltaDot) < 0.01f && tracedColliderHelper.GetCapsuleRadius() > compareColliderRadius)
+                                {
+                                    results.Insert(0, tracedColliderHelper);
+                                    compareDot = currDot;
+                                    compareColliderRadius = tracedColliderHelper.GetCapsuleRadius();
+                                }
+                                else if (deltaDot < 0) //* 각도 차가 작은 타겟은 앞쪽에 추가함
+                                {
+                                    results.Insert(0, tracedColliderHelper);
+                                    compareDot = currDot;
+                                    compareColliderRadius = tracedColliderHelper.GetCapsuleRadius();
+                                }
+                                else
+                                {
+                                    results.Add(tracedColliderHelper);
+                                }
                             }
                         }
                     }
@@ -815,16 +828,24 @@ namespace Game
 
                         if (finalOverlapped)
                         {
-                            //* 거리값이 작은 타겟은 앞쪽에 추가함
-                            var distanceVec = (c.transform.position - __pawnBrain.coreColliderHelper.transform.position).Vector2D();
-                            if (distanceVec.sqrMagnitude > compareSqrDistance)
+                            if (tracedColliderHelper.IsParryHitCollider)
                             {
-                                results.Insert(0, tracedColliderHelper);
-                                compareSqrDistance = distanceVec.sqrMagnitude;
+                                //* ParryHitCollider는 별로로 추가함
+                                parryHitResults.Add(tracedColliderHelper);
                             }
                             else
                             {
-                                results.Add(tracedColliderHelper);
+                                //* 거리값이 작은 타겟은 앞쪽에 추가함
+                                var distanceVec = (c.transform.position - __pawnBrain.coreColliderHelper.transform.position).Vector2D();
+                                if (distanceVec.sqrMagnitude > compareSqrDistance)
+                                {
+                                    results.Insert(0, tracedColliderHelper);
+                                    compareSqrDistance = distanceVec.sqrMagnitude;
+                                }
+                                else
+                                {
+                                    results.Add(tracedColliderHelper);
+                                }
                             }
                         }
                     }
@@ -843,6 +864,10 @@ namespace Game
                     GizmosDrawExtension.DrawFanCylinder(fanLocalToWorldMatrix, fanRadius, fanAngle, fanHeight, 12);
                 });
             }
+
+            //* parryHitResults 결과를 results 앞에 추가해서 우선 처리될 수 있도록 함
+            foreach (var p in parryHitResults)
+                results.Insert(0, p);
 
             if (maxTargetNum > 0 && results.Count > maxTargetNum)
                 results = results.GetRange(0, maxTargetNum);

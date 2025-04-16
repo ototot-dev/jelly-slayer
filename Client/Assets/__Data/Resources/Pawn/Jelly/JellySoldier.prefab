@@ -3524,7 +3524,7 @@ MonoBehaviour:
   baseTransform: {fileID: 0}
   Hips: {fileID: 7969822556023305560}
   ScaleReferenceMode: 3
-  finalScaleReference: 2.3799033
+  finalScaleReference: 2.3799038
   finalScaleReferenceSqrt: 0.1
   customScaleReferenceValue: 0.5
   DelayedInitialization: 0
@@ -83854,7 +83854,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coreColliderHelper: {fileID: 168326260960991395}
   bodyHitColliderHelper: {fileID: 7827817497564531622}
-  parryColliderHelper: {fileID: 0}
   parryHitColliderHelper: {fileID: 0}
   shieldHitColliderHelper: {fileID: 4857157336516560132}
   hookingPointColliderHelper: {fileID: 2174257693202699210}
@@ -84126,7 +84125,7 @@ MonoBehaviour:
     _version: 3.31
     _category: 
     _comments: 
-    _translation: {x: -108, y: 38}
+    _translation: {x: -682, y: -136}
     _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 0

@@ -520,6 +520,7 @@ namespace Game.NodeCanvasExtension
         public BBParameter<bool> manualAdvanceEnabled;
         public BBParameter<float> animSpeedMultiplier = 1f;
         public BBParameter<float> animBlendSpeed = 1f;
+        public BBParameter<float> animBlendOffset = 0f;
         public BBParameter<float> animClipLength = -1f;
         public BBParameter<int> animClipFps = -1;
         public BBParameter<float> rootMotionMultiplier = 1f;
@@ -540,7 +541,7 @@ namespace Game.NodeCanvasExtension
                         rootMotionConstrainSum |= (int)c;
                 }
 
-                EndAction(actionCtrler.StartAction(actionName.value, actionCtrler.PendingActionData.Item2, string.Empty, animBlendSpeed.value, animSpeedMultiplier.value, rootMotionMultiplier.value, rootMotionConstrainSum, rootMotionCurve.value, manualAdvanceEnabled.value));
+                EndAction(actionCtrler.StartAction(actionName.value, actionCtrler.PendingActionData.Item2, string.Empty, animBlendSpeed.value, animBlendOffset.value, animSpeedMultiplier.value, rootMotionMultiplier.value, rootMotionConstrainSum, rootMotionCurve.value, manualAdvanceEnabled.value));
                 actionCtrler.ClearPendingAction();
 
                 if (animClipLength.value > 0f)
@@ -644,7 +645,7 @@ namespace Game.NodeCanvasExtension
             // 'baseTimeStamp'은 기본적으로 WaitAction()이 호출된 시간으로 셋팅된다. 하지만 'useCurrentTime.value'값이 false라면 Action이 시작된 시간으로 셋팅된다.
             // 이 경우엔 다시 2가지 경우가 생기는데 'manualAdvanceEnabled' 값이 false라면 'startTimeStamp'값, 즉 Action이 시작된 시점을 그대로 사용한다. 만약
             //  'manualAdvanceEnabled' 값이 true라면 Action의 시작된 시간은 (Time.time - __pawnActionCtrler.currActionContext.manualAdvanceTime)가 된다.
-            var baseTimeStamp = __pawnActionCtrler.currActionContext.waitTimeStamp;
+            var baseTimeStamp = __pawnActionCtrler.currActionContext.waitTimeStamp - Mathf.Max(0f, __pawnActionCtrler.currActionContext.animClipLength) * __pawnActionCtrler.currActionContext.animBlendOffset;
             if (!useCurrentTime.value)
             {
                 if (__pawnActionCtrler.currActionContext.manualAdvanceEnabled)
@@ -706,7 +707,7 @@ namespace Game.NodeCanvasExtension
             else
             {
                 //* 'preMotionTimeStamp'값이 있으면. 실제 액션 시작 시간은 preMotionTimeStamp으로 간주함
-                var baseTimeStamp = __pawnActionCtrler.currActionContext.preMotionTimeStamp > 0f ? __pawnActionCtrler.currActionContext.preMotionTimeStamp : __pawnActionCtrler.currActionContext.startTimeStamp;
+                var baseTimeStamp = __pawnActionCtrler.currActionContext.preMotionTimeStamp > 0f ? __pawnActionCtrler.currActionContext.preMotionTimeStamp : (__pawnActionCtrler.currActionContext.startTimeStamp - Mathf.Max(0f, __pawnActionCtrler.currActionContext.animClipLength) * __pawnActionCtrler.currActionContext.animBlendOffset);
                 var waitTime = waitFrame.value > 0 ? 1f / __pawnActionCtrler.currActionContext.animClipFps * Mathf.Max(0, waitFrame.value - 1) : __pawnActionCtrler.currActionContext.animClipLength;
                 waitTime /= __pawnActionCtrler.currActionContext.actionSpeed;
                 if (!__pawnActionCtrler.CheckWaitAction(waitTime, baseTimeStamp))
@@ -851,6 +852,7 @@ namespace Game.NodeCanvasExtension
         {
             __pawnActionCtrler = agent.GetComponent<PawnActionController>();
             __pawnActionCtrler.WaitAction();
+
             __capturedActionInstanceId =  __pawnActionCtrler.currActionContext.actionInstanceId;
             __waitDuration = delayTime.value + (randomRangeMax.value > randomRangeMin.value ? UnityEngine.Random.Range(randomRangeMin.value, randomRangeMax.value) : 0);
             __animAdvanceSinusoidal = 0;

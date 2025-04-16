@@ -1070,6 +1070,10 @@ MonoBehaviour:
       value: {fileID: 0}
     punchChargingLevel:
       value: -1
+    punchChargingAnimAdvanceSpeed: 0.4
+    punchChargingAnimAdvanceEnd: 0.38
+    punchChargingAnimAdvanceOffsetAmplitude: 0.01
+    punchChargingAnimAdvanceOffsetSinFrequency: 1
     guardParryDuration: 0.1
     guardParryRootMotionMultiplier: 1
   graphics:

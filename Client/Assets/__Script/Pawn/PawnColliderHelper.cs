@@ -21,6 +21,7 @@ namespace Game
         public PawnBrainController pawnBrain;
         public SensorFilters sensorTrigger = SensorFilters.None;
         public bool IsCoreCollider => pawnBrain != null && pawnBrain.coreColliderHelper == this;
+        public bool IsParryHitCollider => pawnBrain != null && pawnBrain.parryHitColliderHelper == this;
         public bool IsVisionSensorTriggerable => (sensorTrigger & SensorFilters.Vision) > 0;
         public bool IsTouchSensorTriggerable => (sensorTrigger & SensorFilters.Touch) > 0;
         public bool IsSoundSensorTriggerable => (sensorTrigger & SensorFilters.Sound) > 0;
