@@ -951,10 +951,6 @@ MonoBehaviour:
   actionLayerBlendOutSpeed: 5
   legAnimGlueBlendSpeed: 1
   guardParryRootMotionMultiplier: 1
-  blockAdditiveAnimClips:
-  - {fileID: -1905609392677946133, guid: f0ff99e8eab4a414f9d77bc4eec20c58, type: 3}
-  - {fileID: 8952413660455403669, guid: b96a3e38fca3f1f4ab5c7baf1321adad, type: 3}
-  - {fileID: -1322499967654159940, guid: bda0f2cfce46d2a4ea7240385b97e185, type: 3}
 --- !u!114 &7401026273244081378
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1072,7 +1068,7 @@ MonoBehaviour:
   action:
     encounterBrain:
       value: {fileID: 0}
-    punchChargeLevel:
+    punchChargingLevel:
       value: -1
     guardParryDuration: 0.1
     guardParryRootMotionMultiplier: 1
@@ -1133,9 +1129,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coreColliderHelper: {fileID: 4575544682901093454}
   bodyHitColliderHelper: {fileID: 2023143863012937403}
-  parryColliderHelper: {fileID: 1104606249163493149}
-  parryHitColliderHelper: {fileID: 0}
-  shieldHitColliderHelper: {fileID: 0}
+  parryHitColliderHelper: {fileID: 1104606249163493149}
+  shieldHitColliderHelper: {fileID: 1104606249163493149}
   hookingPointColliderHelper: {fileID: 0}
   visibilityChecker: {fileID: 1411842691130928027}
   owner: {fileID: 0}
@@ -2874,8 +2869,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1198755884502479607}
-  - component: {fileID: 2934414730707412224}
-  - component: {fileID: 4296187478468748042}
   m_Layer: 0
   m_Name: MechHandAttachPoint
   m_TagString: Untagged
@@ -2892,527 +2885,12 @@ Transform:
   m_GameObject: {fileID: 2448032411196549165}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 2722692041094006264}
+  m_Children: []
   m_Father: {fileID: 3244703593161533269}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
---- !u!114 &2934414730707412224
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2448032411196549165}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a17d77db75be5b64e891e6cd25906ee5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  StimulatorAmount: 1
-  Bones:
-  - transform: {fileID: 1198755884502479607}
-    Evaluation: 0
-    initLocalPos: {x: 0, y: 0, z: 0}
-    initLocalRot: {x: 0, y: 0, z: 0, w: 0}
-    initLocalScale: {x: 0, y: 0, z: 0}
-    srcAnimatorLocPosition: {x: 0, y: 0, z: 0}
-    srcAnimatorPosition: {x: 0, y: 0, z: 0}
-    srcAnimatorLocRotation: {x: 0, y: 0, z: 0, w: 0}
-    srcAnimatorRotation: {x: 0, y: 0, z: 0, w: 0}
-    EnableCollisions: 1
-    CollisionRadius: 0.1
-    CollisionHelperVector: {x: 0, y: 0, z: 0}
-    lastFinalLocPosition: {x: 0, y: 0, z: 0}
-    lastFinalLocRotation: {x: 0, y: 0, z: 0, w: 0}
-    MomentDampen: 0
-    PosMul: 1
-    RotMul: 1
-    ScaleMul: 1
-    randomFloats: []
-    randomInts: 
-  - transform: {fileID: 2722692041094006264}
-    Evaluation: 0
-    initLocalPos: {x: 0, y: 0, z: 0}
-    initLocalRot: {x: 0, y: 0, z: 0, w: 0}
-    initLocalScale: {x: 0, y: 0, z: 0}
-    srcAnimatorLocPosition: {x: 0, y: 0, z: 0}
-    srcAnimatorPosition: {x: 0, y: 0, z: 0}
-    srcAnimatorLocRotation: {x: 0, y: 0, z: 0, w: 0}
-    srcAnimatorRotation: {x: 0, y: 0, z: 0, w: 0}
-    EnableCollisions: 1
-    CollisionRadius: 0.1
-    CollisionHelperVector: {x: 0, y: 0, z: 0}
-    lastFinalLocPosition: {x: 0, y: 0, z: 0}
-    lastFinalLocRotation: {x: 0, y: 0, z: 0, w: 0}
-    MomentDampen: 0
-    PosMul: 1
-    RotMul: 1
-    ScaleMul: 1
-    randomFloats: []
-    randomInts: 
-  CompensationTransform: {fileID: 0}
-  AnimatePhysics: 0
-  UnscaledDelta: 0
-  HideWith: {fileID: 0}
-  FadeOutDistance: 0
-  DistanceFrom: {fileID: 0}
-  AutoHelperOffset: 1
-  HelperOffset: {x: 0.000000022351744, y: -0.25999987, z: 0.029999979}
-  GravityEffectForce: {x: 0, y: 0, z: 0}
-  GravityHeavyness: 2
-  _editor_Title: ' Bones Stimulator'
-  _editor_DrawSetup: 1
-  _editor_DrawTweaking: 0
-  _editor_DisplayedPreset: 0
-  _editor_DrawGizmos: 1
-  DrawGizmos: 1
-  _editor_SelCategory: 0
-  UpdateRate: 0
-  MovementMuscles: 1
-  MusclesRapidity: 0.6
-  Damping: 0.4
-  Smoothing: 0.6
-  MildRotation: 0
-  MotionInfluence: 1
-  RotationSpaceMuscles: 0
-  UseEulerRotation: 0
-  EnsureRotation: 0
-  RotationsRapidity: 0.7
-  RotationsDamping: 0.25
-  RotationsSwinginess: 0.6
-  MusclesBlend:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  MusclesSimulationSpeed: 1
-  VibrateAmount: 0
-  VibrateSpeed: 6
-  VibrateRange: 2.5
-  VibrateAxis: {x: 1, y: 1, z: 1}
-  VibrateRotation: 1
-  UniRotation: 0
-  VibratePosition: 0
-  VibrateScale: 0
-  DetailedVibrate: 1
-  VibratePosBlend:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  VibrateRotBlend:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  VibrateScaleBlend:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  SqueezingAmount: 0
-  SqueezingSpeed: 15
-  SqueezingMultiply: 0.5
-  SqueezingAxis: {x: 0.2, y: 0.15, z: 0.2}
-  UseCollisions: 0
-  MovementMusclesCollision: 1
-  CollidersScaleCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  CollidersScaleMul: 0.1
-  OffsetAllColliders: {x: 0, y: 0, z: 0}
-  DetailedCollision: 1
-  IncludedColliders: []
-  BlendXAxis: 1
-  BlendYAxis: 1
-  BlendZAxis: 1
-  LimitXAxisRotation: {x: -180, y: 180}
-  LimitYAxisRotation: {x: -180, y: 180}
-  LimitZAxisRotation: {x: -180, y: 180}
-  ElasticLimits: 0
-  ElasticLimitCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  DampenOnLimits: 0
-  InfluenceAxes: {x: 1, y: 1, z: 1}
---- !u!114 &4296187478468748042
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2448032411196549165}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a17d77db75be5b64e891e6cd25906ee5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  StimulatorAmount: 1
-  Bones:
-  - transform: {fileID: 1198755884502479607}
-    Evaluation: 0
-    initLocalPos: {x: 0, y: 0, z: 0}
-    initLocalRot: {x: 0, y: 0, z: 0, w: 0}
-    initLocalScale: {x: 0, y: 0, z: 0}
-    srcAnimatorLocPosition: {x: 0, y: 0, z: 0}
-    srcAnimatorPosition: {x: 0, y: 0, z: 0}
-    srcAnimatorLocRotation: {x: 0, y: 0, z: 0, w: 0}
-    srcAnimatorRotation: {x: 0, y: 0, z: 0, w: 0}
-    EnableCollisions: 1
-    CollisionRadius: 0.1
-    CollisionHelperVector: {x: 0, y: 0, z: 0}
-    lastFinalLocPosition: {x: 0, y: 0, z: 0}
-    lastFinalLocRotation: {x: 0, y: 0, z: 0, w: 0}
-    MomentDampen: 0
-    PosMul: 1
-    RotMul: 1
-    ScaleMul: 1
-    randomFloats: []
-    randomInts: 
-  - transform: {fileID: 2722692041094006264}
-    Evaluation: 0
-    initLocalPos: {x: 0, y: 0, z: 0}
-    initLocalRot: {x: 0, y: 0, z: 0, w: 0}
-    initLocalScale: {x: 0, y: 0, z: 0}
-    srcAnimatorLocPosition: {x: 0, y: 0, z: 0}
-    srcAnimatorPosition: {x: 0, y: 0, z: 0}
-    srcAnimatorLocRotation: {x: 0, y: 0, z: 0, w: 0}
-    srcAnimatorRotation: {x: 0, y: 0, z: 0, w: 0}
-    EnableCollisions: 1
-    CollisionRadius: 0.1
-    CollisionHelperVector: {x: 0, y: 0, z: 0}
-    lastFinalLocPosition: {x: 0, y: 0, z: 0}
-    lastFinalLocRotation: {x: 0, y: 0, z: 0, w: 0}
-    MomentDampen: 0
-    PosMul: 1
-    RotMul: 1
-    ScaleMul: 1
-    randomFloats: []
-    randomInts: 
-  CompensationTransform: {fileID: 0}
-  AnimatePhysics: 0
-  UnscaledDelta: 0
-  HideWith: {fileID: 0}
-  FadeOutDistance: 0
-  DistanceFrom: {fileID: 0}
-  AutoHelperOffset: 1
-  HelperOffset: {x: 0.000000022351744, y: -0.25999987, z: 0.029999979}
-  GravityEffectForce: {x: 0, y: 0, z: 0}
-  GravityHeavyness: 2
-  _editor_Title: ' Bones Stimulator'
-  _editor_DrawSetup: 1
-  _editor_DrawTweaking: 0
-  _editor_DisplayedPreset: 0
-  _editor_DrawGizmos: 1
-  DrawGizmos: 1
-  _editor_SelCategory: 0
-  UpdateRate: 0
-  MovementMuscles: 1
-  MusclesRapidity: 0.6
-  Damping: 0.4
-  Smoothing: 0.6
-  MildRotation: 0
-  MotionInfluence: 1
-  RotationSpaceMuscles: 0
-  UseEulerRotation: 0
-  EnsureRotation: 0
-  RotationsRapidity: 0.7
-  RotationsDamping: 0.25
-  RotationsSwinginess: 0.6
-  MusclesBlend:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  MusclesSimulationSpeed: 1
-  VibrateAmount: 0
-  VibrateSpeed: 6
-  VibrateRange: 2.5
-  VibrateAxis: {x: 1, y: 1, z: 1}
-  VibrateRotation: 1
-  UniRotation: 0
-  VibratePosition: 0
-  VibrateScale: 0
-  DetailedVibrate: 1
-  VibratePosBlend:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  VibrateRotBlend:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  VibrateScaleBlend:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  SqueezingAmount: 0
-  SqueezingSpeed: 15
-  SqueezingMultiply: 0.5
-  SqueezingAxis: {x: 0.2, y: 0.15, z: 0.2}
-  UseCollisions: 0
-  MovementMusclesCollision: 1
-  CollidersScaleCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  CollidersScaleMul: 0.1
-  OffsetAllColliders: {x: 0, y: 0, z: 0}
-  DetailedCollision: 1
-  IncludedColliders: []
-  BlendXAxis: 1
-  BlendYAxis: 1
-  BlendZAxis: 1
-  LimitXAxisRotation: {x: -180, y: 180}
-  LimitYAxisRotation: {x: -180, y: 180}
-  LimitZAxisRotation: {x: -180, y: 180}
-  ElasticLimits: 0
-  ElasticLimitCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  DampenOnLimits: 0
-  InfluenceAxes: {x: 1, y: 1, z: 1}
 --- !u!1 &2553689209439977943
 GameObject:
   m_ObjectHideFlags: 0
@@ -6885,6 +6363,7 @@ Transform:
   m_Children:
   - {fileID: 3244703593161533269}
   - {fileID: 3452488443664082073}
+  - {fileID: 2722692041094006264}
   m_Father: {fileID: 3244703593161533249}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3244703594768668196
@@ -23429,7 +22908,7 @@ Animator:
   m_GameObject: {fileID: 4512951709945630279}
   m_Enabled: 0
   m_Avatar: {fileID: 9000000, guid: 417e358c130ae6c488f2ffe5d6c9830e, type: 3}
-  m_Controller: {fileID: 9100000, guid: 0c0e2f817874f4fb2abf3eb0eeb474dc, type: 2}
+  m_Controller: {fileID: 0}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -24215,13 +23694,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4969839646014775393}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.52, z: 0.06}
+  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -0.05, y: -0.3, z: 0.05}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1198755884502479607}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Father: {fileID: 3244703593161533279}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!1 &5042370019468927925
 GameObject:
   m_ObjectHideFlags: 0
@@ -25264,6 +24743,7 @@ Transform:
   - {fileID: 658711565924659338}
   - {fileID: 2852870756025804235}
   - {fileID: 2945917375858290333}
+  - {fileID: 3153643672898653959}
   m_Father: {fileID: 1269955883950741143}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6289720750434368623
@@ -25595,12 +25075,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6533689133961398233}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5773660180996915832}
+  m_Father: {fileID: 3629962112759600909}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &1135218453575246469
 CapsuleCollider:
@@ -25624,7 +25104,7 @@ CapsuleCollider:
   m_Radius: 1
   m_Height: 2
   m_Direction: 1
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1104606249163493149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27248,7 +26728,6 @@ Transform:
   - {fileID: 1222119519397536986}
   - {fileID: 837518338452918183}
   - {fileID: 6673541937507687907}
-  - {fileID: 3153643672898653959}
   - {fileID: 5887700154971376602}
   - {fileID: 7851241892517562418}
   - {fileID: 6667022547613719956}

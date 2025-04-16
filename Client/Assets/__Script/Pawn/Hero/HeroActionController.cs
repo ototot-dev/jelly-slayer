@@ -25,8 +25,7 @@ namespace Game
 
         public override bool CanParryAction(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
-            return currActionContext.activeParryEnabled && damageContext.receiverBrain.coreColliderHelper.GetDistanceBetween(damageContext.senderBrain.coreColliderHelper) < 1f || 
-                __brain.StatusCtrler.CheckStatus(PawnStatus.GuardParrying);
+            return (currActionContext.punchParryingEnabled && damageContext.hitCollider == __brain.parryHitColliderHelper.pawnCollider) || __brain.StatusCtrler.CheckStatus(PawnStatus.GuardParrying);
         }
 
         public override bool CanBlockAction(ref PawnHeartPointDispatcher.DamageContext damageContext)
@@ -134,7 +133,7 @@ namespace Game
                     __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", true);
                     Observable.Timer(TimeSpan.FromSeconds(0.5f)).Subscribe(_ => 
                     {
-                        if (!__brain.BB.IsGuarding && !__brain.BB.IsPunchCharging)
+                        if (!__brain.BB.IsGuarding)
                             __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", false);
                     }).AddTo(this);
 
@@ -382,7 +381,7 @@ namespace Game
                 }
             };
 
-            onActiveParryEnabled += (_) => __brain.parryColliderHelper.pawnCollider.enabled = currActionContext.activeParryEnabled;
+            onActiveParryEnabled += (_) => __brain.parryHitColliderHelper.pawnCollider.enabled = currActionContext.punchParryingEnabled;
             onActionStart += (_, __) => 
             {
                 if ((currActionContext.actionData?.actionName ?? string.Empty) == "Rolling") 
@@ -390,13 +389,13 @@ namespace Game
             };
             onActionCanceled += (actionContext, __) => 
             { 
-                __brain.parryColliderHelper.pawnCollider.enabled = false; 
+                __brain.parryHitColliderHelper.pawnCollider.enabled = false; 
                 if ((actionContext.actionData?.actionName ?? string.Empty) == "Rolling") 
                     __brain.BB.body.isRolling.Value = false; 
             };
             onActionFinished += (actionContext) => 
             { 
-                __brain.parryColliderHelper.pawnCollider.enabled = false;
+                __brain.parryHitColliderHelper.pawnCollider.enabled = false;
                 if ((actionContext.actionData?.actionName ?? string.Empty) == "Rolling") 
                     __brain.BB.body.isRolling.Value = false; 
             };

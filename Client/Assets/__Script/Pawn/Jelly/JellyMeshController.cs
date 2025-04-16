@@ -43,7 +43,8 @@ namespace Game
         Dictionary<int, ValueTuple<MeshRenderer, Vector3>> __cubeMeshRenderers = new();
         Dictionary<ValueTuple<int, int>, MeshRenderer> __edgeCubeMeshRenderers = new();
         float __eyeLocalScaleCached;
-        IDisposable __fadeUpdateDisposable;
+        IDisposable __fadeInDisposable;
+        IDisposable __fadeOutDisposable;
         IDisposable __hitColorDisposable;
 
         void Awake()
@@ -91,9 +92,13 @@ namespace Game
                 springMassSystem.core.gameObject.layer = LayerMask.NameToLayer("HitBox");
             }).AddTo(this);
 
-            __fadeUpdateDisposable?.Dispose();
-            __fadeUpdateDisposable = Observable.EveryLateUpdate().Subscribe(_ =>
+            __fadeOutDisposable?.Dispose();
+            __fadeOutDisposable = null;
+            __fadeInDisposable = Observable.EveryLateUpdate().Subscribe(_ =>
             {
+                //* __fadeInDisposable?.Dispose()가 호출되어도 한번은 Subscribe()가 호출되고 종료되기 때문에 아래와 같이 방어 코드 추가함
+                if (__fadeInDisposable == null) return;
+
                 UpdateBodyOffsetPointAndAttachPoint();
 
                 foreach (var p in __cubeMeshRenderers)
@@ -157,8 +162,9 @@ namespace Game
             meshBuilder.meshRenderer.enabled = false;
             springMassSystem.core.gameObject.layer = LayerMask.NameToLayer("Default");
 
-            __fadeUpdateDisposable?.Dispose();
-            __fadeUpdateDisposable = Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(duration +  __cubeMeshRenderers.Count * 0.1f)))
+            __fadeInDisposable?.Dispose();
+            __fadeInDisposable = null;
+            __fadeOutDisposable = Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(duration +  __cubeMeshRenderers.Count * 0.1f)))
                 .DoOnCompleted(() =>
                 {
                     foreach (var r in __eyeMeshRenderes) r.enabled = false;
@@ -169,6 +175,9 @@ namespace Game
                 })
                 .Subscribe(_ =>
                 {
+                    //* __fadeOutDisposable?.Dispose()가 호출되어도 한번은 Subscribe()가 호출되고 종료되기 때문에 아래와 같이 방어 코드 추가함
+                    if (__fadeOutDisposable == null) return;
+
                     UpdateBodyOffsetPointAndAttachPoint();
 
                     foreach (var p in __cubeMeshRenderers)

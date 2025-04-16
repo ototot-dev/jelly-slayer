@@ -54,7 +54,7 @@ namespace Game
                 boundJellyMesh.Value = null;
                 __Logger.LogR2(gameObject, nameof(IPawnEventListener.OnReceivePawnActionStart), "OnJellOff", "jellyBrain", sender);
 
-                specialKeyCtrler.HideAsObservable().Subscribe(c =>  c.Unload(true)).AddTo(this);
+                specialKeyCtrler.HideAsObservable().Subscribe(c =>  c.Unload()).AddTo(this);
                 specialKeyCtrler = null;
             }
         }
@@ -412,30 +412,6 @@ namespace Game
             GameManager.Instance.PawnRolled();
         }
 
-        public void OnParry()
-        {
-            if (_isEnable_Parry == false)
-                return;
-            if (possessedBrain == null)
-                return;
-
-            var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsRolling && !possessedBrain.BB.IsHanging;
-            var canAction2 = canAction1 && (!possessedBrain.ActionCtrler.CheckActionRunning() || possessedBrain.ActionCtrler.CanInterruptAction()) && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
-
-            if (canAction2)
-            {
-
-                if (possessedBrain.ActionCtrler.CheckActionRunning())
-                    possessedBrain.ActionCtrler.CancelAction(false);
-
-                possessedBrain.ActionCtrler.SetPendingAction("Punch");
-            }
-        }
-
-        IDisposable __chargingAttackDisposable;
-        float __attackPresssedTimeStamp = -1f;
-        float __attackReleasedTimeStamp = -1f;
-
         bool FindAttackPoint(out Vector3 attackPoint)
         {
             var found = possessedBrain.SensorCtrler.WatchingColliders.AsValueEnumerable()
@@ -455,6 +431,56 @@ namespace Game
             }
         }
 
+
+        IDisposable __punchChargingDisposable;
+        float __punchPresssedTimeStamp = -1f;
+        float __punchReleasedTimeStamp = -1f;
+
+        public void OnPunch(InputValue value)
+        {
+            if (_isEnable_Parry == false)
+                return;
+            if (possessedBrain == null)
+                return;
+
+            __punchChargingDisposable ??= Observable.EveryUpdate().Where(_ => __punchPresssedTimeStamp > __punchReleasedTimeStamp).Subscribe(_ =>
+            {
+                if (possessedBrain.ActionCtrler.CheckActionRunning())
+                {
+                    possessedBrain.BB.action.punchChargingLevel.Value = -1;
+                    __punchReleasedTimeStamp = Time.time;
+                    __Logger.LogR2(gameObject, nameof(OnAttack), "Puncg Charging canceled.", "CurrActionName", possessedBrain.ActionCtrler.CurrActionName);
+                }
+                else
+                {
+                    possessedBrain.BB.action.punchChargingLevel.Value = Mathf.FloorToInt(Time.time - __punchPresssedTimeStamp);
+                }
+            }).AddTo(this);
+
+            if (value.isPressed)
+            {
+                __punchPresssedTimeStamp = Time.time;
+            }
+            else
+            {
+                __punchReleasedTimeStamp = Time.time;
+
+                var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsRolling && !possessedBrain.BB.IsHanging;
+                var canAction2 = canAction1 && (!possessedBrain.ActionCtrler.CheckActionRunning() || possessedBrain.ActionCtrler.CanInterruptAction()) && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
+
+                if (canAction2 && possessedBrain.BB.action.punchChargingLevel.Value > 0)
+                {
+                    if (possessedBrain.ActionCtrler.CheckActionRunning())
+                        possessedBrain.ActionCtrler.CancelAction(false);
+
+                    possessedBrain.ActionCtrler.SetPendingAction("PunchParry");
+                }
+
+                //* 챠징 어택 판별을 위해서 'punchChargeLevel' 값은 제일 마지막에 리셋
+                possessedBrain.BB.action.punchChargingLevel.Value = -1;
+            }
+        }
+
         public void OnAttack(InputValue value)
         {
             if(_isEnable_NormalAttack == false)
@@ -462,36 +488,24 @@ namespace Game
             if (possessedBrain == null)
                 return;
 
-            __chargingAttackDisposable ??= Observable.EveryUpdate().Where(_ => __attackPresssedTimeStamp > __attackReleasedTimeStamp).Subscribe(_ =>
-            {
-                if (possessedBrain.ActionCtrler.CheckActionRunning())
-                {
-                    possessedBrain.BB.action.punchChargingLevel.Value = -1;
-                    __attackReleasedTimeStamp = Time.time;
-                    __Logger.LogR2(gameObject, nameof(OnAttack), "Charging canceled.", "CurrActionName", possessedBrain.ActionCtrler.CurrActionName);
-                }
-                else
-                {
-                    possessedBrain.BB.action.punchChargingLevel.Value = Mathf.FloorToInt(Time.time - __attackPresssedTimeStamp);
-                }
-            }).AddTo(this);
-
             var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsRolling && !possessedBrain.BB.IsHanging;;
             // var canAction2 = canAction1 && !MyHeroBrain.PawnBB.IsThrowing && !MyHeroBrain.PawnBB.IsGrabbed;
             var canAction3 = canAction1 && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
 
             var isJellyActive = (boundJellyMesh.Value != null);
-
-            if (value.isPressed)
+        
+            if (canAction3)
             {
-                __attackPresssedTimeStamp = Time.time;
-
-                var baseActionName = possessedBrain.ActionCtrler.CheckActionRunning() ? possessedBrain.ActionCtrler.CurrActionName : possessedBrain.ActionCtrler.PrevActionName;
                 var canNextAction = possessedBrain.ActionCtrler.CheckActionRunning() ? possessedBrain.ActionCtrler.CanInterruptAction() : (Time.time - possessedBrain.ActionCtrler.prevActionContext.finishTimeStamp) < MainTable.PlayerData.GetList().First().actionInputTimePadding;
-                if (canAction3 && canNextAction)
+                if (canNextAction)
                 {
+                    var baseActionName = possessedBrain.ActionCtrler.CheckActionRunning() ? possessedBrain.ActionCtrler.CurrActionName : possessedBrain.ActionCtrler.PrevActionName;
                     switch (baseActionName)
                     {
+                        case "Punch":
+                            possessedBrain.ActionCtrler.CancelAction(false);
+                            possessedBrain.ActionCtrler.SetPendingAction("Slash#1");
+                            break;
                         case "Slash#1":
                             possessedBrain.ActionCtrler.CancelAction(false);
                             possessedBrain.ActionCtrler.SetPendingAction("Slash#2");
@@ -499,10 +513,6 @@ namespace Game
                         case "Slash#2":
                             possessedBrain.ActionCtrler.CancelAction(false);
                             possessedBrain.ActionCtrler.SetPendingAction("Slash#3");
-                            break;
-                        case "Punch":
-                            possessedBrain.ActionCtrler.CancelAction(false);
-                            possessedBrain.ActionCtrler.SetPendingAction("Slash#1");
                             break;
                         case "GroggyAttack#1":
                             if (isJellyActive == true)
@@ -521,26 +531,12 @@ namespace Game
                             }
                             break;
                     }
-
-                    //* 타겟이 없을 경우엔 주변 타겟으로 공격 방향을 보정해줌
-                    if (possessedBrain.SensorCtrler.WatchingColliders.Count > 0 && FindAttackPoint(out var attackPoint))
-                        possessedBrain.Movement.FaceAt(attackPoint);
                 }
-            }
-            else
-            {
-                __attackReleasedTimeStamp = Time.time;
-
-                if (canAction3 && !possessedBrain.ActionCtrler.CheckActionRunning())
+                else if (!possessedBrain.ActionCtrler.CheckActionRunning())
                 {
                     if (possessedBrain.BB.IsJumping)
                     {
                         possessedBrain.ActionCtrler.SetPendingAction("JumpAttack");
-                        possessedBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
-                    }
-                    else if (possessedBrain.BB.action.punchChargingLevel.Value >= 1)
-                    {
-                        possessedBrain.ActionCtrler.SetPendingAction("HeavySlash#1");
                         possessedBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
                     }
                     else 
@@ -553,19 +549,16 @@ namespace Game
                         else
                         {
                             possessedBrain.ActionCtrler.SetPendingAction("Slash#1");
-                            possessedBrain.ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
                         }
                     }
-
-                    //* 타겟이 없을 경우엔 주변 타겟으로 공격 방향을 보정해줌
-                    if (possessedBrain.SensorCtrler.WatchingColliders.Count > 0 && FindAttackPoint(out var attackPoint))
-                        possessedBrain.Movement.FaceAt(attackPoint);
                 }
 
-                //* 챠징 어택 판별을 위해서 'punchChargeLevel' 값은 제일 마지막에 리셋
-                possessedBrain.BB.action.punchChargingLevel.Value = -1;
+                //* 타겟이 없을 경우엔 주변 타겟으로 공격 방향을 보정해줌
+                if (possessedBrain.SensorCtrler.WatchingColliders.Count > 0 && FindAttackPoint(out var attackPoint))
+                    possessedBrain.Movement.FaceAt(attackPoint);
             }
         }
+
         public void OnGroggyAttack(InputValue value)
         {
             if (_isEnable_NormalAttack == false)
@@ -579,7 +572,7 @@ namespace Game
 
             if (value.isPressed)
             {
-                __attackPresssedTimeStamp = Time.time;
+                __punchPresssedTimeStamp = Time.time;
 
                 var baseActionName = possessedBrain.ActionCtrler.CheckActionRunning() ? possessedBrain.ActionCtrler.CurrActionName : possessedBrain.ActionCtrler.PrevActionName;
                 var canNextAction = possessedBrain.ActionCtrler.CheckActionRunning() ? possessedBrain.ActionCtrler.CanInterruptAction() : (Time.time - possessedBrain.ActionCtrler.prevActionContext.finishTimeStamp) < MainTable.PlayerData.GetList().First().actionInputTimePadding;
@@ -609,6 +602,7 @@ namespace Game
                 }
             }
         }
+        
         public void OnSpecialAttack(InputValue value)
         {
             if (possessedBrain == null)
@@ -628,7 +622,7 @@ namespace Game
                     if (specialKeyCtrler.actionName == "Assault")
                     {
                         possessedBrain.droneBotFormationCtrler.PickDroneBot().ActionCtrler.SetPendingAction(specialKeyCtrler.actionName, specialKeyCtrler.specialTag, string.Empty, 0f);
-                        specialKeyCtrler.HideAsObservable().Subscribe(c =>  c.Unload(true)).AddTo(this);
+                        specialKeyCtrler.HideAsObservable().Subscribe(c =>  c.Unload()).AddTo(this);
                         specialKeyCtrler = null;
                     }
                     else if (specialKeyCtrler.actionName == "GroggyAttack")

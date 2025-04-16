@@ -1769,14 +1769,14 @@ namespace Game.NodeCanvasExtension
     }
 
     [Category("Pawn")]
-    public class SetParryingEnabled : ActionTask
+    public class SetPunchParryingEnabled : ActionTask
     {   
-        protected override string info => newValue.value ? "Parrying <b>On</b>" : "Parrying <b>Off</b>";
+        protected override string info => newValue.value ? "Punch Parrying <b>On</b>" : "Punch Parrying <b>Off</b>";
         public BBParameter<bool> newValue;
         protected override void OnExecute()
         {
             if (agent.TryGetComponent<PawnActionController>(out var actionCtrler) && actionCtrler.currActionContext.actionData != null)
-                actionCtrler.SetActiveParryingEnabled(newValue.value);
+                actionCtrler.SetPunchParryingEnabled(newValue.value);
             EndAction(true);
         }
     }

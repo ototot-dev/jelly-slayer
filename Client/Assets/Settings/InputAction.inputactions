@@ -69,22 +69,22 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Parry",
-                    "type": "Button",
+                    "name": "Punch",
+                    "type": "Value",
                     "id": "d629aeec-d76f-45e8-b1f4-e3628a03963c",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Attack",
-                    "type": "Value",
+                    "type": "Button",
                     "id": "a156257a-fc80-44ee-92b0-793ab800d248",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true
+                    "initialStateCheck": false
                 },
                 {
                     "name": "GroggyAttack",
@@ -428,7 +428,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "Parry",
+                    "action": "Punch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -439,7 +439,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "Parry",
+                    "action": "Punch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

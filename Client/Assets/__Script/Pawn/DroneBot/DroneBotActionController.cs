@@ -229,7 +229,7 @@ namespace Game
                 {
                     __brain.BB.resource.jetBoostFx.Stop(true);
                     __brain.BB.resource.orbBlueFx.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-                    
+
                     var assaultActionData = DatasheetManager.Instance.GetActionData(__brain.BB.HostBrain.BB.common.pawnId, "Assault");
                     Debug.Assert(assaultActionData != null);
 

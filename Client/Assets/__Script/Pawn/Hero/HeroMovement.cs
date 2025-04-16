@@ -132,7 +132,7 @@ namespace Game
 
             if (!__brain.BB.IsHanging)
             {
-                var canRotate1 = __brain.PawnBB.IsSpawnFinished && !__brain.PawnBB.IsDead && !__brain.PawnBB.IsGroggy && !__brain.AnimCtrler.CheckWatchingState("OnDown");
+                var canRotate1 = __brain.PawnBB.IsSpawnFinished && !__brain.PawnBB.IsDead && !__brain.PawnBB.IsGroggy && !__brain.AnimCtrler.CheckAnimStateRunning("OnDown");
                 var canRotate2 = canRotate1 && !__brain.BB.IsRolling && !__brain.BB.IsJumping;
                 var canRotate3 = canRotate2 && (!__pawnActionCtrler.CheckActionRunning() || __pawnActionCtrler.currActionContext.movementEnabled) && !__pawnStatusCtrler.CheckStatus(PawnStatus.Staggered);
 
@@ -172,7 +172,7 @@ namespace Game
             {
                 if (!freezeMovement)
                 {
-                    var canMove1 = __brain.PawnBB.IsSpawnFinished && !__brain.PawnBB.IsDead && !__brain.PawnBB.IsGroggy && !__brain.AnimCtrler.CheckWatchingState("OnDown");
+                    var canMove1 = __brain.PawnBB.IsSpawnFinished && !__brain.PawnBB.IsDead && !__brain.PawnBB.IsGroggy && !__brain.AnimCtrler.CheckAnimStateRunning("OnDown");
                     var canMove2 = canMove1 && (!__pawnActionCtrler.CheckActionRunning() || __pawnActionCtrler.currActionContext.movementEnabled) && !__pawnStatusCtrler.CheckStatus(PawnStatus.Staggered);
                     moveVec = canMove2 ? moveVec : Vector3.zero;
                 }

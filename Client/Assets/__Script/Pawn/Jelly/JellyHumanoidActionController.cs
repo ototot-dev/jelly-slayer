@@ -170,7 +170,7 @@ namespace Game
 
         public override IDisposable StartOnGroogyAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
         {
-            if (damageContext.actionResult == ActionResults.GuardParried || damageContext.actionResult == ActionResults.PunchParried)
+            if (damageContext.actionResult == ActionResults.PunchParried || damageContext.actionResult == ActionResults.GuardParried)
             {
                 Debug.Assert(__humanoidBrain == damageContext.senderBrain);
 

@@ -1286,7 +1286,6 @@ Transform:
   - {fileID: 8622950999368912312}
   - {fileID: 5930645049433172802}
   - {fileID: 8100486106525040855}
-  - {fileID: 1291023932344901000}
   - {fileID: 5781964363949412845}
   - {fileID: 6783572122253413391}
   m_Father: {fileID: 791442315315432696}
@@ -7551,6 +7550,7 @@ Transform:
   - {fileID: 2322152939511116052}
   - {fileID: 7003313829277011996}
   - {fileID: 1791098600045802663}
+  - {fileID: 1291023932344901000}
   m_Father: {fileID: 2264891595277319075}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1750446621591032268
@@ -8151,7 +8151,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1870144864149696292}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
   m_Name: 
@@ -74633,7 +74633,7 @@ GameObject:
   - component: {fileID: 1249195374694539203}
   - component: {fileID: 2174257693202699210}
   m_Layer: 0
-  m_Name: HookingPointCollider
+  m_Name: HookingPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -74648,11 +74648,11 @@ Transform:
   m_GameObject: {fileID: 7734655950861763455}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.0020540797, y: 2.2613554, z: -0.01211834}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 6920421996920446943}
+  m_Father: {fileID: 6523223249745631201}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!135 &7876550681891980300
 SphereCollider:
@@ -83777,12 +83777,13 @@ MonoBehaviour:
   moveAccel: 10
   moveBrake: 10
   rotateSpeed: 180
-  gravity: {x: 0, y: -19.81, z: 0}
+  gravity: {x: 0, y: 0, z: 0}
   moveVec: {x: 0, y: 0, z: 0}
   faceVec: {x: 0, y: 0, z: 1}
   destination: {x: 0, y: 0, z: 0}
   minApproachDistance: 1
   drawGizmosEnabled: 0
+  glideVec: {x: 0, y: 0, z: 0}
 --- !u!114 &509170564454217454
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -83970,28 +83971,23 @@ MonoBehaviour:
     maxSpacingDistance: 3
     minApproachDistance: 1
   action:
-    minCoolDownDuration: 2
-    maxCoolDownDuration: 4
-    counterCoolTime: 1
     comboAttackCoolTime: 1
     comboAttackDistance: 5
-    counterComboAttackInterval: 1
-    counterComboAttackDistance: 4
-    counterComboAttachProb: 0.6
-    counterAttackProbOnGuard: 0.5
     jumpAttackCoolTime: 10
+    shieldAttackCoolTime: 1
     shieldAttackRigBlendInSpeed: 5
     shieldAttackRigBlendOutSpeed: 10
     shieldTouchSensor: {fileID: 376781739002393882}
+    counterCoolTime: 1
     missileCoolTime: 30
+    backstepTriggerDistance: 4
+    backstepRootMotionMultiplier: 1
     missileEmitNum: 3
     missileEmitIntervalA: 0.1
     missileEmitIntervalB: 1
     missileEmitSpeed: 10
     hoveringDurationA: 2
     hoveringDurationB: 6
-    missileBoostProbOnTick: 0.1
-    missileMaxProb: 0.8
     missileEmitPoint: {fileID: 102119456959228274}
     missilePrefab: {fileID: 3083626412401777055, guid: 49b1852d94dc5426fb97f6eb2643051b, type: 3}
     laserDamageInterval: 0.1
@@ -84002,14 +83998,8 @@ MonoBehaviour:
     laserCharingDuration: 1
     leapCoolTime: 50
     leapJumpHeight: 3
-    leapRootMotionDistance: 7
+    leapRootMotionDistance: 10
     leapRootMotionMultiplier: 1
-    leapBoostProbOnTick: 0.05
-    leapMaxProb: 1
-    backstepDestination: {x: 0, y: 0, z: 0}
-    backstepBoostProbOnTick: 1
-    backstepTriggerDistance: 4
-    backstepRootMotionMultiplier: 1
   graphics:
     onHitFx: {fileID: 3011233550371498735, guid: 24e37d54f259141abb7ebbc527b8bf4e, type: 3}
     onBigHitFx: {fileID: 3011233550371498735, guid: 8502543f66322458a81956cdd59fe959, type: 3}
@@ -84018,6 +84008,7 @@ MonoBehaviour:
     onMissedFx: {fileID: 8338894570034044190, guid: 727c6a11e51e81140a330e6639938e26, type: 3}
     onBlockedFx: {fileID: 4961553964636584268, guid: d7027452566465c47aeacb4cdcf40015, type: 3}
     onGuardBreakFx: {fileID: 8905666514069622321, guid: a84cbbb54404c3d499340f02e684aab0, type: 3}
+    onHomingDecalFx: {fileID: 8626301407590365914, guid: 2dd177bd951d34f95803db02ffb55e6a, type: 3}
     hitColor: {fileID: 2100000, guid: a352a16cd87054b82af9135444ad0122, type: 2}
   audios:
     onHitAudioClip: {fileID: 8300000, guid: 93fc0b243c8d39441a33d29e6146b688, type: 3}

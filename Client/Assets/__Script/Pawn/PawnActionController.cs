@@ -25,7 +25,7 @@ namespace Game
             public bool rootMotionEnabled;
             public bool legAnimGlueEnabled;
             public bool interruptEnabled;
-            public bool activeParryEnabled;
+            public bool punchParryingEnabled;
             public bool manualAdvanceEnabled;
             public float manualAdvanceTime;
             public float manualAdvanceSpeed;
@@ -61,7 +61,7 @@ namespace Game
                 rootMotionEnabled = true;
                 legAnimGlueEnabled = true;
                 interruptEnabled = false;
-                activeParryEnabled = false;
+                punchParryingEnabled = false;
                 this.manualAdvanceEnabled = manualAdvacneEnabled;
                 manualAdvanceTime = 0f;
                 manualAdvanceSpeed = actionSpeed;
@@ -96,7 +96,7 @@ namespace Game
                 rootMotionEnabled = true;
                 legAnimGlueEnabled = true;
                 interruptEnabled = false;
-                activeParryEnabled = false;
+                punchParryingEnabled = false;
                 manualAdvanceEnabled = false;
                 manualAdvanceTime = 0f;
                 manualAdvanceSpeed = actionSpeed;
@@ -650,17 +650,17 @@ namespace Game
             currActionContext.interruptEnabled = newValue;
         }
 
-        public void SetActiveParryingEnabled(bool newValue)
+        public void SetPunchParryingEnabled(bool newValue)
         {
             if (!CheckActionRunning())
             {
-                __Logger.WarningR2(gameObject, nameof(SetActiveParryingEnabled), "CheckActionRunning() return false.");
+                __Logger.WarningR2(gameObject, nameof(SetPunchParryingEnabled), "CheckActionRunning() return false.");
                 return;
             }
 
-            if (currActionContext.activeParryEnabled != newValue)
+            if (currActionContext.punchParryingEnabled != newValue)
             {
-                currActionContext.activeParryEnabled = newValue;
+                currActionContext.punchParryingEnabled = newValue;
                 onActiveParryEnabled?.Invoke(currActionContext);
             }
         }

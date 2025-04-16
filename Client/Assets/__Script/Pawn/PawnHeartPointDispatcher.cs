@@ -289,10 +289,10 @@ namespace Game
             {
                 if (!cannotParry && receiverActionCtrler.CanParryAction(ref damageContext))
                 {
-                    if (damageContext.hitCollider == damageContext.receiverBrain.parryColliderHelper.pawnCollider)
+                    if (damageContext.hitCollider == damageContext.receiverBrain.parryHitColliderHelper.pawnCollider)
                     {
                         damageContext.actionResult = ActionResults.PunchParried;
-                        damageContext.receiverActionData = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "Kick");
+                        damageContext.receiverActionData = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "PunchParry");
                     }
                     else
                     {
