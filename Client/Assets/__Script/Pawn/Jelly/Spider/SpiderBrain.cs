@@ -117,7 +117,7 @@ namespace Game
 
         void PostSendDamage(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
-            if (damageContext.actionResult == ActionResults.Blocked || damageContext.actionResult == ActionResults.GuardParried)
+            if (damageContext.actionResult == ActionResults.Blocked || damageContext.actionResult == ActionResults.GuardParrying)
             {
                 if (ActionCtrler.CheckActionRunning())
                     ActionCtrler.CancelAction(false);

@@ -158,7 +158,7 @@ namespace Game
     
             __brain.AnimCtrler.legAnimator.User_AddImpulse(new ImpulseExecutor(new Vector3(0, 0.2f, -0.1f), Vector3.zero, 0.2f));
 
-            var parryActionName = damageContext.actionResult == ActionResults.PunchParried ? "Kick" : "GuardParry";
+            var parryActionName = damageContext.actionResult == ActionResults.PunchParrying ? "Kick" : "GuardParry";
             var knockBackDistance = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, parryActionName)?.knockBackDistance ?? 0f;
             if (knockBackDistance <= 0f)
                 __Logger.WarningR2(gameObject, nameof(StartOnBlockedAction), "knockBackDistance is invalid.", "knockBackDistance", knockBackDistance);

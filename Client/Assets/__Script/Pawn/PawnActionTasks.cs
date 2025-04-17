@@ -1778,7 +1778,7 @@ namespace Game.NodeCanvasExtension
         protected override void OnExecute()
         {
             if (agent.TryGetComponent<PawnActionController>(out var actionCtrler) && actionCtrler.currActionContext.actionData != null)
-                actionCtrler.SetPunchParryingEnabled(newValue.value);
+                actionCtrler.SetParryingEnabled(newValue.value);
             EndAction(true);
         }
     }

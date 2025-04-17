@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Obi;
 using UniRx;
 using Unity.VisualScripting;
 using UnityEditor.Timeline.Actions;
@@ -210,9 +211,9 @@ namespace Game
             DecideActionResult(ref damageContext);
 
             if (damageContext.actionResult == ActionResults.Blocked) ProcessActionBlocked(ref damageContext);
-            else if (damageContext.actionResult == ActionResults.PunchParried) ProcessActionKickParried(ref damageContext);
-            else if (damageContext.actionResult == ActionResults.GuardParried) ProcessActionGuardParried(ref damageContext);
-            else  if (damageContext.finalDamage > 0 || CalcFinalDamage(ref damageContext) > 0)
+            else if (damageContext.actionResult == ActionResults.PunchParrying) ProcessPunchParrying(ref damageContext);
+            else if (damageContext.actionResult == ActionResults.GuardParrying) ProcessGuardParrying(ref damageContext);
+            else if (damageContext.finalDamage > 0 || CalcFinalDamage(ref damageContext) > 0)
             {
                 damageContext.actionResult = ActionResults.Damaged;
                 __Logger.LogR1(gameObject, nameof(ProcessDamageContext), "actionResult", damageContext.actionResult, "senderBrain", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
@@ -261,7 +262,7 @@ namespace Game
                 if (damageContext.senderPenalty.Item1 != PawnStatus.None)
                     damageContext.senderBrain.PawnStatusCtrler.AddStatus(damageContext.senderPenalty.Item1, 1f, damageContext.senderPenalty.Item2);
 
-                if (damageContext.actionResult == ActionResults.GuardParried && damageContext.senderBrain.TryGetComponent<PawnHeartPointDispatcher>(out var senderPawnHp))
+                if (damageContext.actionResult == ActionResults.GuardParrying && damageContext.senderBrain.TryGetComponent<PawnHeartPointDispatcher>(out var senderPawnHp))
                     senderPawnHp.LastParriedTimeStamp = Time.time;
 
                 damageContext.senderBrain.PawnHP.onDamaged?.Invoke(damageContext);
@@ -281,7 +282,6 @@ namespace Game
             if (reflectiveDamage)
                 Debug.Assert(damageContext.projectile.reflectiveBrain.Value == damageContext.senderBrain);
 
-            var senderActionCtrler = damageContext.senderBrain.GetComponent<PawnActionController>();
             var receiverActionCtrler = damageContext.receiverBrain.GetComponent<PawnActionController>();
             var cannotGuard = (damageContext.senderActionData?.cannotGuard ?? 0) > 0 || reflectiveDamage;
             var cannotParry = (damageContext.senderActionData?.cannotParry ?? 0) > 0 || reflectiveDamage;
@@ -291,12 +291,12 @@ namespace Game
                 {
                     if (damageContext.hitCollider == damageContext.receiverBrain.parryHitColliderHelper.pawnCollider)
                     {
-                        damageContext.actionResult = ActionResults.PunchParried;
+                        damageContext.actionResult = ActionResults.PunchParrying;
                         damageContext.receiverActionData = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "PunchParry");
                     }
                     else
                     {
-                        damageContext.actionResult = ActionResults.GuardParried;
+                        damageContext.actionResult = ActionResults.GuardParrying;
                         damageContext.receiverActionData = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "GuardParry");
                     }
                 }
@@ -313,8 +313,6 @@ namespace Game
 
         void ProcessActionBlocked(ref DamageContext damageContext)
         {
-            __Logger.LogR2(gameObject, nameof(ProcessActionBlocked), "ActionResults => Blocked", "senderBrain", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
-
             if (damageContext.insufficientStamina)
             {
                 damageContext.receiverPenalty = new(PawnStatus.None, 0f);
@@ -334,6 +332,8 @@ namespace Game
                 }
                 else
                 {
+                    __Logger.LogR2(gameObject, nameof(ProcessActionBlocked), "ActionResults => Blocked", "senderBrain", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
+
                     if (damageContext.projectile == null)
                     {
                         //* Receiver가 'Block' ActionData가 있는지 검증
@@ -361,16 +361,17 @@ namespace Game
             }
         }
 
-        void ProcessActionKickParried(ref DamageContext damageContext)
+        void ProcessPunchParrying(ref DamageContext damageContext)
         {
             var receiverActionCtrler = damageContext.receiverBrain.GetComponent<PawnActionController>();
 
-            //* Sender의 현재 액션이 'ActiveParry'인지 검증함
+            //* Sender의 현재 액션이 'PunchParry'인지 검증함
             Debug.Assert(receiverActionCtrler.currActionContext.actionData != null && receiverActionCtrler.currActionContext.actionData == damageContext.receiverActionData);
+            __Logger.LogR2(gameObject, nameof(ProcessPunchParrying), "ActionResults => PunchParrying", "senderBrain", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
 
             damageContext.senderBrain.PawnBB.stat.stance.Value += damageContext.receiverActionData.groggyAccum;
 
-            __Logger.LogR2(gameObject, nameof(ProcessActionKickParried), "Sender Stance increased", "groggyAccum", damageContext.receiverActionData.groggyAccum, "stance", damageContext.senderBrain.PawnBB.stat.stance.Value, "maxStance", damageContext.senderBrain.PawnBB.stat.maxStance.Value, "senderBrain", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
+            __Logger.LogR2(gameObject, nameof(ProcessPunchParrying), "Sender Stance increased", "groggyAccum", damageContext.receiverActionData.groggyAccum, "stance", damageContext.senderBrain.PawnBB.stat.stance.Value, "maxStance", damageContext.senderBrain.PawnBB.stat.maxStance.Value, "senderBrain", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
 
             if (damageContext.senderBrain.PawnBB.stat.stance.Value >= damageContext.senderBrain.PawnBB.stat.maxStance.Value)
             {
@@ -378,30 +379,46 @@ namespace Game
                 damageContext.senderBrain.PawnBB.stat.knockDown.Value = 0;
                 damageContext.senderPenalty = new(PawnStatus.Groggy, damageContext.senderBrain.PawnBB.pawnData.groggyDuration);
 
-                __Logger.LogR2(gameObject, nameof(ProcessActionKickParried), "Sender ActionPenalty => Groggy", "groggyDuration", damageContext.senderBrain.PawnBB.pawnData.groggyDuration);
+                __Logger.LogR2(gameObject, nameof(ProcessPunchParrying), "Sender ActionPenalty => Groggy", "groggyDuration", damageContext.senderBrain.PawnBB.pawnData.groggyDuration);
             }
             else
             {
                 damageContext.senderPenalty = new(PawnStatus.Staggered, damageContext.receiverActionData.staggerDuration);
-                __Logger.LogR2(gameObject, nameof(ProcessActionKickParried), "Sender ActionPenalty => Staggered", "staggerDuration", damageContext.receiverActionData.staggerDuration);
+                __Logger.LogR2(gameObject, nameof(ProcessPunchParrying), "Sender ActionPenalty => Staggered", "staggerDuration", damageContext.receiverActionData.staggerDuration);
             }
         }
 
-        void ProcessActionGuardParried(ref DamageContext damageContext)
+        void ProcessGuardParrying(ref DamageContext damageContext)
         {
+            //* 가드 브레이크 판정
+            if (damageContext.receiverBrain.PawnBB.stat.guardStrength <= damageContext.senderActionData.guardBreak)
+            {
+                var staminaCost = (damageContext.receiverBrain.PawnBB.stat.guardStaminaCost * damageContext.senderActionData.guardStaminaCostMultiplier + damageContext.senderActionData.guardStaminaDamage) * Mathf.Clamp01(1f - damageContext.receiverBrain.PawnBB.stat.guardEfficiency);
+                damageContext.receiverBrain.PawnBB.stat.ReduceStamina(staminaCost);
+
+                __Logger.LogR2(gameObject, nameof(ProcessGuardParrying), "ActionResults => GuardBreak", "senderBrain", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
+                damageContext.actionResult = ActionResults.GuardBreak;
+
+                //* 'BreakGuard'인 경우 'Staggered' 디버프를 받게 되며, 'Staggered' 지속 시간은 피격 경직 시간과 동일하게 적용함
+                damageContext.receiverPenalty = new(PawnStatus.Staggered, damageContext.senderActionData.staggerDuration);
+
+                return;
+            }
+
             //* Receiver가 'GuardParried' ActionData가 있는지 검증
             Debug.Assert(damageContext.receiverActionData != null);
+            __Logger.LogR2(gameObject, nameof(ProcessGuardParrying), "ActionResults => GuardParrying", "senderBrain", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
 
             if (damageContext.projectile != null)
             {
-                damageContext.actionResult = ActionResults.ProjectileReflected;
+                damageContext.actionResult = ActionResults.ReflectProjectile;
                 damageContext.projectile.onReflected?.Invoke(damageContext.receiverBrain);
             }
             else
             {
                 damageContext.senderBrain.PawnBB.stat.stance.Value += damageContext.receiverActionData.groggyAccum;
 
-                __Logger.LogR2(gameObject, nameof(ProcessActionGuardParried), "Sender Stance increased", "groggyAccum", damageContext.receiverActionData.groggyAccum, "stance", damageContext.senderBrain.PawnBB.stat.stance.Value, "maxStance", damageContext.senderBrain.PawnBB.stat.maxStance.Value, "senderBrain", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
+                __Logger.LogR2(gameObject, nameof(ProcessGuardParrying), "Sender Stance increased", "groggyAccum", damageContext.receiverActionData.groggyAccum, "stance", damageContext.senderBrain.PawnBB.stat.stance.Value, "maxStance", damageContext.senderBrain.PawnBB.stat.maxStance.Value, "senderBrain", damageContext.senderBrain, "receiverBrain", damageContext.receiverBrain);
 
                 if (damageContext.senderBrain.PawnBB.stat.stance.Value >= damageContext.senderBrain.PawnBB.stat.maxStance.Value)
                 {

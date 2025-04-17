@@ -137,9 +137,9 @@ namespace Game
             __pawnAnimCtrler.mainAnimator.SetTrigger("OnParried");
 
             var knockBackDistance = 0f;
-            if (damageContext.actionResult == ActionResults.PunchParried)
+            if (damageContext.actionResult == ActionResults.PunchParrying)
                 knockBackDistance = damageContext.receiverActionData.knockBackDistance;
-            else if (damageContext.actionResult == ActionResults.GuardParried)
+            else if (damageContext.actionResult == ActionResults.GuardParrying)
                 knockBackDistance = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "GuardParry")?.knockBackDistance ?? 0f;
             else
                 Debug.Assert(false);
@@ -175,14 +175,14 @@ namespace Game
         {
             __Logger.LogR2(gameObject, nameof(StartOnGroogyAction), "-", "Distance", damageContext.senderBrain.coreColliderHelper.GetDistanceBetween(damageContext.receiverBrain.coreColliderHelper));
 
-            if (damageContext.actionResult == ActionResults.GuardParried || damageContext.actionResult == ActionResults.PunchParried)
+            if (damageContext.actionResult == ActionResults.GuardParrying || damageContext.actionResult == ActionResults.PunchParrying)
             {
                 Debug.Assert(__humanoidBrain == damageContext.senderBrain);
 
                 var knockBackDistance = 0f;
-                if (damageContext.actionResult == ActionResults.PunchParried)
+                if (damageContext.actionResult == ActionResults.PunchParrying)
                     knockBackDistance = damageContext.receiverActionData.knockBackDistance;
-                else if (damageContext.actionResult == ActionResults.GuardParried)
+                else if (damageContext.actionResult == ActionResults.GuardParrying)
                     knockBackDistance = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "GuardParry")?.knockBackDistance ?? 0f;
                 else
                     Debug.Assert(false);

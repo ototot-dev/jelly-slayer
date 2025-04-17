@@ -25,7 +25,7 @@ namespace Game
 
         public override bool CanParryAction(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
-            return (currActionContext.punchParryingEnabled && damageContext.hitCollider == __brain.parryHitColliderHelper.pawnCollider) || __brain.StatusCtrler.CheckStatus(PawnStatus.GuardParrying);
+            return (currActionContext.parryingEnabled && damageContext.hitCollider == __brain.parryHitColliderHelper.pawnCollider) || __brain.StatusCtrler.CheckStatus(PawnStatus.GuardParrying);
         }
 
         public override bool CanBlockAction(ref PawnHeartPointDispatcher.DamageContext damageContext)
@@ -149,7 +149,7 @@ namespace Game
                     var rage = MainTable.PlayerData.GetList().First().guardRage;
                     __brain.AddRagePoint(rage);
                 }
-                else if (damageContext.actionResult == ActionResults.GuardParried)
+                else if (damageContext.actionResult == ActionResults.GuardParrying)
                 {
                     __brain.AnimCtrler.mainAnimator.SetTrigger("OnGuardParry");
                     SoundManager.Instance.Play(SoundID.HIT_PARRYING);
@@ -169,7 +169,7 @@ namespace Game
                     var rage = MainTable.PlayerData.GetList().First().parryRage;
                     __brain.AddRagePoint(rage);
                 }
-                else if (damageContext.actionResult == ActionResults.PunchParried)
+                else if (damageContext.actionResult == ActionResults.PunchParrying)
                 {
                     var hitPoint = damageContext.senderBrain.coreColliderHelper.GetWorldCenter() + 
                         damageContext.senderBrain.coreColliderHelper.GetCapsuleRadius() * (__brain.coreColliderHelper.GetWorldCenter() - damageContext.senderBrain.coreColliderHelper.GetWorldCenter()).Vector2D().normalized;
@@ -182,7 +182,7 @@ namespace Game
                     __brain.AddRagePoint(rage);
                 }
 
-                if (damageContext.actionResult == ActionResults.Blocked || damageContext.actionResult == ActionResults.GuardParried)
+                if (damageContext.actionResult == ActionResults.Blocked || damageContext.actionResult == ActionResults.GuardParrying)
                 {
                     var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
                     Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.5f / __brain.BB.pawnData_Movement.knockBackSpeed)))
@@ -381,7 +381,7 @@ namespace Game
                 }
             };
 
-            onActiveParryEnabled += (_) => __brain.parryHitColliderHelper.pawnCollider.enabled = currActionContext.punchParryingEnabled;
+            onParryingEnabled += (_) => __brain.parryHitColliderHelper.pawnCollider.enabled = currActionContext.parryingEnabled;
             onActionStart += (_, __) => 
             {
                 if ((currActionContext.actionData?.actionName ?? string.Empty) == "Rolling") 

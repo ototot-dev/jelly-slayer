@@ -67,9 +67,9 @@ namespace Game
         Missed,
         Blocked,
         GuardBreak,
-        GuardParried,
-        PunchParried,
-        ProjectileReflected,
+        GuardParrying,
+        PunchParrying,
+        ReflectProjectile,
     }
 
     public enum RootMotionConstraints : int

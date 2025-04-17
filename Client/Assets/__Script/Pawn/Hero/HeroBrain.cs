@@ -268,8 +268,8 @@ namespace Game
                 case ActionResults.Blocked: 
                     ActionCtrler.StartAction(damageContext, "!OnBlocked", string.Empty, string.Empty); break;
                     
-                case ActionResults.PunchParried:
-                case ActionResults.GuardParried:
+                case ActionResults.PunchParrying:
+                case ActionResults.GuardParrying:
                     ActionCtrler.StartAction(damageContext, damageContext.senderPenalty.Item1 == Game.PawnStatus.Groggy ? "!OnGroggy" : "!OnParried", string.Empty, string.Empty); break;
             }
         }

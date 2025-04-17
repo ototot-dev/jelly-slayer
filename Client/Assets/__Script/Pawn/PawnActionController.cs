@@ -26,7 +26,7 @@ namespace Game
             public bool rootMotionEnabled;
             public bool legAnimGlueEnabled;
             public bool interruptEnabled;
-            public bool punchParryingEnabled;
+            public bool parryingEnabled;
             public bool manualAdvanceEnabled;
             public float manualAdvanceTime;
             public float manualAdvanceSpeed;
@@ -63,7 +63,7 @@ namespace Game
                 rootMotionEnabled = true;
                 legAnimGlueEnabled = true;
                 interruptEnabled = false;
-                punchParryingEnabled = false;
+                parryingEnabled = false;
                 this.manualAdvanceEnabled = manualAdvacneEnabled;
                 manualAdvanceTime = 0f;
                 manualAdvanceSpeed = actionSpeed;
@@ -99,7 +99,7 @@ namespace Game
                 rootMotionEnabled = true;
                 legAnimGlueEnabled = true;
                 interruptEnabled = false;
-                punchParryingEnabled = false;
+                parryingEnabled = false;
                 manualAdvanceEnabled = false;
                 manualAdvanceTime = 0f;
                 manualAdvanceSpeed = actionSpeed;
@@ -156,7 +156,7 @@ namespace Game
 
         public Action<ActionContext, PawnHeartPointDispatcher.DamageContext> onActionStart;
         public Action<ActionContext, PawnHeartPointDispatcher.DamageContext> onAddictiveActionStart;
-        public Action<ActionContext> onActiveParryEnabled;
+        public Action<ActionContext> onParryingEnabled;
         public Action<ActionContext> onActionFinished;
         public Action<ActionContext, float> onActionCanceled;
         public Action<ActionContext> onHomingRotationStarted;
@@ -654,18 +654,18 @@ namespace Game
             currActionContext.interruptEnabled = newValue;
         }
 
-        public void SetPunchParryingEnabled(bool newValue)
+        public void SetParryingEnabled(bool newValue)
         {
             if (!CheckActionRunning())
             {
-                __Logger.WarningR2(gameObject, nameof(SetPunchParryingEnabled), "CheckActionRunning() return false.");
+                __Logger.WarningR2(gameObject, nameof(SetParryingEnabled), "CheckActionRunning() return false.");
                 return;
             }
 
-            if (currActionContext.punchParryingEnabled != newValue)
+            if (currActionContext.parryingEnabled != newValue)
             {
-                currActionContext.punchParryingEnabled = newValue;
-                onActiveParryEnabled?.Invoke(currActionContext);
+                currActionContext.parryingEnabled = newValue;
+                onParryingEnabled?.Invoke(currActionContext);
             }
         }
         

@@ -132,9 +132,9 @@ namespace Game
             __pawnAnimCtrler.mainAnimator.SetTrigger("OnParried");
 
             var knockBackDistance = 0f;
-            if (damageContext.actionResult == ActionResults.PunchParried)
+            if (damageContext.actionResult == ActionResults.PunchParrying)
                 knockBackDistance = damageContext.receiverActionData.knockBackDistance;
-            else if (damageContext.actionResult == ActionResults.GuardParried)
+            else if (damageContext.actionResult == ActionResults.GuardParrying)
                 knockBackDistance = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "GuardParry")?.knockBackDistance ?? 0f;
             else
                 Debug.Assert(false);
@@ -170,7 +170,7 @@ namespace Game
 
         public override IDisposable StartOnGroogyAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
         {
-            if (damageContext.actionResult == ActionResults.PunchParried || damageContext.actionResult == ActionResults.GuardParried)
+            if (damageContext.actionResult == ActionResults.PunchParrying || damageContext.actionResult == ActionResults.GuardParrying)
             {
                 Debug.Assert(__humanoidBrain == damageContext.senderBrain);
 
