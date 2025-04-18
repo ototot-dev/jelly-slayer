@@ -152,6 +152,7 @@ namespace Game
                 if (status == PawnStatus.Groggy)
                 {
                     jellyMeshCtrler.FadeOut(0.5f);
+                    // jellyMeshCtrler.Die(5f);
                     jellyMeshCtrler.FinishHook();
 
                     //* 막타 Hit 애님이 온전 출력되는 시간 딜레이 

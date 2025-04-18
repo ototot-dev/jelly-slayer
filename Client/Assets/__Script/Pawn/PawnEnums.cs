@@ -88,6 +88,7 @@ namespace Game
         None = 0,
         CanNotStraggerOnBlacked,    //* 블럭킹에 의해서 Action이 캔슬되지 않음
         CanNotStarggerOnDamaged,    //* 데미지에 의해서 Action이 캔슬되지 않음
+        CanNotStarggerOnProjectile, //* 프로젝타일에 의해서 Action이 캔슬되지 않음
         Max,
     }
 

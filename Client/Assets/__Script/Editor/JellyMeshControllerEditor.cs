@@ -11,10 +11,16 @@ namespace Game
             base.OnInspectorGUI();
 
             if (GUILayout.Button("Fade In"))
+            {
+                (target as JellyMeshController).springMassSystem.coreAttachPoint.parent.position = (target as JellyMeshController).hostBrain.coreColliderHelper.GetWorldCenter();
                 (target as JellyMeshController).FadeIn(0.5f);
+            }
 
             if (GUILayout.Button("Fade Out"))
                 (target as JellyMeshController).FadeOut(0.2f);
+
+            if (GUILayout.Button("Die"))
+                (target as JellyMeshController).Die(10f);
 
             if (GUILayout.Button("Hook"))
                 (target as JellyMeshController).StartHook();

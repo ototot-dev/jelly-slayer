@@ -29,11 +29,11 @@ public class PawnAnimatorHandler : MonoBehaviour
     public void Hit() { }
     public void FootR() 
     {
-        __animCtrler?.OnAnimatorFootHandler(true);
+        // __animCtrler?.OnAnimatorFootHandler(true);
     }
     public void FootL() 
     {
-        __animCtrler?.OnAnimatorFootHandler(false);
+        // __animCtrler?.OnAnimatorFootHandler(false);
     }
     public void Land() { }
     public void f_start() { }

@@ -37,7 +37,7 @@ namespace Game
             public void BeginCoolTime(float coolTime) { __beginTimeStamp = Time.time; maxCoolTime = coolTime; }
             public bool Evaluate(float probConstraint, float staminaConstraint)
             {
-                if (GetRemainCoolTime() > 0f) 
+                if (GetRemainCoolTime() > 0f)
                     return false;
 
                 if (currProb < probConstraint) 

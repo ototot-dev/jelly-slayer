@@ -135,7 +135,12 @@ namespace Game
         /// </summary>
         public GameObject ShowAndForget(string effectName, Vector3 position, Quaternion rotation, Vector3 scale, ParticleSystemScalingMode scalingMode = ParticleSystemScalingMode.Local, float playRate = 1f)
         {
-            var instance = Instantiate(Resources.Load<GameObject>($"FX/{effectName}"), position, rotation);
+            return ShowAndForget(Resources.Load<GameObject>($"FX/{effectName}"), position, rotation, scale, scalingMode, playRate);
+        }
+
+        public GameObject ShowAndForget(GameObject sourcePrefab, Vector3 position, Quaternion rotation, Vector3 scale, ParticleSystemScalingMode scalingMode = ParticleSystemScalingMode.Local, float playRate = 1f)
+        {
+            var instance = Instantiate(sourcePrefab, position, rotation);
             if (scale != Vector3.zero && instance.TryGetComponent<ParticleSystem>(out var particleSystem))
             {
                 if (particleSystem.main.scalingMode != scalingMode)

@@ -7,6 +7,7 @@ using FIMSpace.FTail;
 using ParadoxNotion.Animation;
 using UniRx;
 using Unity.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Game
@@ -14,7 +15,7 @@ namespace Game
     public class JellyMeshController : MonoBehaviour
     {
         [Header("Component")]
-        public JellyBrain jellyBrain;
+        public JellyBrain hostBrain;
         public JellySpringMassSystem springMassSystem;
         public JellyMeshBuilder meshBuilder;
         public FEyesAnimator eyeAnimator;
@@ -34,6 +35,7 @@ namespace Game
         [Header("Graphics")]
         public GameObject hoookingPointFx;
         public GameObject onHitFx;
+        public GameObject onBloodDropFx;
         public Material cubeHitColorMaterial;
         public Material tailHitColorMaterial;
         public Material bodyHitColorMaterial;
@@ -46,6 +48,8 @@ namespace Game
         IDisposable __fadeInDisposable;
         IDisposable __fadeOutDisposable;
         IDisposable __hitColorDisposable;
+        IDisposable __dieDisposable;
+
 
         void Awake()
         {
@@ -152,7 +156,7 @@ namespace Game
             }).AddTo(this);
 
             //* Jelly 나타남 이벤트 생성
-            PawnEventManager.Instance.SendPawnActionEvent(jellyBrain, "OnJellyOut");
+            PawnEventManager.Instance.SendPawnActionEvent(hostBrain, "OnJellyOut");
         }
 
         public void FadeOut(float duration)
@@ -218,7 +222,102 @@ namespace Game
                 }).AddTo(this);
 
             //* Jelly 사라짐 이벤트 생성
-            PawnEventManager.Instance.SendPawnActionEvent(jellyBrain, "OnJellyOff");
+            PawnEventManager.Instance.SendPawnActionEvent(hostBrain, "OnJellyOff");
+        }
+
+        public void Die(float duration)
+        {
+            var dieStartTimeStamp = Time.time;
+
+            __fadeInDisposable?.Dispose();
+            __fadeOutDisposable?.Dispose();
+
+            meshBuilder.meshRenderer.enabled = false;
+            foreach (var t in tailAnimators) t.enabled = false;
+
+            eyeAnimator.AddComponent<SphereCollider>().radius = 0.35f;
+            var eyeRigidBody = eyeAnimator.AddComponent<Rigidbody>();
+            eyeRigidBody.mass = 0.1f;
+            eyeRigidBody.linearDamping = 1f;
+            eyeAnimator.transform.parent = transform;
+            eyeAnimator.gameObject.layer = LayerMask.NameToLayer("PhysicsBody");
+
+            Observable.NextFrame(FrameCountType.FixedUpdate).Subscribe(_ =>
+            {
+                eyeRigidBody.AddExplosionForce(1f, eyeRigidBody.transform.position, 1f);
+            }).AddTo(this);
+
+            var bloodDropFxInstances = new List<GameObject>();
+
+            foreach (var p in __cubeMeshRenderers)
+            {
+                var rigidBody = p.Value.Item1.gameObject.AddComponent<BoxCollider>().AddComponent<Rigidbody>();
+                rigidBody.transform.parent = transform;
+                rigidBody.gameObject.layer = LayerMask.NameToLayer("PhysicsBody");
+                rigidBody.mass = 0.1f;
+
+                if (Rand.Dice(4) == 1)
+                {                
+                    var bloodDropFx = EffectManager.Instance.ShowAndForget(onBloodDropFx, rigidBody.transform.position, Quaternion.identity, Rand.Range(1f, 2f) * Vector3.one);
+                    bloodDropFx.transform.parent = rigidBody.transform;
+                    bloodDropFxInstances.Add(bloodDropFx);
+                }
+            }
+
+            foreach (var p in __edgeCubeMeshRenderers)
+            {
+                var rigidBody = p.Value.gameObject.AddComponent<BoxCollider>().AddComponent<Rigidbody>();
+                rigidBody.transform.parent = transform;
+                rigidBody.gameObject.layer = LayerMask.NameToLayer("PhysicsBody");
+                rigidBody.mass = 0.1f;
+
+                if (Rand.Dice(4) == 1)
+                {                
+                    var bloodDropFx = EffectManager.Instance.ShowAndForget(onBloodDropFx, rigidBody.transform.position, Quaternion.identity, Rand.Range(1f, 2f) * Vector3.one);
+                    bloodDropFx.transform.parent = rigidBody.transform;
+                    bloodDropFxInstances.Add(bloodDropFx);
+                }
+            }
+
+            __dieDisposable = Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(duration)))
+                .DoOnCompleted(() =>
+                {
+                    foreach (var b in bloodDropFxInstances) b.GetComponent<ParticleSystem>().Stop();
+                })
+                .Subscribe(_ =>
+                {
+                    foreach (var p in __cubeMeshRenderers)
+                    {
+                        var cubeFadeAlpha = Mathf.Clamp01((Time.time - dieStartTimeStamp - (p.Key + 1f) * 0.05f) / duration);
+                        p.Value.Item1.transform.localScale = 0.2f * (1f - cubeFadeAlpha) * Vector3.one;
+
+                        foreach (var m in p.Value.Item1.materials)
+                        {
+                            m.SetVector("_CenterPosition", p.Value.Item1.transform.position);
+                            // m.SetFloat("_FadeAlphaMultiplier", Mathf.Max(1f, 10f * cubeFadeAlpha));
+                        }
+                    }
+
+                    foreach (var p in __edgeCubeMeshRenderers)
+                    {
+                        var key = (p.Key.Item1 + p.Key.Item2) * 0.5f;
+                        var cubeFadeAlpha = Mathf.Clamp01((Time.time - dieStartTimeStamp - (key + 1f) * 0.05f) / duration);
+                        p.Value.transform.localScale = 0.2f * (1f - cubeFadeAlpha) * Vector3.one;
+
+                        foreach (var m in p.Value.materials)
+                        {
+                            m.SetVector("_CenterPosition", p.Value.transform.position);
+                            // m.SetFloat("_FadeAlphaMultiplier", Mathf.Max(1f, 10f * cubeFadeAlpha));
+                        }
+                    }
+
+                    foreach (var b in bloodDropFxInstances)
+                        b.transform.rotation = Quaternion.identity;
+
+                    if (meshBuilder.meshRenderer.enabled) meshBuilder.meshRenderer.enabled = false;
+                    foreach (var r in __tailMeshRenderers) 
+                        if (r.enabled) r.enabled = false;
+                }).AddTo(this);
         }
 
         void UpdateBodyOffsetPointAndAttachPoint()
@@ -229,9 +328,9 @@ namespace Game
             if (__tweener?.IsComplete() ?? true)
                 springMassSystem.bodyOffsetPoint.localPosition = 0.2f * Perlin.Noise(Time.time) * Vector3.up;
 
-            var distance = (springMassSystem.coreAttachPoint.parent.position - jellyBrain.coreColliderHelper.GetWorldCenter()).Vector2D().magnitude;
+            var distance = (springMassSystem.coreAttachPoint.parent.position - hostBrain.coreColliderHelper.GetWorldCenter()).Vector2D().magnitude;
             if (distance > maintainDistance)
-                springMassSystem.coreAttachPoint.parent.position = springMassSystem.coreAttachPoint.parent.position.LerpSpeed(jellyBrain.coreColliderHelper.GetWorldCenter(), mainDistanceRecoverySpeed * (distance - maintainDistance), Time.deltaTime);
+                springMassSystem.coreAttachPoint.parent.position = springMassSystem.coreAttachPoint.parent.position.LerpSpeed(hostBrain.coreColliderHelper.GetWorldCenter(), mainDistanceRecoverySpeed * (distance - maintainDistance), Time.deltaTime);
         }
 
         Dictionary<int, Material> __defaultCubeMeshMaterials;
@@ -282,16 +381,16 @@ namespace Game
 
         public void StartHook()
         {
-            ropeHookCtrler.LaunchHook(jellyBrain.GetHookingColliderHelper().pawnCollider);
+            ropeHookCtrler.LaunchHook(hostBrain.GetHookingColliderHelper().pawnCollider);
             return;
-            var hookingPointFx = EffectManager.Instance.ShowLooping(hoookingPointFx, jellyBrain.GetHookingColliderHelper().transform.position, Quaternion.identity, Vector3.one);
+            var hookingPointFx = EffectManager.Instance.ShowLooping(hoookingPointFx, hostBrain.GetHookingColliderHelper().transform.position, Quaternion.identity, Vector3.one);
             __hookingPointFxDisposable = Observable.EveryLateUpdate()
                 .DoOnCancel(() => hookingPointFx.Stop())
                 .DoOnCompleted(() => hookingPointFx.Stop())
                 .Subscribe(_ =>
                 {
                     Debug.Assert(ropeHookCtrler.hookingCollider != null);
-                    hookingPointFx.transform.position = ropeHookCtrler.hookingCollider.transform.position = (jellyBrain as SoldierBrain).BB.attachment.spine02.position;
+                    hookingPointFx.transform.position = ropeHookCtrler.hookingCollider.transform.position = (hostBrain as SoldierBrain).BB.attachment.spine02.position;
                     //* 카메라 쪽으로 위치를 당겨서 겹쳐서 안보이게 되는 경우를 완화함
                     hookingPointFx.transform.position -= GameContext.Instance.cameraCtrler.viewCamera.transform.forward;
                 }).AddTo(this);

@@ -18324,7 +18324,7 @@ PrefabInstance:
     - target: {fileID: 9205371885998440386, guid: e96cffa9d00b6b545adfeb26165952cc, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 731937164}
+      objectReference: {fileID: 814666136}
     - target: {fileID: 9205371885998440386, guid: e96cffa9d00b6b545adfeb26165952cc, type: 3}
       propertyPath: orthographic size
       value: 5
@@ -20959,6 +20959,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2168992762603302668, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+      propertyPath: hostBrain
+      value: 
+      objectReference: {fileID: 672230231}
+    - target: {fileID: 8495594617367855988, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+      propertyPath: coreRigidBody
+      value: 
+      objectReference: {fileID: 1454519459}
     - target: {fileID: 8861700421523015734, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
       propertyPath: m_Name
       value: JellySoldier
@@ -22583,43 +22591,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 610d56a909da6a549be90b45fd4ebc37, type: 3}
---- !u!84 &731937164
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 656
-  m_Height: 360
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 94
-  m_ColorFormat: 4
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 1
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 0
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1001 &733993724
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24555,6 +24526,43 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4035879323720651189, guid: ab4c902c9085aa64bbc5f3446c3fe2ce, type: 3}
   m_PrefabInstance: {fileID: 1112219316}
   m_PrefabAsset: {fileID: 0}
+--- !u!84 &814666136
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 656
+  m_Height: 360
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 94
+  m_ColorFormat: 4
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 1
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 0
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!4 &817590315 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1370078850087999363, guid: 946f1aed4b4bf864ea2dc4f09fbdfc35, type: 3}
@@ -46192,6 +46200,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 515844353544733868, guid: 1eff6285a93e5424b8ae79d26a91a68c, type: 3}
   m_PrefabInstance: {fileID: 1017512859}
+  m_PrefabAsset: {fileID: 0}
+--- !u!54 &1454519459 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 4457857856265317276, guid: c1425a2482fff4e219f6de50533f1e1c, type: 3}
+  m_PrefabInstance: {fileID: 672230230}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1459251557
 PrefabInstance:

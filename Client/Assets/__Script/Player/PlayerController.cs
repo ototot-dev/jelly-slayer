@@ -49,7 +49,7 @@ namespace Game
             }
             else if (actionName == "OnJellyOff")
             {
-                Debug.Assert(boundJellyMesh.Value.jellyBrain == sender);
+                Debug.Assert(boundJellyMesh.Value.hostBrain == sender);
 
                 boundJellyMesh.Value = null;
                 __Logger.LogR2(gameObject, nameof(IPawnEventListener.OnReceivePawnActionStart), "OnJellOff", "jellyBrain", sender);

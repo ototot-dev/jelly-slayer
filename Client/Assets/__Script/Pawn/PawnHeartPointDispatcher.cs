@@ -526,6 +526,10 @@ namespace Game
                 {
                     __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "Receiver has SuperArmorLevels.CanNotStarggerOnDamaged");
                 }
+                else if (damageContext.projectile != null && receiverActionCtrler.CheckSuperArmorLevel(SuperArmorLevels.CanNotStarggerOnProjectile))
+                {
+                    __Logger.LogR2(gameObject, nameof(ProcessDamageContext), "Receiver has SuperArmorLevels.CanNotStarggerOnProjectile");
+                }
                 else
                 {
                     damageContext.receiverPenalty = new(PawnStatus.Staggered, damageContext.senderActionData.staggerDuration);

@@ -74,9 +74,9 @@ namespace Game
         /// </summary>
         /// <param name="face"></param>
         /// <returns></returns>
-        public static int Dice(out Tuple<int, int> result, int face = 6)
+        public static int Dice(out ValueTuple<int, int> result, int face = 6)
         {
-            result = new Tuple<int, int>(UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1));
+            result = new ValueTuple<int, int>(UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1));
             return result.Item1 + result.Item2;
         }
 
@@ -85,9 +85,9 @@ namespace Game
         /// </summary>
         /// <param name="face"></param>
         /// <returns></returns>
-        public static int Dice(out Tuple<int, int, int> result, int face = 6)
+        public static int Dice(out ValueTuple<int, int, int> result, int face = 6)
         {
-            result = new Tuple<int, int, int>(UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1));
+            result = new ValueTuple<int, int, int>(UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1));
             return result.Item1 + result.Item2 + result.Item3;
         }
 
@@ -96,9 +96,9 @@ namespace Game
         /// </summary>
         /// <param name="face"></param>
         /// <returns></returns>
-        public static int Dice(out Tuple<int, int, int, int> result, int face = 6)
+        public static int Dice(out ValueTuple<int, int, int, int> result, int face = 6)
         {
-            result = new Tuple<int, int, int, int>(UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1));
+            result = new ValueTuple<int, int, int, int>(UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1));
             return result.Item1 + result.Item2 + result.Item3 + result.Item4;
         }
 
@@ -107,9 +107,9 @@ namespace Game
         /// </summary>
         /// <param name="face"></param>
         /// <returns></returns>
-        public static int Dice(out Tuple<int, int, int, int, int> result, int face = 6)
+        public static int Dice(out ValueTuple<int, int, int, int, int> result, int face = 6)
         {
-            result = new Tuple<int, int, int, int, int>(UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1));
+            result = new ValueTuple<int, int, int, int, int>(UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1));
             return result.Item1 + result.Item2 + result.Item3 + result.Item4 + result.Item5;
         }
 
@@ -118,9 +118,9 @@ namespace Game
         /// </summary>
         /// <param name="face"></param>
         /// <returns></returns>
-        public static int Dice(out Tuple<int, int, int, int, int, int> result, int face = 6)
+        public static int Dice(out ValueTuple<int, int, int, int, int, int> result, int face = 6)
         {
-            result = new Tuple<int, int, int, int, int, int>(UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1));
+            result = new ValueTuple<int, int, int, int, int, int>(UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1), UnityEngine.Random.Range(1, face + 1));
             return result.Item1 + result.Item2 + result.Item3 + result.Item4 + result.Item5 + result.Item6;
         }
 

@@ -52924,7 +52924,7 @@ MonoBehaviour:
   boxBounds: {fileID: 3962910893854648129}
   sphereBounds: {fileID: 0}
   core: {fileID: 664378750196727605}
-  coreRigidBody: {fileID: 0}
+  coreRigidBody: {fileID: 4457857856265317276}
   coreBox: {fileID: 0}
   coreSphere: {fileID: 36127865068610452}
   coreCapsule: {fileID: 0}
@@ -62305,7 +62305,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce37e8d3626dc48508365d459c9cbc2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jellyBrain: {fileID: 8683783354359918731}
+  hostBrain: {fileID: 8683783354359918731}
   springMassSystem: {fileID: 8495594617367855988}
   meshBuilder: {fileID: 8921833237822783817}
   eyeAnimator: {fileID: 6518897691976235552}
@@ -62326,6 +62326,7 @@ MonoBehaviour:
   impulseStrength: 4
   hoookingPointFx: {fileID: 5813854032995505637, guid: b9e66537ec87ed84d8fceb2864cdd90a, type: 3}
   onHitFx: {fileID: 7555031585622908223, guid: dbd0a9584b295d04f9d828d2def2dcba, type: 3}
+  onBloodDropFx: {fileID: 143646283027636570, guid: bbf9dcd9f56329043a0fa6f1b084adb8, type: 3}
   cubeHitColorMaterial: {fileID: 2100000, guid: ed00abc7c672048bbbe3aae2e45b51c5, type: 2}
   tailHitColorMaterial: {fileID: 2100000, guid: 37f84be5dce7b4a7496f585a299d3d5d, type: 2}
   bodyHitColorMaterial: {fileID: 2100000, guid: a352a16cd87054b82af9135444ad0122, type: 2}
