@@ -221,6 +221,10 @@ namespace Game
             seq.maxCoolTime = 0f;
             return seq;
         }
+        public float GetRemainCoolTime<T>(T alias) where T: struct, Enum
+        {
+            return GetSequence(alias)?.GetRemainCoolTime() ?? 0f;
+        }
 
         public bool EvaluateSequence<T>(T alias, float probConstraint = -1f, float staminaConstraint = -1f) where T : struct, Enum
         {

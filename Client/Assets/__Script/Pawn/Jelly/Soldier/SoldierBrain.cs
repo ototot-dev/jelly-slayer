@@ -122,7 +122,6 @@ namespace Game
             ActionDataSelector.ReserveSequence(ActionPatterns.ComboAttackC, "Counter", "Counter", 0.1f, "Attack#1", "Attack#2", 0.1f, "Attack#3");
             ActionDataSelector.ReserveSequence(ActionPatterns.Leap, "Backstep", 0.5f, "Missile", 0.2f, "Missile", 0.2f, "Leap").BeginCoolTime(BB.action.leapCoolTime);
 
-            //* 
             ActionDataSelector.ResetProbability(ActionPatterns.MissileA, 1f);
             ActionDataSelector.ResetProbability(ActionPatterns.MissileB, 1f);
             ActionDataSelector.ResetProbability(ActionPatterns.Leap, 1f);
@@ -285,7 +284,13 @@ namespace Game
                     }
                     else
                     {
-                        var jumpAttackPick = UnityEngine.Random.Range(0, 2) > 0 ? ActionPatterns.JumpAttackA : ActionPatterns.JumpAttackB;
+                        var jumpAttackPick = Rand.Dice(2) == 1 ? ActionPatterns.JumpAttackA : ActionPatterns.JumpAttackB;
+
+                        //* 미사일 패턴이 중복되지 않도록 미사일 쿨타임이 존재하면 'JumpAttackB'는 선택하지 않음
+                        if (jumpAttackPick == ActionPatterns.JumpAttackB && Mathf.Max(ActionDataSelector.GetRemainCoolTime(ActionPatterns.MissileA), ActionDataSelector.GetRemainCoolTime(ActionPatterns.MissileB)) > 0f)
+                            jumpAttackPick = ActionPatterns.JumpAttackA;
+
+
                         if (CheckTargetVisibility() && ActionDataSelector.EvaluateSequence(jumpAttackPick))
                         {
                             ActionDataSelector.EnqueueSequence(jumpAttackPick);
