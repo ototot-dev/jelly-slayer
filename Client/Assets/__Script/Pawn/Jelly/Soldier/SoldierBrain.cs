@@ -308,7 +308,14 @@ namespace Game
 
             if (damageContext.actionResult == ActionResults.Damaged)
             {
-                GameContext.Instance.damageTextManager.Create(damageContext.finalDamage.ToString("0"), damageContext.hitPoint, 1f, Color.white);
+                float scale = 1;
+                Color color = Color.white;
+                if (PawnBB.IsGroggy == true)
+                {
+                    scale = 1.1f;
+                    color = Color.yellow;
+                }
+                GameContext.Instance.damageTextManager.Create(damageContext.finalDamage.ToString("0"), damageContext.hitPoint, scale, color);
             }
             else if (damageContext.actionResult == ActionResults.Blocked)
             {

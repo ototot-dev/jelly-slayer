@@ -25,7 +25,7 @@ public class DamageText : MonoBehaviour, IObjectPoolable
     float _yPos = 0;
     float _yAdd = 0;
     float _xAdd = 0;
-    float _yMax = 150.0f; // �ִ� ����
+    float _yMax = 150.0f;
     bool _isYDamp = true;
 
     public void SetText(string text, Vector3 vPos, float scale, Color color) 
