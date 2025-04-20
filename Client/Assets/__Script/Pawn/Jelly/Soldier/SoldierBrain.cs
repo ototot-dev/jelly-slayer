@@ -92,6 +92,8 @@ namespace Game
 
             BB.common.isSpawnFinished.Value = true;
             PawnEventManager.Instance.SendPawnSpawningEvent(this, PawnSpawnStates.SpawnFinished);
+
+            GameContext.Instance.SetMainTarget(this);
         }
 
         IDisposable __spawningDisposable;
@@ -308,14 +310,8 @@ namespace Game
 
             if (damageContext.actionResult == ActionResults.Damaged)
             {
-                float scale = 1;
-                Color color = Color.white;
-                if (PawnBB.IsGroggy == true)
-                {
-                    scale = 1.1f;
-                    color = Color.yellow;
-                }
-                GameContext.Instance.damageTextManager.Create(damageContext.finalDamage.ToString("0"), damageContext.hitPoint, scale, color);
+                Color color = (PawnBB.IsGroggy == true) ? Color.yellow : Color.white;
+                GameContext.Instance.damageTextManager.Create(damageContext.finalDamage.ToString("0"), damageContext.hitPoint, 1, color);
             }
             else if (damageContext.actionResult == ActionResults.Blocked)
             {

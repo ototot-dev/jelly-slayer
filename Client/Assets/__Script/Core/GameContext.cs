@@ -13,6 +13,9 @@ namespace Game
         public SlimeSpawnManager jellySpawnManager;
         public HeroSpawnManager heroSpawnManager;
         public DamageTextManager damageTextManager;
+        public HPBarManager hpBarManager;
+
+        public PawnBrainController _mainTarget = null; // Boss, Target
 
         public RectTransform MainCanvas
         {
@@ -34,7 +37,7 @@ namespace Game
 
         RectTransform __mainCanvas;
         CanvasManager __mainCanvasCtrler;
-        
+
         void Awake()
         {
             // terrainManager = GameObject.FindWithTag("TerrainManager").GetComponent<TerrainManager>();
@@ -49,7 +52,9 @@ namespace Game
             // slimeSpawnManager = gameObject.Children().First(c => c.name == "Manager").GetComponent<SlimeSpawnManager>();
             // heroSpawnManager = gameObject.Children().First(c => c.name == "Manager").GetComponent<HeroSpawnManager>();
         }
-
+        public void SetMainTarget(PawnBrainController brain) 
+        { 
+            _mainTarget = brain;
+        }
     }
-
 }

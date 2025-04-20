@@ -22,6 +22,7 @@ public class HPBarManager : MonoBehaviour
     private void Awake()
     {
         _instance = this;
+        GameContext.Instance.hpBarManager = this;
     }
     void Start()
     {
