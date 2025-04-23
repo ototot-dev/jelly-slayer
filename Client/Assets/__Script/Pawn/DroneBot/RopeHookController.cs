@@ -10,29 +10,29 @@ namespace Game
     {
         [Header("Component")]
         public ObiSolver obiSolver;
-        public ObiCollider obiCollider;
+        public ObiCollider obiSourceCollider;
+        public ObiCollider obiTargetCollider;
         public ObiRopeSection obiRopeSection;
 
         [Header("Parameter")]
-        [Range(0, 1)]
-        public float hookResolution = 0.5f;
-        public float hookExtendRetractSpeed = 2f;
-        public float hookLengthMultilier = 1f;
         public float hookShootSpeed = 30f;
+        public float ropeExtendRetractSpeed = 1f;
+        public float ropeLengthMultilier = 1f;
+        public float currRopeLength = 1f;
         public int particlePoolSize = 100;
 
-        [Header("Rendering")]
+        [Header("Target")]
+        public Collider targetCollider;
+        public Vector3 targetOffset;
+
+        [Header("Graphics")]
         public Material ropeMaterial;
         [RenderingLayerMask]
         public uint renderingLayerMask = 1;
 
-        [Header("Hook")]
-        public float hookingLength;
-        public Vector3 hookingOffsetPoint;
-        public Collider hookingCollider;
         public Action<Collider> onRopeHooked;
         public Action<Collider> onRopeReleased;
-        public Collider SourceCollider => obiCollider.sourceCollider;
+        public Collider SourceCollider => obiSourceCollider.sourceCollider;
 
         public Vector3 GetFirstParticlePosition()
         {
@@ -107,18 +107,17 @@ namespace Game
             if (targetCollider != null)
             {   
                 __hitPoint = targetCollider.transform.position;
-                hookingOffsetPoint = Vector3.zero;
-                hookingCollider = targetCollider;
-                StartCoroutine(AttachHook());
+                this.targetCollider = targetCollider;
+                StartCoroutine(AttachHook_Coroutine());
 
                 return true;
             }
             else if (Physics.Raycast(new Ray(transform.position, transform.forward), out var hit))
             {
                 __hitPoint = hit.point;
-                hookingOffsetPoint = hit.collider.transform.InverseTransformPoint(__hitPoint);
-                hookingCollider = hit.collider;
-                StartCoroutine(AttachHook());
+                targetOffset = hit.collider.transform.InverseTransformPoint(__hitPoint);
+                this.targetCollider = hit.collider;
+                StartCoroutine(AttachHook_Coroutine());
 
                 return true;
             }
@@ -143,7 +142,7 @@ namespace Game
             }
         }
 
-        IEnumerator AttachHook()
+        IEnumerator AttachHook_Coroutine()
         {
             yield return null;
 
@@ -156,8 +155,8 @@ namespace Game
             // Procedurally generate the rope path (just a short segment, as we will extend it over time):
             int filter = ObiUtils.MakeFilter(ObiUtils.CollideWithEverything, 0);
             __obiRopeBlueprint.path.Clear();
-            __obiRopeBlueprint.path.AddControlPoint(Vector3.zero, Vector3.zero, Vector3.zero, Vector3.up, 0.1f, 0.1f, 1, filter, Color.white, "Hook start");
-            __obiRopeBlueprint.path.AddControlPoint(localHit.normalized * 0.5f, Vector3.zero, Vector3.zero, Vector3.up, 0.1f, 0.1f, 1, filter, Color.white, "Hook end");
+            __obiRopeBlueprint.path.AddControlPoint(Vector3.zero, Vector3.zero, Vector3.zero, Vector3.up, 0.1f, 0.1f, 1f, filter, Color.white, "Hook start");
+            __obiRopeBlueprint.path.AddControlPoint(localHit.normalized * 0.5f, Vector3.zero, Vector3.zero, Vector3.up, 0.1f, 0.1f, 1f, filter, Color.white, "Hook end");
             __obiRopeBlueprint.path.FlushEvents();
 
             // Generate the particle representation of the rope (wait until it has finished):
@@ -173,14 +172,11 @@ namespace Game
 
             // set masses to zero, as we're going to override positions while we extend the rope:
             for (int i = 0; i < __obiRope.activeParticleCount; ++i)
-                obiSolver.invMasses[__obiRope.solverIndices[i]] = 0;
+                obiSolver.invMasses[__obiRope.solverIndices[i]] = 0f;
 
             // while the last particle hasn't reached the hit, extend the rope:
-            Vector3 origin;
-            Vector3 destination;
-            Vector3 direction;
-            float distanceLeft = 0f;
-
+            Vector3 origin, destination, direction;
+            var distanceLeft = 0f;
             while (true)
             {
                 // calculate rope origin in solver space:
@@ -215,55 +211,55 @@ namespace Game
 
             // restore masses so that the simulation takes over now that the rope is in place:
             for (int i = 0; i < __obiRope.activeParticleCount; ++i)
-                obiSolver.invMasses[__obiRope.solverIndices[i]] = 10; // 1/0.1 = 10
+                obiSolver.invMasses[__obiRope.solverIndices[i]] = 10f; // 1/0.1 = 10
 
             // Pin both ends of the rope (this enables two-way interaction between character and rope):
             var batch = new ObiPinConstraintsBatch();
-            batch.AddConstraint(__obiRope.elements[0].particle1, obiCollider, transform.localPosition, Quaternion.identity, 0, 0, float.PositiveInfinity);
-            batch.AddConstraint(__obiRope.elements[__obiRope.elements.Count - 1].particle2, hookingCollider.GetComponent<ObiColliderBase>(),  hookingOffsetPoint, Quaternion.identity, 0, 0, float.PositiveInfinity);
+            batch.AddConstraint(__obiRope.elements[0].particle1, obiSourceCollider, transform.localPosition, Quaternion.identity, 0f, 0f, float.PositiveInfinity);
+            batch.AddConstraint(__obiRope.elements[__obiRope.elements.Count - 1].particle2, obiTargetCollider, targetOffset, Quaternion.identity, 0f, 0f, float.PositiveInfinity);
             batch.activeConstraintCount = 2;
             pinConstraints.AddBatch(batch);
 
             __obiRope.SetConstraintsDirty(Oni.ConstraintType.Pin);
 
             //* 기본 길이값 셋팅
-            hookingLength = (hookingCollider.transform.position - transform.position).magnitude * hookLengthMultilier;
-            onRopeHooked?.Invoke(hookingCollider);
+            currRopeLength = (obiTargetCollider.transform.position - transform.position).magnitude * ropeLengthMultilier;
+            onRopeHooked?.Invoke(targetCollider);
         }
 
         public void DetachHook()
         {
-            var hookColliderCached = hookingCollider;
+            var hookColliderCached = obiTargetCollider;
 
-            hookingLength = -1f;
-            hookingCollider = null;
+            currRopeLength = -1f;
+            obiTargetCollider = null;
 
             // Set the rope blueprint to null (automatically removes the previous blueprint from the solver, if any).
             __obiRope.ropeBlueprint = null;
             __obiRope.GetComponent<ObiRopeExtrudedRenderer>().enabled = false;
 
-            onRopeReleased?.Invoke(hookColliderCached);
+            onRopeReleased?.Invoke(targetCollider);
         }
 
         float __needLength;
 
         void FixedUpdate()
         {
-            if (__obiRope.isLoaded && hookingLength > 0f)
+            if (__obiRope.isLoaded && currRopeLength > 0f)
             {
                 var currLength = __obiRope.CalculateLength();
                 var restLength = __obiRope.restLength;
 
-                hookingLength = (hookingCollider.transform.position - transform.position).magnitude * hookLengthMultilier;
+                currRopeLength = (obiTargetCollider.transform.position - transform.position).magnitude * ropeLengthMultilier;
                 // __Logger.LogR(gameObject, nameof(FixedUpdate), "hookLength", hookLength, "currLength", currLength, "restLength", restLength);
 
                 // restLength - Mathf.Floor(distance);
-                if (Mathf.Abs(hookingLength - __obiRope.restLength) > 0.1f)
+                if (Mathf.Abs(currRopeLength - __obiRope.restLength) > 0.1f)
                 {
-                    if (restLength < hookingLength)
-                        __obiRopeCursor.ChangeLength(hookExtendRetractSpeed * Time.deltaTime);
+                    if (restLength < currRopeLength)
+                        __obiRopeCursor.ChangeLength(ropeExtendRetractSpeed * Time.deltaTime);
                     else
-                        __obiRopeCursor.ChangeLength(-hookExtendRetractSpeed * Time.deltaTime);
+                        __obiRopeCursor.ChangeLength(-ropeExtendRetractSpeed * Time.deltaTime);
                 }
 
 

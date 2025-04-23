@@ -12,7 +12,9 @@ namespace Game
 
             if (GUILayout.Button("Fade In"))
             {
-                (target as JellyMeshController).springMassSystem.coreAttachPoint.parent.position = (target as JellyMeshController).hostBrain.coreColliderHelper.GetWorldCenter();
+                if ((target as JellyMeshController).hostBrain != null)
+                    (target as JellyMeshController).springMassSystem.core.position = (target as JellyMeshController).hostBrain.coreColliderHelper.GetWorldCenter();
+                
                 (target as JellyMeshController).FadeIn(0.5f);
             }
 
@@ -29,11 +31,11 @@ namespace Game
                 (target as JellyMeshController).FinishHook();
 
             if (GUILayout.Button("Impulse"))
-                (target as JellyMeshController).springMassSystem.AddImpulseRandom((target as JellyMeshController).impulseStrength);
+                (target as JellyMeshController).springMassSystem.AddImpulseRandom((target as JellyMeshController).hitImpulseStrength);
 
             if (GUILayout.Button("Hit"))
             {
-                (target as JellyMeshController).springMassSystem.AddImpulseRandom((target as JellyMeshController).impulseStrength);
+                (target as JellyMeshController).springMassSystem.AddImpulseRandom((target as JellyMeshController).hitImpulseStrength);
                 (target as JellyMeshController).ShowHitColor(0.2f);
 
                 // EffectManager.Instance.Show((target as JellyMeshController).onHitFx, (target as JellyMeshController).springMassSystem.core.position, Quaternion.identity, Vector3.one);

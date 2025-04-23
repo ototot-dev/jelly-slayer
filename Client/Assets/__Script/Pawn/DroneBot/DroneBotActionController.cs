@@ -125,7 +125,7 @@ namespace Game
                     __brain.BB.decision.currDecision.Value = DroneBotBrain.Decisions.Hooking;
                 }
 
-                __hookingPointFx = EffectManager.Instance.ShowLooping(orbSmallYellowFx, ropeHookCtrler.hookingCollider.transform.position, Quaternion.identity, Vector3.one);
+                __hookingPointFx = EffectManager.Instance.ShowLooping(orbSmallYellowFx, ropeHookCtrler.obiTargetCollider.transform.position, Quaternion.identity, Vector3.one);
                 __hookingPointFxUpdateDisposable = Observable.EveryUpdate()
                     .DoOnCancel(() =>
                     {
@@ -139,7 +139,7 @@ namespace Game
                     })
                     .Subscribe(_ =>
                     {
-                        Debug.Assert(ropeHookCtrler.hookingCollider != null);
+                        Debug.Assert(ropeHookCtrler.obiTargetCollider != null);
 
                         // __hookingPointFx.transform.position = ropeHookCtrler.hookingCollider.transform.position;
                         __hookingPointFx.transform.position = ropeHookCtrler.GetLastParticlePosition();

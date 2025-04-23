@@ -9,12 +9,6 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 		_MainTex("MainTex", 2D) = "white" {}
 		_BaseColor("BaseColor", Color) = (0,0,0,0)
 		_StencilRef("StencilRef", Int) = 1
-		_CenterPosition("CenterPosition", Vector) = (0,0,0,0)
-		_FadeStartLength("FadeStartLength", Range( 0 , 100)) = 0
-		_FadeEndLength("FadeEndLength", Range( 1 , 100)) = 1
-		_FadeAlphaMultiplier("FadeAlphaMultiplier", Range( 0 , 10)) = 1
-		_AlphaClip("AlphaClip", Range( 0 , 1)) = 0.2
-		_AlphaMultiplier("AlphaMultiplier", Range( 0 , 1)) = 0
 		_HitColorAlpha("HitColorAlpha", Float) = 0
 		[HDR]_EmissiveColor("EmissiveColor", Color) = (0,0,0,0)
 		_Occlusion("Occlusion", Range( 0 , 1)) = 0
@@ -57,7 +51,7 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 
 		Tags { "RenderPipeline"="UniversalPipeline" "RenderType"="TransparentCutout" "Queue"="AlphaTest" "UniversalMaterialType"="Lit" }
 
-		Cull Back
+		Cull Off
 		ZWrite On
 		ZTest LEqual
 		Offset 0 , 0
@@ -268,7 +262,6 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 			#endif
 
 			#define ASE_NEEDS_FRAG_SCREEN_POSITION
-			#define ASE_NEEDS_FRAG_WORLD_POSITION
 
 
 			#if defined(ASE_EARLY_Z_DEPTH_OPTIMIZE) && (SHADER_TARGET >= 45)
@@ -321,15 +314,9 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 			float4 _MainTex_ST;
 			float4 _BaseColor;
 			float4 _EmissiveColor;
-			float3 _CenterPosition;
 			int _StencilRef;
 			float _HitColorAlpha;
 			float _Occlusion;
-			float _AlphaMultiplier;
-			float _FadeStartLength;
-			float _FadeEndLength;
-			float _FadeAlphaMultiplier;
-			float _AlphaClip;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -603,11 +590,7 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 				float4 ase_positionSSNorm = ScreenPos / ScreenPos.w;
 				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
 				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
-				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 1.2 ) , ( ase_positionSS_Pixel.y * 1.2 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
-				float4 ditherCustomScreenPos3 = appendResult38;
-				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
-				float clampResult59 = clamp( ( ( max( ( distance( WorldPosition , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
-				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
+				float dither3 = Dither8x8Bayer( fmod( ase_positionSS_Pixel.x, 8 ), fmod( ase_positionSS_Pixel.y, 8 ) );
 				
 
 				float3 BaseColor = lerpResult68;
@@ -617,8 +600,8 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 				float Metallic = 0.0;
 				float Smoothness = 0.0;
 				float Occlusion = _Occlusion;
-				float Alpha = ( _AlphaMultiplier * lerpResult60 );
-				float AlphaClipThreshold = max( _AlphaClip , clampResult59 );
+				float Alpha = ( _BaseColor.a * 1.5 );
+				float AlphaClipThreshold = dither3;
 				float AlphaClipThresholdShadow = 0.5;
 				float3 BakedGI = 0;
 				float3 RefractionColor = 1;
@@ -920,7 +903,6 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
             #endif
 
 			#define ASE_NEEDS_FRAG_SCREEN_POSITION
-			#define ASE_NEEDS_FRAG_WORLD_POSITION
 
 
 			#if defined(ASE_EARLY_Z_DEPTH_OPTIMIZE) && (SHADER_TARGET >= 45)
@@ -956,15 +938,9 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 			float4 _MainTex_ST;
 			float4 _BaseColor;
 			float4 _EmissiveColor;
-			float3 _CenterPosition;
 			int _StencilRef;
 			float _HitColorAlpha;
 			float _Occlusion;
-			float _AlphaMultiplier;
-			float _FadeStartLength;
-			float _FadeEndLength;
-			float _FadeAlphaMultiplier;
-			float _AlphaClip;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -1182,15 +1158,11 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 				float4 ase_positionSSNorm = ScreenPos / ScreenPos.w;
 				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
 				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
-				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 1.2 ) , ( ase_positionSS_Pixel.y * 1.2 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
-				float4 ditherCustomScreenPos3 = appendResult38;
-				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
-				float clampResult59 = clamp( ( ( max( ( distance( WorldPosition , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
-				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
+				float dither3 = Dither8x8Bayer( fmod( ase_positionSS_Pixel.x, 8 ), fmod( ase_positionSS_Pixel.y, 8 ) );
 				
 
-				float Alpha = ( _AlphaMultiplier * lerpResult60 );
-				float AlphaClipThreshold = max( _AlphaClip , clampResult59 );
+				float Alpha = ( _BaseColor.a * 1.5 );
+				float AlphaClipThreshold = dither3;
 				float AlphaClipThresholdShadow = 0.5;
 
 				#ifdef ASE_DEPTH_WRITE_ON
@@ -1268,7 +1240,6 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
             #endif
 
 			#define ASE_NEEDS_FRAG_SCREEN_POSITION
-			#define ASE_NEEDS_FRAG_WORLD_POSITION
 
 
 			#if defined(ASE_EARLY_Z_DEPTH_OPTIMIZE) && (SHADER_TARGET >= 45)
@@ -1304,15 +1275,9 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 			float4 _MainTex_ST;
 			float4 _BaseColor;
 			float4 _EmissiveColor;
-			float3 _CenterPosition;
 			int _StencilRef;
 			float _HitColorAlpha;
 			float _Occlusion;
-			float _AlphaMultiplier;
-			float _FadeStartLength;
-			float _FadeEndLength;
-			float _FadeAlphaMultiplier;
-			float _AlphaClip;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -1513,15 +1478,11 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 				float4 ase_positionSSNorm = ScreenPos / ScreenPos.w;
 				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
 				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
-				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 1.2 ) , ( ase_positionSS_Pixel.y * 1.2 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
-				float4 ditherCustomScreenPos3 = appendResult38;
-				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
-				float clampResult59 = clamp( ( ( max( ( distance( WorldPosition , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
-				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
+				float dither3 = Dither8x8Bayer( fmod( ase_positionSS_Pixel.x, 8 ), fmod( ase_positionSS_Pixel.y, 8 ) );
 				
 
-				float Alpha = ( _AlphaMultiplier * lerpResult60 );
-				float AlphaClipThreshold = max( _AlphaClip , clampResult59 );
+				float Alpha = ( _BaseColor.a * 1.5 );
+				float AlphaClipThreshold = dither3;
 
 				#ifdef ASE_DEPTH_WRITE_ON
 					float DepthValue = input.positionCS.z;
@@ -1586,8 +1547,7 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/MetaInput.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/ShaderPass.hlsl"
 
-			#define ASE_NEEDS_FRAG_WORLD_POSITION
-
+			
 
 			struct Attributes
 			{
@@ -1623,15 +1583,9 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 			float4 _MainTex_ST;
 			float4 _BaseColor;
 			float4 _EmissiveColor;
-			float3 _CenterPosition;
 			int _StencilRef;
 			float _HitColorAlpha;
 			float _Occlusion;
-			float _AlphaMultiplier;
-			float _FadeStartLength;
-			float _FadeEndLength;
-			float _FadeAlphaMultiplier;
-			float _AlphaClip;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -1865,17 +1819,13 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 				float4 ase_positionSSNorm = screenPos / screenPos.w;
 				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
 				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
-				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 1.2 ) , ( ase_positionSS_Pixel.y * 1.2 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
-				float4 ditherCustomScreenPos3 = appendResult38;
-				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
-				float clampResult59 = clamp( ( ( max( ( distance( WorldPosition , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
-				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
+				float dither3 = Dither8x8Bayer( fmod( ase_positionSS_Pixel.x, 8 ), fmod( ase_positionSS_Pixel.y, 8 ) );
 				
 
 				float3 BaseColor = lerpResult68;
 				float3 Emission = _EmissiveColor.rgb;
-				float Alpha = ( _AlphaMultiplier * lerpResult60 );
-				float AlphaClipThreshold = max( _AlphaClip , clampResult59 );
+				float Alpha = ( _BaseColor.a * 1.5 );
+				float AlphaClipThreshold = dither3;
 
 				#ifdef _ALPHATEST_ON
 					clip(Alpha - AlphaClipThreshold);
@@ -1939,8 +1889,7 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ShaderGraphFunctions.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/ShaderPass.hlsl"
 
-			#define ASE_NEEDS_FRAG_WORLD_POSITION
-
+			
 
 			struct Attributes
 			{
@@ -1969,15 +1918,9 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 			float4 _MainTex_ST;
 			float4 _BaseColor;
 			float4 _EmissiveColor;
-			float3 _CenterPosition;
 			int _StencilRef;
 			float _HitColorAlpha;
 			float _Occlusion;
-			float _AlphaMultiplier;
-			float _FadeStartLength;
-			float _FadeEndLength;
-			float _FadeAlphaMultiplier;
-			float _AlphaClip;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -2191,16 +2134,12 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 				float4 ase_positionSSNorm = screenPos / screenPos.w;
 				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
 				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
-				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 1.2 ) , ( ase_positionSS_Pixel.y * 1.2 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
-				float4 ditherCustomScreenPos3 = appendResult38;
-				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
-				float clampResult59 = clamp( ( ( max( ( distance( WorldPosition , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
-				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
+				float dither3 = Dither8x8Bayer( fmod( ase_positionSS_Pixel.x, 8 ), fmod( ase_positionSS_Pixel.y, 8 ) );
 				
 
 				float3 BaseColor = lerpResult68;
-				float Alpha = ( _AlphaMultiplier * lerpResult60 );
-				float AlphaClipThreshold = max( _AlphaClip , clampResult59 );
+				float Alpha = ( _BaseColor.a * 1.5 );
+				float AlphaClipThreshold = dither3;
 
 				half4 color = half4(BaseColor, Alpha );
 
@@ -2267,7 +2206,6 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
             #endif
 
 			#define ASE_NEEDS_FRAG_SCREEN_POSITION
-			#define ASE_NEEDS_FRAG_WORLD_POSITION
 
 
 			#if defined(ASE_EARLY_Z_DEPTH_OPTIMIZE) && (SHADER_TARGET >= 45)
@@ -2306,15 +2244,9 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 			float4 _MainTex_ST;
 			float4 _BaseColor;
 			float4 _EmissiveColor;
-			float3 _CenterPosition;
 			int _StencilRef;
 			float _HitColorAlpha;
 			float _Occlusion;
-			float _AlphaMultiplier;
-			float _FadeStartLength;
-			float _FadeEndLength;
-			float _FadeAlphaMultiplier;
-			float _AlphaClip;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -2529,16 +2461,12 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 				float4 ase_positionSSNorm = ScreenPos / ScreenPos.w;
 				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
 				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
-				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 1.2 ) , ( ase_positionSS_Pixel.y * 1.2 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
-				float4 ditherCustomScreenPos3 = appendResult38;
-				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
-				float clampResult59 = clamp( ( ( max( ( distance( WorldPosition , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
-				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
+				float dither3 = Dither8x8Bayer( fmod( ase_positionSS_Pixel.x, 8 ), fmod( ase_positionSS_Pixel.y, 8 ) );
 				
 
 				float3 Normal = input.ase_normal;
-				float Alpha = ( _AlphaMultiplier * lerpResult60 );
-				float AlphaClipThreshold = max( _AlphaClip , clampResult59 );
+				float Alpha = ( _BaseColor.a * 1.5 );
+				float AlphaClipThreshold = dither3;
 
 				#ifdef ASE_DEPTH_WRITE_ON
 					float DepthValue = input.positionCS.z;
@@ -2674,7 +2602,6 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 			#endif
 
 			#define ASE_NEEDS_FRAG_SCREEN_POSITION
-			#define ASE_NEEDS_FRAG_WORLD_POSITION
 
 
 			#if defined(ASE_EARLY_Z_DEPTH_OPTIMIZE) && (SHADER_TARGET >= 45)
@@ -2727,15 +2654,9 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 			float4 _MainTex_ST;
 			float4 _BaseColor;
 			float4 _EmissiveColor;
-			float3 _CenterPosition;
 			int _StencilRef;
 			float _HitColorAlpha;
 			float _Occlusion;
-			float _AlphaMultiplier;
-			float _FadeStartLength;
-			float _FadeEndLength;
-			float _FadeAlphaMultiplier;
-			float _AlphaClip;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -3009,11 +2930,7 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 				float4 ase_positionSSNorm = ScreenPos / ScreenPos.w;
 				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
 				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
-				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 1.2 ) , ( ase_positionSS_Pixel.y * 1.2 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
-				float4 ditherCustomScreenPos3 = appendResult38;
-				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
-				float clampResult59 = clamp( ( ( max( ( distance( WorldPosition , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
-				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
+				float dither3 = Dither8x8Bayer( fmod( ase_positionSS_Pixel.x, 8 ), fmod( ase_positionSS_Pixel.y, 8 ) );
 				
 
 				float3 BaseColor = lerpResult68;
@@ -3023,8 +2940,8 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 				float Metallic = 0.0;
 				float Smoothness = 0.0;
 				float Occlusion = _Occlusion;
-				float Alpha = ( _AlphaMultiplier * lerpResult60 );
-				float AlphaClipThreshold = max( _AlphaClip , clampResult59 );
+				float Alpha = ( _BaseColor.a * 1.5 );
+				float AlphaClipThreshold = dither3;
 				float AlphaClipThresholdShadow = 0.5;
 				float3 BakedGI = 0;
 				float3 RefractionColor = 1;
@@ -3202,7 +3119,6 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 			{
 				float4 positionCS : SV_POSITION;
 				float4 ase_texcoord : TEXCOORD0;
-				float4 ase_texcoord1 : TEXCOORD1;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -3211,15 +3127,9 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 			float4 _MainTex_ST;
 			float4 _BaseColor;
 			float4 _EmissiveColor;
-			float3 _CenterPosition;
 			int _StencilRef;
 			float _HitColorAlpha;
 			float _Occlusion;
-			float _AlphaMultiplier;
-			float _FadeStartLength;
-			float _FadeEndLength;
-			float _FadeAlphaMultiplier;
-			float _AlphaClip;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -3297,12 +3207,7 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 				float4 ase_positionCS = TransformObjectToHClip( ( input.positionOS ).xyz );
 				float4 screenPos = ComputeScreenPos( ase_positionCS );
 				output.ase_texcoord = screenPos;
-				float3 ase_positionWS = TransformObjectToWorld( ( input.positionOS ).xyz );
-				output.ase_texcoord1.xyz = ase_positionWS;
 				
-				
-				//setting value to unused interpolator channels and avoid initialization warnings
-				output.ase_texcoord1.w = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = input.positionOS.xyz;
@@ -3414,16 +3319,11 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 				float4 ase_positionSSNorm = screenPos / screenPos.w;
 				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
 				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
-				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 1.2 ) , ( ase_positionSS_Pixel.y * 1.2 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
-				float4 ditherCustomScreenPos3 = appendResult38;
-				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
-				float3 ase_positionWS = input.ase_texcoord1.xyz;
-				float clampResult59 = clamp( ( ( max( ( distance( ase_positionWS , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
-				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
+				float dither3 = Dither8x8Bayer( fmod( ase_positionSS_Pixel.x, 8 ), fmod( ase_positionSS_Pixel.y, 8 ) );
 				
 
-				surfaceDescription.Alpha = ( _AlphaMultiplier * lerpResult60 );
-				surfaceDescription.AlphaClipThreshold = max( _AlphaClip , clampResult59 );
+				surfaceDescription.Alpha = ( _BaseColor.a * 1.5 );
+				surfaceDescription.AlphaClipThreshold = dither3;
 
 				#if _ALPHATEST_ON
 					float alphaClipThreshold = 0.01f;
@@ -3506,7 +3406,6 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 			{
 				float4 positionCS : SV_POSITION;
 				float4 ase_texcoord : TEXCOORD0;
-				float4 ase_texcoord1 : TEXCOORD1;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -3515,15 +3414,9 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 			float4 _MainTex_ST;
 			float4 _BaseColor;
 			float4 _EmissiveColor;
-			float3 _CenterPosition;
 			int _StencilRef;
 			float _HitColorAlpha;
 			float _Occlusion;
-			float _AlphaMultiplier;
-			float _FadeStartLength;
-			float _FadeEndLength;
-			float _FadeAlphaMultiplier;
-			float _AlphaClip;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -3601,12 +3494,7 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 				float4 ase_positionCS = TransformObjectToHClip( ( input.positionOS ).xyz );
 				float4 screenPos = ComputeScreenPos( ase_positionCS );
 				output.ase_texcoord = screenPos;
-				float3 ase_positionWS = TransformObjectToWorld( ( input.positionOS ).xyz );
-				output.ase_texcoord1.xyz = ase_positionWS;
 				
-				
-				//setting value to unused interpolator channels and avoid initialization warnings
-				output.ase_texcoord1.w = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = input.positionOS.xyz;
@@ -3717,16 +3605,11 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 				float4 ase_positionSSNorm = screenPos / screenPos.w;
 				ase_positionSSNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_positionSSNorm.z : ase_positionSSNorm.z * 0.5 + 0.5;
 				float4 ase_positionSS_Pixel = ASEScreenPositionNormalizedToPixel( ase_positionSSNorm );
-				float4 appendResult38 = (float4(( ase_positionSS_Pixel.x * 1.2 ) , ( ase_positionSS_Pixel.y * 1.2 ) , ase_positionSS_Pixel.z , ase_positionSS_Pixel.w));
-				float4 ditherCustomScreenPos3 = appendResult38;
-				float dither3 = Dither8x8Bayer( fmod( ditherCustomScreenPos3.x, 8 ), fmod( ditherCustomScreenPos3.y, 8 ) );
-				float3 ase_positionWS = input.ase_texcoord1.xyz;
-				float clampResult59 = clamp( ( ( max( ( distance( ase_positionWS , _CenterPosition ) - _FadeStartLength ) , 0.0 ) / ( _FadeEndLength - _FadeStartLength ) ) * _FadeAlphaMultiplier ) , 0.0 , 1.0 );
-				float lerpResult60 = lerp( 1.0 , dither3 , clampResult59);
+				float dither3 = Dither8x8Bayer( fmod( ase_positionSS_Pixel.x, 8 ), fmod( ase_positionSS_Pixel.y, 8 ) );
 				
 
-				surfaceDescription.Alpha = ( _AlphaMultiplier * lerpResult60 );
-				surfaceDescription.AlphaClipThreshold = max( _AlphaClip , clampResult59 );
+				surfaceDescription.Alpha = ( _BaseColor.a * 1.5 );
+				surfaceDescription.AlphaClipThreshold = dither3;
 
 				#if _ALPHATEST_ON
 					float alphaClipThreshold = 0.01f;
@@ -3760,44 +3643,24 @@ Shader "Game/JellyMesh-Lit-Stencil-Write"
 }
 /*ASEBEGIN
 Version=19801
-Node;AmplifyShaderEditor.Vector3Node;52;-1632,1280;Inherit;False;Property;_CenterPosition;CenterPosition;3;0;Create;True;0;0;0;False;0;False;0,0,0;0,0,0;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.WorldPosInputsNode;51;-1632,1120;Inherit;False;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.DistanceOpNode;53;-1392,1200;Inherit;False;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;54;-1392,1376;Inherit;False;Property;_FadeStartLength;FadeStartLength;4;0;Create;True;0;0;0;False;0;False;0;1;0;100;0;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleSubtractOpNode;48;-1152,1200;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0.5;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;46;-1392,1456;Inherit;False;Property;_FadeEndLength;FadeEndLength;5;0;Create;True;0;0;0;False;0;False;1;1;1;100;0;1;FLOAT;0
-Node;AmplifyShaderEditor.ScreenPosInputsNode;35;-1536,816;Float;False;4;False;0;5;FLOAT4;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.SimpleMaxOpNode;49;-976,1200;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleSubtractOpNode;55;-1008,1360;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleDivideOpNode;45;-784,1280;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;57;-816,1440;Inherit;False;Property;_FadeAlphaMultiplier;FadeAlphaMultiplier;6;0;Create;True;0;0;0;False;0;False;1;1;0;10;0;1;FLOAT;0
-Node;AmplifyShaderEditor.WireNode;39;-1232,1008;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.WireNode;40;-1232,1040;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;37;-1280,880;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;1.2;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;36;-1280,784;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;1.2;False;1;FLOAT;0
-Node;AmplifyShaderEditor.DynamicAppendNode;38;-1040,816;Inherit;False;FLOAT4;4;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;1;FLOAT4;0
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;50;-608,1280;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;2;False;1;FLOAT;0
-Node;AmplifyShaderEditor.ClampOpNode;59;-416,1168;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;1;False;1;FLOAT;0
-Node;AmplifyShaderEditor.DitheringNode;3;-784,816;Inherit;False;1;True;4;0;FLOAT;0;False;1;SAMPLER2D;;False;2;FLOAT4;0,0,0,0;False;3;SAMPLERSTATE;;False;1;FLOAT;0
-Node;AmplifyShaderEditor.LerpOp;60;-496,816;Inherit;False;3;0;FLOAT;1;False;1;FLOAT;0;False;2;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;65;-624,704;Inherit;False;Property;_AlphaMultiplier;AlphaMultiplier;8;0;Create;True;0;0;0;False;0;False;0;1;0;1;0;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;61;-512,1024;Inherit;False;Property;_AlphaClip;AlphaClip;7;0;Create;True;0;0;0;False;0;False;0.2;0.2;0;1;0;1;FLOAT;0
-Node;AmplifyShaderEditor.LerpOp;68;-368,-112;Inherit;False;3;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT;0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.ColorNode;42;-928,-176;Inherit;False;Property;_BaseColor;BaseColor;1;0;Create;True;0;0;0;False;0;False;0,0,0,0;0.7450981,0,0,1;True;True;0;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
 Node;AmplifyShaderEditor.SamplerNode;1;-992,-432;Inherit;True;Property;_TextureSample0;Texture Sample 0;0;0;Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
 Node;AmplifyShaderEditor.TexturePropertyNode;2;-1280,-432;Inherit;True;Property;_MainTex;MainTex;0;0;Create;True;0;0;0;False;0;False;None;None;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
-Node;AmplifyShaderEditor.ColorNode;42;-928,-176;Inherit;False;Property;_BaseColor;BaseColor;1;0;Create;True;0;0;0;False;0;False;0,0,0,0;0.7450981,0,0,1;True;True;0;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
-Node;AmplifyShaderEditor.ColorNode;67;-704,-48;Inherit;False;Constant;_HitColor;HitColor;7;0;Create;True;0;0;0;False;0;False;1,1,1,0;0,0,0,0;True;True;0;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
 Node;AmplifyShaderEditor.WireNode;70;-445.1237,61.38245;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;69;-672,176;Inherit;False;Property;_HitColorAlpha;HitColorAlpha;9;0;Create;True;0;0;0;False;0;False;0;0;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;41;-640,-288;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.NormalVertexDataNode;71;-336,48;Inherit;False;0;5;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.IntNode;72;-48,-96;Inherit;False;Property;_StencilRef;StencilRef;2;0;Create;False;1;;0;1;Front,2,Back,1,Both,0;True;0;False;1;8;False;0;1;INT;0
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;66;-320,736;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleMaxOpNode;62;-208,1072;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.ColorNode;73;-416,240;Inherit;False;Property;_EmissiveColor;EmissiveColor;10;1;[HDR];Create;True;0;0;0;False;0;False;0,0,0,0;0.1254902,0,0,0;True;True;0;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
-Node;AmplifyShaderEditor.RangedFloatNode;64;-480,528;Inherit;False;Constant;_Smoothness;Smoothness;6;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;63;-480,448;Inherit;False;Constant;_Metallic;Metallic;6;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;74;-480,608;Inherit;False;Property;_Occlusion;Occlusion;11;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.NormalVertexDataNode;71;-368,0;Inherit;False;0;5;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.LerpOp;68;-352,-176;Inherit;False;3;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT;0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.ColorNode;67;-672,-80;Inherit;False;Constant;_HitColor;HitColor;7;0;Create;True;0;0;0;False;0;False;1,1,1,0;0,0,0,0;True;True;0;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
+Node;AmplifyShaderEditor.RangedFloatNode;64;-464,464;Inherit;False;Constant;_Smoothness;Smoothness;6;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;63;-464,384;Inherit;False;Constant;_Metallic;Metallic;6;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;74;-464,544;Inherit;False;Property;_Occlusion;Occlusion;6;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.ColorNode;73;-400,160;Inherit;False;Property;_EmissiveColor;EmissiveColor;5;1;[HDR];Create;True;0;0;0;False;0;False;0,0,0,0;0.1254902,0,0,0;True;True;0;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
+Node;AmplifyShaderEditor.RangedFloatNode;69;-656,160;Inherit;False;Property;_HitColorAlpha;HitColorAlpha;4;0;Create;True;0;0;0;False;0;False;0;0;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.TexturePropertyNode;77;-816,720;Inherit;True;Property;_Texture0;Texture 0;3;0;Create;True;0;0;0;False;0;False;58bfd706299646e6a342bd9b037dfeda;58bfd706299646e6a342bd9b037dfeda;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
+Node;AmplifyShaderEditor.DitheringNode;3;-336,624;Inherit;False;1;False;4;0;FLOAT;0;False;1;SAMPLER2D;;False;2;FLOAT4;0,0,0,0;False;3;SAMPLERSTATE;;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;85;-47.26282,421.2905;Inherit;False;Constant;_Float0;Float 0;7;0;Create;True;0;0;0;False;0;False;0.5;0;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;86;-736,272;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;1.5;False;1;FLOAT;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;16;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;ExtraPrePass;0;0;ExtraPrePass;5;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;0;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;0;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;18;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;ShadowCaster;0;2;ShadowCaster;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;True;False;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;True;3;False;;False;True;1;LightMode=ShadowCaster;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;19;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;DepthOnly;0;3;DepthOnly;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;True;True;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;False;False;True;1;LightMode=DepthOnly;False;False;0;;0;0;Standard;0;False;0
@@ -3808,48 +3671,22 @@ Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;23;0,0;Float;False;False;-1
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;24;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;SceneSelectionPass;0;8;SceneSelectionPass;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;2;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=SceneSelectionPass;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;25;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;ScenePickingPass;0;9;ScenePickingPass;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=Picking;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;26;0,0;Float;False;False;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;MotionVectors;0;10;MotionVectors;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;False;False;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=MotionVectors;False;False;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;17;-48,0;Float;False;True;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;Game/JellyMesh-Lit-Stencil-Write;94348b07e5e8bab40bd6c8a1e3df54cd;True;Forward;0;1;Forward;21;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=TransparentCutout=RenderType;Queue=AlphaTest=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;1;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;True;True;True;0;True;_StencilRef;255;False;;255;True;_StencilRef;7;False;;3;False;;1;False;;1;False;;0;False;;0;False;;0;False;;0;False;;True;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;1;LightMode=UniversalForward;False;False;0;;0;0;Standard;45;Lighting Model;0;638798011889883110;Workflow;1;638798011904848880;Surface;0;638789158035071090;  Refraction Model;0;0;  Blend;0;0;Two Sided;1;638798012310275070;Alpha Clipping;1;638798016574209850;  Use Shadow Threshold;0;638798012585099110;Fragment Normal Space,InvertActionOnDeselection;0;0;Forward Only;0;0;Transmission;0;0;  Transmission Shadow;0.5,False,;0;Translucency;0;0;  Translucency Strength;1,False,;0;  Normal Distortion;0.5,False,;0;  Scattering;2,False,;0;  Direct;0.9,False,;0;  Ambient;0.1,False,;0;  Shadow;0.5,False,;0;Cast Shadows;1;638798012681658800;Receive Shadows;0;638771425011409430;Receive SSAO;0;638771424983508510;Motion Vectors;0;638798012799644210;  Add Precomputed Velocity;0;0;GPU Instancing;1;0;LOD CrossFade;1;0;Built-in Fog;1;638798012967581030;_FinalColorxAlpha;0;0;Meta Pass;1;0;Override Baked GI;0;0;Extra Pre Pass;0;0;Tessellation;0;0;  Phong;0;0;  Strength;0.5,False,;0;  Type;0;0;  Tess;16,False,;0;  Min;10,False,;0;  Max;25,False,;0;  Edge Length;16,False,;0;  Max Displacement;25,False,;0;Write Depth;0;0;  Early Z;0;0;Vertex Position,InvertActionOnDeselection;1;0;Debug Display;0;0;Clear Coat;0;0;0;11;False;True;True;True;True;True;True;True;True;True;False;False;;False;0
-WireConnection;53;0;51;0
-WireConnection;53;1;52;0
-WireConnection;48;0;53;0
-WireConnection;48;1;54;0
-WireConnection;49;0;48;0
-WireConnection;55;0;46;0
-WireConnection;55;1;54;0
-WireConnection;45;0;49;0
-WireConnection;45;1;55;0
-WireConnection;39;0;35;3
-WireConnection;40;0;35;4
-WireConnection;37;0;35;2
-WireConnection;36;0;35;1
-WireConnection;38;0;36;0
-WireConnection;38;1;37;0
-WireConnection;38;2;39;0
-WireConnection;38;3;40;0
-WireConnection;50;0;45;0
-WireConnection;50;1;57;0
-WireConnection;59;0;50;0
-WireConnection;3;2;38;0
-WireConnection;60;1;3;0
-WireConnection;60;2;59;0
-WireConnection;68;0;41;0
-WireConnection;68;1;67;5
-WireConnection;68;2;70;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;17;-48,0;Float;False;True;-1;3;UnityEditor.ShaderGraphLitGUI;0;12;Game/JellyMesh-Lit-Stencil-Write;94348b07e5e8bab40bd6c8a1e3df54cd;True;Forward;0;1;Forward;21;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;2;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=TransparentCutout=RenderType;Queue=AlphaTest=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;1;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;True;True;True;0;True;_StencilRef;255;False;;255;True;_StencilRef;7;False;;3;False;;1;False;;1;False;;0;False;;0;False;;0;False;;0;False;;True;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;1;LightMode=UniversalForward;False;False;0;;0;0;Standard;45;Lighting Model;0;638798011889883110;Workflow;1;638798011904848880;Surface;0;638789158035071090;  Refraction Model;0;0;  Blend;0;0;Two Sided;0;638807152289165120;Alpha Clipping;1;638798016574209850;  Use Shadow Threshold;0;638798012585099110;Fragment Normal Space,InvertActionOnDeselection;0;0;Forward Only;0;0;Transmission;0;0;  Transmission Shadow;0.5,False,;0;Translucency;0;0;  Translucency Strength;1,False,;0;  Normal Distortion;0.5,False,;0;  Scattering;2,False,;0;  Direct;0.9,False,;0;  Ambient;0.1,False,;0;  Shadow;0.5,False,;0;Cast Shadows;1;638798012681658800;Receive Shadows;0;638771425011409430;Receive SSAO;0;638771424983508510;Motion Vectors;0;638798012799644210;  Add Precomputed Velocity;0;0;GPU Instancing;1;0;LOD CrossFade;1;0;Built-in Fog;1;638798012967581030;_FinalColorxAlpha;0;0;Meta Pass;1;0;Override Baked GI;0;0;Extra Pre Pass;0;0;Tessellation;0;0;  Phong;0;0;  Strength;0.5,False,;0;  Type;0;0;  Tess;16,False,;0;  Min;10,False,;0;  Max;25,False,;0;  Edge Length;16,False,;0;  Max Displacement;25,False,;0;Write Depth;0;0;  Early Z;0;0;Vertex Position,InvertActionOnDeselection;1;0;Debug Display;0;0;Clear Coat;0;0;0;11;False;True;True;True;True;True;True;True;True;True;False;False;;False;0
 WireConnection;1;0;2;0
 WireConnection;70;0;69;0
 WireConnection;41;0;1;5
 WireConnection;41;1;42;5
-WireConnection;66;0;65;0
-WireConnection;66;1;60;0
-WireConnection;62;0;61;0
-WireConnection;62;1;59;0
+WireConnection;68;0;41;0
+WireConnection;68;1;67;5
+WireConnection;68;2;70;0
+WireConnection;86;0;42;4
 WireConnection;17;0;68;0
 WireConnection;17;1;71;0
 WireConnection;17;2;73;5
 WireConnection;17;3;63;0
 WireConnection;17;4;64;0
 WireConnection;17;5;74;0
-WireConnection;17;6;66;0
-WireConnection;17;7;62;0
+WireConnection;17;6;86;0
+WireConnection;17;7;3;0
 ASEEND*/
-//CHKSM=E17AF77C0C1C34BB76D3DCDA8F1360C50F060629
+//CHKSM=7996B95FBFFEDBE9B10DEB1366A4D341AF035193
