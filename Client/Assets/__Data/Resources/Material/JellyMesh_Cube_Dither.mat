@@ -111,7 +111,9 @@ Material:
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0.2
     - _AlphaCutoff: 0.5
-    - _AlphaMultiplier: 1
+    - _AlphaDecreaseSpeedV: 1
+    - _AlphaDecreaseStartV: 100
+    - _AlphaMultiplier: 1.5
     - _AlphaToMask: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1

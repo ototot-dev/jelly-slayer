@@ -150,6 +150,51 @@ namespace Game
             return vec.LerpRefSpeed(target, speed, deltaTime);
         }
 
+        public static Vector3 LerpSpeedX(this Vector3 vec, float x, float speed, float deltaTime)
+        {
+            if (x > vec.x)
+                vec.x = Mathf.Min(x, vec.x + speed * deltaTime);
+            else
+                vec.x = Mathf.Max(x, vec.x - speed * deltaTime);
+
+            return vec;
+        }
+
+        public static Vector3 LerpSpeedY(this Vector3 vec, float y, float speed, float deltaTime)
+        {
+            if (y > vec.y)
+                vec.y = Mathf.Min(y, vec.y + speed * deltaTime);
+            else
+                vec.y = Mathf.Max(y, vec.y - speed * deltaTime);
+
+            return vec;
+        }
+
+        public static Vector3 LerpSpeedZ(this Vector3 vec, float z, float speed, float deltaTime)
+        {
+            if (z > vec.z)
+                vec.z = Mathf.Min(z, vec.z + speed * deltaTime);
+            else
+                vec.z = Mathf.Max(z, vec.z - speed * deltaTime);
+
+            return vec;
+        }
+
+        public static Vector3 LerpSpeedXZ(this Vector3 vec, float x, float z, float speed, float deltaTime)
+        {
+            if (x > vec.x)
+                vec.x = Mathf.Min(x, vec.x + speed * deltaTime);
+            else
+                vec.x = Mathf.Max(x, vec.x - speed * deltaTime);
+
+            if (z > vec.z)
+                vec.z = Mathf.Min(z, vec.z + speed * deltaTime);
+            else
+                vec.z = Mathf.Max(z, vec.z - speed * deltaTime);
+
+            return vec;
+        }
+
         public static Vector3 LerpRefSpeed(this ref Vector3 vec, Vector3 target, float speed, float deltaTime)
         {
             var newVec = vec + (target - vec).normalized * speed * deltaTime;

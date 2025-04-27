@@ -9,6 +9,7 @@ using UniRx;
 using UniRx.Triggers;
 using Unity.Linq;
 using UnityEngine;
+using ZLinq;
 
 namespace Game
 {
@@ -18,9 +19,10 @@ namespace Game
         public JellyBrain hostBrain;
         public JellySpringMassSystem springMassSystem;
         public JellyMeshBuilder meshBuilder;
-        public RopeHookController ropeHookCtrler;
+        public ObiSolver ropeObiSolver;
+        public BoxCollider ropeGroundCollider;
         public Transform face;
-        public Transform hair;
+        public Transform popping;
 
         [Header("Parameter")]
         public float maintainDistance = 1f;
@@ -29,31 +31,67 @@ namespace Game
         public float cubeSpreadRadius = 1f;
         public float cubeScaleMin = 1f;
         public float cubeScaleMax = 1f;
-        public float eyeScale = 1f;
         public float eyeOpenSpeed = 1f;
+        public float ropeGroundLevel= 0f;
         public AnimationCurve cubeDitherAlphaCurve;
         public AnimationCurve hairDitherAlphaCurve;
+        public AnimationCurve hookDitherAlphaCurve;
 
         [Header("Graphics")]
-        public GameObject hookingPointFx;
         public GameObject onHitFx;
         public GameObject onBloodDropFx;
+        public GameObject hookingPointFx;
+        public Material cubeHitColorMaterial;
+
+        [Serializable]
+        public struct HookAttachment
+        {
+            public Transform targetPoint;
+            public Transform startPin;
+            public Transform endPin;
+            public ObiRope obiRopeHair;
+            public ObiRopeExtrudedRenderer obiRopeRenderer;
+        }
         
         [Serializable]
         public struct HairAttachment
         {
             public Transform attachPoint;
-            public Vector3 attachOffset;
+            public Transform pin;
             public ObiRope obiRopeHair;
+            public ObiRopeExtrudedRenderer obiRopeRenderer;
         }
 
-        public List<HairAttachment> hairAttachments;
+        [Serializable]
+        public struct EyeAttachment
+        {
+            public Transform attachPoint;
+            public Vector3 attachOffset;
+            public Vector3 localEulerRotation;
+            public Vector3 localScale;
+            public FEyesAnimator eyeAnimator;
+            public MeshRenderer[] eyelidRenderers;
+            public MeshRenderer[] eyeBallRenderers;
+        }
 
-        FEyesAnimator[] __eyeAnimators;
-        MeshRenderer[]  __eyeMeshRenderes;
-        Dictionary<int, ValueTuple<MeshRenderer, Vector3>> __cubeMeshRenderers = new();
+        [Header("Attachment")]
+        public HookAttachment[] hookAttachments;
+        public HairAttachment[] hairAttachments;
+        public EyeAttachment[] eyeAttachments;
+
+        Dictionary<int, MeshRenderer> __cubeMeshRenderers = new();
         Dictionary<ValueTuple<int, int>, MeshRenderer> __edgeCubeMeshRenderers = new();
-        Dictionary<ObiRope, ObiRopeExtrudedRenderer> __hairRenderers = new();
+        HashSet<MeshRenderer> __nonRigidBodyCubeMeshRenderers = new();
+        Dictionary<MeshRenderer, Rigidbody> __cubeMeshRigidBodies = new();
+        Dictionary<MeshRenderer, Material> __cubeMeshMaterials = new();
+        Dictionary<MeshRenderer, Material> __cubeMeshHitColorMaterials = new();
+        Material __hairSharedMaterial;
+        Material __hookSharedMaterial;
+        Color __defaultHairEmissiveColor;
+        Color __defaultHookEmissiveColor;
+        Color __defaultEyeEmissiveColor;
+        Color __defaultBaseColor;
+
         IDisposable __fadeInDisposable;
         IDisposable __fadeOutDisposable;
         IDisposable __hitColorDisposable;
@@ -61,57 +99,107 @@ namespace Game
 
         void Awake()
         {
-            __eyeAnimators = face.gameObject.Children().Select(c => c.GetComponent<FEyesAnimator>()).Where(e => e != null).ToArray();
-            __eyeMeshRenderes = face.gameObject.Descendants().Select(c => c.GetComponent<MeshRenderer>()).Where(m => m != null).ToArray();
-            foreach (var r in __eyeMeshRenderes) { r.enabled = false; }
+            meshBuilder.meshRenderer.enabled = false;
+            if (meshBuilder.meshRenderer.transform.GetChild(0).TryGetComponent<MeshRenderer>(out var cubeMeshRenderer))
+            {
+                cubeMeshRenderer.enabled = false;
+                __defaultBaseColor = cubeMeshRenderer.material.GetColor("_BaseColor");
+
+            }
+
+            __hairSharedMaterial = new Material(hairAttachments.First().obiRopeRenderer.material);
+            __hookSharedMaterial = new Material(hookAttachments.First().obiRopeRenderer.material);
+            foreach (var a in hookAttachments) 
+            {
+                __defaultHookEmissiveColor = __hookSharedMaterial.GetColor("_EmissiveColor");
+                a.obiRopeRenderer.material = __hookSharedMaterial;
+                a.obiRopeRenderer.enabled = false;
+            }
+            foreach (var a in hairAttachments)
+            {
+                __defaultHairEmissiveColor = __hairSharedMaterial.GetColor("_EmissiveColor");
+                a.obiRopeRenderer.material = __hairSharedMaterial;
+                a.obiRopeRenderer.enabled = false;
+            }
+
+            foreach (var a in eyeAttachments)
+            {
+                __defaultEyeEmissiveColor = a.eyelidRenderers.First().material.GetColor("_EmissiveColor");
+                foreach (var r in a.eyelidRenderers) r.enabled = false;
+                foreach (var r in a.eyeBallRenderers) r.enabled = false;
+            }
         }
 
         void Start()
         {
-            foreach (var h in hairAttachments) __hairRenderers.Add(h.obiRopeHair,  h.obiRopeHair.GetComponent<ObiRopeExtrudedRenderer>());
-
             //* JellySpringMassSystem Start() 함수 선호출되고 나서 실행되도록 1 프레임 늦춤
             Observable.NextFrame().Subscribe(_ =>
             {                
                 var sourceCubeRenderer = meshBuilder.meshRenderer.transform.GetChild(0).GetComponent<MeshRenderer>();
                 for (int i = 0; i < springMassSystem.points.Length; i++)
                 {
-                    var spreadOffset = cubeSpreadRadius * springMassSystem.points[i].linkedBone.localPosition.normalized - springMassSystem.points[i].linkedBone.localPosition;
-                    __cubeMeshRenderers.Add(i, (i == 0 ? sourceCubeRenderer : Instantiate(sourceCubeRenderer.gameObject, meshBuilder.meshRenderer.transform).GetComponent<MeshRenderer>(), spreadOffset));
+                    __cubeMeshRenderers.Add(i, i == 0 ? sourceCubeRenderer : Instantiate(sourceCubeRenderer.gameObject, meshBuilder.meshRenderer.transform, false).GetComponent<MeshRenderer>());
+                    __cubeMeshMaterials.Add(__cubeMeshRenderers[i], __cubeMeshRenderers[i].material);
+                    __nonRigidBodyCubeMeshRenderers.Add(__cubeMeshRenderers[i]);
                 }
                 foreach (var c in springMassSystem.connections)
-                    __edgeCubeMeshRenderers.Add((c.pointA.index, c.pointB.index), Instantiate(sourceCubeRenderer.gameObject, meshBuilder.meshRenderer.transform).GetComponent<MeshRenderer>());
+                {
+                    var key = (c.pointA.index, c.pointB.index);
+                    __edgeCubeMeshRenderers.Add(key, Instantiate(sourceCubeRenderer.gameObject, meshBuilder.meshRenderer.transform, false).GetComponent<MeshRenderer>());
+                    __cubeMeshMaterials.Add(__edgeCubeMeshRenderers[key], __edgeCubeMeshRenderers[key].material);
+                    __nonRigidBodyCubeMeshRenderers.Add(__edgeCubeMeshRenderers[key]);
+                }
+            }).AddTo(this);
+
+            //* 초기화를 위해서 첫번째 프레임은 실행한 후 꺼준다.
+            Observable.NextFrame(FrameCountType.FixedUpdate).Subscribe(_ =>
+            {
+                ropeObiSolver.enabled = false;
             }).AddTo(this);
         }
 
-        void Update()
+        void UpdateCorePositionAndBodyOffset()
         {
-            foreach (var a in hairAttachments)
-                a.obiRopeHair.transform.position = a.attachPoint.transform.position + a.attachOffset;
+            if (hostBrain != null)
+            {
+                var distance = (springMassSystem.core.position - hostBrain.coreColliderHelper.GetWorldCenter()).Vector2D().magnitude;
+                if (distance > maintainDistance)
+                    springMassSystem.core.position = springMassSystem.core.position.LerpSpeed(hostBrain.coreColliderHelper.GetWorldCenter(), distanceRecoverySpeed * (distance - maintainDistance), Time.deltaTime);
+            }
+
+            springMassSystem.bodyOffsetPoint.rotation = Quaternion.LookRotation(-GameContext.Instance.cameraCtrler.viewCamera.transform.forward);
+
+            if (__tweener?.IsComplete() ?? true)
+                springMassSystem.bodyOffsetPoint.localPosition = 0.2f * Perlin.Noise(Time.time) * Vector3.up;
         }
 
         public void FadeIn(float duration)
         {
             var fadeStartTimeStamp = Time.time;
 
-            foreach (var e in __eyeAnimators)
-            {
-                e.transform.localScale = Vector3.zero;
-                e.MinOpenValue = 0f;
-            }
-
+            ropeObiSolver.enabled = true;
+            ropeGroundCollider.enabled = true;
             meshBuilder.meshRenderer.enabled = false;
-
-            foreach (var r in __eyeMeshRenderes) r.enabled = true;
-            foreach (var p in __cubeMeshRenderers) p.Value.Item1.enabled = true;
+            foreach (var p in __cubeMeshRenderers) p.Value.enabled = true;
             foreach (var p in __edgeCubeMeshRenderers) p.Value.enabled = true;
-            foreach (var a in hairAttachments) __hairRenderers[a.obiRopeHair].enabled = true;
+            foreach (var a in hairAttachments) a.obiRopeRenderer.enabled = true;
+            foreach (var a in hookAttachments) a.obiRopeRenderer.enabled = true;
+            foreach (var a in eyeAttachments)
+            {
+                a.eyeAnimator.MinOpenValue = 0f;
+                a.eyeAnimator.enabled = true;
+                foreach (var r in a.eyelidRenderers) r.enabled = true;
+                foreach (var r in a.eyeBallRenderers) r.enabled = true;
+            }
 
             Observable.Timer(TimeSpan.FromSeconds(duration)).Subscribe(_ =>
             {
                 springMassSystem.core.gameObject.layer = LayerMask.NameToLayer("HitBox");
             }).AddTo(this);
 
+            var easingStartPosition = hostBrain != null ? hostBrain.coreColliderHelper.GetWorldCenter() : springMassSystem.core.position - 2f * Vector3.right;
+
+            __hitColorDisposable?.Dispose();
             __fadeOutDisposable?.Dispose();
             __fadeOutDisposable = null;
             __fadeInDisposable = Observable.EveryLateUpdate().Subscribe(_ =>
@@ -125,62 +213,80 @@ namespace Game
                 foreach (var p in __cubeMeshRenderers)
                 {
                     var cubeFadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp - p.Key * 0.05f) / duration);
-                    p.Value.Item1.transform.localScale = cubeFadeAlpha * Mathf.Lerp(cubeScaleMin, cubeScaleMax, Mathf.PerlinNoise(Time.time + p.Key, Time.time + p.Key * p.Key)) * Vector3.one;
-                    p.Value.Item1.transform.localRotation = Quaternion.Euler(cubeFadeAlpha * Mathf.Lerp(-5, 5, Mathf.PerlinNoise(Time.time + p.Key, Time.time + p.Key * p.Key)) * Vector3.one);
-                    p.Value.Item1.transform.position = Easing.Ease(EaseType.BounceOut, springMassSystem.core.position, springMassSystem.points[p.Key].linkedBone.localToWorldMatrix.MultiplyPoint(p.Value.Item2), cubeFadeAlpha);
+                    p.Value.transform.localScale = cubeFadeAlpha * Mathf.Lerp(cubeScaleMin, cubeScaleMax, Mathf.PerlinNoise(Time.time + p.Key, Time.time + p.Key * p.Key)) * Vector3.one;
+                    p.Value.transform.localRotation = Quaternion.Euler(cubeFadeAlpha * Mathf.Lerp(-5f, 5f, Mathf.PerlinNoise(Time.time + p.Key, Time.time + p.Key * p.Key)) * Vector3.one);
 
-                    var cubePositionInViewSpace = GameContext.Instance.cameraCtrler.viewCamera.worldToCameraMatrix.MultiplyPoint(p.Value.Item1.transform.position);
+                    var spreadVec = cubeSpreadRadius * springMassSystem.points[p.Key].linkedGrid.localPosition.normalized - springMassSystem.points[p.Key].linkedGrid.localPosition;
+                    p.Value.transform.position = Easing.Ease(EaseType.BounceOut, easingStartPosition, springMassSystem.points[p.Key].linkedBone.localToWorldMatrix.MultiplyPoint(spreadVec), cubeFadeAlpha);
+
+                    var cubePositionInViewSpace = GameContext.Instance.cameraCtrler.viewCamera.worldToCameraMatrix.MultiplyPoint(p.Value.transform.position);
                     var cubeDistanceAlpha = cubeDitherAlphaCurve.Evaluate(Vector3.Distance(corePositionInViewSpace.AdjustZ(0f), cubePositionInViewSpace.AdjustZ(0f)));
 
-                    foreach (var m in p.Value.Item1.materials)
-                        m.SetColor("_BaseColor", new Color(190f / 255f, 0f, 0f, cubeFadeAlpha * cubeDistanceAlpha));
+                    foreach (var m in p.Value.materials)
+                    {
+                        if (__hitColorDisposable != null)
+                            m.SetColor("_BaseColor", Color.white.AdjustAlpha(cubeFadeAlpha < 1f ? cubeFadeAlpha : cubeFadeAlpha * cubeDistanceAlpha));
+                        else
+                            m.SetColor("_BaseColor", __defaultBaseColor.AdjustAlpha(cubeFadeAlpha < 1f ? cubeFadeAlpha : cubeFadeAlpha * cubeDistanceAlpha));
+                    }
                 }
                 foreach (var p in __edgeCubeMeshRenderers)
                 {
                     var key = (p.Key.Item1 + p.Key.Item2) * 0.5f;
                     var cubeFadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp - key * 0.05f) / duration);
                     p.Value.transform.localScale = cubeFadeAlpha * Mathf.Lerp(cubeScaleMin, cubeScaleMax, Mathf.PerlinNoise(Time.time + key, Time.time + key * key)) * Vector3.one;
-                    p.Value.transform.localRotation = Quaternion.Euler(cubeFadeAlpha * Mathf.Lerp(-15, 15, Mathf.PerlinNoise(Time.time + key, Time.time + key * key)) * Vector3.one);
-                    p.Value.transform.position = Easing.Ease(EaseType.BounceOut, springMassSystem.core.position, 0.5f * (__cubeMeshRenderers[p.Key.Item1].Item1.transform.position + __cubeMeshRenderers[p.Key.Item2].Item1.transform.position), cubeFadeAlpha);
+                    p.Value.transform.localRotation = Quaternion.Euler(cubeFadeAlpha * Mathf.Lerp(-15f, 15f, Mathf.PerlinNoise(Time.time + key, Time.time + key * key)) * Vector3.one);
+                    p.Value.transform.position = Easing.Ease(EaseType.BounceOut, easingStartPosition, 0.5f * (__cubeMeshRenderers[p.Key.Item1].transform.position + __cubeMeshRenderers[p.Key.Item2].transform.position), cubeFadeAlpha);
 
                     var cubePositionInViewSpace = GameContext.Instance.cameraCtrler.viewCamera.worldToCameraMatrix.MultiplyPoint(p.Value.transform.position);
                     var cubeDistanceAlpha = cubeDitherAlphaCurve.Evaluate(Vector3.Distance(corePositionInViewSpace.AdjustZ(0f), cubePositionInViewSpace.AdjustZ(0f)));
 
                     foreach (var m in p.Value.materials)
-                        m.SetColor("_BaseColor", new Color(190f / 255f, 0f, 0f, cubeFadeAlpha * cubeDistanceAlpha));
-                }
-
-                var eyeFadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp - __cubeMeshRenderers.Count * 0.05f) / duration);
-                var eyeAttachPosition = springMassSystem.points[springMassSystem.ToIndex(0, 0, 2)].linkedBone.position;
-                if (eyeFadeAlpha < 1f)
-                {
-                    foreach (var e in __eyeAnimators)
                     {
-                        e.transform.position = Easing.Ease(EaseType.BounceOut, eyeAttachPosition, springMassSystem.bodyOffsetPoint.position, eyeFadeAlpha);
-                        e.transform.localScale = Vector3.Lerp(Vector3.zero, eyeScale * Vector3.one, eyeFadeAlpha);
-                    }
-                }
-                else
-                {
-                    foreach (var e in __eyeAnimators)
-                    {
-                        e.transform.position = springMassSystem.bodyOffsetPoint.position;
-                        e.transform.position -= GameContext.Instance.cameraCtrler.viewCamera.transform.forward;
-                        e.transform.rotation = Quaternion.LookRotation(GameContext.Instance.cameraCtrler.viewCamera.transform.position);
+                        if (__hitColorDisposable != null)
+                            m.SetColor("_BaseColor", Color.white.AdjustAlpha(cubeFadeAlpha < 1f ? cubeFadeAlpha : cubeFadeAlpha * cubeDistanceAlpha));
+                        else
+                            m.SetColor("_BaseColor", __defaultBaseColor.AdjustAlpha(cubeFadeAlpha < 1f ? cubeFadeAlpha : cubeFadeAlpha * cubeDistanceAlpha));
                     }
                 }
 
-                if (eyeFadeAlpha > 0f)
+                foreach (var a in eyeAttachments)
                 {
-                    foreach (var r in __hairRenderers)
-                        r.Value.material.SetColor("_BaseColor", new Color(190f / 255f, 0f, 0f, eyeFadeAlpha));
+                    var fadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp - 0.5f) / duration);
+                    a.eyeAnimator.transform.localScale = fadeAlpha * a.localScale;
+                    a.eyeAnimator.transform.localEulerAngles = a.localEulerRotation;
+                    a.eyeAnimator.transform.position = a.attachPoint.localToWorldMatrix.MultiplyPoint(a.attachOffset);
 
-                    if (eyeFadeAlpha > 0.5f)
+                    if (__hitColorDisposable == null && fadeAlpha >= 1f)
                     {
-                        foreach (var e in __eyeAnimators)
-                            e.MinOpenValue = Mathf.Clamp01(e.MinOpenValue + eyeOpenSpeed * Time.deltaTime);
+                        a.eyeAnimator.MinOpenValue = Mathf.Clamp01(a.eyeAnimator.MinOpenValue + eyeOpenSpeed * Time.deltaTime);
+                        foreach (var r in a.eyelidRenderers) r.material.SetColor("_BaseColor", __defaultBaseColor);
+                    }
+                    else
+                    {
+                        foreach (var r in a.eyelidRenderers) r.material.SetColor("_BaseColor", Color.white.AdjustAlpha(1f));
                     }
                 }
+
+                foreach (var a in hairAttachments)
+                {
+                    a.pin.position = a.attachPoint.position;
+
+                    var fadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp - 1f) / duration);
+                    a.obiRopeRenderer.material.SetColor("_BaseColor", __hitColorDisposable != null ? Color.white.AdjustAlpha(fadeAlpha) : __defaultBaseColor.AdjustAlpha(fadeAlpha));
+                    a.obiRopeRenderer.material.SetFloat("_AlphaDecreaseStartV", Mathf.Lerp(0f, 2f, fadeAlpha));
+                }
+
+                foreach (var a in hookAttachments)
+                {
+                    a.startPin.position = springMassSystem.core.position;
+                    a.endPin.position = hostBrain != null ? hostBrain.GetHookingColliderHelper().transform.position : springMassSystem.core.position + springMassSystem.core.forward;
+
+                    var fadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp - 0.5f) / duration);
+                    a.obiRopeRenderer.material.SetColor("_BaseColor", __hitColorDisposable != null ? Color.white.AdjustAlpha(fadeAlpha) : __defaultBaseColor.AdjustAlpha(fadeAlpha));
+                }
+
+                ropeGroundCollider.transform.position = ropeGroundCollider.transform.position.LerpSpeedY(ropeGroundLevel, 1f, Time.deltaTime);
             }).AddTo(this);
 
             //* Jelly 나타남 이벤트 생성
@@ -191,20 +297,29 @@ namespace Game
         public void FadeOut(float duration)
         {
             var fadeStartTimeStamp = Time.time;
-
-            meshBuilder.meshRenderer.enabled = false;
             springMassSystem.core.gameObject.layer = LayerMask.NameToLayer("Default");
 
+            var easingEndPosition = hostBrain != null ? hostBrain.coreColliderHelper.GetWorldCenter() : springMassSystem.core.position - 2f * Vector3.right;
+
+            __hitColorDisposable?.Dispose();
             __fadeInDisposable?.Dispose();
             __fadeInDisposable = null;
             __fadeOutDisposable = Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(duration +  __cubeMeshRenderers.Count * 0.1f)))
                 .DoOnCompleted(() =>
                 {
-                    foreach (var r in __eyeMeshRenderes) r.enabled = false;
-                    foreach (var p in __cubeMeshRenderers) p.Value.Item1.enabled = false;
+                    ropeObiSolver.enabled = false;
+                    ropeGroundCollider.enabled = false;
+                    meshBuilder.meshRenderer.enabled = false;
+                    foreach (var p in __cubeMeshRenderers) p.Value.enabled = false;
                     foreach (var p in __edgeCubeMeshRenderers) p.Value.enabled = false;
-                    // foreach (var r in __tailMeshRenderers) r.enabled = false;
-                    // foreach (var t in tailAnimators) t.enabled = false;
+                    foreach (var a in hairAttachments) a.obiRopeRenderer.enabled = false;
+                    foreach (var a in hookAttachments) a.obiRopeRenderer.enabled = false;
+                    foreach (var a in eyeAttachments)
+                    {
+                        a.eyeAnimator.enabled = false;
+                        foreach (var r in a.eyelidRenderers) r.enabled = false;
+                        foreach (var r in a.eyeBallRenderers) r.enabled = false;
+                    }
                 })
                 .Subscribe(_ =>
                 {
@@ -213,46 +328,62 @@ namespace Game
 
                     UpdateCorePositionAndBodyOffset();
 
+                    var corePositionInViewSpace = GameContext.Instance.cameraCtrler.viewCamera.worldToCameraMatrix.MultiplyPoint(springMassSystem.core.position);
                     foreach (var p in __cubeMeshRenderers)
                     {
-                        var cubeFadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp - (p.Key + 1f) * 0.05f) / duration);
-                        p.Value.Item1.transform.localScale = (1f - cubeFadeAlpha) * Mathf.Lerp(cubeScaleMin, cubeScaleMax, Mathf.PerlinNoise(Time.time + p.Key, Time.time + p.Key * p.Key)) * Vector3.one;
-                        p.Value.Item1.transform.position = Easing.Ease(EaseType.CubicIn, springMassSystem.points[p.Key].linkedBone.localToWorldMatrix.MultiplyPoint(p.Value.Item2), springMassSystem.core.position, cubeFadeAlpha);
-                        foreach (var m in p.Value.Item1.materials)
-                            m.SetVector("_CenterPosition", springMassSystem.core.position);
+                        var cubeFadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp - p.Key * 0.05f) / duration);
+                        p.Value.transform.localScale = (1f - cubeFadeAlpha) * Mathf.Lerp(cubeScaleMin, cubeScaleMax, Mathf.PerlinNoise(Time.time + p.Key, Time.time + p.Key * p.Key)) * Vector3.one;
+                        p.Value.transform.localRotation = Quaternion.Euler(cubeFadeAlpha * Mathf.Lerp(-5f, 5f, Mathf.PerlinNoise(Time.time + p.Key, Time.time + p.Key * p.Key)) * Vector3.one);
+
+                        var spreadVec = cubeSpreadRadius * springMassSystem.points[p.Key].linkedGrid.localPosition.normalized - springMassSystem.points[p.Key].linkedGrid.localPosition;
+                        p.Value.transform.position = Easing.Ease(EaseType.QuadraticIn, springMassSystem.points[p.Key].linkedBone.localToWorldMatrix.MultiplyPoint(spreadVec), easingEndPosition, cubeFadeAlpha);
+
+                        var cubePositionInViewSpace = GameContext.Instance.cameraCtrler.viewCamera.worldToCameraMatrix.MultiplyPoint(p.Value.transform.position);
+                        var cubeDistanceAlpha = cubeDitherAlphaCurve.Evaluate(Vector3.Distance(corePositionInViewSpace.AdjustZ(0f), cubePositionInViewSpace.AdjustZ(0f)));
+
+                        foreach (var m in p.Value.materials)
+                            m.SetColor("_BaseColor", __defaultBaseColor.AdjustAlpha(Easing.Ease(EaseType.QuadraticOut, cubeDistanceAlpha, cubeFadeAlpha, cubeFadeAlpha)));
                     }
                     foreach (var p in __edgeCubeMeshRenderers)
                     {
                         var key = (p.Key.Item1 + p.Key.Item2) * 0.5f;
-                        var cubeFadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp - (key + 1f) * 0.05f) / duration);
+                        var cubeFadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp - key * 0.05f) / duration);
                         p.Value.transform.localScale = (1f - cubeFadeAlpha) * Mathf.Lerp(cubeScaleMin, cubeScaleMax, Mathf.PerlinNoise(Time.time + key, Time.time + key * key)) * Vector3.one;
-                        p.Value.transform.position = Easing.Ease(EaseType.BounceOut, springMassSystem.core.position, 0.5f * (__cubeMeshRenderers[p.Key.Item1].Item1.transform.position + __cubeMeshRenderers[p.Key.Item2].Item1.transform.position), cubeFadeAlpha);
+                        p.Value.transform.localRotation = Quaternion.Euler(cubeFadeAlpha * Mathf.Lerp(-15f, 15f, Mathf.PerlinNoise(Time.time + key, Time.time + key * key)) * Vector3.one);
+                        p.Value.transform.position = Easing.Ease(EaseType.QuadraticIn, 0.5f * (__cubeMeshRenderers[p.Key.Item1].transform.position + __cubeMeshRenderers[p.Key.Item2].transform.position), easingEndPosition, cubeFadeAlpha);
+
+                        var cubePositionInViewSpace = GameContext.Instance.cameraCtrler.viewCamera.worldToCameraMatrix.MultiplyPoint(p.Value.transform.position);
+                        var cubeDistanceAlpha = cubeDitherAlphaCurve.Evaluate(Vector3.Distance(corePositionInViewSpace.AdjustZ(0f), cubePositionInViewSpace.AdjustZ(0f)));
+
                         foreach (var m in p.Value.materials)
-                            p.Value.material.SetVector("_CenterPosition", springMassSystem.core.position);
+                            m.SetColor("_BaseColor", __defaultBaseColor.AdjustAlpha(Easing.Ease(EaseType.QuadraticOut, cubeDistanceAlpha, cubeFadeAlpha, cubeFadeAlpha)));
                     }
 
-                    var eyeFadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp) / duration);
-                    if (eyeFadeAlpha < 1f)
+                    foreach (var a in eyeAttachments)
                     {
-                        foreach (var e in __eyeAnimators)
-                        {
-                            var attachedPosition = springMassSystem.points[springMassSystem.ToIndex(0, 0, -1)].linkedBone.position;
-                            e.transform.position = Easing.Ease(EaseType.CubicIn, e.transform.parent.localToWorldMatrix.GetPosition(), attachedPosition, eyeFadeAlpha);
-                            e.transform.localScale = Vector3.Lerp(eyeScale * Vector3.one, Vector3.zero, eyeFadeAlpha);
-                        }
+                        var fadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp) / duration);
+                        a.eyeAnimator.transform.localScale = (1f - fadeAlpha) * a.localScale;
+                        a.eyeAnimator.transform.localEulerAngles = a.localEulerRotation;
+                        a.eyeAnimator.transform.position = Easing.Ease(EaseType.CubicIn, a.attachPoint.localToWorldMatrix.MultiplyPoint(a.attachOffset), easingEndPosition, fadeAlpha);
+                        a.eyeAnimator.MinOpenValue = 0f;
                     }
 
-                    // for (int i = 0; i < __tailMeshRenderers.Length; i++)
-                    // {
-                    //     foreach (var m in __tailMeshRenderers[i].materials)
-                    //     {
-                    //         m.SetVector("_CenterPosition", springMassSystem.core.position);
-                    //         m.SetFloat("_AlphaMultiplier", 1f - eyeFadeAlpha);
-                    //     }
-                    // }
+                    foreach (var a in hairAttachments)
+                    {
+                        a.pin.position = a.attachPoint.position;
 
-                    foreach (var e in __eyeAnimators)
-                        e.MinOpenValue = Mathf.Clamp01(e.MinOpenValue - eyeOpenSpeed * Time.deltaTime);
+                        var fadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp) / duration);
+                        a.obiRopeRenderer.material.SetColor("_BaseColor", __defaultBaseColor.AdjustAlpha(1f - fadeAlpha));
+                    }
+
+                    foreach (var a in hookAttachments)
+                    {
+                        a.startPin.position = springMassSystem.core.position;
+                        a.endPin.position = hostBrain != null ? hostBrain.GetHookingColliderHelper().transform.position : springMassSystem.core.position + springMassSystem.core.forward;
+                        
+                        var fadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp) / duration);
+                        a.obiRopeRenderer.material.SetColor("_BaseColor", __defaultBaseColor.AdjustAlpha(1f - fadeAlpha));
+                    }
                 }).AddTo(this);
 
             //* Jelly 사라짐 이벤트 생성
@@ -285,7 +416,7 @@ namespace Game
 
             foreach (var p in __cubeMeshRenderers)
             {
-                var rigidBody = p.Value.Item1.gameObject.AddComponent<BoxCollider>().gameObject.AddComponent<Rigidbody>();
+                var rigidBody = p.Value.gameObject.AddComponent<BoxCollider>().gameObject.AddComponent<Rigidbody>();
                 rigidBody.transform.parent = transform;
                 rigidBody.gameObject.layer = LayerMask.NameToLayer("PhysicsBody");
                 rigidBody.mass = 0.1f;
@@ -337,9 +468,9 @@ namespace Game
                     foreach (var p in __cubeMeshRenderers)
                     {
                         var cubeFadeAlpha = Mathf.Clamp01((Time.time - dieStartTimeStamp - (p.Key + 1f) * 0.05f) / duration);
-                        p.Value.Item1.transform.localScale = 0.2f * Vector3.one;
+                        p.Value.transform.localScale = 0.2f * Vector3.one;
 
-                        foreach (var m in p.Value.Item1.materials)
+                        foreach (var m in p.Value.materials)
                         {
                             m.SetVector("_BaseColor", new Color(190f / 255f, 0f, 0f, 1f - cubeFadeAlpha));
                             // m.SetFloat("_FadeAlphaMultiplier", Mathf.Max(1f, 10f * cubeFadeAlpha));
@@ -368,89 +499,101 @@ namespace Game
                 }).AddTo(this);
         }
 
-        void UpdateCorePositionAndBodyOffset()
-        {
-            if (hostBrain != null)
-            {
-                var distance = (springMassSystem.core.position - hostBrain.coreColliderHelper.GetWorldCenter()).Vector2D().magnitude;
-                if (distance > maintainDistance)
-                    springMassSystem.core.position = springMassSystem.core.position.LerpSpeed(hostBrain.coreColliderHelper.GetWorldCenter(), distanceRecoverySpeed * (distance - maintainDistance), Time.deltaTime);
-            }
-
-            springMassSystem.bodyOffsetPoint.rotation = Quaternion.LookRotation(-GameContext.Instance.cameraCtrler.viewCamera.transform.forward);
-
-            if (__tweener?.IsComplete() ?? true)
-                springMassSystem.bodyOffsetPoint.localPosition = 0.2f * Perlin.Noise(Time.time) * Vector3.up;
-        }
-
-        Dictionary<int, Material> __defaultCubeMeshMaterials;
-        Dictionary<ValueTuple<int, int>, Material> __defaultEdgeCubeMeshMaterials;
-        Material[] __defaultTailMeshMaterials;
-        Material[] __defaultEyeMeshMaterials;
-        Material __defaultBodyMeshMaterial;
         Tweener __tweener;
         IDisposable __hookingPointFxDisposable;
 
+        void SetHitColorMaterialEnabled(MeshRenderer meshRenderer, bool newEnabled)
+        {
+            if (newEnabled)
+            {    
+                if (__cubeMeshHitColorMaterials.TryGetValue(meshRenderer, out var material))
+                {
+                    var tempAlpha = meshRenderer.material.GetColor("_BaseColor").a;
+                    meshRenderer.material = material;
+                    meshRenderer.material.SetColor("_BaseColor", Color.white.AdjustAlpha(tempAlpha));
+                }
+                else
+                {
+                    var tempAlpha = meshRenderer.material.GetColor("_BaseColor").a;
+                    meshRenderer.material = cubeHitColorMaterial;
+                    meshRenderer.material.SetColor("_BaseColor", Color.white.AdjustAlpha(tempAlpha));
+                    
+                    __cubeMeshHitColorMaterials.Add(meshRenderer, meshRenderer.material);
+                }
+            }
+            else
+            {
+                meshRenderer.material = __cubeMeshMaterials[meshRenderer];
+            }
+        }
+
         public void ShowHitColor(float duration)
         {
-            if (__defaultCubeMeshMaterials == null)
-            {
-                __defaultCubeMeshMaterials = new();
-                foreach (var p in __cubeMeshRenderers) __defaultCubeMeshMaterials.Add(p.Key, p.Value.Item1.material);
-            }
-            if (__defaultEdgeCubeMeshMaterials == null)
-            {
-                __defaultEdgeCubeMeshMaterials = new();
-                foreach (var p in __edgeCubeMeshRenderers) __defaultEdgeCubeMeshMaterials.Add(p.Key, p.Value.material);
-            }
-            // __defaultTailMeshMaterials ??= 3.Select(r => r.material).ToArray();
-            __defaultEyeMeshMaterials ??= __eyeMeshRenderes.Select(r => r.material).ToArray();
-            __defaultBodyMeshMaterial ??= meshBuilder.meshRenderer.material;
-
-            // foreach (var p in __cubeMeshRenderers) p.Value.Item1.material = cubeHitColorMaterial;
-            // foreach (var p in __edgeCubeMeshRenderers) p.Value.material = cubeHitColorMaterial;
-            // for (int i = 0; i < __tailMeshRenderers.Length; i++) __tailMeshRenderers[i].material = tailHitColorMaterial;
-            // for (int i = 0; i < __eyeMeshRenderes.Length; i++) if (i >= 2) __eyeMeshRenderes[i].material = bodyHitColorMaterial;
-            // meshBuilder.meshRenderer.material = bodyHitColorMaterial;
-
             __hitColorDisposable?.Dispose();
-            __hitColorDisposable = Observable.Timer(TimeSpan.FromSeconds(duration)).Subscribe(_ =>
+
+            foreach (var p in __cubeMeshRenderers) SetHitColorMaterialEnabled(p.Value, true);
+            foreach (var p in __edgeCubeMeshRenderers) SetHitColorMaterialEnabled(p.Value, true);
+            __hairSharedMaterial.SetColor("_EmissiveColor", Color.white.AdjustAlpha(1f));
+            __hookSharedMaterial.SetColor("_EmissiveColor", Color.white.AdjustAlpha(1f));
+
+            foreach (var a in eyeAttachments)
             {
-                foreach (var p in __cubeMeshRenderers) p.Value.Item1.material = __defaultCubeMeshMaterials[p.Key];
-                foreach (var p in __edgeCubeMeshRenderers) p.Value.material = __defaultEdgeCubeMeshMaterials[p.Key];
-                // for (int i = 0; i < __tailMeshRenderers.Length; i++) __tailMeshRenderers[i].material = __defaultTailMeshMaterials[i];
-                for (int i = 0; i < __eyeMeshRenderes.Length; i++) __eyeMeshRenderes[i].material = __defaultEyeMeshMaterials[i];
-                meshBuilder.meshRenderer.material = __defaultBodyMeshMaterial;
-            }).AddTo(this);
+                foreach (var r in a.eyelidRenderers) r.material.SetColor("_EmissiveColor", Color.gray.AdjustAlpha(1f));
+                a.eyeAnimator.MinOpenValue = 0f;
+            }
+
+            __hitColorDisposable = Observable.Timer(TimeSpan.FromSeconds(duration))
+                .DoOnCompleted(() => 
+                {
+                    __hitColorDisposable = null;
+                    __hairSharedMaterial.SetColor("_EmissiveColor", __defaultHairEmissiveColor);
+                    __hookSharedMaterial.SetColor("_EmissiveColor", __defaultHookEmissiveColor);
+                    foreach (var p in __cubeMeshRenderers) SetHitColorMaterialEnabled(p.Value, false);
+                    foreach (var p in __edgeCubeMeshRenderers) SetHitColorMaterialEnabled(p.Value, false); 
+                    foreach (var a in eyeAttachments)
+                        foreach (var r in a.eyelidRenderers) r.material.SetColor("_EmissiveColor", __defaultEyeEmissiveColor);
+                })
+                .DoOnCancel(() => 
+                {
+                    __hitColorDisposable = null;
+                    __hairSharedMaterial.SetColor("_EmissiveColor", __defaultHairEmissiveColor);
+                    __hookSharedMaterial.SetColor("_EmissiveColor", __defaultHookEmissiveColor);
+                    foreach (var p in __cubeMeshRenderers) SetHitColorMaterialEnabled(p.Value, false);
+                    foreach (var p in __edgeCubeMeshRenderers) SetHitColorMaterialEnabled(p.Value, false);
+                    foreach (var a in eyeAttachments)
+                        foreach (var r in a.eyelidRenderers) r.material.SetColor("_EmissiveColor", __defaultEyeEmissiveColor);
+                })
+                .Subscribe().AddTo(this);
 
             __tweener?.Complete();
             __tweener = springMassSystem.bodyOffsetPoint.DOShakePosition(duration, 1f);
 
-            EffectManager.Instance.Show(onHitFx, springMassSystem.core.position, Quaternion.identity, Vector3.one);
+            EffectManager.Instance.Show(onHitFx, springMassSystem.bodyOffsetPoint.position, Quaternion.identity, Vector3.one);
         }
 
-        public void StartHook()
+        public void PopRandomCube(int popCount)
         {
-            ropeHookCtrler.LaunchHook(hostBrain.GetHookingColliderHelper().pawnCollider);
-            return;
-            var hookingPointFx = EffectManager.Instance.ShowLooping(this.hookingPointFx, hostBrain.GetHookingColliderHelper().transform.position, Quaternion.identity, Vector3.one);
-            __hookingPointFxDisposable = Observable.EveryLateUpdate()
-                .DoOnCancel(() => hookingPointFx.Stop())
-                .DoOnCompleted(() => hookingPointFx.Stop())
-                .Subscribe(_ =>
+            while (popCount > 0)
+            {
+                var picked = __nonRigidBodyCubeMeshRenderers.ElementAt(UnityEngine.Random.Range(0, __nonRigidBodyCubeMeshRenderers.Count));
+                var rigidBody = GameObject.Instantiate(picked.gameObject, popping).AddComponent<BoxCollider>().gameObject.AddComponent<Rigidbody>();
+                rigidBody.gameObject.layer = LayerMask.NameToLayer("PhysicsBody");
+                // rigidBody.transform.localScale = 0.5f * rigidBody.transform.localScale;
+                rigidBody.mass = 0.1f;
+                rigidBody.AddExplosionForce(20f, springMassSystem.bodyOffsetPoint.position, 5f);
+
+                Observable.Timer(TimeSpan.FromSeconds(0.2f)).Subscribe(_ =>
                 {
-                    Debug.Assert(ropeHookCtrler.obiTargetCollider != null);
-                    hookingPointFx.transform.position = ropeHookCtrler.obiTargetCollider.transform.position = (hostBrain as SoldierBrain).BB.attachment.spine02.position;
-                    //* 카메라 쪽으로 위치를 당겨서 겹쳐서 안보이게 되는 경우를 완화함
-                    hookingPointFx.transform.position -= GameContext.Instance.cameraCtrler.viewCamera.transform.forward;
-                }).AddTo(this);
-        }
+                    rigidBody.GetComponent<MeshRenderer>().material = __cubeMeshMaterials[picked];
+                }).AddTo(picked);
 
-        public void FinishHook()
-        {
-            __hookingPointFxDisposable?.Dispose();
-            __hookingPointFxDisposable = null;
-            ropeHookCtrler.DetachHook();
+                Observable.Timer(TimeSpan.FromSeconds(2f))
+                    .DoOnCompleted(() => Destroy(rigidBody.gameObject))
+                    .DoOnCancel(() => Destroy(rigidBody.gameObject))
+                    .Subscribe().AddTo(this);
+
+                popCount--;
+            }
         }
     }
 }

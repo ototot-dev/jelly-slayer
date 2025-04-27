@@ -154,7 +154,7 @@ namespace Game
                 {
                     jellyMeshCtrler.FadeOut(0.5f);
                     // jellyMeshCtrler.Die(5f);
-                    jellyMeshCtrler.FinishHook();
+                    // jellyMeshCtrler.FinishHook();
 
                     //* 막타 Hit 애님이 온전 출력되는 시간 딜레이 
                     Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(_ => __pawnAnimCtrler.mainAnimator.SetBool("IsGroggy", false)).AddTo(this);

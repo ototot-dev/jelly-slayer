@@ -43,7 +43,7 @@ namespace Game
                     {
                         __brain.jellyMeshCtrler.springMassSystem.coreAttachPoint.parent.position = __brain.coreColliderHelper.GetWorldCenter();
                         __brain.jellyMeshCtrler.FadeIn(0.5f);
-                        __brain.jellyMeshCtrler.StartHook();
+                        // __brain.jellyMeshCtrler.StartHook();
                     }
                     else
                     {
