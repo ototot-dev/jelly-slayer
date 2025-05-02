@@ -55,8 +55,9 @@ namespace Retween.Rx
             var tweensProperty = property.FindPropertyRelative("sources");
             EditorGUI.PropertyField(position, tweensProperty, new GUIContent("Tween Sources"), true);
 
+            var basePositionY = position.y; 
             if (tweensProperty.isExpanded)
-                position.y += __lineHeight * tweensProperty.arraySize + __lineHeight;
+                position.y += __lineHeight * (tweensProperty.arraySize + 1) + __lineHeight;
 
             position.y += __lineHeight;
 
@@ -352,8 +353,8 @@ namespace Retween.Rx
 
             EditorGUI.EndProperty();
 
-            __propertyHeight = position.y = drawRect.y;
-            // __propertyHeight = position.y - __lineHeight;
+            position.y = drawRect.y;
+            __propertyHeight = position.y - basePositionY;
         }
 
         void UpdateTweenSources(Transform target, TweenSelectorQuery query, SerializedProperty tweensProperty)

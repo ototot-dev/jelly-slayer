@@ -21,8 +21,6 @@ MonoBehaviour:
   m_OverrideGlobalSceneList: 1
   m_Scenes:
   - m_enabled: 1
-    m_path: Assets/__Scene/Title.unity
-  - m_enabled: 1
     m_path: Assets/__Scene/BattleTest.unity
   m_ScriptingDefines: []
   m_PlayerSettingsYaml:
@@ -1005,6 +1003,8 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
     - rid: 4766542918404276290
       type: {class: LinuxPlatformSettings, ns: UnityEditor.LinuxStandalone, asm: UnityEditor.LinuxStandalone.Extensions}
       data:

@@ -6,130 +6,103 @@ using UniRx;
 using UniRx.Triggers;
 using Retween.Rx;
 
-namespace UGUI.Rx {
+namespace UGUI.Rx
+{
+    public class SelectableStyleSelector : StyleSelector
+    {
+        public bool IsMouseHover { get; protected set; }
 
-/// <summary>
-/// 
-/// </summary>
-public class SelectableStyleSelector : StyleSelector {
+        public override void Init(Template owner, TweenName[] tweenNames)
+        {
+            base.Init(owner, tweenNames);
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <value></value>
-    public bool IsHover { get; protected set; }
+            var selectable = GetComponent<Selectable>();
+            Debug.Assert(selectable != null);
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="owner"></param>
-    /// <param name="tweenNames"></param>
-    public override void Init(Template owner, TweenName[] tweenNames) {
-        base.Init(owner, tweenNames);
-        
-        var selectable = GetComponent<Selectable>();
+            if (selectable.interactable)
+            {
+                query.activeStates.Add(__enabledStr);
+                query.activeStates.Add(__normalStr);
+            }
+            else
+            {
+                query.activeStates.Add(__disabledStr);
+            }
 
-        if (selectable.interactable) {
-            query.activeStates.Add(__enabledStr);
-            query.activeStates.Add(__normalStr);
-        }
-        else {
-            query.activeStates.Add(__disabledStr);
-        }
+            __disposables.Add(
+                gameObject.ObserveEveryValueChanged(_ => selectable.interactable).Skip(1).Subscribe(v =>
+                {
+                    if (v)
+                    {
+                        query.activeStates.Remove(__disabledStr);
+                        query.activeStates.Add(__enabledStr);
+                        query.activeStates.Add(__normalStr);
+                    }
+                    else
+                    {
+                        query.activeStates.Remove(__enabledStr);
+                        query.activeStates.Remove(__normalStr);
+                        query.activeStates.Remove(__hoverStr);
+                        query.activeStates.Remove(__pressedStr);
+                        query.activeStates.Add(__disabledStr);
+                    }
 
-        var skipFirst = true;
+                    query.Apply();
+                }).AddTo(this));
 
-        var disposable = gameObject.ObserveEveryValueChanged(_ => selectable.interactable)
-            .Where(_ => !skipFirst)
-            .Subscribe(v => {   
-                if (v) {
-                    query.activeStates.Remove(__disabledStr);
-                    query.activeStates.Add(__enabledStr);
+            __disposables.Add(
+                selectable.OnPointerEnterAsObservable().Where(_ => selectable.interactable).Subscribe(_ =>
+                {
+                    query.activeStates.Remove(__normalStr);
+                    query.activeStates.Add(__hoverStr);
+                    query.Apply();
+
+                    IsMouseHover = true;
+                }).AddTo(this));
+
+            __disposables.Add(
+                selectable.OnPointerExitAsObservable().Where(_ => selectable.interactable).Subscribe(_ =>
+                {
+                    query.activeStates.Remove(__hoverStr);
                     query.activeStates.Add(__normalStr);
-                }
-                else {
-                    query.activeStates.Remove(__enabledStr);
+                    query.Apply();
+
+                    IsMouseHover = false;
+                }).AddTo(this));
+
+            __disposables.Add(
+                selectable.OnPointerDownAsObservable().Where(_ => selectable.interactable).Subscribe(_ =>
+                {
                     query.activeStates.Remove(__normalStr);
                     query.activeStates.Remove(__hoverStr);
+                    query.activeStates.Add(__pressedStr);
+                    query.Apply();
+                }).AddTo(this));
+
+            __disposables.Add(
+                selectable.OnPointerUpAsObservable().Where(_ => selectable.interactable).Subscribe(_ =>
+                {
                     query.activeStates.Remove(__pressedStr);
-                    query.activeStates.Add(__disabledStr);
-                }
+                    query.activeStates.Add(IsMouseHover ? __hoverStr : __normalStr);
+                    query.Apply();
+                }).AddTo(this));
+        }
 
-                query.Apply();
-            })
-            .AddTo(this);
+        List<IDisposable> __disposables = new List<IDisposable>();
+        readonly string __enabledStr = StyleStates.enabled.ToString();
+        readonly string __normalStr = StyleStates.normal.ToString();
+        readonly string __disabledStr = StyleStates.disabled.ToString();
+        readonly string __hoverStr = StyleStates.hover.ToString();
+        readonly string __pressedStr = StyleStates.pressed.ToString();
 
-        __disposables.Add(disposable);
+        public override void CleanUp()
+        {
+            base.CleanUp();
 
-        disposable = selectable.OnPointerEnterAsObservable()
-            .Where(_ => !skipFirst && selectable.interactable)
-            .Subscribe(_ => {
-                query.activeStates.Remove(__normalStr);
-                query.activeStates.Add(__hoverStr);
-                query.Apply();
+            foreach (var d in __disposables)
+                d.Dispose();
 
-                IsHover = true;
-            }).AddTo(this);
-
-        __disposables.Add(disposable);
-
-        disposable = selectable.OnPointerExitAsObservable()
-            .Where(_ => !skipFirst && selectable.interactable)
-            .Subscribe(_ => {
-                query.activeStates.Remove(__hoverStr);
-                query.activeStates.Add(__normalStr);
-                query.Apply();
-
-                IsHover = false;
-            }).AddTo(this);
-
-        __disposables.Add(disposable);
-
-        disposable = selectable.OnPointerDownAsObservable()
-            .Where(_ => !skipFirst && selectable.interactable)
-            .Subscribe(_ => {
-                query.activeStates.Remove(__normalStr);
-                query.activeStates.Remove(__hoverStr);
-                query.activeStates.Add(__pressedStr);
-                query.Apply();
-            })
-            .AddTo(this);
-
-        __disposables.Add(disposable);
-
-        disposable = selectable.OnPointerUpAsObservable()
-            .Where(_ => !skipFirst && selectable.interactable)
-            .Subscribe(_ => {
-                query.activeStates.Remove(__pressedStr);
-                query.activeStates.Add(IsHover ? __hoverStr : __normalStr);
-                query.Apply();
-            })
-            .AddTo(this);
-
-        __disposables.Add(disposable);
-
-        skipFirst = false;
+            __disposables.Clear();
+        }
     }
-
-    List<IDisposable> __disposables = new List<IDisposable>();
-    readonly string __enabledStr = StyleStates.enabled.ToString();
-    readonly string __normalStr = StyleStates.normal.ToString();
-    readonly string __disabledStr = StyleStates.disabled.ToString();
-    readonly string __hoverStr = StyleStates.hover.ToString();
-    readonly string __pressedStr = StyleStates.pressed.ToString();
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public override void CleanUp() {
-        base.CleanUp();
-
-        foreach (var d in __disposables)
-            d.Dispose();
-
-        __disposables.Clear();
-    }
-
-}
-
 }

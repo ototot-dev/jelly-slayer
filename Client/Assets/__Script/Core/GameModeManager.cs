@@ -10,7 +10,7 @@ namespace Game
         ActionTest,
         BattleTest,
         Tutorial,
-        Title,
+        Intro,
         Game,
     }
 
@@ -18,7 +18,9 @@ namespace Game
     {
         public void ChangeMode(GameModes newMode)
         {
-            if (newMode == GameModes.BattleTest)
+            if (newMode == GameModes.Intro)
+                new IntroController().Load(GameObject.Find("intro").GetComponent<Template>()).Show(GameContext.Instance.CanvasManager.body.transform as RectTransform);
+            else if (newMode == GameModes.BattleTest)
                 new BattleTestModeController().Load().Show(GameObject.FindWithTag("MainCanvas").transform as RectTransform);
         }
     }

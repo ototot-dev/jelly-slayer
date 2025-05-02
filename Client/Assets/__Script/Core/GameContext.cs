@@ -14,29 +14,18 @@ namespace Game
         public HeroSpawnManager heroSpawnManager;
         public DamageTextManager damageTextManager;
         public HPBarManager hpBarManager;
-
         public PawnBrainController _mainTarget = null; // Boss, Target
 
-        public RectTransform MainCanvas
+        public CanvasManager CanvasManager
         {
             get
             {
-                __mainCanvas ??= GameObject.FindWithTag("MainCanvas").GetComponent<RectTransform>();
-                return __mainCanvas;
+                __canvasManager ??= FindFirstObjectByType<CanvasManager>();
+                return __canvasManager;
             }
         }
 
-        public CanvasManager canvasManager
-        {
-            get
-            {
-                __mainCanvasCtrler ??= MainCanvas.GetComponent<CanvasManager>();
-                return __mainCanvasCtrler;
-            }
-        }
-
-        RectTransform __mainCanvas;
-        CanvasManager __mainCanvasCtrler;
+        CanvasManager __canvasManager;
 
         void Awake()
         {

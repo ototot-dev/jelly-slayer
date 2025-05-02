@@ -28,17 +28,17 @@ namespace UGUI.Rx
 
         public virtual void CleanUp()
         {
-            ShowCount = PostShowCount = 0;
-            HideCount = PostHideCount = 0;
+            ShowCount = PostShowCount = PostHideCount = 0;
+            HideCount = 1;
         }
 
         public Action onFinishShow;
         public Action onFinishHide;
         public int ShowCount { get; protected set; }
         public int PostShowCount { get; protected set; }
-        public int HideCount { get; protected set; }
+        public int HideCount { get; protected set; } = 1; //* 최초엔 Hidden 상태로 만들기 위해서 디폴트 값을 1로 셋팅함
         public int PostHideCount { get; protected set; }
-        public bool IsHidden => (ShowCount == 0 && HideCount >= 0);
+        public bool IsHidden => HideCount > 0;
         readonly string __showStr = StyleStates.show.ToString();
         readonly string __hideStr = StyleStates.hide.ToString();
 
@@ -51,7 +51,6 @@ namespace UGUI.Rx
         public IObservable<StyleSelector> ShowAsObservable()
         {
             var runningTweenNames = new List<IObservable<TweenName>>();
-
             var setupObservable = Observable.Create<StyleSelector>(observer =>
             {
                 if (IsHidden)

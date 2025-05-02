@@ -1,10 +1,8 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UniRx;
-using UniRx.Triggers;
 
 #if ENABLE_DOTWEEN_SEQUENCE
 using DG.Tweening;
@@ -21,7 +19,7 @@ namespace Retween.Rx
         /// The minimum value of animation elapsed time.
         /// </summary>
         public const float MIN_ELAPSED_TIME = 0.001f;
-        
+
         /// <summary>
         /// The counter value to generate new run number.
         /// </summary>
@@ -30,9 +28,7 @@ namespace Retween.Rx
 
         void Awake()
         {
-            __anim = GetComponent<Animation>();
-
-            if (__anim == null)
+            if (!TryGetComponent<Animation>(out __anim))
             {
                 __anim = gameObject.AddComponent<Animation>();
             }
@@ -53,7 +49,6 @@ namespace Retween.Rx
                 animRunnings.Add(tweenAnim, new TweenAnimRunning(tweenAnim));
 
             var running = animRunnings[tweenAnim];
-
             if (running.IsRunning)
             {
                 var currRunNum = running.runNum;
@@ -508,13 +503,10 @@ namespace Retween.Rx
         public Dictionary<TweenAnim, TweenAnimRunning> animRunnings = new Dictionary<TweenAnim, TweenAnimRunning>();
 
 #if ENABLE_DOTWEEN_SEQUENCE
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="tweenSeq"></param>
-    /// <param name="resetPosition"></param>
-    /// <returns></returns>
-    public IObservable<TweenSequenceRunning> Run(TweenSequence tweenSeq, bool resetPosition = false) {
+    public Dictionary<TweenSequence, TweenSequenceRunning> dotweeenSeqRunnings = new();
+
+    public IObservable<TweenSequenceRunning> Run(TweenSequence tweenSeq, bool resetPosition = false) 
+    {
         if (!dotweeenSeqRunnings.ContainsKey(tweenSeq))
             dotweeenSeqRunnings.Add(tweenSeq, new TweenSequenceRunning(tweenSeq));
 
@@ -605,12 +597,8 @@ namespace Retween.Rx
             );
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="tweenSeq"></param>
-    /// <returns></returns>
-    public IObservable<TweenSequenceRunning> Rewind(TweenSequence tweenSeq) {
+    public IObservable<TweenSequenceRunning> Rewind(TweenSequence tweenSeq) 
+    {
         if (!dotweeenSeqRunnings.ContainsKey(tweenSeq))
             dotweeenSeqRunnings.Add(tweenSeq, new TweenSequenceRunning(tweenSeq));
 
@@ -672,57 +660,29 @@ namespace Retween.Rx
                 .Select(_ => running)
             );
     }
-    
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TweenAnim"></typeparam>
-    /// <typeparam name="TweenAnimInstance"></typeparam>
-    /// <returns></returns>
-    public Dictionary<TweenSequence, TweenSequenceRunning> dotweeenSeqRunnings = new Dictionary<TweenSequence, TweenSequenceRunning>();
 #endif
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <value></value>
         public void ForceToRepaint()
         {
 #if UNITY_EDITOR
-            var tweenSelector = GetComponent<TweenSelector>();
-
-            if (tweenSelector != null)
+            if (TryGetComponent<TweenSelector>(out var tweenSelector))
                 tweenSelector.ForceToRepaint();
 #endif
         }
 
 #if UNITY_EDITOR
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        Dictionary<int, List<string>> __runningHistory = new Dictionary<int, List<string>>();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <value></value>
+        Dictionary<int, List<string>> __runningHistory = new();
         public List<string> RunningHistory
         {
             get
             {
                 var ret = new List<string>();
-
                 foreach (var r in __runningHistory.Keys.OrderBy(k => k))
                     ret.AddRange(__runningHistory[r]);
 
                 return ret;
             }
         }
-
 #endif
-
     }
-
 }
