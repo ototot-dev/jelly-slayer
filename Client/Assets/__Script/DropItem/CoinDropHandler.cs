@@ -32,7 +32,7 @@ namespace Game
             if (!base.TryPick(picker))
                 return false;
 
-            // if (picker.TryGetComponent<HeroBrain>(out var heroBrain))
+            // if (picker.TryGetComponent<SlayerBrain>(out var heroBrain))
             //     heroBrain.BB.body.coinPoint.Value += coinPoint;
 
             return true;

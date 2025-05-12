@@ -15,19 +15,36 @@ namespace Game
         {
             base.OnPreShow();
 
-            template.GetComponentById<Button>("new-game").interactable = false;
-            template.GetComponentById<Button>("continue").interactable = false;
-            template.GetComponentById<Button>("setting").interactable = false;
-            template.GetComponentById<Button>("exit").interactable = false;
+            __newGameButton = template.GetComponentById<Button>("new-game");
+            __continueButton = template.GetComponentById<Button>("continue");
+            __settingButton = template.GetComponentById<Button>("setting");
+            __exitButton = template.GetComponentById<Button>("exit");
+            
+            __newGameButton.interactable = __continueButton.interactable = __settingButton.interactable = __exitButton.interactable = false;
 
             template.GetComponentById<CanvasGroup>("options").alpha = 0f;
             template.GetComponentById<CanvasGroup>("press-any-key-focus").alpha = 0f;
             template.GetComponentById<TMPro.TextMeshProUGUI>("press-any-key-text").color = Color.clear;
         }
 
+        Button __newGameButton;
+        Button __continueButton;
+        Button __settingButton;
+        Button __exitButton;
+
         public override void OnPostShow()
         {
             base.OnPostShow();
+
+            __newGameButton.OnPointerEnterAsObservable().Where(_ => __newGameButton.interactable).Subscribe(v => SetFocusedOption("new-game")).AddToHide(this);
+            __continueButton.OnPointerEnterAsObservable().Where(_ => __continueButton.interactable).Subscribe(v => SetFocusedOption("continue")).AddToHide(this);
+            __settingButton.OnPointerEnterAsObservable().Where(_ => __settingButton.interactable).Subscribe(v => SetFocusedOption("setting")).AddToHide(this);
+            __exitButton.OnPointerEnterAsObservable().Where(_ => __exitButton.interactable).Subscribe(v => SetFocusedOption("exit")).AddToHide(this);
+
+            __newGameButton.OnPointerClickAsObservable().Where(_ => __newGameButton.interactable).Subscribe(_ => HandleOptionButtonClicked("new-game")).AddToHide(this);
+            __continueButton.OnPointerClickAsObservable().Where(_ => __continueButton.interactable).Subscribe(_ => HandleOptionButtonClicked("continue")).AddToHide(this);
+            __settingButton.OnPointerClickAsObservable().Where(_ => __settingButton.interactable).Subscribe(_ => HandleOptionButtonClicked("setting")).AddToHide(this);
+            __exitButton.OnPointerClickAsObservable().Where(_ => __exitButton.interactable).Subscribe(_ => HandleOptionButtonClicked("exit")).AddToHide(this);
 
             __pressAnyKeyFocusQuery = template.GetComponentById<PanelStyleSelector>("press-any-key-focus").query;
             __optionFocusQuery = template.GetComponentById<PanelStyleSelector>("options-focus").query;
@@ -70,6 +87,7 @@ namespace Game
                 Observable.Timer(TimeSpan.FromSeconds(0.5f)).Subscribe(_ =>
                 {
                     template.GetComponentById<CanvasGroup>("options").alpha = 1f;
+
                     var optionsQuery = template.GetComponentById<PanelStyleSelector>("options").query;
                     optionsQuery.activeStates.Add("show");
                     optionsQuery.Apply();
@@ -78,22 +96,9 @@ namespace Game
                     __optionFocusQuery.activeStates.Add("show");
                     __optionFocusQuery.Apply();
 
-                    template.GetComponentById<Button>("new-game").interactable = true;
-                    template.GetComponentById<Button>("continue").interactable = true;
-                    template.GetComponentById<Button>("setting").interactable = true;
-                    template.GetComponentById<Button>("exit").interactable = true;
+                    __newGameButton.interactable = __continueButton.interactable = __settingButton.interactable = __exitButton.interactable = true;
                 }).AddToHide(this);
             }).AddToHide(this);
-
-            template.GetComponentById<Button>("new-game").OnPointerEnterAsObservable().Subscribe(v => SetFocusedOption("new-game")).AddToHide(this);
-            template.GetComponentById<Button>("continue").OnPointerEnterAsObservable().Subscribe(v => SetFocusedOption("continue")).AddToHide(this);
-            template.GetComponentById<Button>("setting").OnPointerEnterAsObservable().Subscribe(v => SetFocusedOption("setting")).AddToHide(this);
-            template.GetComponentById<Button>("exit").OnPointerEnterAsObservable().Subscribe(v => SetFocusedOption("exit")).AddToHide(this);
-
-            template.GetComponentById<Button>("new-game").OnPointerClickAsObservable().Subscribe(_ => HandleOptionButtonClicked("new-game")).AddToHide(this);
-            template.GetComponentById<Button>("continue").OnPointerClickAsObservable().Subscribe(_ => HandleOptionButtonClicked("continue")).AddToHide(this);
-            template.GetComponentById<Button>("setting").OnPointerClickAsObservable().Subscribe(_ => HandleOptionButtonClicked("setting")).AddToHide(this);
-            template.GetComponentById<Button>("exit").OnPointerClickAsObservable().Subscribe(_ => HandleOptionButtonClicked("exit")).AddToHide(this);
 
             // LoadingPageController loadingCtrler = null;
 
@@ -107,9 +112,6 @@ namespace Game
 
         void HandleOptionButtonClicked(string optionId)
         {
-            if (!template.GetComponentById<Button>(optionId).interactable)
-                return;
-
             switch (optionId)
             {
                 case "new-game": break;
@@ -130,8 +132,7 @@ namespace Game
             __currFocusOptionId = optionId;
 
             __optionFocusRect ??= template.GetComponentById<RectTransform>("options-focus");
-            __optionFocusRect.parent = template.GetComponentById<RectTransform>(optionId);
-            __optionFocusRect.localPosition = Vector3.zero;
+            __optionFocusRect.SetParent(template.GetComponentById<RectTransform>(optionId), false);
             __optionFocusRect.SetSiblingIndex(0);
 
             __optionFocusQuery.activeStates.Clear();

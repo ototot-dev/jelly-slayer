@@ -271,9 +271,9 @@ namespace Retween.Rx
             if (__runningTweensFoldOut)
             {
                 var drawAny = false;
-                if (query.Target != null && query.Target.Player != null && query.Target.Player.animRunnings.Count > 0)
+                if (query.Target != null && query.Target.Player != null && query.Target.Player.tweenStates.Count > 0)
                 {
-                    foreach (var v in query.Target.Player.animRunnings.Values)
+                    foreach (var v in query.Target.Player.tweenStates.Values)
                     {
                         if (!v.IsRunning && !v.IsRewinding && !v.IsRollBack && v.elapsed <= TweenPlayer.MIN_ELAPSED_TIME)
                             continue;

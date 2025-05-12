@@ -13,7 +13,7 @@ public class ChainController : MonoBehaviour
         Bind,
     }
 
-    public HeroBrain _heroBrain;
+    public SlayerBrain _heroBrain;
     public PawnBrainController _bindBrain;
 
     public GameObject _cableObj;

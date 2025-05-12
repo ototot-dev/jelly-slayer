@@ -12,8 +12,8 @@ namespace Game
         {
             base.OnPreLoad(loader);
 
-            GameContext.Instance.playerCtrler = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
-            GameContext.Instance.cameraCtrler = GameObject.FindWithTag("MainCamera").GetComponent<CameraController>();
+            // GameContext.Instance.playerCtrler = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
+            // GameContext.Instance.cameraCtrler = GameObject.FindWithTag("MainCamera").GetComponent<CameraController>();
 
             // loader.Add(Resources.LoadAsync("BG").AsAsyncOperationObservable().Select(_ => this));
             // loader.Add(Resources.LoadAsync("Block Spritesheet - 1").AsAsyncOperationObservable().Select(_ => this));
@@ -23,7 +23,7 @@ namespace Game
         {
             base.OnPreShow();
 
-            GameContext.Instance.playerCtrler.Possess(GameObject.FindWithTag("Hero").GetComponent<HeroBrain>());
+            GameContext.Instance.playerCtrler.Possess(GameObject.FindWithTag("Hero").GetComponent<SlayerBrain>());
             new GamePanelController().Load().Show(GameContext.Instance.CanvasManager.body.transform as RectTransform);
         }
     }

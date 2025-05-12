@@ -198,11 +198,7 @@ namespace Retween.Rx
                 Debug.LogWarning($"TweenSelectorQuery => {targetName} is invalid!!");
             }
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="rollbackOnly"></param>
+    
         public void Apply(bool rollbackOnly = false)
         {
 #if UNITY_EDITOR

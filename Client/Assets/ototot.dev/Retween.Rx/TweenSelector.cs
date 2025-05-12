@@ -1,22 +1,12 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
 namespace Retween.Rx
 {
-
-    /// <summary>
-    /// 
-    /// </summary>
     [RequireComponent(typeof(TweenPlayer))]
     public class TweenSelector : MonoBehaviour
     {
-
-        /// <summary>
-        /// 
-        /// </summary>
         public TweenPlayer Player { get; private set; }
 
         void Awake()
@@ -24,7 +14,6 @@ namespace Retween.Rx
             Player = GetComponent<TweenPlayer>();
 
             query.SetTarget(this);
-
 #if UNITY_EDITOR
             query.BuildSelectables();
 #endif
@@ -46,7 +35,7 @@ namespace Retween.Rx
 
                 if (query.skipInitTweens)
                 {
-                    foreach (var r in Player.animRunnings.Values)
+                    foreach (var r in Player.tweenStates.Values)
                     {
                         Player.AdvanceElapsed(r, r.duration);
                         Player.UpdateAnimation(r);
@@ -55,49 +44,17 @@ namespace Retween.Rx
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public TweenSelectorQuery query = new TweenSelectorQuery();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="TweenAnim"></typeparam>
-        /// <returns></returns>
-        public HashSet<TweenName> matchingResults = new HashSet<TweenName>();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="TweenName"></typeparam>
-        /// <typeparam name="TweenAnimRunning"></typeparam>
-        /// <returns></returns>
-        public Dictionary<TweenName, TweenAnimRunning> TweenAnimRunnings { get; private set; } = new Dictionary<TweenName, TweenAnimRunning>();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="TweenName"></typeparam>
-        /// <typeparam name="TweenSequenceRunning"></typeparam>
-        /// <returns></returns>
-        public Dictionary<TweenName, TweenSequenceRunning> TweenSeqRunnings { get; private set; } = new Dictionary<TweenName, TweenSequenceRunning>();
-
+        public TweenSelectorQuery query = new();
+        public HashSet<TweenName> matchingResults = new();
+        public Dictionary<TweenName, TweenAnimState> TweenAnimStates { get; private set; } = new Dictionary<TweenName, TweenAnimState>();
+        public Dictionary<TweenName, TweenSequenceState> TweenSeqStates { get; private set; } = new Dictionary<TweenName, TweenSequenceState>();
 
 #if UNITY_EDITOR
-
-        /// <summary>
-        /// 
-        /// </summary>
         void OnValidate()
         {
             OnValidateInternal();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public virtual void OnValidateInternal()
         {
             if (query.Target == null)
@@ -106,9 +63,6 @@ namespace Retween.Rx
             query.BuildSelectables();
         }
 
-        /// <summary>
-        ///     
-        /// </summary>
         public void ForceToRepaint()
         {
             if (query.Target == null)
@@ -118,7 +72,6 @@ namespace Retween.Rx
 
             EditorUtility.SetDirty(this);
         }
-
 #endif
 
     }

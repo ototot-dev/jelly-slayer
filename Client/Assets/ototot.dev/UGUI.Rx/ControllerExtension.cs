@@ -40,38 +40,17 @@ namespace UGUI.Rx
             return Loader.Instance.LoadAsObservable<T>(ctrler, overrideTemplate, overrideStyleSheets, null);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ctrler"></param>
-        /// <param name="loader"></param>
-        /// <param name="overrideTemplate"></param>
-        /// <param name="overrideStyleSheets"></param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
         public static T PreLoad<T>(this T ctrler, List<IObservable<Controller>> loader, Template overrideTemplate = null, StyleSheet[] overrideStyleSheets = null) where T : Controller
         {
             Loader.Instance.PreLoadAsObservable<T>(ctrler, overrideTemplate, overrideStyleSheets, loader).Subscribe();
             return ctrler;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ctrler"></param>
-        /// <param name="destroyTemplate"></param>
         public static void Unload(this Controller ctrler, bool destroyTemplate = false)
         {
             Loader.Instance.Unload(ctrler, destroyTemplate);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ctrler"></param>
-        /// <param name="parent"></param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
         public static T Show<T>(this T ctrler, RectTransform parent) where T : Controller
         {
             if (!ctrler.isLoaded)
@@ -82,7 +61,7 @@ namespace UGUI.Rx
 
             ctrler.template.transform.SetParent(parent, false);
 
-            // Ensure that OnPostHide() to be called
+            //* Hide 상태라면 Hide 상태는 강제로 종료시킴
             if (ctrler.hideCount > 0 && ctrler.postHideCount == 0)
             {
                 ctrler.DisposePostHide();
@@ -104,13 +83,6 @@ namespace UGUI.Rx
             return ctrler;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ctrler"></param>
-        /// <param name="parent"></param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
         public static IObservable<T> ShowAsObservable<T>(this T ctrler, RectTransform parent) where T : Controller
         {
             if (!ctrler.isLoaded)
@@ -124,7 +96,7 @@ namespace UGUI.Rx
                 ctrler.template.transform.SetParent(parent, false);
                 ctrler.template.gameObject.SetActive(true);
 
-                // Ensure that OnPostHide() to be called
+                //* Hide 상태라면 Hide 상태는 강제로 종료시킴
                 if (ctrler.hideCount > 0 && ctrler.postHideCount == 0)
                 {
                     ctrler.DisposePostHide();
@@ -152,12 +124,6 @@ namespace UGUI.Rx
                 .Select(_ => ctrler);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ctrler"></param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
         public static T Hide<T>(this T ctrler) where T : Controller
         {
             if (ctrler.template == null)
@@ -191,12 +157,6 @@ namespace UGUI.Rx
             return ctrler;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ctrler"></param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
         public static IObservable<T> HideAsObservable<T>(this T ctrler) where T : Controller
         {
             if (!ctrler.isLoaded)
@@ -238,75 +198,42 @@ namespace UGUI.Rx
                 .Select(_ => ctrler);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ctrler"></param>
-        /// <param name="sortingOrder"></param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public static T ShowPopup<T>(this T ctrler, RectTransform blocker) where T : Controller
+        public static T ShowDimmed<T>(this T ctrler, RectTransform dimmed) where T : Controller
         {
-            blocker.gameObject.SetActive(true);
-            return Show<T>(ctrler, blocker.transform as RectTransform);
+            dimmed.gameObject.SetActive(true);
+            return Show<T>(ctrler, dimmed.transform as RectTransform);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ctrler"></param>
-        /// <param name="blocker"></param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public static IObservable<T> ShowPopupAsObservable<T>(this T ctrler, RectTransform blocker) where T : Controller
+        public static IObservable<T> ShowDimmedAsObservable<T>(this T ctrler, RectTransform dimmed) where T : Controller
         {
-            blocker.gameObject.SetActive(true);
-            return ShowAsObservable<T>(ctrler, blocker);
+            dimmed.gameObject.SetActive(true);
+            return ShowAsObservable<T>(ctrler, dimmed);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ctrler"></param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public static T HidePopup<T>(this T ctrler) where T : Controller
+        public static T HideDimmed<T>(this T ctrler) where T : Controller
         {
-            var blockerTM = ctrler.template.transform.parent;
+            var dimmed = ctrler.template.transform.parent;
 
             HideAsObservable<T>(ctrler).Subscribe(_ =>
             {
-                if (blockerTM.childCount == 0 || blockerTM.gameObject.Children().All(c => !c.activeSelf))
-                    blockerTM.gameObject.SetActive(false);
+                if (dimmed.childCount == 0 || dimmed.gameObject.Children().All(c => !c.activeSelf))
+                    dimmed.gameObject.SetActive(false);
             });
 
             return ctrler;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ctrler"></param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public static IObservable<T> HidePopupAsObservable<T>(this T ctrler) where T : Controller
+        public static IObservable<T> HideDimmedAsObservable<T>(this T ctrler) where T : Controller
         {
-            var blockerTM = ctrler.template.transform.parent;
+            var dimmed = ctrler.template.transform.parent;
 
             return HideAsObservable<T>(ctrler).Do(_ =>
             {
-                if (blockerTM.childCount == 0 || blockerTM.gameObject.Children().All(c => !c.activeSelf))
-                    blockerTM.gameObject.SetActive(false);
+                if (dimmed.childCount == 0 || dimmed.gameObject.Children().All(c => !c.activeSelf))
+                    dimmed.gameObject.SetActive(false);
             });
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="disposable"></param>
-        /// <param name="ctrler"></param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
         public static T AddToHide<T>(this T disposable, Controller ctrler) where T : IDisposable
         {
             if (ctrler == null)
@@ -321,13 +248,6 @@ namespace UGUI.Rx
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="disposable"></param>
-        /// <param name="ctrler"></param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
         public static T AddToPostHide<T>(this T disposable, Controller ctrler) where T : IDisposable
         {
             if (ctrler == null)
@@ -342,13 +262,6 @@ namespace UGUI.Rx
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="disposable"></param>
-        /// <param name="ctrler"></param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
         public static T AddToUnload<T>(this T disposable, Controller ctrler) where T : IDisposable
         {
             if (ctrler == null)

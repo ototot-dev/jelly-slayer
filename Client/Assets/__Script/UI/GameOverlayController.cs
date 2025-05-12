@@ -43,7 +43,7 @@ namespace Game
 
             GameContext.Instance.playerCtrler.onPossessed += (hero) =>
             {
-                var heroBrain = hero.GetComponent<HeroBrain>();
+                var heroBrain = hero.GetComponent<SlayerBrain>();
 
                 Debug.Assert(heroBrain != null);
 
@@ -69,7 +69,7 @@ namespace Game
         /// 
         /// </summary>
         /// <param name="heroBrain"></param>
-        void RefreshHeartPointCount(HeroBrain heroBrain)
+        void RefreshHeartPointCount(SlayerBrain heroBrain)
         {
             // var maxHeartPoint = Mathf.CeilToInt(heroBrain.PawnBB.HeartPoint);
 
@@ -179,7 +179,7 @@ namespace Game
         /// 
         /// </summary>
         /// <param name="heroBrain"></param>
-        void RefreshActionPoint(HeroBrain heroBrain)
+        void RefreshActionPoint(SlayerBrain heroBrain)
         {
             // GetComponentById<RectTransform>("action-point").gameObject.SetActive(true);
 
@@ -226,7 +226,7 @@ namespace Game
         /// 
         /// </summary>
         /// <param name="heroBrain"></param>
-        void RefreshBombPoint(HeroBrain heroBrain)
+        void RefreshBombPoint(SlayerBrain heroBrain)
         {
             // GetComponentById<RectTransform>("bomb-point").gameObject.SetActive(true);
 
@@ -270,7 +270,7 @@ namespace Game
         /// 
         /// </summary>
         /// <param name="heroBrain"></param>
-        void RefreshBombFillAlpha(HeroBrain heroBrain)
+        void RefreshBombFillAlpha(SlayerBrain heroBrain)
         {
             // if (heroBrain.BB.action.currBombNum.Value < heroBrain.BB.action.maxBombNum.Value)
             //     __bombPointFillImgs[heroBrain.BB.action.currBombNum.Value].fillAmount = Mathf.Clamp01(heroBrain.BB.action.bombFillAlpha.Value);

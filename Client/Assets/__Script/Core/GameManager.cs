@@ -174,7 +174,7 @@ public class GameManager : MonoSingleton<GameManager>
     { 
         if(pawn == null) return;
 
-        if (pawn is HeroBrain)
+        if (pawn is SlayerBrain)
         {
         }
         _delPawnSpawned?.Invoke(pawn);

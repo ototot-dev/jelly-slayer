@@ -42,53 +42,56 @@ namespace Retween.Rx
         }
         
         Animation __anim;
+        public Dictionary<TweenAnim, TweenAnimState> tweenStates = new();
 
-        public IObservable<TweenAnimRunning> Run(TweenAnim tweenAnim, bool resetElapsed = false)
+        public IObservable<TweenAnimState> Run(TweenAnim tweenAnim, bool resetElapsed = false)
         {
-            if (!animRunnings.ContainsKey(tweenAnim))
-                animRunnings.Add(tweenAnim, new TweenAnimRunning(tweenAnim));
-
-            var running = animRunnings[tweenAnim];
-            if (running.IsRunning)
+            if (!tweenStates.TryGetValue(tweenAnim, out var currState))
             {
-                var currRunNum = running.runNum;
-
-                // Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Run() observable is running. returns empty Run() observable. runNum is {currRunNum}.");
-
-                return Observable.EveryUpdate()
-                    .TakeWhile(_ => (tweenAnim.transition.IsLooping || running.elapsed < running.duration) && running.runNum == currRunNum)
-                    .Select(_ => running);
+                currState = new TweenAnimState(tweenAnim);
+                tweenStates.Add(tweenAnim, currState);
             }
 
-            var reservedRunNum = ReserveRunNumber();
+            if (currState.IsRunning)
+            {
+                var currNum = currState.runNum;
+
+                // Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Run() observable is animState. returns empty Run() observable. runNum is {currRunNum}.");
+
+                return Observable.EveryUpdate()
+                    .TakeWhile(_ => (tweenAnim.transition.IsLooping || currState.elapsed < currState.duration) && currState.runNum == currNum)
+                    .Select(_ => currState);
+            }
+
+            var reservedNum = ReserveRunNumber();
 
             // Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Run() observable reserved. reservedRunNum to {reservedRunNum}.");
 
-            running.runNum = reservedRunNum;
-            running.duration = tweenAnim.transition.duration;
-            running.elapsed = (resetElapsed || running.IsRollBack) ? MIN_ELAPSED_TIME : Mathf.Max(running.elapsed, MIN_ELAPSED_TIME);
-            running.IsRewinding = false;
-            running.IsRollBack = false;
-            running.togglePingPong = false;
+            currState.runNum = reservedNum;
+            currState.duration = tweenAnim.transition.duration;
+            currState.elapsed = (resetElapsed || currState.IsRollBack) ? MIN_ELAPSED_TIME : Mathf.Max(currState.elapsed, MIN_ELAPSED_TIME);
+            currState.IsRewinding = false;
+            currState.IsRollBack = false;
+            currState.togglePingPong = false;
 
-            SetAnimation(running);
+            SetAnimation(currState);
 
             // Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Run() observable started. runNum is {reservedRunNum}.");
 
             return Observable.NextFrame().ContinueWith(
                 Observable.EveryUpdate()
-                    .TakeWhile(_ => (tweenAnim.transition.IsLooping || running.elapsed < running.duration) && running.runNum == reservedRunNum)
+                    .TakeWhile(_ => (tweenAnim.transition.IsLooping || currState.elapsed < currState.duration) && currState.runNum == reservedNum)
                     .Do(_ =>
                     {
-                        AdvanceElapsed(running, Time.deltaTime);
-                        UpdateAnimation(running);
+                        AdvanceElapsed(currState, Time.deltaTime);
+                        UpdateAnimation(currState);
                     })
                     .DoOnCancel(() =>
                     {
-                        if (running.runNum != reservedRunNum)
+                        if (currState.runNum != reservedNum)
                         {
-                            if (running.source.transition.loop != TweenAnim.Loopings.None)
-                                UnsetAnimation(running);
+                            if (currState.source.transition.loop != TweenAnim.Loopings.None)
+                                UnsetAnimation(currState);
 
                             // Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Run() observable cancelled. runNum is {reservedRunNum}.");
 
@@ -97,33 +100,33 @@ namespace Retween.Rx
 
                         if (!tweenAnim.transition.IsLooping && tweenAnim.rewindOnCancelled)
                         {
-                            running.IsRewinding = true;
+                            currState.IsRewinding = true;
 
                             Observable.EveryUpdate()
-                                .TakeWhile(_ => running.elapsed > MIN_ELAPSED_TIME && running.runNum == reservedRunNum)
+                                .TakeWhile(_ => currState.elapsed > MIN_ELAPSED_TIME && currState.runNum == reservedNum)
                                 .DoOnCompleted(() =>
                                 {
-                                    if (running.runNum == reservedRunNum)
+                                    if (currState.runNum == reservedNum)
                                     {
-                                        UnsetAnimation(running);
+                                        UnsetAnimation(currState);
 
-                                        running.elapsed = MIN_ELAPSED_TIME;
-                                        running.IsRewinding = false;
+                                        currState.elapsed = MIN_ELAPSED_TIME;
+                                        currState.IsRewinding = false;
                                     }
 
                                     ForceToRepaint();
                                 })
                                 .Subscribe(_ =>
                                 {
-                                    AdvanceElapsed(running, Time.deltaTime);
-                                    UpdateAnimation(running);
+                                    AdvanceElapsed(currState, Time.deltaTime);
+                                    UpdateAnimation(currState);
                                 }).AddTo(this);
 
                             // Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Rewind() observable started via rewindOnCancelled. runNum is {reservedRunNum}.");
                         }
                         else
                         {
-                            UnsetAnimation(running);
+                            UnsetAnimation(currState);
                             // Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Run() observable cancelled. runNum is {reservedRunNum}.");
                         }
 
@@ -131,94 +134,95 @@ namespace Retween.Rx
                     })
                     .DoOnCompleted(() =>
                     {
-                        if (running.runNum == reservedRunNum)
+                        if (currState.runNum == reservedNum)
                         {
-                            UnsetAnimation(running);
-                            running.elapsed = running.duration;
+                            UnsetAnimation(currState);
+                            currState.elapsed = currState.duration;
 
                             // Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Run() observable completed. runNum is {reservedRunNum}.");
                         }
                         else
                         {
-                            if (running.source.transition.loop != TweenAnim.Loopings.None)
-                                UnsetAnimation(running);
+                            if (currState.source.transition.loop != TweenAnim.Loopings.None)
+                                UnsetAnimation(currState);
 
                             // Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Run()  observable cancelled. runNum is {reservedRunNum}.");
                         }
 
                         ForceToRepaint();
                     })
-                    .Select(_ => running)
+                    .Select(_ => currState)
                 );
         }
 
-        public IObservable<TweenAnimRunning> Rewind(TweenAnim tweenAnim)
+        public IObservable<TweenAnimState> Rewind(TweenAnim tweenAnim)
         {
-            if (!animRunnings.ContainsKey(tweenAnim))
-                animRunnings.Add(tweenAnim, new TweenAnimRunning(tweenAnim));
-
-            var running = animRunnings[tweenAnim];
+            if (!tweenStates.TryGetValue(tweenAnim, out var currState))
+            {
+                currState = new TweenAnimState(tweenAnim);
+                tweenStates.Add(tweenAnim, currState);
+            }
 
             if (tweenAnim.transition.IsLooping)
             {
-                running.runNum = ReserveRunNumber();
+                currState.runNum = ReserveRunNumber();
 
-                // Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' transition.IsLooping is true. returns empty Rewind() observable. runNum is {running.runNum}.");
+                // Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' transition.IsLooping is true. returns empty Rewind() observable. runNum is {animState.runNum}.");
 
-                return Observable.Return(running);
+                return Observable.Return(currState);
             }
-            else if (running.IsRewinding)
+            else if (currState.IsRewinding)
             {
-                var currRunNum = running.runNum;
+                var currRunNum = currState.runNum;
 
-                //Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Rewind() observable is running. returns empty Rewind() observable. runNum is {currRunNum}.");
+                //Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Rewind() observable is animState. returns empty Rewind() observable. runNum is {currRunNum}.");
 
                 return Observable.EveryUpdate()
-                    .TakeWhile(_ => running.elapsed > MIN_ELAPSED_TIME && running.runNum == currRunNum)
-                    .Select(_ => running);
+                    .TakeWhile(_ => currState.elapsed > MIN_ELAPSED_TIME && currState.runNum == currRunNum)
+                    .Select(_ => currState);
             }
-            else if (running.IsRollBack)
+            else if (currState.IsRollBack)
             {
-                running = animRunnings[tweenAnim];
+                currState = tweenStates[tweenAnim];
 
-                var currRunNum = running.runNum;
+                var currRunNum = currState.runNum;
 
-                //Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Rollback() observable is running. returns empty Rewind() observable. runNum is {currRunNum}.");
+                //Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Rollback() observable is animState. returns empty Rewind() observable. runNum is {currRunNum}.");
 
                 return Observable.EveryUpdate()
-                    .TakeWhile(_ => running.elapsed < running.duration && running.runNum == currRunNum)
-                    .Select(_ => running);
+                    .TakeWhile(_ => currState.elapsed < currState.duration && currState.runNum == currRunNum)
+                    .Select(_ => currState);
             }
 
             var reservedRunNum = ReserveRunNumber();
 
             //Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Rewind() observable reserved. reservedRunNum to {reservedRunNum}.");
 
-            running.runNum = reservedRunNum;
-            running.duration = tweenAnim.transition.duration;
-            running.elapsed = Mathf.Min(running.elapsed, running.duration);
-            running.IsRewinding = true;
-            running.IsRollBack = false;
-            running.togglePingPong = false;
+            currState.runNum = reservedRunNum;
+            currState.duration = tweenAnim.transition.duration;
+            currState.elapsed = Mathf.Min(currState.elapsed, currState.duration);
+            currState.IsRewinding = true;
+            currState.IsRollBack = false;
+            currState.togglePingPong = false;
 
-            SetAnimation(running);
+            SetAnimation(currState);
 
             //Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Rewind() observable started. runNum is {reservedRunNum}.");
 
             return Observable.NextFrame().ContinueWith(
                 Observable.EveryUpdate()
-                    .TakeWhile(_ => running.elapsed > MIN_ELAPSED_TIME && running.runNum == reservedRunNum)
+                    .TakeWhile(_ => currState.elapsed > MIN_ELAPSED_TIME && currState.runNum == reservedRunNum)
                     .Do(_ =>
                     {
-                        AdvanceElapsed(running, Time.deltaTime);
-                        UpdateAnimation(running);
+                        AdvanceElapsed(currState, Time.deltaTime);
+                        UpdateAnimation(currState);
                     })
                     .DoOnCancel(() =>
                     {
-                        if (running.runNum == reservedRunNum)
+                        if (currState.runNum == reservedRunNum)
                         {
-                            UnsetAnimation(running);
-                            running.IsRewinding = false;
+                            UnsetAnimation(currState);
+                            currState.IsRewinding = false;
 
                             //Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Rewind() observable cancelled. runNum is {reservedRunNum}.");
                         }
@@ -227,12 +231,12 @@ namespace Retween.Rx
                     })
                     .DoOnCompleted(() =>
                     {
-                        if (running.runNum == reservedRunNum)
+                        if (currState.runNum == reservedRunNum)
                         {
-                            UnsetAnimation(running);
+                            UnsetAnimation(currState);
 
-                            running.elapsed = MIN_ELAPSED_TIME;
-                            running.IsRewinding = false;
+                            currState.elapsed = MIN_ELAPSED_TIME;
+                            currState.IsRewinding = false;
 
                             //Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Rewind() observable completed. runNum is {reservedRunNum}.");
                         }
@@ -243,112 +247,113 @@ namespace Retween.Rx
 
                         ForceToRepaint();
                     })
-                    .Select(_ => running)
+                    .Select(_ => currState)
                 );
         }
 
-        public IObservable<TweenAnimRunning> Rollback(TweenAnim tweenAnim, bool acceptRewinding = true)
+        public IObservable<TweenAnimState> Rollback(TweenAnim tweenAnim, bool acceptRewinding = true)
         {
-            if (!animRunnings.ContainsKey(tweenAnim))
-                animRunnings.Add(tweenAnim, new TweenAnimRunning(tweenAnim));
-
-            var running = animRunnings[tweenAnim];
+            if (!tweenStates.TryGetValue(tweenAnim, out var currState))
+            {
+                currState = new TweenAnimState(tweenAnim);
+                tweenStates.Add(tweenAnim, currState);
+            }
 
             if (tweenAnim.transition.IsLooping || !tweenAnim.runRollback)
             {
-                running.runNum = ReserveRunNumber();
-                running.elapsed = MIN_ELAPSED_TIME;
-                running.IsRewinding = false;
+                currState.runNum = ReserveRunNumber();
+                currState.elapsed = MIN_ELAPSED_TIME;
+                currState.IsRewinding = false;
 
-                UnsetAnimation(running);
+                UnsetAnimation(currState);
 
                 // if (tweenAnim.transition.IsLooping)
-                //     Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' transition.IsLooping is true. returns empty Rollback() observable. runNum is {running.runNum}.");
+                //     Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' transition.IsLooping is true. returns empty Rollback() observable. runNum is {animState.runNum}.");
                 // else if (!tweenAnim.runRollback)
-                //     Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' ransition.runRollback is false. returns empty Rollback() observable. runNum is {running.runNum}.");
+                //     Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' ransition.runRollback is false. returns empty Rollback() observable. runNum is {animState.runNum}.");
 
-                return Observable.Return(running);
+                return Observable.Return(currState);
             }
-            else if (running.IsRewinding)
+            else if (currState.IsRewinding)
             {
-                var currRunNum = running.runNum;
+                var currRunNum = currState.runNum;
 
-                // Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Rewind() observable is running. returns empty Rollback() TweenAnim observable. runNum is {currRunNum}.");
+                // Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Rewind() observable is animState. returns empty Rollback() TweenAnim observable. runNum is {currRunNum}.");
 
                 return Observable.EveryUpdate()
-                    .TakeWhile(_ => running.elapsed > MIN_ELAPSED_TIME && running.runNum == currRunNum)
-                    .Select(_ => running);
+                    .TakeWhile(_ => currState.elapsed > MIN_ELAPSED_TIME && currState.runNum == currRunNum)
+                    .Select(_ => currState);
             }
-            else if (running.IsRollBack)
+            else if (currState.IsRollBack)
             {
-                running = animRunnings[tweenAnim];
+                currState = tweenStates[tweenAnim];
 
-                var currRunNum = running.runNum;
+                var currRunNum = currState.runNum;
 
-                // Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Rollback() observable is running. returns empty Rollback() TweenAnim observable. runNum is {currRunNum}.");
+                // Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Rollback() observable is animState. returns empty Rollback() TweenAnim observable. runNum is {currRunNum}.");
 
                 return Observable.EveryUpdate()
-                    .TakeWhile(_ => running.elapsed < running.duration && running.runNum == currRunNum)
-                    .Select(_ => running);
+                    .TakeWhile(_ => currState.elapsed < currState.duration && currState.runNum == currRunNum)
+                    .Select(_ => currState);
             }
 
             var reservedRunNum = ReserveRunNumber();
 
             // Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Rollback() observable reserved. reservedRunNum to {reservedRunNum}.");
 
-            running.runNum = reservedRunNum;
+            currState.runNum = reservedRunNum;
 
-            if (running.source.rewindOnRollback || (running.elapsed < running.duration && acceptRewinding))
+            if (currState.source.rewindOnRollback || (currState.elapsed < currState.duration && acceptRewinding))
             {
-                running.duration = tweenAnim.transition.duration;
-                running.elapsed = Mathf.Min(running.elapsed, running.duration);
-                running.IsRewinding = true;
-                running.IsRollBack = false;
-                running.togglePingPong = false;
+                currState.duration = tweenAnim.transition.duration;
+                currState.elapsed = Mathf.Min(currState.elapsed, currState.duration);
+                currState.IsRewinding = true;
+                currState.IsRollBack = false;
+                currState.togglePingPong = false;
 
                 // Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' allowRewinding is true. executes Rewind() observable. runNum is {reservedRunNum}.");
             }
             else
             {
-                running.duration = tweenAnim.rollbackTransition.duration;
-                running.elapsed = MIN_ELAPSED_TIME;
-                running.IsRewinding = false;
-                running.IsRollBack = true;
-                running.togglePingPong = false;
+                currState.duration = tweenAnim.rollbackTransition.duration;
+                currState.elapsed = MIN_ELAPSED_TIME;
+                currState.IsRewinding = false;
+                currState.IsRollBack = true;
+                currState.togglePingPong = false;
 
                 // Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Rollback() observable started. runNum is {reservedRunNum}.");
             }
 
-            SetAnimation(running);
+            SetAnimation(currState);
 
             return Observable.NextFrame().ContinueWith(
                 Observable.EveryUpdate()
                     .TakeWhile(_ =>
                     {
-                        if (running.IsRewinding)
-                            return running.elapsed > MIN_ELAPSED_TIME && reservedRunNum == running.runNum;
+                        if (currState.IsRewinding)
+                            return currState.elapsed > MIN_ELAPSED_TIME && reservedRunNum == currState.runNum;
                         else
-                            return running.elapsed < running.duration && reservedRunNum == running.runNum;
+                            return currState.elapsed < currState.duration && reservedRunNum == currState.runNum;
                     })
                     .Do(_ =>
                     {
-                        AdvanceElapsed(running, Time.deltaTime);
-                        UpdateAnimation(running);
+                        AdvanceElapsed(currState, Time.deltaTime);
+                        UpdateAnimation(currState);
                     })
                     .DoOnCancel(() =>
                     {
-                        if (running.runNum == reservedRunNum)
+                        if (currState.runNum == reservedRunNum)
                         {
-                            UnsetAnimation(running);
+                            UnsetAnimation(currState);
 
-                            if (running.IsRollBack)
+                            if (currState.IsRollBack)
                             {
-                                running.duration = tweenAnim.transition.duration;
-                                running.elapsed = MIN_ELAPSED_TIME;
+                                currState.duration = tweenAnim.transition.duration;
+                                currState.elapsed = MIN_ELAPSED_TIME;
                             }
 
-                            running.IsRewinding = false;
-                            running.IsRollBack = false;
+                            currState.IsRewinding = false;
+                            currState.IsRollBack = false;
 
                             // Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Rollback() observable cancelled. runNum is {reservedRunNum}.");
                         }
@@ -357,19 +362,19 @@ namespace Retween.Rx
                     })
                     .DoOnCompleted(() =>
                     {
-                        if (running.runNum == reservedRunNum)
+                        if (currState.runNum == reservedRunNum)
                         {
-                            UnsetAnimation(running);
+                            UnsetAnimation(currState);
 
-                            if (running.IsRollBack)
+                            if (currState.IsRollBack)
                             {
-                                running.duration = tweenAnim.transition.duration;
-                                running.elapsed = MIN_ELAPSED_TIME;
+                                currState.duration = tweenAnim.transition.duration;
+                                currState.elapsed = MIN_ELAPSED_TIME;
                             }
 
-                            running.elapsed = MIN_ELAPSED_TIME;
-                            running.IsRewinding = false;
-                            running.IsRollBack = false;
+                            currState.elapsed = MIN_ELAPSED_TIME;
+                            currState.IsRewinding = false;
+                            currState.IsRollBack = false;
 
                             // Debug.Log($"TweenPlayer => TweenAnim '{tweenAnim.gameObject.name}' Rollback() observable completed. runNum is {reservedRunNum}.");
                         }
@@ -380,55 +385,55 @@ namespace Retween.Rx
 
                         ForceToRepaint();
                     })
-                    .Select(_ => running)
+                    .Select(_ => currState)
                 );
         }
 
-        public void AdvanceElapsed(TweenAnimRunning running, float deltaTime)
+        public void AdvanceElapsed(TweenAnimState animState, float deltaTime)
         {
-            switch (running.source.transition.loop)
+            switch (animState.source.transition.loop)
             {
                 case TweenAnim.Loopings.None:
-                    if (running.IsRewinding)
+                    if (animState.IsRewinding)
                     {
-                        running.elapsed -= deltaTime;
+                        animState.elapsed -= deltaTime;
                     }
                     else
                     {
                         // 딜레이로 인한 초기값 튐 방지
-                        running.elapsed = Mathf.Max(running.elapsed, MIN_ELAPSED_TIME);
-                        running.elapsed += deltaTime;
+                        animState.elapsed = Mathf.Max(animState.elapsed, MIN_ELAPSED_TIME);
+                        animState.elapsed += deltaTime;
                     }
 
                     break;
 
                 case TweenAnim.Loopings.Loop:
-                    running.elapsed += deltaTime;
+                    animState.elapsed += deltaTime;
 
-                    if (running.elapsed >= running.source.transition.duration)
-                        running.elapsed -= running.source.transition.duration;
+                    if (animState.elapsed >= animState.source.transition.duration)
+                        animState.elapsed -= animState.source.transition.duration;
 
                     break;
 
                 case TweenAnim.Loopings.PingPong:
-                    if (running.togglePingPong)
+                    if (animState.togglePingPong)
                     {
-                        running.elapsed -= deltaTime;
+                        animState.elapsed -= deltaTime;
 
-                        if (running.elapsed <= MIN_ELAPSED_TIME)
+                        if (animState.elapsed <= MIN_ELAPSED_TIME)
                         {
-                            running.elapsed = -running.elapsed;
-                            running.togglePingPong = false;
+                            animState.elapsed = -animState.elapsed;
+                            animState.togglePingPong = false;
                         }
                     }
                     else
                     {
-                        running.elapsed += deltaTime;
+                        animState.elapsed += deltaTime;
 
-                        if (running.elapsed >= running.source.transition.duration)
+                        if (animState.elapsed >= animState.source.transition.duration)
                         {
-                            running.elapsed = running.source.transition.duration + running.source.transition.duration - running.elapsed;
-                            running.togglePingPong = true;
+                            animState.elapsed = animState.source.transition.duration + animState.source.transition.duration - animState.elapsed;
+                            animState.togglePingPong = true;
                         }
                     }
 
@@ -436,71 +441,63 @@ namespace Retween.Rx
             }
         }
 
-        void SetAnimation(TweenAnimRunning running)
+        void SetAnimation(TweenAnimState animState)
         {
             if (__anim.clip != null)
                 Debug.Log($"@@ clip => {__anim.clip}");
 
-            foreach (var c in running.source.animClips)
+            foreach (var c in animState.source.animClips)
             {
                 if (__anim.GetClip(c.name) != null)
                     continue;
 
                 __anim.AddClip(c, c.name);
 
-                var t = Mathf.Clamp01(running.elapsed / (running.IsRollBack ? running.source.rollbackTransition.duration : running.source.transition.duration));
+                var t = Mathf.Clamp01(animState.elapsed / (animState.IsRollBack ? animState.source.rollbackTransition.duration : animState.source.transition.duration));
 
-                if (running.IsRollBack)
-                    __anim[c.name].normalizedTime = TweenFunc.GetValue(running.source.rollbackTransition.easing, 1f, 0f, t);
+                if (animState.IsRollBack)
+                    __anim[c.name].normalizedTime = TweenFunc.GetValue(animState.source.rollbackTransition.easing, 1f, 0f, t);
                 else
-                    __anim[c.name].normalizedTime = TweenFunc.GetValue(running.source.transition.easing, 0f, 1f, t);
+                    __anim[c.name].normalizedTime = TweenFunc.GetValue(animState.source.transition.easing, 0f, 1f, t);
 
                 __anim[c.name].normalizedSpeed = 0f;
                 __anim[c.name].weight = 1f;
                 __anim[c.name].enabled = true;
             }
 
-            running.animEnabled = true;
+            animState.animEnabled = true;
         }
 
-        void UnsetAnimation(TweenAnimRunning running)
+        void UnsetAnimation(TweenAnimState animState)
         {
-            foreach (var c in running.source.animClips)
+            foreach (var c in animState.source.animClips)
             {
                 if (__anim.GetClip(c.name) != null)
                     __anim.RemoveClip(c.name);
             }
 
-            running.animEnabled = false;
+            animState.animEnabled = false;
         }
 
-        public void UpdateAnimation(TweenAnimRunning running)
+        public void UpdateAnimation(TweenAnimState animState)
         {
-            var t = Mathf.Clamp01(running.elapsed / (running.IsRollBack ? running.source.rollbackTransition.duration : running.source.transition.duration));
+            var t = Mathf.Clamp01(animState.elapsed / (animState.IsRollBack ? animState.source.rollbackTransition.duration : animState.source.transition.duration));
 
-            foreach (var c in running.source.animClips)
+            foreach (var c in animState.source.animClips)
             {
                 try
                 {
-                    if (running.IsRollBack)
-                        __anim[c.name].normalizedTime = TweenFunc.GetValue(running.source.rollbackTransition.easing, 1f, 0f, t);
+                    if (animState.IsRollBack)
+                        __anim[c.name].normalizedTime = TweenFunc.GetValue(animState.source.rollbackTransition.easing, 1f, 0f, t);
                     else
-                        __anim[c.name].normalizedTime = TweenFunc.GetValue(running.source.transition.easing, 0f, 1f, t);
+                        __anim[c.name].normalizedTime = TweenFunc.GetValue(animState.source.transition.easing, 0f, 1f, t);
                 }
                 catch (NullReferenceException e)
                 {
-                    Debug.LogWarning($"TweenPlayer => __anim[c.name] returns {e}. {c.name} in {running.source.name} is not a valid animation clip!!");
+                    Debug.LogWarning($"TweenPlayer => __anim[c.name] returns {e}. {c.name} in {animState.source.name} is not a valid animation clip!!");
                 }
             }
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="TweenAnim"></typeparam>
-        /// <typeparam name="TweenAnimInstance"></typeparam>
-        /// <returns></returns>
-        public Dictionary<TweenAnim, TweenAnimRunning> animRunnings = new Dictionary<TweenAnim, TweenAnimRunning>();
 
 #if ENABLE_DOTWEEN_SEQUENCE
     public Dictionary<TweenSequence, TweenSequenceRunning> dotweeenSeqRunnings = new();
@@ -510,57 +507,57 @@ namespace Retween.Rx
         if (!dotweeenSeqRunnings.ContainsKey(tweenSeq))
             dotweeenSeqRunnings.Add(tweenSeq, new TweenSequenceRunning(tweenSeq));
 
-        var running = dotweeenSeqRunnings[tweenSeq];
+        var animState = dotweeenSeqRunnings[tweenSeq];
 
-        if (running.dotweenSeq != null && running.dotweenSeq.IsPlaying()) {
-            var currRunNum = running.runNum;
+        if (animState.dotweenSeq != null && animState.dotweenSeq.IsPlaying()) {
+            var currRunNum = animState.runNum;
 
-            //Debug.Log($"TweenPlayer => TweenSequence '{TweenSequence.gameObject.name}' Run() observable is running. returns empty Run() observable. runNum is {currRunNum}.");
+            //Debug.Log($"TweenPlayer => TweenSequence '{TweenSequence.gameObject.name}' Run() observable is animState. returns empty Run() observable. runNum is {currRunNum}.");
 
             return Observable.EveryUpdate()
-                .TakeWhile(_ => running.dotweenSeq.IsPlaying() && running.runNum == currRunNum)
-                .Select(_ => running);
+                .TakeWhile(_ => animState.dotweenSeq.IsPlaying() && animState.runNum == currRunNum)
+                .Select(_ => animState);
         }
 
         var reservedRunNum = ReserveRunNumber();
 
         //Debug.Log($"TweenPlayer => TweenSequence '{tweenSeq.gameObject.name}' Run() observable reserved. reservedRunNum to {reservedRunNum}.");
 
-        running.runNum = reservedRunNum;
-        running.isRewinding = false;
+        animState.runNum = reservedRunNum;
+        animState.isRewinding = false;
 
-        if (running.dotweenSeq == null || running.source.reinitializeOnRun) {
-            if (running.dotweenSeq != null)
-                running.dotweenSeq.Kill();
+        if (animState.dotweenSeq == null || animState.source.reinitializeOnRun) {
+            if (animState.dotweenSeq != null)
+                animState.dotweenSeq.Kill();
                 
-            running.dotweenSeq = running.source.dotweenSeqMaker.Invoke(gameObject);
-            running.dotweenSeq.SetAutoKill(false);
+            animState.dotweenSeq = animState.source.dotweenSeqMaker.Invoke(gameObject);
+            animState.dotweenSeq.SetAutoKill(false);
         }
 
         if (resetPosition)
-            running.dotweenSeq.Restart(false);
+            animState.dotweenSeq.Restart(false);
         else
-            running.dotweenSeq.PlayForward();
+            animState.dotweenSeq.PlayForward();
             
         //Debug.Log($"TweenPlayer => TweenSequence '{tweenSeq.gameObject.name}' Run() observable started. runNum is {reservedRunNum}.");
 
         return Observable.NextFrame().ContinueWith(
             Observable.EveryUpdate()
-                .TakeWhile(_ => running.dotweenSeq.IsPlaying() && running.runNum == reservedRunNum)
+                .TakeWhile(_ => animState.dotweenSeq.IsPlaying() && animState.runNum == reservedRunNum)
                 .DoOnCancel(() => {
-                    if (running.runNum != reservedRunNum)
+                    if (animState.runNum != reservedRunNum)
                         return;
 
                     if (tweenSeq.rewindOnCancelled) {
-                        running.dotweenSeq.PlayBackwards();
-                        running.isRewinding = true;
+                        animState.dotweenSeq.PlayBackwards();
+                        animState.isRewinding = true;
 
                         Observable.EveryUpdate()
-                            .TakeWhile(_ => running.dotweenSeq.IsPlaying() && running.runNum == reservedRunNum)
+                            .TakeWhile(_ => animState.dotweenSeq.IsPlaying() && animState.runNum == reservedRunNum)
                             .DoOnCompleted(() => {
-                                if (running.runNum == reservedRunNum) {
-                                    running.dotweenSeq.Pause();
-                                    running.isRewinding = false;
+                                if (animState.runNum == reservedRunNum) {
+                                    animState.dotweenSeq.Pause();
+                                    animState.isRewinding = false;
                                 }
                             })
                             .Subscribe()
@@ -569,22 +566,22 @@ namespace Retween.Rx
                         //Debug.Log($"TweenPlayer => TweenSequence '{tweenSeq.gameObject.name}' Rewind() observable started via rewindOnCancelled . runNum is {reservedRunNum}.");
                     }
                     else {
-                        running.dotweenSeq.Pause();
+                        animState.dotweenSeq.Pause();
                     }
 
                     ForceToRepaint();
                 })
                 .DoOnCancel(() => {
-                    if (running.runNum == reservedRunNum) {
-                        running.dotweenSeq.Pause();
+                    if (animState.runNum == reservedRunNum) {
+                        animState.dotweenSeq.Pause();
                         //Debug.Log($"TweenPlayer => TweenSequence '{tweenSeq.gameObject.name}' Run() observable cancelled. runNum is {reservedRunNum}.");
                     }
 
                     ForceToRepaint();
                 })
                 .DoOnCompleted(() => {
-                    if (running.runNum == reservedRunNum) {
-                        running.dotweenSeq.Pause();
+                    if (animState.runNum == reservedRunNum) {
+                        animState.dotweenSeq.Pause();
                         //Debug.Log($"TweenPlayer => TweenSequence '{tweenSeq.gameObject.name}' Run() observable completed. runNum is {reservedRunNum}.");
                     }
                     else {
@@ -593,7 +590,7 @@ namespace Retween.Rx
 
                     ForceToRepaint();
                 })
-                .Select(_ => running)
+                .Select(_ => animState)
             );
     }
 
@@ -602,45 +599,45 @@ namespace Retween.Rx
         if (!dotweeenSeqRunnings.ContainsKey(tweenSeq))
             dotweeenSeqRunnings.Add(tweenSeq, new TweenSequenceRunning(tweenSeq));
 
-        var running = dotweeenSeqRunnings[tweenSeq];
+        var animState = dotweeenSeqRunnings[tweenSeq];
 
-        if (!tweenSeq.rewindOnRollback || running.dotweenSeq == null) {
-            var running.runNum = ReserveRunNumber();
+        if (!tweenSeq.rewindOnRollback || animState.dotweenSeq == null) {
+            var animState.runNum = ReserveRunNumber();
 
             // if (!tweenSeq.rewindOnRollback)
-            //     Debug.Log($"TweenPlayer => TweenSequence '{tweenSeq.gameObject.name}' rewindOnRollback is false. returns empty Rewind() observable. runNum is {running.runNum}.");
-            // else if (running.dotweenSeq == null)
-            //     Debug.Log($"TweenPlayer => TweenSequence '{tweenSeq.gameObject.name}' is never played. returns empty Rewind() observable. runNum is {running.runNum}.");
+            //     Debug.Log($"TweenPlayer => TweenSequence '{tweenSeq.gameObject.name}' rewindOnRollback is false. returns empty Rewind() observable. runNum is {animState.runNum}.");
+            // else if (animState.dotweenSeq == null)
+            //     Debug.Log($"TweenPlayer => TweenSequence '{tweenSeq.gameObject.name}' is never played. returns empty Rewind() observable. runNum is {animState.runNum}.");
 
-            return Observable.Return(running);
+            return Observable.Return(animState);
         }
-        else if (running.isRewinding) {
-            var currRunNum = running.runNum;
+        else if (animState.isRewinding) {
+            var currRunNum = animState.runNum;
 
-            //Debug.Log($"TweenPlayer => TweenSequence '{tweenAnim.gameObject.name}' Rewind() observable is running. returns empty Rewind() observable. runNum is {currRunNum}.");
+            //Debug.Log($"TweenPlayer => TweenSequence '{tweenAnim.gameObject.name}' Rewind() observable is animState. returns empty Rewind() observable. runNum is {currRunNum}.");
 
             return Observable.EveryUpdate()
-                    .TakeWhile(_ => running.dotweenSeq.IsPlaying() && running.runNum == currRunNum)
-                    .Select(_ => running);
+                    .TakeWhile(_ => animState.dotweenSeq.IsPlaying() && animState.runNum == currRunNum)
+                    .Select(_ => animState);
         }
         
         var reservedRunNum = ReserveRunNumber();
 
         //Debug.Log($"TweenPlayer => TweenSequence '{tweenSeq.gameObject.name}' Rewind() observable reserved. reservedRunNum to {reservedRunNum}.");
         
-        running.runNum = reservedRunNum;
-        running.dotweenSeq.PlayBackwards();
-        running.isRewinding = true;
+        animState.runNum = reservedRunNum;
+        animState.dotweenSeq.PlayBackwards();
+        animState.isRewinding = true;
 
         //Debug.Log($"TweenPlayer => TweenSequence '{tweenSeq.gameObject.name}' Rewind() observable started. runNum is {reservedRunNum}.");
 
         return Observable.NextFrame().ContinueWith(
             Observable.EveryUpdate()
-                .TakeWhile(_ => running.dotweenSeq.IsPlaying() && running.runNum == reservedRunNum)
+                .TakeWhile(_ => animState.dotweenSeq.IsPlaying() && animState.runNum == reservedRunNum)
                 .DoOnCancel(() => {
-                    if (running.runNum == reservedRunNum) {
-                        running.dotweenSeq.Pause();
-                        running.isRewinding = false;
+                    if (animState.runNum == reservedRunNum) {
+                        animState.dotweenSeq.Pause();
+                        animState.isRewinding = false;
                     }
 
                     //Debug.Log($"TweenPlayer => TweenSequence '{tweenSeq.gameObject.name}' Rewind() observable cancelled. runNum is {reservedRunNum}.");
@@ -648,16 +645,16 @@ namespace Retween.Rx
                     ForceToRepaint();
                 })
                 .DoOnCompleted(() => {
-                    if (running.runNum == reservedRunNum) {
-                        running.dotweenSeq.Pause();
-                        running.isRewinding = false;
+                    if (animState.runNum == reservedRunNum) {
+                        animState.dotweenSeq.Pause();
+                        animState.isRewinding = false;
                     }
 
                     //Debug.Log($"TweenPlayer => TweenSequence '{tweenSeq.gameObject.name}' Rewind() observable completed. runNum is {reservedRunNum}.");
 
                     ForceToRepaint();
                 })
-                .Select(_ => running)
+                .Select(_ => animState)
             );
     }
 #endif
@@ -671,14 +668,14 @@ namespace Retween.Rx
         }
 
 #if UNITY_EDITOR
-        Dictionary<int, List<string>> __runningHistory = new();
-        public List<string> RunningHistory
+        Dictionary<int, List<string>> __animStateHistory = new();
+        public List<string> AnimStateHistory
         {
             get
             {
                 var ret = new List<string>();
-                foreach (var r in __runningHistory.Keys.OrderBy(k => k))
-                    ret.AddRange(__runningHistory[r]);
+                foreach (var r in __animStateHistory.Keys.OrderBy(k => k))
+                    ret.AddRange(__animStateHistory[r]);
 
                 return ret;
             }

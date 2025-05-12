@@ -10,13 +10,13 @@ public class UIGameOverlay : MonoBehaviour
     public Slider _sliderHP;
     public Slider _sliderStamina;
 
-    HeroBrain _heroBrain = null;
+    SlayerBrain _heroBrain = null;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        _heroBrain = FindFirstObjectByType<HeroBrain>().GetComponent<HeroBrain>();
+        _heroBrain = FindFirstObjectByType<SlayerBrain>().GetComponent<SlayerBrain>();
 
         _heroBrain.BB.stat.stamina.Subscribe(v =>
         {

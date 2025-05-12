@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 8605580359376196877}
   m_Layer: 0
   m_Name: PixelCameraSystem
-  m_TagString: MainCamera
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -350,7 +350,7 @@ GameObject:
   - component: {fileID: 1032179972197267321}
   m_Layer: 0
   m_Name: ViewCamera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

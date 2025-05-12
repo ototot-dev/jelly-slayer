@@ -30,18 +30,18 @@ namespace Game
         IEnumerator Loading_Coroutine()
         {
             //* 지형 생성
-            if (!GameContext.Instance.terrainManager.IsTerrainGenerated)
-            {
-                GameContext.Instance.terrainManager.Generate();
-                yield return new WaitForSeconds(0.5f);
-            }
+            // if (!GameContext.Instance.terrainManager.IsTerrainGenerated)
+            // {
+            //     GameContext.Instance.terrainManager.Generate();
+            //     yield return new WaitForSeconds(0.5f);
+            // }
 
             //* 슬라임 생성
             // GameContext.Instance.jellySpawnManager.Spawn(TerrainManager.GetTerrainPoint(Vector3.zero), 1, JellySlimeBlackboard.ActiveProjectiles.Ball);
-            // yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.5f);
 
             //* 영웅 생성
-            GameContext.Instance.playerCtrler.SpawnHeroPawn(Resources.Load<GameObject>("Pawn/Hero"), true).transform.position = TerrainManager.GetTerrainPoint(Vector3.zero);
+            // GameContext.Instance.playerCtrler.SpawnHeroPawn(Resources.Load<GameObject>("Pawn/Hero"), true).transform.position = TerrainManager.GetTerrainPoint(Vector3.zero);
             yield return new WaitForSeconds(0.1f);
 
             isLoadingCompleted.Value = true;

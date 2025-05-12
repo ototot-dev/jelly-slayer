@@ -23,7 +23,7 @@ namespace Game
 
             emitterBrain.Where(v => v != null).Subscribe(v =>
             {
-                heroBrain = v.GetComponent<HeroBrain>();
+                heroBrain = v.GetComponent<SlayerBrain>();
             });
         }
         

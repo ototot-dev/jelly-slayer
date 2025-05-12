@@ -61,7 +61,7 @@ namespace Game
             // meshRenderer.material.SetFloat("__tintStartTime", Time.timeSinceLevelLoad);
             // meshRenderer.material.SetFloat("__tintFrequency", 2);
 
-            emitterBrain.Where(v => v != null).Subscribe(v => heroBrain = v.GetComponent<HeroBrain>()).AddTo(this);
+            emitterBrain.Where(v => v != null).Subscribe(v => heroBrain = v.GetComponent<SlayerBrain>()).AddTo(this);
 
             onHitSomething += (obj) =>
             {

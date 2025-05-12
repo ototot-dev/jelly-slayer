@@ -63,7 +63,7 @@ namespace Game
 
             emitterBrain.Subscribe(v =>
             {
-                heroBrain = emitterBrain.Value.GetComponent<HeroBrain>();
+                heroBrain = emitterBrain.Value.GetComponent<SlayerBrain>();
                 __startPoint = transform.position;
                 __endPoint = transform.position + transform.forward.Vector2D().normalized * spikeDistance;
             });

@@ -5,7 +5,9 @@ using FIMSpace.FProceduralAnimation;
 using UniRx;
 using UniRx.Triggers.Extension;
 using UnityEngine;
+using UnityEngine.Animations;
 using UnityEngine.Animations.Rigging;
+using UnityEngine.Playables;
 
 namespace Game
 {
@@ -19,8 +21,8 @@ namespace Game
         public RagdollAnimator2 ragdollAnimator;
         public Action<AnimatorStateInfo, int> onAnimStateEnter;
         public Action<AnimatorStateInfo, int> onAnimStateExit;
-
         readonly Dictionary<string, ObservableStateMachineTriggerEx> __observableStateMachineTriggersCached = new();
+
         public ObservableStateMachineTriggerEx FindObservableStateMachineTriggerEx(string stateName)
         {
             if (__observableStateMachineTriggersCached.TryGetValue(stateName, out var ret))
@@ -30,6 +32,83 @@ namespace Game
             __observableStateMachineTriggersCached.Add(stateName, found);
 
             return found;
+        }
+
+        void OnDestroy()
+        {
+            __playableGraph.Destroy();
+        }
+
+        protected PlayableGraph __playableGraph;
+        protected AnimationPlayableOutput __playableOutput;
+        protected AnimationMixerPlayable __playableMixer;
+        protected AnimatorControllerPlayable __playableAnimatorCtrler;
+        protected readonly AnimationClipPlayable[] __playableClips = new AnimationClipPlayable[2];
+        protected int __currPlayableClipIndex;
+        protected IDisposable __blendSingleClipDisposable;
+
+        void CreatePlayableGraph()
+        {
+            __playableGraph = PlayableGraph.Create();
+            __playableOutput = AnimationPlayableOutput.Create(__playableGraph, "Animation", mainAnimator);
+            __playableMixer = AnimationMixerPlayable.Create(__playableGraph, 3);
+            __playableClips[0] = AnimationClipPlayable.Create(__playableGraph, null);
+            __playableClips[1] = AnimationClipPlayable.Create(__playableGraph, null);
+            __playableAnimatorCtrler = AnimatorControllerPlayable.Create(__playableGraph, mainAnimator.runtimeAnimatorController);
+
+            __playableOutput.SetSourcePlayable(__playableMixer);
+            __playableGraph.Connect(__playableClips[0], 0, __playableMixer, 0);
+            __playableGraph.Connect(__playableClips[1], 0, __playableMixer, 1);
+            __playableGraph.Connect(__playableAnimatorCtrler, 0, __playableMixer, 2);
+
+            __playableMixer.SetInputWeight(0, 0f);
+            __playableMixer.SetInputWeight(1, 0f);
+            __playableMixer.SetInputWeight(2, 1f);
+        }
+
+        public void PlaySingleClip(AnimationClip clip, float blendInTime)
+        {
+            if (!__playableGraph.IsValid()) CreatePlayableGraph();
+
+            __currPlayableClipIndex = __currPlayableClipIndex == 0 ? 1 : 0;
+            __playableMixer.DisconnectInput(__currPlayableClipIndex);
+            __playableClips[__currPlayableClipIndex].Destroy();
+            __playableClips[__currPlayableClipIndex] = AnimationClipPlayable.Create(__playableGraph, clip);
+            __playableGraph.Connect(__playableClips[__currPlayableClipIndex], 0, __playableMixer, __currPlayableClipIndex);
+            
+            if (!__playableGraph.IsPlaying())
+                __playableGraph.Play();
+
+            var blendSpeed = 1f / blendInTime;
+
+            __blendSingleClipDisposable?.Dispose();
+            __blendSingleClipDisposable = Observable.EveryUpdate().Subscribe(_ =>
+            {
+                __playableMixer.SetInputWeight(0, Mathf.Clamp01(__playableMixer.GetInputWeight(0) + (__currPlayableClipIndex == 0 ? blendSpeed : -blendSpeed)* Time.deltaTime));
+                __playableMixer.SetInputWeight(1, Mathf.Clamp01(__playableMixer.GetInputWeight(1) + (__currPlayableClipIndex == 1 ? blendSpeed : -blendSpeed)* Time.deltaTime));
+                __playableMixer.SetInputWeight(2, Mathf.Clamp01(__playableMixer.GetInputWeight(2) - blendSpeed * Time.deltaTime));
+            }).AddTo(this);
+        }
+
+        public void StopSingleClip(float blendOutTime)
+        {
+            var blendSpeed = 1f / blendOutTime;
+
+            __blendSingleClipDisposable?.Dispose();
+            __blendSingleClipDisposable = Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(blendOutTime)))
+                .DoOnCompleted(() => 
+                {
+                    __playableMixer.SetInputWeight(0, 0f);
+                    __playableMixer.SetInputWeight(1, 0f);
+                    __playableMixer.SetInputWeight(2, 1f);
+                    __playableGraph.Stop();
+                })
+                .Subscribe(_ =>
+                {
+                    __playableMixer.SetInputWeight(0, Mathf.Clamp01(__playableMixer.GetInputWeight(0) - blendSpeed * Time.deltaTime));
+                    __playableMixer.SetInputWeight(1, Mathf.Clamp01(__playableMixer.GetInputWeight(1) - blendSpeed * Time.deltaTime));
+                    __playableMixer.SetInputWeight(2, Mathf.Clamp01(__playableMixer.GetInputWeight(2) + blendSpeed * Time.deltaTime));
+                }).AddTo(this);
         }
     
         public virtual void OnAnimatorMoveHandler() {}

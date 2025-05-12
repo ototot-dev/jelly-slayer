@@ -29,7 +29,7 @@ namespace UGUI.Rx
             return ret.ToArray();
         }
 
-        public bool IsHidden => template != null ? template.SetHidden : false;
+        public bool IsHidden => template == null || template.SetHidden;
         public bool isLoaded;
         public int loadTryCount;
         public int showCount;

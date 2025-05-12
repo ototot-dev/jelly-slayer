@@ -56,7 +56,7 @@ namespace Game
     //         if (owner.Value != null)
     //             return false;
 
-    //         if (picker.TryGetComponent<HeroBrain>(out var heroBrain) && heroBrain.CubeStackCtrler.TryStackCube(this))
+    //         if (picker.TryGetComponent<SlayerBrain>(out var heroBrain) && heroBrain.CubeStackCtrler.TryStackCube(this))
     //         {
     //             owner.Value = picker;
     //             return true;

@@ -16,7 +16,7 @@ namespace Game
 
         PlayerController __playerCtrler;
 
-        public static PawnColliderHelper FindTarget(HeroBrain heroBrain) 
+        public static PawnColliderHelper FindTarget(SlayerBrain heroBrain) 
         {
             var newTarget = heroBrain.SensorCtrler.ListeningColliders.AsValueEnumerable()
                 .Select(l => l.GetComponent<PawnColliderHelper>())
@@ -26,7 +26,7 @@ namespace Game
             return newTarget;
         }
 
-        public static PawnColliderHelper FindStunnedTarget(HeroBrain heroBrain)
+        public static PawnColliderHelper FindStunnedTarget(SlayerBrain heroBrain)
         {
             var newTarget = heroBrain.SensorCtrler.ListeningColliders.AsValueEnumerable()
                 .Select(l => l.GetComponent<PawnColliderHelper>())
@@ -35,7 +35,7 @@ namespace Game
 
             return newTarget;
         }
-        public static PawnColliderHelper FindGuardbreakTarget(HeroBrain heroBrain)
+        public static PawnColliderHelper FindGuardbreakTarget(SlayerBrain heroBrain)
         {
             return null;
             // var newTarget = heroBrain.SensorCtrler.ListeningColliders

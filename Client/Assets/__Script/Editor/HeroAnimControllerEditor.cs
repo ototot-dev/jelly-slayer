@@ -5,7 +5,7 @@
 
 // namespace Game
 // {
-//     [CustomEditor(typeof(HeroAnimController))]
+//     [CustomEditor(typeof(SlayerAnimController))]
 //     public class HeroAnimControllerEditor : Editor
 //     {
 
@@ -15,11 +15,11 @@
 
 //             if (GUILayout.Button("Reset"))
 //             {
-//                 (target as HeroAnimController).sourceTest.gameObject.DescendantsAndSelf().ForEach(s =>
+//                 (target as SlayerAnimController).sourceTest.gameObject.DescendantsAndSelf().ForEach(s =>
 //                 {
-//                     if ((target as HeroAnimController).targetTest.gameObject.DescendantsAndSelf().Any(t => t.name == s.name))
+//                     if ((target as SlayerAnimController).targetTest.gameObject.DescendantsAndSelf().Any(t => t.name == s.name))
 //                     {
-//                     var found = (target as HeroAnimController).targetTest.gameObject.DescendantsAndSelf().First(t => t.name == s.name).transform;
+//                     var found = (target as SlayerAnimController).targetTest.gameObject.DescendantsAndSelf().First(t => t.name == s.name).transform;
 //                     s.transform.SetLocalPositionAndRotation(found.localPosition, found.localRotation);
 //                     }
 //                 });

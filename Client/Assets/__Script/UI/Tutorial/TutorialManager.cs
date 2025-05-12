@@ -90,7 +90,7 @@ public class TutorialManager : MonoBehaviour
     public Count _count = new ();
 
     [Space(10)]
-    public HeroBrain _heroBrain;
+    public SlayerBrain _heroBrain;
 
     public GameObject[] _targetObj;
 

@@ -496,7 +496,7 @@ namespace Game
                 }
 
                 //* Hero 전용 공중 KnockDown 처리
-                if (damageContext.receiverPenalty.Item1 != PawnStatus.KnockBack && damageContext.receiverBrain.TryGetComponent<HeroBlackboard>(out var heroBB) && heroBB.IsHanging)
+                if (damageContext.receiverPenalty.Item1 != PawnStatus.KnockBack && damageContext.receiverBrain.TryGetComponent<SlayerBlackboard>(out var heroBB) && heroBB.IsHanging)
                 {
                     if (heroBB.stat.ReduceStamina(damageContext.senderActionData.hangingStaminaDamage) <= 0 && damageContext.receiverPenalty.Item1 == PawnStatus.None)
                     {

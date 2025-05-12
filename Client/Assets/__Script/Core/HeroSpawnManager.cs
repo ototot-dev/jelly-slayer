@@ -50,7 +50,7 @@ namespace Game
         /// <param name="weight"></param>
         public void Spawn(int weight)
         {
-            var spawnBB = Instantiate(Resources.Load<GameObject>("Pawn/Hero"), GameContext.Instance.playerCtrler.transform.position, Quaternion.identity).GetComponent<HeroBlackboard>();
+            var spawnBB = Instantiate(Resources.Load<GameObject>("Pawn/Hero"), GameContext.Instance.playerCtrler.transform.position, Quaternion.identity).GetComponent<SlayerBlackboard>();
         }
     
         /// <summary>

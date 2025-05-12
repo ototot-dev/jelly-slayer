@@ -45,7 +45,7 @@ public class SampleJoinTweens : MonoBehaviour {
 
         // Run '.slide' and '.fade' tween together and wait all end.
         // wait 1 second and then rollback '.slide' and '.fade' tween.
-        Observable.WhenAll(new IObservable<TweenAnimRunning>[] {
+        Observable.WhenAll(new IObservable<TweenAnimState>[] {
             tweenPlayer.Run(slideTween),
             tweenPlayer.Run(fadeTween)
         }).ContinueWith(_ => {

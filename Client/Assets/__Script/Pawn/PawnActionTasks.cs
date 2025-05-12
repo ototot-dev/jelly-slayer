@@ -563,7 +563,7 @@ namespace Game.NodeCanvasExtension
 
         protected override void OnExecute()
         {
-            if (agent.TryGetComponent<HeroMovement>(out var movement))
+            if (agent.TryGetComponent<SlayerMovement>(out var movement))
                 movement.StartJump(jumpHeight.value);
             else
                 Debug.Assert(false);
@@ -577,7 +577,7 @@ namespace Game.NodeCanvasExtension
     {
         protected override void OnExecute()
         {
-            if (agent.TryGetComponent<HeroMovement>(out var movement))
+            if (agent.TryGetComponent<SlayerMovement>(out var movement))
                 movement.FinishJump();
             else
                 Debug.Assert(false);

@@ -8,7 +8,7 @@ namespace Game
     public class  DroneBotBlackboard : PawnBlackboard
     {
         public DroneBotBrain.Decisions CurrDecision => decision.currDecision.Value;
-        public HeroBrain HostBrain => decision.hostBrain.Value;
+        public SlayerBrain HostBrain => decision.hostBrain.Value;
         public PawnColliderHelper HostColliderHelper => HostBrain != null ? decision.hostBrain.Value.coreColliderHelper : null;
         public Transform HostCore => HostBrain != null ? decision.hostBrain.Value.coreColliderHelper.transform : null;
         public Transform FormationSpot => decision.formationSpot.Value;
@@ -48,7 +48,7 @@ namespace Game
         {
             public ReactiveProperty<DroneBotBrain.Decisions> currDecision = new(DroneBotBrain.Decisions.None);
             public FloatReactiveProperty aggressiveLevel = new(0);
-            public ReactiveProperty<HeroBrain> hostBrain = new();
+            public ReactiveProperty<SlayerBrain> hostBrain = new();
             public ReactiveProperty<Transform> formationSpot = new();
         }
 

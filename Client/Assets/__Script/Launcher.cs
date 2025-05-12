@@ -14,6 +14,9 @@ namespace Game
             DatasheetManager.Instance.Load();
             SoundManager.Instance.Init();
 
+            GameContext.Instance.playerCtrler = GameObject.FindFirstObjectByType<PlayerController>();
+            GameContext.Instance.cameraCtrler = GameObject.FindFirstObjectByType<CameraController>();
+
             if (startGameMode != GameModes.None)
                 GameModeManager.Instance.ChangeMode(startGameMode);
         }

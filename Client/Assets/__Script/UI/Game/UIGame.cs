@@ -56,7 +56,7 @@ public class UIGame : MonoBehaviour
             return;
 
         bool isStamina = false; // (pawn.PawnBB.stat.maxStamina.Value > 0);
-        if (pawn is HeroBrain)
+        if (pawn is SlayerBrain)
         {
             isStamina = true;
             _gamePanel?.SetHeroBrain(pawn);

@@ -16,10 +16,6 @@ MonoBehaviour:
     keys: []
     values: []
   bookmarks:
-  - guid: d9471d8352890f343aa6a3837f532fe4
-  - guid: ae84b66165385c54f8b569059247cb66
-  - guid: 1c883c2d1609f45adba4b4f5372be728
-  - guid: 32e46454b638e4b4a9f1354aa1e67d2d
-  - guid: cb14124287f3a4747aeb2f9a308951af
-  - guid: 1ad481361a9cd4034812c9ebb235b202
   - guid: 58fb4780f2e604ac99e70c7963b7709a
+  - guid: 94e821cd6bad969429ac70201c5fc4d2
+  - guid: 2c6b586908ca945dd8c05b1d6ac576e1

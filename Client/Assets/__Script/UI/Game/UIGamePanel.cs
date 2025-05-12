@@ -21,7 +21,7 @@ public class UIGamePanel : MonoBehaviour
     public Text _enemyName;
 
     [Space(10)]
-    public HeroBrain _heroBrain;
+    public SlayerBrain _heroBrain;
     public PawnBrainController _targetPawn = null;
     public PawnBrainController _attackedPawn = null;
     float _attackedTime = 0;
@@ -31,7 +31,7 @@ public class UIGamePanel : MonoBehaviour
     {
         if (_heroBrain == null) 
         {
-            _heroBrain = FindAnyObjectByType<HeroBrain>();
+            _heroBrain = FindAnyObjectByType<SlayerBrain>();
             if (_heroBrain == null) 
             {
                 _playerObj.SetActive(false);
@@ -44,7 +44,7 @@ public class UIGamePanel : MonoBehaviour
     }
     public void SetHeroBrain(PawnBrainController pawn) 
     {
-        _heroBrain = (HeroBrain)pawn;
+        _heroBrain = (SlayerBrain)pawn;
         Update();
 
         _playerObj.SetActive(true);

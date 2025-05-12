@@ -10,13 +10,13 @@ using DG.Tweening;
 
 namespace Retween.Rx {
 
-public class TweenSequenceRunning {
+public class TweenSequenceState {
     
     /// <summary>
     /// ctor.
     /// </summary>
     /// <param name="sourceAnim"></param>
-    public TweenSequenceRunning(TweenSequence source) {
+    public TweenSequenceState(TweenSequence source) {
         this.source = source;
     }
 

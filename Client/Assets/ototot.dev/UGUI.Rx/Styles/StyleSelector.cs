@@ -36,37 +36,37 @@ namespace UGUI.Rx
         public Action onFinishHide;
         public int ShowCount { get; protected set; }
         public int PostShowCount { get; protected set; }
-        public int HideCount { get; protected set; } = 1; //* 최초엔 Hidden 상태로 만들기 위해서 디폴트 값을 1로 셋팅함
+        public int HideCount { get; protected set; }
         public int PostHideCount { get; protected set; }
         public bool IsHidden => HideCount > 0;
-        readonly string __showStr = StyleStates.show.ToString();
-        readonly string __hideStr = StyleStates.hide.ToString();
+        readonly string __showStateName = StyleStates.show.ToString();
+        readonly string __hideStateName = StyleStates.hide.ToString();
 
         public void Show()
         {
-            if (IsHidden)
+            if (ShowCount <= 0)
                 ShowAsObservable().Subscribe();
         }
 
         public IObservable<StyleSelector> ShowAsObservable()
         {
-            var runningTweenNames = new List<IObservable<TweenName>>();
+            var currTweenNames = new List<IObservable<TweenName>>();
             var setupObservable = Observable.Create<StyleSelector>(observer =>
             {
-                if (IsHidden)
+                if (ShowCount <= 0)
                 {
-                    query.activeStates.Remove(__hideStr);
-                    query.activeStates.Add(__showStr);
+                    query.activeStates.Remove(__hideStateName);
+                    query.activeStates.Add(__showStateName);
                     query.Apply();
                 }
 
                 ++ShowCount;
                 HideCount = PostHideCount = 0;
 
-                foreach (var r in Player.animRunnings)
+                foreach (var r in Player.tweenStates)
                 {
-                    if (r.Key.TweenName.stateName == __showStr)
-                        runningTweenNames.Add(Player.Run(r.Key).Select(_ => r.Key.TweenName));
+                    if (r.Key.TweenName.stateName == __showStateName)
+                        currTweenNames.Add(Player.Run(r.Key).Select(_ => r.Key.TweenName));
                 }
 
                 // foreach (var r in Player.dotweeenSeqRunnings) {
@@ -80,7 +80,7 @@ namespace UGUI.Rx
                 return Disposable.Empty;
             });
 
-            return setupObservable.ContinueWith(Observable.WhenAll(runningTweenNames))
+            return setupObservable.ContinueWith(Observable.WhenAll(currTweenNames))
                 .Do(_ =>
                 {
                     if (ShowCount > 0 && ++PostShowCount == 1)
@@ -91,34 +91,33 @@ namespace UGUI.Rx
 
         public void Hide()
         {
-            if (!IsHidden)
+            if (HideCount <= 0)
                 HideAsObservable().Subscribe();
         }
 
         public IObservable<StyleSelector> HideAsObservable()
         {
-            var runningTweenNames = new List<IObservable<TweenName>>();
-
+            var currTweenNames = new List<IObservable<TweenName>>();
             var setupObservable = Observable.Create<StyleSelector>(observer =>
             {
-                if (!IsHidden)
+                if (HideCount <= 0)
                 {
-                    query.activeStates.Remove(__showStr);
-                    query.activeStates.Add(__hideStr);
+                    query.activeStates.Remove(__showStateName);
+                    query.activeStates.Add(__hideStateName);
                     query.Apply();
                 }
 
                 ++HideCount;
                 ShowCount = PostShowCount = 0;
 
-                foreach (var r in Player.animRunnings)
+                foreach (var r in Player.tweenStates)
                 {
                     // Consider show-tween as hide-tween if it has runRollback set true.
-                    if (r.Key.runRollback && r.Key.TweenName.stateName == __showStr)
-                        runningTweenNames.Add(Player.Rollback(r.Key).Select(_ => r.Key.TweenName));
+                    if (r.Key.runRollback && r.Key.TweenName.stateName == __showStateName)
+                        currTweenNames.Add(Player.Rollback(r.Key).Select(_ => r.Key.TweenName));
 
-                    if (r.Key.TweenName.stateName == __hideStr)
-                        runningTweenNames.Add(Player.Run(r.Key).Select(_ => r.Key.TweenName));
+                    if (r.Key.TweenName.stateName == __hideStateName)
+                        currTweenNames.Add(Player.Run(r.Key).Select(_ => r.Key.TweenName));
                 }
 
                 // foreach (var r in Player.dotweeenSeqRunnings) {
@@ -136,7 +135,7 @@ namespace UGUI.Rx
                 return Disposable.Empty;
             });
 
-            return setupObservable.ContinueWith(Observable.WhenAll(runningTweenNames))
+            return setupObservable.ContinueWith(Observable.WhenAll(currTweenNames))
                 .Do(_ =>
                 {
                     if (HideCount > 0 && ++PostHideCount == 1)

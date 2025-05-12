@@ -14,10 +14,10 @@ public class DoorObj : MonoBehaviour
     [SerializeField]
     bool _isOpen = false;
 
-    private Vector3[] velocity = new Vector3[2]; // ¼Óµµ ÀúÀå º¯¼ö
-    public float smoothTime = 0.3f; // °¨¼Ó ½Ã°£ (ÀÛÀ»¼ö·Ï ºü¸£°Ô ¸ØÃã)
+    private Vector3[] velocity = new Vector3[2]; // ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    public float smoothTime = 0.3f; // ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 
-    HeroBrain _brain;
+    SlayerBrain _brain;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -25,7 +25,7 @@ public class DoorObj : MonoBehaviour
         var obj = GameObject.Find("Hero_OneUp");
         if (obj != null)
         {
-            _brain = obj.GetComponent<HeroBrain>();
+            _brain = obj.GetComponent<SlayerBrain>();
         }
     }
     public void Open() 
@@ -44,7 +44,7 @@ public class DoorObj : MonoBehaviour
         var vDist = _trRoot.position - _brain.coreColliderHelper.transform.position;
         _isOpen = (vDist.magnitude <= 3.5f);
 
-        // SmoothDamp¸¦ ÀÌ¿ëÇØ ÀÌµ¿
+        // SmoothDampï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
         for (int ia = 0; ia < 2; ia++)
         {
             var targetPos = (_isOpen == true) ? _targetPos[ia] : new Vector3(-2.4f, 0, 0);

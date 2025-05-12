@@ -20,10 +20,10 @@ namespace Game
 
         [Header("Possess")]
         public StringReactiveProperty playerName = new();
-        public HeroBrain possessedBrain;
+        public SlayerBrain possessedBrain;
         public GameObject PossessedPawn => possessedBrain != null ? possessedBrain.gameObject : null;
-        public Action<HeroBrain> onPossessed;
-        public Action<HeroBrain> onUnpossessed;
+        public Action<SlayerBrain> onPossessed;
+        public Action<SlayerBrain> onUnpossessed;
 
         [Header("Enable")]
         public bool _isEnable_Move = true;
@@ -94,7 +94,7 @@ namespace Game
 
             if (possessImmediately)
             {
-                Possess(Instantiate(heroPrefab, spawnPosition, spawnRotation).GetComponent<HeroBrain>());
+                Possess(Instantiate(heroPrefab, spawnPosition, spawnRotation).GetComponent<SlayerBrain>());
                 return PossessedPawn;
             }
             else
@@ -103,16 +103,15 @@ namespace Game
             }
         }
 
-        public bool Possess(HeroBrain targetBrain)
+        public bool Possess(SlayerBrain targetBrain)
         {
             if (targetBrain == null || targetBrain.PawnBB.IsPossessed)
                 return false;
 
             targetBrain.owner = this;
-            possessedBrain = targetBrain as HeroBrain;
+            possessedBrain = targetBrain as SlayerBrain;
 
-            transform.SetParent((Transform)targetBrain.transform, false);
-            transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+            targetBrain.transform.SetParent(transform, true);
             targetBrain.OnPossessedHandler();
             onPossessed?.Invoke(targetBrain);
 
@@ -122,10 +121,11 @@ namespace Game
 
         public void Unpossess()
         {
-            transform.SetParent(null, true);
+            __Logger.LogR1(gameObject, nameof(Unpossess), "possessedBrain", possessedBrain);
+
+            possessedBrain.transform.SetParent(null, true);
             onUnpossessed?.Invoke(possessedBrain);
 
-            Debug.Log($"1?? {PossessedPawn.name} is unpossessed by {gameObject.name}.");
             possessedBrain = null;
         }
 
