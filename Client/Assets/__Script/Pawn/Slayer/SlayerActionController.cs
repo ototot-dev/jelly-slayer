@@ -233,8 +233,9 @@ namespace Game
                 __brain.PawnStatusCtrler.AddStatus(PawnStatus.KnockDown, 1f, __brain.BB.pawnData.knockDownDuration);
 
                 var __knockDownTimeStamp = Time.time;
-                var __knockBackVec = -__brain.BB.pawnData_Movement.knockBackSpeed * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
-                Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.1f))).Subscribe(_ =>
+                // var __knockBackVec = -__brain.BB.pawnData_Movement.knockBackSpeed * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                var __knockBackVec = -2f * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.2f))).Subscribe(_ =>
                 {
                     __brain.Movement.AddRootMotion(Time.fixedDeltaTime * __knockBackVec, Quaternion.identity, Time.fixedDeltaTime);
                 }).AddTo(this);

@@ -74,13 +74,23 @@ namespace Game
             base.OnAniamtorStateExitHandler(stateInfo, layerIndex);
         }
 
+        public override void OnRagdollAnimatorFalling() 
+        {
+            // mainAnimator.SetBool("IsFalling", true);
+            // mainAnimator.SetTrigger("OnFalling");
+        }
+
+        public override void OnRagdollAnimatorGetUp() 
+        {
+            // mainAnimator.SetBool("IsFalling", false);
+        }
+
         public AnimationClip testSingleClipA;
         public AnimationClip testSingleClipB;
 
         void Start()
         {   
-            PlaySingleClip(testSingleClipA, 0.2f);
-
+            // PlaySingleClip(testSingleClipA, 0.2f);
             // Observable.Timer(TimeSpan.FromSeconds(2f)).Subscribe(_ => PlaySingleClip(testSingleClipB, 0.2f));
 
             __brain.BB.body.isGuarding.CombineLatest(__brain.BB.action.punchChargingLevel, (a, b) => new Tuple<bool, int>(a, b)).Subscribe(v =>
@@ -117,7 +127,7 @@ namespace Game
             {
                 legAnimator.User_FadeToDisabled(0.1f);
                 ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Standing;
-                Observable.Timer(TimeSpan.FromSeconds(0.1f)).Subscribe(_ => ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Falling).AddTo(this);
+                Observable.Timer(TimeSpan.FromSeconds(0.25f)).Subscribe(_ => ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Falling).AddTo(this);
             }).AddTo(this);
             FindObservableStateMachineTriggerEx("OnDown (End)").OnStateEnterAsObservable().Subscribe(s => 
             {
@@ -166,18 +176,18 @@ namespace Game
             __brain.onUpdate += () =>
             {
                 //* __playableGraph가 실행 중에는 Animation PostProcess는 모두 꺼줌
-                if (__playableGraph.IsPlaying())
-                {
-                    rigSetup.weight = 0f;
-                    spineOverrideTransform.weight = 0f;
-                    leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
-                    leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
-                    legAnimator.User_SetIsMoving(false);
-                    legAnimator.User_SetIsGrounded(false);
-                    legAnimator.MainGlueBlend = 0f;
+                // if (__playableGraph.IsPlaying())
+                // {
+                //     rigSetup.weight = 0f;
+                //     spineOverrideTransform.weight = 0f;
+                //     leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
+                //     leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
+                //     legAnimator.User_SetIsMoving(false);
+                //     legAnimator.User_SetIsGrounded(false);
+                //     legAnimator.MainGlueBlend = 0f;
 
-                    return;
-                }
+                //     return;
+                // }
 
                 //* Down, Dead 상태에선 Animation 처리를 모두 끈다.
                 if (CheckAnimStateRunning("OnDown") || CheckAnimStateRunning("OnDead"))

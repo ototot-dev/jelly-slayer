@@ -42,24 +42,25 @@ namespace Game
         protected PlayableGraph __playableGraph;
         protected AnimationPlayableOutput __playableOutput;
         protected AnimationMixerPlayable __playableMixer;
-        protected AnimatorControllerPlayable __playableAnimatorCtrler;
+        protected AnimatorControllerPlayable __playableAnimator;
         protected readonly AnimationClipPlayable[] __playableClips = new AnimationClipPlayable[2];
         protected int __currPlayableClipIndex;
         protected IDisposable __blendSingleClipDisposable;
+        public bool IsPlayableGraphRunning() => __playableGraph.IsPlaying();
 
-        void CreatePlayableGraph()
+        protected virtual void CreatePlayableGraph()
         {
             __playableGraph = PlayableGraph.Create();
             __playableOutput = AnimationPlayableOutput.Create(__playableGraph, "Animation", mainAnimator);
             __playableMixer = AnimationMixerPlayable.Create(__playableGraph, 3);
             __playableClips[0] = AnimationClipPlayable.Create(__playableGraph, null);
             __playableClips[1] = AnimationClipPlayable.Create(__playableGraph, null);
-            __playableAnimatorCtrler = AnimatorControllerPlayable.Create(__playableGraph, mainAnimator.runtimeAnimatorController);
+            __playableAnimator = AnimatorControllerPlayable.Create(__playableGraph, mainAnimator.runtimeAnimatorController);
 
             __playableOutput.SetSourcePlayable(__playableMixer);
             __playableGraph.Connect(__playableClips[0], 0, __playableMixer, 0);
             __playableGraph.Connect(__playableClips[1], 0, __playableMixer, 1);
-            __playableGraph.Connect(__playableAnimatorCtrler, 0, __playableMixer, 2);
+            __playableGraph.Connect(__playableAnimator, 0, __playableMixer, 2);
 
             __playableMixer.SetInputWeight(0, 0f);
             __playableMixer.SetInputWeight(1, 0f);
@@ -115,5 +116,7 @@ namespace Game
         public virtual void OnAnimatorStateEnterHandler(AnimatorStateInfo stateInfo, int layerIndex) { onAnimStateEnter?.Invoke(stateInfo, layerIndex); }
         public virtual void OnAniamtorStateExitHandler(AnimatorStateInfo stateInfo, int layerIndex) { onAnimStateExit?.Invoke(stateInfo, layerIndex); }
         public virtual void OnAnimatorFootHandler(bool isRight) {}
+        public virtual void OnRagdollAnimatorFalling() {}
+        public virtual void OnRagdollAnimatorGetUp() {}
     }
 }

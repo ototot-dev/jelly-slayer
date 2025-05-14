@@ -59,6 +59,9 @@ namespace FIMSpace.Basics
         {
             if (FollowObject == null) return;
 
+            float screenDelta = (( Screen.width + Screen.height ) / 2f) * 0.001f;
+            screenDelta = ( MouseControlSensitivity / screenDelta ) * 0.25f;
+
             if (MouseControl == EControl.LockCursor)
             {
                 if (Cursor.visible || Cursor.lockState == CursorLockMode.None) SwitchLockCursor(false);
@@ -67,23 +70,35 @@ namespace FIMSpace.Basics
 
                 if (Cursor.lockState == CursorLockMode.Locked)
                 {
-                    float sze = ((Screen.width + Screen.height) / 2f) * 0.02f * MouseControlSensitivity;
-                    targetSphericalRot.x -= Input.GetAxis("Mouse Y") * sze * joystickInput.ValuePower * joystickInput.ScaleOutput.x;
-                    targetSphericalRot.y += Input.GetAxis("Mouse X") * sze * joystickInput.ValuePower * joystickInput.ScaleOutput.y;
+                    float sze = ((Screen.width + Screen.height) / 2f) * 0.02f * screenDelta;
+
+                    float powx = 1f;
+                    float powy = 1f;
+                    if( joystickInput )
+                    {
+                        powx = joystickInput.ValuePower * joystickInput.ScaleOutput.x;
+                        powy = joystickInput.ValuePower * joystickInput.ScaleOutput.y;
+                    }
+
+                    targetSphericalRot.x -= Input.GetAxis( "Mouse Y" ) * sze * powx;
+                    targetSphericalRot.y += Input.GetAxis( "Mouse X" ) * sze * powy;
                 }
             }
             else if (MouseControl == EControl.OnRMBHold)
             {
                 if (Input.GetMouseButton(1) || Input.GetMouseButton(2))
                 {
-                    float sze = ((Screen.width + Screen.height) / 2f) * 0.02f * MouseControlSensitivity;
+                    float sze = ((Screen.width + Screen.height) / 2f) * 0.02f * screenDelta;
                     targetSphericalRot.x -= Input.GetAxis("Mouse Y") * sze;
                     targetSphericalRot.y += Input.GetAxis("Mouse X") * sze;
                 }
             }
 
-            targetSphericalRot.x -= joystickInput.OutputValue.y;
-            targetSphericalRot.y += joystickInput.OutputValue.x;
+            if( joystickInput )
+            {
+                targetSphericalRot.x -= joystickInput.OutputValue.y;
+                targetSphericalRot.y += joystickInput.OutputValue.x;
+            }
 
             targetSphericalRot.x = Mathf.Clamp(targetSphericalRot.x, VerticalClamp.x, VerticalClamp.y);
 
