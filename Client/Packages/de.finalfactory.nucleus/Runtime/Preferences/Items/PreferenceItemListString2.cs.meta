@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 02c7aa717c8864243b241879752a842d
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 92135
+  packageName: Final Tagger - Multi-Tag Your GameObjects (formerly Tagger)
+  packageVersion: 2.4
+  assetPath: Packages/de.finalfactory.nucleus/Runtime/Preferences/Items/PreferenceItemListString2.cs
+  uploadId: 701608

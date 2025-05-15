@@ -127,7 +127,7 @@ namespace Game
             {
                 legAnimator.User_FadeToDisabled(0.1f);
                 ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Standing;
-                Observable.Timer(TimeSpan.FromSeconds(0.25f)).Subscribe(_ => ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Falling).AddTo(this);
+                Observable.Timer(TimeSpan.FromSeconds(0.4f)).Subscribe(_ => ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Falling).AddTo(this);
             }).AddTo(this);
             FindObservableStateMachineTriggerEx("OnDown (End)").OnStateEnterAsObservable().Subscribe(s => 
             {
@@ -188,6 +188,18 @@ namespace Game
 
                 //     return;
                 // }
+
+                if (ragdollAnimator.Handler.AnimatingMode == FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Falling)
+                {
+                    rigSetup.weight = 0f;
+                    spineOverrideTransform.weight = 0f;
+                    leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
+                    leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
+                    legAnimator.User_SetIsMoving(false);
+                    legAnimator.User_SetIsGrounded(false);
+                    legAnimator.MainGlueBlend = 0f;
+                    return;
+                }
 
                 //* Down, Dead 상태에선 Animation 처리를 모두 끈다.
                 if (CheckAnimStateRunning("OnDown") || CheckAnimStateRunning("OnDead"))

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: b65e6eafdd1eb764cbb411085649f96c
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 92135
+  packageName: Final Tagger - Multi-Tag Your GameObjects (formerly Tagger)
+  packageVersion: 2.4
+  assetPath: Packages/de.finalfactory.nucleus/package.json
+  uploadId: 701608

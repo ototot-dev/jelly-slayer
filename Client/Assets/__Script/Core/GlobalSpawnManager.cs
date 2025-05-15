@@ -8,143 +8,27 @@ using UnityEngine;
 
 namespace Game
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public class GlobalSpawnManager : MonoSingleton<GlobalSpawnManager>
     {   
-        /// <summary>
-        /// 
-        /// </summary>
-        public int maxGrassNumPerZone = 8;
+        public HashSet<PawnBrainController> spawnedBrains = new();
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public int maxRockNumPerZone = 4;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public int maxNpcNumPerZone = 16;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public int maxSlimeNumPerZone = 4;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public int maxSlimeJuniorNumPerZone = 16;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public int maxSlimeJuniorFollowerNum = 4;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="givenHeartPoint"></param>
-        /// <returns></returns>
-        public GameObject[] SelectSpawningPawn(int givenHeartPoint)
+        public SlayerBrain SpawnSlayerPawn(GameObject sourcePrefab, Vector3 spawnPosition, Quaternion spawnRotation, bool possessImmediately = false)
         {
-            // if (givenHeartPoint <= 10)
-            //     return Resources.Load<GameObject>("Pawn/Slime");
-            // else
-                // return Resources.Load<GameObject>("Pawn/BoximonFiery");π
-                
-            return new GameObject[] {
-                Resources.Load<GameObject>("Pawn/MinerMale"),
-                Resources.Load<GameObject>("Pawn/MinerFemale"),
-            };
+            var slayerBrain = Instantiate(sourcePrefab, spawnPosition, spawnRotation).GetComponent<SlayerBrain>();
+            spawnedBrains.Add(slayerBrain);
 
-            // return new GameObject[] { 
-            //     Resources.Load<GameObject>("Pawn/Footman"),
-            //     Resources.Load<GameObject>("Pawn/Footman"),
-            //     Resources.Load<GameObject>("Pawn/Footman"),
-            //     Resources.Load<GameObject>("Pawn/Footman"),
-            //     Resources.Load<GameObject>("Pawn/Footman"),
-            // };
+            if (possessImmediately)
+                GameContext.Instance.playerCtrler.Possess(slayerBrain);
+
+            return slayerBrain;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public void Init()
-        {   
-            // Observable.Timer(TimeSpan.FromSeconds(1.1f)).Subscribe(_ => StartCoroutine(StartSpawnSlime())).AddTo(this);
-            // Observable.Timer(TimeSpan.FromSeconds(2.2f)).Subscribe(_ => StartCoroutine(StartSpawnTerrainStamp())).AddTo(this);
-            // Observable.Timer(TimeSpan.FromSeconds(3.3f)).Subscribe(_ => StartCoroutine(StartSpawnHollow())).AddTo(this);
-
-            // Observable
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        IEnumerator StartSpawnTerrainStamp()
+        public DroneBotBrain SpawnDroneBot(GameObject sourcePrefab, Vector3 spawnPosition, Quaternion spawnRotation)
         {
-            for (int i = 0; i < maxGrassNumPerZone / 2; i++)
-            {
-                foreach (var c in GameContext.Instance.terrainManager.gameObject.Children())
-                    SpawnGrassStamp(c.GetComponent<TerrainMeshGenerator>().GetRandomPoint(0.9f, 0.9f), true);
+            var droneBotBrain = Instantiate(sourcePrefab, spawnPosition, spawnRotation).GetComponent<DroneBotBrain>();
+            spawnedBrains.Add(droneBotBrain);
 
-                yield return new WaitForSeconds(1);
-            }
-
-            for (int i = 0; i < maxRockNumPerZone / 2; i++)
-            {
-                foreach (var c in GameContext.Instance.terrainManager.gameObject.Children())
-                {
-                    var spawnPosition = c.GetComponent<TerrainMeshGenerator>().GetRandomPoint(0.9f, 0.9f);
-                    var rockSpawnNum = UnityEngine.Random.Range(1, 4);
-
-                    SpawnRockStamp(spawnPosition, rockSpawnNum, true);
-                }
-
-                yield return new WaitForSeconds(1);
-            }
+            return droneBotBrain;
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void SpawnGrassStamp(Vector3 spawnPosition, bool showStamp = true)
-        {
-            var stamp = Instantiate(Resources.Load<GameObject>("Terrain/GrassStamp"), spawnPosition, Quaternion.identity).GetComponent<VegetationStamp>();
-
-            Observable.NextFrame().Subscribe(_ =>
-            {
-                stamp.Generate(GameContext.Instance.terrainManager);
-
-                if (showStamp)
-                    stamp.Show();
-            }).AddTo(this);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="spawnPosition"></param>
-        /// <param name="rockSpawnNum"></param>
-        /// <param name="showStamp"></param>
-        public void SpawnRockStamp(Vector3 spawnPosition, int rockSpawnNum, bool showStamp = true)
-        {
-            var stamp = Instantiate(Resources.Load<GameObject>("Terrain/RockStamp"), spawnPosition, Quaternion.identity).GetComponent<RockStamp>();
-
-            stamp.size = Vector2.one * Mathf.Min(5, rockSpawnNum + 2);
-            stamp.rockSpawnCount = rockSpawnNum;
-
-            Observable.NextFrame().Subscribe(_ =>
-            {
-                stamp.Generate();
-
-                if (showStamp)
-                    stamp.Show();
-            }).AddTo(this);
-        }
-
     }
 }

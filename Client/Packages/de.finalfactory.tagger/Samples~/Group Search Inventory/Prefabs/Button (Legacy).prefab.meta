@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e783a39d9ff966840bfea0d5fe5bb4ed
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 92135
+  packageName: Final Tagger - Multi-Tag Your GameObjects (formerly Tagger)
+  packageVersion: 2.4
+  assetPath: Packages/de.finalfactory.tagger/Samples~/Group Search Inventory/Prefabs/Button
+    (Legacy).prefab
+  uploadId: 701608

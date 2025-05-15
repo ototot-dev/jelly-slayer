@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0700c3333f819244baa980a874ca2e5d, type: 3}
+  m_Name: TaggerData
+  m_EditorClassIdentifier: 
+  _allTags:
+  - Slayer
+  - K
+  - Hero
+  _serializedGroups:
+  - _name: Ungrouped
+    _tags:
+    - K
+    _isSingleton: 0
+  - _name: Pawn
+    _tags:
+    - Slayer
+    - Hero
+    _isSingleton: 0
+  _serializedIDs: 000000000100000002000000
+  _serializedLinkIdKeys: 
+  _serializedLinkIdValues: 
+  _serializedTagArrays:
+  - _array: 01000000
+    _maskArray: ffffffff
+    _version: 7
+  - _array: 05000000
+    _maskArray: ffffffff
+    _version: 8
+  - _array: 07000000
+    _maskArray: ffffffff
+    _version: 9
+  _tagColors:
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  _version: 5

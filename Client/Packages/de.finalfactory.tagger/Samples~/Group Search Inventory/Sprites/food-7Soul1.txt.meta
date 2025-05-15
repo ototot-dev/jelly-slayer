@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8c4a74debeb22444e9e1a7ac1ae1530b
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 92135
+  packageName: Final Tagger - Multi-Tag Your GameObjects (formerly Tagger)
+  packageVersion: 2.4
+  assetPath: Packages/de.finalfactory.tagger/Samples~/Group Search Inventory/Sprites/food-7Soul1.txt
+  uploadId: 701608

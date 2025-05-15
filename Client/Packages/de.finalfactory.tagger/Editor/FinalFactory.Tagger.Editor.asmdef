@@ -1,0 +1,20 @@
+{
+  "name": "FinalFactory.Tagger.Editor",
+  "rootNamespace": "FinalFactory",
+  "references": [
+    "GUID:1a5f2abd0c6ec794580b4987a4181075",
+    "GUID:e3e98402e2b294e45a028f562c251ce3",
+    "GUID:f3bb1945abcac854fbb4404a5fc63a2e"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

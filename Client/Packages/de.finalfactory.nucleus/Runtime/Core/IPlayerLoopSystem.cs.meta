@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: 0814a86984c54e2b9b18247a32dd4f45
+timeCreated: 1713808943
+AssetOrigin:
+  serializedVersion: 1
+  productId: 92135
+  packageName: Final Tagger - Multi-Tag Your GameObjects (formerly Tagger)
+  packageVersion: 2.4
+  assetPath: Packages/de.finalfactory.nucleus/Runtime/Core/IPlayerLoopSystem.cs
+  uploadId: 701608

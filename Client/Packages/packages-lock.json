@@ -70,6 +70,13 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.unity.editorcoroutines": {
+      "version": "1.0.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
     "com.unity.ext.nunit": {
       "version": "2.0.5",
       "depth": 1,
@@ -201,6 +208,13 @@
         "com.unity.searcher": "4.9.2"
       }
     },
+    "com.unity.sharp-zip-lib": {
+      "version": "1.3.8",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
     "com.unity.sysroot": {
       "version": "2.0.10",
       "depth": 1,
@@ -287,6 +301,20 @@
         "com.unity.modules.jsonserialize": "1.0.0"
       },
       "url": "https://packages.unity.com"
+    },
+    "de.finalfactory.nucleus": {
+      "version": "file:de.finalfactory.nucleus",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "de.finalfactory.tagger": {
+      "version": "file:de.finalfactory.tagger",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "de.finalfactory.nucleus": "1.0.0"
+      }
     },
     "dev.ameye.linework": {
       "version": "file:dev.ameye.linework",

@@ -1,0 +1,45 @@
+﻿{
+  "name": "de.finalfactory.tagger",
+  "version": "2.2.0",
+  "displayName": "Final Tagger",
+  "unity": "2021.1",
+  "description": "Final Tagger is a flexible multi-tagging solution for your Unity projects. Effortlessly apply multiple tags to GameObjects and swiftly find them using intuitive search and filtering. Formerly known as Tagger, Final Tag enhances project organization and streamlines workflow for efficient game development.",
+  "dependencies": {
+    "de.finalfactory.nucleus": "1.0.0"
+  },
+  "documentationUrl": "https://finalfactory.de/finaltaggerdoc",
+  "changelogUrl": "https://docs.finalfactory.de/docs/tagger/changelog",
+  "type": "Tools/Utilities",
+  "author": {
+    "name": "Final Factory Florian Schmidt",
+    "email": "support@finalfactory.de",
+    "url": "https://www.finalfactory.de"
+  },
+  "samples": [
+    {
+      "displayName": "Filtering Strategy Units Example",
+      "description": "Demonstrates how to filter Units in a Strategy game using Final Tagger.",
+      "path": "Samples~/Filtering Strategy Units"
+    },
+    {
+      "displayName": "Group Search Inventory",
+      "description": "Demonstrates how to filter and search items by tag in an inventory using Final Tagger.",
+      "path": "Samples~/Group Search Inventory"
+    },
+    {
+      "displayName": "Filter Script",
+      "description": "Demonstrates how to use the TaggerFilter class. Inspector only demonstration.",
+      "path": "Samples~/Filter Script"
+    },
+    {
+      "displayName": "Advanced Filter Script",
+      "description": "This script shows how to create advanced filters using Final Tagger. Script Only.",
+      "path": "Samples~/Advanced Filter Script"
+    },
+    {
+      "displayName": "Performance Test",
+      "description": "This test scene demonstrates the performance of Final Tagger.",
+      "path": "Samples~/Performance Test"
+    }
+  ]
+}

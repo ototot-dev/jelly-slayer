@@ -1,0 +1,106 @@
+﻿.final-on-screen-joystick
+{
+    justify-content: center;
+    align-items: center;
+}
+
+.final-on-screen-joystick__container
+{
+    width: 100px;
+    height: 100px;
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 50%;
+}
+
+.final-on-screen-joystick__handle
+{
+    width: 95%;
+    height: 95%;
+    background-color: rgba(0,0,0,0.1);
+    border-radius: 50%;
+    border-width: 2px;
+    border-color: rgba(0,0,0,0.4);
+    top: 2.5%;
+    left: 2.5%;
+}
+
+.final-on-screen-button
+{
+    width: 100px;
+    height: 100px;
+    background-color: rgba(0,0,0,0.1);
+    border-radius: 50%;
+    border-width: 2px;
+    border-color: rgba(0,0,0,0.4);
+}
+
+.final-on-screen-button:active
+{
+    border-color: rgba(255, 255, 255, 1);
+    border-width: 4px;
+    transition: all 0.1s;
+}
+
+.final-on-screen-dpad
+{
+    justify-content: center;
+    align-items: center;
+}
+
+.final-on-screen-dpad__container
+{
+    width: 100px;
+    height: 100px;
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 10%;
+    padding: 2.5px;
+}
+
+.final-on-screen-dpad__handle
+{
+    width: 95%;
+    height: 95%;
+    top: 2.5%;
+    left: 2.5%;
+}
+
+.final-on-screen-dpad__button-container
+{
+    width: 100%;
+    height: 100%;
+    justify-content: space-between;
+    flex-direction: row;
+    position: absolute;
+}
+
+.final-on-screen-dpad__button-container--up
+{
+    align-items: flex-start;
+}
+
+.final-on-screen-dpad__button-container--center
+{
+    align-items: center;
+}
+
+.final-on-screen-dpad__button-container--down
+{
+    align-items: flex-end;
+}
+
+.final-on-screen-dpad__button
+{
+    width: 25px;
+    height: 25px;
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 20%;
+}
+
+.final-on-screen-dpad__button:active
+{
+    width: 30px;
+    height: 30px;
+    background-color: rgba(0,0,0,0.5);
+    border-radius: 15%;
+    transition: all 0.1s;
+}

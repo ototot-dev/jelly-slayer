@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 9534453a09bda75478f28e9767f2c14b
+timeCreated: 1494615037
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 92135
+  packageName: Final Tagger - Multi-Tag Your GameObjects (formerly Tagger)
+  packageVersion: 2.4
+  assetPath: Packages/de.finalfactory.tagger/Samples~/Filtering Strategy Units/Scripts/SelectionHighlighter.cs
+  uploadId: 701608

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 90e290ed2a919a945b12492254c47d6d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 4890085278179872738
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 92135
+  packageName: Final Tagger - Multi-Tag Your GameObjects (formerly Tagger)
+  packageVersion: 2.4
+  assetPath: Packages/de.finalfactory.tagger/Samples~/Performance Test/PerformanceSettings.lighting
+  uploadId: 701608

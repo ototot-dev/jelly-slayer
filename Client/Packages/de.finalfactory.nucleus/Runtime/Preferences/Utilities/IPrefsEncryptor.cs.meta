@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: a6d09a9058d042cabf68d5eb2063dfae
+timeCreated: 1715192411
+AssetOrigin:
+  serializedVersion: 1
+  productId: 92135
+  packageName: Final Tagger - Multi-Tag Your GameObjects (formerly Tagger)
+  packageVersion: 2.4
+  assetPath: Packages/de.finalfactory.nucleus/Runtime/Preferences/Utilities/IPrefsEncryptor.cs
+  uploadId: 701608

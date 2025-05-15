@@ -1,0 +1,45 @@
+{
+    "name": "FinalFactory.Nucleus",
+    "rootNamespace": "FinalFactory",
+    "references": [
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:d8b63aba1907145bea998dd612889d6b",
+        "GUID:eec0964c48f6f4e40bc3ec2257ccf8c5",
+        "GUID:84651a3751eca9349aac36a66bba901b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.inputsystem",
+            "expression": "1.0",
+            "define": "UNITY_INPUTSYSTEM"
+        },
+        {
+            "name": "com.unity.mathematics",
+            "expression": "1.0",
+            "define": "UNITY_MATHEMATICS"
+        },
+        {
+            "name": "de.finalfactory.nucleus-unlocker",
+            "expression": "1.0",
+            "define": "FINALFACTORY_UNLOCK_ALL_FEATURES"
+        },
+        {
+            "name": "com.unity.localization",
+            "expression": "1.0",
+            "define": "UNITY_LOCALIZATION"
+        },
+        {
+            "name": "de.finalfactory.preferences",
+            "expression": "1.0",
+            "define": "FINAL_PREFERENCES"
+        }
+    ],
+    "noEngineReferences": false
+}

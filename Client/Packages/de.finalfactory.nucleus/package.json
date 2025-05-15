@@ -1,0 +1,13 @@
+﻿{
+    "name": "de.finalfactory.nucleus",
+    "version": "1.0.0",
+    "displayName": "Final Nucleus",
+    "unity": "2021.1",
+    "description": "FinalNucleus is the core library behind every asset released by FinalFactory. As the name suggests, it acts as the nucleus or central component, ensuring seamless integration and functionality across our entire suite of Unity assets. Only necessary files are included, making it lightweight and reduce the size of your project. This makes the library look a bit fragmented.",
+    "type": "Tools/Utilities",
+    "author": {
+        "name": "Final Factory Florian Schmidt",
+        "email": "support@finalfactory.de",
+        "url": "https://www.finalfactory.de"
+    }
+}

@@ -33,6 +33,9 @@ namespace Game
             // animCtrler.PlaySingleClip(, 0.1f);
 
             // template.StartCoroutine();
+
+            var found = TaggerSystem.FindGameObjectWithTag("Slayer");
+            if (found != null) __Logger.LogR1(template.gameObject, "FindGameObjectWithTag", "found", found);
         }
 
         // IEnumerator Loading_Coroutine()

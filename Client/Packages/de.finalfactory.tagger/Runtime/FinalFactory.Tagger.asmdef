@@ -1,0 +1,16 @@
+{
+  "name": "FinalFactory.Tagger",
+  "rootNamespace": "FinalFactory",
+  "references": [
+    "GUID:f3bb1945abcac854fbb4404a5fc63a2e"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

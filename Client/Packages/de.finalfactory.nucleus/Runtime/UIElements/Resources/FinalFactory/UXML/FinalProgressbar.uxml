@@ -1,0 +1,11 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="bar" class="progress-bar__container">
+        <ui:VisualElement name="background" class="progress-bar__background">
+            <ui:VisualElement name="infill-main" class="progress-bar__infill progress-bar__infill--main" style="flex-grow: 1;" />
+            <ui:VisualElement name="infill-opposite" class="progress-bar__infill progress-bar__infill--opposite" style="flex-grow: 1;" />
+            <ui:VisualElement name="title-container" class="progress-bar__title-container" style="flex-grow: 1; position: absolute; left: 0; top: 0; right: 0; bottom: 0;">
+                <ui:Label name="title" class="progress-bar__title" style="flex-grow: 1;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: 6d0d3e8aed4749e3906df84001fbc816
+timeCreated: 1715188052
+AssetOrigin:
+  serializedVersion: 1
+  productId: 92135
+  packageName: Final Tagger - Multi-Tag Your GameObjects (formerly Tagger)
+  packageVersion: 2.4
+  assetPath: Packages/de.finalfactory.nucleus/Runtime/Preferences/Utilities/IPlayerPrefsChangeMonitor.cs
+  uploadId: 701608

@@ -1,0 +1,34 @@
+﻿.progress-bar{
+    flex-shrink: 0;
+    margin: 1 3;
+    padding-bottom: 1;
+}
+
+.progress-bar__background{
+    border-width: 1;    
+    height: 19;
+}
+
+.progress-bar__container{
+    overflow: visible;
+}
+
+.progress-bar__infill{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+}
+
+.progress-bar__marker
+{
+    background-color: red;
+    width: 2px;
+    height: 100%;
+}
+
+.progress-bar__title
+{
+    -unity-text-align: middle-center;
+}

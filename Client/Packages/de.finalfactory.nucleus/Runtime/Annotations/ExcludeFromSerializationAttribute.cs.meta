@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: efdf290273e3463998b7c8a49feb6654
+timeCreated: 1693305129
+AssetOrigin:
+  serializedVersion: 1
+  productId: 92135
+  packageName: Final Tagger - Multi-Tag Your GameObjects (formerly Tagger)
+  packageVersion: 2.4
+  assetPath: Packages/de.finalfactory.nucleus/Runtime/Annotations/ExcludeFromSerializationAttribute.cs
+  uploadId: 701608

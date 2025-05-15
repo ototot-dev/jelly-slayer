@@ -6,7 +6,6 @@ using UniRx;
 using Unity.Linq;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
-using VInspector.Libs;
 
 namespace Game
 {
@@ -84,15 +83,17 @@ namespace Game
         void Start()
         {
             //* Ragdoll이 사용하는 PhysicsBody 레이어는 
-            ragdollAnimator.Handler.TargetParentForRagdollDummy.gameObject.Descendants()
-                .Select(d => d.GetComponent<Rigidbody>()).Where(r => r != null).ForEach(r => 
+            foreach (var d in ragdollAnimator.Handler.TargetParentForRagdollDummy.gameObject.Descendants())
+            {
+                if (d.TryGetComponent<Rigidbody>(out var rigidBody))
                 {
-                    r.excludeLayers |= LayerMask.GetMask("HitBoxBlocking");
-                    if (r.TryGetComponent<Collider>(out var collider))
+                    rigidBody.excludeLayers |= LayerMask.GetMask("HitBoxBlocking");
+                    if (rigidBody.TryGetComponent<Collider>(out var collider))
                         collider.excludeLayers |= LayerMask.GetMask("HitBoxBlocking");
                         
-                    __Logger.LogR1(gameObject, "Add 'HitBoxBlocking' to excludeLayers", "gameObject", r);
-                });
+                    __Logger.LogR1(gameObject, "Add 'HitBoxBlocking' to excludeLayers", "gameObject", rigidBody);
+                }
+            }
 
             __brain.StatusCtrler.onStatusActive += (status) =>
             {

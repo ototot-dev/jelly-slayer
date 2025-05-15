@@ -1,0 +1,10 @@
+﻿fileFormatVersion: 2
+guid: bab39cd3fec0415c8161fe206fde2915
+timeCreated: 1724409294
+AssetOrigin:
+  serializedVersion: 1
+  productId: 92135
+  packageName: Final Tagger - Multi-Tag Your GameObjects (formerly Tagger)
+  packageVersion: 2.4
+  assetPath: Packages/de.finalfactory.nucleus/Runtime/UIElements/ProgressbarFillType.cs
+  uploadId: 701608

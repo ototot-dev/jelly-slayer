@@ -1,0 +1,36 @@
+{
+    "name": "FinalFactory.Nucleus.Editor",
+    "rootNamespace": "FinalFactory",
+    "references": [
+        "GUID:f3bb1945abcac854fbb4404a5fc63a2e",
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:d8b63aba1907145bea998dd612889d6b"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.inputsystem",
+            "expression": "1.0",
+            "define": "UNITY_INPUTSYSTEM"
+        },
+        {
+            "name": "com.unity.mathematics",
+            "expression": "1.0",
+            "define": "UNITY_MATHEMATICS"
+        },
+        {
+            "name": "de.finalfactory.nucleus-unlocker",
+            "expression": "2.0",
+            "define": "FINALFACTORY_UNLOCK_ALL_FEATURES"
+        }
+    ],
+    "noEngineReferences": false
+}

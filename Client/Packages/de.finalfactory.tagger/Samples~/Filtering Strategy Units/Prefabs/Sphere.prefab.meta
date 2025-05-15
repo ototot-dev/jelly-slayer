@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ef64e27e030b0df41b1a7696ba73c665
+timeCreated: 1491979052
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 92135
+  packageName: Final Tagger - Multi-Tag Your GameObjects (formerly Tagger)
+  packageVersion: 2.4
+  assetPath: Packages/de.finalfactory.tagger/Samples~/Filtering Strategy Units/Prefabs/Sphere.prefab
+  uploadId: 701608

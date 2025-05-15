@@ -787,6 +787,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3758835991799220657}
+  - component: {fileID: 4341923631125150275}
   - component: {fileID: 2413320803077063668}
   - component: {fileID: 1130383802714546397}
   - component: {fileID: 1853797499062314162}
@@ -826,6 +827,19 @@ Transform:
   - {fileID: 4284445581982952642}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4341923631125150275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 859846127300755753}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 352d56696aba6374fa7fdf47e19af82f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _tagId: 2
 --- !u!114 &2413320803077063668
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8859,7 +8873,7 @@ MonoBehaviour:
   _Editor_EnsureCount: 1
   _Editor_OnValidateTrigger: 1
   _EditorAllowAutoUpdateFeetParams: 1
-  _EditorCategory: 2
+  _EditorCategory: 1
   _EditorSetupCategory: 1
   _EditorMotionCategory: 1
   _EditorExtraCategory: 2
@@ -8974,7 +8988,7 @@ MonoBehaviour:
   handler:
     _Editor_SelectedChain: 3
     _Editor_ChainCategory: 1
-    _EditorCategory: 4
+    _EditorCategory: 3
     _EditorMainCategory: 0
     _EditorMotionCategory: 0
     m_hemi: {fileID: -2508796484986968503, guid: 44d994eaad14fdf49a2dd378b4d62094, type: 3}
@@ -9802,7 +9816,7 @@ MonoBehaviour:
     ProjectionMode: 0
     PreProcessing: 0
     RagdollBlend: 1
-    animatingMode: 0
+    animatingMode: 1
     UseReconstruction: 0
     UnitySolverIterations: 12
     Calibrate: 1

@@ -1,0 +1,12 @@
+﻿.progress-bar__background{
+    background-color: #B6B6B6;
+    border-color: #808080;
+}
+
+.progress-bar__infill--main{
+    background-color: #4E8DD3;
+}
+
+.progress-bar__infill--opposite{
+    background-color: #d34e4e;
+}

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c7ac416b572ad16429a2b577daa22fd4
+timeCreated: 1491978640
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 92135
+  packageName: Final Tagger - Multi-Tag Your GameObjects (formerly Tagger)
+  packageVersion: 2.4
+  assetPath: Packages/de.finalfactory.tagger/Samples~/Filtering Strategy Units/Prefabs/Cube.prefab
+  uploadId: 701608

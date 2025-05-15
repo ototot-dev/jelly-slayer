@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d457033f767b3cc458d66033cb5ea789
+timeCreated: 1491979209
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 92135
+  packageName: Final Tagger - Multi-Tag Your GameObjects (formerly Tagger)
+  packageVersion: 2.4
+  assetPath: Packages/de.finalfactory.tagger/Samples~/Filtering Strategy Units/Prefabs/Capsule.prefab
+  uploadId: 701608

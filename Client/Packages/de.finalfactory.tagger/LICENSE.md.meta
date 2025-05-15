@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 2c5089614e0ca874e9de9ff2ffc56e29
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 92135
+  packageName: Final Tagger - Multi-Tag Your GameObjects (formerly Tagger)
+  packageVersion: 2.4
+  assetPath: Packages/de.finalfactory.tagger/LICENSE.md
+  uploadId: 701608

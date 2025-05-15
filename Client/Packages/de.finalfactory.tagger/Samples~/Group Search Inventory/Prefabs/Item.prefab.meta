@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c5238bd349a508d46a090cef6b48e2f6
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 92135
+  packageName: Final Tagger - Multi-Tag Your GameObjects (formerly Tagger)
+  packageVersion: 2.4
+  assetPath: Packages/de.finalfactory.tagger/Samples~/Group Search Inventory/Prefabs/Item.prefab
+  uploadId: 701608
