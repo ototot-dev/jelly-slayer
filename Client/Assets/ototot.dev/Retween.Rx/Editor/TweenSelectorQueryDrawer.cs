@@ -66,8 +66,8 @@ namespace Retween.Rx
 
             if (GUI.Button(drawRect, "Update Tween Sources"))
             {
-                if (query.Target != null)
-                    UpdateTweenSources(query.Target.transform, query, tweensProperty);
+                if (query.TargetSelector != null)
+                    UpdateTweenSources(query.TargetSelector.transform, query, tweensProperty);
 
                 query.BuildSelectables();
             }
@@ -271,9 +271,9 @@ namespace Retween.Rx
             if (__runningTweensFoldOut)
             {
                 var drawAny = false;
-                if (query.Target != null && query.Target.Player != null && query.Target.Player.tweenStates.Count > 0)
+                if (query.TargetSelector != null && query.TargetSelector.Player != null && query.TargetSelector.Player.tweenStates.Count > 0)
                 {
-                    foreach (var v in query.Target.Player.tweenStates.Values)
+                    foreach (var v in query.TargetSelector.Player.tweenStates.Values)
                     {
                         if (!v.IsRunning && !v.IsRewinding && !v.IsRollBack && v.elapsed <= TweenPlayer.MIN_ELAPSED_TIME)
                             continue;

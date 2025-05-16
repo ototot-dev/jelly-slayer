@@ -6,62 +6,28 @@ using UniRx;
 
 namespace Retween.Rx
 {
-
-    /// <summary>
-    /// 
-    /// </summary>
     [Serializable]
     public class TweenSelectorQuery
     {
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="target"></param>
-        public void SetTarget(TweenSelector target)
-        {
-            Target = target;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public TweenSelector Target { get; private set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
         public bool usingTag;
-
-        /// <summary>
-        /// 
-        /// </summary>
         public string tag;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public HashSet<string> activeClasses = new HashSet<string>();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public HashSet<string> activeStates = new HashSet<string>();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public List<string> GetActiveNames()
+        public HashSet<string> activeClasses = new();
+        public HashSet<string> activeStates = new();
+        public bool enableInitTweens;
+        public bool skipInitTweens;
+        public List<string> initActiveClasses = new();
+        public List<string> initActiveStates = new();
+        public List<TweenName> sources = new();
+        public List<TweenAnim> TweenAnims => sources.Select(s => s == null ? null : s.GetComponent<TweenAnim>()).Where(t => t != null).ToList();
+        public List<TweenSequence> TweenSeqs => sources.Select(s => s == null ? null : s.GetComponent<TweenSequence>()).Where(t => t != null).ToList();
+        public List<string> GetActiveTweenNames()
         {
-            List<string> ret = new List<string>();
+            List<string> ret = new();
 
             var hasTag = usingTag && !string.IsNullOrEmpty(tag);
-
             foreach (var c in activeClasses)
             {
                 ret.Add(hasTag ? $"{tag}.{c}" : $".{c}");
-
                 foreach (var s in activeStates)
                     ret.Add(hasTag ? $"{tag}.{c}:{s}" : $".{c}:{s}");
             }
@@ -69,48 +35,13 @@ namespace Retween.Rx
             return ret;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool enableInitTweens;
+        public void SetTargetSelector(TweenSelector target)
+        {
+            TargetSelector = target;
+        }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool skipInitTweens;
+        public TweenSelector TargetSelector { get; private set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="string"></typeparam>
-        public List<string> initActiveClasses = new List<string>();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="string"></typeparam>
-        public List<string> initActiveStates = new List<string>();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="TweenName"></typeparam>
-        public List<TweenName> sources = new List<TweenName>();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public List<TweenAnim> TweenAnims => sources.Select(t => t?.GetComponent<TweenAnim>()).Where(a => a != null).ToList();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public List<TweenSequence> TweenSeqs => sources.Select(t => t?.GetComponent<TweenSequence>()).Where(s => s != null).ToList();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="name"></param>
         public void Add(string name, bool clearBeforeAdd = false, bool applyAfterAdd = false)
         {
             if (name.StartsWith("."))
@@ -133,11 +64,6 @@ namespace Retween.Rx
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="applyAfterRemove"></param>
         public void Remove(string name, bool applyAfterRemove = false)
         {
             if (name.StartsWith("."))
@@ -206,27 +132,27 @@ namespace Retween.Rx
                 return;
 #endif
 
-            if (Target == null)
+            if (TargetSelector == null)
                 return;
 
             foreach (var t in TweenAnims)
             {
-                if (t.TweenName.Match(Target))
+                if (t.TweenName.Match(TargetSelector))
                 {
-                    if (!rollbackOnly && !Target.matchingResults.Contains(t.TweenName))
+                    if (!rollbackOnly && !TargetSelector.matchingResults.Contains(t.TweenName))
                     {
-                        Target.matchingResults.Add(t.TweenName);
-                        Target.Player.Run(t, !t.rewindOnCancelled && !t.runRollback)?.Subscribe();
+                        TargetSelector.matchingResults.Add(t.TweenName);
+                        TargetSelector.Player.Run(t, !t.rewindOnCancelled && !t.runRollback)?.Subscribe();
 
                         // Debug.Log($"TweenSelector => {t.gameObject.name} in TweenAnim is selected.");
                     }
                 }
                 else
                 {
-                    if (Target.matchingResults.Contains(t.TweenName))
+                    if (TargetSelector.matchingResults.Contains(t.TweenName))
                     {
-                        Target.matchingResults.Remove(t.TweenName);
-                        Target.Player.Rollback(t).Subscribe();
+                        TargetSelector.matchingResults.Remove(t.TweenName);
+                        TargetSelector.Player.Rollback(t).Subscribe();
 
                         // Debug.Log($"TweenSelector => {t.gameObject.name} in TweenAnim is unselected.");
                     }
@@ -256,7 +182,7 @@ namespace Retween.Rx
 
 #if UNITY_EDITOR
             BuildSelectables();
-            Target.ForceToRepaint();
+            TargetSelector.ForceToRepaint();
 #endif
         }
 

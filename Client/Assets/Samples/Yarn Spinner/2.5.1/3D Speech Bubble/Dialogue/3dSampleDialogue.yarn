@@ -1,6 +1,8 @@
 ﻿title: Start
 tags:
 ---
+<<jumpTo "Roof">>
+
 Alice: Hey Bob.
 Bob: Hey Alice.
 Alice: This is an example of using Yarn Spinner for a 3D RPG type game with NPCs.

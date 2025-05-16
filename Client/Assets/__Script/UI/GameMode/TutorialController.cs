@@ -51,6 +51,12 @@ namespace Game
         public override void OnPostShow()
         {
             base.OnPostShow();
+
+            var bubbleDialogueCtrler = new BubbleDialoqueController().Load(GameObject.Find("3d-bubble-dialogue").GetComponent<Template>()).Show(GameContext.Instance.CanvasManager.body.transform as RectTransform);
+            Observable.NextFrame().Subscribe(_ =>
+            {
+                bubbleDialogueCtrler.StartDialogue("Start");
+            }).AddToHide(this);
         }
     }
 }

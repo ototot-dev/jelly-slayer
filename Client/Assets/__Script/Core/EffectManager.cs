@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using PampelGames.BloodFactory;
 using UniRx;
 using Unity.Linq;
 using UnityEngine;
@@ -36,11 +35,6 @@ namespace Game
                 //* 음수면 재생 시간은 무한대, 즉 Looping임을 뜻함
                 PlayDuration = -1f;
             }
-            else if (__bloodFactory != null || TryGetComponent<BloodFactory>(out __bloodFactory))
-            {
-                //* BloodFactory는 루핑 지원하지 않음
-                Debug.Assert(false);
-            }
         }
 
         public void Play(float duration, float playRate = 1f, bool releaseInstance = true)
@@ -57,18 +51,10 @@ namespace Game
                 PlayDuration = duration > 0 ? duration : Mathf.Max(0.1f, mainModule.duration * 0.99f);
                 Observable.Timer(TimeSpan.FromSeconds(PlayDuration)).Subscribe(_ => Stop(releaseInstance)).AddTo(this);
             }
-            else if (__bloodFactory != null || TryGetComponent<BloodFactory>(out __bloodFactory))
-            {
-                __bloodFactory.Execute();
-
-                PlayDuration = duration > 0 ? duration : Mathf.Max(0.1f, __bloodFactory.bloodParticles.Max(p => p.duration) * 2f);
-                Observable.Timer(TimeSpan.FromSeconds(PlayDuration)).Subscribe(_ => Stop(releaseInstance)).AddTo(this);
-            }
         }
 
         public float PlayDuration { get; private set; }
         ParticleSystem __particleSystem;
-        BloodFactory __bloodFactory;
         IDisposable __stopDiposable;
 
         public void Stop(bool releaseInstance = true)
@@ -76,21 +62,6 @@ namespace Game
             if (__particleSystem != null || TryGetComponent<ParticleSystem>(out __particleSystem))
             {
                 __particleSystem.Stop();
-
-                if (releaseInstance)
-                {
-                    Debug.Assert(__stopDiposable == null);
-                    __stopDiposable = Observable.Timer(TimeSpan.FromSeconds(1f)).Subscribe(_ =>
-                    {
-                        EffectManager.Instance.ReleaseInstance(this);
-                        __stopDiposable = null;
-                    }).AddTo(this);
-                }
-            }
-            else if (__bloodFactory != null || TryGetComponent<BloodFactory>(out __bloodFactory))
-            {
-                foreach (var p in __bloodFactory.bloodParticles) p.particle.Stop();
-                foreach (var p in __bloodFactory.particles) p.Stop();
 
                 if (releaseInstance)
                 {

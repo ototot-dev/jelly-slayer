@@ -1,0 +1,31 @@
+using System;
+using System.Collections.Generic;
+namespace vietlabs.fr2
+{
+    partial class FR2_WindowAll
+    {
+        [Serializable] internal class PanelSettings
+        {
+            public bool selection;
+            public bool horzLayout;
+            public bool scene = true;
+            public bool asset = true;
+            public bool details;
+            public bool bookmark;
+            public bool toolMode;
+
+            public bool showFullPath = true;
+            public bool showFileSize;
+            public bool showFileExtension;
+            public bool showUsageType = true;
+            public bool writeImportLog;
+
+            public FR2_RefDrawer.Mode toolGroupMode = FR2_RefDrawer.Mode.Type;
+            public FR2_RefDrawer.Mode groupMode = FR2_RefDrawer.Mode.Dependency;
+            public FR2_RefDrawer.Sort sortMode = FR2_RefDrawer.Sort.Path;
+
+            public int historyIndex;
+            public List<SelectHistory> history = new List<SelectHistory>();
+        }
+    }
+}

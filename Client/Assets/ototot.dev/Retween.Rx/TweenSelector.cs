@@ -13,7 +13,7 @@ namespace Retween.Rx
         {
             Player = GetComponent<TweenPlayer>();
 
-            query.SetTarget(this);
+            query.SetTargetSelector(this);
 #if UNITY_EDITOR
             query.BuildSelectables();
 #endif
@@ -57,16 +57,16 @@ namespace Retween.Rx
 
         public virtual void OnValidateInternal()
         {
-            if (query.Target == null)
-                query.SetTarget(this);
+            if (query.TargetSelector == null)
+                query.SetTargetSelector(this);
 
             query.BuildSelectables();
         }
 
         public void ForceToRepaint()
         {
-            if (query.Target == null)
-                query.SetTarget(this);
+            if (query.TargetSelector == null)
+                query.SetTargetSelector(this);
 
             query.forceToRepaintFlag = !query.forceToRepaintFlag;
 
