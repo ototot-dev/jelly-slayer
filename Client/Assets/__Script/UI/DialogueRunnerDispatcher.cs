@@ -53,10 +53,17 @@ namespace Game
             base.UserRequestedViewAdvancement();
         }
 
-        [YarnCommand("jumpTo")]
+        DialogueRunner __dialogueRunner;
+
+        void Awake()
+        {
+            __dialogueRunner = GetComponent<DialogueRunner>();
+            __dialogueRunner.AddCommandHandler<string>("jumpTo", JumpTo);
+        }
+
         public void JumpTo(string text)
         {
-            Debug.Log("From A");
+            Debug.Log($"From {text}");
         }
 
     }
