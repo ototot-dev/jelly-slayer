@@ -15,14 +15,14 @@ namespace Game
         {
             base.OnPostShow();
 
-            isLoadingCompleted.Where(v => v).Subscribe(_ =>
-            {
-                this.HideAsObservable().Subscribe(_ =>
-                {
-                    GameContext.Instance.CanvasManager.FadeOut(1);
-                    new GameOverlayController().Load().Show(GameContext.Instance.CanvasManager.body.transform as RectTransform);
-                });
-            });
+            // isLoadingCompleted.Where(v => v).Subscribe(_ =>
+            // {
+            //     this.HideAsObservable().Subscribe(_ =>
+            //     {
+            //         GameContext.Instance.CanvasManager.FadeOut(1);
+            //         new GameOverlayController().Load().Show(GameContext.Instance.CanvasManager.body.transform as RectTransform);
+            //     });
+            // });
 
             template.StartCoroutine(Loading_Coroutine());
         }

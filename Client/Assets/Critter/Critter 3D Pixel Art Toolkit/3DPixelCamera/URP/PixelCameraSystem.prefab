@@ -85,6 +85,9 @@ MonoBehaviour:
   yawAngleOnGrouned: 40
   yawAngleOnHanging: 45
   yawAngleSpeed: 50
+  volumeProfile: {fileID: 11400000, guid: ab09877e2e707104187f6f83e2f62510, type: 2}
+  vignetteIntensity: 0.3
+  vignetteSmoothness: 0.2
 --- !u!1 &3474214803470865388
 GameObject:
   m_ObjectHideFlags: 0
@@ -452,7 +455,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0

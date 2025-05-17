@@ -8,8 +8,6 @@ namespace Game
 {
     public class SlayerBlackboard : PawnBlackboard
     {
-        public int _id = 0;  // PlayerData ID (������ ĳ�� �Ѱ��� ū �ǹ̴� ����)
-
         public bool IsJumping => body.isJumping.Value;
         public bool IsHanging => body.hangingBrain.Value != null;
         public bool IsRolling => body.isRolling.Value;
@@ -101,6 +99,15 @@ namespace Game
         }
 
         public Attachment attachment = new();
+
+        [Serializable]
+        public class Dialogue
+        {
+            public AnimationClip sleepAnimClip;
+            public AnimationClip getUpAnimClip;
+        }
+
+        public Dialogue dialogue = new();
 
         protected override void AwakeInternal()
         {

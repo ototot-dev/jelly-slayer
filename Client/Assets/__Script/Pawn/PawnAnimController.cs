@@ -46,7 +46,7 @@ namespace Game
         protected readonly AnimationClipPlayable[] __playableClips = new AnimationClipPlayable[2];
         protected int __currPlayableClipIndex;
         protected IDisposable __blendSingleClipDisposable;
-        public bool IsPlayableGraphRunning() => __playableGraph.IsPlaying();
+        public bool IsPlayableGraphRunning() => __playableGraph.IsValid() && __playableGraph.IsPlaying();
 
         protected virtual void CreatePlayableGraph()
         {
@@ -66,8 +66,7 @@ namespace Game
             __playableMixer.SetInputWeight(1, 0f);
             __playableMixer.SetInputWeight(2, 1f);
         }
-
-        public void PlaySingleClip(AnimationClip clip, float blendInTime)
+        public void PlaySingleClipLooping(AnimationClip clip, float blendInTime)
         {
             if (!__playableGraph.IsValid()) CreatePlayableGraph();
 
@@ -87,6 +86,35 @@ namespace Game
             {
                 __playableMixer.SetInputWeight(0, Mathf.Clamp01(__playableMixer.GetInputWeight(0) + (__currPlayableClipIndex == 0 ? blendSpeed : -blendSpeed)* Time.deltaTime));
                 __playableMixer.SetInputWeight(1, Mathf.Clamp01(__playableMixer.GetInputWeight(1) + (__currPlayableClipIndex == 1 ? blendSpeed : -blendSpeed)* Time.deltaTime));
+                __playableMixer.SetInputWeight(2, Mathf.Clamp01(__playableMixer.GetInputWeight(2) - blendSpeed * Time.deltaTime));
+            }).AddTo(this);
+        }
+        
+        public void PlaySingleClip(AnimationClip clip, float blendInTime, float blendOutTime)
+        {
+            if (!__playableGraph.IsValid()) CreatePlayableGraph();
+
+            __currPlayableClipIndex = __currPlayableClipIndex == 0 ? 1 : 0;
+            __playableMixer.DisconnectInput(__currPlayableClipIndex);
+            __playableClips[__currPlayableClipIndex].Destroy();
+            __playableClips[__currPlayableClipIndex] = AnimationClipPlayable.Create(__playableGraph, clip);
+            __playableGraph.Connect(__playableClips[__currPlayableClipIndex], 0, __playableMixer, __currPlayableClipIndex);
+
+            if (!__playableGraph.IsPlaying())
+                __playableGraph.Play();
+
+            var blendStartTimeStamp = Time.time;
+            var blendSpeed = 1f / blendInTime;
+            var clipDuration = clip.length;
+
+            __blendSingleClipDisposable?.Dispose();
+            __blendSingleClipDisposable = Observable.EveryUpdate().Subscribe(_ =>
+            {
+                if ((Time.time - blendStartTimeStamp) > (clipDuration - blendOutTime))
+                    StopSingleClip(blendOutTime);
+
+                __playableMixer.SetInputWeight(0, Mathf.Clamp01(__playableMixer.GetInputWeight(0) + (__currPlayableClipIndex == 0 ? blendSpeed : -blendSpeed) * Time.deltaTime));
+                __playableMixer.SetInputWeight(1, Mathf.Clamp01(__playableMixer.GetInputWeight(1) + (__currPlayableClipIndex == 1 ? blendSpeed : -blendSpeed) * Time.deltaTime));
                 __playableMixer.SetInputWeight(2, Mathf.Clamp01(__playableMixer.GetInputWeight(2) - blendSpeed * Time.deltaTime));
             }).AddTo(this);
         }

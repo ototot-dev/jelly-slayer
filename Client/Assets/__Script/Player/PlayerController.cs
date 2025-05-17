@@ -171,24 +171,30 @@ namespace Game
 
         public void OnMove(InputValue value)
         {
-            if (_isEnable_Move == false)
+            if (possessedBrain == null)
                 return;
+            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
+                return;
+
             inputMoveVec.Value = value.Get<Vector2>();
         }
 
         public void OnLook(InputValue value)
         {
-            if (_isEnable_Look == false || possessedBrain == null)
+            if (possessedBrain == null)
                 return;
-            if (GameContext.Instance.cameraCtrler != null && 
+            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
+                return;
+                
+            if (GameContext.Instance.cameraCtrler != null &&
                 GameContext.Instance.cameraCtrler.TryGetPickingPointOnTerrain(value.Get<Vector2>(), out var pickingPoint))
                 inputLookVec.Value = (pickingPoint - possessedBrain.Movement.capsule.transform.position).Vector2D().normalized;
         }
         public void OnGuard(InputValue value)
         {
-            if (_isEnable_Guard == false)
-                return;
             if (possessedBrain == null)
+                return;
+            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
                 return;
 
             possessedBrain.ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
@@ -210,7 +216,9 @@ namespace Game
 
         public void OnJump(InputValue value)
         {
-            if (_isEnable_Jump == false)
+            if (possessedBrain == null)
+                return;
+            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
                 return;
 
             __jumpHangingDisposable ??= Observable.EveryUpdate().Where(_ => __jumpExecutedTimeStamp > __jumpReleasedTimeStamp).Subscribe(_ =>
@@ -277,6 +285,11 @@ namespace Game
 
         public void OnNextTarget()
         {
+            if (possessedBrain == null)
+                return;
+            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
+                return;
+
             if (possessedBrain.BB.TargetPawn == null)
             {
                 var newTarget = possessedBrain.PawnSensorCtrler.ListeningColliders.AsValueEnumerable()
@@ -322,6 +335,11 @@ namespace Game
 
         public void OnPrevTarget()
         {
+            if (possessedBrain == null)
+                return;
+            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
+                return;
+
             if (possessedBrain.BB.TargetPawn == null)
             {
                 var newTarget = possessedBrain.PawnSensorCtrler.ListeningColliders.AsValueEnumerable()
@@ -358,7 +376,10 @@ namespace Game
 
         public void OnRoll()
         {
-            if (possessedBrain == null) return;
+            if (possessedBrain == null)
+                return;
+            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
+                return;
 
             if (_isEnable_Roll == false)
                 return;
@@ -438,9 +459,12 @@ namespace Game
 
         public void OnPunch(InputValue value)
         {
-            if (_isEnable_Parry == false)
-                return;
             if (possessedBrain == null)
+                return;
+            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
+                return;
+
+            if (_isEnable_Parry == false)
                 return;
 
             __punchChargingDisposable ??= Observable.EveryUpdate().Where(_ => __punchPresssedTimeStamp > __punchReleasedTimeStamp).Subscribe(_ =>
@@ -483,9 +507,12 @@ namespace Game
 
         public void OnAttack(InputValue value)
         {
-            if(_isEnable_NormalAttack == false)
-                return;
             if (possessedBrain == null)
+                return;
+            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
+                return;
+                
+            if (_isEnable_NormalAttack == false)
                 return;
 
             var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsRolling && !possessedBrain.BB.IsHanging;;
@@ -561,9 +588,12 @@ namespace Game
 
         public void OnGroggyAttack(InputValue value)
         {
-            if (_isEnable_NormalAttack == false)
-                return;
             if (possessedBrain == null)
+                return;
+            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
+                return;
+
+            if (_isEnable_NormalAttack == false)
                 return;
 
             var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsRolling && !possessedBrain.BB.IsHanging; ;
@@ -607,6 +637,8 @@ namespace Game
         {
             if (possessedBrain == null)
                 return;
+            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
+                return;
 
             if (value.isPressed)
             {
@@ -636,12 +668,22 @@ namespace Game
 
         public void OnDrink() 
         {
+            if (possessedBrain == null)
+                return;
+            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
+                return;
+
             Debug.Log("<color=red>OnDrink</color>");
             possessedBrain.ActionCtrler.SetPendingAction("DrinkPotion");
         }
 
         public void OnBurst(InputValue value)
         {
+            if (possessedBrain == null)
+                return;
+            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
+                return;
+                
             Debug.Log("OnBurst");
             if (possessedBrain.BB.stat.rage.Value < possessedBrain.BB.stat.maxRage.Value)
                 return;

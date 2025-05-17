@@ -1059,7 +1059,6 @@ MonoBehaviour:
     targetPawnHP:
       value: {fileID: 0}
     trail: []
-  _id: 0
   body:
     hangingBrain:
       value: {fileID: 0}
@@ -1135,6 +1134,9 @@ MonoBehaviour:
     leftMechElbowBone: {fileID: 5347011434172573214}
     blockingFxAttachPoint: {fileID: 0}
     healingPotion: {fileID: 433290913834801051}
+  dialogue:
+    sleepAnimClip: {fileID: 1827226128182048838, guid: 81164a6fd681e11458cc1f8828d2b994, type: 3}
+    getUpAnimClip: {fileID: 1827226128182048838, guid: 5d01ab709a6977043be6e6921968e347, type: 3}
 --- !u!114 &8791414763947496166
 MonoBehaviour:
   m_ObjectHideFlags: 0

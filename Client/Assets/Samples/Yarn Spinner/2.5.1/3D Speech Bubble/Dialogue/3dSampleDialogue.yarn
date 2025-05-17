@@ -1,13 +1,21 @@
 ﻿title: Start
 tags:
 ---
-<<jumpTo "Roof">>
+
+<<vignette 0.4 0.9 0>>
+<<sleep>>
+<<wait 2>>
+<<fadeOut 1>>
+<<wait 2>>
+<<vignette 0.3 0.2 1>>
 
 Alice: Hey Bob.
 Bob: Hey Alice.
 Alice: This is an example of using Yarn Spinner for a 3D RPG type game with NPCs.
 Alice: Like in A Short Hike! Have you played that game, Bob?
 Bob: ...
+
+<<getUp>>
 
 Alice: Bob, are you OK?
 Bob: I feel so dizzy. I think I have to get off soon...

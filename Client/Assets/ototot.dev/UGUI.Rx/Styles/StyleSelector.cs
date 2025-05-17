@@ -69,10 +69,12 @@ namespace UGUI.Rx
                         currTweenNames.Add(Player.Run(r.Key).Select(_ => r.Key.TweenName));
                 }
 
-                // foreach (var r in Player.dotweeenSeqRunnings) {
-                //     if (r.Key.TweenName.stateName == __showStr)
-                //         runningTweenNames.Add(Player.Run(r.Key).Select(_ => r.Key.TweenName));
-                // }
+#if ENABLE_DOTWEEN_SEQUENCE
+                foreach (var r in Player.dotweeenSeqRunnings) {
+                    if (r.Key.TweenName.stateName == __showStr)
+                        runningTweenNames.Add(Player.Run(r.Key).Select(_ => r.Key.TweenName));
+                }
+#endif
 
                 observer.OnNext(this);
                 observer.OnCompleted();
@@ -120,14 +122,16 @@ namespace UGUI.Rx
                         currTweenNames.Add(Player.Run(r.Key).Select(_ => r.Key.TweenName));
                 }
 
-                // foreach (var r in Player.dotweeenSeqRunnings) {
-                //     // Consider show-tween as hide-tween if it has rewindOnCancelled set true.
-                //     if (r.Key.rewindOnCancelled && r.Key.TweenName.stateName == __showStr)
-                //         runningTweenNames.Add(Player.Rewind(r.Key).Select(_ => r.Key.TweenName));
+#if ENABLE_DOTWEEN_SEQUENCE
+                    // foreach (var r in Player.dotweeenSeqRunnings) {
+                    //     // Consider show-tween as hide-tween if it has rewindOnCancelled set true.
+                    //     if (r.Key.rewindOnCancelled && r.Key.TweenName.stateName == __showStr)
+                    //         runningTweenNames.Add(Player.Rewind(r.Key).Select(_ => r.Key.TweenName));
 
-                //     if (r.Key.TweenName.stateName == __hideStr)
-                //         runningTweenNames.Add(Player.Run(r.Key).Select(_ => r.Key.TweenName));
-                // }
+                    //     if (r.Key.TweenName.stateName == __hideStr)
+                    //         runningTweenNames.Add(Player.Run(r.Key).Select(_ => r.Key.TweenName));
+                    // }
+#endif
 
                 observer.OnNext(this);
                 observer.OnCompleted();

@@ -4,7 +4,6 @@ using UnityEditor;
 
 namespace Retween.Rx
 {
-    [RequireComponent(typeof(TweenPlayer))]
     public class TweenSelector : MonoBehaviour
     {
         public TweenPlayer Player { get; private set; }
@@ -73,7 +72,5 @@ namespace Retween.Rx
             EditorUtility.SetDirty(this);
         }
 #endif
-
     }
-
 }

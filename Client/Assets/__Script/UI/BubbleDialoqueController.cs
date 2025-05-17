@@ -3,53 +3,35 @@ using UnityEngine.UI;
 using UniRx;
 using UGUI.Rx;
 using Yarn.Unity;
-using System.Collections.Generic;
 
 namespace Game
 {
     [Template(path: "UI/template/3d-bubble-dialoque")]
     public class BubbleDialoqueController : Controller
     {
-        DialogueRunner __dialogRunner;
-        DialogueRunnerDispatcher __dialogueDispatcher;
-        CanvasScaler __canvasScaler;
-
-        public void StartDialogue(string nodeName)
-        {
-            __dialogRunner.StartDialogue(nodeName);
-        }
+        public PawnBrainController speakerBrain;
 
         public override void OnPostLoad()
         {
             base.OnPostLoad();
 
-            __dialogRunner = template.GetComponent<DialogueRunner>();
-            __dialogueDispatcher = template.gameObject.AddComponent<DialogueRunnerDispatcher>();
-            __canvasScaler = template.transform.GetComponent<CanvasScaler>();
-
-            var tempViews = new List<DialogueViewBase>() { GameContext.Instance.CanvasManager.GetComponent<DialogueRunnerDispatcher>() };
-            foreach (var v in __dialogRunner.dialogueViews) tempViews.Add(v);
-
-            //* 'DialogueRunnerDispatcher'를 포함한 새로운 View 리스트 셋팅
-            __dialogRunner.SetDialogueViews(tempViews.ToArray());
-
             //* 드로우 순서를 제일 앞단으로 변경
             template.transform.SetAsFirstSibling();
         }
 
-        public PawnBrainController speakerBrain;
-
-        public override void OnPostShow()
+        public override void OnPreShow()
         {
-            base.OnPostShow();
+            base.OnPreShow();
 
-            __dialogueDispatcher.onRunLine += l =>
+            GameContext.Instance.dialogueRunnerDispatcher.AddViews(GetComponentById<DialogueViewBase>("dialogue"), GetComponentById<DialogueViewBase>("options"));
+
+            GameContext.Instance.dialogueRunnerDispatcher.onRunLine += l =>
             {
                 speakerBrain = GameContext.Instance.playerCtrler.possessedBrain;
                 // speakerBrain = TaggerSystem.FindGameObjectWithTag(l.CharacterName).GetComponent<PawnBrainController>();
             };
 
-            __dialogueDispatcher.onDialoqueComplete += () =>
+            GameContext.Instance.dialogueRunnerDispatcher.onDialoqueComplete += () =>
             {
                 this.HideAsObservable().Subscribe(_ => this.Unload());
             };
@@ -70,12 +52,14 @@ namespace Game
             }).AddToHide(this);
         }
 
-        public override void OnPostHide()
+        public override void OnPreHide()
         {
-            base.OnPostHide();
+            base.OnPreHide();
 
-            __dialogRunner.SetDialogueViews(new DialogueViewBase[0]);
+            GameContext.Instance.dialogueRunnerDispatcher.RemoveViews(GetComponentById<DialogueViewBase>("dialogue"), GetComponentById<DialogueViewBase>("options"));
         }
+        
+        CanvasScaler __canvasScaler;
 
         /// <summary>Calculates where to put dialogue bubble based on worldPosition and any desired screen margins. 
         /// Ensure "constrainToViewportMargin" is between 0.0f-1.0f (% of screen) to constrain to screen, or value of -1 lets bubble go off-screen.</summary>
@@ -88,6 +72,9 @@ namespace Game
                 out Vector2 screenPos
             );
             
+            if (__canvasScaler == null)
+                __canvasScaler = template.transform.GetComponent<CanvasScaler>();
+
             // to force the dialogue bubble to be fully on screen, clamp the bubble rectangle within the screen bounds
             if (constrainToViewportMargin >= 0f)
             {

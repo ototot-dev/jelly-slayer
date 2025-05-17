@@ -7,157 +7,141 @@ using UniRx;
 using UniRx.Triggers;
 using Retween.Rx;
 
-namespace UGUI.Rx {
+namespace UGUI.Rx
+{
+    [RequireComponent(typeof(RectTransform))]
+    [RequireComponent(typeof(TweenPlayer))]
+    [RequireComponent(typeof(InputField))]
+    public class InputFieldStyleSelector : StyleSelector
+    {
+        public override string Tag => "inputfield";
+        public bool IsHover { get; protected set; }
+        public StringReactiveProperty RegexPattern = new StringReactiveProperty(string.Empty);
+        Regex __regex;
 
-/// <summary>
-/// 
-/// </summary>
-[RequireComponent(typeof(RectTransform))]
-[RequireComponent(typeof(InputField))]
-public class InputFieldStyleSelector : StyleSelector {
+        public override void Init(Template owner, TweenName[] tweenNames)
+        {
+            base.Init(owner, tweenNames);
 
-    /// <summary>
-    /// 
-    /// </summary>
-    public override string Tag => "inputfield";
+            var inputField = GetComponent<InputField>();
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <value></value>
-    public bool IsHover { get; protected set; }
+            query.activeStates.Add(inputField.interactable ? __normalStr : __disabledStr);
+            query.activeStates.Add(__emptyStr);
+            query.Apply();
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
-    public StringReactiveProperty RegexPattern = new StringReactiveProperty(string.Empty);
+            var skipFirst = true;
 
-    /// <summary>
-    /// 
-    /// </summary>
-    Regex __regex;
-    
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="owner"></param>
-        /// <param name="tweenNames"></param>
-    public override void Init(Template owner, TweenName[] tweenNames) {
-        base.Init(owner, tweenNames);
+            var disposable = gameObject.ObserveEveryValueChanged(_ => inputField.interactable)
+                .Where(_ => !skipFirst)
+                .Subscribe(v =>
+                {
+                    if (v)
+                    {
+                        query.activeStates.Remove(__disabledStr);
+                        query.activeStates.Add(__normalStr);
+                    }
+                    else
+                    {
+                        query.activeStates.Remove(__normalStr);
+                        query.activeStates.Remove(__hoverStr);
+                        query.activeStates.Add(__disabledStr);
+                    }
 
-        var inputField = GetComponent<InputField>();
+                    query.Apply();
+                })
+                .AddTo(this);
 
-        query.activeStates.Add(inputField.interactable ? __normalStr : __disabledStr);
-        query.activeStates.Add(__emptyStr);
-        query.Apply();
+            __disposables.Add(disposable);
 
-        var skipFirst = true;
-
-        var disposable = gameObject.ObserveEveryValueChanged(_ => inputField.interactable)
-            .Where(_ => !skipFirst)
-            .Subscribe(v => {
-                if (v) {
-                    query.activeStates.Remove(__disabledStr);
-                    query.activeStates.Add(__normalStr);
-                }
-                else {
+            disposable = inputField.OnPointerEnterAsObservable()
+                .Where(_ => !skipFirst && inputField.interactable)
+                .Subscribe(_ =>
+                {
                     query.activeStates.Remove(__normalStr);
+                    query.activeStates.Add(__hoverStr);
+
+                    query.Apply();
+
+                    IsHover = true;
+                })
+                .AddTo(this);
+
+            __disposables.Add(disposable);
+
+            disposable = inputField.OnPointerExitAsObservable()
+                .Where(_ => !skipFirst && inputField.interactable)
+                .Subscribe(_ =>
+                {
                     query.activeStates.Remove(__hoverStr);
-                    query.activeStates.Add(__disabledStr);
+                    query.activeStates.Add(__normalStr);
+                    query.Apply();
+
+                    IsHover = false;
+                })
+                .AddTo(this);
+
+            __disposables.Add(disposable);
+
+            if (!string.IsNullOrEmpty(RegexPattern.Value))
+            {
+                try
+                {
+                    __regex = new Regex(RegexPattern.Value);
                 }
-
-                query.Apply();
-            })
-            .AddTo(this);
-            
-        __disposables.Add(disposable);
-
-        disposable = inputField.OnPointerEnterAsObservable()
-            .Where(_ => !skipFirst && inputField.interactable)
-            .Subscribe(_ => {
-                query.activeStates.Remove(__normalStr);
-                query.activeStates.Add(__hoverStr);
-
-                query.Apply();
-
-                IsHover = true;
-            })
-            .AddTo(this);
-
-        __disposables.Add(disposable);
-
-        disposable = inputField.OnPointerExitAsObservable()
-            .Where(_ => !skipFirst && inputField.interactable)
-            .Subscribe(_ => {
-                query.activeStates.Remove(__hoverStr);
-                query.activeStates.Add(__normalStr);
-                query.Apply();
-
-                IsHover = false;
-            })
-            .AddTo(this);
-
-        __disposables.Add(disposable);
-
-        if (!string.IsNullOrEmpty(RegexPattern.Value)) {
-            try {
-                __regex = new Regex(RegexPattern.Value);
+                catch (Exception e)
+                {
+                    Debug.LogWarning($"InputFieldStyleSelector => RegexPattern - {RegexPattern.Value} - is invalid!! => {e.ToString()}");
+                }
             }
-            catch (Exception e) {
-                Debug.LogWarning($"InputFieldStyleSelector => RegexPattern - {RegexPattern.Value} - is invalid!! => {e.ToString()}");
-            }
+
+            disposable = inputField.OnValueChangedAsObservable()
+                .Where(_ => !skipFirst && inputField.interactable && __regex != null)
+                .Subscribe(v =>
+                {
+                    if (string.IsNullOrEmpty(v))
+                    {
+                        query.activeStates.Remove(__matchedStr);
+                        query.activeStates.Remove(__unmatchedStr);
+                        query.activeStates.Add(__emptyStr);
+                    }
+                    else
+                    {
+                        query.activeStates.Remove(__matchedStr);
+                        query.activeStates.Remove(__unmatchedStr);
+
+                        var isMatched = (__regex.Match(v)?.Length ?? -1) == v.Length;
+
+                        query.activeStates.Add(isMatched ? __matchedStr : __unmatchedStr);
+                        query.activeStates.Remove(__emptyStr);
+                    }
+
+                    query.Apply();
+                })
+                .AddTo(this);
+
+            __disposables.Add(disposable);
+
+            skipFirst = false;
         }
 
-        disposable = inputField.OnValueChangedAsObservable()
-            .Where(_ => !skipFirst && inputField.interactable && __regex != null)
-            .Subscribe(v => {
-                if (string.IsNullOrEmpty(v)) {
-                    query.activeStates.Remove(__matchedStr);
-                    query.activeStates.Remove(__unmatchedStr);
-                    query.activeStates.Add(__emptyStr);
-                }
-                else {
-                    query.activeStates.Remove(__matchedStr);
-                    query.activeStates.Remove(__unmatchedStr);
+        List<IDisposable> __disposables = new List<IDisposable>();
+        readonly string __enabledStr = StyleStates.enabled.ToString();
+        readonly string __normalStr = StyleStates.normal.ToString();
+        readonly string __disabledStr = StyleStates.disabled.ToString();
+        readonly string __hoverStr = StyleStates.hover.ToString();
+        readonly string __pressedStr = StyleStates.pressed.ToString();
+        readonly string __emptyStr = StyleStates.empty.ToString();
+        readonly string __matchedStr = StyleStates.matched.ToString();
+        readonly string __unmatchedStr = StyleStates.unmatched.ToString();
 
-                    var isMatched = (__regex.Match(v)?.Length ?? -1) == v.Length;
+        public override void CleanUp()
+        {
+            base.CleanUp();
 
-                    query.activeStates.Add(isMatched ? __matchedStr : __unmatchedStr);
-                    query.activeStates.Remove(__emptyStr);
-                }
+            foreach (var d in __disposables)
+                d.Dispose();
 
-                query.Apply();
-            })
-            .AddTo(this);
-
-        __disposables.Add(disposable);
-
-        skipFirst = false;
+            __disposables.Clear();
+        }
     }
-
-    List<IDisposable> __disposables = new List<IDisposable>();
-    readonly string __enabledStr = StyleStates.enabled.ToString();
-    readonly string __normalStr = StyleStates.normal.ToString();
-    readonly string __disabledStr = StyleStates.disabled.ToString();
-    readonly string __hoverStr = StyleStates.hover.ToString();
-    readonly string __pressedStr = StyleStates.pressed.ToString();
-    readonly string __emptyStr = StyleStates.empty.ToString();
-    readonly string __matchedStr = StyleStates.matched.ToString();
-    readonly string __unmatchedStr = StyleStates.unmatched.ToString();
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public override void CleanUp() {
-        base.CleanUp();
-
-        foreach (var d in __disposables)
-            d.Dispose();
-
-        __disposables.Clear();
-    }
-
-}
-
 }

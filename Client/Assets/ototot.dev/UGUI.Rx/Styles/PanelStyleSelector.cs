@@ -1,19 +1,12 @@
+using Retween.Rx;
 using UnityEngine;
 
-
-namespace UGUI.Rx {
-
-/// <summary>
-/// 
-/// </summary>    
-[RequireComponent(typeof(RectTransform))]
-public class PanelStyleSelector : StyleSelector {
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public override string Tag => "panel";
-
-}
-
+namespace UGUI.Rx
+{
+    [RequireComponent(typeof(RectTransform))]
+    [RequireComponent(typeof(TweenPlayer))]
+    public class PanelStyleSelector : StyleSelector
+    {
+        public override string Tag => "panel";
+    }
 }

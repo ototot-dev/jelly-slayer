@@ -4,6 +4,8 @@ using System.Linq;
 using PixelCamera;
 using UniRx;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 namespace Game
 {
@@ -23,6 +25,25 @@ namespace Game
         public float yawAngleSpeed = 360f;
         public Quaternion SpriteLookRotation => cameraTransform != null ? Quaternion.LookRotation(cameraTransform.forward, Vector3.up) : Quaternion.identity;
         public Quaternion BillboardRotation => cameraTransform != null ? Quaternion.LookRotation(-cameraTransform.forward, Vector3.up) : Quaternion.identity;
+
+        [Header("Volume")]
+        public VolumeProfile volumeProfile;
+
+        [Header("Vignette")]
+        public float vignetteIntensity = 0.3f;
+        public float vignetteSmoothness = 0.2f;
+        Vignette __vignette;
+
+        void Awake()
+        {
+            Debug.Assert(volumeProfile != null);
+
+            if (volumeProfile.TryGet(out __vignette))
+            {
+                __vignette.intensity.value = vignetteIntensity;
+                __vignette.smoothness.value = vignetteSmoothness;
+            }
+        }
 
         public void Shake(float strength, float duration)
         {
@@ -74,8 +95,20 @@ namespace Game
         Vector3 __currTargetPoint;
         HashSet<PawnBrainController> __listeningBrains = new();
 
+        void Update()
+        {
+            if (!Mathf.Approximately(__vignette.intensity.value, vignetteIntensity))
+            {
+                __vignette.intensity.value = vignetteIntensity;
+                __Logger.LogR1(gameObject, "__vignette.intensity.value", "vignetteIntensity", vignetteIntensity);
+            }
+            if (!Mathf.Approximately(__vignette.smoothness.value, vignetteSmoothness)) __vignette.smoothness.value = vignetteSmoothness;
+
+        }
+
         void LateUpdate()
         {
+
             if (cameraTransform == null || GameContext.Instance.playerCtrler == null || GameContext.Instance.playerCtrler.possessedBrain == null)
                 return;
 

@@ -8,7 +8,6 @@ using UniRx;
 using DG.Tweening;
 #endif
 
-
 namespace Retween.Rx
 {
     public class TweenPlayer : MonoBehaviour
@@ -40,7 +39,7 @@ namespace Retween.Rx
 
             __anim.playAutomatically = false;
         }
-        
+
         Animation __anim;
         public Dictionary<TweenAnim, TweenAnimState> tweenStates = new();
 

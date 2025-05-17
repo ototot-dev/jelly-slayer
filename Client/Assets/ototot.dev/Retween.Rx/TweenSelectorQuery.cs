@@ -82,12 +82,6 @@ namespace Retween.Rx
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="targetName"></param>
-        /// <param name="newName"></param>
-        /// <param name="applyAfterReplace"></param>
         public void Replace(string targetName, string newName, bool applyAfterRemove = false, bool applyAfterAdd = false)
         {
             if (targetName.StartsWith("."))
@@ -187,25 +181,10 @@ namespace Retween.Rx
         }
 
 #if UNITY_EDITOR
-
-        /// <summary>
-        /// 
-        /// </summary>
         public List<string> selectableNames = new List<string>();
-
-        /// <summary>
-        /// 
-        /// </summary>
         public List<string> selectableClasses = new List<string>();
-
-        /// <summary>
-        /// 
-        /// </summary>
         public List<string> selectableStates = new List<string>();
 
-        /// <summary>
-        /// 
-        /// </summary>
         public void BuildSelectables()
         {
             selectableNames.Clear();
@@ -249,9 +228,6 @@ namespace Retween.Rx
         }
 
         public bool forceToRepaintFlag;
-
 #endif
-
     }
-
 }

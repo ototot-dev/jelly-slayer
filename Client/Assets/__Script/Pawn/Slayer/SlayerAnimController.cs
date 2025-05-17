@@ -90,9 +90,6 @@ namespace Game
 
         void Start()
         {   
-            // PlaySingleClip(testSingleClipA, 0.2f);
-            // Observable.Timer(TimeSpan.FromSeconds(2f)).Subscribe(_ => PlaySingleClip(testSingleClipB, 0.2f));
-
             __brain.BB.body.isGuarding.CombineLatest(__brain.BB.action.punchChargingLevel, (a, b) => new Tuple<bool, int>(a, b)).Subscribe(v =>
             {   
                 if (v.Item2 >= 0)
@@ -176,18 +173,18 @@ namespace Game
             __brain.onUpdate += () =>
             {
                 //* __playableGraph가 실행 중에는 Animation PostProcess는 모두 꺼줌
-                // if (__playableGraph.IsPlaying())
-                // {
-                //     rigSetup.weight = 0f;
-                //     spineOverrideTransform.weight = 0f;
-                //     leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
-                //     leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
-                //     legAnimator.User_SetIsMoving(false);
-                //     legAnimator.User_SetIsGrounded(false);
-                //     legAnimator.MainGlueBlend = 0f;
+                if (IsPlayableGraphRunning())
+                {
+                    rigSetup.weight = 0f;
+                    spineOverrideTransform.weight = 0f;
+                    leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
+                    leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
+                    legAnimator.User_SetIsMoving(false);
+                    legAnimator.User_SetIsGrounded(false);
+                    legAnimator.MainGlueBlend = 0f;
 
-                //     return;
-                // }
+                    return;
+                }
 
                 if (ragdollAnimator.Handler.AnimatingMode == FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Falling)
                 {

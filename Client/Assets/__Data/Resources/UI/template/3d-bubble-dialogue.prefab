@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4070441402665766495}
   - component: {fileID: 4808989351538988086}
-  - component: {fileID: 4654172522092100320}
   m_Layer: 5
   m_Name: 3d-bubble-dialogue
   m_TagString: Untagged
@@ -57,43 +56,6 @@ MonoBehaviour:
   hideTweens: []
   runTestMode: 0
   testStyleSheets: []
---- !u!114 &4654172522092100320
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 700500891764033697}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4bec29c0a230741bdac901dba8da47ee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  yarnProject: {fileID: 7545569452688597077, guid: 7695ad157ec234e088ab1de2389cbc9c, type: 3}
-  _variableStorage: {fileID: 0}
-  dialogueViews:
-  - {fileID: 4992576999047838267}
-  - {fileID: 8946156695518017871}
-  startNode: Start
-  startAutomatically: 0
-  runSelectedOptionAsLine: 0
-  lineProvider: {fileID: 0}
-  verboseLogging: 1
-  onNodeStart:
-    m_PersistentCalls:
-      m_Calls: []
-  onNodeComplete:
-    m_PersistentCalls:
-      m_Calls: []
-  onDialogueStart:
-    m_PersistentCalls:
-      m_Calls: []
-  onDialogueComplete:
-    m_PersistentCalls:
-      m_Calls: []
-  onCommand:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &4992576998352961423
 GameObject:
   m_ObjectHideFlags: 0

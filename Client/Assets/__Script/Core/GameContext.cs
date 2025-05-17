@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Yarn.Unity;
 
 namespace Game
 {
@@ -9,6 +10,7 @@ namespace Game
     {
         public PlayerController playerCtrler;
         public CameraController cameraCtrler;
+        public DialogueRunnerDispatcher dialogueRunnerDispatcher;
         public TerrainManager terrainManager;
         public SlimeSpawnManager jellySpawnManager;
         public HeroSpawnManager heroSpawnManager;
@@ -26,6 +28,8 @@ namespace Game
         }
 
         CanvasManager __canvasManager;
+
+        public DialogueRunner dialogueRunner;
 
         void Awake()
         {
