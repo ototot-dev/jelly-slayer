@@ -12,6 +12,11 @@ namespace Game
         public override DialogueRunnerDispatcher GetDialogueRunnerDispatcher() => __dialogueRunnerDispatcher;
         DialogueRunnerDispatcher __dialogueRunnerDispatcher;
 
+        public override bool CanPlayerConsumeInput()
+        {
+            return !__dialogueRunnerDispatcher.IsDialogueRunning();
+        }
+
         void Awake()
         {
             __dialogueRunnerDispatcher = gameObject.AddComponent<DialogueRunnerDispatcher>();

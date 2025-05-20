@@ -9,6 +9,7 @@ namespace Game
     {
         public virtual GameModeTypes GetGameModeType() => GameModeTypes.None;
         public virtual DialogueRunnerDispatcher GetDialogueRunnerDispatcher() => null;
+        public virtual bool CanPlayerConsumeInput() => true;
         public virtual bool IsInCombat() => false;
         public virtual void Enter() { EnterAsObservable()?.Subscribe(); }
         public virtual void Exit() { ExitAsObservable()?.Subscribe(); }

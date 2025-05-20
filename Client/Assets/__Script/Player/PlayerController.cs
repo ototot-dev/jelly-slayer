@@ -5,6 +5,8 @@ using UGUI.Rx;
 using UniRx;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
+using Yarn.Unity;
 using ZLinq;
 
 namespace Game
@@ -136,8 +138,18 @@ namespace Game
 
         void Update()
         {
+            //* 
+            if (GameContext.Instance.dialogueRunner.IsDialogueRunning && Input.anyKeyDown)
+            {
+                foreach (var v in GameContext.Instance.dialogueRunner.dialogueViews)
+                {
+                    if (v is LineView lineView)
+                        lineView.UserRequestedViewAdvancement();
+                }
+            }
+
             if (possessedBrain == null)
-                return;
+                    return;
 
             if (inputMoveVec.Value.sqrMagnitude > 0)
             {
@@ -171,9 +183,9 @@ namespace Game
 
         public void OnMove(InputValue value)
         {
-            if (possessedBrain == null)
+            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
                 return;
-            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
+            if (possessedBrain == null)
                 return;
 
             inputMoveVec.Value = value.Get<Vector2>();
@@ -181,9 +193,9 @@ namespace Game
 
         public void OnLook(InputValue value)
         {
-            if (possessedBrain == null)
+            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
                 return;
-            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
+            if (possessedBrain == null)
                 return;
                 
             if (GameContext.Instance.cameraCtrler != null &&
@@ -192,9 +204,9 @@ namespace Game
         }
         public void OnGuard(InputValue value)
         {
-            if (possessedBrain == null)
+            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
                 return;
-            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
+            if (possessedBrain == null)
                 return;
 
             possessedBrain.BB.body.isGuarding.Value = value.Get<float>() > 0;
@@ -214,7 +226,7 @@ namespace Game
 
         public void OnJump(InputValue value)
         {
-            if (possessedBrain == null)
+            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
                 return;
             if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
                 return;
@@ -283,9 +295,9 @@ namespace Game
 
         public void OnNextTarget()
         {
-            if (possessedBrain == null)
+            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
                 return;
-            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
+            if (possessedBrain == null)
                 return;
 
             if (possessedBrain.BB.TargetPawn == null)
@@ -333,9 +345,9 @@ namespace Game
 
         public void OnPrevTarget()
         {
-            if (possessedBrain == null)
+            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
                 return;
-            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
+            if (possessedBrain == null)
                 return;
 
             if (possessedBrain.BB.TargetPawn == null)
@@ -374,9 +386,9 @@ namespace Game
 
         public void OnRoll()
         {
-            if (possessedBrain == null)
+            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
                 return;
-            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
+            if (possessedBrain == null)
                 return;
 
             if (_isEnable_Roll == false)
@@ -457,9 +469,9 @@ namespace Game
 
         public void OnPunch(InputValue value)
         {
-            if (possessedBrain == null)
+            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
                 return;
-            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
+            if (possessedBrain == null)
                 return;
 
             if (_isEnable_Parry == false)
@@ -505,9 +517,9 @@ namespace Game
 
         public void OnAttack(InputValue value)
         {
-            if (possessedBrain == null)
+            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
                 return;
-            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
+            if (possessedBrain == null)
                 return;
                 
             if (_isEnable_NormalAttack == false)
@@ -585,9 +597,9 @@ namespace Game
 
         public void OnGroggyAttack(InputValue value)
         {
-            if (possessedBrain == null)
+            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
                 return;
-            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
+            if (possessedBrain == null)
                 return;
 
             if (_isEnable_NormalAttack == false)
@@ -632,9 +644,9 @@ namespace Game
         
         public void OnSpecialAttack(InputValue value)
         {
-            if (possessedBrain == null)
+            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
                 return;
-            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
+            if (possessedBrain == null)
                 return;
 
             if (value.isPressed)
@@ -665,9 +677,9 @@ namespace Game
 
         public void OnDrink() 
         {
-            if (possessedBrain == null)
+            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
                 return;
-            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
+            if (possessedBrain == null)
                 return;
 
             Debug.Log("<color=red>OnDrink</color>");
@@ -676,9 +688,9 @@ namespace Game
 
         public void OnBurst(InputValue value)
         {
-            if (possessedBrain == null)
+            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
                 return;
-            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
+            if (possessedBrain == null)
                 return;
                 
             Debug.Log("OnBurst");
