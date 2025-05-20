@@ -262,8 +262,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   outer: {fileID: 0}
   poolingName: 
-  showTweens: []
-  hideTweens: []
+  showTweens:
+  - {fileID: 8515446568105435506}
+  - {fileID: 5506641831486595061}
+  hideTweens:
+  - {fileID: 8515446568105435506}
   runTestMode: 0
   testStyleSheets: []
 --- !u!1 &793517068771036331
@@ -346,20 +349,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   query:
-    usingTag: 1
-    tag: panel
-    enableInitTweens: 1
-    skipInitTweens: 0
-    initActiveClasses:
-    - fill
-    - blur
-    - focus
-    initActiveStates: []
+    forceCompleteTweenOnStart: 0
+    initialClasses: []
+    initialStates: []
     sources:
     - {fileID: 8614735537049826323}
     - {fileID: 2912387888026299129}
     - {fileID: 1711720783390394365}
     - {fileID: 7890609698689119370}
+    sourceTweens: []
     selectableNames:
     - .fill:show
     - .blur:show
@@ -939,6 +937,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 8772937399947842732}
   - {fileID: 5683133263715447617}
   - {fileID: 2981808593288642686}
   - {fileID: 5856182706928687026}
@@ -1758,16 +1757,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   query:
-    usingTag: 1
-    tag: panel
-    enableInitTweens: 0
-    skipInitTweens: 0
-    initActiveClasses: []
-    initActiveStates: []
-    sources: []
-    selectableNames: []
-    selectableClasses: []
-    selectableStates: []
+    forceCompleteTweenOnStart: 0
+    initialClasses: []
+    initialStates: []
+    sources:
+    - {fileID: 8105750678179052088}
+    - {fileID: 1634628099000287255}
+    sourceTweens: []
+    selectableNames:
+    - .body:show
+    - .body:hide
+    selectableClasses:
+    - body
+    selectableStates:
+    - show
+    - hide
     forceToRepaintFlag: 0
   id: body
   template: {fileID: 0}
@@ -2166,16 +2170,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   query:
-    usingTag: 1
-    tag: panel
-    enableInitTweens: 0
-    skipInitTweens: 0
-    initActiveClasses: []
-    initActiveStates: []
-    sources: []
-    selectableNames: []
-    selectableClasses: []
-    selectableStates: []
+    forceCompleteTweenOnStart: 0
+    initialClasses: []
+    initialStates: []
+    sources:
+    - {fileID: 3929630038037101250}
+    sourceTweens: []
+    selectableNames:
+    - .options:show
+    selectableClasses:
+    - options
+    selectableStates:
+    - show
     forceToRepaintFlag: 0
   id: options
   template: {fileID: 0}
@@ -2248,7 +2254,7 @@ MonoBehaviour:
   - {fileID: 7400000, guid: c1b26b616c28b418baaae6b1e777b543, type: 2}
   transition:
     loop: 0
-    easing: 0
+    easing: 4
     duration: 1
     isRollback: 0
     easingCurve:
@@ -2590,9 +2596,9 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  rewindOnCancelled: 1
-  rewindOnRollback: 1
-  runRollback: 1
+  rewindOnCancelled: 0
+  rewindOnRollback: 0
+  runRollback: 0
   rollbackTransition:
     loop: 0
     easing: 0
@@ -3076,6 +3082,8 @@ GameObject:
   - component: {fileID: 1468383029075287325}
   - component: {fileID: 8218011141703063626}
   - component: {fileID: 4353942230718016385}
+  - component: {fileID: 2234413801278800879}
+  - component: {fileID: 60064556989538462}
   m_Layer: 5
   m_Name: exit
   m_TagString: Untagged
@@ -3155,6 +3163,43 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2234413801278800879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3607738988677310813}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a66886e44cbe4f0fb36f2729f7a1e76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clearAnimClips: 1
+--- !u!114 &60064556989538462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3607738988677310813}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63a7addda05a34de5b48a9608f3378d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  query:
+    forceCompleteTweenOnStart: 0
+    initialClasses: []
+    initialStates: []
+    sources: []
+    sourceTweens: []
+    selectableNames: []
+    selectableClasses: []
+    selectableStates: []
+    forceToRepaintFlag: 0
+  id: exit
+  template: {fileID: 0}
 --- !u!1 &3927707082455928420
 GameObject:
   m_ObjectHideFlags: 0
@@ -3713,15 +3758,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   query:
-    usingTag: 1
-    tag: p
-    enableInitTweens: 1
-    skipInitTweens: 0
-    initActiveClasses:
-    - title-text
-    initActiveStates: []
+    forceCompleteTweenOnStart: 0
+    initialClasses: []
+    initialStates: []
     sources:
     - {fileID: 8435124167404047299}
+    sourceTweens: []
     selectableNames:
     - .title-text:show
     selectableClasses:
@@ -4086,20 +4128,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   query:
-    usingTag: 1
-    tag: panel
-    enableInitTweens: 1
-    skipInitTweens: 0
-    initActiveClasses:
-    - fill
-    - blur
-    - focus
-    initActiveStates: []
+    forceCompleteTweenOnStart: 0
+    initialClasses: []
+    initialStates: []
     sources:
     - {fileID: 8614735537049826323}
     - {fileID: 2912387888026299129}
     - {fileID: 1711720783390394365}
     - {fileID: 7890609698689119370}
+    sourceTweens: []
     selectableNames:
     - .fill:show
     - .blur:show
@@ -4114,7 +4151,7 @@ MonoBehaviour:
     - hide
     - heartbeat
     forceToRepaintFlag: 0
-  id: press-any-key-focus
+  id: options-focus
   template: {fileID: 0}
 --- !u!111 &1319566254879589172
 Animation:
@@ -6485,6 +6522,8 @@ GameObject:
   - component: {fileID: 8059979782082512181}
   - component: {fileID: 7152497134077573218}
   - component: {fileID: 1792575330077939925}
+  - component: {fileID: 7057905882380238476}
+  - component: {fileID: 3941428274852158735}
   m_Layer: 5
   m_Name: new-game
   m_TagString: Untagged
@@ -6565,6 +6604,43 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7057905882380238476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7984399972959143778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a66886e44cbe4f0fb36f2729f7a1e76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clearAnimClips: 1
+--- !u!114 &3941428274852158735
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7984399972959143778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63a7addda05a34de5b48a9608f3378d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  query:
+    forceCompleteTweenOnStart: 0
+    initialClasses: []
+    initialStates: []
+    sources: []
+    sourceTweens: []
+    selectableNames: []
+    selectableClasses: []
+    selectableStates: []
+    forceToRepaintFlag: 0
+  id: new-game
+  template: {fileID: 0}
 --- !u!1 &8060029994647427023
 GameObject:
   m_ObjectHideFlags: 0
@@ -6634,8 +6710,8 @@ MonoBehaviour:
   - {fileID: 7400000, guid: 81e6d739c95d94937a7bda2987c738bb, type: 2}
   transition:
     loop: 0
-    easing: 0
-    duration: 1
+    easing: 4
+    duration: 0.2
     isRollback: 0
     easingCurve:
       serializedVersion: 2
@@ -7172,16 +7248,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   query:
-    usingTag: 1
-    tag: p
-    enableInitTweens: 1
-    skipInitTweens: 0
-    initActiveClasses:
-    - press-any-key-text
-    initActiveStates: []
+    forceCompleteTweenOnStart: 0
+    initialClasses: []
+    initialStates: []
     sources:
     - {fileID: 8050693201678910909}
     - {fileID: 1257554890442145902}
+    sourceTweens: []
     selectableNames:
     - .press-any-key-text:show
     - .press-any-key-text:hide
@@ -7205,6 +7278,8 @@ GameObject:
   - component: {fileID: 324140407700294946}
   - component: {fileID: 8654627671488749302}
   - component: {fileID: 3333507659292102138}
+  - component: {fileID: 5942741022879240740}
+  - component: {fileID: 5541846781197447934}
   m_Layer: 5
   m_Name: continue
   m_TagString: Untagged
@@ -7284,6 +7359,43 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5942741022879240740
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8293727699160679586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a66886e44cbe4f0fb36f2729f7a1e76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clearAnimClips: 1
+--- !u!114 &5541846781197447934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8293727699160679586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63a7addda05a34de5b48a9608f3378d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  query:
+    forceCompleteTweenOnStart: 0
+    initialClasses: []
+    initialStates: []
+    sources: []
+    sourceTweens: []
+    selectableNames: []
+    selectableClasses: []
+    selectableStates: []
+    forceToRepaintFlag: 0
+  id: continue
+  template: {fileID: 0}
 --- !u!1 &8422488565582837528
 GameObject:
   m_ObjectHideFlags: 0
@@ -7384,13 +7496,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   query:
-    usingTag: 1
-    tag: img
-    enableInitTweens: 0
-    skipInitTweens: 0
-    initActiveClasses: []
-    initActiveStates: []
+    forceCompleteTweenOnStart: 0
+    initialClasses: []
+    initialStates: []
     sources: []
+    sourceTweens: []
     selectableNames: []
     selectableClasses: []
     selectableStates: []
@@ -7408,6 +7518,8 @@ GameObject:
   - component: {fileID: 7466504544566321154}
   - component: {fileID: 8089120638488647297}
   - component: {fileID: 5709450889493124480}
+  - component: {fileID: 927109893505509572}
+  - component: {fileID: 3929273688522849333}
   m_Layer: 5
   m_Name: setting
   m_TagString: Untagged
@@ -7487,6 +7599,486 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &927109893505509572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8678299952004325780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a66886e44cbe4f0fb36f2729f7a1e76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clearAnimClips: 1
+--- !u!114 &3929273688522849333
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8678299952004325780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63a7addda05a34de5b48a9608f3378d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  query:
+    forceCompleteTweenOnStart: 0
+    initialClasses: []
+    initialStates: []
+    sources: []
+    sourceTweens: []
+    selectableNames: []
+    selectableClasses: []
+    selectableStates: []
+    forceToRepaintFlag: 0
+  id: setting
+  template: {fileID: 0}
+--- !u!1 &8692813562086825056
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8772937399947842732}
+  - component: {fileID: 8105750678179052088}
+  - component: {fileID: 3919582406997905722}
+  m_Layer: 5
+  m_Name: .body:show
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &8772937399947842732
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8692813562086825056}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5406127497489856185}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &8105750678179052088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8692813562086825056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 921f6ec3c250d4c2fba77fdeced7d821, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tagName: 
+  className: body
+  stateName: show
+  hasValidName: 1
+--- !u!114 &3919582406997905722
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8692813562086825056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebf9e8837f9ee48df9f1c0b477e7d923, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animClips:
+  - {fileID: 7400000, guid: 81e6d739c95d94937a7bda2987c738bb, type: 2}
+  transition:
+    loop: 0
+    easing: 5
+    duration: 0.1
+    isRollback: 0
+    easingCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 2.9174395
+        outSlope: 2.9174395
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.027777778
+        value: 0.08103999
+        inSlope: 2.836421
+        outSlope: 2.836421
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.055555556
+        value: 0.15757895
+        inSlope: 2.6766958
+        outSlope: 2.6766958
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.083333336
+        value: 0.22974531
+        inSlope: 2.521603
+        outSlope: 2.521603
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.11111111
+        value: 0.297668
+        inSlope: 2.371143
+        outSlope: 2.371143
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.1388889
+        value: 0.3614755
+        inSlope: 2.2253096
+        outSlope: 2.2253096
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.16666667
+        value: 0.42129633
+        inSlope: 2.084104
+        outSlope: 2.084104
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.19444445
+        value: 0.47725904
+        inSlope: 1.94753
+        outSlope: 1.94753
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.22222222
+        value: 0.52949244
+        inSlope: 1.8155874
+        outSlope: 1.8155874
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.25
+        value: 0.578125
+        inSlope: 1.6882721
+        outSlope: 1.6882721
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.2777778
+        value: 0.62328535
+        inSlope: 1.5655873
+        outSlope: 1.5655873
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.30555555
+        value: 0.66510206
+        inSlope: 1.4475315
+        outSlope: 1.4475315
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.33333334
+        value: 0.70370376
+        inSlope: 1.334104
+        outSlope: 1.334104
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.3611111
+        value: 0.73921895
+        inSlope: 1.2253082
+        outSlope: 1.2253082
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.3888889
+        value: 0.77177644
+        inSlope: 1.1211419
+        outSlope: 1.1211419
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.41666666
+        value: 0.8015046
+        inSlope: 1.0216041
+        outSlope: 1.0216041
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.44444445
+        value: 0.8285322
+        inSlope: 0.92669785
+        outSlope: 0.92669785
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.4722222
+        value: 0.8529878
+        inSlope: 0.8364202
+        outSlope: 0.8364202
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.5
+        value: 0.875
+        inSlope: 0.7507714
+        outSlope: 0.7507714
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.5277778
+        value: 0.89469737
+        inSlope: 0.6697526
+        outSlope: 0.6697526
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.5555556
+        value: 0.9122085
+        inSlope: 0.593364
+        outSlope: 0.593364
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.5833333
+        value: 0.927662
+        inSlope: 0.52160525
+        outSlope: 0.52160525
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.6111111
+        value: 0.94118655
+        inSlope: 0.4544754
+        outSlope: 0.4544754
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.6388889
+        value: 0.95291066
+        inSlope: 0.3919757
+        outSlope: 0.3919757
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.6666667
+        value: 0.962963
+        inSlope: 0.33410472
+        outSlope: 0.33410472
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.6944444
+        value: 0.971472
+        inSlope: 0.28086394
+        outSlope: 0.28086394
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.7222222
+        value: 0.9785665
+        inSlope: 0.23225343
+        outSlope: 0.23225343
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.75
+        value: 0.984375
+        inSlope: 0.18827167
+        outSlope: 0.18827167
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.7777778
+        value: 0.98902607
+        inSlope: 0.1489194
+        outSlope: 0.1489194
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.8055556
+        value: 0.9926483
+        inSlope: 0.11419778
+        outSlope: 0.11419778
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.8333333
+        value: 0.9953704
+        inSlope: 0.08410556
+        outSlope: 0.08410556
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.8611111
+        value: 0.99732083
+        inSlope: 0.058641646
+        outSlope: 0.058641646
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.8888889
+        value: 0.99862826
+        inSlope: 0.0378084
+        outSlope: 0.0378084
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.9166667
+        value: 0.9994213
+        inSlope: 0.021604663
+        outSlope: 0.021604663
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.9444444
+        value: 0.9998285
+        inSlope: 0.0100304
+        outSlope: 0.0100304
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.9722222
+        value: 0.99997854
+        inSlope: 0.0030866845
+        outSlope: 0.0030866845
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0.00077247585
+        outSlope: 0.00077247585
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  rewindOnCancelled: 0
+  rewindOnRollback: 0
+  runRollback: 0
+  rollbackTransition:
+    loop: 0
+    easing: 0
+    duration: 1
+    isRollback: 1
+    easingCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 1
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 1
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
 --- !u!1 &8931002033696169145
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,6 +10,7 @@ namespace Game
     public class BubbleDialoqueController : Controller
     {
         public PawnBrainController speakerBrain;
+        DialogueRunnerDispatcher __dialogueRunnerDispatcher;
 
         public override void OnPostLoad()
         {
@@ -23,15 +24,18 @@ namespace Game
         {
             base.OnPreShow();
 
-            GameContext.Instance.dialogueRunnerDispatcher.AddViews(GetComponentById<DialogueViewBase>("dialogue"), GetComponentById<DialogueViewBase>("options"));
+            __dialogueRunnerDispatcher = GameContext.Instance.launcher.currGameMode.GetDialogueRunnerDispatcher();
+            Debug.Assert(__dialogueRunnerDispatcher != null);
 
-            GameContext.Instance.dialogueRunnerDispatcher.onRunLine += l =>
+            __dialogueRunnerDispatcher.AddViews(GetComponentById<DialogueViewBase>("dialogue"), GetComponentById<DialogueViewBase>("options"));
+
+            __dialogueRunnerDispatcher.onRunLine += l =>
             {
                 speakerBrain = GameContext.Instance.playerCtrler.possessedBrain;
                 // speakerBrain = TaggerSystem.FindGameObjectWithTag(l.CharacterName).GetComponent<PawnBrainController>();
             };
 
-            GameContext.Instance.dialogueRunnerDispatcher.onDialoqueComplete += () =>
+            __dialogueRunnerDispatcher.onDialoqueComplete += () =>
             {
                 this.HideAsObservable().Subscribe(_ => this.Unload());
             };
@@ -56,7 +60,7 @@ namespace Game
         {
             base.OnPreHide();
 
-            GameContext.Instance.dialogueRunnerDispatcher.RemoveViews(GetComponentById<DialogueViewBase>("dialogue"), GetComponentById<DialogueViewBase>("options"));
+            __dialogueRunnerDispatcher.RemoveViews(GetComponentById<DialogueViewBase>("dialogue"), GetComponentById<DialogueViewBase>("options"));
         }
         
         CanvasScaler __canvasScaler;
@@ -73,7 +77,7 @@ namespace Game
             );
             
             if (__canvasScaler == null)
-                __canvasScaler = template.transform.GetComponent<CanvasScaler>();
+                __canvasScaler = template.transform.parent.GetComponent<CanvasScaler>();
 
             // to force the dialogue bubble to be fully on screen, clamp the bubble rectangle within the screen bounds
             if (constrainToViewportMargin >= 0f)

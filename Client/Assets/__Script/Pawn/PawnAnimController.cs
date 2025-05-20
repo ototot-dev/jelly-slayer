@@ -36,7 +36,8 @@ namespace Game
 
         void OnDestroy()
         {
-            __playableGraph.Destroy();
+            if (__playableGraph.IsValid())
+                __playableGraph.Destroy();
         }
 
         protected PlayableGraph __playableGraph;
@@ -44,8 +45,9 @@ namespace Game
         protected AnimationMixerPlayable __playableMixer;
         protected AnimatorControllerPlayable __playableAnimator;
         protected readonly AnimationClipPlayable[] __playableClips = new AnimationClipPlayable[2];
-        protected int __currPlayableClipIndex;
+        protected int __currPlayableClipIndex = -1;
         protected IDisposable __blendSingleClipDisposable;
+        // public bool IsPlayableGraphRunning() => __playableGraph.IsValid() && (__playableGraph.IsPlaying() || __blendSingleClipDisposable != null);
         public bool IsPlayableGraphRunning() => __playableGraph.IsValid() && __playableGraph.IsPlaying();
 
         protected virtual void CreatePlayableGraph()
@@ -75,6 +77,7 @@ namespace Game
             __playableClips[__currPlayableClipIndex].Destroy();
             __playableClips[__currPlayableClipIndex] = AnimationClipPlayable.Create(__playableGraph, clip);
             __playableGraph.Connect(__playableClips[__currPlayableClipIndex], 0, __playableMixer, __currPlayableClipIndex);
+            __playableMixer.SetInputWeight(__currPlayableClipIndex, 0f);
             
             if (!__playableGraph.IsPlaying())
                 __playableGraph.Play();
@@ -84,8 +87,19 @@ namespace Game
             __blendSingleClipDisposable?.Dispose();
             __blendSingleClipDisposable = Observable.EveryUpdate().Subscribe(_ =>
             {
-                __playableMixer.SetInputWeight(0, Mathf.Clamp01(__playableMixer.GetInputWeight(0) + (__currPlayableClipIndex == 0 ? blendSpeed : -blendSpeed)* Time.deltaTime));
-                __playableMixer.SetInputWeight(1, Mathf.Clamp01(__playableMixer.GetInputWeight(1) + (__currPlayableClipIndex == 1 ? blendSpeed : -blendSpeed)* Time.deltaTime));
+                if (__currPlayableClipIndex == 0)
+                {
+                    var newWeight = Mathf.Clamp01(__playableMixer.GetInputWeight(0) + blendSpeed * Time.deltaTime);
+                    __playableMixer.SetInputWeight(0, newWeight);
+                    __playableMixer.SetInputWeight(1, 1f - newWeight);
+                }
+                else
+                {
+                    var newWeight = Mathf.Clamp01(__playableMixer.GetInputWeight(1) + blendSpeed * Time.deltaTime);
+                    __playableMixer.SetInputWeight(0, 1f - newWeight);
+                    __playableMixer.SetInputWeight(1, newWeight);
+                }
+
                 __playableMixer.SetInputWeight(2, Mathf.Clamp01(__playableMixer.GetInputWeight(2) - blendSpeed * Time.deltaTime));
             }).AddTo(this);
         }
@@ -99,6 +113,7 @@ namespace Game
             __playableClips[__currPlayableClipIndex].Destroy();
             __playableClips[__currPlayableClipIndex] = AnimationClipPlayable.Create(__playableGraph, clip);
             __playableGraph.Connect(__playableClips[__currPlayableClipIndex], 0, __playableMixer, __currPlayableClipIndex);
+            __playableMixer.SetInputWeight(__currPlayableClipIndex, 0f);
 
             if (!__playableGraph.IsPlaying())
                 __playableGraph.Play();
@@ -113,8 +128,19 @@ namespace Game
                 if ((Time.time - blendStartTimeStamp) > (clipDuration - blendOutTime))
                     StopSingleClip(blendOutTime);
 
-                __playableMixer.SetInputWeight(0, Mathf.Clamp01(__playableMixer.GetInputWeight(0) + (__currPlayableClipIndex == 0 ? blendSpeed : -blendSpeed) * Time.deltaTime));
-                __playableMixer.SetInputWeight(1, Mathf.Clamp01(__playableMixer.GetInputWeight(1) + (__currPlayableClipIndex == 1 ? blendSpeed : -blendSpeed) * Time.deltaTime));
+                if (__currPlayableClipIndex == 0)
+                {
+                    var newWeight = Mathf.Clamp01(__playableMixer.GetInputWeight(0) + blendSpeed * Time.deltaTime);
+                    __playableMixer.SetInputWeight(0, newWeight);
+                    __playableMixer.SetInputWeight(1, 1f - newWeight);
+                }
+                else
+                {
+                    var newWeight = Mathf.Clamp01(__playableMixer.GetInputWeight(1) + blendSpeed * Time.deltaTime);
+                    __playableMixer.SetInputWeight(0, 1f - newWeight);
+                    __playableMixer.SetInputWeight(1, newWeight);
+                }
+
                 __playableMixer.SetInputWeight(2, Mathf.Clamp01(__playableMixer.GetInputWeight(2) - blendSpeed * Time.deltaTime));
             }).AddTo(this);
         }

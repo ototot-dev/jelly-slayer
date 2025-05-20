@@ -123,14 +123,15 @@ namespace UGUI.Rx
                 }
 
 #if ENABLE_DOTWEEN_SEQUENCE
-                    // foreach (var r in Player.dotweeenSeqRunnings) {
-                    //     // Consider show-tween as hide-tween if it has rewindOnCancelled set true.
-                    //     if (r.Key.rewindOnCancelled && r.Key.TweenName.stateName == __showStr)
-                    //         runningTweenNames.Add(Player.Rewind(r.Key).Select(_ => r.Key.TweenName));
+                foreach (var r in Player.dotweeenSeqRunnings) 
+                {
+                    // Consider show-tween as hide-tween if it has rewindOnCancelled set true.
+                    if (r.Key.rewindOnCancelled && r.Key.TweenName.stateName == __showStr)
+                        runningTweenNames.Add(Player.Rewind(r.Key).Select(_ => r.Key.TweenName));
 
-                    //     if (r.Key.TweenName.stateName == __hideStr)
-                    //         runningTweenNames.Add(Player.Run(r.Key).Select(_ => r.Key.TweenName));
-                    // }
+                    if (r.Key.TweenName.stateName == __hideStr)
+                        runningTweenNames.Add(Player.Run(r.Key).Select(_ => r.Key.TweenName));
+                }
 #endif
 
                 observer.OnNext(this);
@@ -155,15 +156,5 @@ namespace UGUI.Rx
                 .Where(t => t != null)
                 .FirstOrDefault();
         }
-
-#if UNITY_EDITOR
-        public override void OnValidateInternal()
-        {
-            base.OnValidateInternal();
-
-            query.usingTag = true;
-            query.tag = Tag;
-        }
-#endif
     }
 }

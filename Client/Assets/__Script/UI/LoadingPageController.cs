@@ -3,48 +3,50 @@ using UGUI.Rx;
 using System.Linq;
 using System.Collections;
 using UnityEngine;
+using System.Collections.Generic;
+using UnityEngine.SceneManagement;
+using System;
+using Unity.VisualScripting;
 
 namespace Game
 {
     [Template(path: "UI/loading-page")]
     public class LoadingPageController : Controller
     {
-        public BoolReactiveProperty isLoadingCompleted = new();
+        public string[] resourcePaths;
+        public string[] scenePaths;
+        public ReactiveCollection<UnityEngine.Object> loadedObjects = new();
+        public IntReactiveProperty loadedSceneCount = new();
+        public FloatReactiveProperty loadingPregress = new();
+        public Action onLoadingCompleted;
+
+        public LoadingPageController(string[] resourcePaths, string[] scenePaths)
+        {
+            this.resourcePaths = resourcePaths;
+            this.scenePaths = scenePaths;
+        }
 
         public override void OnPostShow()
         {
             base.OnPostShow();
 
-            // isLoadingCompleted.Where(v => v).Subscribe(_ =>
-            // {
-            //     this.HideAsObservable().Subscribe(_ =>
-            //     {
-            //         GameContext.Instance.CanvasManager.FadeOut(1);
-            //         new GameOverlayController().Load().Show(GameContext.Instance.CanvasManager.body.transform as RectTransform);
-            //     });
-            // });
+            var resourceLoading = resourcePaths.Select(p => Resources.LoadAsync(p).AsObservable().Do(a => loadedObjects.Add((a as ResourceRequest).asset)));
+            var sceneLoading = scenePaths.Select(p => SceneManager.LoadSceneAsync(p, LoadSceneMode.Additive).AsObservable().Do(_ => loadedSceneCount.Value++));
 
-            template.StartCoroutine(Loading_Coroutine());
-        }
+            Observable.WhenAll(resourceLoading.Concat(sceneLoading)).Subscribe(_ =>
+            {
+                onLoadingCompleted?.Invoke();
+            }).AddToHide(this);
 
-        IEnumerator Loading_Coroutine()
-        {
-            //* 지형 생성
-            // if (!GameContext.Instance.terrainManager.IsTerrainGenerated)
-            // {
-            //     GameContext.Instance.terrainManager.Generate();
-            //     yield return new WaitForSeconds(0.5f);
-            // }
+            loadedObjects.ObserveAdd().Subscribe(v =>
+            {
+                loadingPregress.Value = (loadedObjects.Count + loadedSceneCount.Value) / Mathf.Min(1f, (float)(resourcePaths?.Length ?? 0f + scenePaths?.Length ?? 0f));
+            }).AddToHide(this);
 
-            //* 슬라임 생성
-            // GameContext.Instance.jellySpawnManager.Spawn(TerrainManager.GetTerrainPoint(Vector3.zero), 1, JellySlimeBlackboard.ActiveProjectiles.Ball);
-            yield return new WaitForSeconds(0.5f);
-
-            //* 영웅 생성
-            // GameContext.Instance.playerCtrler.SpawnHeroPawn(Resources.Load<GameObject>("Pawn/Hero"), true).transform.position = TerrainManager.GetTerrainPoint(Vector3.zero);
-            yield return new WaitForSeconds(0.1f);
-
-            isLoadingCompleted.Value = true;
+            loadedSceneCount.Subscribe(_ =>
+            {
+                loadingPregress.Value = (loadedObjects.Count + loadedSceneCount.Value) / Mathf.Min(1f, (float)(resourcePaths?.Length ?? 0f + scenePaths?.Length ?? 0f));
+            }).AddToHide(this);
         }
     }
 }

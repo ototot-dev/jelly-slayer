@@ -116,9 +116,6 @@ namespace Retween.Rx
 
         public bool Match(TweenSelector tweenSelector)
         {
-            if (!string.IsNullOrEmpty(tagName) && tagName != tweenSelector.query.tag)
-                return false;
-
             if (!tweenSelector.query.activeClasses.Contains(className))
                 return false;
 

@@ -45,7 +45,7 @@ namespace Game
                 boundJellyMesh.Value = (sender as JellyBrain).jellyMeshCtrler;
                 __Logger.LogR2(gameObject, nameof(IPawnEventListener.OnReceivePawnActionStart), "jellyBrain", sender, "OnJellyOut", "boundJellyMesh", boundJellyMesh.Value);
 
-                specialKeyCtrler = new SpecialKeyController(sender, "GroggyAttack", "Groggy").Load().Show(GameContext.Instance.CanvasManager.body.transform as RectTransform);
+                specialKeyCtrler = new SpecialKeyController(sender, "GroggyAttack", "Groggy").Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
             }
             else if (actionName == "OnJellyOff")
             {
@@ -64,7 +64,7 @@ namespace Game
             if (sender is JellyBrain && status == PawnStatus.Groggy && strength > 0f)
             {
                 Debug.Assert(specialKeyCtrler == null);
-                specialKeyCtrler = new SpecialKeyController(sender, "Assault", "Encounter").Load().Show(GameContext.Instance.CanvasManager.body.transform as RectTransform);
+                specialKeyCtrler = new SpecialKeyController(sender, "Assault", "Encounter").Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
             }
         }
         void IPawnEventListener.OnReceivePawnDamageContext(PawnBrainController sender, PawnHeartPointDispatcher.DamageContext damageContext) 
@@ -173,7 +173,7 @@ namespace Game
         {
             if (possessedBrain == null)
                 return;
-            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
+            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
                 return;
 
             inputMoveVec.Value = value.Get<Vector2>();
@@ -183,7 +183,7 @@ namespace Game
         {
             if (possessedBrain == null)
                 return;
-            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
+            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
                 return;
                 
             if (GameContext.Instance.cameraCtrler != null &&
@@ -194,10 +194,8 @@ namespace Game
         {
             if (possessedBrain == null)
                 return;
-            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
+            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
                 return;
-
-            possessedBrain.ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
 
             possessedBrain.BB.body.isGuarding.Value = value.Get<float>() > 0;
             if (possessedBrain.BB.IsGuarding)
@@ -218,7 +216,7 @@ namespace Game
         {
             if (possessedBrain == null)
                 return;
-            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
+            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
                 return;
 
             __jumpHangingDisposable ??= Observable.EveryUpdate().Where(_ => __jumpExecutedTimeStamp > __jumpReleasedTimeStamp).Subscribe(_ =>
@@ -287,7 +285,7 @@ namespace Game
         {
             if (possessedBrain == null)
                 return;
-            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
+            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
                 return;
 
             if (possessedBrain.BB.TargetPawn == null)
@@ -337,7 +335,7 @@ namespace Game
         {
             if (possessedBrain == null)
                 return;
-            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
+            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
                 return;
 
             if (possessedBrain.BB.TargetPawn == null)
@@ -378,7 +376,7 @@ namespace Game
         {
             if (possessedBrain == null)
                 return;
-            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
+            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
                 return;
 
             if (_isEnable_Roll == false)
@@ -461,7 +459,7 @@ namespace Game
         {
             if (possessedBrain == null)
                 return;
-            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
+            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
                 return;
 
             if (_isEnable_Parry == false)
@@ -509,7 +507,7 @@ namespace Game
         {
             if (possessedBrain == null)
                 return;
-            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
+            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
                 return;
                 
             if (_isEnable_NormalAttack == false)
@@ -564,7 +562,6 @@ namespace Game
                     if (possessedBrain.BB.IsJumping)
                     {
                         possessedBrain.ActionCtrler.SetPendingAction("JumpAttack");
-                        possessedBrain.ChangeWeapon(WeaponSetType.TWOHAND_WEAPON);
                     }
                     else 
                     {
@@ -590,7 +587,7 @@ namespace Game
         {
             if (possessedBrain == null)
                 return;
-            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
+            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
                 return;
 
             if (_isEnable_NormalAttack == false)
@@ -637,7 +634,7 @@ namespace Game
         {
             if (possessedBrain == null)
                 return;
-            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
+            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
                 return;
 
             if (value.isPressed)
@@ -670,7 +667,7 @@ namespace Game
         {
             if (possessedBrain == null)
                 return;
-            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
+            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
                 return;
 
             Debug.Log("<color=red>OnDrink</color>");
@@ -681,7 +678,7 @@ namespace Game
         {
             if (possessedBrain == null)
                 return;
-            if (GameContext.Instance.dialogueRunnerDispatcher != null && GameContext.Instance.dialogueRunnerDispatcher.IsDialogueRunning())
+            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
                 return;
                 
             Debug.Log("OnBurst");

@@ -318,14 +318,13 @@ GameObject:
   - component: {fileID: 6782871118888090363}
   - component: {fileID: 8238598742690601974}
   - component: {fileID: 4878572496757719609}
-  - component: {fileID: 5890542248429394717}
   m_Layer: 0
   m_Name: SM_Prop_Drink_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6782871118888090363
 Transform:
   m_ObjectHideFlags: 0
@@ -394,28 +393,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &5890542248429394717
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 433290913834801051}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 6324913870426937978, guid: e913308bf7f5a2e4ba8651eae7ab40d2, type: 2}
 --- !u!1 &465535719075180605
 GameObject:
   m_ObjectHideFlags: 0
@@ -795,6 +772,7 @@ GameObject:
   - component: {fileID: 3540552371793380332}
   - component: {fileID: 6760044505968453408}
   - component: {fileID: 2118029493424771570}
+  - component: {fileID: 179919551335561179}
   - component: {fileID: 7401026273244081378}
   - component: {fileID: 4268522763273999486}
   - component: {fileID: 8791414763947496166}
@@ -824,7 +802,6 @@ Transform:
   - {fileID: 6005531443151399207}
   - {fileID: 2757304479724195745}
   - {fileID: 1097579612682551057}
-  - {fileID: 4284445581982952642}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4341923631125150275
@@ -967,6 +944,39 @@ MonoBehaviour:
   guardParryRootMotionMultiplier: 1
   testSingleClipA: {fileID: 1827226128182048838, guid: b46e52c5b38d6e1439278a245b5d9f4e, type: 3}
   testSingleClipB: {fileID: 1827226128182048838, guid: 6215d55ecfe67ee4a89a9b3696618e13, type: 3}
+--- !u!114 &179919551335561179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 859846127300755753}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cfd445eba3d74c36ae817b206181ac3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bodyMeshRenderer: {fileID: 3244703593147971087}
+  swordMeshRenderer: {fileID: 7268340508694672973}
+  mechArmRenderers:
+  - {fileID: 2132723217248930319}
+  - {fileID: 6727123505348413996}
+  - {fileID: 6044203557791290534}
+  - {fileID: 3708959956901825257}
+  - {fileID: 8671812115822184104}
+  - {fileID: 8137085999887176722}
+  - {fileID: 1921932584694193279}
+  - {fileID: 523696488037954153}
+  - {fileID: 2208770605482222660}
+  - {fileID: 7337643089677858276}
+  - {fileID: 7216739047667691116}
+  - {fileID: 1898135407832488233}
+  leftMechHandAttachPoint: {fileID: 1198755884502479607}
+  leftMechElbowAttachPoint: {fileID: 2722692041094006264}
+  leftMechHandRagdoll: {fileID: 0}
+  leftMechElbowRagdoll: {fileID: 0}
+  leftMechHandBone: {fileID: 439219319864916215}
+  leftMechElbowBone: {fileID: 5347011434172573214}
 --- !u!114 &7401026273244081378
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1112,31 +1122,11 @@ MonoBehaviour:
     onBlockedAudioClip: {fileID: 0}
     onGuardBreakAudioClip: {fileID: 8300000, guid: 93fc0b243c8d39441a33d29e6146b688, type: 3}
     onEvadeClip: {fileID: 8300000, guid: 85b52aa0c9bf8c24cb323e74251fdad1, type: 3}
-  attachment:
-    bodyMeshRenderer: {fileID: 3244703593147971087}
-    swordMeshRenderer: {fileID: 7268340508694672973}
-    mechArmRenderers:
-    - {fileID: 2132723217248930319}
-    - {fileID: 6727123505348413996}
-    - {fileID: 6044203557791290534}
-    - {fileID: 3708959956901825257}
-    - {fileID: 8671812115822184104}
-    - {fileID: 8137085999887176722}
-    - {fileID: 1921932584694193279}
-    - {fileID: 523696488037954153}
-    - {fileID: 2208770605482222660}
-    - {fileID: 7337643089677858276}
-    - {fileID: 7216739047667691116}
-    - {fileID: 1898135407832488233}
-    leftHandBone: {fileID: 1198755884502479607}
-    leftElbowBone: {fileID: 2722692041094006264}
-    leftMechHandBone: {fileID: 439219319864916215}
-    leftMechElbowBone: {fileID: 5347011434172573214}
-    blockingFxAttachPoint: {fileID: 0}
+  children:
     healingPotion: {fileID: 433290913834801051}
   dialogue:
-    sleepAnimClip: {fileID: 1827226128182048838, guid: 81164a6fd681e11458cc1f8828d2b994, type: 3}
-    getUpAnimClip: {fileID: 1827226128182048838, guid: 5d01ab709a6977043be6e6921968e347, type: 3}
+    sleepAnimClip: {fileID: 7400000, guid: 6237d8c98ca7c43b49d1a9afe7818f09, type: 2}
+    getUpAnimClip: {fileID: 7400000, guid: a9623bef5d4bd48c5b184356d72bf12b, type: 2}
 --- !u!114 &8791414763947496166
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29583,65 +29573,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9009b549499cc784daf9bd3bedfdf391, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1001 &5873251019936885689
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 3758835991799220657}
-    m_Modifications:
-    - target: {fileID: 7706945536487327611, guid: 7f4813004f880e946a3bb3db2c4e8642, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7706945536487327611, guid: 7f4813004f880e946a3bb3db2c4e8642, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.137
-      objectReference: {fileID: 0}
-    - target: {fileID: 7706945536487327611, guid: 7f4813004f880e946a3bb3db2c4e8642, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.26
-      objectReference: {fileID: 0}
-    - target: {fileID: 7706945536487327611, guid: 7f4813004f880e946a3bb3db2c4e8642, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7706945536487327611, guid: 7f4813004f880e946a3bb3db2c4e8642, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7706945536487327611, guid: 7f4813004f880e946a3bb3db2c4e8642, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7706945536487327611, guid: 7f4813004f880e946a3bb3db2c4e8642, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7706945536487327611, guid: 7f4813004f880e946a3bb3db2c4e8642, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7706945536487327611, guid: 7f4813004f880e946a3bb3db2c4e8642, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7706945536487327611, guid: 7f4813004f880e946a3bb3db2c4e8642, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7706945536487327614, guid: 7f4813004f880e946a3bb3db2c4e8642, type: 3}
-      propertyPath: m_Name
-      value: AttackHitRed
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 7f4813004f880e946a3bb3db2c4e8642, type: 3}
---- !u!4 &4284445581982952642 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7706945536487327611, guid: 7f4813004f880e946a3bb3db2c4e8642, type: 3}
-  m_PrefabInstance: {fileID: 5873251019936885689}
-  m_PrefabAsset: {fileID: 0}

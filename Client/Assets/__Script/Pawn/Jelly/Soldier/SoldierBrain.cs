@@ -92,8 +92,6 @@ namespace Game
 
             BB.common.isSpawnFinished.Value = true;
             PawnEventManager.Instance.SendPawnSpawningEvent(this, PawnSpawnStates.SpawnFinished);
-
-            GameContext.Instance.SetMainTarget(this);
         }
 
         IDisposable __spawningDisposable;

@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using UniRx;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Game
@@ -85,20 +84,12 @@ namespace Game
         public Audios audios = new();
 
         [Serializable]
-        public class Attachment
+        public class Children
         {
-            public Renderer bodyMeshRenderer;
-            public Renderer swordMeshRenderer;
-            public Renderer[] mechArmRenderers;
-            public Transform leftHandBone;
-            public Transform leftElbowBone;
-            public Transform leftMechHandBone;
-            public Transform leftMechElbowBone;
-            public Transform blockingFxAttachPoint;
             public GameObject healingPotion;
         }
 
-        public Attachment attachment = new();
+        public Children children = new();
 
         [Serializable]
         public class Dialogue

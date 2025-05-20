@@ -16,13 +16,11 @@ namespace Game
             {
                 if (__instance == null)
                     __instance = new T();
-
                 return __instance;
             }
         }
 
         static T __instance;
-
     }
 
     /// <summary>
@@ -47,9 +45,9 @@ namespace Game
 
                 if (__instance == null)
                 {
-                    __instance = FindObjectOfType(typeof(T)) as T;
+                    __instance = FindFirstObjectByType(typeof(T)) as T;
 
-                    if (FindObjectsOfType(typeof(T)).Length > 1)
+                    if (FindObjectsByType(typeof(T), FindObjectsSortMode.None).Length > 1)
                     {
                         Debug.LogError("[Singleton] Something went really wrong " +
                             " - there should never be more than 1 singleton!" +

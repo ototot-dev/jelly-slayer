@@ -59,7 +59,7 @@ namespace Retween.Rx
             if (tweensProperty.isExpanded)
                 position.y += __lineHeight * (tweensProperty.arraySize + 1) + __lineHeight;
 
-            position.y += __lineHeight;
+            position.y += __lineHeight + 3;
 
             var drawRect = position;
             drawRect.height = __lineHeight;
@@ -74,72 +74,53 @@ namespace Retween.Rx
 
             drawRect.y += __lineHeight + 3;
 
-            var usingTagProperty = property.FindPropertyRelative("usingTag");
-            EditorGUI.PropertyField(drawRect, usingTagProperty);
+            GUI.Label(drawRect,
+                "- Initial Classes = " + (query.initialClasses.Count == 0 ? "Empty" : query.initialClasses.Aggregate((concat, str) => $"{concat}, {str}")),
+                query.initialClasses.Count == 0 ? __initValueEmptyStyle : __initValueStyle
+                );
 
             drawRect.y += __lineHeight;
-            if (usingTagProperty.boolValue)
-            {
-                var tagProperty = property.FindPropertyRelative("tag");
-                EditorGUI.PropertyField(drawRect, tagProperty);
 
-                drawRect.y += __lineHeight;
-            }
-
-            var enableInitTweensProperty = property.FindPropertyRelative("enableInitTweens");
-            EditorGUI.PropertyField(drawRect, enableInitTweensProperty);
+            GUI.Label(drawRect,
+                "- Initial States = " + (query.initialStates.Count == 0 ? "Empty" : query.initialStates.Aggregate((concat, str) => $"{concat}, {str}")),
+                query.initialStates.Count == 0 ? __initValueEmptyStyle : __initValueStyle
+                );
 
             drawRect.y += __lineHeight;
-            if (enableInitTweensProperty.boolValue)
+
+            var forceCompleteTweenOnStartProperty = property.FindPropertyRelative("forceCompleteTweenOnStart");
+            EditorGUI.PropertyField(drawRect, forceCompleteTweenOnStartProperty);
+
+            drawRect.y += __lineHeight + 3;
+
+            if (GUI.Button(drawRect, "Save Initial Tweens"))
             {
-                var skipInitTweensProperty = property.FindPropertyRelative("skipInitTweens");
-                EditorGUI.PropertyField(drawRect, skipInitTweensProperty);
+                var initialClassesProperty = property.FindPropertyRelative("initialClasses");
+                var initialStatesProperty = property.FindPropertyRelative("initialStates");
 
-                drawRect.y += __lineHeight;
+                initialClassesProperty.ClearArray();
+                initialStatesProperty.ClearArray();
 
-                GUI.Label(drawRect,
-                    "- Classes = " + (query.initActiveClasses.Count == 0 ? "Empty" : query.initActiveClasses.Aggregate((concat, str) => $"{concat}, {str}")),
-                    query.initActiveClasses.Count == 0 ? __initValueEmptyStyle : __initValueStyle
-                    );
-
-                drawRect.y += __lineHeight;
-
-                GUI.Label(drawRect,
-                    "- States = " + (query.initActiveStates.Count == 0 ? "Empty" : query.initActiveStates.Aggregate((concat, str) => $"{concat}, {str}")),
-                    query.initActiveStates.Count == 0 ? __initValueEmptyStyle : __initValueStyle
-                    );
-
-                drawRect.y += __lineHeight;
-
-                if (GUI.Button(drawRect, "Save Init Tweens"))
+                var tempList = new List<string>(query.activeClasses);
+                // tempList.AddRange(query.activeClasses);
+                for (int i = tempList.Count - 1; i >= 0; --i)
                 {
-                    var initActiveClassesProperty = property.FindPropertyRelative("initActiveClasses");
-                    var initActiveStatesProperty = property.FindPropertyRelative("initActiveStates");
-
-                    initActiveClassesProperty.ClearArray();
-                    initActiveStatesProperty.ClearArray();
-
-                    var tempList = new List<string>(query.activeClasses);
-                    // tempList.AddRange(query.activeClasses);
-                    for (int i = tempList.Count - 1; i >= 0; --i)
-                    {
-                        initActiveClassesProperty.InsertArrayElementAtIndex(0);
-                        initActiveClassesProperty.GetArrayElementAtIndex(0).stringValue = tempList[i];
-                    }
-
-                    tempList.Clear();
-                    tempList.AddRange(query.activeStates);
-
-                    for (int i = tempList.Count - 1; i >= 0; --i)
-                    {
-                        initActiveStatesProperty.InsertArrayElementAtIndex(0);
-                        initActiveStatesProperty.GetArrayElementAtIndex(0).stringValue = tempList[i];
-                    }
+                    initialClassesProperty.InsertArrayElementAtIndex(0);
+                    initialClassesProperty.GetArrayElementAtIndex(0).stringValue = tempList[i];
                 }
 
-                drawRect.x = position.x;
-                drawRect.y += __lineHeight;
+                tempList.Clear();
+                tempList.AddRange(query.activeStates);
+
+                for (int i = tempList.Count - 1; i >= 0; --i)
+                {
+                    initialStatesProperty.InsertArrayElementAtIndex(0);
+                    initialStatesProperty.GetArrayElementAtIndex(0).stringValue = tempList[i];
+                }
             }
+
+            drawRect.x = position.x;
+            drawRect.y += __lineHeight;
 
             drawRect.width = __charWidth;
             drawRect.height = __lineHeight;

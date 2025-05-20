@@ -108,8 +108,8 @@ namespace Game
                 //* 경직 지속 시간과 맞춰주기 위해서 'AnimSpeed' 값을 조정함
                 __brain.AnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1f / damageContext.receiverPenalty.Item2);
 
-                EffectManager.Instance.Show(__brain.BB.graphics.onGuardBreakFx, __brain.BB.attachment.leftMechHandBone.transform.position, Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward, Vector3.up), Vector3.one);
-                SoundManager.Instance.PlayWithClipPos(__brain.BB.audios.onGuardBreakAudioClip, __brain.BB.attachment.leftMechHandBone.transform.position);
+                EffectManager.Instance.Show(__brain.BB.graphics.onGuardBreakFx, __brain.PartsCtrler.leftMechHandBone.transform.position, Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward, Vector3.up), Vector3.one);
+                SoundManager.Instance.PlayWithClipPos(__brain.BB.audios.onGuardBreakAudioClip, __brain.PartsCtrler.leftMechHandBone.transform.position);
 
                 var knockBackVec = __brain.BB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
                 Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __brain.BB.pawnData_Movement.knockBackSpeed)))
@@ -139,7 +139,7 @@ namespace Game
 
                     Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ =>
                     {
-                        EffectManager.Instance.Show(__brain.BB.graphics.onBlockFx, __brain.BB.attachment.leftMechHandBone.transform.position, Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward, Vector3.up), Vector3.one);
+                        EffectManager.Instance.Show(__brain.BB.graphics.onBlockFx, __brain.PartsCtrler.leftMechHandBone.transform.position, Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward, Vector3.up), Vector3.one);
                         SoundManager.Instance.Play(SoundID.HIT_BLOCK);
                     });
 
@@ -158,7 +158,7 @@ namespace Game
 
                     Observable.Timer(TimeSpan.FromMilliseconds(50)).Subscribe(_ =>
                     {
-                        var pos = __brain.BB.attachment.leftMechHandBone.transform.position + 0.5f * __brain.coreColliderHelper.transform.forward;
+                        var pos = __brain.PartsCtrler.leftMechHandBone.transform.position + 0.5f * __brain.coreColliderHelper.transform.forward;
                         EffectManager.Instance.Show(__brain.BB.graphics.onGuardParriedFx, pos, Quaternion.identity, 0.8f * Vector3.one);
                         EffectManager.Instance.Show(__brain.BB.graphics.onGuardParriedFx2, pos, Quaternion.identity, 2.0f * Vector3.one);
                     });
@@ -279,39 +279,39 @@ namespace Game
 
         void ShowHitColor(PawnColliderHelper hitColliderHelper = null)
         {
-            __bodyMeshRenderersCached ??= __brain.BB.attachment.bodyMeshRenderer.materials;
-            __swordMeshRenderersCached ??= __brain.BB.attachment.swordMeshRenderer.materials;
+            __bodyMeshRenderersCached ??= __brain.PartsCtrler.bodyMeshRenderer.materials;
+            __swordMeshRenderersCached ??= __brain.PartsCtrler.swordMeshRenderer.materials;
             __hitColorBodyMeshRenderersCached ??= new Material[] { __brain.BB.graphics.hitColor, __brain.BB.graphics.hitColor, __brain.BB.graphics.hitColor, __brain.BB.graphics.hitColor };
             __hitColorSwordMeshRenderersCached ??= new Material[] { __brain.BB.graphics.hitColor, __brain.BB.graphics.hitColor };
 
             if (hitColliderHelper == __brain.bodyHitColliderHelper)
             {
-                __brain.BB.attachment.bodyMeshRenderer.materials = __hitColorBodyMeshRenderersCached;
-                __brain.BB.attachment.swordMeshRenderer.materials = __hitColorSwordMeshRenderersCached;
+                __brain.PartsCtrler.bodyMeshRenderer.materials = __hitColorBodyMeshRenderersCached;
+                __brain.PartsCtrler.swordMeshRenderer.materials = __hitColorSwordMeshRenderersCached;
 
-                foreach (var r in __brain.BB.attachment.mechArmRenderers)
+                foreach (var r in __brain.PartsCtrler.mechArmRenderers)
                     r.materials = new Material[] { r.material, new(__brain.BB.graphics.hitColor) };
 
                 __hitColorDisposable?.Dispose();
                 __hitColorDisposable = Observable.Timer(TimeSpan.FromMilliseconds(100)).Subscribe(_ => 
                 {
                     __hitColorDisposable = null;
-                    __brain.BB.attachment.bodyMeshRenderer.materials = __bodyMeshRenderersCached;
-                    __brain.BB.attachment.swordMeshRenderer.materials = __swordMeshRenderersCached;
+                    __brain.PartsCtrler.bodyMeshRenderer.materials = __bodyMeshRenderersCached;
+                    __brain.PartsCtrler.swordMeshRenderer.materials = __swordMeshRenderersCached;
 
-                    foreach (var r in __brain.BB.attachment.mechArmRenderers)
+                    foreach (var r in __brain.PartsCtrler.mechArmRenderers)
                         r.materials = new Material[] { r.materials[0] };
                 }).AddTo(this);
             }
             else
             {
-                foreach (var r in __brain.BB.attachment.mechArmRenderers)
+                foreach (var r in __brain.PartsCtrler.mechArmRenderers)
                     r.materials = new Material[] { r.material, new(__brain.BB.graphics.hitColor) };
 
                 __hitColorDisposable?.Dispose();
                 __hitColorDisposable = Observable.Timer(TimeSpan.FromMilliseconds(100)).Subscribe(_ => 
                 {
-                    foreach (var r in __brain.BB.attachment.mechArmRenderers)
+                    foreach (var r in __brain.PartsCtrler.mechArmRenderers)
                         r.materials = new Material[] { r.materials[0] };
                 }).AddTo(this);
             }

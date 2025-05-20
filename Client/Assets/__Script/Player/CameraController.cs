@@ -98,12 +98,9 @@ namespace Game
         void Update()
         {
             if (!Mathf.Approximately(__vignette.intensity.value, vignetteIntensity))
-            {
                 __vignette.intensity.value = vignetteIntensity;
-                __Logger.LogR1(gameObject, "__vignette.intensity.value", "vignetteIntensity", vignetteIntensity);
-            }
-            if (!Mathf.Approximately(__vignette.smoothness.value, vignetteSmoothness)) __vignette.smoothness.value = vignetteSmoothness;
-
+            if (!Mathf.Approximately(__vignette.smoothness.value, vignetteSmoothness))
+                __vignette.smoothness.value = vignetteSmoothness;
         }
 
         void LateUpdate()

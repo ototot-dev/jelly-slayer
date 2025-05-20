@@ -99,7 +99,7 @@ public class UIGamePanel : MonoBehaviour
             }
         }
         //_targetPawn = (_attackedPawn != null) ? _attackedPawn : _heroBrain.BB.TargetBrain;
-        _targetPawn = GameContext.Instance._mainTarget;
+        // _targetPawn = GameContext.Instance._mainTarget;
         if (_targetPawn != null && _targetPawn.PawnBB.IsDead == false)
         {
             _enemyObj.SetActive(true);

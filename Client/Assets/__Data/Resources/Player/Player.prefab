@@ -162,15 +162,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29d0f99007c217a49a87ef444e985204, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  possessedBrain: {fileID: 0}
-  dronebotFormationCtrler: {fileID: 0}
+  attackPointAssistRange: 1
+  inputMoveVec:
+    value: {x: 0, y: 0}
+  inputLookVec:
+    value: {x: 0, y: 0, z: 0}
+  boundJellyMesh:
+    value: {fileID: 0}
   playerName:
     value: 
-  moveVec:
-    value: {x: 0, y: 0}
-  lookVec:
-    value: {x: 1, y: 0, z: 0}
-  attackPointAssistLength: 3
+  possessedBrain: {fileID: 0}
   _isEnable_Move: 1
   _isEnable_Look: 1
   _isEnable_NormalAttack: 1
@@ -197,9 +198,9 @@ MonoBehaviour:
   _targetZoom: 1
   _dist: 0
   _min: 0.9
-  _max: 2
+  _max: 1.2
   _limit: 6
-  _rate: 0.2
+  _rate: 0.1
 --- !u!1 &937048620446195801
 GameObject:
   m_ObjectHideFlags: 0
@@ -388,7 +389,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5420305180625639804
 Transform:
   m_ObjectHideFlags: 0
@@ -587,7 +588,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8067599848960600021
 RectTransform:
   m_ObjectHideFlags: 0
@@ -761,7 +762,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8677253210991032733
 Transform:
   m_ObjectHideFlags: 0
@@ -793,7 +794,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7781821959776160877
 Transform:
   m_ObjectHideFlags: 0

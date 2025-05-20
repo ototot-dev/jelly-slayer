@@ -275,6 +275,27 @@ namespace Game
             return rot;
         }
 
+        public static Matrix4x4 Lerp(this Matrix4x4 matrix, Matrix4x4 target, float t)
+        {
+            // 1. 분해
+            Vector3 posA = matrix.GetColumn(3);
+            Vector3 posB = target.GetColumn(3);
+
+            Vector3 scaleA = matrix.lossyScale;
+            Vector3 scaleB = target.lossyScale;
+
+            Quaternion rotA = Quaternion.LookRotation(matrix.GetColumn(2), matrix.GetColumn(1));
+            Quaternion rotB = Quaternion.LookRotation(target.GetColumn(2), target.GetColumn(1));
+
+            // 2. 보간
+            Vector3 posLerp = Vector3.Lerp(posA, posB, t);
+            Vector3 scaleLerp = Vector3.Lerp(scaleA, scaleB, t);
+            Quaternion rotSlerp = Quaternion.Slerp(rotA, rotB, t);
+
+            // 3. 재조합
+            return Matrix4x4.TRS(posLerp, rotSlerp, scaleLerp);
+        }
+
         public static Vector3 Random(this Vector3 vec)
         {
             var rangeVec = vec.Abs();

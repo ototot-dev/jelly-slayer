@@ -58,34 +58,41 @@ namespace Game
             base.UserRequestedViewAdvancement();
         }
 
-        public DialogueRunner runner;
-        public bool IsDialogueRunning() => runner != null && runner.IsDialogueRunning;
+        public bool IsDialogueRunning() => __runner != null && __runner.IsDialogueRunning;
 
         public void AddViews(params DialogueViewBase[] views)
         {
-            runner.SetDialogueViews(runner.dialogueViews.Concat(views).ToArray());
+            __runner.SetDialogueViews(__runner.dialogueViews.Concat(views).ToArray());
         }
 
         public void RemoveViews(params DialogueViewBase[] views)
         {
-            runner.SetDialogueViews(runner.dialogueViews.Where(v => !views.Contains(v)).ToArray());
+            __runner.SetDialogueViews(__runner.dialogueViews.Where(v => !views.Contains(v)).ToArray());
         }
 
         public void StartDialogue(string nodeName)
         {
-            runner.StartDialogue(nodeName);
+            __runner.StartDialogue(nodeName);
         }
+
+        DialogueRunner __runner;
 
         void Awake()
         {
-            runner = GetComponent<DialogueRunner>();
-            runner.AddCommandHandler<float>("waitForSeconds", WaitForSeconds);
-            runner.AddCommandHandler<float>("fadeIn", FadeIn);
-            runner.AddCommandHandler<float>("fadeOut", FadeOut);
-            runner.AddCommandHandler<float, float, float>("vignette", Vignetee);
-            runner.AddCommandHandler<string>("jumpTo", JumpTo);
-            runner.AddCommandHandler("sleep", Sleep);
-            runner.AddCommandHandler("getUp", GetUp);
+            Debug.Assert(GameContext.Instance.dialogueRunner != null);
+            __runner = GameContext.Instance.dialogueRunner;
+            __runner.SetDialogueViews(new DialogueViewBase[] { this });
+            __runner.AddCommandHandler<float>("waitForSeconds", WaitForSeconds);
+            __runner.AddCommandHandler<float>("fadeIn", FadeIn);
+            __runner.AddCommandHandler<float>("fadeOut", FadeOut);
+            __runner.AddCommandHandler<float, float, float>("vignette", Vignetee);
+            __runner.AddCommandHandler<string>("jumpTo", JumpTo);
+            __runner.AddCommandHandler("sleep", Sleep);
+            __runner.AddCommandHandler("getUp", GetUp);
+            __runner.AddCommandHandler("showMechArm", ShowMechArm);
+            __runner.AddCommandHandler("hideMechArm", HideMechArm);
+            __runner.AddCommandHandler("showSword", ShowSword);
+            __runner.AddCommandHandler("hideSword", HideSword);
         }
 
         public void Vignetee(float intensity, float smoothness, float blendTime)
@@ -118,12 +125,12 @@ namespace Game
 
         public void FadeIn(float duration)
         {
-            GameContext.Instance.CanvasManager.FadeIn(Color.black, duration);
+            GameContext.Instance.canvasManager.FadeIn(Color.black, duration);
         }
 
         public void FadeOut(float duration)
         {
-            GameContext.Instance.CanvasManager.FadeOut(duration);
+            GameContext.Instance.canvasManager.FadeOut(duration);
         }
 
         public IEnumerator WaitForSeconds(float seconds)
@@ -145,7 +152,31 @@ namespace Game
         public void GetUp()
         {
             var slayerBrain = GameContext.Instance.playerCtrler.possessedBrain;
-            slayerBrain.GetComponent<SlayerAnimController>().PlaySingleClip(slayerBrain.BB.dialogue.getUpAnimClip, 0.5f, 0.2f);
+            slayerBrain.GetComponent<SlayerAnimController>().PlaySingleClip(slayerBrain.BB.dialogue.getUpAnimClip, 0.5f, 0.5f);
+        }
+
+        public void ShowMechArm()
+        {
+            var slayerBrain = GameContext.Instance.playerCtrler.possessedBrain;
+            slayerBrain.PartsCtrler.SetLeftMechArmHidden(false);
+        }
+
+        public void HideMechArm()
+        {
+            var slayerBrain = GameContext.Instance.playerCtrler.possessedBrain;
+            slayerBrain.PartsCtrler.SetLeftMechArmHidden(true);
+        }
+
+        public void ShowSword()
+        {
+            var slayerBrain = GameContext.Instance.playerCtrler.possessedBrain;
+            slayerBrain.PartsCtrler.SetSwordHidden(false);
+        }
+
+        public void HideSword()
+        {
+            var slayerBrain = GameContext.Instance.playerCtrler.possessedBrain;
+            slayerBrain.PartsCtrler.SetSwordHidden(true);
         }
     }
 }

@@ -3,6 +3,8 @@ tags:
 ---
 
 <<vignette 0.4 0.9 0>>
+<<hideMechArm>>
+<<hideSword>>
 <<sleep>>
 <<wait 2>>
 <<fadeOut 1>>

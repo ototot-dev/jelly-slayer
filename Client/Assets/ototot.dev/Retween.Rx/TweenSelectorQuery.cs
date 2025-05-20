@@ -9,31 +9,14 @@ namespace Retween.Rx
     [Serializable]
     public class TweenSelectorQuery
     {
-        public bool usingTag;
-        public string tag;
         public HashSet<string> activeClasses = new();
         public HashSet<string> activeStates = new();
-        public bool enableInitTweens;
-        public bool skipInitTweens;
-        public List<string> initActiveClasses = new();
-        public List<string> initActiveStates = new();
+        public bool forceCompleteTweenOnStart;
+        public List<string> initialClasses = new();
+        public List<string> initialStates = new();
         public List<TweenName> sources = new();
         public List<TweenAnim> TweenAnims => sources.Select(s => s == null ? null : s.GetComponent<TweenAnim>()).Where(t => t != null).ToList();
         public List<TweenSequence> TweenSeqs => sources.Select(s => s == null ? null : s.GetComponent<TweenSequence>()).Where(t => t != null).ToList();
-        public List<string> GetActiveTweenNames()
-        {
-            List<string> ret = new();
-
-            var hasTag = usingTag && !string.IsNullOrEmpty(tag);
-            foreach (var c in activeClasses)
-            {
-                ret.Add(hasTag ? $"{tag}.{c}" : $".{c}");
-                foreach (var s in activeStates)
-                    ret.Add(hasTag ? $"{tag}.{c}:{s}" : $".{c}:{s}");
-            }
-
-            return ret;
-        }
 
         public void SetTargetSelector(TweenSelector target)
         {

@@ -91,6 +91,7 @@ namespace Game
         public SlayerBlackboard BB { get; private set; }
         public SlayerMovement Movement { get; private set; }
         public SlayerAnimController AnimCtrler { get; private set; }
+        public SlayerPartsController PartsCtrler { get; private set; }
         public SlayerActionController ActionCtrler { get; private set; }
         public PawnSensorController SensorCtrler { get; private set; }
         public PawnStatusController StatusCtrler { get; private set;}
@@ -105,6 +106,7 @@ namespace Game
             BB = GetComponent<SlayerBlackboard>();
             Movement = GetComponent<SlayerMovement>();
             AnimCtrler = GetComponent<SlayerAnimController>();
+            PartsCtrler = GetComponent<SlayerPartsController>();
             ActionCtrler = GetComponent<SlayerActionController>();
             SensorCtrler = GetComponent<PawnSensorController>();
             StatusCtrler = GetComponent<PawnStatusController>();
@@ -127,7 +129,7 @@ namespace Game
                 if ((actionContext.actionData?.actionName ?? string.Empty) == "DrinkPotion")
                     Movement.moveSpeed = BB.body.walkSpeed;
 
-                ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
+                // ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
             };
 
             ActionCtrler.onActionFinished += (actionContext) =>
@@ -135,7 +137,7 @@ namespace Game
                 if ((actionContext.actionData?.actionName ?? string.Empty) == "DrinkPotion")
                     Movement.moveSpeed = BB.body.walkSpeed;
 
-                ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
+                // ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
             };
 
             PawnHP.onAvoided += (_, reason) =>
@@ -291,52 +293,5 @@ namespace Game
             Movement.freezeRotation = true;
         }
 
-        WeaponController GetWeaponController(WeaponType weaponType)
-        {
-            return _weaponController[(int)weaponType];
-        }
-        Transform GetWeaponBone(WeaponBone weaponBone)
-        {
-            return _trWeaponBone[(int)weaponBone];
-        }
-
-        void EquipWeaponToBone(WeaponType weaponType, WeaponBone weaponBone) 
-        {
-            return;
-            var controller = GetWeaponController(weaponType);
-            var bone = GetWeaponBone(weaponBone);
-            if (weaponBone == WeaponBone.RIGHTHAND)
-            {
-                _weaponCtrlRightHand = controller;
-                AnimCtrler.weaponMeshSlot = controller.transform;
-            }
-            controller.EquipToBone(bone, (weaponBone == WeaponBone.RIGHTHAND));
-        }
-
-        public void ChangeWeapon(WeaponSetType weaponSetType) 
-        {
-            return;
-            // if(_weaponSetType == weaponSetType) 
-            //     return;
-
-            _weaponSetType = weaponSetType;
-            switch (weaponSetType)
-            {
-                case WeaponSetType.ONEHAND_WEAPONSHIELD:
-                    {
-                        EquipWeaponToBone(WeaponType.SWORD, WeaponBone.RIGHTHAND);
-                        EquipWeaponToBone(WeaponType.SHIELD, WeaponBone.LEFTHAND);
-                        EquipWeaponToBone(WeaponType.KATANA, WeaponBone.BACK);
-                    }
-                    break;
-                case WeaponSetType.TWOHAND_WEAPON:
-                    {
-                        EquipWeaponToBone(WeaponType.SWORD, WeaponBone.BACK);
-                        EquipWeaponToBone(WeaponType.SHIELD, WeaponBone.BACK);
-                        EquipWeaponToBone(WeaponType.KATANA, WeaponBone.RIGHTHAND);
-                    }
-                    break;
-            }
-        }
     }
 }

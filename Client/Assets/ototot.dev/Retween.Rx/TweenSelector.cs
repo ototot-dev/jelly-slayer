@@ -17,11 +17,11 @@ namespace Retween.Rx
             query.BuildSelectables();
 #endif
 
-            if (query.enableInitTweens)
+            if (query.initialClasses.Count > 0 || query.initialStates.Count > 0)
             {
-                foreach (var c in query.initActiveClasses)
+                foreach (var c in query.initialClasses)
                     query.activeClasses.Add(c);
-                foreach (var s in query.initActiveStates)
+                foreach (var s in query.initialStates)
                     query.activeStates.Add(s);
             }
         }
@@ -32,7 +32,7 @@ namespace Retween.Rx
             {
                 query.Apply();
 
-                if (query.skipInitTweens)
+                if (query.forceCompleteTweenOnStart)
                 {
                     foreach (var r in Player.tweenStates.Values)
                     {
@@ -45,8 +45,10 @@ namespace Retween.Rx
 
         public TweenSelectorQuery query = new();
         public HashSet<TweenName> matchingResults = new();
-        public Dictionary<TweenName, TweenAnimState> TweenAnimStates { get; private set; } = new Dictionary<TweenName, TweenAnimState>();
-        public Dictionary<TweenName, TweenSequenceState> TweenSeqStates { get; private set; } = new Dictionary<TweenName, TweenSequenceState>();
+        public readonly Dictionary<TweenName, TweenAnimState> tweenAnimStates = new();
+#if ENABLE_DOTWEEN_SEQUENCE
+        public readonly Dictionary<TweenName, TweenSequenceState> tweenSeqStates = new();
+#endif
 
 #if UNITY_EDITOR
         void OnValidate()
