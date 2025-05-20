@@ -11,36 +11,57 @@ tags:
 <<wait 2>>
 <<vignette 0.3 0.2 1>>
 
-Alice: Hey Bob.
-Bob: Hey Alice.
-Alice: This is an example of using Yarn Spinner for a 3D RPG type game with NPCs.
-Alice: Like in A Short Hike! Have you played that game, Bob?
-Bob: ...
+케이: 크윽...
+케이: '몸이 움직이지 않아....'
+케이: 커억.. 컥. 컥...
+// 몸을 뒤척이며 일어난다.
+
+케이: 으윽... 여긴... 어디지?
+// 기침 후 몸을 일으킨다.
 
 <<getUp>>
 
-Alice: Bob, are you OK?
-Bob: I feel so dizzy. I think I have to get off soon...
-Alice: No, you have to keep spinning!
-Alice: You're a great example of 3D speech bubbles following moving characters.
+케이: 여긴... 나한테 무슨 일이 있었던거야?
+// 주변은 작고 어두운 방. 딱히 아무런 장식도 없다.
 
-Bob: I'm gonna barf...
-Alice: And notice how the speech bubble doesn't get cut off, even if Bob goes off-screen?
-Alice: Check out /Samples/3D/Scripts/YarnCharacterView.cs to see how that works.
+<<playsound ring>>
 
-Bob: Alice.
-Alice: WHAT???
-Bob: Are you OK? Who are you talking to?
+// 전화벨 소리와 함께 폰부스가 밝아진다.
+// 케이는 몸을 돌려 전화박스를 발견한다.
 
--> ... the Unity user.
-    Alice: I'm talking to the Unity user.
-    Bob: What the heck is a Unity user?
--> ... no one.
-    Alice: I'm talking to... no one.
+<<playsound ring>>
+<<playsound ring>>
 
-Alice: (wink)
-Bob: Why did you say "wink" up at the sky?
-Alice: (winks again)
+케이: 공중... 전화?
+
+<<playsound ring>>
+<<playsound ring>>
+<<playsound ring>>
+
+// 케이는 천천히 몸을 움직인다. 잠시 망설이다 전화를 받는다.
+
+철컥.
+케이: 여보세요?
+상대방: 드디어 연길이 되었군. 케이
+케이: 이봐요? 누구시죠? 절 아시나요?
+상대방: 시간이 없어. 다행히 지금 통화로 너의 위치를 특정했다.
+
+순간 짜증나는표정 (이모지)
+케이: WHAT??? 당신 누구야? 지금 무슨 일인데?
+상대방: 길게 통화는 못하니 잘 들어. 너는 위험에 처해 있어.
+상대방: 하지만 우리가 널 도와줄 누군가를 보내줄께.
+
+// 뚜... 전화 끊어짐
+// 케이가 전화 내려놓음.
+케이: 이게 무슨 소리야? 위험이라니....
+
+// 갑자기 드론이 날아온다.
+
+드론: 드디어 발견했네. 우리가 널 찾으려고 얼마나 노력했는지.
+케이: 뭐야? 아까 전화한 당신인거?
+드론: 시간이 없어. 일단 도망가야 해. 이쪽으로 가자.
+
+// 드론이 문쪽으로 날아가서 선회
 
 THE END.
 

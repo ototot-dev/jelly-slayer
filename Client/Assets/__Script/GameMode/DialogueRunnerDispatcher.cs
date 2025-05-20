@@ -93,6 +93,7 @@ namespace Game
             __runner.AddCommandHandler("hideMechArm", HideMechArm);
             __runner.AddCommandHandler("showSword", ShowSword);
             __runner.AddCommandHandler("hideSword", HideSword);
+            __runner.AddCommandHandler<string>("playsound", PlaySound);            
         }
 
         public void Vignetee(float intensity, float smoothness, float blendTime)
@@ -177,6 +178,11 @@ namespace Game
         {
             var slayerBrain = GameContext.Instance.playerCtrler.possessedBrain;
             slayerBrain.PartsCtrler.SetSwordHidden(true);
+        }
+
+        public void PlaySound(string soundName) 
+        {
+            Debug.Log("YarnCommand PlaySound: " + soundName);
         }
     }
 }
