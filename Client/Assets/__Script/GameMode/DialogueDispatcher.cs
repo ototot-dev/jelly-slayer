@@ -8,7 +8,7 @@ using Yarn.Unity;
 
 namespace Game
 {
-    public class DialogueDispatcher : DialogueViewBase
+    public partial class DialogueDispatcher : DialogueViewBase
     {
         public Action onDialoqueStarted;
         public Action<LocalizedLine> onRunLine;
@@ -98,6 +98,7 @@ namespace Game
             __runner.AddCommandHandler("hideMechArm", HideMechArm);
             __runner.AddCommandHandler("showSword", ShowSword);
             __runner.AddCommandHandler("hideSword", HideSword);
+            __runner.AddCommandHandler<string>("playsound", PlaySound);            
         }
 
         public void Vignetee(float intensity, float smoothness, float blendTime)
@@ -141,47 +142,6 @@ namespace Game
         public IEnumerator WaitForSeconds(float seconds)
         {
             yield return new WaitForSeconds(seconds);
-        }
-
-        public void JumpTo(string text)
-        {
-            Debug.Log($"From {text}");
-        }
-
-        public void Sleep()
-        {
-            var slayerBrain = GameContext.Instance.playerCtrler.possessedBrain;
-            slayerBrain.GetComponent<SlayerAnimController>().PlaySingleClipLooping(slayerBrain.BB.dialogue.sleepAnimClip, 0.1f);
-        }
-
-        public void GetUp()
-        {
-            var slayerBrain = GameContext.Instance.playerCtrler.possessedBrain;
-            slayerBrain.GetComponent<SlayerAnimController>().PlaySingleClip(slayerBrain.BB.dialogue.getUpAnimClip, 0.5f, 0.5f);
-        }
-
-        public void ShowMechArm()
-        {
-            var slayerBrain = GameContext.Instance.playerCtrler.possessedBrain;
-            slayerBrain.PartsCtrler.SetLeftMechArmHidden(false);
-        }
-
-        public void HideMechArm()
-        {
-            var slayerBrain = GameContext.Instance.playerCtrler.possessedBrain;
-            slayerBrain.PartsCtrler.SetLeftMechArmHidden(true);
-        }
-
-        public void ShowSword()
-        {
-            var slayerBrain = GameContext.Instance.playerCtrler.possessedBrain;
-            slayerBrain.PartsCtrler.SetSwordHidden(false);
-        }
-
-        public void HideSword()
-        {
-            var slayerBrain = GameContext.Instance.playerCtrler.possessedBrain;
-            slayerBrain.PartsCtrler.SetSwordHidden(true);
         }
     }
 }

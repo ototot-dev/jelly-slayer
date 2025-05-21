@@ -459,7 +459,7 @@ PrefabInstance:
     - target: {fileID: 9205371885998440386, guid: e96cffa9d00b6b545adfeb26165952cc, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 1398601746}
+      objectReference: {fileID: 1093470940}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -476,6 +476,10 @@ PrefabInstance:
     - target: {fileID: 700500891764033697, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
       propertyPath: m_Name
       value: 3d-bubble-dialogue
+      objectReference: {fileID: 0}
+    - target: {fileID: 700500891764033697, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4070441402665766495, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
       propertyPath: m_Pivot.x
@@ -557,6 +561,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4992576998352961409, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
+      propertyPath: m_text
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4992576998352961409, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: b2c034d743b3f4592b5fcf051563fc23, type: 2}
+    - target: {fileID: 4992576998352961409, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 4883203608713296254, guid: b2c034d743b3f4592b5fcf051563fc23, type: 2}
+    - target: {fileID: 4992576998352961409, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4992576998352961422, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -567,6 +587,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4992576998352961422, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
       propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4992576998352961422, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
+      propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4992576998352961422, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
@@ -947,7 +971,7 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b6d5c34d2745a45a7b139bff6db7e948, type: 3}
---- !u!84 &1398601746
+--- !u!84 &1093470940
 RenderTexture:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
