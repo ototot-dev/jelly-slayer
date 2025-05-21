@@ -20,23 +20,33 @@ tags:
 // 기침 후 몸을 일으킨다.
 
 <<getUp>>
+<<wait 2>>
 
 케이: 여긴... 나한테 무슨 일이 있었던거야?
 // 주변은 작고 어두운 방. 딱히 아무런 장식도 없다.
 
 <<playsound ring>>
+따르릉
+<<wait 2>>
 
 // 전화벨 소리와 함께 폰부스가 밝아진다.
 // 케이는 몸을 돌려 전화박스를 발견한다.
 
 <<playsound ring>>
+따르릉
 <<playsound ring>>
+따르릉
+<<wait 2>>
 
 케이: 공중... 전화?
 
 <<playsound ring>>
+따르릉
 <<playsound ring>>
+따르릉
 <<playsound ring>>
+따르릉
+<<wait 2>>
 
 // 케이는 천천히 몸을 움직인다. 잠시 망설이다 전화를 받는다.
 
