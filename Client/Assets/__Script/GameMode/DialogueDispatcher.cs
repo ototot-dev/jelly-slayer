@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using FinalFactory;
 using UniRx;
@@ -9,7 +8,7 @@ using Yarn.Unity;
 
 namespace Game
 {
-    public class DialogueRunnerDispatcher : DialogueViewBase
+    public class DialogueDispatcher : DialogueViewBase
     {
         public Action onDialoqueStarted;
         public Action<LocalizedLine> onRunLine;
@@ -75,13 +74,19 @@ namespace Game
             __runner.StartDialogue(nodeName);
         }
 
-        DialogueRunner __runner;
+        protected DialogueRunner __runner;
 
         void Awake()
         {
             Debug.Assert(GameContext.Instance.dialogueRunner != null);
             __runner = GameContext.Instance.dialogueRunner;
             __runner.SetDialogueViews(new DialogueViewBase[] { this });
+
+            AwakeInternal();
+        }
+
+        protected virtual void AwakeInternal()
+        {
             __runner.AddCommandHandler<float>("waitForSeconds", WaitForSeconds);
             __runner.AddCommandHandler<float>("fadeIn", FadeIn);
             __runner.AddCommandHandler<float>("fadeOut", FadeOut);

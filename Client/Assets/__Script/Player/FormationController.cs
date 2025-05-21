@@ -5,9 +5,6 @@ using UnityEngine;
 
 namespace Game
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public class FormationController : MonoBehaviour
     {
         void Awake()
@@ -24,11 +21,6 @@ namespace Game
     
         GameObject[] __formationSpots;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
         public Vector3 GetFormationPosition(int index)
         {
             Debug.Assert(index >= 0 && index < __formationSpots.Length);
@@ -36,24 +28,10 @@ namespace Game
             return TerrainManager.GetTerrainPoint(__formationSpots[index].transform.position);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public float radius = 0.5f;
-
-        /// <summary>
-        /// 
-        /// </summary>
         public float padding = 0.1f;
-
-        /// <summary>
-        /// 
-        /// </summary>
         public float Spacing => radius * 2 + padding;
         
-        /// <summary>
-        /// 
-        /// </summary>
         public void Rebuild(float radius = 0.5f, float padding = 0.1f)
         {
             // this.radius = radius;
@@ -64,9 +42,6 @@ namespace Game
             __formationSpots = __formationObj.Children().ToArray();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public void RebuildInternal()
         {
             if (__formationObj == null)
@@ -138,9 +113,6 @@ namespace Game
             spotObj.transform.localRotation = Quaternion.identity;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         void OnDrawGizmosSelected()
         {
             if (__formationObj == null)

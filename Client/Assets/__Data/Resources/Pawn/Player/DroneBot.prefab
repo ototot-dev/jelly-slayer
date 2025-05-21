@@ -86549,17 +86549,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   obiSolver: {fileID: 3967674598846706180}
-  obiCollider: {fileID: 8443836590798154438}
+  obiSourceCollider: {fileID: 0}
+  obiTargetCollider: {fileID: 0}
   obiRopeSection: {fileID: 11400000, guid: a0bc36a59515f413e90e10895929c938, type: 2}
-  hookResolution: 1
-  hookExtendRetractSpeed: 4
-  hookLengthMultilier: 1
   hookShootSpeed: 80
+  ropeExtendRetractSpeed: 1
+  ropeLengthMultilier: 1
+  currRopeLength: 1
   particlePoolSize: 100
+  targetCollider: {fileID: 0}
+  targetOffset: {x: 0, y: 0, z: 0}
   ropeMaterial: {fileID: 2100000, guid: edc856900ac3941a98996e21e91e215e, type: 2}
-  hookingLength: 0
-  hookingOffsetPoint: {x: 0, y: 0, z: 0}
-  hookingCollider: {fileID: 0}
+  renderingLayerMask: 1
 --- !u!1 &6886716866094881771
 GameObject:
   m_ObjectHideFlags: 0
@@ -96764,8 +96765,8 @@ MonoBehaviour:
   visionLen: 10
   visionAngle: 60
   nearVisionLen: 1
-  touchSensorTrigger: {fileID: 6422417314821490770}
   soundSensorTrigger: {fileID: 3156252202833504533}
+  touchSensorTrigger: {fileID: 6422417314821490770}
   drawGizmosEnabled: 0
 --- !u!114 &8278016189585381211
 MonoBehaviour:
@@ -96871,7 +96872,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coreColliderHelper: {fileID: 8387849614197782209}
   bodyHitColliderHelper: {fileID: 0}
-  parryColliderHelper: {fileID: 0}
   parryHitColliderHelper: {fileID: 0}
   shieldHitColliderHelper: {fileID: 0}
   hookingPointColliderHelper: {fileID: 0}
@@ -102238,12 +102238,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   query:
-    usingTag: 0
-    tag: 
-    enableInitTweens: 0
-    skipInitTweens: 0
-    initActiveClasses: []
-    initActiveStates: []
+    forceCompleteTweenOnStart: 0
+    initialClasses: []
+    initialStates: []
     sources:
     - {fileID: 2813514641796427641}
     selectableNames:

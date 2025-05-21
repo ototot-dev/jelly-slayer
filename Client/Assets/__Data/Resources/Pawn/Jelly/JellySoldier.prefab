@@ -59326,17 +59326,18 @@ MonoBehaviour:
   hostBrain: {fileID: 8683783354359918731}
   springMassSystem: {fileID: 8495594617367855988}
   meshBuilder: {fileID: 8921833237822783817}
-  ropeHookCtrler: {fileID: 7479067417664856405}
+  ropeObiSolver: {fileID: 0}
+  ropeGroundCollider: {fileID: 0}
   face: {fileID: 3248501061273801011}
-  hair: {fileID: 7425788325353855474}
+  popping: {fileID: 0}
   maintainDistance: 1
   distanceRecoverySpeed: 1
   hitImpulseStrength: 1
   cubeSpreadRadius: 0.7
   cubeScaleMin: 0.2
   cubeScaleMax: 0.5
-  eyeScale: 0.6
   eyeOpenSpeed: 5
+  ropeGroundLevel: 0
   cubeDitherAlphaCurve:
     serializedVersion: 2
     m_Curve:
@@ -59376,37 +59377,55 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  hookingPointFx: {fileID: 0}
+  hookDitherAlphaCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   onHitFx: {fileID: 7555031585622908223, guid: dbd0a9584b295d04f9d828d2def2dcba, type: 3}
   onBloodDropFx: {fileID: 143646283027636570, guid: bbf9dcd9f56329043a0fa6f1b084adb8, type: 3}
+  hookingPointFx: {fileID: 0}
+  cubeHitColorMaterial: {fileID: 0}
+  hookAttachments: []
   hairAttachments:
   - attachPoint: {fileID: 2710930548157459308}
-    attachOffset: {x: 0, y: 0.5, z: 0}
+    pin: {fileID: 0}
     obiRopeHair: {fileID: 6252921304811721519}
+    obiRopeRenderer: {fileID: 0}
   - attachPoint: {fileID: 7445155660636810008}
-    attachOffset: {x: 0, y: 0.5, z: 0}
+    pin: {fileID: 0}
     obiRopeHair: {fileID: 6828724772134220431}
+    obiRopeRenderer: {fileID: 0}
   - attachPoint: {fileID: 4222419883354516231}
-    attachOffset: {x: 0, y: 0.5, z: 0}
+    pin: {fileID: 0}
     obiRopeHair: {fileID: 6534068513558982246}
+    obiRopeRenderer: {fileID: 0}
   - attachPoint: {fileID: 6058523834562923980}
-    attachOffset: {x: 0, y: 0.5, z: 0}
+    pin: {fileID: 0}
     obiRopeHair: {fileID: 3238916789432440325}
+    obiRopeRenderer: {fileID: 0}
   - attachPoint: {fileID: 1510931421059545871}
-    attachOffset: {x: 0, y: 0.5, z: 0}
+    pin: {fileID: 0}
     obiRopeHair: {fileID: 3315052456593006058}
+    obiRopeRenderer: {fileID: 0}
   - attachPoint: {fileID: 6300160055790067258}
-    attachOffset: {x: 0, y: 0.5, z: 0}
+    pin: {fileID: 0}
     obiRopeHair: {fileID: 5642860006137617005}
+    obiRopeRenderer: {fileID: 0}
   - attachPoint: {fileID: 7957811037137510770}
-    attachOffset: {x: 0, y: 0.5, z: 0}
+    pin: {fileID: 0}
     obiRopeHair: {fileID: 5508975467259532988}
+    obiRopeRenderer: {fileID: 0}
   - attachPoint: {fileID: 3684910484575492657}
-    attachOffset: {x: 0, y: 0, z: 0}
+    pin: {fileID: 0}
     obiRopeHair: {fileID: 6501191329949059960}
+    obiRopeRenderer: {fileID: 0}
   - attachPoint: {fileID: 8472628562186496690}
-    attachOffset: {x: 0, y: 0.5, z: 0}
+    pin: {fileID: 0}
     obiRopeHair: {fileID: 6235253722097019999}
+    obiRopeRenderer: {fileID: 0}
+  eyeAttachments: []
 --- !u!1 &6687845027951194453
 GameObject:
   m_ObjectHideFlags: 0

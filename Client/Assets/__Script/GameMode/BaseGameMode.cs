@@ -8,7 +8,7 @@ namespace Game
     public abstract class BaseGameMode : MonoBehaviour
     {
         public virtual GameModeTypes GetGameModeType() => GameModeTypes.None;
-        public virtual DialogueRunnerDispatcher GetDialogueRunnerDispatcher() => null;
+        public virtual DialogueDispatcher GetDialogueDispatcher() => null;
         public virtual bool CanPlayerConsumeInput() => true;
         public virtual bool IsInCombat() => false;
         public virtual void Enter() { EnterAsObservable()?.Subscribe(); }

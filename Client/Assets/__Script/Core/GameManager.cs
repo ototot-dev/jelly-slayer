@@ -9,7 +9,7 @@ public class GameManager : MonoSingleton<GameManager>
             return null;
 
         var res = Resources.Load<GameObject>("Pawn/Player/Hero_OneUp");
-        var pawnObj = GameContext.Instance.playerCtrler.SpawnHeroPawn(res, true);
+        var pawnObj = GameContext.Instance.playerCtrler.SpawnSlayerPawn(true);
         if (pawnObj == null)
             return null;
 

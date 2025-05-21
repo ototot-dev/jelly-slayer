@@ -4,6 +4,9 @@ public static class Tags
     public static readonly string[] All = new string[]
     {
         "K",
+        "DroneBotSpawnPoint",
+        "Phone",
+        "PlayerSpawnPoint",
         "Slayer",
         "Hero",
     };
@@ -12,8 +15,14 @@ public static class Tags
         public static readonly string[] All = new string[]
         {
             "K",
+            "DroneBotSpawnPoint",
+            "Phone",
+            "PlayerSpawnPoint",
         };
         public const string K = "K";
+        public const string DroneBotSpawnPoint = "DroneBotSpawnPoint";
+        public const string Phone = "Phone";
+        public const string PlayerSpawnPoint = "PlayerSpawnPoint";
     }
     public static class Pawn
     {
@@ -24,5 +33,11 @@ public static class Tags
         };
         public const string Slayer = "Slayer";
         public const string Hero = "Hero";
+    }
+    public static class Prop
+    {
+        public static readonly string[] All = new string[]
+        {
+        };
     }
 }

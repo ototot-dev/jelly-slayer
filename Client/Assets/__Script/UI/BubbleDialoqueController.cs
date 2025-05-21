@@ -10,7 +10,7 @@ namespace Game
     public class BubbleDialoqueController : Controller
     {
         public PawnBrainController speakerBrain;
-        DialogueRunnerDispatcher __dialogueRunnerDispatcher;
+        DialogueDispatcher __dialogueRunnerDispatcher;
 
         public override void OnPostLoad()
         {
@@ -24,7 +24,7 @@ namespace Game
         {
             base.OnPreShow();
 
-            __dialogueRunnerDispatcher = GameContext.Instance.launcher.currGameMode.GetDialogueRunnerDispatcher();
+            __dialogueRunnerDispatcher = GameContext.Instance.launcher.currGameMode.GetDialogueDispatcher();
             Debug.Assert(__dialogueRunnerDispatcher != null);
 
             __dialogueRunnerDispatcher.AddViews(GetComponentById<DialogueViewBase>("dialogue"), GetComponentById<DialogueViewBase>("options"));

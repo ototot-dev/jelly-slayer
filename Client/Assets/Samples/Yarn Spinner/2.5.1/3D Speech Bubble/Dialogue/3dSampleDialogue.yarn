@@ -38,6 +38,8 @@ Bob: Are you OK? Who are you talking to?
 -> ... no one.
     Alice: I'm talking to... no one.
 
+<<spawnDrontBot>>
+
 Alice: (wink)
 Bob: Why did you say "wink" up at the sky?
 Alice: (winks again)

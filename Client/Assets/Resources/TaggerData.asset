@@ -16,31 +16,55 @@ MonoBehaviour:
   - Slayer
   - K
   - Hero
+  - DroneBotSpawnPoint
+  - Phone
+  - PlayerSpawnPoint
   _serializedGroups:
   - _name: Ungrouped
     _tags:
     - K
+    - DroneBotSpawnPoint
+    - Phone
+    - PlayerSpawnPoint
     _isSingleton: 0
   - _name: Pawn
     _tags:
     - Slayer
     - Hero
     _isSingleton: 0
-  _serializedIDs: 000000000100000002000000
-  _serializedLinkIdKeys: 
-  _serializedLinkIdValues: 
+  - _name: Prop
+    _tags: []
+    _isSingleton: 0
+  _serializedIDs: 00000000010000000200000003000000040000000600000007000000
+  _serializedLinkIdKeys: 05000000
+  _serializedLinkIdValues: 03000000
   _serializedTagArrays:
   - _array: 01000000
     _maskArray: ffffffff
-    _version: 7
+    _version: 21
   - _array: 05000000
     _maskArray: ffffffff
-    _version: 8
+    _version: 22
   - _array: 07000000
     _maskArray: ffffffff
+    _version: 23
+  - _array: 00000000
+    _maskArray: ffffffff
+    _version: 12
+  - _array: 08000000
+    _maskArray: ffffffff
     _version: 9
+  - _array: 10000000
+    _maskArray: ffffffff
+    _version: 13
+  - _array: 20000000
+    _maskArray: ffffffff
+    _version: 1
   _tagColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
-  _version: 5
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  _version: 11

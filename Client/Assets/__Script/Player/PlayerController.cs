@@ -89,20 +89,25 @@ namespace Game
         void IPawnEventListener.OnReceivePawnSpawningStateChanged(PawnBrainController sender, PawnSpawnStates state) {}
 #endregion
 
-        public GameObject SpawnHeroPawn(GameObject heroPrefab, bool possessImmediately = false)
+        public GameObject SpawnSlayerPawn(bool possessImmediately = false)
         {
             var spawnPosition = possessedBrain != null ? possessedBrain.GetWorldPosition() : transform.position;
             var spawnRotation = possessedBrain != null ? possessedBrain.GetWorldRotation() : Quaternion.LookRotation(Vector3.left + Vector3.back, Vector3.up);
 
             if (possessImmediately)
             {
-                Possess(Instantiate(heroPrefab, spawnPosition, spawnRotation).GetComponent<SlayerBrain>());
+                Possess(Instantiate(Resources.Load<GameObject>("Pawn/Player/Slayer-K"), spawnPosition, spawnRotation).GetComponent<SlayerBrain>());
                 return PossessedPawn;
             }
             else
             {
-                return Instantiate(heroPrefab, spawnPosition, spawnRotation);
+                return Instantiate(Resources.Load<GameObject>("Pawn/Player/Slayer-K"), spawnPosition, spawnRotation);
             }
+        }
+
+        public GameObject SpawnDroneBot(Vector3 position, Quaternion rotation)
+        {
+            return Instantiate(Resources.Load<GameObject>("Pawn/Player/DroneBot"), position, rotation);
         }
 
         public bool Possess(SlayerBrain targetBrain)
@@ -138,7 +143,7 @@ namespace Game
 
         void Update()
         {
-            //* 
+            //* 다이얼로그 진행 중에 AnyKeyDown 처리
             if (GameContext.Instance.dialogueRunner.IsDialogueRunning && Input.anyKeyDown)
             {
                 foreach (var v in GameContext.Instance.dialogueRunner.dialogueViews)
@@ -148,8 +153,10 @@ namespace Game
                 }
             }
 
+            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
+                return;
             if (possessedBrain == null)
-                    return;
+                return;
 
             if (inputMoveVec.Value.sqrMagnitude > 0)
             {
