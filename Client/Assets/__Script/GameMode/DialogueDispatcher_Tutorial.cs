@@ -10,7 +10,7 @@ using Yarn.Unity;
 namespace Game
 {
     // Tutorial
-    public partial class DialogueRunnerDispatcher : DialogueViewBase
+    public partial class DialogueDispatcher : DialogueViewBase
     {
         public void JumpTo(string text)
         {
