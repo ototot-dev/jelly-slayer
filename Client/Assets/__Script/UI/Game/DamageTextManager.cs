@@ -47,7 +47,7 @@ public class DamageTextManager : MonoBehaviour
         //whereas WorldToViewPortPoint treats the lower left corner as 0,0. Because of this,
         //you need to subtract the height / width of the canvas * 0.5 to get the correct position.
 
-        Vector2 ViewportPosition = GameContext.Instance.cameraCtrler.viewCamera.WorldToViewportPoint(pos);
+        Vector2 ViewportPosition = GameContext.Instance.cameraCtrler.gameCamera.WorldToViewportPoint(pos);
         Vector2 WorldObject_ScreenPosition = new (
             ((ViewportPosition.x * _canvasRect.sizeDelta.x) - (_canvasRect.sizeDelta.x * 0.5f)),
             ((ViewportPosition.y * _canvasRect.sizeDelta.y) - (_canvasRect.sizeDelta.y * 0.5f)));

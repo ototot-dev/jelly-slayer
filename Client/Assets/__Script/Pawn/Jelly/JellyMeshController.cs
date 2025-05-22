@@ -167,7 +167,7 @@ namespace Game
                     springMassSystem.core.position = springMassSystem.core.position.LerpSpeed(hostBrain.coreColliderHelper.GetWorldCenter(), distanceRecoverySpeed * (distance - maintainDistance), Time.deltaTime);
             }
 
-            springMassSystem.bodyOffsetPoint.rotation = Quaternion.LookRotation(-GameContext.Instance.cameraCtrler.viewCamera.transform.forward);
+            springMassSystem.bodyOffsetPoint.rotation = Quaternion.LookRotation(-GameContext.Instance.cameraCtrler.gameCamera.transform.forward);
 
             if (__tweener?.IsComplete() ?? true)
                 springMassSystem.bodyOffsetPoint.localPosition = 0.2f * Perlin.Noise(Time.time) * Vector3.up;
@@ -209,7 +209,7 @@ namespace Game
 
                 UpdateCorePositionAndBodyOffset();
 
-                var corePositionInViewSpace = GameContext.Instance.cameraCtrler.viewCamera.worldToCameraMatrix.MultiplyPoint(springMassSystem.core.position);
+                var corePositionInViewSpace = GameContext.Instance.cameraCtrler.gameCamera.worldToCameraMatrix.MultiplyPoint(springMassSystem.core.position);
                 foreach (var p in __cubeMeshRenderers)
                 {
                     var cubeFadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp - p.Key * 0.05f) / duration);
@@ -219,7 +219,7 @@ namespace Game
                     var spreadVec = cubeSpreadRadius * springMassSystem.points[p.Key].linkedGrid.localPosition.normalized - springMassSystem.points[p.Key].linkedGrid.localPosition;
                     p.Value.transform.position = Easing.Ease(EaseType.BounceOut, easingStartPosition, springMassSystem.points[p.Key].linkedBone.localToWorldMatrix.MultiplyPoint(spreadVec), cubeFadeAlpha);
 
-                    var cubePositionInViewSpace = GameContext.Instance.cameraCtrler.viewCamera.worldToCameraMatrix.MultiplyPoint(p.Value.transform.position);
+                    var cubePositionInViewSpace = GameContext.Instance.cameraCtrler.gameCamera.worldToCameraMatrix.MultiplyPoint(p.Value.transform.position);
                     var cubeDistanceAlpha = cubeDitherAlphaCurve.Evaluate(Vector3.Distance(corePositionInViewSpace.AdjustZ(0f), cubePositionInViewSpace.AdjustZ(0f)));
 
                     foreach (var m in p.Value.materials)
@@ -238,7 +238,7 @@ namespace Game
                     p.Value.transform.localRotation = Quaternion.Euler(cubeFadeAlpha * Mathf.Lerp(-15f, 15f, Mathf.PerlinNoise(Time.time + key, Time.time + key * key)) * Vector3.one);
                     p.Value.transform.position = Easing.Ease(EaseType.BounceOut, easingStartPosition, 0.5f * (__cubeMeshRenderers[p.Key.Item1].transform.position + __cubeMeshRenderers[p.Key.Item2].transform.position), cubeFadeAlpha);
 
-                    var cubePositionInViewSpace = GameContext.Instance.cameraCtrler.viewCamera.worldToCameraMatrix.MultiplyPoint(p.Value.transform.position);
+                    var cubePositionInViewSpace = GameContext.Instance.cameraCtrler.gameCamera.worldToCameraMatrix.MultiplyPoint(p.Value.transform.position);
                     var cubeDistanceAlpha = cubeDitherAlphaCurve.Evaluate(Vector3.Distance(corePositionInViewSpace.AdjustZ(0f), cubePositionInViewSpace.AdjustZ(0f)));
 
                     foreach (var m in p.Value.materials)
@@ -328,7 +328,7 @@ namespace Game
 
                     UpdateCorePositionAndBodyOffset();
 
-                    var corePositionInViewSpace = GameContext.Instance.cameraCtrler.viewCamera.worldToCameraMatrix.MultiplyPoint(springMassSystem.core.position);
+                    var corePositionInViewSpace = GameContext.Instance.cameraCtrler.gameCamera.worldToCameraMatrix.MultiplyPoint(springMassSystem.core.position);
                     foreach (var p in __cubeMeshRenderers)
                     {
                         var cubeFadeAlpha = Mathf.Clamp01((Time.time - fadeStartTimeStamp - p.Key * 0.05f) / duration);
@@ -338,7 +338,7 @@ namespace Game
                         var spreadVec = cubeSpreadRadius * springMassSystem.points[p.Key].linkedGrid.localPosition.normalized - springMassSystem.points[p.Key].linkedGrid.localPosition;
                         p.Value.transform.position = Easing.Ease(EaseType.QuadraticIn, springMassSystem.points[p.Key].linkedBone.localToWorldMatrix.MultiplyPoint(spreadVec), easingEndPosition, cubeFadeAlpha);
 
-                        var cubePositionInViewSpace = GameContext.Instance.cameraCtrler.viewCamera.worldToCameraMatrix.MultiplyPoint(p.Value.transform.position);
+                        var cubePositionInViewSpace = GameContext.Instance.cameraCtrler.gameCamera.worldToCameraMatrix.MultiplyPoint(p.Value.transform.position);
                         var cubeDistanceAlpha = cubeDitherAlphaCurve.Evaluate(Vector3.Distance(corePositionInViewSpace.AdjustZ(0f), cubePositionInViewSpace.AdjustZ(0f)));
 
                         foreach (var m in p.Value.materials)
@@ -352,7 +352,7 @@ namespace Game
                         p.Value.transform.localRotation = Quaternion.Euler(cubeFadeAlpha * Mathf.Lerp(-15f, 15f, Mathf.PerlinNoise(Time.time + key, Time.time + key * key)) * Vector3.one);
                         p.Value.transform.position = Easing.Ease(EaseType.QuadraticIn, 0.5f * (__cubeMeshRenderers[p.Key.Item1].transform.position + __cubeMeshRenderers[p.Key.Item2].transform.position), easingEndPosition, cubeFadeAlpha);
 
-                        var cubePositionInViewSpace = GameContext.Instance.cameraCtrler.viewCamera.worldToCameraMatrix.MultiplyPoint(p.Value.transform.position);
+                        var cubePositionInViewSpace = GameContext.Instance.cameraCtrler.gameCamera.worldToCameraMatrix.MultiplyPoint(p.Value.transform.position);
                         var cubeDistanceAlpha = cubeDitherAlphaCurve.Evaluate(Vector3.Distance(corePositionInViewSpace.AdjustZ(0f), cubePositionInViewSpace.AdjustZ(0f)));
 
                         foreach (var m in p.Value.materials)

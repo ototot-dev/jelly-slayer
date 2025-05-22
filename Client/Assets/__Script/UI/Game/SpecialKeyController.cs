@@ -36,8 +36,8 @@ namespace Game
             Observable.EveryLateUpdate().TakeWhile(_ => hideCount <= 0).Subscribe(_ =>
             {
                 __bodyRect.anchoredPosition = attachToJellyMesh ?
-                    GameContext.Instance.cameraCtrler.viewCamera.WorldToScreenPoint(__targetJellyMesh.springMassSystem.core.position + Vector3.up) :
-                    GameContext.Instance.cameraCtrler.viewCamera.WorldToScreenPoint(__targetBrain.GetSpecialKeyPosition());
+                    GameContext.Instance.cameraCtrler.gameCamera.WorldToScreenPoint(__targetJellyMesh.springMassSystem.core.position + Vector3.up) :
+                    GameContext.Instance.cameraCtrler.gameCamera.WorldToScreenPoint(__targetBrain.GetSpecialKeyPosition());
             }).AddTo(template);
         }
 

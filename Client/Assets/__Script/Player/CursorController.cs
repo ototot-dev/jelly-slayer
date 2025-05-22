@@ -156,7 +156,7 @@ namespace Game
             var textMesh = GetTextMesh(textAlias);
             textMesh.gameObject.SetActive(true);
             textMesh.transform.localScale = 0.5f * Vector3.one;
-            textMesh.transform.SetPositionAndRotation(position, Quaternion.LookRotation(GameContext.Instance.cameraCtrler.viewCamera.transform.forward));
+            textMesh.transform.SetPositionAndRotation(position, Quaternion.LookRotation(GameContext.Instance.cameraCtrler.gameCamera.transform.forward));
             textMesh.text = content;
             textMesh.color = color;
             textMesh.fontSize = fontSize;
@@ -292,9 +292,9 @@ namespace Game
         /// <returns></returns>
         public bool TryMoveCursorPositionOnTerrain(Vector3 mousePoint)
         {
-            if (GameContext.Instance.cameraCtrler.viewCamera != null)
+            if (GameContext.Instance.cameraCtrler.gameCamera != null)
             {
-                var ray = GameContext.Instance.cameraCtrler.viewCamera.ScreenPointToRay(mousePoint);
+                var ray = GameContext.Instance.cameraCtrler.gameCamera.ScreenPointToRay(mousePoint);
                 var hitPoints = Physics.RaycastAll(ray, 9999f, LayerMask.GetMask(TerrainManager.LayerName));
 
                 if (hitPoints.Length > 0)
@@ -309,9 +309,9 @@ namespace Game
 
         public bool TryGetPickingPointOnTerrain(Vector3 mousePoint, out Vector3 result)
         {
-            if (GameContext.Instance.cameraCtrler.viewCamera != null)
+            if (GameContext.Instance.cameraCtrler.gameCamera != null)
             {
-                var ray = GameContext.Instance.cameraCtrler.viewCamera.ScreenPointToRay(mousePoint);
+                var ray = GameContext.Instance.cameraCtrler.gameCamera.ScreenPointToRay(mousePoint);
                 if (Physics.Raycast(ray, out var hit, 9999f, LayerMask.GetMask(TerrainManager.LayerName)))
                 {
                     result = hit.point;

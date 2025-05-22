@@ -49,7 +49,7 @@ namespace Game
         /// <returns></returns>
         public bool TryMoveCursorPositionOnTerrain(Vector3 mousePoint)
         {
-            var camera = GameContext.Instance.cameraCtrler.viewCamera;
+            var camera = GameContext.Instance.cameraCtrler.gameCamera;
 
             if (camera == null)
                 return false;

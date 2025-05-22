@@ -225,7 +225,7 @@ namespace Game
                         PawnHP.heartPoint.Value += hpAdd;
                         Debug.Log("<color=green>HP Regen : " + (100 * rate) + "%, " + hpAdd + "</green>");
 
-                        var viewVec = GameContext.Instance.cameraCtrler.viewCamera.transform.forward;
+                        var viewVec = GameContext.Instance.cameraCtrler.gameCamera.transform.forward;
                         EffectManager.Instance.Show("FX/HealSingle", GetWorldPosition() + Vector3.up - viewVec, Quaternion.identity, Vector3.one, 1f);
                     }
                 }

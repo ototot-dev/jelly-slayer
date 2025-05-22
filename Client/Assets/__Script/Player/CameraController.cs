@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cinemachine;
 using PixelCamera;
 using UniRx;
 using UnityEngine;
@@ -12,9 +13,10 @@ namespace Game
     public class CameraController : MonoBehaviour
     {
         [Header("Component")]
-        public Camera viewCamera;
-        public Transform cameraTransform;
-        public PixelCameraManager pixelCameraManager;
+        public Camera gameCamera;
+        public PixelCameraManager pixelCamera;
+        public CinemachineBrain cinemachineBrain;
+        public CinemachineVirtualCamera virtualCamera;
 
         [Header("Parameter")]
         [Range(0.1f, 2f)]
@@ -23,8 +25,8 @@ namespace Game
         public float yawAngleOnGrouned = 40f;
         public float yawAngleOnHanging = 50f;
         public float yawAngleSpeed = 360f;
-        public Quaternion SpriteLookRotation => cameraTransform != null ? Quaternion.LookRotation(cameraTransform.forward, Vector3.up) : Quaternion.identity;
-        public Quaternion BillboardRotation => cameraTransform != null ? Quaternion.LookRotation(-cameraTransform.forward, Vector3.up) : Quaternion.identity;
+        public Quaternion SpriteLookRotation => Quaternion.LookRotation(pixelCamera.transform.forward, Vector3.up);
+        public Quaternion BillboardRotation => Quaternion.LookRotation(-pixelCamera.transform.forward, Vector3.up);
 
         [Header("Volume")]
         public VolumeProfile volumeProfile;
@@ -36,6 +38,9 @@ namespace Game
 
         void Awake()
         {
+            if (cinemachineBrain != null)
+                cinemachineBrain.m_UpdateMethod = CinemachineBrain.UpdateMethod.ManualUpdate;
+
             Debug.Assert(volumeProfile != null);
 
             if (volumeProfile.TryGet(out __vignette))
@@ -75,16 +80,16 @@ namespace Game
 
         IObservable<long> InterpolateZoomInternal(float targetZoom, float duration)
         {
-            var startZoom = pixelCameraManager.ViewCameraZoom;
+            var startZoom = pixelCamera.ViewCameraZoom;
             var alpha = 0f;
 
             return Observable.EveryLateUpdate()
-                .TakeWhile(_ => !Mathf.Approximately(pixelCameraManager.ViewCameraZoom, targetZoom))
+                .TakeWhile(_ => !Mathf.Approximately(pixelCamera.ViewCameraZoom, targetZoom))
                 .Do(_ =>
                 {
                     alpha += Time.deltaTime / duration;
                     var val = alpha * alpha;
-                    pixelCameraManager.ViewCameraZoom = Mathf.Lerp(startZoom, targetZoom, val);
+                    pixelCamera.ViewCameraZoom = Mathf.Lerp(startZoom, targetZoom, val);
                     //Debug.Log($"zoom : {val}, {pixelCameraManager.ViewCameraZoom}");
                 });
         }
@@ -105,72 +110,78 @@ namespace Game
 
         void LateUpdate()
         {
-
-            if (cameraTransform == null || GameContext.Instance.playerCtrler == null || GameContext.Instance.playerCtrler.possessedBrain == null)
-                return;
-
-            //* 줌 처리
-            pixelCameraManager.ViewCameraZoom = pixelCameraManager.ViewCameraZoom.LerpSpeed(zoom, zoomSpeed, Time.deltaTime);
-
-            //* 점프 동작과 같이 y축 변화량이 큰 경우엔 카메라가 대상을 따라가는 y축 속도를 살짝 줄여줌
-            var interpY = __currFocusPoint.y.LerpSpeed(GameContext.Instance.playerCtrler.possessedBrain.GetWorldPosition().y, 4f, Time.deltaTime);
-            __currFocusPoint = GameContext.Instance.playerCtrler.possessedBrain.GetWorldPosition();
-            if (GameContext.Instance.playerCtrler.possessedBrain.BB.TargetBrain != null)
+            if (cinemachineBrain != null)
             {
-                __currFocusPoint = 0.5f * (__currFocusPoint + GameContext.Instance.playerCtrler.possessedBrain.BB.TargetBrain.GetWorldPosition());
+                cinemachineBrain.ManualUpdate();
+                pixelCamera.FollowedTransform.SetPositionAndRotation(cinemachineBrain.CurrentCameraState.FinalPosition, cinemachineBrain.CurrentCameraState.FinalOrientation);
             }
-            else 
-            {
-                __listeningBrains.Clear();
-                foreach (var c in GameContext.Instance.playerCtrler.possessedBrain.PawnSensorCtrler.ListeningColliders)
-                {
-                    if (c.TryGetComponent<PawnColliderHelper>(out var colliderHelper) && colliderHelper.pawnBrain != null && 
-                        colliderHelper.pawnBrain.CompareTag("Jelly") && !__listeningBrains.Contains(colliderHelper.pawnBrain))
-                        __listeningBrains.Add(colliderHelper.pawnBrain);
-                }
-                var positionSum = GameContext.Instance.playerCtrler.possessedBrain.GetWorldPosition();
-                foreach (var b in __listeningBrains) positionSum += b.GetWorldPosition();
 
-                __currFocusPoint = positionSum / (__listeningBrains.Count + 1);
-            }
-            __currFocusPoint.y = interpY;
 
-            //* 고도 처리
-            var currEulerAngles = cameraTransform.rotation.eulerAngles;
-            if (GameContext.Instance.playerCtrler.possessedBrain.Movement.ReservedHangingBrain != null || GameContext.Instance.playerCtrler.possessedBrain.BB.IsHanging)
-            {
-                if (!__prevIsHanging)
-                {
-                    __prevIsHanging = true;
-                    __currYawInterpSpeed = 0f;
-                }
+            // if (cameraTransform == null || GameContext.Instance.playerCtrler == null || GameContext.Instance.playerCtrler.possessedBrain == null)
+            //     return;
 
-                __currYawInterpSpeed = __currYawInterpSpeed.LerpSpeed(yawAngleSpeed, 100f, Time.deltaTime);
-                cameraTransform.rotation = Quaternion.Euler(currEulerAngles.x.LerpSpeed(yawAngleOnHanging, __currYawInterpSpeed, Time.deltaTime), currEulerAngles.y, currEulerAngles.z);
-            }
-            else if (GameContext.Instance.playerCtrler.possessedBrain.Movement.IsOnGround)
-            {
-                if (__prevIsHanging)
-                {
-                    __prevIsHanging = false;
-                    __currYawInterpSpeed = 0f;
-                }
+                // //* 줌 처리
+                // pixelCamera.ViewCameraZoom = pixelCamera.ViewCameraZoom.LerpSpeed(zoom, zoomSpeed, Time.deltaTime);
 
-                __currYawInterpSpeed = __currYawInterpSpeed.LerpSpeed(yawAngleSpeed, 100f, Time.deltaTime);
-                cameraTransform.rotation = Quaternion.Euler(currEulerAngles.x.LerpSpeed(yawAngleOnGrouned, __currYawInterpSpeed, Time.deltaTime), currEulerAngles.y, currEulerAngles.z);
-            }
-            //__currTargetPoint += 0.1f * (__currFocusPoint - __currTargetPoint);
-            cameraTransform.position = __currFocusPoint - 10f * cameraTransform.transform.forward;
+                // //* 점프 동작과 같이 y축 변화량이 큰 경우엔 카메라가 대상을 따라가는 y축 속도를 살짝 줄여줌
+                // var interpY = __currFocusPoint.y.LerpSpeed(GameContext.Instance.playerCtrler.possessedBrain.GetWorldPosition().y, 4f, Time.deltaTime);
+                // __currFocusPoint = GameContext.Instance.playerCtrler.possessedBrain.GetWorldPosition();
+                // if (GameContext.Instance.playerCtrler.possessedBrain.BB.TargetBrain != null)
+                // {
+                //     __currFocusPoint = 0.5f * (__currFocusPoint + GameContext.Instance.playerCtrler.possessedBrain.BB.TargetBrain.GetWorldPosition());
+                // }
+                // else 
+                // {
+                //     __listeningBrains.Clear();
+                //     foreach (var c in GameContext.Instance.playerCtrler.possessedBrain.PawnSensorCtrler.ListeningColliders)
+                //     {
+                //         if (c.TryGetComponent<PawnColliderHelper>(out var colliderHelper) && colliderHelper.pawnBrain != null && 
+                //             colliderHelper.pawnBrain.CompareTag("Jelly") && !__listeningBrains.Contains(colliderHelper.pawnBrain))
+                //             __listeningBrains.Add(colliderHelper.pawnBrain);
+                //     }
+                //     var positionSum = GameContext.Instance.playerCtrler.possessedBrain.GetWorldPosition();
+                //     foreach (var b in __listeningBrains) positionSum += b.GetWorldPosition();
 
-            if ((Time.time - __shakeTimeStamp) < __shakeDuration)
-                cameraTransform.transform.position = cameraTransform.transform.position + (Vector3)(__shakeStrength * UnityEngine.Random.insideUnitCircle);
+                //     __currFocusPoint = positionSum / (__listeningBrains.Count + 1);
+                // }
+                // __currFocusPoint.y = interpY;
+
+                // //* 고도 처리
+                // var currEulerAngles = cameraTransform.rotation.eulerAngles;
+                // if (GameContext.Instance.playerCtrler.possessedBrain.Movement.ReservedHangingBrain != null || GameContext.Instance.playerCtrler.possessedBrain.BB.IsHanging)
+                // {
+                //     if (!__prevIsHanging)
+                //     {
+                //         __prevIsHanging = true;
+                //         __currYawInterpSpeed = 0f;
+                //     }
+
+                //     __currYawInterpSpeed = __currYawInterpSpeed.LerpSpeed(yawAngleSpeed, 100f, Time.deltaTime);
+                //     cameraTransform.rotation = Quaternion.Euler(currEulerAngles.x.LerpSpeed(yawAngleOnHanging, __currYawInterpSpeed, Time.deltaTime), currEulerAngles.y, currEulerAngles.z);
+                // }
+                // else if (GameContext.Instance.playerCtrler.possessedBrain.Movement.IsOnGround)
+                // {
+                //     if (__prevIsHanging)
+                //     {
+                //         __prevIsHanging = false;
+                //         __currYawInterpSpeed = 0f;
+                //     }
+
+                //     __currYawInterpSpeed = __currYawInterpSpeed.LerpSpeed(yawAngleSpeed, 100f, Time.deltaTime);
+                //     cameraTransform.rotation = Quaternion.Euler(currEulerAngles.x.LerpSpeed(yawAngleOnGrouned, __currYawInterpSpeed, Time.deltaTime), currEulerAngles.y, currEulerAngles.z);
+                // }
+                // //__currTargetPoint += 0.1f * (__currFocusPoint - __currTargetPoint);
+                // cameraTransform.position = __currFocusPoint - 10f * cameraTransform.transform.forward;
+
+                // if ((Time.time - __shakeTimeStamp) < __shakeDuration)
+                //     cameraTransform.transform.position = cameraTransform.transform.position + (Vector3)(__shakeStrength * UnityEngine.Random.insideUnitCircle);
         }
 
         public bool TryGetPickingPointOnTerrain(Vector3 mousePoint, out Vector3 result)
         {
-            if (viewCamera != null)
+            if (gameCamera != null)
             {
-                var ray = viewCamera.ScreenPointToRay(mousePoint);
+                var ray = gameCamera.ScreenPointToRay(mousePoint);
                 if (Physics.Raycast(ray, out var hit, 9999f, LayerMask.GetMask(TerrainManager.LayerName)))
                 {
                     result = hit.point;

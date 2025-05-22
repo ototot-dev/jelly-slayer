@@ -72,7 +72,7 @@ public class HPBarPanel : MonoBehaviour
         var pos = _pawn.GetWorldPosition() + (rate * Vector3.up);
 
 
-        Vector2 viewportPosition = GameContext.Instance.cameraCtrler.viewCamera.WorldToViewportPoint(pos);
+        Vector2 viewportPosition = GameContext.Instance.cameraCtrler.gameCamera.WorldToViewportPoint(pos);
         Vector2 screenPosition = new Vector2(
             ((viewportPosition.x * _rtCanvas.sizeDelta.x) - (_rtCanvas.sizeDelta.x * 0.5f)),
             ((viewportPosition.y * _rtCanvas.sizeDelta.y) - (_rtCanvas.sizeDelta.y * 0.5f)));

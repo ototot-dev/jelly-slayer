@@ -19,6 +19,7 @@ MonoBehaviour:
   - DroneBotSpawnPoint
   - Phone
   - PlayerSpawnPoint
+  - ConfinerVolume
   _serializedGroups:
   - _name: Ungrouped
     _tags:
@@ -26,6 +27,7 @@ MonoBehaviour:
     - DroneBotSpawnPoint
     - Phone
     - PlayerSpawnPoint
+    - ConfinerVolume
     _isSingleton: 0
   - _name: Pawn
     _tags:
@@ -35,31 +37,34 @@ MonoBehaviour:
   - _name: Prop
     _tags: []
     _isSingleton: 0
-  _serializedIDs: 00000000010000000200000003000000040000000600000007000000
+  _serializedIDs: 0000000001000000020000000300000004000000060000000700000008000000
   _serializedLinkIdKeys: 05000000
   _serializedLinkIdValues: 03000000
   _serializedTagArrays:
   - _array: 01000000
     _maskArray: ffffffff
-    _version: 21
+    _version: 24
   - _array: 05000000
     _maskArray: ffffffff
-    _version: 22
+    _version: 25
   - _array: 07000000
     _maskArray: ffffffff
-    _version: 23
+    _version: 26
   - _array: 00000000
     _maskArray: ffffffff
-    _version: 12
+    _version: 15
   - _array: 08000000
     _maskArray: ffffffff
-    _version: 9
+    _version: 12
   - _array: 10000000
     _maskArray: ffffffff
-    _version: 13
+    _version: 16
   - _array: 20000000
     _maskArray: ffffffff
-    _version: 1
+    _version: 4
+  - _array: 40000000
+    _maskArray: ffffffff
+    _version: 16
   _tagColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
@@ -67,4 +72,5 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
-  _version: 11
+  - {r: 1, g: 1, b: 1, a: 1}
+  _version: 12

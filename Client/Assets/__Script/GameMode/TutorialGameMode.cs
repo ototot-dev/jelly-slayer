@@ -4,6 +4,7 @@ using UGUI.Rx;
 using ZLinq;
 using System;
 using Finalfactory.Tagger;
+using Cinemachine;
 
 namespace Game
 {
@@ -35,6 +36,13 @@ namespace Game
                 GameContext.Instance.playerCtrler.SpawnSlayerPawn(true);
                 GameContext.Instance.playerCtrler.possessedBrain.transform.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
                 GameContext.Instance.playerCtrler.possessedBrain.TryGetComponent<SlayerAnimController>(out var animCtrler);
+
+                GameContext.Instance.cameraCtrler.virtualCamera.LookAt = GameContext.Instance.playerCtrler.possessedBrain.coreColliderHelper.transform;
+                GameContext.Instance.cameraCtrler.virtualCamera.Follow = GameContext.Instance.playerCtrler.possessedBrain.coreColliderHelper.transform;
+
+                var confinerVolume = TaggerSystem.FindGameObjectWithTag("ConfinerVolume");
+                if (confinerVolume != null)
+                    GameContext.Instance.cameraCtrler.virtualCamera.GetComponent<CinemachineConfiner>().m_BoundingVolume = confinerVolume.GetComponent<BoxCollider>();
 
                 // var found = TaggerSystem.FindGameObjectWithTag("Slayer");
                 // if (found != null) __Logger.LogR1(template.gameObject, "FindGameObjectWithTag", "found", found);

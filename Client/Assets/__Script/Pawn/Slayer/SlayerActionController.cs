@@ -72,7 +72,7 @@ namespace Game
                 if (GetSuperArmorLevel() != SuperArmorLevels.CanNotStarggerOnDamaged)
                     __brain.AnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1f / damageContext.receiverPenalty.Item2);
 
-                var viewMatrix = GameContext.Instance.cameraCtrler.cameraTransform.worldToLocalMatrix;
+                var viewMatrix = GameContext.Instance.cameraCtrler.pixelCamera.transform.worldToLocalMatrix;
                 var hitPointOffsetVec = viewMatrix.MultiplyPoint(damageContext.hitPoint.AdjustY(0f)) - viewMatrix.MultiplyPoint(__brain.GetWorldPosition().AdjustY(0f));
                 if (Mathf.Abs(hitPointOffsetVec.x) > Mathf.Abs(hitPointOffsetVec.y))
                 {

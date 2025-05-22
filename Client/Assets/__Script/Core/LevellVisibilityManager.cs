@@ -26,7 +26,7 @@ namespace Game
             foreach (var c in __visibilityChecker)
             {
                 var origin = c.transform.position + c.center;
-                var distanceVec = GameContext.Instance.cameraCtrler.viewCamera.transform.position - origin;
+                var distanceVec = GameContext.Instance.cameraCtrler.gameCamera.transform.position - origin;
                 var hitCount = Physics.SphereCastNonAlloc(c.transform.position + c.center, c.radius, distanceVec.normalized, __tempHitsNonAlloc, distanceVec.magnitude, LayerMask.GetMask("Ceil"));
 
                 if (hitCount > 0)

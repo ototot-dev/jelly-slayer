@@ -71,7 +71,7 @@ namespace Game
         {
             RectTransformUtility.ScreenPointToLocalPointInRectangle( 
                 bubble.parent.GetComponent<RectTransform>(), // calculate local point inside parent... NOT inside the dialogue bubble itself
-                GameContext.Instance.cameraCtrler.viewCamera.WorldToScreenPoint(worldPos), 
+                GameContext.Instance.cameraCtrler.gameCamera.WorldToScreenPoint(worldPos), 
                 null, 
                 out Vector2 screenPos
             );
