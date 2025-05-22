@@ -19,7 +19,7 @@ MonoBehaviour:
   - DroneBotSpawnPoint
   - Phone
   - PlayerSpawnPoint
-  - ConfinerVolume
+  - ConfinerBoundingBox
   _serializedGroups:
   - _name: Ungrouped
     _tags:
@@ -27,7 +27,7 @@ MonoBehaviour:
     - DroneBotSpawnPoint
     - Phone
     - PlayerSpawnPoint
-    - ConfinerVolume
+    - ConfinerBoundingBox
     _isSingleton: 0
   - _name: Pawn
     _tags:

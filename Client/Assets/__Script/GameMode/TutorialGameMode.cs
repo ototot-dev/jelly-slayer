@@ -40,9 +40,13 @@ namespace Game
                 GameContext.Instance.cameraCtrler.virtualCamera.LookAt = GameContext.Instance.playerCtrler.possessedBrain.coreColliderHelper.transform;
                 GameContext.Instance.cameraCtrler.virtualCamera.Follow = GameContext.Instance.playerCtrler.possessedBrain.coreColliderHelper.transform;
 
-                var confinerVolume = TaggerSystem.FindGameObjectWithTag("ConfinerVolume");
-                if (confinerVolume != null)
-                    GameContext.Instance.cameraCtrler.virtualCamera.GetComponent<CinemachineConfiner>().m_BoundingVolume = confinerVolume.GetComponent<BoxCollider>();
+                var confinerBoundingBox = TaggerSystem.FindGameObjectWithTag("ConfinerBoundingBox").GetComponent<BoxCollider>();
+                if (confinerBoundingBox != null)
+                    GameContext.Instance.cameraCtrler.RefreshConfinerVolume(confinerBoundingBox, Quaternion.Euler(45f, 45f, 0f), 10f);
+
+                // Matrix4x4.TRS(Vector3.zero, Quaternion.Euler())
+
+
 
                 // var found = TaggerSystem.FindGameObjectWithTag("Slayer");
                 // if (found != null) __Logger.LogR1(template.gameObject, "FindGameObjectWithTag", "found", found);
