@@ -603,7 +603,7 @@ MonoBehaviour:
   pixelCamera: {fileID: 3963520112537721265}
   cinemachineBrain: {fileID: 4315633728337592350}
   virtualCamera: {fileID: 995634912585403014}
-  cinemachineConfiner: {fileID: 0}
+  cinemachineConfiner: {fileID: 1067688498470259145}
   zoom: 1
   zoomSpeed: 1
   yawAngleOnGrouned: 40
