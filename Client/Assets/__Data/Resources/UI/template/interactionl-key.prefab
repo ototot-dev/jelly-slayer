@@ -1059,7 +1059,7 @@ GameObject:
   - component: {fileID: 3100916727168708697}
   - component: {fileID: 1311981071386784720}
   m_Layer: 5
-  m_Name: special-key
+  m_Name: interactionl-key
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

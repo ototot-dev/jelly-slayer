@@ -38,7 +38,7 @@ namespace Game
         [Header("Component")]
         public RoboDogFormationController roboDogFormationCtrler;
 
-        public override Vector3 GetSpecialKeyPosition() => BB.attachment.specialKeyAttachPoint.transform.position;
+        public override Vector3 GetInteractionKeyAttachPoint() => BB.attachment.specialKeyAttachPoint.transform.position;
         public SoldierBlackboard BB { get; private set; }
         public SoldierMovement Movement { get; private set; }
         public SoldierAnimController AnimCtrler { get; private set; }

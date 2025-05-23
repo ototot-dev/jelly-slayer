@@ -5,7 +5,6 @@ using UGUI.Rx;
 using UniRx;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
 using Yarn.Unity;
 using ZLinq;
 
@@ -18,7 +17,7 @@ namespace Game
         public ReactiveProperty<Vector2> inputMoveVec = new();
         public ReactiveProperty<Vector3> inputLookVec = new();
         public ReactiveProperty<JellyMeshController> boundJellyMesh = new();
-        public SpecialKeyController specialKeyCtrler;
+        public InteractionKeyController interactionKeyCtrler;
 
         [Header("Possess")]
         public StringReactiveProperty playerName = new();
@@ -47,7 +46,7 @@ namespace Game
                 boundJellyMesh.Value = (sender as JellyBrain).jellyMeshCtrler;
                 __Logger.LogR2(gameObject, nameof(IPawnEventListener.OnReceivePawnActionStart), "jellyBrain", sender, "OnJellyOut", "boundJellyMesh", boundJellyMesh.Value);
 
-                specialKeyCtrler = new SpecialKeyController(sender, "GroggyAttack", "Groggy").Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
+                // interactionKeyCtrler = new InteractionKeyController(sender, "GroggyAttack", "Groggy").Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
             }
             else if (actionName == "OnJellyOff")
             {
@@ -56,8 +55,8 @@ namespace Game
                 boundJellyMesh.Value = null;
                 __Logger.LogR2(gameObject, nameof(IPawnEventListener.OnReceivePawnActionStart), "OnJellOff", "jellyBrain", sender);
 
-                specialKeyCtrler.HideAsObservable().Subscribe(c =>  c.Unload()).AddTo(this);
-                specialKeyCtrler = null;
+                interactionKeyCtrler.HideAsObservable().Subscribe(c =>  c.Unload()).AddTo(this);
+                interactionKeyCtrler = null;
             }
         }
 
@@ -65,8 +64,8 @@ namespace Game
         {
             if (sender is JellyBrain && status == PawnStatus.Groggy && strength > 0f)
             {
-                Debug.Assert(specialKeyCtrler == null);
-                specialKeyCtrler = new SpecialKeyController(sender, "Assault", "Encounter").Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
+                Debug.Assert(interactionKeyCtrler == null);
+                // interactionKeyCtrler = new InteractionKeyController(sender, "Assault", "Encounter").Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
             }
         }
         void IPawnEventListener.OnReceivePawnDamageContext(PawnBrainController sender, PawnHeartPointDispatcher.DamageContext damageContext) 
@@ -659,7 +658,7 @@ namespace Game
             if (value.isPressed)
             {
                 var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsRolling && !possessedBrain.BB.IsHanging;
-                var canAction2 = canAction1 && (specialKeyCtrler?.actionName ?? string.Empty) != string.Empty;
+                var canAction2 = canAction1 && (interactionKeyCtrler?.commandName ?? string.Empty) != string.Empty;
                 var canAction3 = canAction2 &&  (!possessedBrain.ActionCtrler.CheckActionRunning() || possessedBrain.ActionCtrler.CanInterruptAction()) && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
 
                 if (canAction3)
@@ -667,15 +666,15 @@ namespace Game
                     if (possessedBrain.ActionCtrler.CheckActionRunning())
                         possessedBrain.ActionCtrler.CancelAction(false);
 
-                    if (specialKeyCtrler.actionName == "Assault")
+                    if (interactionKeyCtrler.commandName == "Assault")
                     {
-                        possessedBrain.droneBotFormationCtrler.PickDroneBot().ActionCtrler.SetPendingAction(specialKeyCtrler.actionName, specialKeyCtrler.specialTag, string.Empty, 0f);
-                        specialKeyCtrler.HideAsObservable().Subscribe(c =>  c.Unload()).AddTo(this);
-                        specialKeyCtrler = null;
+                        possessedBrain.droneBotFormationCtrler.PickDroneBot().ActionCtrler.SetPendingAction(interactionKeyCtrler.commandName, interactionKeyCtrler.commandName, string.Empty, 0f);
+                        interactionKeyCtrler.HideAsObservable().Subscribe(c =>  c.Unload()).AddTo(this);
+                        interactionKeyCtrler = null;
                     }
-                    else if (specialKeyCtrler.actionName == "GroggyAttack")
+                    else if (interactionKeyCtrler.commandName == "GroggyAttack")
                     {
-                        possessedBrain.ActionCtrler.SetPendingAction($"GroggyAttack#{++specialKeyCtrler.actionCount}");
+                        // possessedBrain.ActionCtrler.SetPendingAction($"GroggyAttack#{++interactionKeyCtrler.actionCount}");
                         possessedBrain.Movement.FaceAt(boundJellyMesh.Value.springMassSystem.core.position);
                     }
                 }
