@@ -101,7 +101,7 @@ namespace Game
             __runner.AddCommandHandler("hideSword", HideSword);
             __runner.AddCommandHandler<string>("playsound", PlaySound);
             __runner.AddCommandHandler<string, float>("showInteractionKey", ShowInteractionKey);
-            // __runner.AddCommandHandler<string, float, int, bool>("tweenshake", TweenShake);
+            __runner.AddCommandHandler<string, float, int, bool>("tweenshake", TweenShake);
             __runner.AddCommandHandler<string, string>("sendmsg", SendMessage);            
         }
 

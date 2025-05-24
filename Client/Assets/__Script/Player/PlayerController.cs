@@ -179,7 +179,7 @@ namespace Game
 
         public void OnMove(InputValue value)
         {
-            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
+            if (GameContext.Instance.launcher.currGameMode == null || !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
                 return;
             if (possessedBrain == null)
                 return;
@@ -465,7 +465,7 @@ namespace Game
 
         public void OnPunch(InputValue value)
         {
-            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput() && GameContext.Instance.launcher.currGameMode.IsInCombat())
+            if (GameContext.Instance.launcher.currGameMode == null || !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput() || !GameContext.Instance.launcher.currGameMode.IsInCombat())
                 return;
             if (possessedBrain == null)
                 return;
@@ -513,7 +513,7 @@ namespace Game
 
         public void OnAttack(InputValue value)
         {
-            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput() && GameContext.Instance.launcher.currGameMode.IsInCombat())
+            if (GameContext.Instance.launcher.currGameMode == null || !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput() || !GameContext.Instance.launcher.currGameMode.IsInCombat())
                 return;
             if (possessedBrain == null)
                 return;
@@ -593,7 +593,7 @@ namespace Game
 
         public void OnGroggyAttack(InputValue value)
         {
-            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput() && GameContext.Instance.launcher.currGameMode.IsInCombat())
+            if (GameContext.Instance.launcher.currGameMode == null || !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput() || !GameContext.Instance.launcher.currGameMode.IsInCombat())
                 return;
             if (possessedBrain == null)
                 return;
@@ -640,7 +640,7 @@ namespace Game
 
         public void OnSpecialAttack(InputValue value)
         {
-            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
+            if (GameContext.Instance.launcher.currGameMode == null || !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
                 return;
             if (possessedBrain == null)
                 return;
