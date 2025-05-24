@@ -562,13 +562,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   query:
-    usingTag: 1
-    tag: img
-    enableInitTweens: 1
-    skipInitTweens: 0
-    initActiveClasses:
+    forceCompleteTweenOnStart: 0
+    initialClasses:
     - body
-    initActiveStates: []
+    initialStates:
+    - heartbeat
     sources:
     - {fileID: 4256359746280125178}
     - {fileID: 1250396437880841771}
@@ -1059,7 +1057,7 @@ GameObject:
   - component: {fileID: 3100916727168708697}
   - component: {fileID: 1311981071386784720}
   m_Layer: 5
-  m_Name: interactionl-key
+  m_Name: interaction-key
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1097,10 +1095,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45f1d03c2ab444920ae919b0829bc9f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  poolingName: 
   outer: {fileID: 0}
-  showTweens:
-  - {fileID: 5107682318136762139}
+  poolingName: 
+  showTweens: []
   hideTweens:
   - {fileID: 5107682318136762139}
   runTestMode: 0
@@ -1212,8 +1209,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: E
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6bb728dc283784e9aab3786dfe844d67, type: 2}
-  m_sharedMaterial: {fileID: -6564181969868659696, guid: 6bb728dc283784e9aab3786dfe844d67, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1307,12 +1304,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   query:
-    usingTag: 1
-    tag: p
-    enableInitTweens: 0
-    skipInitTweens: 0
-    initActiveClasses: []
-    initActiveStates: []
+    forceCompleteTweenOnStart: 0
+    initialClasses: []
+    initialStates: []
     sources: []
     selectableNames: []
     selectableClasses: []

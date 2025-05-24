@@ -18,6 +18,7 @@ Alice: Like in A Short Hike! Have you played that game, Bob?
 Bob: ...
 
 <<getUp>>
+<<showInteractionKey "Phone" 2>>
 
 Alice: Bob, are you OK?
 Bob: I feel so dizzy. I think I have to get off soon...

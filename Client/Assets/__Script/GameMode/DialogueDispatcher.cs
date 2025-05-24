@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Linq;
 using FinalFactory;
+using UGUI.Rx;
 using UniRx;
 using UnityEngine;
 using Yarn.Unity;
@@ -98,7 +99,8 @@ namespace Game
             __runner.AddCommandHandler("hideMechArm", HideMechArm);
             __runner.AddCommandHandler("showSword", ShowSword);
             __runner.AddCommandHandler("hideSword", HideSword);
-            __runner.AddCommandHandler<string>("playsound", PlaySound);            
+            __runner.AddCommandHandler<string>("playsound", PlaySound);
+            __runner.AddCommandHandler<string, float>("showInteractionKey", ShowInteractionKey);
         }
 
         public void Vignetee(float intensity, float smoothness, float blendTime)
@@ -142,6 +144,12 @@ namespace Game
         public IEnumerator WaitForSeconds(float seconds)
         {
             yield return new WaitForSeconds(seconds);
+        }
+
+        public IEnumerator ShowInteractionKey(string tagName, float radius)
+        {
+            GameContext.Instance.playerCtrler.interactionKeyCtrler = new InteractionKeyController("E", "RunLine", TaggerSystem.FindGameObjectWithTag(tagName).transform, radius).Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
+            yield return new WaitUntil(() => GameContext.Instance.playerCtrler.interactionKeyCtrler == null || GameContext.Instance.playerCtrler.interactionKeyCtrler.commandName != "RunLine");
         }
     }
 }

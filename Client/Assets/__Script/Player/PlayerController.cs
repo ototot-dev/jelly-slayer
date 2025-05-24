@@ -142,16 +142,6 @@ namespace Game
 
         void Update()
         {
-            //* 다이얼로그 진행 중에 AnyKeyDown 처리
-            if (GameContext.Instance.dialogueRunner.IsDialogueRunning && Input.anyKeyDown)
-            {
-                foreach (var v in GameContext.Instance.dialogueRunner.dialogueViews)
-                {
-                    if (v is LineView lineView)
-                        lineView.UserRequestedViewAdvancement();
-                }
-            }
-
             if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
                 return;
             if (possessedBrain == null)
@@ -475,7 +465,7 @@ namespace Game
 
         public void OnPunch(InputValue value)
         {
-            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
+            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput() && GameContext.Instance.launcher.currGameMode.IsInCombat())
                 return;
             if (possessedBrain == null)
                 return;
@@ -523,7 +513,7 @@ namespace Game
 
         public void OnAttack(InputValue value)
         {
-            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
+            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput() && GameContext.Instance.launcher.currGameMode.IsInCombat())
                 return;
             if (possessedBrain == null)
                 return;
@@ -603,7 +593,7 @@ namespace Game
 
         public void OnGroggyAttack(InputValue value)
         {
-            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
+            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput() && GameContext.Instance.launcher.currGameMode.IsInCombat())
                 return;
             if (possessedBrain == null)
                 return;
@@ -647,7 +637,7 @@ namespace Game
                 }
             }
         }
-        
+
         public void OnSpecialAttack(InputValue value)
         {
             if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
@@ -655,30 +645,50 @@ namespace Game
             if (possessedBrain == null)
                 return;
 
-            if (value.isPressed)
+            if (value.isPressed && interactionKeyCtrler != null && interactionKeyCtrler.PreprocessKeyDown())
             {
-                var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsRolling && !possessedBrain.BB.IsHanging;
-                var canAction2 = canAction1 && (interactionKeyCtrler?.commandName ?? string.Empty) != string.Empty;
-                var canAction3 = canAction2 &&  (!possessedBrain.ActionCtrler.CheckActionRunning() || possessedBrain.ActionCtrler.CanInterruptAction()) && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
-
-                if (canAction3)
+                if (interactionKeyCtrler.commandName == "RunLine")
                 {
-                    if (possessedBrain.ActionCtrler.CheckActionRunning())
-                        possessedBrain.ActionCtrler.CancelAction(false);
+                    interactionKeyCtrler.HideAsObservable().Subscribe(c => c.Unload());
+                    interactionKeyCtrler = null;
 
-                    if (interactionKeyCtrler.commandName == "Assault")
+                    Debug.Assert(GameContext.Instance.dialogueRunner.IsDialogueRunning);
+
+                    Observable.NextFrame().Subscribe(_ =>
                     {
-                        possessedBrain.droneBotFormationCtrler.PickDroneBot().ActionCtrler.SetPendingAction(interactionKeyCtrler.commandName, interactionKeyCtrler.commandName, string.Empty, 0f);
-                        interactionKeyCtrler.HideAsObservable().Subscribe(c =>  c.Unload()).AddTo(this);
-                        interactionKeyCtrler = null;
-                    }
-                    else if (interactionKeyCtrler.commandName == "GroggyAttack")
-                    {
-                        // possessedBrain.ActionCtrler.SetPendingAction($"GroggyAttack#{++interactionKeyCtrler.actionCount}");
-                        possessedBrain.Movement.FaceAt(boundJellyMesh.Value.springMassSystem.core.position);
-                    }
+                        foreach (var v in GameContext.Instance.dialogueRunner.dialogueViews)
+                        {
+                            if (v is LineView lineView)
+                                lineView.UserRequestedViewAdvancement();
+                        }
+                    }).AddTo(this);
                 }
             }
+            
+            // if (value.isPressed)
+            // {
+            //     var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsRolling && !possessedBrain.BB.IsHanging;
+            //     var canAction2 = canAction1 && interactionKeyCtrler != null && interactionKeyCtrler.PreprocessKeyDown();
+            //     var canAction3 = canAction2 &&  (!possessedBrain.ActionCtrler.CheckActionRunning() || possessedBrain.ActionCtrler.CanInterruptAction()) && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
+
+                //     if (canAction3)
+                //     {
+                //         if (possessedBrain.ActionCtrler.CheckActionRunning())
+                //             possessedBrain.ActionCtrler.CancelAction(false);
+
+                //         if (interactionKeyCtrler.commandName == "Assault")
+                //         {
+                //             possessedBrain.droneBotFormationCtrler.PickDroneBot().ActionCtrler.SetPendingAction(interactionKeyCtrler.commandName, interactionKeyCtrler.commandName, string.Empty, 0f);
+                //             interactionKeyCtrler.HideAsObservable().Subscribe(c =>  c.Unload()).AddTo(this);
+                //             interactionKeyCtrler = null;
+                //         }
+                //         else if (interactionKeyCtrler.commandName == "GroggyAttack")
+                //         {
+                //             // possessedBrain.ActionCtrler.SetPendingAction($"GroggyAttack#{++interactionKeyCtrler.actionCount}");
+                //             possessedBrain.Movement.FaceAt(boundJellyMesh.Value.springMassSystem.core.position);
+                //         }
+                //     }
+                // }
         }
 
         public void OnDrink() 

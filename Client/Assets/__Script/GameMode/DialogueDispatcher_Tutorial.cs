@@ -1,9 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using FinalFactory;
-using UniRx;
+using UGUI.Rx;
 using UnityEngine;
 using Yarn.Unity;
 
@@ -53,9 +48,10 @@ namespace Game
             slayerBrain.PartsCtrler.SetSwordHidden(true);
         }
 
-        public void PlaySound(string soundName) 
+        public void PlaySound(string soundName)
         {
             Debug.Log("YarnCommand PlaySound: " + soundName);
         }
+        
     }
 }

@@ -1,10 +1,8 @@
 using UnityEngine;
 using UniRx;
 using UGUI.Rx;
-using ZLinq;
 using System;
-using Finalfactory.Tagger;
-using Cinemachine;
+using Yarn.Unity;
 
 namespace Game
 {
@@ -16,7 +14,7 @@ namespace Game
 
         public override bool CanPlayerConsumeInput()
         {
-            return !__dialogueDispatcher.IsDialogueRunning();
+            return !__dialogueDispatcher.IsDialogueRunning() || (GameContext.Instance.playerCtrler.interactionKeyCtrler != null && GameContext.Instance.playerCtrler.interactionKeyCtrler.commandName == "RunLine");
         }
 
         void Awake()
@@ -31,7 +29,7 @@ namespace Game
             var loadingPageCtrler = new LoadingPageController(new string[] { "Pawn/Player/Slayer-K", "Pawn/Player/DrontBot" }, new string[] { "Tutorial-0" });
             loadingPageCtrler.onLoadingCompleted += () =>
             {
-                var spawnPoint = GameObject.FindGameObjectsWithTag("SpawnPoint").AsValueEnumerable().First(v => v.name == "PlayerSpawnPoint").transform;
+                var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint").transform;
 
                 GameContext.Instance.playerCtrler.SpawnSlayerPawn(true);
                 GameContext.Instance.playerCtrler.possessedBrain.transform.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
@@ -71,6 +69,19 @@ namespace Game
         public override IObservable<Unit> ExitAsObservable()
         {
             return Observable.NextFrame();
+        }
+
+        void Update()
+        {
+            //* 다이얼로그 진행 중에 AnyKeyDown 처리
+            if (__dialogueDispatcher.IsDialogueRunning() && Input.anyKeyDown && !CanPlayerConsumeInput())
+            {
+                foreach (var v in GameContext.Instance.dialogueRunner.dialogueViews)
+                {
+                    if (v is LineView lineView)
+                        lineView.UserRequestedViewAdvancement();
+                }
+            }
         }
     }
 }

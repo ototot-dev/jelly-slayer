@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public abstract class PawnBrainController : MonoBehaviour
+    public abstract class PawnBrainController : MonoBehaviour, IInteractionKeyAttachable
     {
         public virtual void OnPossessedHandler() { }
         public virtual void OnUnpossessedHandler() { }
