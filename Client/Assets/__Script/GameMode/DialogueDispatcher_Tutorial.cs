@@ -48,10 +48,10 @@ namespace Game
             slayerBrain.PartsCtrler.SetSwordHidden(true);
         }
 
-        public void PlaySound(string soundName)
-        {
-            Debug.Log("YarnCommand PlaySound: " + soundName);
-        }
+        // public void PlaySound(string soundName)
+        // {
+        //     Debug.Log("YarnCommand PlaySound: " + soundName);
+        // }
         
     }
 }

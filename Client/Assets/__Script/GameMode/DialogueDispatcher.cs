@@ -101,6 +101,8 @@ namespace Game
             __runner.AddCommandHandler("hideSword", HideSword);
             __runner.AddCommandHandler<string>("playsound", PlaySound);
             __runner.AddCommandHandler<string, float>("showInteractionKey", ShowInteractionKey);
+            // __runner.AddCommandHandler<string, float, int, bool>("tweenshake", TweenShake);
+            __runner.AddCommandHandler<string, string>("sendmsg", SendMessage);            
         }
 
         public void Vignetee(float intensity, float smoothness, float blendTime)
@@ -150,6 +152,27 @@ namespace Game
         {
             GameContext.Instance.playerCtrler.interactionKeyCtrler = new InteractionKeyController("E", "RunLine", TaggerSystem.FindGameObjectWithTag(tagName).transform, radius).Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
             yield return new WaitUntil(() => GameContext.Instance.playerCtrler.interactionKeyCtrler == null || GameContext.Instance.playerCtrler.interactionKeyCtrler.commandName != "RunLine");
+        }
+
+        public void PlaySound(string soundName)
+        {
+            if (Enum.TryParse(soundName, out SoundID id))
+            {
+                SoundManager.Instance.Play(id);
+            }
+            else
+            {
+                Debug.LogError("Invalid enum string: " + soundName);
+            }
+        }
+
+        public void SendMessage(string tag, string msg) 
+        {
+            var obj = TaggerSystem.FindGameObjectWithTag(tag);
+            if (obj == null)
+                Debug.Log("YarnCommand: Not Found Object, " + msg);
+
+            obj.SendMessage(msg, SendMessageOptions.DontRequireReceiver);
         }
     }
 }

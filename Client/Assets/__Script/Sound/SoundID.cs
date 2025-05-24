@@ -24,4 +24,7 @@ public enum SoundID
     SLASH_PARRY,
     GUARD_BREAK,
     CHARGING_ON,
+
+    PHONE_RING,
+    PHONE_PICKUP,
 }
