@@ -98,7 +98,9 @@ namespace Game
             __runner.AddCommandHandler("hideMechArm", HideMechArm);
             __runner.AddCommandHandler("showSword", ShowSword);
             __runner.AddCommandHandler("hideSword", HideSword);
-            __runner.AddCommandHandler<string>("playsound", PlaySound);            
+            __runner.AddCommandHandler<string>("playsound", PlaySound);
+            __runner.AddCommandHandler<string, float, int, bool>("tweenshake", TweenShake);
+            __runner.AddCommandHandler<string, string>("sendmsg", SendMessage);            
         }
 
         public void Vignetee(float intensity, float smoothness, float blendTime)
@@ -142,6 +144,26 @@ namespace Game
         public IEnumerator WaitForSeconds(float seconds)
         {
             yield return new WaitForSeconds(seconds);
+        }
+        public void PlaySound(string soundName)
+        {
+            if (Enum.TryParse(soundName, out SoundID id))
+            {
+                SoundManager.Instance.Play(id);
+            }
+            else
+            {
+                Debug.LogError("Invalid enum string: " + soundName);
+            }
+        }
+
+        public void SendMessage(string tag, string msg) 
+        {
+            var obj = TaggerSystem.FindGameObjectWithTag(tag);
+            if (obj == null)
+                Debug.Log("YarnCommand: Not Found Object, " + msg);
+
+            obj.SendMessage(msg, SendMessageOptions.DontRequireReceiver);
         }
     }
 }

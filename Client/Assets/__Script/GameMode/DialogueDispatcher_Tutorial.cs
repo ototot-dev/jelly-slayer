@@ -52,10 +52,5 @@ namespace Game
             var slayerBrain = GameContext.Instance.playerCtrler.possessedBrain;
             slayerBrain.PartsCtrler.SetSwordHidden(true);
         }
-
-        public void PlaySound(string soundName) 
-        {
-            Debug.Log("YarnCommand PlaySound: " + soundName);
-        }
     }
 }

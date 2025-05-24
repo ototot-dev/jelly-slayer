@@ -10320,7 +10320,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &368595784
 Transform:
   m_ObjectHideFlags: 0
@@ -24945,6 +24945,7 @@ GameObject:
   - component: {fileID: 843581088}
   - component: {fileID: 844711008}
   - component: {fileID: 840692736}
+  - component: {fileID: 847005313}
   m_Layer: 0
   m_Name: Phone  1
   m_TagString: Untagged
@@ -24961,7 +24962,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 847005314}
-  - component: {fileID: 847005315}
   - component: {fileID: 843581090}
   - component: {fileID: 844711010}
   m_Layer: 0
@@ -24986,6 +24986,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 847005314}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &847005313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 846977696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 352d56696aba6374fa7fdf47e19af82f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _tagId: 6
 --- !u!4 &847005314
 Transform:
   m_ObjectHideFlags: 0
@@ -24995,26 +25008,13 @@ Transform:
   m_GameObject: {fileID: 846977698}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0.7071068, w: 0}
-  m_LocalPosition: {x: 3.36, y: 1.027, z: 4.33}
+  m_LocalPosition: {x: -0.76, y: 1.027, z: 4.33}
   m_LocalScale: {x: 0.0070000007, y: 0.0070000007, z: 0.0070000007}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 847005312}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 180}
---- !u!114 &847005315
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 846977698}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 352d56696aba6374fa7fdf47e19af82f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _tagId: 6
 --- !u!1001 &847429538
 PrefabInstance:
   m_ObjectHideFlags: 0
