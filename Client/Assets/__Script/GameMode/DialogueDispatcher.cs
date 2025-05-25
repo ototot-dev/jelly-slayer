@@ -103,7 +103,8 @@ namespace Game
             __runner.AddCommandHandler<string, float>("showInteractionKey", ShowInteractionKey);
             __runner.AddCommandHandler<string, float>("showAndWaitInteractionKey", ShowAndWaitInteractionKey);
             __runner.AddCommandHandler<string, float, int, bool>("tweenshake", TweenShake);
-            __runner.AddCommandHandler<string, string>("sendmsg", SendMessage);            
+            __runner.AddCommandHandler<string, string>("sendmsg", SendMessage);
+            __runner.AddCommandHandler<string, string>("spawnpawn", SpawnPawn);
         }
 
         public void Vignetee(float intensity, float smoothness, float blendTime)
@@ -170,6 +171,36 @@ namespace Game
             {
                 Debug.LogError("Invalid enum string: " + soundName);
             }
+        }
+
+        public void SpawnPawn(string pawnName, string spawnTag)
+        {
+            Debug.Log("YarnComman SpawnPawn: " + pawnName + ", " + spawnTag);
+            if (Enum.TryParse(pawnName, out PawnId id) == false)
+            {
+                Debug.Log("SpawnPawn Enum Parse Error: " + pawnName);
+                return;
+            }
+            var pawnData = MainTable.PawnData.PawnDataList.First(d => d.pawnId == id);
+            if (pawnData == null)
+            {
+                Debug.Log("SpawnPawn PawnData Get Error: " + id);
+                return;
+            }
+            var resObj = Resources.Load<GameObject>(pawnData.prefPath);
+            if (resObj == null)
+            {
+                Debug.Log("SpawnPawn Res Load Error: " + pawnData.pawnId + ", " + pawnData.prefPath);
+                return;
+            }
+            Vector3 pos = Vector3.zero;
+            GameObject tagObj = TaggerSystem.FindGameObjectWithTag(spawnTag);
+            if (tagObj != null)
+                pos = tagObj.transform.position;
+            else
+                Debug.Log("SpawnPawn SpawnTag Error: " + spawnTag);
+
+            var pawnObj = Instantiate(resObj, pos, Quaternion.identity);
         }
 
         public void SendMessage(string tag, string msg) 

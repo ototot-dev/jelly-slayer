@@ -20,10 +20,11 @@ tags:
 // 기침 후 몸을 일으킨다.
 
 <<getUp>>
-<<wait 2>>
+<<wait 3>>
 
 케이: 여긴... 나한테 무슨 일이 있었던거야?
 // 주변은 작고 어두운 방. 딱히 아무런 장식도 없다.
+<<wait 1>>
 
 // 1.5 초간 50 만큼 shake (fadeout 안함)
 <<tweenshake Phone 2 50 false>>
@@ -65,9 +66,11 @@ tags:
 
 케이: 이게 무슨 소리야? 위험이라니....
 
-<<wait 3>>
+<<wait 0.5>>
 
 // 갑자기 드론이 날아온다.
+<<spawnpawn DroneBot DroneBotSpawnPoint>>
+<<wait 4>>
 
 드론: 드디어 발견했네. 우리가 널 찾으려고 얼마나 노력했는지.
 케이: 뭐야? 아까 전화한 당신인거?
