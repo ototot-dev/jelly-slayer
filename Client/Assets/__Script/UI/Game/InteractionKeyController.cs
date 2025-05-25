@@ -44,7 +44,8 @@ namespace Game
             if (__attachableTarget == null)
             {
                 __attachableTargetTrasform = attachableTarget.Children().Where(c => c.CompareTag("InteractionKeyAttachPoint")).FirstOrDefault();
-                Debug.LogWarning($"InteractionKeyController.ctor(), InteractionKeyAttachPoint is not found => attachableTarget: {attachableTarget}");   
+                if (__attachableTargetTrasform == null)
+                    Debug.LogWarning($"InteractionKeyController.ctor(), InteractionKeyAttachPoint is not found => attachableTarget: {attachableTarget}");   
             }
         }
 

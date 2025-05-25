@@ -101,6 +101,7 @@ namespace Game
             __runner.AddCommandHandler("hideSword", HideSword);
             __runner.AddCommandHandler<string>("playsound", PlaySound);
             __runner.AddCommandHandler<string, float>("showInteractionKey", ShowInteractionKey);
+            __runner.AddCommandHandler<string, float>("showAndWaitInteractionKey", ShowAndWaitInteractionKey);
             __runner.AddCommandHandler<string, float, int, bool>("tweenshake", TweenShake);
             __runner.AddCommandHandler<string, string>("sendmsg", SendMessage);            
         }
@@ -148,7 +149,12 @@ namespace Game
             yield return new WaitForSeconds(seconds);
         }
 
-        public IEnumerator ShowInteractionKey(string tagName, float radius)
+        public void ShowInteractionKey(string tagName, float radius)
+        {
+            GameContext.Instance.playerCtrler.interactionKeyCtrler = new InteractionKeyController("E", "RunLine", TaggerSystem.FindGameObjectWithTag(tagName).transform, radius).Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
+        }
+
+        public IEnumerator ShowAndWaitInteractionKey(string tagName, float radius)
         {
             GameContext.Instance.playerCtrler.interactionKeyCtrler = new InteractionKeyController("E", "RunLine", TaggerSystem.FindGameObjectWithTag(tagName).transform, radius).Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
             yield return new WaitUntil(() => GameContext.Instance.playerCtrler.interactionKeyCtrler == null || GameContext.Instance.playerCtrler.interactionKeyCtrler.commandName != "RunLine");

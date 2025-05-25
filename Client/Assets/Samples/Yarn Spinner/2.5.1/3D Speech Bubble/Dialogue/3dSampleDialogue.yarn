@@ -45,7 +45,7 @@ tags:
 <<playsound PHONE_RING>> // 따르릉
 // <<wait 3>>
 
-<<showInteractionKey "Phone" 2>>
+<<showAndWaitInteractionKey "Phone" 2>>
  
 // 케이는 천천히 몸을 움직인다. 잠시 망설이다 전화를 받는다.
 <<playsound PHONE_PICKUP>> // 철컥.
