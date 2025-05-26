@@ -201,6 +201,78 @@ MonoBehaviour:
   onCommand:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &385157662 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4992576998352961423, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
+  m_PrefabInstance: {fileID: 611143497}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &385157664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 385157662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8ace8ced0e81c847968cdca0aeda757, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  typewriterStartsAutomatically: 0
+  animationLoop: 0
+  timeScale: 0
+  _text: 
+  useDynamicScaling: 1
+  referenceFontSize: 10
+  isResettingTimeOnNewText: 1
+  useDefaultDatabases: 1
+  databaseBehaviors: {fileID: 11400000, guid: ff78a81fc7910423a9f0b7641db6cf68, type: 2}
+  databaseAppearances: {fileID: 11400000, guid: bcbb99bf789c74117a09c9498499eb95, type: 2}
+  useDefaultStyleSheet: 1
+  styleSheet: {fileID: 0}
+  databaseActions: {fileID: 11400000, guid: 1ed65d73fdc2b4dee8fddeebb3828429, type: 2}
+  defaultAppearancesTags: []
+  defaultDisappearancesTags:
+  - fade
+  defaultBehaviorsTags: []
+  defaultTagsMode: 0
+--- !u!84 &488368209
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 640
+  m_Height: 360
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 94
+  m_ColorFormat: 4
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 1
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 0
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!1001 &504578202
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -421,10 +493,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: 3d-bubble-dialogue
       objectReference: {fileID: 0}
-    - target: {fileID: 700500891764033697, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4070441402665766495, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -506,29 +574,13 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4992576998352961409, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
-      propertyPath: m_text
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4992576998352961409, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
-      propertyPath: m_fontSize
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 4992576998352961409, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
       propertyPath: m_fontAsset
       value: 
-      objectReference: {fileID: 11400000, guid: b2c034d743b3f4592b5fcf051563fc23, type: 2}
-    - target: {fileID: 4992576998352961409, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
-      propertyPath: m_spriteAsset
-      value: 
-      objectReference: {fileID: 11400000, guid: c41005c129ba4d66911b75229fd70b45, type: 2}
-    - target: {fileID: 4992576998352961409, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
-      propertyPath: m_fontSizeBase
-      value: 30
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 11400000, guid: d001bcd92f9bdf547ad6f20e29fc5557, type: 2}
     - target: {fileID: 4992576998352961409, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
       propertyPath: m_sharedMaterial
       value: 
-      objectReference: {fileID: 4883203608713296254, guid: b2c034d743b3f4592b5fcf051563fc23, type: 2}
+      objectReference: {fileID: -1897884813567867348, guid: d001bcd92f9bdf547ad6f20e29fc5557, type: 2}
     - target: {fileID: 4992576998352961409, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
       propertyPath: m_hasFontAssetChanged
       value: 0
@@ -543,10 +595,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4992576998352961422, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4992576998352961422, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
-      propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4992576998352961422, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
@@ -568,7 +616,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4992576998352961423, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 385157664}
   m_SourcePrefab: {fileID: 100100000, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
 --- !u!224 &611143498 stripped
 RectTransform:
@@ -916,43 +967,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b6d5c34d2745a45a7b139bff6db7e948, type: 3}
---- !u!84 &1351945022
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 640
-  m_Height: 360
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 94
-  m_ColorFormat: 4
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 1
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 0
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1001 &1366469139
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -972,7 +986,7 @@ PrefabInstance:
     - target: {fileID: 5839498371252988597, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 1351945022}
+      objectReference: {fileID: 488368209}
     - target: {fileID: 6719027917663992577, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
       propertyPath: m_Name
       value: CameraSystem
