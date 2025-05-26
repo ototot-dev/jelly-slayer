@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public abstract class PawnBrainController : MonoBehaviour, IInteractionKeyAttachable
+    public abstract class PawnBrainController : MonoBehaviour, IInteractionKeyAttachable, IBubbleDialogueAttachable
     {
         public virtual void OnPossessedHandler() { }
         public virtual void OnUnpossessedHandler() { }
@@ -17,7 +17,7 @@ namespace Game
         public virtual void InvalidateDecision(float decisionCoolTime = 0) { }
         public virtual void ChangeDecision(int newDecision) { }
         public virtual Vector3 GetInteractionKeyAttachPoint() => Vector3.zero;
-        public virtual Vector3 GetDialoqueAnchorPosition() => coreColliderHelper != null ? coreColliderHelper.transform.position + coreColliderHelper.GetCapsuleHeight() * Vector3.up : transform.position;
+        public virtual Vector3 GetBubbleDialogueAttachPoint() => coreColliderHelper != null ? coreColliderHelper.transform.position + coreColliderHelper.GetCapsuleHeight() * Vector3.up : transform.position;
         public virtual Vector3 GetWorldForward() => coreColliderHelper != null ? coreColliderHelper.transform.forward : transform.forward;
         public virtual Vector3 GetWorldPosition() => coreColliderHelper != null ? coreColliderHelper.transform.position : transform.position;
         public virtual Quaternion GetWorldRotation() => coreColliderHelper != null ? coreColliderHelper.transform.rotation : transform.rotation;

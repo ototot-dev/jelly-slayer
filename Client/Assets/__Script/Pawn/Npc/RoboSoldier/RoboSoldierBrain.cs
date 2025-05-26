@@ -7,11 +7,11 @@ using UnityEngine;
 
 namespace Game
 {
-    [RequireComponent(typeof(SoldierMovement))]
-    [RequireComponent(typeof(SoldierBlackboard))]
-    [RequireComponent(typeof(SoldierAnimController))]
-    [RequireComponent(typeof(SoldierActionController))]
-    public class SoldierBrain : JellyHumanoidBrain, IPawnTargetable
+    [RequireComponent(typeof(RoboSoldierMovement))]
+    [RequireComponent(typeof(RoboSoldierBlackboard))]
+    [RequireComponent(typeof(RoboSoldierAnimController))]
+    [RequireComponent(typeof(RoboSoldierActionController))]
+    public class RoboSoldierBrain : JellyHumanoidBrain, IPawnTargetable
     {
         #region IPawnTargetable 구현
         PawnColliderHelper IPawnTargetable.StartTargeting() => bodyHitColliderHelper;
@@ -39,19 +39,19 @@ namespace Game
         public RoboDogFormationController roboDogFormationCtrler;
 
         public override Vector3 GetInteractionKeyAttachPoint() => BB.attachment.specialKeyAttachPoint.transform.position;
-        public SoldierBlackboard BB { get; private set; }
-        public SoldierMovement Movement { get; private set; }
-        public SoldierAnimController AnimCtrler { get; private set; }
-        public SoldierActionController ActionCtrler { get; private set; }
+        public RoboSoldierBlackboard BB { get; private set; }
+        public RoboSoldierMovement Movement { get; private set; }
+        public RoboSoldierAnimController AnimCtrler { get; private set; }
+        public RoboSoldierActionController ActionCtrler { get; private set; }
 
         protected override void AwakeInternal()
         {
             base.AwakeInternal();
 
-            BB = GetComponent<SoldierBlackboard>();
-            Movement = GetComponent<SoldierMovement>();
-            AnimCtrler = GetComponent<SoldierAnimController>();
-            ActionCtrler = GetComponent<SoldierActionController>();
+            BB = GetComponent<RoboSoldierBlackboard>();
+            Movement = GetComponent<RoboSoldierMovement>();
+            AnimCtrler = GetComponent<RoboSoldierAnimController>();
+            ActionCtrler = GetComponent<RoboSoldierActionController>();
         }
 
         public enum ActionPatterns : int

@@ -9,7 +9,7 @@ using ZLinq;
 
 namespace Game
 {
-    public class SoldierAnimController : PawnAnimController
+    public class RoboSoldierAnimController : PawnAnimController
     {
         [Header("Component")]
         public Transform headBone;
@@ -74,10 +74,10 @@ namespace Game
 
         void Awake()
         {
-            __brain = GetComponent<SoldierBrain>();
+            __brain = GetComponent<RoboSoldierBrain>();
         }
 
-        SoldierBrain __brain;
+        RoboSoldierBrain __brain;
         HashSet<int> __runningAnimStateNames = new();
 
         void Start()

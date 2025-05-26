@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public class SoldierActionController : JellyHumanoidActionController
+    public class RoboSoldierActionController : JellyHumanoidActionController
     {
         public override bool CheckAddictiveActionRunning(string actionName) => __laserDisposable != null && actionName == "Laser";
 
@@ -191,7 +191,7 @@ namespace Game
         IDisposable __laserDisposable;
         IDisposable __missileEmitDisposable;
         IDisposable __hitColorDisposable;
-        SoldierBrain __brain;
+        RoboSoldierBrain __brain;
 
         public override IDisposable StartCustomAction(ref PawnHeartPointDispatcher.DamageContext damageContext, string actionName, bool isAddictiveAction = false)
         {
@@ -302,7 +302,7 @@ namespace Game
         protected override void AwakeInternal()
         {
             base.AwakeInternal();
-            __brain = GetComponent<SoldierBrain>();
+            __brain = GetComponent<RoboSoldierBrain>();
         }
 
         protected override void StartInternal()

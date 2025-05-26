@@ -3,13 +3,21 @@ using UnityEngine.UI;
 using UniRx;
 using UGUI.Rx;
 using Yarn.Unity;
+using ZLinq;
 
 namespace Game
 {
+    public interface IBubbleDialogueAttachable
+    {
+        Vector3 GetBubbleDialogueAttachPoint() => Vector3.zero;
+    }
+
     [Template(path: "UI/template/3d-bubble-dialoque")]
     public class BubbleDialoqueController : Controller
     {
-        public PawnBrainController speakerBrain;
+        PawnBrainController __speakerBrain;
+        IBubbleDialogueAttachable __bubbleAttachable;
+        Transform __attachableTargetTrasform;
         DialogueDispatcher __dialogueRunnerDispatcher;
 
         public override void OnPostLoad()
@@ -31,8 +39,34 @@ namespace Game
 
             __dialogueRunnerDispatcher.onRunLine += l =>
             {
-                speakerBrain = GameContext.Instance.playerCtrler.possessedBrain;
-                // speakerBrain = TaggerSystem.FindGameObjectWithTag(l.CharacterName).GetComponent<PawnBrainController>();
+                // TODO: 주인공 찾기 하드 코딩 
+                if (l.CharacterName == "케이")
+                {
+                    __bubbleAttachable = __speakerBrain = GameContext.Instance.playerCtrler.possessedBrain;
+                    return;
+                }
+
+                var speaker = TaggerSystem.FindGameObjectWithTag(l.CharacterName);
+                if (speaker == null)
+                {
+                    __Logger.WarningR1(template.gameObject, "CharacterName is not found", "CharacterName", l.CharacterName);
+                    return;
+                }
+
+                if (speaker.TryGetComponent<PawnBrainController>(out __speakerBrain))
+                {
+                    __bubbleAttachable = __speakerBrain;
+                    __attachableTargetTrasform = null;
+                }
+                else
+                {
+                    __speakerBrain = null;
+                    __bubbleAttachable = null;
+                    __attachableTargetTrasform = speaker.transform.Children().FirstOrDefault(c => c.CompareTag("BubbleDialogueAttachPoint"));
+
+                    if (__attachableTargetTrasform == null)
+                        __Logger.WarningR1(template.gameObject, "BubbleDialogueAttachPoint is not found", "speaker", speaker);
+                }
             };
 
             __dialogueRunnerDispatcher.onDialoqueComplete += () =>
@@ -45,14 +79,17 @@ namespace Game
 
             Observable.EveryUpdate().Subscribe(_ =>
             {
-                if (dialogueBubbleRect.gameObject.activeInHierarchy && speakerBrain != null)
-                {
-                    dialogueBubbleRect.anchoredPosition = WorldToAnchoredPosition(dialogueBubbleRect, speakerBrain.GetDialoqueAnchorPosition(), 0.2f);
-                }
-                if (optionsBubbleRect.gameObject.activeInHierarchy && speakerBrain != null)
-                {
-                    optionsBubbleRect.anchoredPosition = WorldToAnchoredPosition(optionsBubbleRect, speakerBrain.GetDialoqueAnchorPosition(), 0.2f);
-                }
+                var attachPoint = Vector3.zero;
+                
+                if (__bubbleAttachable != null)
+                    attachPoint = __bubbleAttachable.GetBubbleDialogueAttachPoint();
+                else if (__attachableTargetTrasform != null)
+                    attachPoint = __attachableTargetTrasform.position;
+
+                if (dialogueBubbleRect.gameObject.activeInHierarchy)
+                    dialogueBubbleRect.anchoredPosition = WorldToAnchoredPosition(dialogueBubbleRect, attachPoint, 0.2f);
+                if (optionsBubbleRect.gameObject.activeInHierarchy)
+                    optionsBubbleRect.anchoredPosition = WorldToAnchoredPosition(optionsBubbleRect, attachPoint, 0.2f);
             }).AddToHide(this);
         }
 
