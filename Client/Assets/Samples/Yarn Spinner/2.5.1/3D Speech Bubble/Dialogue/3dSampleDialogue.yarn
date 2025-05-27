@@ -46,14 +46,15 @@ tags:
 
 <<tweenShake Phone 2 50 false>>
 <<playSound PHONE_RING>> // 따르릉
-// <<wait 3>>
 
 <<showAndWaitInteractionKey "Phone" 2>>
  
 // 케이는 천천히 몸을 움직인다. 잠시 망설이다 전화를 받는다.
 <<playSound PHONE_PICKUP>> // 철컥.
+<<wait 1>>
+
 케이: 여보세요?
-???: 드디어 연길이 되었군... 케이
+???: 드디어 연결이 되었군...  케이.
 케이: 이봐요? 누구시죠? 절 아시나요?
 ???: 시간이 없어. 다행히 지금 통화로 너의 위치를 특정했다.
 
