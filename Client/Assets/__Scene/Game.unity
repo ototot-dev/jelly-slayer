@@ -521,6 +521,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5074104138960976005, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
+      propertyPath: defaultAppearancesTags.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6178920799867714290, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
@@ -539,43 +543,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 4070441402665766495, guid: 6959a4e44611540e3b445281c2c5f6cf, type: 3}
   m_PrefabInstance: {fileID: 611143497}
   m_PrefabAsset: {fileID: 0}
---- !u!84 &627349640
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 640
-  m_Height: 360
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 94
-  m_ColorFormat: 4
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 1
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 0
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!224 &684437826 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4070441402665766495, guid: b6d5c34d2745a45a7b139bff6db7e948, type: 3}
@@ -917,6 +884,43 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b6d5c34d2745a45a7b139bff6db7e948, type: 3}
+--- !u!84 &1338031869
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 640
+  m_Height: 360
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 94
+  m_ColorFormat: 4
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 1
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 0
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!1001 &1366469139
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -936,7 +940,7 @@ PrefabInstance:
     - target: {fileID: 5839498371252988597, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 627349640}
+      objectReference: {fileID: 1338031869}
     - target: {fileID: 6719027917663992577, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
       propertyPath: m_Name
       value: CameraSystem
