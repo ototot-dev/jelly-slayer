@@ -99,12 +99,14 @@ namespace Game
             __runner.AddCommandHandler("hideMechArm", HideMechArm);
             __runner.AddCommandHandler("showSword", ShowSword);
             __runner.AddCommandHandler("hideSword", HideSword);
-            __runner.AddCommandHandler<string>("playsound", PlaySound);
+            __runner.AddCommandHandler<string>("playSound", PlaySound);
             __runner.AddCommandHandler<string, float>("showInteractionKey", ShowInteractionKey);
             __runner.AddCommandHandler<string, float>("showAndWaitInteractionKey", ShowAndWaitInteractionKey);
-            __runner.AddCommandHandler<string, float, int, bool>("tweenshake", TweenShake);
-            __runner.AddCommandHandler<string, string>("sendmsg", SendMessage);
-            __runner.AddCommandHandler<string, string>("spawnpawn", SpawnPawn);
+            __runner.AddCommandHandler<string, float, int, bool>("tweenShake", TweenShake);
+            __runner.AddCommandHandler<string, string>("sendMsg", SendMessage);
+            __runner.AddCommandHandler<string, string>("spawnPawn", SpawnPawn);
+            __runner.AddCommandHandler<string>("setCameraTarget", SetCameraTarget);
+            __runner.AddCommandHandler("setCameraSlayer", SetCameraSlayer);
         }
 
         public void Vignetee(float intensity, float smoothness, float blendTime)
@@ -210,6 +212,23 @@ namespace Game
                 Debug.Log("YarnCommand: Not Found Object, " + msg);
 
             obj.SendMessage(msg, SendMessageOptions.DontRequireReceiver);
+        }
+
+        public void SetCameraTarget(string targetTag) 
+        {
+            Debug.Log("YarnCommand TargetCamera : " + targetTag);
+            GameObject tagObj = TaggerSystem.FindGameObjectWithTag(targetTag);
+            if (tagObj == null) 
+            {
+                Debug.Log("YarnCommand Error : Not Exist Object : " + targetTag);
+                return;
+            }
+            GameContext.Instance.cameraCtrler.virtualCamera.Follow = tagObj.transform;
+        }
+        public void SetCameraSlayer() 
+        {
+            var slayerBrain = GameContext.Instance.playerCtrler.possessedBrain;
+            GameContext.Instance.cameraCtrler.virtualCamera.Follow = slayerBrain.coreColliderHelper.transform;
         }
     }
 }
