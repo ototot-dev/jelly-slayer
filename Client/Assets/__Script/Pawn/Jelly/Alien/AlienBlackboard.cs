@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public class AlienBlackboard : JellyHumanoidBlackboard
+    public class AlienBlackboard : NpcHumanoidBlackboard
     {
         public override bool IsGuarding => action.isGuarding.Value;
         public override float SpacingInDistance => action.spacingInDistance;

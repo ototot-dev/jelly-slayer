@@ -43,7 +43,7 @@ namespace Game
             {
                 Debug.Assert(boundJellyMesh.Value == null);
 
-                boundJellyMesh.Value = (sender as JellyBrain).jellyMeshCtrler;
+                boundJellyMesh.Value = (sender as NpcBrain).jellyMeshCtrler;
                 __Logger.LogR2(gameObject, nameof(IPawnEventListener.OnReceivePawnActionStart), "jellyBrain", sender, "OnJellyOut", "boundJellyMesh", boundJellyMesh.Value);
 
                 // interactionKeyCtrler = new InteractionKeyController(sender, "GroggyAttack", "Groggy").Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
@@ -62,7 +62,7 @@ namespace Game
 
         void IPawnEventListener.OnReceivePawnStatusChanged(PawnBrainController sender, PawnStatus status, float strength, float duration) 
         {
-            if (sender is JellyBrain && status == PawnStatus.Groggy && strength > 0f)
+            if (sender is NpcBrain && status == PawnStatus.Groggy && strength > 0f)
             {
                 Debug.Assert(interactionKeyCtrler == null);
                 // interactionKeyCtrler = new InteractionKeyController(sender, "Assault", "Encounter").Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);

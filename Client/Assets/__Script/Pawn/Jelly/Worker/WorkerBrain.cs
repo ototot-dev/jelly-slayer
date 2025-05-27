@@ -10,7 +10,7 @@ namespace Game
     [RequireComponent(typeof(WorkerBlackboard))]
     [RequireComponent(typeof(WorkerAnimController))]
     [RequireComponent(typeof(WorkerActionController))]
-    public class WorkerBrain : JellyHumanoidBrain
+    public class WorkerBrain : NpcHumanoidBrain
     {
         public WorkerBlackboard BB { get; private set; }
         public WorkerMovement Movement { get; private set; }

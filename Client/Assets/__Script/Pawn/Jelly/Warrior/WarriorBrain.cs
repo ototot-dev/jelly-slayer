@@ -8,7 +8,7 @@ namespace Game
     [RequireComponent(typeof(WarriorBlackboard))]
     [RequireComponent(typeof(WarriorAnimController))]
     [RequireComponent(typeof(WarriorActionController))]
-    public class WarriorBrain : JellyBrain
+    public class WarriorBrain : NpcBrain
     {
         public WarriorBlackboard BB { get; private set; }
         public WarrirorMovement Movement { get; private set; }

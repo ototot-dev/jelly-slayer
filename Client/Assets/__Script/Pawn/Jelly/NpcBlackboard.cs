@@ -4,16 +4,16 @@ using UniRx;
 
 namespace Game
 {
-    public class JellyBlackboard : PawnBlackboard
+    public class NpcBlackboard : PawnBlackboard
     {
-        public JellyBrain.Decisions CurrDecision => decision.currDecision.Value;
+        public NpcBrain.Decisions CurrDecision => decision.currDecision.Value;
         public float AggressiveLevel => decision.aggressiveLevel.Value;
         public bool IsInCombat => decision.aggressiveLevel.Value >= 0f;
 
         [Serializable]
         public class Decision
         {
-            public ReactiveProperty<JellyBrain.Decisions> currDecision = new(JellyBrain.Decisions.None);
+            public ReactiveProperty<NpcBrain.Decisions> currDecision = new(NpcBrain.Decisions.None);
             public FloatReactiveProperty aggressiveLevel = new(0);
         }
 

@@ -5,7 +5,7 @@ using XftWeapon;
 
 namespace Game
 {
-    public class AlienActionController : JellyHumanoidActionController
+    public class AlienActionController : NpcHumanoidActionController
     {
         [Header("Component")]
         public Transform counterActionCollider;

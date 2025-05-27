@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public class Etasphera42_Blackboard : JellyQuadWalkBlackboard
+    public class Etasphera42_Blackboard : NpcQuadWalkBlackboard
     {
         public bool IsDriving => action.isDriving.Value;
         public override bool IsJumping => action.isJumping.Value;

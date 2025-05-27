@@ -11,7 +11,7 @@ namespace Game
     [RequireComponent(typeof(RoboSoldierBlackboard))]
     [RequireComponent(typeof(RoboSoldierAnimController))]
     [RequireComponent(typeof(RoboSoldierActionController))]
-    public class RoboSoldierBrain : JellyHumanoidBrain, IPawnTargetable
+    public class RoboSoldierBrain : NpcHumanoidBrain, IPawnTargetable
     {
         #region IPawnTargetable 구현
         PawnColliderHelper IPawnTargetable.StartTargeting() => bodyHitColliderHelper;

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public class SoldierActionController : JellyHumanoidActionController
+    public class SoldierActionController : NpcHumanoidActionController
     {
         public override bool CheckAddictiveActionRunning(string actionName) => __laserDisposable != null && actionName == "Laser";
 

@@ -7,7 +7,7 @@ using static FIMSpace.FProceduralAnimation.LegsAnimator;
 
 namespace Game
 {
-    public class Etasphera42_ActionController : JellyQuadWalkActionController
+    public class Etasphera42_ActionController : NpcQuadWalkActionController
     {
         [Header("Component")]
         public PawnColliderHelper dashActionColliderHelper;

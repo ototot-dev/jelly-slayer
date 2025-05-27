@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public class ZombieBlackboard : JellyBlackboard
+    public class ZombieBlackboard : NpcBlackboard
     {
     }
 }

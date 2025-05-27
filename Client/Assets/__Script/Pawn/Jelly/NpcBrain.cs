@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public class JellyBrain : PawnBrainController, IPawnSpawnable, IPawnMovable
+    public class NpcBrain : PawnBrainController, IPawnSpawnable, IPawnMovable
     {
 #region IPawnSpawnable / IPawnMovable 구현
         Vector3 IPawnSpawnable.GetSpawnPosition() => transform.position;
@@ -59,7 +59,7 @@ namespace Game
             Max
         }
 
-        public JellyBlackboard JellyBB { get; private set; }
+        public NpcBlackboard JellyBB { get; private set; }
         public PawnStatusController StatusCtrler { get; private set; }
         public PawnSensorController SensorCtrler { get; private set; }
         public PawnActionDataSelector ActionDataSelector { get; private set; }
@@ -71,7 +71,7 @@ namespace Game
         {
             base.AwakeInternal();
             
-            JellyBB = GetComponent<JellyBlackboard>();
+            JellyBB = GetComponent<NpcBlackboard>();
             StatusCtrler = GetComponent<PawnStatusController>();
             SensorCtrler = GetComponent<PawnSensorController>();
             ActionDataSelector = GetComponent<PawnActionDataSelector>();

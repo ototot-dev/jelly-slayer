@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public class JellyQuadWalkBlackboard : JellyBlackboard
+    public class NpcHumanoidBlackboard : NpcBlackboard
     {
         public virtual bool IsJumping => false;
         public virtual bool IsGliding => false;

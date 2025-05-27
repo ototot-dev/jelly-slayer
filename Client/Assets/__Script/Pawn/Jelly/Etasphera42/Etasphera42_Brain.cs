@@ -7,7 +7,7 @@ namespace Game
     [RequireComponent(typeof(Etasphera42_Blackboard))]
     [RequireComponent(typeof(Etasphera42_AnimController))]
     [RequireComponent(typeof(Etasphera42_ActionController))]
-    public class Etasphera42_Brain : JellyQuadWalkBrain, IPawnTargetable, IPawnEventListener
+    public class Etasphera42_Brain : NpcQuadWalkBrain, IPawnTargetable, IPawnEventListener
     {
 #region IPawnTargetable 구현
         public enum HitBoxIndices

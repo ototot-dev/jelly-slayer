@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public class JellyQuadWalkActionController : PawnActionController
+    public class NpcQuadWalkActionController : PawnActionController
     {
         public override bool CheckKnockBackRunning() => __knockBackDisposable != null;
         IDisposable __knockBackDisposable;
@@ -250,13 +250,13 @@ namespace Game
             return null;
         }
 
-        protected JellyQuadWalkBrain __humanoidBrain;
+        protected NpcQuadWalkBrain __humanoidBrain;
 
         protected override void AwakeInternal()
         {
             base.AwakeInternal();
             
-            __humanoidBrain = GetComponent<JellyQuadWalkBrain>();
+            __humanoidBrain = GetComponent<NpcQuadWalkBrain>();
         }
 
         protected override void StartInternal()

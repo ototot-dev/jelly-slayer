@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public class ZombieBrain : JellyBrain
+    public class ZombieBrain : NpcBrain
     {
         [Header("Weapon")]
         public WeaponController[] _handWeaponCtrl;

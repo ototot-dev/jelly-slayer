@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public class RoboSoldierBlackboard : JellyHumanoidBlackboard
+    public class RoboSoldierBlackboard : NpcHumanoidBlackboard
     {
         public override bool IsJumping => body.isJumping.Value;
         public override bool IsGliding => body.isGliding.Value;

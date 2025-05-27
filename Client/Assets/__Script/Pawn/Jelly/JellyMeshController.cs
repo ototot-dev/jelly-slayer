@@ -16,7 +16,7 @@ namespace Game
     public class JellyMeshController : MonoBehaviour
     {
         [Header("Component")]
-        public JellyBrain hostBrain;
+        public NpcBrain hostBrain;
         public JellySpringMassSystem springMassSystem;
         public JellyMeshBuilder meshBuilder;
         public ObiSolver ropeObiSolver;

@@ -11,7 +11,7 @@ namespace Game
     [RequireComponent(typeof(SoldierBlackboard))]
     [RequireComponent(typeof(SoldierAnimController))]
     [RequireComponent(typeof(SoldierActionController))]
-    public class SoldierBrain : JellyHumanoidBrain, IPawnTargetable
+    public class SoldierBrain : NpcHumanoidBrain, IPawnTargetable
     {
         #region IPawnTargetable 구현
         PawnColliderHelper IPawnTargetable.StartTargeting() => bodyHitColliderHelper;
