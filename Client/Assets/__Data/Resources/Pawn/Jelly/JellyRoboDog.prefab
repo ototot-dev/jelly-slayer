@@ -4681,7 +4681,6 @@ MonoBehaviour:
   nearVisionLen: 2
   soundSensorTrigger: {fileID: 7034759996533335061}
   touchSensorTrigger: {fileID: 6441958913384127248}
-  touchSensorTriggers: []
   drawGizmosEnabled: 0
 --- !u!114 &9129796806968136233
 MonoBehaviour:
@@ -4911,7 +4910,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coreColliderHelper: {fileID: 168326260960991395}
   bodyHitColliderHelper: {fileID: 7827817497564531622}
-  parryColliderHelper: {fileID: 0}
   parryHitColliderHelper: {fileID: 0}
   shieldHitColliderHelper: {fileID: 0}
   hookingPointColliderHelper: {fileID: 0}
@@ -4922,6 +4920,7 @@ MonoBehaviour:
   updateEnabled: 1
   lateUpdateEnabled: 1
   fixedUpdateEnabled: 1
+  jellyMeshCtrler: {fileID: 0}
 --- !u!114 &937156682906900337
 MonoBehaviour:
   m_ObjectHideFlags: 0

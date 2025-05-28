@@ -2557,7 +2557,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: Action Layer
     m_StateMachine: {fileID: -2213521241799735876}
-    m_Mask: {fileID: 31900000, guid: d1717ccaec65d674a9c2032ee55910f6, type: 2}
+    m_Mask: {fileID: 0}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 0
@@ -2569,7 +2569,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: Lower Layer
     m_StateMachine: {fileID: -7047513997208110184}
-    m_Mask: {fileID: 31900000, guid: 5c30fb8edde8040f2abc19ce1510b6f5, type: 2}
+    m_Mask: {fileID: 101100000, guid: 6f65a5d404171421bb08f85b7e86c965, type: 2}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 0
@@ -2581,7 +2581,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: Addictive Layer
     m_StateMachine: {fileID: 2421892315718272676}
-    m_Mask: {fileID: 31900000, guid: d1717ccaec65d674a9c2032ee55910f6, type: 2}
+    m_Mask: {fileID: 0}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 1

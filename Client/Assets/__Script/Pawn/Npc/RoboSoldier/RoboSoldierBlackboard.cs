@@ -156,7 +156,7 @@ namespace Game
             public Transform specialKeyAttachPoint;
             public Transform jellyMeshAttactPointParent;
             public Transform laserAimPoint;
-            public SoldierLaserRenderer laserRenderer;
+            public RoboSoldierLaserRenderer laserRenderer;
             public PawnColliderHelper counterActionTraceColliderHelper;
         }
 

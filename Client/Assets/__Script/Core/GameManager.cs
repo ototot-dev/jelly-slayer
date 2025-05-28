@@ -34,7 +34,7 @@ public class GameManager : MonoSingleton<GameManager>
 
     public void DespawnSoldier()
     {
-        var soldierBrain = GameObject.FindFirstObjectByType<SoldierBrain>();
+        var soldierBrain = GameObject.FindFirstObjectByType<RoboSoldierBrain>();
         if (soldierBrain != null)
             soldierBrain.BB.common.isDead.Value = true;
     }

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a686a47eee2fa44cb0a34b5d86e4d5e, type: 3}
+  m_Name: RoboDog_Combat_BT 1
+  m_EditorClassIdentifier: 
+  _serializedGraph: '{"type":"NodeCanvas.BehaviourTrees.BehaviourTree","nodes":[{"dynamic":true,"selectionMode":1,"intCase":{},"enumCase":{"_type":"System.Enum","_name":"CurrDecision"},"_position":{"x":1028.0,"y":338.0},"$type":"NodeCanvas.BehaviourTrees.Switch","$id":"0"},{"_action":{"lookAt":{},"duration":{"_value":9999.0},"$type":"Game.NodeCanvasExtension.HoldPosition"},"_position":{"x":936.2246,"y":523.0712},"$type":"NodeCanvas.BehaviourTrees.ActionNode","$id":"1"},{"_action":{"target":{"_name":"FormationSpot","_targetVariableID":"284e2c5a-7d42-4e82-9eba-be8476a6182d"},"minDistance":{"_name":"MinSpacingDistance","_targetVariableID":"592eae13-2a22-443b-9572-079b81d1bd82"},"maxDistance":{"_name":"MaxSpacingDistance","_targetVariableID":"6bbfffe0-607e-4bd4-a726-a0286262048d"},"outDistance":{"_name":"SpacingOutDistance","_targetVariableID":"013c95de-2ad3-4ee1-8adf-ee62b8991f8f"},"duration":{"_value":99.0},"shouldRotateToTarget":false,"notifyDecisionFinished":true,"$type":"Game.NodeCanvasExtension.Spacing"},"_position":{"x":1039.0,"y":523.0},"$type":"NodeCanvas.BehaviourTrees.ActionNode","$id":"2"},{"_action":{"target":{"_name":"FormationSpot","_targetVariableID":"284e2c5a-7d42-4e82-9eba-be8476a6182d"},"approachDistance":{"_name":"MinSpacingDistance","_targetVariableID":"592eae13-2a22-443b-9572-079b81d1bd82"},"duration":{"_value":-1.0},"stopOnReachToDestination":true,"$type":"Game.NodeCanvasExtension.Approach"},"_position":{"x":1132.0,"y":524.0},"$type":"NodeCanvas.BehaviourTrees.ActionNode","$id":"3"}],"connections":[{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.BehaviourTrees.BTConnection"},{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.BehaviourTrees.BTConnection"},{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"3"},"$type":"NodeCanvas.BehaviourTrees.BTConnection"}],"canvasGroups":[],"localBlackboard":{"_variables":{"TargetBrain":{"_propertyPath":"Game.RoboDogBlackboard.TargetBrain","_name":"TargetBrain","_id":"ba2e3605-4261-4c54-b2a1-f701b161bb98","$type":"NodeCanvas.Framework.Variable`1[[Game.PawnBrainController,
+    Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"MinSpacingDistance":{"_propertyPath":"Game.RoboDogBlackboard.MinSpacingDistance","_name":"MinSpacingDistance","_id":"592eae13-2a22-443b-9572-079b81d1bd82","$type":"NodeCanvas.Framework.Variable`1[[System.Single,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},"MaxSpacingDistance":{"_propertyPath":"Game.RoboDogBlackboard.MaxSpacingDistance","_name":"MaxSpacingDistance","_id":"6bbfffe0-607e-4bd4-a726-a0286262048d","$type":"NodeCanvas.Framework.Variable`1[[System.Single,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},"SpacingOutDistance":{"_propertyPath":"Game.RoboDogBlackboard.SpacingOutDistance","_name":"SpacingOutDistance","_id":"013c95de-2ad3-4ee1-8adf-ee62b8991f8f","$type":"NodeCanvas.Framework.Variable`1[[System.Single,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},"FormationSpot":{"_propertyPath":"Game.RoboDogBlackboard.FormationSpot","_name":"FormationSpot","_id":"284e2c5a-7d42-4e82-9eba-be8476a6182d","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Transform,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"HostCore":{"_propertyPath":"Game.RoboDogBlackboard.HostCore","_name":"HostCore","_id":"875360f7-f3e5-40eb-887f-078fec58ee4b","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Transform,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}}},"derivedData":{"repeat":true,"$type":"NodeCanvas.BehaviourTrees.BehaviourTree+DerivedSerializationData"}}'
+  _objectReferences: []
+  _graphSource:
+    _version: 3.31
+    _category: 
+    _comments: 
+    _translation: {x: -764, y: -287}
+    _zoomFactor: 1
+  _haltSerialization: 0
+  _externalSerializationFile: {fileID: 0}

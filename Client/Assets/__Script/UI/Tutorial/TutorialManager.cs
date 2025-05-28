@@ -317,7 +317,7 @@ public class TutorialManager : MonoBehaviour
             return;
 
         var obj = _targetObj[index];
-        var brain = obj.GetComponent<SoldierBrain>();
+        var brain = obj.GetComponent<RoboSoldierBrain>();
         // brain.debugActionDisabled = !isEnable;
 
         if (_heroBrain == null)

@@ -4,31 +4,31 @@ using UnityEngine;
 
 namespace Game.NodeCanvasExtension.RoboSoldier
 {
-    [Category("RoboSoldier")]
+    [Category("RpbpSoldier")]
     public class StartGliding : ActionTask
     {
         protected override void OnExecute()
         {
-            if (agent.TryGetComponent<SoldierBrain>(out var brain))
+            if (agent.TryGetComponent<RoboSoldierBrain>(out var brain))
                 brain.Movement.StartJump(brain.BB.action.leapJumpHeight);
 
             EndAction(true);
         }
     }
 
-    [Category("Soldier")]
+    [Category("RoboSoldier")]
     public class FinishGliding : ActionTask
     {
         protected override void OnExecute()
         {
-            if (agent.TryGetComponent<SoldierBrain>(out var brain))
+            if (agent.TryGetComponent<RoboSoldierBrain>(out var brain))
                 brain.Movement.StartFalling();
 
             EndAction(true);
         }
     }
 
-    [Category("Soldier")]
+    [Category("RoboSoldier")]
     public class AdjustRootMotionMultiplier : ActionTask
     {
         public BBParameter<Transform> target;
@@ -37,7 +37,7 @@ namespace Game.NodeCanvasExtension.RoboSoldier
 
         protected override void OnExecute()
         {
-            if (agent.TryGetComponent<SoldierBrain>(out var brain))
+            if (agent.TryGetComponent<RoboSoldierBrain>(out var brain))
             {
                 Debug.Assert(brain.ActionCtrler.CheckActionRunning());
                 Debug.Assert(rootMotionDistance.value > 0f);

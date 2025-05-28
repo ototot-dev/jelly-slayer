@@ -15,7 +15,7 @@ namespace Game
         public override float MinApproachDistance => action.minApproachDistance;
         public float HoldPositionRate => action.holdPositionRate;
         public float MoveAroundRate => action.moveAroundRate;
-        public SoldierBrain HostBrain => body.hostBrain.Value;
+        public RoboSoldierBrain HostBrain => body.hostBrain.Value;
         public Transform HostCore => body.hostBrain.Value.coreColliderHelper.transform;
         public Transform FormationSpot => body.formationSpot.Value;
 
@@ -24,7 +24,7 @@ namespace Game
         {
             public float walkSpeed = 1f;
             public float runSpeed = 1f;
-            public ReactiveProperty<SoldierBrain> hostBrain;
+            public ReactiveProperty<RoboSoldierBrain> hostBrain;
             public ReactiveProperty<Transform> formationSpot;
         }
 
