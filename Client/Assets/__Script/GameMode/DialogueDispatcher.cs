@@ -99,11 +99,15 @@ namespace Game
             __runner.AddCommandHandler("hideMechArm", HideMechArm);
             __runner.AddCommandHandler("showSword", ShowSword);
             __runner.AddCommandHandler("hideSword", HideSword);
-            __runner.AddCommandHandler<string>("playsound", PlaySound);
+            __runner.AddCommandHandler<string>("playSound", PlaySound);
             __runner.AddCommandHandler<string, float>("showInteractionKey", ShowInteractionKey);
             __runner.AddCommandHandler<string, float>("showAndWaitInteractionKey", ShowAndWaitInteractionKey);
-            __runner.AddCommandHandler<string, float, int, bool>("tweenshake", TweenShake);
-            __runner.AddCommandHandler<string, string>("sendmsg", SendMessage);            
+            __runner.AddCommandHandler<string, float, int, bool>("tweenShake", TweenShake);
+            __runner.AddCommandHandler<string, string>("sendMsg", SendMessage);
+            __runner.AddCommandHandler<string, string>("spawnPawn", SpawnPawn);
+            __runner.AddCommandHandler<string>("setCameraTarget", SetCameraTarget);
+            __runner.AddCommandHandler("setCameraSlayer", SetCameraSlayer);
+            __runner.AddCommandHandler<string, string, float>("showMessagePopup", ShowMessagePopup);           
         }
 
         public void Vignetee(float intensity, float smoothness, float blendTime)
@@ -172,6 +176,36 @@ namespace Game
             }
         }
 
+        public void SpawnPawn(string pawnName, string spawnTag)
+        {
+            Debug.Log("YarnComman SpawnPawn: " + pawnName + ", " + spawnTag);
+            if (Enum.TryParse(pawnName, out PawnId id) == false)
+            {
+                Debug.Log("SpawnPawn Enum Parse Error: " + pawnName);
+                return;
+            }
+            var pawnData = MainTable.PawnData.PawnDataList.First(d => d.pawnId == id);
+            if (pawnData == null)
+            {
+                Debug.Log("SpawnPawn PawnData Get Error: " + id);
+                return;
+            }
+            var resObj = Resources.Load<GameObject>(pawnData.prefPath);
+            if (resObj == null)
+            {
+                Debug.Log("SpawnPawn Res Load Error: " + pawnData.pawnId + ", " + pawnData.prefPath);
+                return;
+            }
+            Vector3 pos = Vector3.zero;
+            GameObject tagObj = TaggerSystem.FindGameObjectWithTag(spawnTag);
+            if (tagObj != null)
+                pos = tagObj.transform.position;
+            else
+                Debug.Log("SpawnPawn SpawnTag Error: " + spawnTag);
+
+            var pawnObj = Instantiate(resObj, pos, Quaternion.identity);
+        }
+
         public void SendMessage(string tag, string msg) 
         {
             var obj = TaggerSystem.FindGameObjectWithTag(tag);
@@ -179,6 +213,29 @@ namespace Game
                 Debug.Log("YarnCommand: Not Found Object, " + msg);
 
             obj.SendMessage(msg, SendMessageOptions.DontRequireReceiver);
+        }
+
+        public void SetCameraTarget(string targetTag) 
+        {
+            Debug.Log("YarnCommand TargetCamera : " + targetTag);
+            GameObject tagObj = TaggerSystem.FindGameObjectWithTag(targetTag);
+            if (tagObj == null) 
+            {
+                Debug.Log("YarnCommand Error : Not Exist Object : " + targetTag);
+                return;
+            }
+            GameContext.Instance.cameraCtrler.virtualCamera.Follow = tagObj.transform;
+        }
+        public void SetCameraSlayer() 
+        {
+            var slayerBrain = GameContext.Instance.playerCtrler.possessedBrain;
+            GameContext.Instance.cameraCtrler.virtualCamera.Follow = slayerBrain.coreColliderHelper.transform;
+        }
+
+        public void ShowMessagePopup(string title, string text, float showDuration) 
+        {
+            Debug.Log("showMessagePopup" + title + text);
+            new MessagePopupController(title, text, showDuration).Load().ShowDimmed(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
         }
     }
 }

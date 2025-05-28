@@ -80,6 +80,7 @@ namespace MainTable
 		public System.Single groggyDuration;
 		public System.Single knockDownDuration;
 		public System.String name;
+		public System.String prefPath;
   
 
 #region fuctions

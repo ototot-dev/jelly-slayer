@@ -20,14 +20,17 @@ tags:
 // 기침 후 몸을 일으킨다.
 
 <<getUp>>
-<<wait 2>>
+<<wait 6>>
 
-케이: 여긴... 나한테 무슨 일이 있었던거야?
+케이: 여긴...<waitfor=1>나한테 무슨 일이 있었던거야?
 // 주변은 작고 어두운 방. 딱히 아무런 장식도 없다.
+<<wait 1>>
+
+<<setCameraTarget Phone>>
 
 // 1.5 초간 50 만큼 shake (fadeout 안함)
-<<tweenshake Phone 2 50 false>>
-<<playsound PHONE_RING>> // 따르릉
+<<tweenShake Phone 2 50 false>>
+<<playSound PHONE_RING>> // 따르릉
 <<wait 3>>
 
 케이: 무슨 소리야?
@@ -35,43 +38,51 @@ tags:
 // 전화벨 소리와 함께 폰부스가 밝아진다.
 // 케이는 몸을 돌려 전화박스를 발견한다.
 
-<<tweenshake Phone 2 50 false>>
-<<playsound PHONE_RING>> // 따르릉
+<<tweenShake Phone 2 50 false>>
+<<playSound PHONE_RING>> // 따르릉
 <<wait 3>>
 
 케이: 공중... 전화?
 
-<<tweenshake Phone 2 50 false>>
-<<playsound PHONE_RING>> // 따르릉
-// <<wait 3>>
+<<tweenShake Phone 2 50 false>>
+<<playSound PHONE_RING>> // 따르릉
+
+<<showMessagePopup "알림" "방향키를 사용해서 이동하세요" 8>>
 
 <<showAndWaitInteractionKey "Phone" 2>>
  
 // 케이는 천천히 몸을 움직인다. 잠시 망설이다 전화를 받는다.
-<<playsound PHONE_PICKUP>> // 철컥.
+<<playSound PHONE_PICKUP>> // 철컥.
+<<wait 1>>
+
 케이: 여보세요?
-Phone: 드디어 연길이 되었군. 케이
+???: 드디어 연결이 되었군...  케이.
 케이: 이봐요? 누구시죠? 절 아시나요?
-Phone: 시간이 없어. 다행히 지금 통화로 너의 위치를 특정했다.
+???: 시간이 없어. 다행히 지금 통화로 너의 위치를 특정했다.
 
 // 순간 짜증나는표정 (이모지)
-케이: WHAT??? <sprite name=smile> 당신 누구야? 지금 무슨 일인데?
-Phone: 길게 통화는 못하니 잘 들어. 너는 위험에 처해 있어.
-Phone: 하지만 우리가 널 도와줄 누군가를 보내줄께.
+케이: <shake>뭐??? <sprite name=smile> 당신 누구야? 지금 무슨 일인데?</shake> 
+???: 길게 통화는 못하니 잘 들어. 너는 위험에 처해 있어.
+???: 하지만 우리가 널 도와줄 누군가를 보내줄께.
 
-<<playsound PHONE_PICKUP>> // 뚜... 전화 끊어짐
+<<playSound PHONE_PICKUP>> // 뚜... 전화 끊어짐
 // 케이가 전화 내려놓음.
 <<wait 2>>
 
+케이: 하... 끊어 버렸네.
 케이: 이게 무슨 소리야? 위험이라니....
 
-<<wait 3>>
+<<wait 0.5>>
 
 // 갑자기 드론이 날아온다.
+<<spawnPawn DroneBot DroneBotSpawnPoint>>
+<<wait 6>>
 
-드론: 드디어 발견했네. 우리가 널 찾으려고 얼마나 노력했는지.
-케이: 뭐야? 아까 전화한 당신인거?
+드론: 드디어 발견했네. 케이. 우리가 널 찾으려고 얼마나 노력했는지.
+케이: 뭐야? 아까 전화한 게 당신인가?
 드론: 시간이 없어. 일단 도망가야 해. 이쪽으로 가자.
+
+<<setCameraSlayer>>
 
 // 드론이 문쪽으로 날아가서 선회
 
