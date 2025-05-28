@@ -107,6 +107,7 @@ namespace Game
             __runner.AddCommandHandler<string, string>("spawnPawn", SpawnPawn);
             __runner.AddCommandHandler<string>("setCameraTarget", SetCameraTarget);
             __runner.AddCommandHandler("setCameraSlayer", SetCameraSlayer);
+            __runner.AddCommandHandler<string, string, float>("showMessagePopup", ShowMessagePopup);           
         }
 
         public void Vignetee(float intensity, float smoothness, float blendTime)
@@ -229,6 +230,12 @@ namespace Game
         {
             var slayerBrain = GameContext.Instance.playerCtrler.possessedBrain;
             GameContext.Instance.cameraCtrler.virtualCamera.Follow = slayerBrain.coreColliderHelper.transform;
+        }
+
+        public void ShowMessagePopup(string title, string text, float showDuration) 
+        {
+            Debug.Log("showMessagePopup" + title + text);
+            new MessagePopupController(title, text, showDuration).Load().ShowDimmed(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
         }
     }
 }

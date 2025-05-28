@@ -16,6 +16,9 @@ tags:
 케이: 커억.. 컥. 컥...
 // 몸을 뒤척이며 일어난다.
 
+<<showMessagePopup "알림" "방향키를 사용해서 이동하세요" 10>>
+
+
 케이: 으윽... 여긴... 어디지?
 // 기침 후 몸을 일으킨다.
 
@@ -46,6 +49,8 @@ tags:
 
 <<tweenShake Phone 2 50 false>>
 <<playSound PHONE_RING>> // 따르릉
+
+<<showMessagePopup "알림" "방향키를 사용해서 이동하세요" 10>>
 
 <<showAndWaitInteractionKey "Phone" 2>>
  

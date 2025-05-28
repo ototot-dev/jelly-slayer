@@ -647,7 +647,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1851434474}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!84 &1059459973
+--- !u!84 &1014016088
 RenderTexture:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -960,7 +960,7 @@ PrefabInstance:
     - target: {fileID: 5839498371252988597, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 1059459973}
+      objectReference: {fileID: 1014016088}
     - target: {fileID: 6719027917663992577, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
       propertyPath: m_Name
       value: CameraSystem
