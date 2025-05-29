@@ -46,8 +46,9 @@ tags:
 
 <<tweenShake Phone 2 50 false>>
 <<playSound PHONE_RING>> // 따르릉
+<<wait 1>>
 
-<<showMessagePopup "알림" "방향키를 사용해서 이동하세요" 8>>
+<<showMessagePopup "" "방향키를 사용해서 이동하세요" 8>>
 
 <<showAndWaitInteractionKey "Phone" 2>>
  
