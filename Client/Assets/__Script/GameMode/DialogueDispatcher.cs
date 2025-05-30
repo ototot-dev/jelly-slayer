@@ -75,6 +75,11 @@ namespace Game
             __runner.StartDialogue(nodeName);
         }
 
+        public void StopDialogue()
+        {
+            __runner.Stop();
+        }
+
         protected DialogueRunner __runner;
 
         void Awake()

@@ -82,6 +82,10 @@ namespace Game
 
         public IEnumerator ChangeRoom_Coroutine()
         {
+            __dialogueDispatcher.StopDialogue();
+
+            //* 현재 맵이 Unload되면 에러가 발생해서 강제 비활성화
+            GameContext.Instance.playerCtrler.possessedBrain.AnimCtrler.legAnimator.enabled = false;
             GameContext.Instance.canvasManager.FadeIn(Color.black, 1f);
             yield return new WaitForSeconds(1f);
 
@@ -97,6 +101,8 @@ namespace Game
                 //* 슬레이어 초기 위치 
                 var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint").transform;
                 (GameContext.Instance.playerCtrler.possessedBrain as IPawnMovable).Teleport(spawnPoint.position);
+
+                Observable.Timer(TimeSpan.FromSeconds(0.1f)).Subscribe(_ => GameContext.Instance.playerCtrler.possessedBrain.AnimCtrler.legAnimator.enabled = true);
 
                 //* 카메라 이동 영역 셋팅
                 var confinerBoundingBox = TaggerSystem.FindGameObjectWithTag("ConfinerBoundingBox").GetComponent<BoxCollider>();
