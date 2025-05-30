@@ -1,8 +1,12 @@
+using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UniRx;
 using UGUI.Rx;
-using System;
 using Yarn.Unity;
+using ZLinq;
+
 
 namespace Game
 {
@@ -11,10 +15,13 @@ namespace Game
         public override GameModeTypes GetGameModeType() => GameModeTypes.Tutorial;
         public override DialogueDispatcher GetDialogueDispatcher() => __dialogueDispatcher;
         TutorialDialogueDispatcher __dialogueDispatcher;
+        LoadingPageController __loadingPageCtrler;
+        string __currSceneName;
 
         public override bool CanPlayerConsumeInput()
         {
-            return !__dialogueDispatcher.IsDialogueRunning() || (GameContext.Instance.playerCtrler.interactionKeyCtrler != null && GameContext.Instance.playerCtrler.interactionKeyCtrler.commandName == "RunLine");
+            if (__loadingPageCtrler != null) return false;
+            return !__dialogueDispatcher.IsDialogueRunning() || GameContext.Instance.playerCtrler.interactionKeyCtrlers.AsValueEnumerable().Any(i => i.IsInteractableEnabled);
         }
 
         void Awake()
@@ -26,42 +33,39 @@ namespace Game
         {
             GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
 
-            var loadingPageCtrler = new LoadingPageController(new string[] { "Pawn/Player/Slayer-K", "Pawn/Player/DrontBot" }, new string[] { "Tutorial-0" });
-            loadingPageCtrler.onLoadingCompleted += () =>
+            __loadingPageCtrler = new LoadingPageController(new string[] { "Pawn/Player/Slayer-K", "Pawn/Player/DrontBot" }, new string[] { "Tutorial-0" });
+            __currSceneName = "Tutorial-0";
+
+            //* 로딩 시작
+            __loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
+            __loadingPageCtrler.onLoadingCompleted += () =>
             {
                 var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint").transform;
 
+                //* 슬레이어 스폰
                 GameContext.Instance.playerCtrler.SpawnSlayerPawn(true);
                 GameContext.Instance.playerCtrler.possessedBrain.transform.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
                 GameContext.Instance.playerCtrler.possessedBrain.TryGetComponent<SlayerAnimController>(out var animCtrler);
 
+                //* 카메라 타겟 셋팅
                 GameContext.Instance.cameraCtrler.virtualCamera.LookAt = GameContext.Instance.playerCtrler.possessedBrain.coreColliderHelper.transform;
                 GameContext.Instance.cameraCtrler.virtualCamera.Follow = GameContext.Instance.playerCtrler.possessedBrain.coreColliderHelper.transform;
 
+                //* 카메라 이동 영역 셋팅
                 var confinerBoundingBox = TaggerSystem.FindGameObjectWithTag("ConfinerBoundingBox").GetComponent<BoxCollider>();
                 if (confinerBoundingBox != null)
                     GameContext.Instance.cameraCtrler.RefreshConfinerVolume(confinerBoundingBox, Quaternion.Euler(45f, 45f, 0f), 10f);
 
-                // Matrix4x4.TRS(Vector3.zero, Quaternion.Euler())
-
-
-
-                // var found = TaggerSystem.FindGameObjectWithTag("Slayer");
-                // if (found != null) __Logger.LogR1(template.gameObject, "FindGameObjectWithTag", "found", found);
-
-                loadingPageCtrler.HideAsObservable().Subscribe(__ =>
+                //* 로딩 화면 종료
+                __loadingPageCtrler.HideAsObservable().Subscribe(__ =>
                 {
-                    loadingPageCtrler.Unload();
+                    __loadingPageCtrler.Unload();
+                    __loadingPageCtrler = null;
 
                     new BubbleDialoqueController().Load(GameObject.Find("3d-bubble-dialogue").GetComponent<Template>()).Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
                     __dialogueDispatcher.StartDialogue("Start");
                 });
-
-                // var found = TaggerSystem.FindGameObjectWithTags(TaggerSearchMode.And, "Prop", "Phone");
-                // __Logger.LogR1(gameObject, "FindGameObjectWithTags", "found", found);
             };
-
-            loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
 
             return Observable.NextFrame();
         }
@@ -69,6 +73,51 @@ namespace Game
         public override IObservable<Unit> ExitAsObservable()
         {
             return Observable.NextFrame();
+        }
+
+        public override IObservable<Unit> ChangeSceneAsObservable(string sceneName)
+        {
+            return Observable.FromCoroutine(ChangeRoom_Coroutine);
+        }
+
+        public IEnumerator ChangeRoom_Coroutine()
+        {
+            GameContext.Instance.canvasManager.FadeIn(Color.black, 1f);
+            yield return new WaitForSeconds(1f);
+
+            //* 현재 Scene 제거
+            yield return SceneManager.UnloadSceneAsync(__currSceneName).AsObservable().ToYieldInstruction();
+
+            //* 로딩 시작
+            __loadingPageCtrler = new LoadingPageController(new string[] { }, new string[] { "Tutorial-1" });
+            __loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
+
+            __loadingPageCtrler.onLoadingCompleted += () =>
+            {
+                //* 슬레이어 초기 위치 
+                var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint").transform;
+                (GameContext.Instance.playerCtrler.possessedBrain as IPawnMovable).Teleport(spawnPoint.position);
+
+                //* 카메라 이동 영역 셋팅
+                var confinerBoundingBox = TaggerSystem.FindGameObjectWithTag("ConfinerBoundingBox").GetComponent<BoxCollider>();
+                if (confinerBoundingBox != null)
+                    GameContext.Instance.cameraCtrler.RefreshConfinerVolume(confinerBoundingBox, Quaternion.Euler(45f, 45f, 0f), 10f);
+
+                //* 로딩 화면 종료
+                __loadingPageCtrler.HideAsObservable().Subscribe(__ =>
+                {
+                    __loadingPageCtrler.Unload();
+                    __loadingPageCtrler = null;
+
+                    new BubbleDialoqueController().Load(GameObject.Find("3d-bubble-dialogue").GetComponent<Template>()).Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
+                    __dialogueDispatcher.StartDialogue("Start");
+                });
+            };
+
+            yield return new WaitUntil(() => __loadingPageCtrler == null);
+
+            GameContext.Instance.canvasManager.FadeOut(1f);
+            yield return new WaitForSeconds(1f);
         }
 
         void Update()

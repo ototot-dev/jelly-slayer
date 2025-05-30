@@ -5,11 +5,12 @@ public static class Tags
     {
         "K",
         "DroneBotSpawnPoint",
-        "Phone",
         "PlayerSpawnPoint",
         "ConfinerBoundingBox",
         "Slayer",
         "Hero",
+        "Door",
+        "Phone",
     };
     public static class Ungrouped
     {
@@ -17,13 +18,11 @@ public static class Tags
         {
             "K",
             "DroneBotSpawnPoint",
-            "Phone",
             "PlayerSpawnPoint",
             "ConfinerBoundingBox",
         };
         public const string K = "K";
         public const string DroneBotSpawnPoint = "DroneBotSpawnPoint";
-        public const string Phone = "Phone";
         public const string PlayerSpawnPoint = "PlayerSpawnPoint";
         public const string ConfinerBoundingBox = "ConfinerBoundingBox";
     }
@@ -42,5 +41,15 @@ public static class Tags
         public static readonly string[] All = new string[]
         {
         };
+    }
+    public static class Interactable
+    {
+        public static readonly string[] All = new string[]
+        {
+            "Door",
+            "Phone",
+        };
+        public const string Door = "Door";
+        public const string Phone = "Phone";
     }
 }

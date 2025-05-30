@@ -100,8 +100,8 @@ namespace Game
             __runner.AddCommandHandler("showSword", ShowSword);
             __runner.AddCommandHandler("hideSword", HideSword);
             __runner.AddCommandHandler<string>("playSound", PlaySound);
-            __runner.AddCommandHandler<string, float>("showInteractionKey", ShowInteractionKey);
-            __runner.AddCommandHandler<string, float>("showAndWaitInteractionKey", ShowAndWaitInteractionKey);
+            __runner.AddCommandHandler<string>("showInteractionKey", ShowInteractionKey);
+            __runner.AddCommandHandler<string>("showAndWaitInteractionKey", ShowAndWaitInteractionKey);
             __runner.AddCommandHandler<string, float, int, bool>("tweenShake", TweenShake);
             __runner.AddCommandHandler<string, string>("sendMsg", SendMessage);
             __runner.AddCommandHandler<string, string>("spawnPawn", SpawnPawn);
@@ -153,15 +153,18 @@ namespace Game
             yield return new WaitForSeconds(seconds);
         }
 
-        public void ShowInteractionKey(string tagName, float radius)
+        public void ShowInteractionKey(string tagName)
         {
-            GameContext.Instance.playerCtrler.interactionKeyCtrler = new InteractionKeyController("E", "RunLine", TaggerSystem.FindGameObjectWithTag(tagName).transform, radius).Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
+            new InteractionKeyController("E", "RunLine", TaggerSystem.FindGameObjectWithTag(tagName).GetComponent<InteractableHandler>()).Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
         }
 
-        public IEnumerator ShowAndWaitInteractionKey(string tagName, float radius)
+        public IEnumerator ShowAndWaitInteractionKey(string tagName)
         {
-            GameContext.Instance.playerCtrler.interactionKeyCtrler = new InteractionKeyController("E", "RunLine", TaggerSystem.FindGameObjectWithTag(tagName).transform, radius).Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
-            yield return new WaitUntil(() => GameContext.Instance.playerCtrler.interactionKeyCtrler == null || GameContext.Instance.playerCtrler.interactionKeyCtrler.commandName != "RunLine");
+            var targetInteractable = TaggerSystem.FindGameObjectWithTag(tagName).GetComponent<InteractableHandler>();
+            Debug.Assert(targetInteractable != null);
+
+            var interactableKeyCtrler = new InteractionKeyController("E", targetInteractable.GetCommand(), targetInteractable).Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
+            yield return new WaitUntil(() => interactableKeyCtrler.IsInteractableFinished);
         }
 
         public void PlaySound(string soundName)

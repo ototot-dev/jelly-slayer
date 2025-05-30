@@ -1,14 +1,13 @@
 using UniRx;
 using UGUI.Rx;
-using System.Linq;
 using UnityEngine;
-using ZLinq;
-using UnityEngine.UI;
 
 namespace Game
 {
     public interface IInteractionKeyAttachable
     {
+        bool GetEnanbled() => false;
+        float GetVisibleRadius() => -1f;
         Vector3 GetInteractionKeyAttachPoint() => Vector3.zero;
     }
 
@@ -17,56 +16,61 @@ namespace Game
     {
         public string displayName;
         public string commandName;
-        public float visibleRadius = -1f;
-        BoolReactiveProperty visibilityFlag = new();
-        bool IsVisible => visibilityFlag.Value;
+        public IntReactiveProperty keyPressedCount = new();
+        public bool IsInteractableFinished => hideCount > 0;
+        public bool IsInteractableEnabled => __attachable.GetEnanbled();
+        public bool IsVisible => __attachable.GetEnanbled() && __visibilityFlag.Value;
+        BoolReactiveProperty __visibilityFlag = new();
 
-        RectTransform __attachedRect;
-        PawnBrainController __targetBrain;
-        IInteractionKeyAttachable __attachableTarget;
-        Transform __attachableTargetTrasform;
+        RectTransform __templateRect;
+        PawnBrainController __attachableBrain;
+        InteractableHandler __attachableHandler;
+        IInteractionKeyAttachable __attachable;
 
-        public InteractionKeyController(string displayName, string commandName, PawnBrainController targetBrain, float visibleRadius = -1f)
+        public InteractionKeyController(string displayName, string commandName, PawnBrainController attachableBrain)
         {
             this.displayName = displayName;
             this.commandName = commandName;
-            this.visibleRadius = visibleRadius;
-            __attachableTarget = __targetBrain = targetBrain;
+            __attachable = __attachableBrain = attachableBrain;
         }
 
-        public InteractionKeyController(string displayName, string commandName, Transform attachableTarget, float visibleRadius = -1f)
+        public InteractionKeyController(string displayName, string commandName, InteractableHandler attachableHandler)
         {
             this.displayName = displayName;
             this.commandName = commandName;
-            this.visibleRadius = visibleRadius;
-            __attachableTarget = attachableTarget as IInteractionKeyAttachable;
+            __attachable = __attachableHandler = attachableHandler;
+        }
 
-            if (__attachableTarget == null)
-            {
-                __attachableTargetTrasform = attachableTarget.Children().Where(c => c.CompareTag("InteractionKeyAttachPoint")).FirstOrDefault();
-                if (__attachableTargetTrasform == null)
-                    Debug.LogWarning($"InteractionKeyController.ctor(), InteractionKeyAttachPoint is not found => attachableTarget: {attachableTarget}");   
-            }
+        //* 키 입력 처리가 가능한지 판단하는 함수
+        public bool PreprocessKeyDown() => IsVisible;
+        public void PostProcessKeyDown(bool finishInteractable = false)
+        {
+            keyPressedCount.Value++;
+            if (finishInteractable)
+                this.HideAsObservable().Subscribe(_ => this.Unload());
         }
 
         public override void OnPreShow()
         {
             base.OnPreShow();
 
-            if (__attachedRect == null) __attachedRect = template.transform as RectTransform;
-            __attachedRect.anchorMin = __attachedRect.anchorMax = Vector2.zero;
+            //* PlayerController에 직접 등록함
+            GameContext.Instance.playerCtrler.interactionKeyCtrlers.Add(this);
 
-            if (visibleRadius > 0f)
+            if (__templateRect == null) __templateRect = template.transform as RectTransform;
+            __templateRect.anchorMin = __templateRect.anchorMax = Vector2.zero;
+
+            if (__attachable.GetVisibleRadius() > 0f)
             {
                 //* visibleRadius가 활성화 상태면 최초엔 보이지 않도록 강제 수정
                 GetComponentById<CanvasGroup>("body").alpha = 0f;
             }
             else
             {
-                visibilityFlag.Value = true;
+                __visibilityFlag.Value = true;
             }
 
-            visibilityFlag.Subscribe(v =>
+            __visibilityFlag.Subscribe(v =>
             {
                 if (v)
                 {
@@ -84,24 +88,29 @@ namespace Game
                 }
             }).AddToHide(this);
 
-            Observable.EveryLateUpdate().TakeWhile(_ => hideCount <= 0).Subscribe(_ =>
+            Observable.EveryLateUpdate().Subscribe(_ =>
             {
-                var attachPoint = __attachableTarget != null ? __attachableTarget.GetInteractionKeyAttachPoint() : __attachableTargetTrasform.position;
-                __attachedRect.anchoredPosition = GameContext.Instance.cameraCtrler.gameCamera.WorldToScreenPoint(attachPoint);
+                if (!__attachable.GetEnanbled())
+                {
+                    if (__visibilityFlag.Value) __visibilityFlag.Value = false;
+                    return;
+                }
 
-                if (visibleRadius > 0f)
-                    visibilityFlag.Value = attachPoint.Distance2D(GameContext.Instance.playerCtrler.possessedBrain.GetWorldPosition()) <= visibleRadius;
+                if (__attachable.GetVisibleRadius() > 0f)
+                    __visibilityFlag.Value = __attachable.GetInteractionKeyAttachPoint().Distance2D(GameContext.Instance.playerCtrler.possessedBrain.GetWorldPosition()) <= __attachable.GetVisibleRadius();
+                if (__visibilityFlag.Value)
+                    __templateRect.anchoredPosition = GameContext.Instance.cameraCtrler.gameCamera.WorldToScreenPoint(__attachable.GetInteractionKeyAttachPoint());
             }).AddToHide(this);
         }
 
-        // public override void OnPostShow()
-        // {
-        //     base.OnPostShow();
+        public override void OnPostShow()
+        {
+            base.OnPostShow();
 
-        //     var query = GetComponentById<ImageStyleSelector>("body").query;
-        //     query.activeStates.Add("heartbeat");
-        //     query.Apply();
-        // }
+            var query = GetComponentById<ImageStyleSelector>("body").query;
+            query.activeStates.Add("heartbeat");
+            query.Apply();
+        }
 
         public override void OnPreHide()
         {
@@ -110,9 +119,9 @@ namespace Game
             var query = GetComponentById<ImageStyleSelector>("body").query;
             query.activeStates.Remove("heartbeat");
             query.Apply();
-        }
 
-        //* 키 입력 처리가 가능한지 판단하는 함수
-        public bool PreprocessKeyDown() => IsVisible;
+            //* PlayerController에서 해제도 직접 함
+            GameContext.Instance.playerCtrler.interactionKeyCtrlers.Remove(this);
+        }
     }
 }

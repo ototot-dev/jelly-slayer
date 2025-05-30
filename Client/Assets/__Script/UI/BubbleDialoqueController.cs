@@ -15,9 +15,8 @@ namespace Game
     [Template(path: "UI/template/3d-bubble-dialoque")]
     public class BubbleDialoqueController : Controller
     {
-        PawnBrainController __speakerBrain;
-        IBubbleDialogueAttachable __bubbleAttachable;
         Transform __attachableTargetTrasform;
+        IBubbleDialogueAttachable __dialogueAttachable;
         DialogueDispatcher __dialogueRunnerDispatcher;
 
         public override void OnPostLoad()
@@ -42,7 +41,7 @@ namespace Game
                 // TODO: 주인공 찾기 하드 코딩 
                 if (l.CharacterName == "케이")
                 {
-                    __bubbleAttachable = __speakerBrain = GameContext.Instance.playerCtrler.possessedBrain;
+                    __dialogueAttachable = GameContext.Instance.playerCtrler.possessedBrain;
                     return;
                 }
 
@@ -53,15 +52,22 @@ namespace Game
                     return;
                 }
 
-                if (speaker.TryGetComponent<PawnBrainController>(out __speakerBrain))
+                if (speaker.TryGetComponent<PawnBrainController>(out var speakerBrain))
                 {
-                    __bubbleAttachable = __speakerBrain;
+                    __dialogueAttachable = speakerBrain;
                     __attachableTargetTrasform = null;
+                }
+                else if (speaker.TryGetComponent<InteractableHandler>(out var speakerInteractable))
+                {
+                    __dialogueAttachable = speakerInteractable;
+                    __attachableTargetTrasform = speaker.transform.Children().FirstOrDefault(c => c.CompareTag("BubbleDialogueAttachPoint"));
+
+                    if (__attachableTargetTrasform == null)
+                        __Logger.WarningR1(template.gameObject, "BubbleDialogueAttachPoint is not found", "speaker", speaker);
                 }
                 else
                 {
-                    __speakerBrain = null;
-                    __bubbleAttachable = null;
+                    __dialogueAttachable = null;
                     __attachableTargetTrasform = speaker.transform.Children().FirstOrDefault(c => c.CompareTag("BubbleDialogueAttachPoint"));
 
                     if (__attachableTargetTrasform == null)
@@ -81,8 +87,8 @@ namespace Game
             {
                 var attachPoint = Vector3.zero;
                 
-                if (__bubbleAttachable != null)
-                    attachPoint = __bubbleAttachable.GetBubbleDialogueAttachPoint();
+                if (__dialogueAttachable != null)
+                    attachPoint = __dialogueAttachable.GetBubbleDialogueAttachPoint();
                 else if (__attachableTargetTrasform != null)
                     attachPoint = __attachableTargetTrasform.position;
 

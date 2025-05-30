@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Buffers;
+using System.Collections.Generic;
 using System.Linq;
 using UGUI.Rx;
 using UniRx;
@@ -17,7 +18,7 @@ namespace Game
         public ReactiveProperty<Vector2> inputMoveVec = new();
         public ReactiveProperty<Vector3> inputLookVec = new();
         public ReactiveProperty<JellyMeshController> boundJellyMesh = new();
-        public InteractionKeyController interactionKeyCtrler;
+        public HashSet<InteractionKeyController> interactionKeyCtrlers = new();
 
         [Header("Possess")]
         public StringReactiveProperty playerName = new();
@@ -55,8 +56,8 @@ namespace Game
                 boundJellyMesh.Value = null;
                 __Logger.LogR2(gameObject, nameof(IPawnEventListener.OnReceivePawnActionStart), "OnJellOff", "jellyBrain", sender);
 
-                interactionKeyCtrler.HideAsObservable().Subscribe(c =>  c.Unload()).AddTo(this);
-                interactionKeyCtrler = null;
+                // interactionKeyCtrler.HideAsObservable().Subscribe(c =>  c.Unload()).AddTo(this);
+                // interactionKeyCtrler = null;
             }
         }
 
@@ -64,7 +65,7 @@ namespace Game
         {
             if (sender is NpcBrain && status == PawnStatus.Groggy && strength > 0f)
             {
-                Debug.Assert(interactionKeyCtrler == null);
+                // Debug.Assert(interactionKeyCtrler == null);
                 // interactionKeyCtrler = new InteractionKeyController(sender, "Assault", "Encounter").Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
             }
         }
@@ -645,12 +646,15 @@ namespace Game
             if (possessedBrain == null)
                 return;
 
-            if (value.isPressed && interactionKeyCtrler != null && interactionKeyCtrler.PreprocessKeyDown())
+            if (value.isPressed)
             {
-                if (interactionKeyCtrler.commandName == "RunLine")
+                var pressedCtrler = interactionKeyCtrlers.AsValueEnumerable().FirstOrDefault(i => i.PreprocessKeyDown());
+                if (pressedCtrler == null)
+                    return;
+
+                if (pressedCtrler.commandName == "RunLine")
                 {
-                    interactionKeyCtrler.HideAsObservable().Subscribe(c => c.Unload());
-                    interactionKeyCtrler = null;
+                    pressedCtrler.PostProcessKeyDown(true);
 
                     Debug.Assert(GameContext.Instance.dialogueRunner.IsDialogueRunning);
 
@@ -662,6 +666,12 @@ namespace Game
                                 lineView.UserRequestedViewAdvancement();
                         }
                     }).AddTo(this);
+                }
+                else if (pressedCtrler.commandName == "NextRoom")
+                {
+                    pressedCtrler.PostProcessKeyDown(true);
+
+                    GameContext.Instance.launcher.currGameMode.ChangeScene("Tutorial-1");
                 }
             }
             
