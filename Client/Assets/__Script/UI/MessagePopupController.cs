@@ -17,6 +17,9 @@ namespace Game
         string _text;
         float _showDuration;
 
+        BoolReactiveProperty visibilityFlag = new();
+
+
         public MessagePopupController(string title, string text, float showDuration = 10f) 
         {
             _title = title;
