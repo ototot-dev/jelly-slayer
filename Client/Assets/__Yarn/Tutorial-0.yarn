@@ -50,7 +50,7 @@ tags:
 
 <<showMessagePopup "" "방향키를 사용해서 이동하세요" 8>>
 
-// <<showAndWaitInteractionKey "Door">>
+//<<showAndWaitInteractionKey "Door">>
 <<showAndWaitInteractionKey "Phone">>
  
 // 케이는 천천히 몸을 움직인다. 잠시 망설이다 전화를 받는다.
@@ -63,7 +63,7 @@ tags:
 ???: 시간이 없어. 다행히 지금 통화로 너의 위치를 특정했다.
 
 // 순간 짜증나는표정 (이모지)
-케이: <shake>뭐??? <sprite name=smile> 당신 누구야? 지금 무슨 일인데?</shake> 
+케이: <shake><size=40>뭐???<sprite name=smile> 당신 누구야? 지금 무슨 일인데?</size></shake> 
 ???: 길게 통화는 못하니 잘 들어. 너는 위험에 처해 있어.
 ???: 하지만 우리가 널 도와줄 누군가를 보내줄께.
 

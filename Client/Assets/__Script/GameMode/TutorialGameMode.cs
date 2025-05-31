@@ -117,7 +117,7 @@ namespace Game
                     __loadingPageCtrler = null;
 
                     new BubbleDialoqueController().Load(GameObject.Find("3d-bubble-dialogue").GetComponent<Template>()).Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
-                    __dialogueDispatcher.StartDialogue("Start");
+                    __dialogueDispatcher.StartDialogue("Tutorial-1");
                 });
             };
 

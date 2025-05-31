@@ -634,7 +634,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animClips:
-  - {fileID: 7400000, guid: 941ea3fc3a1f3427bb172bb1bd5c869c, type: 2}
+  - {fileID: 7400000, guid: 81e6d739c95d94937a7bda2987c738bb, type: 2}
   transition:
     loop: 0
     easing: 4
@@ -1520,7 +1520,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animClips:
-  - {fileID: 7400000, guid: 69439ee8f17ca41e185130f04a31da2e, type: 2}
+  - {fileID: 7400000, guid: c1b26b616c28b418baaae6b1e777b543, type: 2}
   transition:
     loop: 0
     easing: 4
