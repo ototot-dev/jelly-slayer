@@ -909,7 +909,7 @@ MonoBehaviour:
   moveSpeed: 1
   moveAccel: 20
   moveBrake: 20
-  rotateSpeed: 360
+  rotateSpeed: 30
   gravity: {x: 0, y: -19.81, z: 0}
   moveVec: {x: 0, y: 0, z: 0}
   faceVec: {x: 0, y: 0, z: 1}
@@ -942,8 +942,6 @@ MonoBehaviour:
   actionLayerBlendOutSpeed: 5
   legAnimGlueBlendSpeed: 1
   guardParryRootMotionMultiplier: 1
-  testSingleClipA: {fileID: 1827226128182048838, guid: b46e52c5b38d6e1439278a245b5d9f4e, type: 3}
-  testSingleClipB: {fileID: 1827226128182048838, guid: 6215d55ecfe67ee4a89a9b3696618e13, type: 3}
 --- !u!114 &179919551335561179
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7950,10 +7948,10 @@ GameObject:
   - component: {fileID: 3244703593161533231}
   - component: {fileID: 3244703593152202959}
   - component: {fileID: 3673634840836888687}
-  - component: {fileID: 5342563191333443356}
+  - component: {fileID: 1508909516796287826}
   - component: {fileID: 8157329558261335758}
   - component: {fileID: 6722402446907569461}
-  - component: {fileID: 1508909516796287826}
+  - component: {fileID: 5342563191333443356}
   m_Layer: 0
   m_Name: 1UP GIRL - SHIZUKA Mobile III
   m_TagString: Untagged
@@ -8339,7 +8337,7 @@ MonoBehaviour:
       _rangeHelper: {x: 0, y: 3, z: 0, w: 0}
     - VariableName: Duration Multiplier
       Tooltip: 
-      _value: {x: 1, y: 0, z: 0, w: 0}
+      _value: {x: 0.2, y: 0, z: 0, w: 0}
       _string: 
       _curve:
         serializedVersion: 2
@@ -8350,6 +8348,20 @@ MonoBehaviour:
       _uObject: {fileID: 0}
       VariableType: 0
       _rangeHelper: {x: 0, y: 3, z: 0, w: 0}
+    - VariableName: Speed Affects Land
+      Tooltip: Is movement speed affecting landing power? If true, then landing will
+        not add implulse on jump in place.
+      _value: {x: 0, y: 0, z: 0, w: 0}
+      _string: 
+      _curve:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      _uObject: {fileID: 0}
+      VariableType: 1
+      _rangeHelper: {x: 0, y: 0, z: 0, w: 0}
   - Enabled: 0
     Parent: {fileID: 3673634840836888687}
     ModuleReference: {fileID: 11400000, guid: 7eb61b1c17ff136479062144e8467190, type: 2}
@@ -8867,7 +8879,7 @@ MonoBehaviour:
   _EditorAllowAutoUpdateFeetParams: 1
   _EditorCategory: 1
   _EditorSetupCategory: 1
-  _EditorMotionCategory: 1
+  _EditorMotionCategory: 3
   _EditorExtraCategory: 2
   setupPose:
     MainHipsPose:
@@ -8915,56 +8927,6 @@ MonoBehaviour:
   LegsAnimatorBlend: 1
   _Editor_DefaultModuleOnStart: {fileID: 0}
   _Editor_LegHelperModule: {fileID: 0}
---- !u!114 &5342563191333443356
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3244703593161571087}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 776bd98dc9dedb44da093fe4799879c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &8157329558261335758
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3244703593161571087}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fff0960ef4ea6e04eac66b4a7fd2189d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_RigLayers:
-  - m_Rig: {fileID: 18808741469499199}
-    m_Active: 1
-  m_Effectors: []
---- !u!114 &6722402446907569461
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3244703593161571087}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2d8418b0b9634b1892b0268dd9c2743, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  boneShape: 1
-  drawBones: 1
-  drawTripods: 0
-  boneSize: 1
-  tripodSize: 1
-  boneColor: {r: 0, g: 1, b: 0, a: 0.5}
-  m_Transforms:
-  - {fileID: 3244703593161533249}
-  - {fileID: 3244703593161533279}
-  - {fileID: 3244703593161533269}
 --- !u!114 &1508909516796287826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10889,6 +10851,56 @@ MonoBehaviour:
       AlternativeTensorsOnFall: 0
       HardMatchMultiply: 1
     parentObject: {fileID: 3244703593161571087}
+--- !u!114 &8157329558261335758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3244703593161571087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fff0960ef4ea6e04eac66b4a7fd2189d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RigLayers:
+  - m_Rig: {fileID: 18808741469499199}
+    m_Active: 1
+  m_Effectors: []
+--- !u!114 &6722402446907569461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3244703593161571087}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2d8418b0b9634b1892b0268dd9c2743, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boneShape: 1
+  drawBones: 1
+  drawTripods: 0
+  boneSize: 1
+  tripodSize: 1
+  boneColor: {r: 0, g: 1, b: 0, a: 0.5}
+  m_Transforms:
+  - {fileID: 3244703593161533249}
+  - {fileID: 3244703593161533279}
+  - {fileID: 3244703593161533269}
+--- !u!114 &5342563191333443356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3244703593161571087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 776bd98dc9dedb44da093fe4799879c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3244703593161571091
 GameObject:
   m_ObjectHideFlags: 0

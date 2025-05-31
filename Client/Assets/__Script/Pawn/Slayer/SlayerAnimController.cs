@@ -75,24 +75,223 @@ namespace Game
             base.OnAniamtorStateExitHandler(stateInfo, layerIndex);
         }
 
-        public override void OnRagdollAnimatorFalling() 
+        public override void OnRagdollAnimatorFalling()
         {
             // mainAnimator.SetBool("IsFalling", true);
             // mainAnimator.SetTrigger("OnFalling");
         }
 
-        public override void OnRagdollAnimatorGetUp() 
+        public override void OnRagdollAnimatorGetUp()
         {
             // mainAnimator.SetBool("IsFalling", false);
         }
 
-        public AnimationClip testSingleClipA;
-        public AnimationClip testSingleClipB;
+        void UpdateCombatMode()
+        {
+            mainAnimator.SetLayerWeight((int)LayerIndices.Interaction, 0f);
+
+            if (ragdollAnimator.Handler.AnimatingMode == FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Falling)
+            {
+                rigSetup.weight = 0f;
+                spineOverrideTransform.weight = 0f;
+                leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
+                leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
+
+                legAnimator.User_SetIsMoving(false);
+                legAnimator.User_SetIsGrounded(false);
+                legAnimator.MainGlueBlend = 0f;
+                if (legAnimator.enabled) legAnimator.User_FadeToDisabled(0f);
+
+                ragdollAnimator.RagdollBlend = 1f;
+
+                return;
+            }
+
+            //* Down, Dead 상태에선 Animation 처리를 모두 끈다.
+            if (CheckAnimStateRunning("OnDown") || CheckAnimStateRunning("OnDead"))
+            {
+                rigSetup.weight = 0f;
+                spineOverrideTransform.weight = 0f;
+                leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
+                leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
+
+                legAnimator.User_SetIsMoving(false);
+                legAnimator.User_SetIsGrounded(false);
+                legAnimator.MainGlueBlend = 0f;
+                if (legAnimator.enabled)
+                    legAnimator.User_FadeToDisabled(0f);
+
+                ragdollAnimator.RagdollBlend = 1f;
+
+                mainAnimator.SetLayerWeight((int)LayerIndices.Arms, 0f);
+                mainAnimator.SetLayerWeight((int)LayerIndices.Upper, 0f);
+                mainAnimator.SetLayerWeight((int)LayerIndices.Action, __brain.ActionCtrler.GetAdvancedActionLayerWeight(mainAnimator.GetLayerWeight((int)LayerIndices.Action), actionLayerBlendInSpeed, actionLayerBlendOutSpeed, Time.deltaTime));
+                mainAnimator.SetBool("IsGuarding", false);
+                mainAnimator.SetBool("IsMoving", false);
+            }
+            else if (__brain.BB.IsRolling)
+            {
+                rigSetup.weight = 0f;
+                spineOverrideTransform.weight = 0f;
+                leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
+                leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
+
+                legAnimator.User_SetIsMoving(false);
+                legAnimator.User_SetIsGrounded(false);
+                legAnimator.MainGlueBlend = 0f;
+                if (legAnimator.enabled)
+                    legAnimator.User_FadeToDisabled(0f);
+
+                ragdollAnimator.RagdollBlend = 0.01f;
+
+                mainAnimator.SetLayerWeight((int)LayerIndices.Arms, 0f);
+                mainAnimator.SetLayerWeight((int)LayerIndices.Upper, 0f);
+                mainAnimator.SetLayerWeight((int)LayerIndices.Action, 1f);
+                mainAnimator.SetFloat("MoveSpeed", 0f);
+                mainAnimator.SetFloat("MoveAnimSpeed", 1f);
+                mainAnimator.SetBool("IsMoving", false);
+            }
+            else if (__brain.BB.IsHanging)
+            {
+                rigSetup.weight = 1f;
+                spineOverrideTransform.weight = 0f;
+                leftArmTwoBoneIK.weight = leftArmTwoBoneIK.weight.LerpSpeed(1f, 4f, Time.deltaTime);
+                rightArmTwoBoneIK.weight = leftArmTwoBoneIK.weight.LerpSpeed(1f, 4f, Time.deltaTime);
+                leftLegBoneSimulator.StimulatorAmount = leftLegBoneSimulator.StimulatorAmount.LerpSpeed(0.4f, 1f, Time.deltaTime);
+                rightLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount.LerpSpeed(0.5f, 1f, Time.deltaTime);
+
+                legAnimator.User_SetIsMoving(false);
+                legAnimator.User_SetIsGrounded(false);
+                legAnimator.MainGlueBlend = 0f;
+                if (!legAnimator.enabled)
+                    legAnimator.User_FadeToDisabled(0);
+
+                ragdollAnimator.RagdollBlend = 0.01f;
+
+                mainAnimator.SetLayerWeight((int)LayerIndices.Arms, 0f);
+                mainAnimator.SetLayerWeight((int)LayerIndices.Upper, 0f);
+                mainAnimator.SetLayerWeight((int)LayerIndices.Action, __brain.ActionCtrler.GetAdvancedActionLayerWeight(mainAnimator.GetLayerWeight((int)LayerIndices.Action), actionLayerBlendInSpeed, actionLayerBlendOutSpeed, Time.deltaTime));
+                mainAnimator.SetFloat("MoveSpeed", 0f);
+                mainAnimator.SetFloat("MoveAnimSpeed", 1f);
+                mainAnimator.SetBool("IsMoving", false);
+            }
+            else
+            {
+                rigSetup.weight = 1f;
+
+                if (__brain.ActionCtrler.CheckActionRunning() || mainAnimator.GetBool("IsGuarding") || CheckAnimStateRunning("GuardParry") || CheckAnimStateRunning("PunchParry (Charge)") || CheckAnimStateRunning("DrinkPotion"))
+                    spineOverrideTransform.weight = 0f;
+                else if (__brain.Movement.moveSpeed > 0f)
+                    spineOverrideTransform.weight = Mathf.Clamp01(__brain.Movement.CurrVelocity.magnitude / __brain.Movement.moveSpeed);
+                else
+                    spineOverrideTransform.weight = Mathf.Max(0f, spineOverrideTransform.weight - Time.deltaTime);
+
+                if (__brain.ActionCtrler.CheckActionRunning())
+                {
+                    leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
+                    leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
+                }
+                else
+                {
+                    leftArmTwoBoneIK.weight = leftArmTwoBoneIK.weight.LerpSpeed(0f, 4f, Time.deltaTime);
+                    rightArmTwoBoneIK.weight = leftArmTwoBoneIK.weight.LerpSpeed(0f, 4f, Time.deltaTime);
+                    leftLegBoneSimulator.StimulatorAmount = leftLegBoneSimulator.StimulatorAmount.LerpSpeed(0f, 1f, Time.deltaTime);
+                    rightLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount.LerpSpeed(0f, 1f, Time.deltaTime);
+                }
+
+                if (!legAnimator.enabled)
+                    legAnimator.User_FadeEnabled(0.1f);
+
+                legAnimator.User_SetIsMoving(__brain.Movement.CurrVelocity.sqrMagnitude > 0f);
+                legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround && !__brain.BB.IsJumping && (!__brain.ActionCtrler.CheckActionRunning() || __brain.ActionCtrler.currActionContext.legAnimGlueEnabled));
+                legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude > 0f ? -1f : 1f) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.6f : 0.5f, 1f);
+
+                ragdollAnimator.RagdollBlend = 0.01f;
+
+                if (__brain.StatusCtrler.CheckStatus(PawnStatus.Staggered) || __brain.StatusCtrler.CheckStatus(PawnStatus.CanNotGuard))
+                    mainAnimator.SetBool("IsGuarding", false);
+                else if (__brain.BB.IsGuarding && __brain.BB.action.punchChargingLevel.Value < 0)
+                    mainAnimator.SetBool("IsGuarding", true);
+
+                // TODO: healingPotion Show/Hide 임시 코드
+                if (CheckAnimStateRunning("DrinkPotion"))
+                {
+                    if (!__brain.BB.children.healingPotion.activeSelf)
+                        __brain.BB.children.healingPotion.SetActive(true);
+                }
+                else
+                {
+                    if (__brain.BB.children.healingPotion.activeSelf)
+                        __brain.BB.children.healingPotion.SetActive(false);
+                }
+
+                mainAnimator.SetLayerWeight((int)LayerIndices.Arms, __brain.BB.IsJumping || CheckAnimStateRunning("DrinkPotion") ? 0f : 1f);
+                mainAnimator.SetLayerWeight((int)LayerIndices.Upper, CheckAnimStateRunning("DrinkPotion") ? 1f : 0f);
+
+                if (CheckAnimStateRunning("DrinkPotion"))
+                    mainAnimator.SetLayerWeight((int)LayerIndices.Action, 0f);
+                else if (CheckAnimStateRunning("GuardParry"))
+                    mainAnimator.SetLayerWeight((int)LayerIndices.Action, 1f);
+                else
+                    mainAnimator.SetLayerWeight((int)LayerIndices.Action, __brain.ActionCtrler.GetAdvancedActionLayerWeight(mainAnimator.GetLayerWeight((int)LayerIndices.Action), actionLayerBlendInSpeed, actionLayerBlendOutSpeed, Time.deltaTime));
+
+                mainAnimator.SetFloat("MoveForward", __brain.Movement.freezeRotation ? -1 : __brain.Movement.CurrVelocity.Vector2D().magnitude / __brain.BB.body.walkSpeed);
+                mainAnimator.SetFloat("MoveAnimSpeed", __brain.Movement.freezeRotation ? (__brain.BB.IsGuarding ? 1f : 1.5f) : 1.2f);
+                mainAnimator.SetBool("IsMoving", __brain.Movement.CurrVelocity.sqrMagnitude > 0f);
+
+                var animMoveVec = __brain.coreColliderHelper.transform.InverseTransformDirection(__brain.Movement.CurrVelocity).Vector2D();
+                mainAnimator.SetFloat("MoveX", animMoveVec.x / __brain.Movement.moveSpeed);
+                mainAnimator.SetFloat("MoveY", animMoveVec.z / __brain.Movement.moveSpeed);
+            }
+        }
+
+        void UpdateDialogueMode()
+        {
+            mainAnimator.SetLayerWeight((int)LayerIndices.Base, 0f);
+            mainAnimator.SetLayerWeight((int)LayerIndices.Upper, 0f);
+            mainAnimator.SetLayerWeight((int)LayerIndices.Arms, 0f);
+            mainAnimator.SetLayerWeight((int)LayerIndices.Addictive, 0f);
+            mainAnimator.SetLayerWeight((int)LayerIndices.Interaction, 1f);
+
+            //* __playableGraph가 실행 중에는 Animation PostProcess는 모두 꺼줌
+            if (IsPlayableGraphRunning())
+            {
+                rigSetup.weight = 0f;
+                spineOverrideTransform.weight = 0f;
+                leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
+                leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
+
+                legAnimator.User_SetIsMoving(false);
+                legAnimator.User_SetIsGrounded(false);
+                legAnimator.MainGlueBlend = 0f;
+                legAnimator.LegsAnimatorBlend = 0f;
+                if (legAnimator.enabled) legAnimator.enabled = false;
+
+                ragdollAnimator.RagdollBlend = 0.01f;
+            }
+            else if (GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
+            {
+                legAnimator.LegsAnimatorBlend = 1f;
+                if (!legAnimator.enabled) legAnimator.enabled = true;
+
+                legAnimator.User_SetIsMoving(__brain.Movement.CurrVelocity.sqrMagnitude > 0f);
+                legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround && !__brain.BB.IsJumping && (!__brain.ActionCtrler.CheckActionRunning() || __brain.ActionCtrler.currActionContext.legAnimGlueEnabled));
+                legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude > 0f ? -1f : 1f) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.6f : 0.5f, 1f);
+
+                mainAnimator.SetFloat("MoveForward", __brain.Movement.freezeRotation ? -1 : __brain.Movement.CurrVelocity.Vector2D().magnitude / __brain.BB.body.walkSpeed);
+                mainAnimator.SetFloat("MoveAnimSpeed", __brain.Movement.freezeRotation ? (__brain.BB.IsGuarding ? 1f : 1.5f) : 1.2f);
+                mainAnimator.SetBool("IsMoving", __brain.Movement.CurrVelocity.sqrMagnitude > 0f);
+
+                var animMoveVec = __brain.coreColliderHelper.transform.InverseTransformDirection(__brain.Movement.CurrVelocity).Vector2D();
+                mainAnimator.SetFloat("MoveX", animMoveVec.x / __brain.Movement.moveSpeed);
+                mainAnimator.SetFloat("MoveY", animMoveVec.z / __brain.Movement.moveSpeed);
+            }
+        }
 
         void Start()
-        {   
+        {
             __brain.BB.body.isGuarding.CombineLatest(__brain.BB.action.punchChargingLevel, (a, b) => new Tuple<bool, int>(a, b)).Subscribe(v =>
-            {   
+            {
                 if (v.Item2 >= 0)
                 {
                     mainAnimator.SetBool("IsPunchCharging", true);
@@ -121,18 +320,21 @@ namespace Game
 
             FindObservableStateMachineTriggerEx("Empty (UpperLayer)").OnStateEnterAsObservable().Subscribe(_ => mainAnimator.SetLayerWeight(1, 0f)).AddTo(this);
             FindObservableStateMachineTriggerEx("Empty (UpperLayer)").OnStateExitAsObservable().Subscribe(_ => mainAnimator.SetLayerWeight(1, 1f)).AddTo(this);
-            FindObservableStateMachineTriggerEx("OnDown (Start)").OnStateEnterAsObservable().Subscribe(s => 
+
+            FindObservableStateMachineTriggerEx("OnDown (Start)").OnStateEnterAsObservable().Subscribe(s =>
             {
                 legAnimator.User_FadeToDisabled(0.1f);
                 ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Standing;
                 Observable.Timer(TimeSpan.FromSeconds(0.4f)).Subscribe(_ => ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Falling).AddTo(this);
             }).AddTo(this);
-            FindObservableStateMachineTriggerEx("OnDown (End)").OnStateEnterAsObservable().Subscribe(s => 
+
+            FindObservableStateMachineTriggerEx("OnDown (End)").OnStateEnterAsObservable().Subscribe(s =>
             {
                 __brain.Movement.GetCharacterMovement().SetPosition(__brain.AnimCtrler.ragdollAnimator.Handler.DummyReference.transform.GetChild(0).position);
                 ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Standing;
             }).AddTo(this);
-            FindObservableStateMachineTriggerEx("OnDown (End)").OnStateExitAsObservable().Subscribe(s => 
+
+            FindObservableStateMachineTriggerEx("OnDown (End)").OnStateExitAsObservable().Subscribe(s =>
             {
                 legAnimator.User_FadeEnabled(0.1f);
                 ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Off;
@@ -146,7 +348,7 @@ namespace Game
 
                 Observable.EveryUpdate().TakeWhile(_ => CheckAnimStateRunning("PunchParry (Charge)"))
                     .Subscribe(_ =>
-                    {   
+                    {
                         if (__brain.BB.action.punchChargingLevel.Value >= 0)
                         {
                             animAdvance += __brain.BB.action.punchChargingAnimAdvanceSpeed * Time.deltaTime;
@@ -173,179 +375,10 @@ namespace Game
 
             __brain.onUpdate += () =>
             {
-                //* __playableGraph가 실행 중에는 Animation PostProcess는 모두 꺼줌
-                if (IsPlayableGraphRunning())
-                {
-                    rigSetup.weight = 0f;
-                    spineOverrideTransform.weight = 0f;
-                    leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
-                    leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
-
-                    legAnimator.User_SetIsMoving(false);
-                    legAnimator.User_SetIsGrounded(false);
-                    legAnimator.MainGlueBlend = 0f;
-                    if (legAnimator.enabled)
-                        legAnimator.User_FadeToDisabled(0f);
-
-                    ragdollAnimator.RagdollBlend = 0.01f;
-
-                    return;
-                }
-
-                if (ragdollAnimator.Handler.AnimatingMode == FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Falling)
-                {
-                    rigSetup.weight = 0f;
-                    spineOverrideTransform.weight = 0f;
-                    leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
-                    leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
-
-                    legAnimator.User_SetIsMoving(false);
-                    legAnimator.User_SetIsGrounded(false);
-                    legAnimator.MainGlueBlend = 0f;
-                    if (legAnimator.enabled)
-                        legAnimator.User_FadeToDisabled(0f);
-
-                    ragdollAnimator.RagdollBlend = 1f;
-
-                    return;
-                }
-
-                //* Down, Dead 상태에선 Animation 처리를 모두 끈다.
-                if (CheckAnimStateRunning("OnDown") || CheckAnimStateRunning("OnDead"))
-                {
-                    rigSetup.weight = 0f;
-                    spineOverrideTransform.weight = 0f;
-                    leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
-                    leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
-
-                    legAnimator.User_SetIsMoving(false);
-                    legAnimator.User_SetIsGrounded(false);
-                    legAnimator.MainGlueBlend = 0f;
-                    if (legAnimator.enabled)
-                        legAnimator.User_FadeToDisabled(0f);
-
-                    ragdollAnimator.RagdollBlend = 1f;
-
-                    mainAnimator.SetLayerWeight((int)LayerIndices.Arms, 0f);
-                    mainAnimator.SetLayerWeight((int)LayerIndices.Upper, 0f);
-                    mainAnimator.SetLayerWeight((int)LayerIndices.Action, __brain.ActionCtrler.GetAdvancedActionLayerWeight(mainAnimator.GetLayerWeight((int)LayerIndices.Action), actionLayerBlendInSpeed, actionLayerBlendOutSpeed, Time.deltaTime));
-                    mainAnimator.SetBool("IsGuarding", false);
-                    mainAnimator.SetBool("IsMoving", false);
-                }
-                else if (__brain.BB.IsRolling)
-                {
-                    rigSetup.weight = 0f;
-                    spineOverrideTransform.weight = 0f;
-                    leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
-                    leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
-
-                    legAnimator.User_SetIsMoving(false);
-                    legAnimator.User_SetIsGrounded(false);
-                    legAnimator.MainGlueBlend = 0f;
-                    if (legAnimator.enabled)
-                        legAnimator.User_FadeToDisabled(0f);
-
-                    ragdollAnimator.RagdollBlend = 0.01f;
-                    
-                    mainAnimator.SetLayerWeight((int)LayerIndices.Arms, 0f);
-                    mainAnimator.SetLayerWeight((int)LayerIndices.Upper, 0f);
-                    mainAnimator.SetLayerWeight((int)LayerIndices.Action, 1f);
-                    mainAnimator.SetFloat("MoveSpeed", 0f);
-                    mainAnimator.SetFloat("MoveAnimSpeed", 1f);
-                    mainAnimator.SetBool("IsMoving", false);
-                }
-                else if (__brain.BB.IsHanging)
-                {
-                    rigSetup.weight = 1f;
-                    spineOverrideTransform.weight = 0f;
-                    leftArmTwoBoneIK.weight = leftArmTwoBoneIK.weight.LerpSpeed(1f, 4f, Time.deltaTime);
-                    rightArmTwoBoneIK.weight = leftArmTwoBoneIK.weight.LerpSpeed(1f, 4f, Time.deltaTime);
-                    leftLegBoneSimulator.StimulatorAmount = leftLegBoneSimulator.StimulatorAmount.LerpSpeed(0.4f, 1f, Time.deltaTime);
-                    rightLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount.LerpSpeed(0.5f, 1f, Time.deltaTime);
-
-                    legAnimator.User_SetIsMoving(false);
-                    legAnimator.User_SetIsGrounded(false);
-                    legAnimator.MainGlueBlend = 0f;
-                    if (!legAnimator.enabled)
-                        legAnimator.User_FadeToDisabled(0);
-
-                    ragdollAnimator.RagdollBlend = 0.01f;
-
-                    mainAnimator.SetLayerWeight((int)LayerIndices.Arms, 0f);
-                    mainAnimator.SetLayerWeight((int)LayerIndices.Upper, 0f);
-                    mainAnimator.SetLayerWeight((int)LayerIndices.Action, __brain.ActionCtrler.GetAdvancedActionLayerWeight(mainAnimator.GetLayerWeight((int)LayerIndices.Action), actionLayerBlendInSpeed, actionLayerBlendOutSpeed, Time.deltaTime));
-                    mainAnimator.SetFloat("MoveSpeed", 0f);
-                    mainAnimator.SetFloat("MoveAnimSpeed", 1f);
-                    mainAnimator.SetBool("IsMoving", false);
-                }
+                if (GameContext.Instance.launcher.currGameMode.IsInCombat())
+                    UpdateCombatMode();
                 else
-                {
-                    rigSetup.weight = 1f;
-
-                    if (__brain.ActionCtrler.CheckActionRunning() || mainAnimator.GetBool("IsGuarding") || CheckAnimStateRunning("GuardParry") || CheckAnimStateRunning("PunchParry (Charge)") || CheckAnimStateRunning("DrinkPotion"))
-                        spineOverrideTransform.weight = 0f;
-                    else if (__brain.Movement.moveSpeed > 0f)
-                        spineOverrideTransform.weight = Mathf.Clamp01(__brain.Movement.CurrVelocity.magnitude / __brain.Movement.moveSpeed);
-                    else
-                        spineOverrideTransform.weight = Mathf.Max(0f, spineOverrideTransform.weight - Time.deltaTime);
-
-                    if (__brain.ActionCtrler.CheckActionRunning())
-                    {
-                        leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
-                        leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
-                    }
-                    else
-                    {
-                        leftArmTwoBoneIK.weight = leftArmTwoBoneIK.weight.LerpSpeed(0f, 4f, Time.deltaTime);
-                        rightArmTwoBoneIK.weight = leftArmTwoBoneIK.weight.LerpSpeed(0f, 4f, Time.deltaTime);
-                        leftLegBoneSimulator.StimulatorAmount = leftLegBoneSimulator.StimulatorAmount.LerpSpeed(0f, 1f, Time.deltaTime);
-                        rightLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount.LerpSpeed(0f, 1f, Time.deltaTime);
-                    }
-                    
-                    if (!legAnimator.enabled)
-                        legAnimator.User_FadeEnabled(0.1f);
-
-                    legAnimator.User_SetIsMoving(__brain.Movement.CurrVelocity.sqrMagnitude > 0f);
-                    legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround && !__brain.BB.IsJumping && (!__brain.ActionCtrler.CheckActionRunning() || __brain.ActionCtrler.currActionContext.legAnimGlueEnabled));
-                    legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude > 0f ? -1f : 1f) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.6f : 0.5f, 1f);
-
-                    ragdollAnimator.RagdollBlend = 0.01f;
-
-                    if (__brain.StatusCtrler.CheckStatus(PawnStatus.Staggered) || __brain.StatusCtrler.CheckStatus(PawnStatus.CanNotGuard))
-                        mainAnimator.SetBool("IsGuarding", false);
-                    else if (__brain.BB.IsGuarding && __brain.BB.action.punchChargingLevel.Value < 0)
-                        mainAnimator.SetBool("IsGuarding", true);
-
-                    // TODO: healingPotion Show/Hide 임시 코드
-                    if (CheckAnimStateRunning("DrinkPotion"))
-                    {
-                        if (!__brain.BB.children.healingPotion.activeSelf)
-                            __brain.BB.children.healingPotion.SetActive(true);
-                    }
-                    else
-                    {
-                        if (__brain.BB.children.healingPotion.activeSelf)
-                            __brain.BB.children.healingPotion.SetActive(false);
-                    }
-
-                    mainAnimator.SetLayerWeight((int)LayerIndices.Arms, __brain.BB.IsJumping || CheckAnimStateRunning("DrinkPotion") ? 0f : 1f);
-                    mainAnimator.SetLayerWeight((int)LayerIndices.Upper, CheckAnimStateRunning("DrinkPotion") ? 1f : 0f);
-
-                    if (CheckAnimStateRunning("DrinkPotion"))
-                        mainAnimator.SetLayerWeight((int)LayerIndices.Action, 0f);
-                    else if (CheckAnimStateRunning("GuardParry"))
-                        mainAnimator.SetLayerWeight((int)LayerIndices.Action, 1f);
-                    else
-                        mainAnimator.SetLayerWeight((int)LayerIndices.Action, __brain.ActionCtrler.GetAdvancedActionLayerWeight(mainAnimator.GetLayerWeight((int)LayerIndices.Action), actionLayerBlendInSpeed, actionLayerBlendOutSpeed, Time.deltaTime));
-
-                    mainAnimator.SetFloat("MoveForward", __brain.Movement.freezeRotation ? -1 : __brain.Movement.CurrVelocity.Vector2D().magnitude / __brain.BB.body.walkSpeed);
-                    mainAnimator.SetFloat("MoveAnimSpeed", __brain.Movement.freezeRotation ? (__brain.BB.IsGuarding ? 1f : 1.5f) : 1.2f);
-                    mainAnimator.SetBool("IsMoving", __brain.Movement.CurrVelocity.sqrMagnitude > 0f);
-
-                    var animMoveVec = __brain.coreColliderHelper.transform.InverseTransformDirection(__brain.Movement.CurrVelocity).Vector2D();
-                    mainAnimator.SetFloat("MoveX", animMoveVec.x / __brain.Movement.moveSpeed);
-                    mainAnimator.SetFloat("MoveY", animMoveVec.z / __brain.Movement.moveSpeed);
-                }
+                    UpdateDialogueMode();
             };
 
             __brain.onLateUpdate += () =>

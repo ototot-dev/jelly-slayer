@@ -148,6 +148,11 @@ namespace Game
             if (possessedBrain == null)
                 return;
 
+            if (GameContext.Instance.launcher.currGameMode.IsInCombat())
+                possessedBrain.Movement.freezeRotation = possessedBrain.BB.TargetPawn != null;
+            else
+                possessedBrain.Movement.freezeRotation = false;
+
             if (inputMoveVec.Value.sqrMagnitude > 0)
             {
                 var isAction = possessedBrain.BB.IsGuarding || possessedBrain.BB.IsPunchCharging;
