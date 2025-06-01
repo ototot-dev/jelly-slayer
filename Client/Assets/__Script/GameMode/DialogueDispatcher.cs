@@ -113,6 +113,7 @@ namespace Game
             __runner.AddCommandHandler("waitCheck", WaitCheck);
             __runner.AddCommandHandler<string, float, int, bool>("tweenShake", TweenShake);
             __runner.AddCommandHandler<string, string>("sendMsg", SendMessage);
+            __runner.AddCommandHandler<string>("sendMsgToGameMode", SendMessageToGameMode);
             __runner.AddCommandHandler<string, string>("spawnPawn", SpawnPawn);
             __runner.AddCommandHandler<string, float, float, float>("spawnPawnByVector", SpawnPawnByVector);
             __runner.AddCommandHandler<string>("setCameraTarget", SetCameraTarget);
@@ -252,6 +253,15 @@ namespace Game
                 Debug.Log("YarnCommand: Not Found Object, " + msg);
 
             obj.SendMessage(msg, SendMessageOptions.DontRequireReceiver);
+        }
+
+        public void SendMessageToGameMode(string msg) 
+        {
+            var mode = GameContext.Instance.launcher.currGameMode;
+            if (mode == null)
+                return;
+
+            mode.SendMessage(msg, SendMessageOptions.DontRequireReceiver);
         }
 
         public void SetCameraTarget(string targetTag) 

@@ -27,6 +27,7 @@ tags:
 드론: 이정도면 매우 안전한 길이야. 다른쪽은.... 그것보다 차라리 잘 되었어. 기본적인 공격을 연습해봐.
 
 <<showSword>>
+<<sendMsgToGameMode StartTutorialAttack>>
 <<showMessagePopup "일반 공격" "공격키를 사용해서 적을 공격하세요" 8>>
 
 <<waitCheck>>

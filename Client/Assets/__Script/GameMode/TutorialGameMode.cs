@@ -10,6 +10,11 @@ using ZLinq;
 
 namespace Game
 {
+    public enum TutorialMode 
+    {
+        None,
+        NormalAttack,
+    }
     public class TutorialGameMode : BaseGameMode
     {
         public override GameModeTypes GetGameModeType() => GameModeTypes.Tutorial;
@@ -20,10 +25,14 @@ namespace Game
 
         private int _attackCount = 0;
 
+        public TutorialMode _mode = TutorialMode.None;
+
         public override bool CanPlayerConsumeInput()
         {
             if (__loadingPageCtrler != null) return false;
-            return !__dialogueDispatcher.IsDialogueRunning() || GameContext.Instance.playerCtrler.interactionKeyCtrlers.AsValueEnumerable().Any(i => i.IsInteractableEnabled);
+            return !__dialogueDispatcher.IsDialogueRunning() || 
+                GameContext.Instance.playerCtrler.interactionKeyCtrlers.AsValueEnumerable().Any(i => i.IsInteractableEnabled) ||
+                _mode != TutorialMode.None;
         }
 
         void Awake()
@@ -130,6 +139,11 @@ namespace Game
 
             GameContext.Instance.canvasManager.FadeOut(1f);
             yield return new WaitForSeconds(1f);
+        }
+
+        public void StartTutorialAttack() 
+        {
+            _mode = TutorialMode.NormalAttack;
         }
 
         void Update()
