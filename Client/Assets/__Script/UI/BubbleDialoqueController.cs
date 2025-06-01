@@ -48,7 +48,7 @@ namespace Game
                 var speaker = TaggerSystem.FindGameObjectWithTag(l.CharacterName);
                 if (speaker == null)
                 {
-                    __Logger.WarningR1(template.gameObject, "CharacterName is not found", "CharacterName", l.CharacterName);
+                    __Logger.WarningR1(template?.gameObject, "CharacterName is not found", "CharacterName", l.CharacterName);
                     return;
                 }
 

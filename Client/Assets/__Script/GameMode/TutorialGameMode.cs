@@ -116,11 +116,9 @@ namespace Game
                     __loadingPageCtrler.Unload();
                     __loadingPageCtrler = null;
 
-                    //var obj = GameObject.Find("3d-bubble-dialogue");
-                    //var res = Resources.Load("UI/template/3d-bubble-dialogue");
-                    //GameObject obj = (GameObject)GameObject.Instantiate(res);
-                    //obj.transform.SetParent(GameContext.Instance.canvasManager.transform);
-                    //new BubbleDialoqueController().Load(GameObject.Find("3d-bubble-dialogue").GetComponent<Template>()).Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
+                    __dialogueDispatcher.onRunLine = null;
+                    __dialogueDispatcher.onDialoqueComplete = null;
+
                     new BubbleDialoqueController().Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
                     __dialogueDispatcher.StartDialogue("Tutorial-1");
                 });

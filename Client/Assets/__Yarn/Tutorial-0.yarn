@@ -52,8 +52,8 @@ tags:
 
 <<showMessagePopup "" "방향키를 사용해서 이동하세요" 8>>
 
-<<showAndWaitInteractionKey "Door">>
-//<<showAndWaitInteractionKey "Phone">>
+//<<showAndWaitInteractionKey "Door">>
+<<showAndWaitInteractionKey "Phone">>
  
 // 케이는 천천히 몸을 움직인다. 잠시 망설이다 전화를 받는다.
 <<playSound PHONE_PICKUP>> // 철컥.
