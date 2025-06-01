@@ -12,7 +12,7 @@ namespace Game
         Vector3 GetBubbleDialogueAttachPoint() => Vector3.zero;
     }
 
-    [Template(path: "UI/template/3d-bubble-dialoque")]
+    [Template(path: "UI/template/3d-bubble-dialogue")]
     public class BubbleDialoqueController : Controller
     {
         Transform __attachableTargetTrasform;

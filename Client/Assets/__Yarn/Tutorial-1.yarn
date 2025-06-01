@@ -2,6 +2,14 @@ title: Tutorial-1
 tags:
 ---
 
+<<vignette 0.4 0.9 0>>
+<<hideMechArm>>
+<<hideSword>>
+<<wait 2>>
+<<fadeOut 1>>
+<<wait 2>>
+<<vignette 0.3 0.2 1>>
+
 케이: 여기로 가면 되나?
 드론: 이쪽으로 쭉 가면 탈출로야.
 

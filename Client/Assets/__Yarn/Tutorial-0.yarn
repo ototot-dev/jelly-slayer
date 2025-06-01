@@ -26,6 +26,8 @@ tags:
 // 주변은 작고 어두운 방. 딱히 아무런 장식도 없다.
 <<wait 1>>
 
+<<showAndWaitInteractionKey "Door">>
+
 <<setCameraTarget Phone>>
 
 // 1.5 초간 50 만큼 shake (fadeout 안함)
@@ -50,8 +52,8 @@ tags:
 
 <<showMessagePopup "" "방향키를 사용해서 이동하세요" 8>>
 
-//<<showAndWaitInteractionKey "Door">>
-<<showAndWaitInteractionKey "Phone">>
+<<showAndWaitInteractionKey "Door">>
+//<<showAndWaitInteractionKey "Phone">>
  
 // 케이는 천천히 몸을 움직인다. 잠시 망설이다 전화를 받는다.
 <<playSound PHONE_PICKUP>> // 철컥.
@@ -85,7 +87,9 @@ tags:
 드론: 시간이 없어. 일단 도망가야 해. 이쪽으로 가자.
 
 <<setCameraSlayer>>
+<<wait 1>>
 
+<<showMessagePopup "" "오른쪽 문으로 나가세요." 8>>
 // 드론이 문쪽으로 날아가서 선회
 
 <<showAndWaitInteractionKey "Door">>
