@@ -18,6 +18,8 @@ namespace Game
         LoadingPageController __loadingPageCtrler;
         string __currSceneName;
 
+        private int _attackCount = 0;
+
         public override bool CanPlayerConsumeInput()
         {
             if (__loadingPageCtrler != null) return false;

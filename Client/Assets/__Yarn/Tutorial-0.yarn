@@ -20,13 +20,13 @@ tags:
 // 기침 후 몸을 일으킨다.
 
 <<getUp>>
+<<showAndWaitInteractionKey "Door">>
+
 <<wait 6>>
 
 케이: 여긴...<waitfor=1>나한테 무슨 일이 있었던거야?
 // 주변은 작고 어두운 방. 딱히 아무런 장식도 없다.
 <<wait 1>>
-
-<<showAndWaitInteractionKey "Door">>
 
 <<setCameraTarget Phone>>
 

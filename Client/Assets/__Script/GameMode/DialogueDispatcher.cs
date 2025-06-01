@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Linq;
 using FinalFactory;
+using Obi;
 using UGUI.Rx;
 using UniRx;
 using UnityEngine;
@@ -17,6 +18,8 @@ namespace Game
         public Action onDismissLine;
         public Action<DialogueOption[]> onRunOptions;
         public Action onDialoqueComplete;
+
+        bool _isWaitCheck = false;
 
         public override void DialogueStarted()
         {
@@ -107,12 +110,14 @@ namespace Game
             __runner.AddCommandHandler<string>("playSound", PlaySound);
             __runner.AddCommandHandler<string>("showInteractionKey", ShowInteractionKey);
             __runner.AddCommandHandler<string>("showAndWaitInteractionKey", ShowAndWaitInteractionKey);
+            __runner.AddCommandHandler("waitCheck", WaitCheck);
             __runner.AddCommandHandler<string, float, int, bool>("tweenShake", TweenShake);
             __runner.AddCommandHandler<string, string>("sendMsg", SendMessage);
             __runner.AddCommandHandler<string, string>("spawnPawn", SpawnPawn);
+            __runner.AddCommandHandler<string, float, float, float>("spawnPawnByVector", SpawnPawnByVector);
             __runner.AddCommandHandler<string>("setCameraTarget", SetCameraTarget);
             __runner.AddCommandHandler("setCameraSlayer", SetCameraSlayer);
-            __runner.AddCommandHandler<string, string, float>("showMessagePopup", ShowMessagePopup);           
+            __runner.AddCommandHandler<string, string, float>("showMessagePopup", ShowMessagePopup); 
         }
 
         public void Vignetee(float intensity, float smoothness, float blendTime)
@@ -172,6 +177,13 @@ namespace Game
             yield return new WaitUntil(() => interactableKeyCtrler.IsInteractableFinished);
         }
 
+        public IEnumerator WaitCheck() 
+        {
+            _isWaitCheck = false;
+
+            yield return new WaitUntil(() => { return _isWaitCheck; });
+        }
+
         public void PlaySound(string soundName)
         {
             if (Enum.TryParse(soundName, out SoundID id))
@@ -184,34 +196,53 @@ namespace Game
             }
         }
 
-        public void SpawnPawn(string pawnName, string spawnTag)
+        private GameObject InstantiatePawn(string pawnName) 
         {
-            Debug.Log("YarnComman SpawnPawn: " + pawnName + ", " + spawnTag);
             if (Enum.TryParse(pawnName, out PawnId id) == false)
             {
                 Debug.Log("SpawnPawn Enum Parse Error: " + pawnName);
-                return;
+                return null;
             }
             var pawnData = MainTable.PawnData.PawnDataList.First(d => d.pawnId == id);
             if (pawnData == null)
             {
                 Debug.Log("SpawnPawn PawnData Get Error: " + id);
-                return;
+                return null;
             }
             var resObj = Resources.Load<GameObject>(pawnData.prefPath);
             if (resObj == null)
             {
                 Debug.Log("SpawnPawn Res Load Error: " + pawnData.pawnId + ", " + pawnData.prefPath);
-                return;
+                return null;
             }
-            Vector3 pos = Vector3.zero;
-            GameObject tagObj = TaggerSystem.FindGameObjectWithTag(spawnTag);
-            if (tagObj != null)
-                pos = tagObj.transform.position;
-            else
-                Debug.Log("SpawnPawn SpawnTag Error: " + spawnTag);
+            return Instantiate(resObj);
+        }
 
-            var pawnObj = Instantiate(resObj, pos, Quaternion.identity);
+        public void SpawnPawnByVector(string pawnName, float tx, float ty, float tz) 
+        {
+            Debug.Log("YarnComman SpawnPawn: " + pawnName + ", " + tx + ", " + ty + ", " + tz);
+            var pawnObj = InstantiatePawn(pawnName);
+            if (pawnObj == null)
+                return;
+
+            pawnObj.transform.position = new Vector3(tx, ty, tz);
+        }
+
+        public void SpawnPawn(string pawnName, string spawnTag)
+        {
+            Debug.Log("YarnComman SpawnPawn: " + pawnName + ", " + spawnTag);            
+            var pawnObj = InstantiatePawn(pawnName);
+            if (pawnObj == null)
+                return;
+
+            if (spawnTag.Length > 0)
+            {
+                GameObject tagObj = TaggerSystem.FindGameObjectWithTag(spawnTag);
+                if (tagObj != null)
+                    pawnObj.transform.position = tagObj.transform.position;
+                else
+                    Debug.Log("SpawnPawn SpawnTag Error: " + spawnTag);
+            }
         }
 
         public void SendMessage(string tag, string msg) 
