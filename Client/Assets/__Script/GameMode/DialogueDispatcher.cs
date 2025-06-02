@@ -227,6 +227,10 @@ namespace Game
                 return;
 
             pawnObj.transform.position = new Vector3(tx, ty, tz);
+
+            // Spawn Message
+            var mode = GameContext.Instance.launcher.currGameMode;
+            mode?.SendMessage("PawnSpawned", pawnObj, SendMessageOptions.DontRequireReceiver);
         }
 
         public void SpawnPawn(string pawnName, string spawnTag)

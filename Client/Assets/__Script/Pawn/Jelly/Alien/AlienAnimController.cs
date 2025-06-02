@@ -33,7 +33,8 @@ namespace Game
         {
             __brain = GetComponent<AlienBrain>();
             // __rig = mainAnimator.GetComponent<RigBuilder>().layers.First().rig;
-            springMassSystem.coreAttachPoint = jellyMeshSlot;
+            if (springMassSystem != null)
+                springMassSystem.coreAttachPoint = jellyMeshSlot;
         }
 
         void Start()

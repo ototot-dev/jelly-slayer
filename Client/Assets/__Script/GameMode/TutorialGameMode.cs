@@ -156,22 +156,25 @@ namespace Game
             if (brain == null)
                 return;
 
-            brain.PawnHP.onDamaged += (damageContext) =>
+
+            if (brain.PawnBB.common.pawnId == PawnId.Alien)
             {
-                switch (_mode) {
-                    case TutorialMode.NormalAttack:
-                        _attackCount++;
-                        if (_attackCount >= 3) 
-                        {
-                            __dialogueDispatcher._isWaitCheck = true;
-                            _mode = TutorialMode.None;
-                        }
-                        break;
-                }
-                //if (damageContext.senderBrain == this && CheckActionRunning() && CurrActionName == "Bumping")
-                    //currActionContext.rootMotionEnabled = false;
-            };
-            _pawnList.Add(brain);
+                brain.PawnHP.onDamaged += (damageContext) =>
+                {
+                    switch (_mode)
+                    {
+                        case TutorialMode.NormalAttack:
+                            _attackCount++;
+                            if (_attackCount >= 3)
+                            {
+                                __dialogueDispatcher._isWaitCheck = true;
+                                _mode = TutorialMode.None;
+                            }
+                            break;
+                    }
+                };
+                _pawnList.Add(brain);
+            }
         }
 
         public void SetCombatMode() 
