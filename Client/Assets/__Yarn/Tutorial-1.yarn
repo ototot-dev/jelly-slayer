@@ -1,7 +1,7 @@
 title: Tutorial-1
 tags:
 ---
-
+<<fadeIn 0.1>>
 <<vignette 0.4 0.9 0>>
 <<hideMechArm>>
 <<hideSword>>
@@ -16,8 +16,12 @@ tags:
 
 <<wait 2>>
 
+<<setCameraTarget AlienSpawnPoint>>
 // 조금 이동했는데 전방에 적 출현
-<<spawnPawnByVector Alien -3 0 4>>
+<<spawnPawn Alien AlienSpawnPoint>>
+
+<<wait 2>>
+<<setCameraSlayer>>
 
 케이: 뭐? 저게 뭐야?
 드론: 이런, 방어 시스템이 발동한 모양이네.

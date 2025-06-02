@@ -21,6 +21,7 @@ MonoBehaviour:
   - PlayerSpawnPoint
   - ConfinerBoundingBox
   - Door
+  - AlienSpawnPoint
   _serializedGroups:
   - _name: Ungrouped
     _tags:
@@ -28,6 +29,7 @@ MonoBehaviour:
     - DroneBotSpawnPoint
     - PlayerSpawnPoint
     - ConfinerBoundingBox
+    - AlienSpawnPoint
     _isSingleton: 0
   - _name: Pawn
     _tags:
@@ -42,37 +44,55 @@ MonoBehaviour:
     - Door
     - Phone
     _isSingleton: 0
-  _serializedIDs: 000000000100000002000000030000000400000006000000070000000800000009000000
+  _serializedIDs: 0000000001000000020000000300000004000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f000000
   _serializedLinkIdKeys: 05000000
   _serializedLinkIdValues: 03000000
   _serializedTagArrays:
   - _array: 01000000
     _maskArray: ffffffff
-    _version: 27
+    _version: 30
   - _array: 05000000
     _maskArray: ffffffff
-    _version: 28
+    _version: 31
   - _array: 07000000
     _maskArray: ffffffff
-    _version: 29
+    _version: 32
   - _array: 00000000
     _maskArray: ffffffff
-    _version: 18
+    _version: 21
   - _array: 08000000
     _maskArray: ffffffff
-    _version: 15
+    _version: 18
   - _array: 10000000
     _maskArray: ffffffff
-    _version: 19
+    _version: 22
   - _array: 20000000
     _maskArray: ffffffff
-    _version: 7
+    _version: 10
   - _array: 40000000
     _maskArray: ffffffff
-    _version: 19
+    _version: 22
   - _array: 80000000
     _maskArray: ffffffff
-    _version: 1
+    _version: 4
+  - _array: 22000000
+    _maskArray: ffffffff
+    _version: 11
+  - _array: 2a000000
+    _maskArray: ffffffff
+    _version: 12
+  - _array: 6a000000
+    _maskArray: ffffffff
+    _version: 13
+  - _array: 68000000
+    _maskArray: ffffffff
+    _version: 14
+  - _array: 60000000
+    _maskArray: ffffffff
+    _version: 15
+  - _array: 00010000
+    _maskArray: ffffffff
+    _version: 22
   _tagColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
@@ -82,4 +102,5 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
-  _version: 14
+  - {r: 1, g: 1, b: 1, a: 1}
+  _version: 15
