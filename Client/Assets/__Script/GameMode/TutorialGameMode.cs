@@ -6,6 +6,8 @@ using UniRx;
 using UGUI.Rx;
 using Yarn.Unity;
 using ZLinq;
+using NUnit.Framework;
+using System.Collections.Generic;
 
 
 namespace Game
@@ -25,7 +27,12 @@ namespace Game
 
         private int _attackCount = 0;
 
+        private List<PawnBrainController> _pawnList = new();
+
         public TutorialMode _mode = TutorialMode.None;
+        private bool _isInCombat = false;
+
+        public override bool IsInCombat() => _isInCombat;
 
         public override bool CanPlayerConsumeInput()
         {
@@ -103,6 +110,8 @@ namespace Game
             //* 현재 Scene 제거
             yield return SceneManager.UnloadSceneAsync(__currSceneName).AsObservable().ToYieldInstruction();
 
+            _pawnList.Clear();
+
             //* 로딩 시작
             __loadingPageCtrler = new LoadingPageController(new string[] { }, new string[] { "Tutorial-1" });
             __loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
@@ -141,11 +150,43 @@ namespace Game
             yield return new WaitForSeconds(1f);
         }
 
+        public void PawnSpawned(GameObject pawnObj) 
+        {
+            var brain = pawnObj.GetComponent<PawnBrainController>();
+            if (brain == null)
+                return;
+
+            brain.PawnHP.onDamaged += (damageContext) =>
+            {
+                switch (_mode) {
+                    case TutorialMode.NormalAttack:
+                        _attackCount++;
+                        if (_attackCount >= 3) 
+                        {
+                            __dialogueDispatcher._isWaitCheck = true;
+                            _mode = TutorialMode.None;
+                        }
+                        break;
+                }
+                //if (damageContext.senderBrain == this && CheckActionRunning() && CurrActionName == "Bumping")
+                    //currActionContext.rootMotionEnabled = false;
+            };
+            _pawnList.Add(brain);
+        }
+
+        public void SetCombatMode() 
+        {
+            _isInCombat = true;
+        }
+        public void ResetCombatMode()
+        {
+            _isInCombat = false;
+        }
+
         public void StartTutorialAttack() 
         {
             _mode = TutorialMode.NormalAttack;
         }
-
         void Update()
         {
             //* 다이얼로그 진행 중에 AnyKeyDown 처리

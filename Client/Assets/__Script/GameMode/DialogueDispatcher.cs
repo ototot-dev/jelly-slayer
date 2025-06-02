@@ -19,7 +19,7 @@ namespace Game
         public Action<DialogueOption[]> onRunOptions;
         public Action onDialoqueComplete;
 
-        bool _isWaitCheck = false;
+        public bool _isWaitCheck = false;
 
         public override void DialogueStarted()
         {
@@ -244,6 +244,9 @@ namespace Game
                 else
                     Debug.Log("SpawnPawn SpawnTag Error: " + spawnTag);
             }
+            // Spawn Message
+            var mode = GameContext.Instance.launcher.currGameMode;
+            mode?.SendMessage("PawnSpawned", pawnObj, SendMessageOptions.DontRequireReceiver);
         }
 
         public void SendMessage(string tag, string msg) 
