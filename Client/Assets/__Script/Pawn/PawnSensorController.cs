@@ -74,11 +74,12 @@ namespace Game
             {
                 touchSensorTrigger.OnTriggerEnterAsObservable().Subscribe(c =>
                 {
-                    if (c.gameObject.CompareTag("TerrainBoundary"))
-                    {
-                        __pawnBrain.OnTouchTerrainBoundaryHandler(c.gameObject);
-                    }
-                    else if (!c.TryGetComponent<PawnColliderHelper>(out var colliderHelper) || colliderHelper.pawnBrain != __pawnBrain)
+                    // if (c.gameObject.CompareTag("TerrainBoundary"))
+                    // {
+                    //     __pawnBrain.OnTouchTerrainBoundaryHandler(c.gameObject);
+                    // }
+                    // else
+                    if (!c.TryGetComponent<PawnColliderHelper>(out var colliderHelper) || colliderHelper.pawnBrain != __pawnBrain)
                     {
                         TouchingColliders.Add(c);
                         onTouchSomething?.Invoke(c);

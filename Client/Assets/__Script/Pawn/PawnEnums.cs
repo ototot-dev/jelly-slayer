@@ -10,6 +10,7 @@ namespace Game
         DroneBot,
         Soldier,
         RoboDog,
+        RoboSoldier,
         Worker,
         Alien,
         Etasphera42,
