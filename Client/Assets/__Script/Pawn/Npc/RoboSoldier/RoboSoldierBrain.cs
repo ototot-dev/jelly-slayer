@@ -111,7 +111,8 @@ namespace Game
 
             //* 액션 패턴 등록
             ActionDataSelector.ReserveSequence(ActionPatterns.JumpAttackA, "JumpAttack").BeginCoolTime(BB.action.jumpAttackCoolTime);
-            ActionDataSelector.ReserveSequence(ActionPatterns.JumpAttackB, "Missile", 1f, "JumpAttack").BeginCoolTime(BB.action.jumpAttackCoolTime);
+            ActionDataSelector.ReserveSequence(ActionPatterns.JumpAttackB, "JumpAttack").BeginCoolTime(BB.action.jumpAttackCoolTime);
+            // ActionDataSelector.ReserveSequence(ActionPatterns.JumpAttackB, "Missile", 1f, "JumpAttack").BeginCoolTime(BB.action.jumpAttackCoolTime);
             ActionDataSelector.ReserveSequence(ActionPatterns.ShieldAttackA, "ShieldAttack", "Counter", "Counter", 0.1f, "Attack#3");
             ActionDataSelector.ReserveSequence(ActionPatterns.ShieldAttackB, "ShieldAttack", "Attack#1", "Attack#2", 0.1f, "Attack#3");
             ActionDataSelector.ReserveSequence(ActionPatterns.CounterA, "Counter", "Counter", 0.1f, "Attack#3");
@@ -251,18 +252,17 @@ namespace Game
 
             if (ActionDataSelector.CurrSequence() == null)
             {
-                if (ActionDataSelector.EvaluateSequence(ActionPatterns.Leap))
-                {
-                    ActionDataSelector.EnqueueSequence(ActionPatterns.Leap).BeginCoolTime(BB.action.leapCoolTime);
-
-                }
-                else if (ActionDataSelector.EvaluateSequence(ActionPatterns.MissileA))
-                {
-                    ActionDataSelector.EnqueueSequence(GetWorldPosition().Magnitude2D() < BB.action.backstepTriggerDistance ? ActionPatterns.MissileA : ActionPatterns.MissileB);
-                    ActionDataSelector.BeginCoolTime(ActionPatterns.MissileA, BB.action.missileCoolTime);
-                    ActionDataSelector.BeginCoolTime(ActionPatterns.MissileB, BB.action.missileCoolTime);
-                }
-                else
+                // if (ActionDataSelector.EvaluateSequence(ActionPatterns.Leap))
+                // {
+                //     ActionDataSelector.EnqueueSequence(ActionPatterns.Leap).BeginCoolTime(BB.action.leapCoolTime);
+                // }
+                // else if (ActionDataSelector.EvaluateSequence(ActionPatterns.MissileA))
+                // {
+                //     ActionDataSelector.EnqueueSequence(GetWorldPosition().Magnitude2D() < BB.action.backstepTriggerDistance ? ActionPatterns.MissileA : ActionPatterns.MissileB);
+                //     ActionDataSelector.BeginCoolTime(ActionPatterns.MissileA, BB.action.missileCoolTime);
+                //     ActionDataSelector.BeginCoolTime(ActionPatterns.MissileB, BB.action.missileCoolTime);
+                // }
+                // else
                 {
                     var distanceToTarget = coreColliderHelper.GetDistanceSimple(BB.TargetBrain.coreColliderHelper);
                     if (distanceToTarget < BB.action.comboAttackDistance)

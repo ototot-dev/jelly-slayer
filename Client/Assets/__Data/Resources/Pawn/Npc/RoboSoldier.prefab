@@ -45955,7 +45955,7 @@ MonoBehaviour:
   moveAccel: 10
   moveBrake: 10
   rotateSpeed: 180
-  gravity: {x: 0, y: 0, z: 0}
+  gravity: {x: 0, y: -20, z: 0}
   moveVec: {x: 0, y: 0, z: 0}
   faceVec: {x: 0, y: 0, z: 1}
   destination: {x: 0, y: 0, z: 0}
