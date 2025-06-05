@@ -116,6 +116,8 @@ namespace Game
         {
             base.StartInternal();
 
+            LevelVisibilityManager.Instance.RegisterChecker(BB.children.visibilityChecker);
+
             // ChangeWeapon(WeaponSetType.ONEHAND_WEAPONSHIELD);
 
             ActionCtrler.onActionStart += (actionContext, _) =>

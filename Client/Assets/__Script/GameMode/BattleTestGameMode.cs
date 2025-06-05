@@ -11,7 +11,8 @@ namespace Game
 
         void Start()
         {
-            GameContext.Instance.playerCtrler.Possess(GameObject.FindWithTag("Hero").GetComponent<SlayerBrain>());
+
+            GameContext.Instance.playerCtrler.Possess(TaggerSystem.FindGameObjectWithTags( Finalfactory.Tagger.TaggerSearchMode.And, Tags.Pawn.Slayer, Tags.Ungrouped.K).GetComponent<SlayerBrain>());
             new GamePanelController().Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
 
             var confinerBoundingBox = TaggerSystem.FindGameObjectWithTag("ConfinerBoundingBox").GetComponent<BoxCollider>();

@@ -19,7 +19,7 @@ MonoBehaviour:
     m_Bits: 128
   layerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 0
   renderQueue: 2
   occlusion: 1
   blendMode: 0

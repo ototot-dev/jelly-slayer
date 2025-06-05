@@ -9,7 +9,6 @@ public static class Tags
         "ConfinerBoundingBox",
         "AlienSpawnPoint",
         "Slayer",
-        "Hero",
         "Door",
         "Phone",
     };
@@ -34,10 +33,8 @@ public static class Tags
         public static readonly string[] All = new string[]
         {
             "Slayer",
-            "Hero",
         };
         public const string Slayer = "Slayer";
-        public const string Hero = "Hero";
     }
     public static class Prop
     {

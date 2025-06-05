@@ -1,15 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
+using ZLinq;
 
 namespace Game
 {
     public class LevelVisibilityManager : MonoSingleton<LevelVisibilityManager>
     {
         HashSet<SphereCollider> __visibilityChecker = new();
-        HashSet<MeshRenderer> __visibilityOffRenderers = new();
+        HashSet<MeshRenderer> __visibilityBlockerRenderers = new();
         static readonly RaycastHit[] __tempHitsNonAlloc = new RaycastHit[16];
-        static readonly HashSet<MeshRenderer> __hitRenderers = new();
-        static readonly HashSet<MeshRenderer> __noHitRenderers = new();
+        static readonly HashSet<MeshRenderer> __tmepHitRenderers = new();
+        static readonly HashSet<MeshRenderer> __tempNoHitRenderers = new();
 
         public bool RegisterChecker(SphereCollider collider)
         {
@@ -27,38 +28,46 @@ namespace Game
             {
                 var origin = c.transform.position + c.center;
                 var distanceVec = GameContext.Instance.cameraCtrler.gameCamera.transform.position - origin;
-                var hitCount = Physics.SphereCastNonAlloc(c.transform.position + c.center, c.radius, distanceVec.normalized, __tempHitsNonAlloc, distanceVec.magnitude, LayerMask.GetMask("Ceil"));
+                var hitCount = Physics.SphereCastNonAlloc(c.transform.position + c.center, c.radius, distanceVec.normalized, __tempHitsNonAlloc, distanceVec.magnitude, LayerMask.GetMask("Obstacle"));
 
                 if (hitCount > 0)
                 {
                     for (int i = 0; i < hitCount; i++)
                     {
-                        if (__tempHitsNonAlloc[i].collider.TryGetComponent<MeshRenderer>(out var renderer))
-                            __hitRenderers.Add(renderer);
+                        if (__tempHitsNonAlloc[i].collider.CompareTag("VisibilityBlocker") &&__tempHitsNonAlloc[i].collider.TryGetComponent<MeshRenderer>(out var renderer))
+                            __tmepHitRenderers.Add(renderer);
                     }
                 }
             }
 
-            foreach (var c in __visibilityOffRenderers)
+            foreach (var c in __visibilityBlockerRenderers)
             {
-                if (!__hitRenderers.Contains(c))
+                if (!__tmepHitRenderers.Contains(c))
+                    __tempNoHitRenderers.Add(c);
+            }
+
+            foreach (var r in __tmepHitRenderers)
+            {
+                __visibilityBlockerRenderers.Add(r);
+                foreach (var m in r.materials)
                 {
-                    __noHitRenderers.Add(c);
-                    c.enabled = true;
+                    m.SetColor("_BaseColor", Color.white.AdjustAlpha(0.2f));
+                    m.SetFloat("_Alpha", 0.2f);
                 }
             }
 
-            foreach (var r in __hitRenderers)
+            foreach (var r in __tempNoHitRenderers)
             {
-                if (__visibilityOffRenderers.Add(r))
-                    r.enabled = false;
+                __visibilityBlockerRenderers.Remove(r);
+                foreach (var m in r.materials)
+                {
+                    m.SetColor("_BaseColor", Color.white.AdjustAlpha(0.5f));
+                    m.SetFloat("_Alpha", 0.5f);
+                }
             }
 
-            foreach (var r in __noHitRenderers)
-                __visibilityOffRenderers.Remove(r);
-
-            __hitRenderers.Clear();
-            __noHitRenderers.Clear();
+            __tmepHitRenderers.Clear();
+            __tempNoHitRenderers.Clear();
         }
     }
 }

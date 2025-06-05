@@ -87,6 +87,7 @@ namespace Game
         public class Children
         {
             public GameObject healingPotion;
+            public SphereCollider visibilityChecker;
         }
 
         public Children children = new();

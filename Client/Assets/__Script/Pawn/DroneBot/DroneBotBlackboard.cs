@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public class  DroneBotBlackboard : PawnBlackboard
+    public class DroneBotBlackboard : PawnBlackboard
     {
         public DroneBotBrain.Decisions CurrDecision => decision.currDecision.Value;
         public SlayerBrain HostBrain => decision.hostBrain.Value;
@@ -63,6 +63,14 @@ namespace Game
         }
 
         public Resource resource = new();
+
+        [Serializable]
+        public class Children
+        {
+            public SphereCollider visibilityChecker;
+        }
+
+        public Children children = new();
  
     }
 }

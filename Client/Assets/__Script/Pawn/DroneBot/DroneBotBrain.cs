@@ -87,6 +87,8 @@ namespace Game
         protected override void StartInternal()
         {
             base.StartInternal();
+
+            LevelVisibilityManager.Instance.RegisterChecker(BB.children.visibilityChecker);
             
             PawnStatusCtrler.onStatusActive += (status) =>
             {
