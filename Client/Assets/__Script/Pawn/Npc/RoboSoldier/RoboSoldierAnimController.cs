@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using DG.Tweening;
 using FIMSpace.BonesStimulation;
 using UniRx;
@@ -122,10 +121,10 @@ namespace Game
                 //* 발바닥에서 발사하는 Frame 이펙트 On
                 if (v)
                 {
-                    foreach (var p in __brain.BB.attachment.jetParticleSystems)
+                    foreach (var p in __brain.BB.children.jetParticleSystems)
                     {
                         p.transform.parent.GetComponent<MeshRenderer>().enabled = true;
-                        p.transform.parent.DOScale(5f * Vector3.one, 0.5f).OnComplete(() => p.Play());
+                        p.transform.parent.DOScale(2f * Vector3.one, 0.5f).OnComplete(() => p.Play());
                     }
                 }
             }).AddTo(this);
@@ -133,17 +132,17 @@ namespace Game
             __brain.BB.body.isGliding.Subscribe(v =>
             {
                 //* 발바닥에서 발사하는 Frame 이펙트 Off
-                // if (!v)
-                // {
-                //     foreach (var p in __brain.BB.attachment.jetParticleSystems)
-                //     {
-                //         p.transform.parent.DOScale(Vector3.zero, 0.2f).OnComplete(() =>
-                //         {
-                //             p.transform.parent.GetComponent<MeshRenderer>().enabled = false;
-                //             p.Stop();
-                //         });
-                //     }
-                // }
+                if (!v)
+                {
+                    foreach (var p in __brain.BB.children.jetParticleSystems)
+                    {
+                        p.transform.parent.DOScale(Vector3.zero, 0.2f).OnComplete(() =>
+                        {
+                            p.transform.parent.GetComponent<MeshRenderer>().enabled = false;
+                            p.Stop();
+                        });
+                    }
+                }
             }).AddTo(this);
 
             __brain.onUpdate += () =>

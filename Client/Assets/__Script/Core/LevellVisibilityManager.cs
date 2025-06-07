@@ -40,6 +40,8 @@ namespace Game
                 }
             }
 
+            // qkrcksdud123!@#
+
             foreach (var c in __visibilityBlockerRenderers)
             {
                 if (!__tmepHitRenderers.Contains(c))

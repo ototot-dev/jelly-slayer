@@ -19,20 +19,29 @@ namespace Game
             __brain.BB.body.isFalling.Value = false;
             __brain.BB.body.isGliding.Value = false;
 
-            Observable.Timer(TimeSpan.FromMilliseconds(500)).Subscribe(_ =>
-            {            
+            Observable.NextFrame(FrameCountType.FixedUpdate).Subscribe(_ =>
+            {
                 if (__brain.BB.IsJumping)
                 {
+                    if (jumpHeight > 0f)
+                        __ecmMovement.velocity.y = GetVerticalImpulseOnJump(jumpHeight);
+
                     __jumpImpulseTimeStamp = Time.time;
-                    __ecmMovement.velocity.y = GetVerticalImpulseOnJump(jumpHeight);
                     __ecmMovement.PauseGroundConstraint();
                 }
             }).AddTo(this);
         }
 
-        public void StartGliding()
+        public void StartGliding(bool dampingVelocityY = false)
         {
-            __ecmMovement.velocity = __ecmMovement.velocity.AdjustY(0f);
+            if (!dampingVelocityY)
+                __ecmMovement.velocity = __ecmMovement.velocity.AdjustY(0f);
+            else
+            {
+                __glidingDampingSpeed = Mathf.Max(10f, Mathf.Abs(__ecmMovement.velocity.y));
+                __Logger.Log(gameObject, "__glidingDampingSpeed", __glidingDampingSpeed);
+            }
+
             __glidingTimeStamp = Time.time;
             __brain.AnimCtrler.mainAnimator.SetBool("IsGliding", true);
             __brain.BB.body.isJumping.Value = false;
@@ -57,6 +66,7 @@ namespace Game
         float __jumpTimeStamp;
         float __jumpImpulseTimeStamp;
         float __glidingTimeStamp;
+        float __glidingDampingSpeed;
         float __landingTimeStamp;
         RoboSoldierBrain __brain;
 
@@ -77,7 +87,7 @@ namespace Game
                 __ecmMovement.Move(Time.fixedDeltaTime);
 
                 if (__jumpImpulseTimeStamp > 0f && __ecmMovement.velocity.y < 0f)
-                    StartGliding();
+                    StartGliding(true);
             }
             else if (__brain.BB.IsFalling)
             {                
@@ -89,8 +99,11 @@ namespace Game
             }
             else if (__brain.BB.IsGliding)
             {
+                if (__ecmMovement.velocity.y < 0f)
+                    __ecmMovement.velocity = __ecmMovement.velocity.LerpSpeedY(0f, __glidingDampingSpeed, Time.fixedDeltaTime);
+
                 if (CheckRootMotionZero())
-                {   
+                {
                     if (!freezeMovement)
                     {
                         var canMove1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsGroggy && !__pawnBrain.PawnBB.IsDown;

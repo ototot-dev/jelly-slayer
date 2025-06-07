@@ -138,6 +138,7 @@ namespace Game
         public class Children
         {
             public Transform jellyMeshAttactPoint;
+            public ParticleSystem[] jetParticleSystems;
         }
 
         public Children children = new();
@@ -151,7 +152,6 @@ namespace Game
             public Transform  bodyMeshParent;
             public Renderer[] bodyMeshRenderers;
             public Renderer shieldMeshRenderer;
-            public ParticleSystem[] jetParticleSystems;
             public Transform blockingFxAttachPoint;
             public Transform specialKeyAttachPoint;
             public Transform jellyMeshAttactPointParent;

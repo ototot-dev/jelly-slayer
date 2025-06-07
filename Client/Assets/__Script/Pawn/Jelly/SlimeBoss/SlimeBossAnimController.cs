@@ -92,7 +92,7 @@ namespace Game
                     jellyTweenSelector.query.Apply();
 
                     //* 카메라 쉐이킹
-                    GameContext.Instance.cameraCtrler.Shake(0.2f, 0.4f);
+                    // GameContext.Instance.cameraCtrler.Shake(0.2f, 0.4f);
                 }
             }).AddTo(this);
 

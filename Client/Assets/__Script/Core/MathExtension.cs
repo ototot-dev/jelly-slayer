@@ -197,7 +197,7 @@ namespace Game
 
         public static Vector3 LerpRefSpeed(this ref Vector3 vec, Vector3 target, float speed, float deltaTime)
         {
-            var newVec = vec + (target - vec).normalized * speed * deltaTime;
+            var newVec = vec + deltaTime * speed * (target - vec).normalized;
 
             if (target.x > vec.x)
                 vec.x = Mathf.Min(newVec.x, target.x);

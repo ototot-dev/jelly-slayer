@@ -9,9 +9,6 @@ namespace Game
     [CustomEditor(typeof(PawnActionDataSelector))]
     public class PawnActionDataSelectorEditor : Editor
     {
-        int __selectIndex;
-        bool __actionSelectEnabled;
-        bool __movementEnabled;
         GUIStyle __currActionLabelStyle;
         GUIStyle __prevActionLabelStyle;
         List<Tuple<string,float>> __executedActionTable = new();
@@ -105,8 +102,8 @@ namespace Game
             GUILayout.Label("Toggle");
             GUILayout.BeginVertical();
             {
-                actionDataSelector.debugActionSelectDisabled = GUILayout.Toggle(actionDataSelector.debugActionSelectDisabled, " Action Disabled");
-                actionDataSelector.GetComponent<PawnMovement>().freezeMovement = GUILayout.Toggle(actionDataSelector.GetComponent<PawnMovement>().freezeMovement, " Movement Disabled");
+                actionDataSelector.debugActionSelectDisabled = GUILayout.Toggle(actionDataSelector.debugActionSelectDisabled, "Action Disabled");
+                actionDataSelector.GetComponent<PawnMovement>().freezeMovement = GUILayout.Toggle(actionDataSelector.GetComponent<PawnMovement>().freezeMovement, "Movement Disabled");
             }
             GUILayout.EndHorizontal();
         }

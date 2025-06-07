@@ -49,18 +49,27 @@ namespace Game
                 __vignette.intensity.value = vignetteIntensity;
                 __vignette.smoothness.value = vignetteSmoothness;
             }
+
+            __noise = virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+            __noise.enabled = false;
         }
 
-        public void Shake(float strength, float duration)
+        public void Shake(float amplitude, float frequency, float duration)
         {
-            __shakeStrength = strength;
-            __shakeDuration = duration;
-            __shakeTimeStamp = Time.time;
+            __noise.m_AmplitudeGain = amplitude;
+            __noise.m_FrequencyGain = frequency;
+            __noise.enabled = true;
+
+            __shakeDisposable?.Dispose();
+            __shakeDisposable = Observable.Timer(TimeSpan.FromSeconds(duration)).Subscribe(_ =>
+            {
+                __shakeDisposable = null;
+                __noise.enabled = false;
+            }).AddTo(this);
         }
 
-        float __shakeStrength;
-        float __shakeDuration;
-        float __shakeTimeStamp;
+        CinemachineBasicMultiChannelPerlin __noise;
+        IDisposable __shakeDisposable;
         IDisposable __zoomDisposable;
 
         public void InterpolateZoom(float targetZoom, float duration, float waitingTime = 0)

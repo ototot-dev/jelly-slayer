@@ -75,20 +75,23 @@ namespace Game
         IEnumerator SpawningCoroutine()
         {
             PawnEventManager.Instance.SendPawnSpawningEvent(this, PawnSpawnStates.SpawnStart);
-            Movement.gravity = Vector3.down;
-            Movement.StartJump(0f);
-
+            Movement.gravity =  Vector3.zero;
+            
             yield return new WaitForSeconds(1f);
 
-            AnimCtrler.ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Off;
             Movement.gravity = 20f * Vector3.down;
+            Movement.StartFalling();
+
+            yield return new WaitForSeconds(0.5f);
+            Movement.StartJump(0f);
+
+            yield return new WaitForSeconds(1.5f);
             Movement.StartFalling();
 
             yield return new WaitUntil(() => Movement.IsOnGround);
 
-            GameContext.Instance.cameraCtrler.Shake(0.2f, 0.5f);
-
-            yield return new WaitForSeconds(1f);
+            GameContext.Instance.cameraCtrler.Shake(0.2f, 1f, 1f);
+            yield return new WaitForSeconds(2f);
 
             BB.common.isSpawnFinished.Value = true;
             PawnEventManager.Instance.SendPawnSpawningEvent(this, PawnSpawnStates.SpawnFinished);
@@ -101,13 +104,9 @@ namespace Game
             base.StartInternal();
 
             //* Spawning 연출 시작
-            Observable.Timer(TimeSpan.FromSeconds(1f)).Subscribe(_ =>
-            {
-                BB.common.isSpawnFinished.Value = true;
-                // __spawningDisposable = Observable.FromCoroutine(SpawningCoroutine)
-                //     .DoOnCompleted(() => __spawningDisposable = null)
-                //     .Subscribe().AddTo(this);
-            }).AddTo(this);
+            __spawningDisposable = Observable.FromCoroutine(SpawningCoroutine)
+                .DoOnCompleted(() => __spawningDisposable = null)
+                .Subscribe().AddTo(this);
 
             //* 액션 패턴 등록
             ActionDataSelector.ReserveSequence(ActionPatterns.JumpAttackA, "JumpAttack").BeginCoolTime(BB.action.jumpAttackCoolTime);
