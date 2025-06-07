@@ -17,7 +17,13 @@ namespace Game
         None,
         NormalAttack,
     }
-    public class TutorialGameMode : BaseGameMode
+    public enum TutorialScene 
+    {
+        Tutorial_0,     // 시작 씬, 전화
+        Tutorial_1,     // 적 조우
+    }
+
+    public class TutorialGameMode : BaseGameMode, IPawnEventListener
     {
         public override GameModeTypes GetGameModeType() => GameModeTypes.Tutorial;
         public override DialogueDispatcher GetDialogueDispatcher() => __dialogueDispatcher;
@@ -25,12 +31,12 @@ namespace Game
         LoadingPageController __loadingPageCtrler;
         string __currSceneName;
 
-        private int _attackCount = 0;
+        public TutorialScene _startScene = TutorialScene.Tutorial_0;
 
-        private List<PawnBrainController> _pawnList = new();
-
-        public TutorialMode _mode = TutorialMode.None;
+        [Header("Tutorial")]
+        public TutorialMode _tutorialMode = TutorialMode.None;
         private bool _isInCombat = false;
+        private int _attackCount = 0;
 
         public override bool IsInCombat() => _isInCombat;
 
@@ -39,7 +45,7 @@ namespace Game
             if (__loadingPageCtrler != null) return false;
             return !__dialogueDispatcher.IsDialogueRunning() || 
                 GameContext.Instance.playerCtrler.interactionKeyCtrlers.AsValueEnumerable().Any(i => i.IsInteractableEnabled) ||
-                _mode != TutorialMode.None;
+                _tutorialMode != TutorialMode.None;
         }
 
         void Awake()
@@ -47,47 +53,21 @@ namespace Game
             __dialogueDispatcher = gameObject.AddComponent<TutorialDialogueDispatcher>();
         }
 
+        void Start() 
+        {
+            PawnEventManager.Instance.RegisterEventListener(this as IPawnEventListener);
+        }
+
         public override IObservable<Unit> EnterAsObservable()
         {
-            GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
+            //InitStartRoom();
 
-            __loadingPageCtrler = new LoadingPageController(new string[] { "Pawn/Player/Slayer-K", "Pawn/Player/DrontBot" }, new string[] { "Tutorial-0" });
-            __currSceneName = "Tutorial-0";
-
-            //* 로딩 시작
-            __loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
-            __loadingPageCtrler.onLoadingCompleted += () =>
-            {
-                var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint").transform;
-
-                //* 슬레이어 스폰
-                GameContext.Instance.playerCtrler.SpawnSlayerPawn(true);
-                GameContext.Instance.playerCtrler.possessedBrain.transform.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
-                GameContext.Instance.playerCtrler.possessedBrain.TryGetComponent<SlayerAnimController>(out var animCtrler);
-
-                //* 카메라 타겟 셋팅
-                GameContext.Instance.cameraCtrler.virtualCamera.LookAt = GameContext.Instance.playerCtrler.possessedBrain.coreColliderHelper.transform;
-                GameContext.Instance.cameraCtrler.virtualCamera.Follow = GameContext.Instance.playerCtrler.possessedBrain.coreColliderHelper.transform;
-
-                //* 카메라 이동 영역 셋팅
-                var confinerBoundingBox = TaggerSystem.FindGameObjectWithTag("ConfinerBoundingBox").GetComponent<BoxCollider>();
-                if (confinerBoundingBox != null)
-                    GameContext.Instance.cameraCtrler.RefreshConfinerVolume(confinerBoundingBox, Quaternion.Euler(45f, 45f, 0f), 10f);
-
-                //* 로딩 화면 종료
-                __loadingPageCtrler.HideAsObservable().Subscribe(__ =>
-                {
-                    __loadingPageCtrler.Unload();
-                    __loadingPageCtrler = null;
-
-                    new BubbleDialoqueController().Load(GameObject.Find("3d-bubble-dialogue").GetComponent<Template>()).Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
-                    __dialogueDispatcher.StartDialogue("Tutorial-0");
-                });
-            };
+            InitTurorial1Room();
+            //Observable.FromCoroutine(ChangeRoom_Coroutine);
 
             return Observable.NextFrame();
         }
-
+        
         public override IObservable<Unit> ExitAsObservable()
         {
             return Observable.NextFrame();
@@ -98,6 +78,110 @@ namespace Game
             return Observable.FromCoroutine(ChangeRoom_Coroutine);
         }
 
+        void InitPlayerCharacter(Transform spawnPoint)
+        {
+            if (GameContext.Instance.playerCtrler.possessedBrain == null)
+            {
+                //* 슬레이어 스폰
+                GameContext.Instance.playerCtrler.SpawnSlayerPawn(true);
+                GameContext.Instance.playerCtrler.possessedBrain.transform.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
+                GameContext.Instance.playerCtrler.possessedBrain.TryGetComponent<SlayerAnimController>(out var animCtrler);
+            }
+            else
+            {
+                (GameContext.Instance.playerCtrler.possessedBrain as IPawnMovable).Teleport(spawnPoint.position);
+
+                //* LegAnimator 다시 활성화
+                Observable.Timer(TimeSpan.FromSeconds(0.1f)).Subscribe(_ => GameContext.Instance.playerCtrler.possessedBrain.AnimCtrler.legAnimator.enabled = true);
+            }
+        }
+
+        void InitBubbleDialogue(string nodeName) 
+        {
+            if (__dialogueDispatcher != null)
+            {
+                __dialogueDispatcher.onRunLine = null;
+                __dialogueDispatcher.onDialoqueComplete = null;
+            }
+            var obj = GameObject.Find("3d-bubble-dialogue");
+
+            BubbleDialoqueController controller;
+            if (obj != null)
+                controller = new BubbleDialoqueController().Load(obj.GetComponent<Template>());
+            else
+                controller = new BubbleDialoqueController().Load();
+
+            controller.Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
+            __dialogueDispatcher.StartDialogue(nodeName);
+        }
+
+        void InitLoadingPageCtrler(string nodeName, Action action = null) 
+        {
+            //* 로딩 화면 종료
+            __loadingPageCtrler.HideAsObservable().Subscribe(__ =>
+            {
+                __loadingPageCtrler.Unload();
+                __loadingPageCtrler = null;
+
+                InitBubbleDialogue(nodeName);
+
+                action?.Invoke();
+            });
+        }
+
+        void InitCamera()
+        {
+            //* 카메라 타겟 셋팅
+            GameContext.Instance.cameraCtrler.virtualCamera.LookAt = GameContext.Instance.playerCtrler.possessedBrain.coreColliderHelper.transform;
+            GameContext.Instance.cameraCtrler.virtualCamera.Follow = GameContext.Instance.playerCtrler.possessedBrain.coreColliderHelper.transform;
+
+            //* 카메라 이동 영역 셋팅
+            var confinerBoundingBox = TaggerSystem.FindGameObjectWithTag("ConfinerBoundingBox").GetComponent<BoxCollider>();
+            if (confinerBoundingBox != null)
+                GameContext.Instance.cameraCtrler.RefreshConfinerVolume(confinerBoundingBox, Quaternion.Euler(45f, 45f, 0f), 10f);
+        }
+
+        void InitStartRoom() 
+        { 
+            GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
+
+            __currSceneName = "Tutorial-0";
+
+            //* 로딩 시작
+            __loadingPageCtrler = new LoadingPageController(new string[] { "Pawn/Player/Slayer-K", "Pawn/Player/DrontBot" }, new string[] { "Tutorial-0" });
+            __loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
+            __loadingPageCtrler.onLoadingCompleted += () =>
+            {
+                //* 슬레이어 초기 위치 
+                var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint").transform;
+                InitPlayerCharacter(spawnPoint);
+
+                InitCamera();
+
+                InitLoadingPageCtrler("Tutorial-0", () => { });
+            };
+        }
+
+        void InitTurorial1Room() 
+        {
+            GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
+
+            __currSceneName = "Tutorial-1";
+
+            //* 로딩 시작
+            __loadingPageCtrler = new LoadingPageController(new string[] { }, new string[] { "Tutorial-1" });
+            __loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
+            __loadingPageCtrler.onLoadingCompleted += () =>
+            {
+                //* 슬레이어 초기 위치 
+                var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint").transform;
+                InitPlayerCharacter(spawnPoint);
+
+                InitCamera();
+
+                InitLoadingPageCtrler("Tutorial-1", () => { });
+            };
+        }
         public IEnumerator ChangeRoom_Coroutine()
         {
             __dialogueDispatcher.StopDialogue();
@@ -110,39 +194,7 @@ namespace Game
             //* 현재 Scene 제거
             yield return SceneManager.UnloadSceneAsync(__currSceneName).AsObservable().ToYieldInstruction();
 
-            _pawnList.Clear();
-
-            //* 로딩 시작
-            __loadingPageCtrler = new LoadingPageController(new string[] { }, new string[] { "Tutorial-1" });
-            __loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
-
-            __loadingPageCtrler.onLoadingCompleted += () =>
-            {
-                //* 슬레이어 초기 위치 
-                var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint").transform;
-                (GameContext.Instance.playerCtrler.possessedBrain as IPawnMovable).Teleport(spawnPoint.position);
-
-                //* LegAnimator 다시 활성화
-                Observable.Timer(TimeSpan.FromSeconds(0.1f)).Subscribe(_ => GameContext.Instance.playerCtrler.possessedBrain.AnimCtrler.legAnimator.enabled = true);
-
-                //* 카메라 이동 영역 셋팅
-                var confinerBoundingBox = TaggerSystem.FindGameObjectWithTag("ConfinerBoundingBox").GetComponent<BoxCollider>();
-                if (confinerBoundingBox != null)
-                    GameContext.Instance.cameraCtrler.RefreshConfinerVolume(confinerBoundingBox, Quaternion.Euler(45f, 45f, 0f), 10f);
-
-                //* 로딩 화면 종료
-                __loadingPageCtrler.HideAsObservable().Subscribe(__ =>
-                {
-                    __loadingPageCtrler.Unload();
-                    __loadingPageCtrler = null;
-
-                    __dialogueDispatcher.onRunLine = null;
-                    __dialogueDispatcher.onDialoqueComplete = null;
-
-                    new BubbleDialoqueController().Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
-                    __dialogueDispatcher.StartDialogue("Tutorial-1");
-                });
-            };
+            InitTurorial1Room();
 
             yield return new WaitUntil(() => __loadingPageCtrler == null);
 
@@ -150,46 +202,6 @@ namespace Game
             yield return new WaitForSeconds(1f);
         }
 
-        public void PawnSpawned(GameObject pawnObj) 
-        {
-            var brain = pawnObj.GetComponent<PawnBrainController>();
-            if (brain == null)
-                return;
-
-
-            if (brain.PawnBB.common.pawnId == PawnId.Alien)
-            {
-                brain.PawnHP.onDamaged += (damageContext) =>
-                {
-                    switch (_mode)
-                    {
-                        case TutorialMode.NormalAttack:
-                            _attackCount++;
-                            if (_attackCount >= 3)
-                            {
-                                __dialogueDispatcher._isWaitCheck = true;
-                                _mode = TutorialMode.None;
-                            }
-                            break;
-                    }
-                };
-                _pawnList.Add(brain);
-            }
-        }
-
-        public void SetCombatMode() 
-        {
-            _isInCombat = true;
-        }
-        public void ResetCombatMode()
-        {
-            _isInCombat = false;
-        }
-
-        public void StartTutorialAttack() 
-        {
-            _mode = TutorialMode.NormalAttack;
-        }
         void Update()
         {
             //* 다이얼로그 진행 중에 AnyKeyDown 처리
@@ -202,5 +214,53 @@ namespace Game
                 }
             }
         }
+        #region TUTORIAL
+        public void SetCombatMode()
+        {
+            _isInCombat = true;
+        }
+        public void ResetCombatMode()
+        {
+            _isInCombat = false;
+        }
+        public void StartTutorialAttack()
+        {
+            _tutorialMode = TutorialMode.NormalAttack;
+        }
+
+        public void OnReceivePawnActionStart(PawnBrainController sender, string actionName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnReceivePawnStatusChanged(PawnBrainController sender, PawnStatus status, float strength, float duration)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnReceivePawnDamageContext(PawnBrainController sender, PawnHeartPointDispatcher.DamageContext damageContext)
+        {
+            if (damageContext.senderBrain == GameContext.Instance.playerCtrler.possessedBrain) 
+            {
+                switch (_tutorialMode)
+                {
+                    case TutorialMode.NormalAttack:
+                        _attackCount++;
+                        if (_attackCount >= 3)
+                        {
+                            __dialogueDispatcher._isWaitCheck = true;
+                            _tutorialMode = TutorialMode.None;
+                        }
+                        break;
+                }
+            }
+            throw new NotImplementedException();
+        }
+
+        public void OnReceivePawnSpawningStateChanged(PawnBrainController sender, PawnSpawnStates state)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
     }
 }
