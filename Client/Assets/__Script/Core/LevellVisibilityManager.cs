@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Analytics;
 using ZLinq;
 
 namespace Game
@@ -24,6 +25,9 @@ namespace Game
 
         void Update()
         {
+            if (__visibilityChecker.Count == 0)
+                return;
+
             foreach (var c in __visibilityChecker)
             {
                 var origin = c.transform.position + c.center;
@@ -34,13 +38,11 @@ namespace Game
                 {
                     for (int i = 0; i < hitCount; i++)
                     {
-                        if (__tempHitsNonAlloc[i].collider.CompareTag("VisibilityBlocker") &&__tempHitsNonAlloc[i].collider.TryGetComponent<MeshRenderer>(out var renderer))
+                        if (__tempHitsNonAlloc[i].collider.CompareTag("VisibilityBlocker") && __tempHitsNonAlloc[i].collider.TryGetComponent<MeshRenderer>(out var renderer))
                             __tmepHitRenderers.Add(renderer);
                     }
                 }
             }
-
-            // qkrcksdud123!@#
 
             foreach (var c in __visibilityBlockerRenderers)
             {

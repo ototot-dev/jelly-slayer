@@ -1122,6 +1122,7 @@ MonoBehaviour:
     onEvadeClip: {fileID: 8300000, guid: 85b52aa0c9bf8c24cb323e74251fdad1, type: 3}
   children:
     healingPotion: {fileID: 433290913834801051}
+    visibilityChecker: {fileID: 1411842691130928027}
   dialogue:
     sleepAnimClip: {fileID: 7400000, guid: 6237d8c98ca7c43b49d1a9afe7818f09, type: 2}
     getUpAnimClip: {fileID: 7400000, guid: a9623bef5d4bd48c5b184356d72bf12b, type: 2}
