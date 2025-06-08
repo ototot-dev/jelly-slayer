@@ -76,7 +76,7 @@ namespace Game
         IEnumerator SpawningCoroutine()
         {
             PawnEventManager.Instance.SendPawnSpawningEvent(this, PawnSpawnStates.SpawnStart);
-            Movement.gravity =  Vector3.zero;
+            Movement.gravity = Vector3.zero;
             
             yield return new WaitForSeconds(1f);
 
@@ -89,13 +89,13 @@ namespace Game
                 p.transform.parent.DOScale(2f * Vector3.one, 0.5f).OnComplete(() => p.Play());
             }
 
-            // yield return new WaitForSeconds(0.5f);
-            // Movement.StartJump(0f);
-
-            // yield return new WaitForSeconds(1.5f);
-            // Movement.StartFalling();
-
             yield return new WaitUntil(() => Movement.IsOnGround);
+
+            foreach (var p in BB.children.jetParticleSystems)
+            {
+                p.Stop();
+                p.transform.parent.DOScale(Vector3.zero, 0.5f).OnComplete(() => p.transform.parent.GetComponent<MeshRenderer>().enabled = false);
+            }
 
             GameContext.Instance.cameraCtrler.Shake(0.2f, 2f, 0.5f);
             yield return new WaitForSeconds(2f);

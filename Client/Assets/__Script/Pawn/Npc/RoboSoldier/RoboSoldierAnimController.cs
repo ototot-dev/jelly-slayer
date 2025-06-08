@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using DG.Tweening;
 using FIMSpace.BonesStimulation;
+using NodeCanvas.Framework.Internal;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
@@ -81,6 +82,12 @@ namespace Game
 
         void Start()
         {
+            __brain.BB.common.isSpawnFinished.Subscribe(v =>
+            {
+                if (v)
+                    __brain.AnimCtrler.mainAnimator.SetBool("IsSpawnFinished", true);
+            }).AddTo(this);
+
             //* Ragdoll이 사용하는 PhysicsBody 레이어는 
             foreach (var d in ragdollAnimator.Handler.TargetParentForRagdollDummy.gameObject.Descendants())
             {
@@ -89,7 +96,7 @@ namespace Game
                     rigidBody.excludeLayers |= LayerMask.GetMask("HitBoxBlocking");
                     if (rigidBody.TryGetComponent<Collider>(out var collider))
                         collider.excludeLayers |= LayerMask.GetMask("HitBoxBlocking");
-                        
+
                     __Logger.LogR1(gameObject, "Add 'HitBoxBlocking' to excludeLayers", "gameObject", rigidBody);
                 }
             }
