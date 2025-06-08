@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using DG.Tweening;
 using Game.NodeCanvasExtension;
 using UniRx;
 using UniRx.Triggers;
@@ -82,15 +83,21 @@ namespace Game
             Movement.gravity = 20f * Vector3.down;
             Movement.StartFalling();
 
-            yield return new WaitForSeconds(0.5f);
-            Movement.StartJump(0f);
+            foreach (var p in BB.children.jetParticleSystems)
+            {
+                p.transform.parent.GetComponent<MeshRenderer>().enabled = true;
+                p.transform.parent.DOScale(2f * Vector3.one, 0.5f).OnComplete(() => p.Play());
+            }
 
-            yield return new WaitForSeconds(1.5f);
-            Movement.StartFalling();
+            // yield return new WaitForSeconds(0.5f);
+            // Movement.StartJump(0f);
+
+            // yield return new WaitForSeconds(1.5f);
+            // Movement.StartFalling();
 
             yield return new WaitUntil(() => Movement.IsOnGround);
 
-            GameContext.Instance.cameraCtrler.Shake(0.2f, 1f, 1f);
+            GameContext.Instance.cameraCtrler.Shake(0.2f, 2f, 0.5f);
             yield return new WaitForSeconds(2f);
 
             BB.common.isSpawnFinished.Value = true;
@@ -313,13 +320,13 @@ namespace Game
             }
             else if (damageContext.actionResult == ActionResults.Blocked)
             {
-                if (ActionDataSelector.CurrSequence() == null && ActionDataSelector.EvaluateSequence(ActionPatterns.CounterA))
-                {
-                    var counterPick = UnityEngine.Random.Range(0, 2) > 0 ? ActionPatterns.CounterA : ActionPatterns.CounterB;
-                    ActionDataSelector.EnqueueSequence(UnityEngine.Random.Range(0, 2) > 0 ? ActionPatterns.CounterA : ActionPatterns.CounterB);
-                    ActionDataSelector.BeginCoolTime(ActionPatterns.CounterA, BB.action.counterCoolTime);
-                    ActionDataSelector.BeginCoolTime(ActionPatterns.CounterA, BB.action.counterCoolTime);
-                }
+                // if (ActionDataSelector.CurrSequence() == null && ActionDataSelector.EvaluateSequence(ActionPatterns.CounterA))
+                // {
+                //     var counterPick = UnityEngine.Random.Range(0, 2) > 0 ? ActionPatterns.CounterA : ActionPatterns.CounterB;
+                //     ActionDataSelector.EnqueueSequence(UnityEngine.Random.Range(0, 2) > 0 ? ActionPatterns.CounterA : ActionPatterns.CounterB);
+                //     ActionDataSelector.BeginCoolTime(ActionPatterns.CounterA, BB.action.counterCoolTime);
+                //     ActionDataSelector.BeginCoolTime(ActionPatterns.CounterA, BB.action.counterCoolTime);
+                // }
             }
         }
 

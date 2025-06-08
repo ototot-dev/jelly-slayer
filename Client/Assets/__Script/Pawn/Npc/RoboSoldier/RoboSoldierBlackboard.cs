@@ -137,6 +137,10 @@ namespace Game
         [Serializable]
         public class Children
         {
+            public Transform bodyMeshParent;
+            public Renderer[] bodyMeshRenderers;
+            public Renderer shieldMeshRenderer;
+            public Transform blockingFxAttachPoint;
             public Transform jellyMeshAttactPoint;
             public ParticleSystem[] jetParticleSystems;
         }
@@ -149,10 +153,6 @@ namespace Game
         {
             public Transform targetLookAt;
             public Transform spine02;
-            public Transform  bodyMeshParent;
-            public Renderer[] bodyMeshRenderers;
-            public Renderer shieldMeshRenderer;
-            public Transform blockingFxAttachPoint;
             public Transform specialKeyAttachPoint;
             public Transform jellyMeshAttactPointParent;
             public Transform laserAimPoint;
@@ -167,11 +167,11 @@ namespace Game
             base.AwakeInternal();
 
             var tempRenderers = new List<Renderer>();
-            foreach (var d in attachment.bodyMeshParent.gameObject.DescendantsAndSelf())
+            foreach (var d in children.bodyMeshParent.gameObject.DescendantsAndSelf())
                 if (d.TryGetComponent<SkinnedMeshRenderer>(out var renderer) && renderer.enabled) tempRenderers.Add(renderer);
 
             //* HitColor 하이라이트 bodyMeshRenderers 셋팅
-            attachment.bodyMeshRenderers = tempRenderers.ToArray();
+            children.bodyMeshRenderers = tempRenderers.ToArray();
         }
 
 

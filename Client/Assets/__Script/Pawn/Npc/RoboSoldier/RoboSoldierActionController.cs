@@ -75,7 +75,7 @@ namespace Game
             }
             else if (damageContext.actionResult == ActionResults.Missed)
             {
-                Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onMissedFx, __brain.BB.attachment.blockingFxAttachPoint.position, Quaternion.identity, 0.8f * Vector3.one, 1f)).AddTo(this);
+                Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onMissedFx, __brain.BB.children.blockingFxAttachPoint.position, Quaternion.identity, 0.8f * Vector3.one, 1f)).AddTo(this);
                 SoundManager.Instance.PlayWithClip(__brain.BB.audios.onMissedAudioClip);
             }
             else if (damageContext.actionResult == ActionResults.Blocked)
@@ -84,14 +84,14 @@ namespace Game
                 __brain.AnimCtrler.mainAnimator.SetTrigger("OnGuard");
 
                 Observable.Timer(TimeSpan.FromSeconds(0.5f)).Subscribe(_ => __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", false)).AddTo(this);
-                Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onBlockedFx, __brain.BB.attachment.blockingFxAttachPoint.position, Quaternion.identity, 0.8f * Vector3.one, 1f)).AddTo(this);
+                Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onBlockedFx, __brain.BB.children.blockingFxAttachPoint.position, Quaternion.identity, 0.8f * Vector3.one, 1f)).AddTo(this);
                 SoundManager.Instance.PlayWithClip(__brain.BB.audios.onBlockedAudioClip);
 
                 ShowHitColor(__brain.shieldHitColliderHelper);
             }
             else if (damageContext.actionResult == ActionResults.GuardBreak)
             {
-                Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onGuardBreakFx, __brain.BB.attachment.blockingFxAttachPoint.position, Quaternion.identity, Vector3.one, 1f)).AddTo(this);
+                Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onGuardBreakFx, __brain.BB.children.blockingFxAttachPoint.position, Quaternion.identity, Vector3.one, 1f)).AddTo(this);
                 SoundManager.Instance.PlayWithClip(__brain.BB.audios.onGuardBreakAudioClip);
             }
 
@@ -124,26 +124,26 @@ namespace Game
         {
             if (hitColliderHelper == __brain.bodyHitColliderHelper)
             {
-                foreach (var r in __brain.BB.attachment.bodyMeshRenderers)
+                foreach (var r in __brain.BB.children.bodyMeshRenderers)
                     r.materials = new Material[] { r.material, new(__brain.BB.graphics.hitColor) };
 
                 __hitColorDisposable?.Dispose();
                 __hitColorDisposable = Observable.Timer(TimeSpan.FromMilliseconds(100)).Subscribe(_ =>
                 {
                     __hitColorDisposable = null;
-                    foreach (var r in __brain.BB.attachment.bodyMeshRenderers)
+                    foreach (var r in __brain.BB.children.bodyMeshRenderers)
                         r.materials = new Material[] { r.materials[0] };
                 }).AddTo(this);
             }
             else if (hitColliderHelper == __brain.shieldHitColliderHelper)
             {
-                __brain.BB.attachment.shieldMeshRenderer.materials = new Material[] { __brain.BB.attachment.shieldMeshRenderer.material, new(__brain.BB.graphics.hitColor) };
+                __brain.BB.children.shieldMeshRenderer.materials = new Material[] { __brain.BB.children.shieldMeshRenderer.material, new(__brain.BB.graphics.hitColor) };
 
                 __hitColorDisposable?.Dispose();
                 __hitColorDisposable = Observable.Timer(TimeSpan.FromMilliseconds(100)).Subscribe(_ =>
                 {
                     __hitColorDisposable = null;
-                    __brain.BB.attachment.shieldMeshRenderer.materials = new Material[] { __brain.BB.attachment.shieldMeshRenderer.material };
+                    __brain.BB.children.shieldMeshRenderer.materials = new Material[] { __brain.BB.children.shieldMeshRenderer.material };
                 }).AddTo(this);
             }
             else

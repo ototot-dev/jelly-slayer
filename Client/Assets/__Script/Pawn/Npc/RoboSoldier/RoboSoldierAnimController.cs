@@ -123,8 +123,11 @@ namespace Game
                 {
                     foreach (var p in __brain.BB.children.jetParticleSystems)
                     {
-                        p.transform.parent.GetComponent<MeshRenderer>().enabled = true;
-                        p.transform.parent.DOScale(2f * Vector3.one, 0.5f).OnComplete(() => p.Play());
+                        if (!p.transform.parent.GetComponent<MeshRenderer>().enabled)
+                        {
+                            p.transform.parent.GetComponent<MeshRenderer>().enabled = true;
+                            p.transform.parent.DOScale(2f * Vector3.one, 0.5f).OnComplete(() => p.Play());
+                        }
                     }
                 }
             }).AddTo(this);
