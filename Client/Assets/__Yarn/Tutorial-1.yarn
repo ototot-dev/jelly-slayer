@@ -16,9 +16,9 @@ tags:
 
 <<wait 2>>
 
-<<setCameraTarget AlienSpawnPoint>>
+<<setCameraTarget EnemySpawnPoint>>
 // 조금 이동했는데 전방에 적 출현
-<<spawnPawn Alien AlienSpawnPoint>>
+<<spawnPawn RoboSoldier EnemySpawnPoint>>
 
 <<wait 2>>
 <<setCameraSlayer>>
