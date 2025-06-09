@@ -16,7 +16,7 @@ tags:
 
 <<wait 2>>
 
-<<setCameraTarget EnemySpawnPoint>>
+<<setCameraTarget CameraPoint>>
 // 조금 이동했는데 전방에 적 출현
 <<spawnPawn RoboSoldier EnemySpawnPoint>>
 
