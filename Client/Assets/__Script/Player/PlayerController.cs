@@ -148,10 +148,7 @@ namespace Game
             if (possessedBrain == null)
                 return;
 
-            if (GameContext.Instance.launcher.currGameMode.IsInCombat())
-                possessedBrain.Movement.freezeRotation = possessedBrain.BB.TargetPawn != null;
-            else
-                possessedBrain.Movement.freezeRotation = false;
+            possessedBrain.Movement.freezeRotation = GameContext.Instance.launcher.currGameMode.IsInCombat();
 
             if (inputMoveVec.Value.sqrMagnitude > 0)
             {
@@ -463,7 +460,6 @@ namespace Game
                 return false;
             }
         }
-
 
         IDisposable __punchChargingDisposable;
         float __punchPresssedTimeStamp = -1f;
