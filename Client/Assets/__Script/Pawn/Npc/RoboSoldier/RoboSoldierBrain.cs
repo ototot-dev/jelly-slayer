@@ -84,6 +84,10 @@ namespace Game
 
             var currVelocity = Vector3.zero;
             var downVec = new Vector3(-1f, -1f, 0f).normalized;
+            var oldCollisionLayers = Movement.GetCharacterMovement().collisionLayers;
+
+            //* 강하 중에 벽에 걸리지 않도록 충돌 레이어를 임시로 변경함
+            Movement.GetCharacterMovement().collisionLayers = LayerMask.GetMask("Terrain");
             Observable.EveryFixedUpdate().TakeWhile(_ => !Movement.IsOnGround).Subscribe(_ =>
             {
                 currVelocity += Time.fixedDeltaTime * 100f * downVec;
@@ -101,6 +105,7 @@ namespace Game
             yield return new WaitForSeconds(2f);
             
             Movement.GetCharacterMovement().velocity = Vector3.zero;
+            Movement.GetCharacterMovement().collisionLayers = oldCollisionLayers;
 
             BB.common.isSpawnFinished.Value = true;
             PawnEventManager.Instance.SendPawnSpawningEvent(this, PawnSpawnStates.SpawnFinished);
