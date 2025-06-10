@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
+using System.Threading;
 using DG.Tweening;
-using Game.NodeCanvasExtension;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
@@ -53,6 +53,8 @@ namespace Game
             Movement = GetComponent<RoboSoldierMovement>();
             AnimCtrler = GetComponent<RoboSoldierAnimController>();
             ActionCtrler = GetComponent<RoboSoldierActionController>();
+
+            Movement.Teleport(GetWorldPosition() + 8f * new Vector3(1f, 1f, 0f).normalized);
         }
 
         public enum ActionPatterns : int
@@ -76,28 +78,28 @@ namespace Game
         IEnumerator SpawningCoroutine()
         {
             PawnEventManager.Instance.SendPawnSpawningEvent(this, PawnSpawnStates.SpawnStart);
-            Movement.gravity = Vector3.zero;
-            
-            yield return new WaitForSeconds(1f);
-
-            Movement.gravity = 20f * Vector3.down;
-            Movement.StartFalling();
 
             foreach (var p in BB.children.jetParticleSystems)
+                p.Play();
+
+            AnimCtrler.mainAnimator.SetBool("IsFalling", true);
+
+            var currVelocity = Vector3.zero;
+            var downVec = new Vector3(-1f, -1f, 0f).normalized;
+            Observable.EveryFixedUpdate().TakeWhile(_ => !Movement.IsOnGround).Subscribe(_ =>
             {
-                p.transform.parent.GetComponent<MeshRenderer>().enabled = true;
-                p.transform.parent.DOScale(2f * Vector3.one, 0.5f).OnComplete(() => p.Play());
-            }
+                currVelocity += Time.fixedDeltaTime * 100f * downVec;
+                Movement.GetCharacterMovement().SimpleMove(currVelocity, 999f, 999f, 999f, 1f, 1f, Vector3.zero, false, Time.fixedDeltaTime);
+            }).AddTo(this);
 
             yield return new WaitUntil(() => Movement.IsOnGround);
 
             foreach (var p in BB.children.jetParticleSystems)
-            {
                 p.Stop();
-                p.transform.parent.DOScale(Vector3.zero, 0.5f).OnComplete(() => p.transform.parent.GetComponent<MeshRenderer>().enabled = false);
-            }
 
-            GameContext.Instance.cameraCtrler.Shake(0.2f, 2f, 0.5f);
+            AnimCtrler.mainAnimator.SetBool("IsFalling", false);
+            GameContext.Instance.cameraCtrler.Shake(0.5f, 2f, 0.5f);
+            
             yield return new WaitForSeconds(2f);
 
             BB.common.isSpawnFinished.Value = true;

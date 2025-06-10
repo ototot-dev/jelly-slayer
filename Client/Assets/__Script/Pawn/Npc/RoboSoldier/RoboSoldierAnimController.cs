@@ -126,7 +126,7 @@ namespace Game
             __brain.BB.body.isJumping.Subscribe(v =>
             {
                 //* 발바닥에서 발사하는 Frame 이펙트 On
-                if (v)
+                if (v && __brain.BB.IsSpawnFinished)
                 {
                     foreach (var p in __brain.BB.children.jetParticleSystems)
                     {
@@ -142,7 +142,7 @@ namespace Game
             __brain.BB.body.isGliding.Subscribe(v =>
             {
                 //* 발바닥에서 발사하는 Frame 이펙트 Off
-                if (!v)
+                if (!v && __brain.BB.IsSpawnFinished)
                 {
                     foreach (var p in __brain.BB.children.jetParticleSystems)
                     {
@@ -157,6 +157,9 @@ namespace Game
 
             __brain.onUpdate += () =>
             {
+                if (!__brain.BB.IsSpawnFinished)
+                    return;
+
                 mainAnimator.SetLayerWeight((int)LayerIndices.Action, __brain.ActionCtrler.GetAdvancedActionLayerWeight(mainAnimator.GetLayerWeight((int)LayerIndices.Action), actionLayerBlendInSpeed, actionLayerBlendOutSpeed, Time.deltaTime));
                 mainAnimator.SetLayerWeight((int)LayerIndices.Addictive, 1f);
                 mainAnimator.SetBool("IsMoving", __brain.Movement.CurrVelocity.sqrMagnitude > 0 && !__brain.ActionCtrler.CheckKnockBackRunning());

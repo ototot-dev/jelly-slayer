@@ -45,6 +45,16 @@ namespace Game
 
         public Body body = new();
 
+        // [Serializable]
+        // public class Spawning
+        // {
+        //     public float dropMaxSpeed = 100f;
+        //     public float dropDistance = 10f;
+        //     public float dropAccel = 10f;
+        // }
+
+        // public Spawning spawning = new();
+
         [Serializable]
         public class Action
         {
