@@ -9,6 +9,7 @@ public static class Tags
         "ConfinerBoundingBox",
         "AlienSpawnPoint",
         "EnemySpawnPoint",
+        "CameraPoint",
         "Slayer",
         "Door",
         "Phone",
@@ -23,6 +24,7 @@ public static class Tags
             "ConfinerBoundingBox",
             "AlienSpawnPoint",
             "EnemySpawnPoint",
+            "CameraPoint",
         };
         public const string K = "K";
         public const string DroneBotSpawnPoint = "DroneBotSpawnPoint";
@@ -30,6 +32,7 @@ public static class Tags
         public const string ConfinerBoundingBox = "ConfinerBoundingBox";
         public const string AlienSpawnPoint = "AlienSpawnPoint";
         public const string EnemySpawnPoint = "EnemySpawnPoint";
+        public const string CameraPoint = "CameraPoint";
     }
     public static class Pawn
     {

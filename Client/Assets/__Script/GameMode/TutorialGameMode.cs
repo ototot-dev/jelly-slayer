@@ -230,12 +230,14 @@ namespace Game
 
         public void OnReceivePawnActionStart(PawnBrainController sender, string actionName)
         {
-            throw new NotImplementedException();
+            return;
+            //throw new NotImplementedException();
         }
 
         public void OnReceivePawnStatusChanged(PawnBrainController sender, PawnStatus status, float strength, float duration)
         {
-            throw new NotImplementedException();
+            return;
+            //throw new NotImplementedException();
         }
 
         public void OnReceivePawnDamageContext(PawnBrainController sender, PawnHeartPointDispatcher.DamageContext damageContext)
@@ -254,12 +256,14 @@ namespace Game
                         break;
                 }
             }
-            throw new NotImplementedException();
+            return;
+            //throw new NotImplementedException();
         }
 
         public void OnReceivePawnSpawningStateChanged(PawnBrainController sender, PawnSpawnStates state)
         {
-            throw new NotImplementedException();
+            return;
+            //throw new NotImplementedException();
         }
         #endregion
     }
