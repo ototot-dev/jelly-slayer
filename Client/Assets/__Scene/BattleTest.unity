@@ -26827,43 +26827,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 533188996}
   m_SourcePrefab: {fileID: 100100000, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
---- !u!84 &1176073274
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 640
-  m_Height: 360
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 94
-  m_ColorFormat: 4
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 1
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 0
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!4 &1182746130 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7210471230131241780, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
@@ -34924,11 +34887,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 791442315315432696, guid: efc1683b84cd04e1b82f3ffd3068ba41, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 791442315315432696, guid: efc1683b84cd04e1b82f3ffd3068ba41, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 8
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 791442315315432696, guid: efc1683b84cd04e1b82f3ffd3068ba41, type: 3}
       propertyPath: m_LocalPosition.z
@@ -36000,15 +35963,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8506063769050789407, guid: efc1683b84cd04e1b82f3ffd3068ba41, type: 3}
       propertyPath: HelperOffset.x
-      value: -0.30127287
+      value: -0.301273
       objectReference: {fileID: 0}
     - target: {fileID: 8506063769050789407, guid: efc1683b84cd04e1b82f3ffd3068ba41, type: 3}
       propertyPath: HelperOffset.y
-      value: 0.39138004
+      value: 0.39137998
       objectReference: {fileID: 0}
     - target: {fileID: 8506063769050789407, guid: efc1683b84cd04e1b82f3ffd3068ba41, type: 3}
       propertyPath: HelperOffset.z
-      value: 0.102980286
+      value: 0.10298028
       objectReference: {fileID: 0}
     - target: {fileID: 8861700421523015734, guid: efc1683b84cd04e1b82f3ffd3068ba41, type: 3}
       propertyPath: m_Name
@@ -45882,6 +45845,43 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e888828102106134e9d822fc9cda990f, type: 3}
+--- !u!84 &2068496990
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 640
+  m_Height: 360
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 94
+  m_ColorFormat: 4
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 1
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 0
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!4 &2070095746 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7210471230131241780, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
@@ -47507,7 +47507,7 @@ PrefabInstance:
     - target: {fileID: 5839498371252988597, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 1176073274}
+      objectReference: {fileID: 2068496990}
     - target: {fileID: 6719027917663992577, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
       propertyPath: m_Name
       value: CameraSystem

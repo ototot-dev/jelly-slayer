@@ -53,8 +53,6 @@ namespace Game
             Movement = GetComponent<RoboSoldierMovement>();
             AnimCtrler = GetComponent<RoboSoldierAnimController>();
             ActionCtrler = GetComponent<RoboSoldierActionController>();
-
-            Movement.Teleport(GetWorldPosition() + 8f * new Vector3(1f, 1f, 0f).normalized);
         }
 
         public enum ActionPatterns : int
@@ -101,6 +99,8 @@ namespace Game
             GameContext.Instance.cameraCtrler.Shake(0.5f, 2f, 0.5f);
             
             yield return new WaitForSeconds(2f);
+            
+            Movement.GetCharacterMovement().velocity = Vector3.zero;
 
             BB.common.isSpawnFinished.Value = true;
             PawnEventManager.Instance.SendPawnSpawningEvent(this, PawnSpawnStates.SpawnFinished);
@@ -111,6 +111,8 @@ namespace Game
         protected override void StartInternal()
         {
             base.StartInternal();
+
+            Movement.Teleport(GetWorldPosition() + 10f * new Vector3(1f, 1f, 0f).normalized, false);
 
             //* Spawning 연출 시작
             __spawningDisposable = Observable.FromCoroutine(SpawningCoroutine)

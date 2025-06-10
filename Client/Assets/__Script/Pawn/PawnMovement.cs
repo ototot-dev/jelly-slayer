@@ -104,7 +104,7 @@ namespace Game
 
         public void Teleport(Vector3 destination, bool stickToGround = true)
         {
-            if (stickToGround) __ecmMovement.SetPosition(TerrainManager.GetTerrainPoint(destination));
+            __ecmMovement.SetPosition(stickToGround ? TerrainManager.GetTerrainPoint(destination) : destination);
             __ecmMovement.velocity = Vector3.zero;
             __ecmMovement.ClearAccumulatedForces();
         }
