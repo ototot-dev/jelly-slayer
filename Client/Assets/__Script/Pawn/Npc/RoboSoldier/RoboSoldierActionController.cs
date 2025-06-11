@@ -33,7 +33,7 @@ namespace Game
                     {
                         Observable.Interval(TimeSpan.FromSeconds(0.1f)).Take(3).Subscribe(_ =>
                         {
-                            EffectManager.Instance.Show(__brain.BB.graphics.onBleedingFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward), 1.5f * Vector3.one)
+                            EffectManager.Instance.Show(__brain.BB.resource.onBleedingFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward), 1.5f * Vector3.one)
                                 .transform.SetParent(__brain.bodyHitColliderHelper.transform, true);
                         }).AddTo(this);
                     }
@@ -50,8 +50,8 @@ namespace Game
                         // SoundManager.Instance.PlayWithClip(__brain.BB.audios.onHitFleshClip);
                     }
 
-                    SoundManager.Instance.PlayWithClip(__brain.BB.audios.onHitAudioClip);
-                    SoundManager.Instance.PlayWithClip(__brain.BB.audios.onHitAudioClip2);
+                    SoundManager.Instance.PlayWithClip(__brain.BB.resource.onHitAudioClip);
+                    SoundManager.Instance.PlayWithClip(__brain.BB.resource.onHitAudioClip2);
                 }
                 // else if (damageContext.senderActionData.actionName.StartsWith("Kick"))
                 // {
@@ -66,17 +66,17 @@ namespace Game
                 // }
                 else
                 {
-                    EffectManager.Instance.Show(__brain.BB.graphics.onHitFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()) * Quaternion.Euler(90f, 0f, 0f), Vector3.one, 1f);
-                    SoundManager.Instance.PlayWithClip(__brain.BB.audios.onHitAudioClip);
-                    SoundManager.Instance.PlayWithClip(__brain.BB.audios.onHitAudioClip2);
+                    EffectManager.Instance.Show(__brain.BB.resource.onHitFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()) * Quaternion.Euler(90f, 0f, 0f), Vector3.one, 1f);
+                    SoundManager.Instance.PlayWithClip(__brain.BB.resource.onHitAudioClip);
+                    SoundManager.Instance.PlayWithClip(__brain.BB.resource.onHitAudioClip2);
                 }
 
                 ShowHitColor(__brain.bodyHitColliderHelper);
             }
             else if (damageContext.actionResult == ActionResults.Missed)
             {
-                Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onMissedFx, __brain.BB.children.blockingFxAttachPoint.position, Quaternion.identity, 0.8f * Vector3.one, 1f)).AddTo(this);
-                SoundManager.Instance.PlayWithClip(__brain.BB.audios.onMissedAudioClip);
+                Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.resource.onMissedFx, __brain.BB.children.blockingFxAttachPoint.position, Quaternion.identity, 0.8f * Vector3.one, 1f)).AddTo(this);
+                SoundManager.Instance.PlayWithClip(__brain.BB.resource.onMissedAudioClip);
             }
             else if (damageContext.actionResult == ActionResults.Blocked)
             {
@@ -84,15 +84,15 @@ namespace Game
                 __brain.AnimCtrler.mainAnimator.SetTrigger("OnGuard");
 
                 Observable.Timer(TimeSpan.FromSeconds(0.5f)).Subscribe(_ => __brain.AnimCtrler.mainAnimator.SetBool("IsGuarding", false)).AddTo(this);
-                Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onBlockedFx, __brain.BB.children.blockingFxAttachPoint.position, Quaternion.identity, 0.8f * Vector3.one, 1f)).AddTo(this);
-                SoundManager.Instance.PlayWithClip(__brain.BB.audios.onBlockedAudioClip);
+                Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.resource.onBlockedFx, __brain.BB.children.blockingFxAttachPoint.position, Quaternion.identity, 0.8f * Vector3.one, 1f)).AddTo(this);
+                SoundManager.Instance.PlayWithClip(__brain.BB.resource.onBlockedAudioClip);
 
                 ShowHitColor(__brain.shieldHitColliderHelper);
             }
             else if (damageContext.actionResult == ActionResults.GuardBreak)
             {
-                Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.graphics.onGuardBreakFx, __brain.BB.children.blockingFxAttachPoint.position, Quaternion.identity, Vector3.one, 1f)).AddTo(this);
-                SoundManager.Instance.PlayWithClip(__brain.BB.audios.onGuardBreakAudioClip);
+                Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => EffectManager.Instance.Show(__brain.BB.resource.onGuardBreakFx, __brain.BB.children.blockingFxAttachPoint.position, Quaternion.identity, Vector3.one, 1f)).AddTo(this);
+                SoundManager.Instance.PlayWithClip(__brain.BB.resource.onGuardBreakAudioClip);
             }
 
             return base.StartOnHitAction(ref damageContext, isAddictiveAction);
@@ -104,9 +104,9 @@ namespace Game
 
             if (damageContext.actionResult == ActionResults.Damaged)
             {
-                EffectManager.Instance.Show(__brain.BB.graphics.onBigHitFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()) * Quaternion.Euler(90f, 0f, 0f), Vector3.one, 1f);
-                SoundManager.Instance.PlayWithClip(__brain.BB.audios.onBigHitAudioClip);
-                SoundManager.Instance.PlayWithClip(__brain.BB.audios.onHitAudioClip2);
+                EffectManager.Instance.Show(__brain.BB.resource.onBigHitFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()) * Quaternion.Euler(90f, 0f, 0f), Vector3.one, 1f);
+                SoundManager.Instance.PlayWithClip(__brain.BB.resource.onBigHitAudioClip);
+                SoundManager.Instance.PlayWithClip(__brain.BB.resource.onHitAudioClip2);
             }
 
             return base.StartOnKnockDownAction(ref damageContext, isAddictiveAction);
@@ -115,7 +115,7 @@ namespace Game
         {
             base.StartOnGroogyAction(ref damageContext, isAddictiveAction);
 
-            SoundManager.Instance.PlayWithClipPos(__brain.BB.audios.onEnterGroggy, __brain.bodyHitColliderHelper.GetWorldCenter());
+            SoundManager.Instance.PlayWithClipPos(__brain.BB.resource.onEnterGroggy, __brain.bodyHitColliderHelper.GetWorldCenter());
 
             return null;
         }
@@ -125,7 +125,7 @@ namespace Game
             if (hitColliderHelper == __brain.bodyHitColliderHelper)
             {
                 foreach (var r in __brain.BB.children.bodyMeshRenderers)
-                    r.materials = new Material[] { r.material, new(__brain.BB.graphics.hitColor) };
+                    r.materials = new Material[] { r.material, new(__brain.BB.resource.hitColor) };
 
                 __hitColorDisposable?.Dispose();
                 __hitColorDisposable = Observable.Timer(TimeSpan.FromMilliseconds(100)).Subscribe(_ =>
@@ -137,7 +137,7 @@ namespace Game
             }
             else if (hitColliderHelper == __brain.shieldHitColliderHelper)
             {
-                __brain.BB.children.shieldMeshRenderer.materials = new Material[] { __brain.BB.children.shieldMeshRenderer.material, new(__brain.BB.graphics.hitColor) };
+                __brain.BB.children.shieldMeshRenderer.materials = new Material[] { __brain.BB.children.shieldMeshRenderer.material, new(__brain.BB.resource.hitColor) };
 
                 __hitColorDisposable?.Dispose();
                 __hitColorDisposable = Observable.Timer(TimeSpan.FromMilliseconds(100)).Subscribe(_ =>
@@ -204,9 +204,9 @@ namespace Game
                     .DoOnCancel(() =>
                     {
                         __laserDisposable = null;
-                        __brain.BB.attachment.laserRenderer.flashFx.Stop();
-                        __brain.BB.attachment.laserRenderer.hitFx.Stop();
-                        __brain.BB.attachment.laserRenderer.FadeOut(0.2f);
+                        __brain.BB.children.laserRenderer.flashFx.Stop();
+                        __brain.BB.children.laserRenderer.hitFx.Stop();
+                        __brain.BB.children.laserRenderer.FadeOut(0.2f);
                     })
                     .DoOnCompleted(() => __laserDisposable = null)
                     .Subscribe().AddTo(this);
@@ -220,13 +220,13 @@ namespace Game
 
         IEnumerator LaserActionCoroutine()
         {
-            var laserRenderer = __brain.BB.attachment.laserRenderer;
+            var laserRenderer = __brain.BB.children.laserRenderer;
             laserRenderer.flashFx.Play();
 
             //* 차징 스텝
             yield return Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(__brain.BB.action.laserCharingDuration))).Do(_ =>
             {
-                laserRenderer.hitFx.transform.position = __brain.BB.attachment.laserAimPoint.position = __brain.BB.TargetColliderHelper.GetWorldCenter();
+                laserRenderer.hitFx.transform.position = __brain.BB.children.laserAimPoint.position = __brain.BB.TargetColliderHelper.GetWorldCenter();
             }).ToYieldInstruction();
 
             //* 레이저 Fade-In        
@@ -242,7 +242,7 @@ namespace Game
             {
                 //* 히트하지 전까지만 목표를 추적함
                 if (!__brain.BB.TargetColliderHelper.pawnBrain.PawnBB.IsDown)
-                    __brain.BB.attachment.laserAimPoint.position = __brain.BB.TargetColliderHelper.GetWorldCenter();
+                    __brain.BB.children.laserAimPoint.position = __brain.BB.TargetColliderHelper.GetWorldCenter();
 
                 var hitIndex = LaserActionTraceTarget(laserRenderer.transform.position, laserRenderer.transform.forward, laserRenderer.lineWidth, __brain.BB.action.laseMaxDistance, hitLayerMask);
                 if (hitIndex >= 0 && __hitsNonAlloc[hitIndex].collider.TryGetComponent<PawnColliderHelper>(out var hitColliderHelper) && hitColliderHelper.pawnBrain == __brain.BB.TargetColliderHelper.pawnBrain)
@@ -313,7 +313,7 @@ namespace Game
             {
                 if (currActionContext.actionName == "Leap")
                 {
-                    var homingDecalFx = GameObject.Instantiate(__brain.BB.graphics.onHomingDecalFx);
+                    var homingDecalFx = GameObject.Instantiate(__brain.BB.resource.onHomingDecalFx);
                     homingDecalFx.transform.position = __brain.BB.TargetBrain.GetWorldPosition() + 0.1f * Vector3.up;
                     
                     Observable.EveryUpdate().TakeWhile(_ => CheckActionRunning())

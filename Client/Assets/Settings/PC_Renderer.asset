@@ -67,7 +67,8 @@ MonoBehaviour:
   - {fileID: -8918925750689531554}
   - {fileID: -7073512217561340440}
   - {fileID: 6134285725648833527}
-  m_RendererFeatureMap: ad6b866f10d7b46c5ef910c4489c3984e8e5de7d1dd6d59df74b0cdc5d5c2155
+  - {fileID: 6061546198147069766}
+  m_RendererFeatureMap: ad6b866f10d7b46c5ef910c4489c3984e8e5de7d1dd6d59df74b0cdc5d5c215546f72cda26f01e54
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -93,6 +94,21 @@ MonoBehaviour:
   m_DepthTextureFormat: 0
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 0
+--- !u!114 &6061546198147069766
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8e1eeeaa7fba944fb8e39c0af65b268, type: 3}
+  m_Name: TranslucentImageBlurSource
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  renderOrder: 0
+  canvasDisappearWorkaround: 0
 --- !u!114 &6134285725648833527
 MonoBehaviour:
   m_ObjectHideFlags: 0

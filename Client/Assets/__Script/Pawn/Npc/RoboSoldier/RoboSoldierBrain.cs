@@ -39,7 +39,7 @@ namespace Game
         [Header("Component")]
         public RoboDogFormationController roboDogFormationCtrler;
 
-        public override Vector3 GetInteractionKeyAttachPoint() => BB.attachment.specialKeyAttachPoint.transform.position;
+        public override Vector3 GetInteractionKeyAttachPoint() => BB.children.specialKeyAttachPoint.transform.position;
         public RoboSoldierBlackboard BB { get; private set; }
         public RoboSoldierMovement Movement { get; private set; }
         public RoboSoldierAnimController AnimCtrler { get; private set; }
@@ -77,8 +77,8 @@ namespace Game
         {
             PawnEventManager.Instance.SendPawnSpawningEvent(this, PawnSpawnStates.SpawnStart);
 
-            foreach (var p in BB.children.jetParticleSystems)
-                p.Play();
+            foreach (var r in BB.children.jetFlameRenderers)
+                r.transform.GetChild(0).GetComponent<ParticleSystem>().Play();
 
             AnimCtrler.mainAnimator.SetBool("IsFalling", true);
 
@@ -96,8 +96,8 @@ namespace Game
 
             yield return new WaitUntil(() => Movement.IsOnGround);
 
-            foreach (var p in BB.children.jetParticleSystems)
-                p.Stop();
+            foreach (var r in BB.children.jetFlameRenderers)
+                r.transform.GetChild(0).GetComponent<ParticleSystem>().Stop();
 
             AnimCtrler.mainAnimator.SetBool("IsFalling", false);
             GameContext.Instance.cameraCtrler.Shake(0.5f, 2f, 0.5f);
@@ -105,7 +105,7 @@ namespace Game
             yield return new WaitForSeconds(2f);
             
             Movement.GetCharacterMovement().velocity = Vector3.zero;
-            Movement.GetCharacterMovement().collisionLayers = oldCollisionLayers;
+            Movement.GetCharacterMovement().collisionLayers = LayerMask.GetMask("Terrain");
 
             BB.common.isSpawnFinished.Value = true;
             PawnEventManager.Instance.SendPawnSpawningEvent(this, PawnSpawnStates.SpawnFinished);
@@ -213,7 +213,7 @@ namespace Game
             }).AddTo(this);
 
             //* 방패 터치 시에 ShieldAttack 발동 조건
-            BB.action.shieldTouchSensor.OnTriggerEnterAsObservable().Subscribe(c =>
+            BB.children.shieldTouchSensor.OnTriggerEnterAsObservable().Subscribe(c =>
             {
                 if (!BB.IsSpawnFinished || !BB.IsInCombat || BB.IsDead || BB.IsDown || BB.IsGroggy)
                     return;

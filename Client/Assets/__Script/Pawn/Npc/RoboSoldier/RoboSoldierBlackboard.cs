@@ -21,7 +21,7 @@ namespace Game
         public float BackstepRootMotionMultiplier => action.backstepRootMotionMultiplier;
         public GameObject MissilePrefab => action.missilePrefab;
         public Transform MissileEmitPoint => action.missileEmitPoint;
-        public CapsuleCollider CounterActionTraceCollider => attachment.counterActionTraceColliderHelper.pawnCollider as CapsuleCollider;
+        public CapsuleCollider CounterActionCollider => children.counterActionColliderHelper.pawnCollider as CapsuleCollider;
 
         [Serializable]
         public class Body
@@ -45,16 +45,6 @@ namespace Game
 
         public Body body = new();
 
-        // [Serializable]
-        // public class Spawning
-        // {
-        //     public float dropMaxSpeed = 100f;
-        //     public float dropDistance = 10f;
-        //     public float dropAccel = 10f;
-        // }
-
-        // public Spawning spawning = new();
-
         [Serializable]
         public class Action
         {
@@ -69,7 +59,6 @@ namespace Game
             public float shieldAttackCoolTime = 1f;
             public float shieldAttackRigBlendInSpeed = 1f;
             public float shieldAttackRigBlendOutSpeed = 1f;
-            public BoxCollider shieldTouchSensor;
 
             [Header("Counter")]
             public float counterCoolTime = 1f;
@@ -105,9 +94,31 @@ namespace Game
         public Action action = new();
 
         [Serializable]
-        public class Graphics
+        public class Children
         {
-            [Header("Prefab")]
+            public Transform bodyMeshParent;
+            public Renderer[] bodyMeshRenderers;
+            public Renderer[] jetFlameRenderers;
+            public Renderer shieldMeshRenderer;
+            public Transform lookAtPoint;
+            public Transform missileEmitPoint;
+            public Transform laserAimPoint;
+            public Transform blockingFxAttachPoint;
+            public Transform specialKeyAttachPoint;
+            public BoxCollider shieldTouchSensor;
+            public PawnColliderHelper counterActionColliderHelper;
+            public RoboSoldierLaserRenderer laserRenderer;
+        }
+
+        public Children children = new();
+
+        [Serializable]
+        public class Resource
+        {
+            [Header("Material")]
+            public Material hitColor;
+
+            [Header("Fx")]
             public GameObject onHitFx;
             public GameObject onBigHitFx;
             public GameObject onKickHitFx;
@@ -117,15 +128,7 @@ namespace Game
             public GameObject onGuardBreakFx;
             public GameObject onHomingDecalFx;
 
-            [Header("Material")]
-            public Material hitColor;
-        }
-
-        public Graphics graphics = new();
-
-        [Serializable]
-        public class Audios
-        {
+            [Header("Audio")]
             public AudioClip onHitAudioClip;
             public AudioClip onHitAudioClip2;
             public AudioClip onBigHitAudioClip;
@@ -134,43 +137,15 @@ namespace Game
             public AudioClip onMissedAudioClip;
             public AudioClip onBlockedAudioClip;
             public AudioClip onGuardBreakAudioClip;
-
             public AudioClip onHitFleshClip;
             public AudioClip onEnterGroggy;
-
             public AudioClip onFootstepClip;
+
+            [Header("Prefab")]
+            public GameObject missileProjectile;
         }
 
-        public Audios audios = new();
-
-
-        [Serializable]
-        public class Children
-        {
-            public Transform bodyMeshParent;
-            public Renderer[] bodyMeshRenderers;
-            public Renderer shieldMeshRenderer;
-            public Transform blockingFxAttachPoint;
-            public Transform jellyMeshAttactPoint;
-            public ParticleSystem[] jetParticleSystems;
-        }
-
-        public Children children = new();
-
-
-        [Serializable]
-        public class Attachment
-        {
-            public Transform targetLookAt;
-            public Transform spine02;
-            public Transform specialKeyAttachPoint;
-            public Transform jellyMeshAttactPointParent;
-            public Transform laserAimPoint;
-            public RoboSoldierLaserRenderer laserRenderer;
-            public PawnColliderHelper counterActionTraceColliderHelper;
-        }
-
-        public Attachment attachment = new();
+        public Resource resource = new();
 
         protected override void AwakeInternal()
         {

@@ -646,7 +646,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 482121057316969072}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -13084,8 +13084,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1831214148773844277}
   serializedVersion: 2
-  m_LocalRotation: {x: 1.7256332e-31, y: -1.209484e-31, z: 0, w: 1}
-  m_LocalPosition: {x: -0.15814279, y: -0.0000000027496108, z: -4.7493606e-11}
+  m_LocalRotation: {x: -0.000046581234, y: 0.00016209763, z: -0.25136954, w: 0.9678912}
+  m_LocalPosition: {x: -0.15814279, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -13576,7 +13576,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1939195801888823007}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.00006627419, y: 0.000511984, z: 0.12836441, w: 0.99172693}
+  m_LocalRotation: {x: -0.000066274195, y: 0.00051198405, z: 0.12836443, w: 0.991727}
   m_LocalPosition: {x: -0.111334234, y: 0.00010928616, z: -0.00013057412}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -31419,7 +31419,7 @@ Transform:
   m_GameObject: {fileID: 3767825427837568918}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.0072774948, y: 0, z: 0.027806014}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -32040,7 +32040,7 @@ MonoBehaviour:
   baseTransform: {fileID: 0}
   Hips: {fileID: 2152633521541674416}
   ScaleReferenceMode: 3
-  finalScaleReference: 1.0652916
+  finalScaleReference: 1.0652913
   finalScaleReferenceSqrt: 0.1
   customScaleReferenceValue: 0.5
   DelayedInitialization: 0
@@ -32086,7 +32086,7 @@ MonoBehaviour:
   handler:
     _Editor_SelectedChain: 0
     _Editor_ChainCategory: 0
-    _EditorCategory: 4
+    _EditorCategory: 3
     _EditorMainCategory: 0
     _EditorMotionCategory: 2
     m_hemi: {fileID: -2508796484986968503, guid: 44d994eaad14fdf49a2dd378b4d62094, type: 3}
@@ -57962,7 +57962,7 @@ MonoBehaviour:
   FadeOutDistance: 0
   DistanceFrom: {fileID: 0}
   AutoHelperOffset: 1
-  HelperOffset: {x: -0.30127284, y: 0.3913798, z: 0.10298026}
+  HelperOffset: {x: -0.301273, y: 0.39137998, z: 0.10298028}
   GravityEffectForce: {x: 0, y: 0, z: 0}
   GravityHeavyness: 2
   _editor_Title: ' Bones Stimulator'
@@ -60953,7 +60953,6 @@ MonoBehaviour:
     shieldAttackCoolTime: 1
     shieldAttackRigBlendInSpeed: 5
     shieldAttackRigBlendOutSpeed: 10
-    shieldTouchSensor: {fileID: 0}
     counterCoolTime: 1
     missileCoolTime: 30
     backstepTriggerDistance: 4
@@ -60976,7 +60975,24 @@ MonoBehaviour:
     leapJumpHeight: 3
     leapRootMotionDistance: 10
     leapRootMotionMultiplier: 1
-  graphics:
+  children:
+    bodyMeshParent: {fileID: 3307139268801310495}
+    bodyMeshRenderers: []
+    jetFlameRenderers:
+    - {fileID: 7813648779630399870}
+    - {fileID: 4321470205878649435}
+    - {fileID: 6814608665583795676}
+    shieldMeshRenderer: {fileID: 4976226285070200747}
+    lookAtPoint: {fileID: 2628180316295316148}
+    missileEmitPoint: {fileID: 0}
+    laserAimPoint: {fileID: 5689320857391352882}
+    blockingFxAttachPoint: {fileID: 6144097004714579140}
+    specialKeyAttachPoint: {fileID: 6783572122253413391}
+    shieldTouchSensor: {fileID: 0}
+    counterActionColliderHelper: {fileID: 1010624364731835310}
+    laserRenderer: {fileID: 0}
+  resource:
+    hitColor: {fileID: 2100000, guid: a352a16cd87054b82af9135444ad0122, type: 2}
     onHitFx: {fileID: 3011233550371498735, guid: 24e37d54f259141abb7ebbc527b8bf4e, type: 3}
     onBigHitFx: {fileID: 3011233550371498735, guid: 8502543f66322458a81956cdd59fe959, type: 3}
     onKickHitFx: {fileID: 5627402125419773176, guid: 5567adfb3bd0fd14180e380e0bba7ead, type: 3}
@@ -60985,8 +61001,6 @@ MonoBehaviour:
     onBlockedFx: {fileID: 4961553964636584268, guid: d7027452566465c47aeacb4cdcf40015, type: 3}
     onGuardBreakFx: {fileID: 8905666514069622321, guid: a84cbbb54404c3d499340f02e684aab0, type: 3}
     onHomingDecalFx: {fileID: 8626301407590365914, guid: 2dd177bd951d34f95803db02ffb55e6a, type: 3}
-    hitColor: {fileID: 2100000, guid: a352a16cd87054b82af9135444ad0122, type: 2}
-  audios:
     onHitAudioClip: {fileID: 8300000, guid: 93fc0b243c8d39441a33d29e6146b688, type: 3}
     onHitAudioClip2: {fileID: 8300000, guid: 4a1e5870adeca5a4da18636f90a7a627, type: 3}
     onBigHitAudioClip: {fileID: 8300000, guid: bba0a0725054ad0419aecf461293c8e9, type: 3}
@@ -60998,24 +61012,7 @@ MonoBehaviour:
     onHitFleshClip: {fileID: 8300000, guid: 1fb5c72a8e42f4b4ca01ef6f874b7b04, type: 3}
     onEnterGroggy: {fileID: 8300000, guid: f86dc17312fb0bf418624499b31be97d, type: 3}
     onFootstepClip: {fileID: 8300000, guid: 8e8064bfe8a8f884b9066b34381a5b77, type: 3}
-  children:
-    bodyMeshParent: {fileID: 3307139268801310495}
-    bodyMeshRenderers: []
-    shieldMeshRenderer: {fileID: 4976226285070200747}
-    blockingFxAttachPoint: {fileID: 6144097004714579140}
-    jellyMeshAttactPoint: {fileID: 0}
-    jetParticleSystems:
-    - {fileID: 5038489309448856587}
-    - {fileID: 4445349336339824474}
-    - {fileID: 4674041639645738002}
-  attachment:
-    targetLookAt: {fileID: 2628180316295316148}
-    spine02: {fileID: 0}
-    specialKeyAttachPoint: {fileID: 6783572122253413391}
-    jellyMeshAttactPointParent: {fileID: 0}
-    laserAimPoint: {fileID: 5689320857391352882}
-    laserRenderer: {fileID: 0}
-    counterActionTraceColliderHelper: {fileID: 1010624364731835310}
+    missileProjectile: {fileID: 0}
 --- !u!114 &8593737910688562853
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61101,7 +61098,7 @@ MonoBehaviour:
     _version: 3.31
     _category: 
     _comments: 
-    _translation: {x: -110, y: 22}
+    _translation: {x: -138, y: -132}
     _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 0

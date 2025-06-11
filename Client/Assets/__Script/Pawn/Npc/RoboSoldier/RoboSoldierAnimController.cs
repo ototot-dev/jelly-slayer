@@ -67,7 +67,7 @@ namespace Game
         public override void OnAnimatorFootHandler(bool isRight) 
         {
             var pos = __brain.BB.TargetColliderHelper.GetWorldCenter();
-            SoundManager.Instance.PlayWithClipPos(__brain.BB.audios.onFootstepClip, pos, false, true, 0.2f);
+            SoundManager.Instance.PlayWithClipPos(__brain.BB.resource.onFootstepClip, pos, false, true, 0.2f);
         }
 
         public bool CheckAnimStateRunning(string stateName) => __runningAnimStateNames.Contains(Animator.StringToHash(stateName));
@@ -128,12 +128,12 @@ namespace Game
                 //* 발바닥에서 발사하는 Frame 이펙트 On
                 if (v && __brain.BB.IsSpawnFinished)
                 {
-                    foreach (var p in __brain.BB.children.jetParticleSystems)
+                    foreach (var r in __brain.BB.children.jetFlameRenderers)
                     {
-                        if (!p.transform.parent.GetComponent<MeshRenderer>().enabled)
+                        if (!r.enabled)
                         {
-                            p.transform.parent.GetComponent<MeshRenderer>().enabled = true;
-                            p.transform.parent.DOScale(2f * Vector3.one, 0.5f).OnComplete(() => p.Play());
+                            r.enabled = true;
+                            r.transform.DOScale(2f * Vector3.one, 0.5f).OnComplete(() => r.transform.GetChild(0).GetComponent<ParticleSystem>().Play());
                         }
                     }
                 }
@@ -144,12 +144,12 @@ namespace Game
                 //* 발바닥에서 발사하는 Frame 이펙트 Off
                 if (!v && __brain.BB.IsSpawnFinished)
                 {
-                    foreach (var p in __brain.BB.children.jetParticleSystems)
+                    foreach (var r in __brain.BB.children.jetFlameRenderers)
                     {
-                        p.transform.parent.DOScale(Vector3.zero, 0.2f).OnComplete(() =>
+                        r.transform.DOScale(Vector3.zero, 0.2f).OnComplete(() =>
                         {
-                            p.transform.parent.GetComponent<MeshRenderer>().enabled = false;
-                            p.Stop();
+                            r.enabled = false;
+                            r.transform.GetChild(0).GetComponent<ParticleSystem>().Stop();
                         });
                     }
                 }
@@ -282,11 +282,11 @@ namespace Game
 
                 rigSetup.weight = 1f;
                 if (__brain.ActionCtrler.CheckAddictiveActionRunning("Laser"))
-                    __brain.BB.attachment.targetLookAt.position = __brain.BB.attachment.laserAimPoint.position;
+                    __brain.BB.children.lookAtPoint.position = __brain.BB.children.laserAimPoint.position;
                 else if (__brain.BB.TargetBrain != null && __brain.BB.TargetBrain.coreColliderHelper != null)
-                    __brain.BB.attachment.targetLookAt.position = __brain.BB.TargetBrain.coreColliderHelper.GetWorldCenter() + 0.5f * Vector3.up;
+                    __brain.BB.children.lookAtPoint.position = __brain.BB.TargetBrain.coreColliderHelper.GetWorldCenter() + 0.5f * Vector3.up;
                 else
-                    __brain.BB.attachment.targetLookAt.position = __brain.coreColliderHelper.GetWorldCenter() + 1000f * __brain.coreColliderHelper.transform.forward;
+                    __brain.BB.children.lookAtPoint.position = __brain.coreColliderHelper.GetWorldCenter() + 1000f * __brain.coreColliderHelper.transform.forward;
 
                 //* 머리 사이즈 키우기
                 headBone.transform.localScale = headBoneScaleFactor * Vector3.one;
