@@ -11,6 +11,7 @@ public static class Tags
         "EnemySpawnPoint",
         "CameraPoint",
         "Slayer",
+        "SunLight",
         "Door",
         "Phone",
     };
@@ -46,7 +47,9 @@ public static class Tags
     {
         public static readonly string[] All = new string[]
         {
+            "SunLight",
         };
+        public const string SunLight = "SunLight";
     }
     public static class Interactable
     {

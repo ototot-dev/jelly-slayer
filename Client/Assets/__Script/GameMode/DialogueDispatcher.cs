@@ -118,7 +118,8 @@ namespace Game
             __runner.AddCommandHandler<string, float, float, float>("spawnPawnByVector", SpawnPawnByVector);
             __runner.AddCommandHandler<string>("setCameraTarget", SetCameraTarget);
             __runner.AddCommandHandler("setCameraSlayer", SetCameraSlayer);
-            __runner.AddCommandHandler<string, string, float>("showMessagePopup", ShowMessagePopup); 
+            __runner.AddCommandHandler<string, string, float>("showMessagePopup", ShowMessagePopup);
+            __runner.AddCommandHandler<string, float>("setLightIntensity", SetLightIntensity);
         }
 
         public void Vignetee(float intensity, float smoothness, float blendTime)
@@ -257,9 +258,23 @@ namespace Game
         {
             var obj = TaggerSystem.FindGameObjectWithTag(tag);
             if (obj == null)
+            {
                 Debug.Log("YarnCommand: Not Found Object, " + msg);
-
+                return;
+            }
             obj.SendMessage(msg, SendMessageOptions.DontRequireReceiver);
+        }
+        public void SetLightIntensity(string tag, float intensity)
+        {
+            var obj = TaggerSystem.FindGameObjectWithTag(tag);
+            if (obj == null)
+            {
+                Debug.Log("YarnCommand: Not Found Object, " + tag);
+                return;
+            }
+            Light light = obj.GetComponent<Light>();
+            if (light != null)
+                light.intensity = intensity;
         }
 
         public void SendMessageToGameMode(string msg) 

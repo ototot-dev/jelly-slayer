@@ -16,8 +16,22 @@ tags:
 
 <<wait 2>>
 
+<<setLightIntensity SunLight 0.6>>
+<<wait 0.1>>
+<<setLightIntensity SunLight 0.1>>
+<<wait 0.1>>
+<<setLightIntensity SunLight 0.6>>
+<<wait 0.1>>
+<<setLightIntensity SunLight 0.1>>
+<<wait 0.6>>
+<<setLightIntensity SunLight 1>>
+<<wait 0.3>>
+
+케이: <shake><size=40>뭐야?</size> 갑자기?</shake>
+
+<<wait 2>>
+
 <<setCameraTarget CameraPoint>>
-// 조금 이동했는데 전방에 적 출현
 <<spawnPawn RoboSoldier EnemySpawnPoint>>
 
 <<wait 4>>

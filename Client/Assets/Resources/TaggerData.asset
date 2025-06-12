@@ -23,6 +23,7 @@ MonoBehaviour:
   - Slayer
   - EnemySpawnPoint
   - CameraPoint
+  - SunLight
   _serializedGroups:
   - _name: Ungrouped
     _tags:
@@ -39,68 +40,72 @@ MonoBehaviour:
     - Slayer
     _isSingleton: 0
   - _name: Prop
-    _tags: []
+    _tags:
+    - SunLight
     _isSingleton: 0
   - _name: Interactable
     _tags:
     - Door
     - Phone
     _isSingleton: 0
-  _serializedIDs: 00000000020000001100000004000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f000000120000001300000014000000
+  _serializedIDs: 00000000020000001100000004000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f00000012000000130000001400000015000000
   _serializedLinkIdKeys: 05000000010000001000000003000000
   _serializedLinkIdValues: 03000000000000000200000000000000
   _serializedTagArrays:
   - _array: 00000000
     _maskArray: ffffffff
-    _version: 54
+    _version: 57
   - _array: 01000000
     _maskArray: ffffffff
-    _version: 56
+    _version: 59
   - _array: 81000000
     _maskArray: ffffffff
-    _version: 57
+    _version: 60
   - _array: 02000000
     _maskArray: ffffffff
-    _version: 42
+    _version: 45
   - _array: 04000000
     _maskArray: ffffffff
-    _version: 46
+    _version: 49
   - _array: 08000000
     _maskArray: ffffffff
-    _version: 34
+    _version: 37
   - _array: 10000000
     _maskArray: ffffffff
-    _version: 46
+    _version: 49
   - _array: 20000000
     _maskArray: ffffffff
-    _version: 28
+    _version: 31
   - _array: 09000000
     _maskArray: ffffffff
-    _version: 35
+    _version: 38
   - _array: 0b000000
     _maskArray: ffffffff
-    _version: 36
+    _version: 39
   - _array: 1b000000
     _maskArray: ffffffff
-    _version: 37
+    _version: 40
   - _array: 1a000000
     _maskArray: ffffffff
-    _version: 38
+    _version: 41
   - _array: 18000000
     _maskArray: ffffffff
-    _version: 39
+    _version: 42
   - _array: 40000000
     _maskArray: ffffffff
-    _version: 46
+    _version: 49
   - _array: 80000000
     _maskArray: ffffffff
-    _version: 58
+    _version: 61
   - _array: 00010000
     _maskArray: ffffffff
-    _version: 55
+    _version: 58
   - _array: 00020000
     _maskArray: ffffffff
-    _version: 55
+    _version: 58
+  - _array: 00040000
+    _maskArray: ffffffff
+    _version: 1
   _tagColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
@@ -112,4 +117,5 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
-  _version: 20
+  - {r: 1, g: 1, b: 1, a: 1}
+  _version: 21

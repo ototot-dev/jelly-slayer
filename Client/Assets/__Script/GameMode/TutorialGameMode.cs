@@ -60,9 +60,9 @@ namespace Game
 
         public override IObservable<Unit> EnterAsObservable()
         {
-            //InitStartRoom();
+            InitStartRoom();
 
-            InitTurorial1Room();
+            //InitTurorial1Room();
             //Observable.FromCoroutine(ChangeRoom_Coroutine);
 
             return Observable.NextFrame();
@@ -230,14 +230,10 @@ namespace Game
 
         public void OnReceivePawnActionStart(PawnBrainController sender, string actionName)
         {
-            return;
-            //throw new NotImplementedException();
         }
 
         public void OnReceivePawnStatusChanged(PawnBrainController sender, PawnStatus status, float strength, float duration)
         {
-            return;
-            //throw new NotImplementedException();
         }
 
         public void OnReceivePawnDamageContext(PawnBrainController sender, PawnHeartPointDispatcher.DamageContext damageContext)
@@ -256,8 +252,6 @@ namespace Game
                         break;
                 }
             }
-            return;
-            //throw new NotImplementedException();
         }
 
         public void OnReceivePawnSpawningStateChanged(PawnBrainController sender, PawnSpawnStates state)
