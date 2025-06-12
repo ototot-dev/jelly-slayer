@@ -60,9 +60,9 @@ namespace Game
 
         public override IObservable<Unit> EnterAsObservable()
         {
-            InitStartRoom();
+            //InitStartRoom();
+            InitTurorial1Room();
 
-            //InitTurorial1Room();
             //Observable.FromCoroutine(ChangeRoom_Coroutine);
 
             return Observable.NextFrame();
