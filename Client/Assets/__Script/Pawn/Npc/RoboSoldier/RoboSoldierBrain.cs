@@ -21,24 +21,6 @@ namespace Game
         void IPawnTargetable.StopTargeting() { }
         #endregion
 
-        #region IPawnSpawnable 재정의
-        public override void OnDeadHandler()
-        {
-            base.OnDeadHandler();
-
-            var roboDogBrain = roboDogFormationCtrler.PickRoboDog();
-            while (roboDogBrain != null)
-            {
-                roboDogFormationCtrler.ReleaseRoboDog(roboDogBrain);
-                roboDogBrain.BB.common.isDead.Value = true;
-                roboDogBrain = roboDogFormationCtrler.PickRoboDog();
-            }
-        }
-        #endregion
-
-        [Header("Component")]
-        public RoboDogFormationController roboDogFormationCtrler;
-
         public override Vector3 GetInteractionKeyAttachPoint() => BB.children.specialKeyAttachPoint.transform.position;
         public RoboSoldierBlackboard BB { get; private set; }
         public RoboSoldierMovement Movement { get; private set; }
@@ -58,18 +40,14 @@ namespace Game
         public enum ActionPatterns : int
         {
             None = -1,
-            JumpAttackA,
-            JumpAttackB,
+            JumpAttack,
             ShieldAttackA,
             ShieldAttackB,
             CounterA,
             CounterB,
-            MissileA,
-            MissileB,
             ComboAttackA,
             ComboAttackB,
             ComboAttackC,
-            Leap,
             Max,
         }
 
@@ -78,32 +56,38 @@ namespace Game
             PawnEventManager.Instance.SendPawnSpawningEvent(this, PawnSpawnStates.SpawnStart);
 
             foreach (var r in BB.children.jetFlameRenderers)
+            {
+                if (!r.enabled) r.enabled = true;
+                r.transform.localScale = 2f * Vector3.one;
                 r.transform.GetChild(0).GetComponent<ParticleSystem>().Play();
+            }
 
             AnimCtrler.mainAnimator.SetBool("IsFalling", true);
 
-            var currVelocity = Vector3.zero;
-            var downVec = new Vector3(-1f, -1f, 0f).normalized;
+            var dropVelocity = Vector3.zero;
             var oldCollisionLayers = Movement.GetCharacterMovement().collisionLayers;
 
             //* 강하 중에 벽에 걸리지 않도록 충돌 레이어를 임시로 변경함
             Movement.GetCharacterMovement().collisionLayers = LayerMask.GetMask("Terrain");
             Observable.EveryFixedUpdate().TakeWhile(_ => !Movement.IsOnGround).Subscribe(_ =>
             {
-                currVelocity += Time.fixedDeltaTime * 100f * downVec;
-                Movement.GetCharacterMovement().SimpleMove(currVelocity, 999f, 999f, 999f, 1f, 1f, Vector3.zero, false, Time.fixedDeltaTime);
+                dropVelocity += Time.fixedDeltaTime * BB.body.spawnDropAccel * BB.body.spawnDropDirection;
+                Movement.GetCharacterMovement().SimpleMove(dropVelocity, BB.body.spawnDropSpeed, 999f, 999f, 1f, 1f, Vector3.zero, false, Time.fixedDeltaTime);
             }).AddTo(this);
 
             yield return new WaitUntil(() => Movement.IsOnGround);
 
             foreach (var r in BB.children.jetFlameRenderers)
+            {
+                r.transform.DOScale(Vector3.zero, 0.2f).OnComplete(() => r.enabled = false);
                 r.transform.GetChild(0).GetComponent<ParticleSystem>().Stop();
+            }
 
             AnimCtrler.mainAnimator.SetBool("IsFalling", false);
             GameContext.Instance.cameraCtrler.Shake(0.5f, 2f, 0.5f);
-            
+
             yield return new WaitForSeconds(2f);
-            
+
             Movement.GetCharacterMovement().velocity = Vector3.zero;
             Movement.GetCharacterMovement().collisionLayers = LayerMask.GetMask("Terrain");
 
@@ -117,7 +101,7 @@ namespace Game
         {
             base.StartInternal();
 
-            Movement.Teleport(GetWorldPosition() + 10f * new Vector3(1f, 1f, 0f).normalized, false);
+            Movement.Teleport(GetWorldPosition() - BB.body.spawnDropDistance * BB.body.spawnDropDirection.normalized, false);
 
             //* Spawning 연출 시작
             __spawningDisposable = Observable.FromCoroutine(SpawningCoroutine)
@@ -125,29 +109,20 @@ namespace Game
                 .Subscribe().AddTo(this);
 
             //* 액션 패턴 등록
-            ActionDataSelector.ReserveSequence(ActionPatterns.JumpAttackA, "JumpAttack").BeginCoolTime(BB.action.jumpAttackCoolTime);
-            ActionDataSelector.ReserveSequence(ActionPatterns.JumpAttackB, "JumpAttack").BeginCoolTime(BB.action.jumpAttackCoolTime);
-            // ActionDataSelector.ReserveSequence(ActionPatterns.JumpAttackB, "Missile", 1f, "JumpAttack").BeginCoolTime(BB.action.jumpAttackCoolTime);
-            ActionDataSelector.ReserveSequence(ActionPatterns.ShieldAttackA, "ShieldAttack", "Counter", "Counter", 0.1f, "Attack#3");
-            ActionDataSelector.ReserveSequence(ActionPatterns.ShieldAttackB, "ShieldAttack", "Attack#1", "Attack#2", 0.1f, "Attack#3");
-            ActionDataSelector.ReserveSequence(ActionPatterns.CounterA, "Counter", "Counter", 0.1f, "Attack#3");
-            ActionDataSelector.ReserveSequence(ActionPatterns.CounterB, "Counter", 0.1f, "Attack#1", "Attack#2", 0.1f, "Attack#3");
-            ActionDataSelector.ReserveSequence(ActionPatterns.MissileA, "Missile").BeginCoolTime(BB.action.missileCoolTime);
-            ActionDataSelector.ReserveSequence(ActionPatterns.MissileB, "Backstep", 0.5f, "Missile").BeginCoolTime(BB.action.missileCoolTime);
-            ActionDataSelector.ReserveSequence(ActionPatterns.ComboAttackA, "Attack#1", "Attack#2", 0.1f, "Attack#3");
-            ActionDataSelector.ReserveSequence(ActionPatterns.ComboAttackB, "Counter", "Counter", 0.1f, "Attack#3");
-            ActionDataSelector.ReserveSequence(ActionPatterns.ComboAttackC, "Counter", "Counter", 0.1f, "Attack#1", "Attack#2", 0.1f, "Attack#3");
-            ActionDataSelector.ReserveSequence(ActionPatterns.Leap, "Backstep", 0.5f, "Missile", 0.2f, "Missile", 0.2f, "Leap").BeginCoolTime(BB.action.leapCoolTime);
-
-            ActionDataSelector.ResetProbability(ActionPatterns.MissileA, 1f);
-            ActionDataSelector.ResetProbability(ActionPatterns.MissileB, 1f);
-            ActionDataSelector.ResetProbability(ActionPatterns.Leap, 1f);
+            ActionDataSelector.ReserveSequence(ActionPatterns.JumpAttack, "JumpAttack").BeginCoolTime(BB.action.jumpAttackCoolTime).ResetProbability(1f);
+            ActionDataSelector.ReserveSequence(ActionPatterns.ShieldAttackA, "ShieldAttack", "Counter", "Counter", 0.1f, "Attack#3").ResetProbability(1f);
+            ActionDataSelector.ReserveSequence(ActionPatterns.ShieldAttackB, "ShieldAttack", "Attack#1", "Attack#2", 0.1f, "Attack#3").ResetProbability(1f);
+            ActionDataSelector.ReserveSequence(ActionPatterns.CounterA, "Counter", "Counter", 0.1f, "Attack#3").ResetProbability(1f);
+            ActionDataSelector.ReserveSequence(ActionPatterns.CounterB, "Counter", 0.1f, "Attack#1", "Attack#2", 0.1f, "Attack#3").ResetProbability(1f);
+            ActionDataSelector.ReserveSequence(ActionPatterns.ComboAttackA, "Attack#1", "Attack#2", 0.1f, "Attack#3").ResetProbability(1f);
+            ActionDataSelector.ReserveSequence(ActionPatterns.ComboAttackB, "Counter", "Counter", 0.1f, "Attack#3").ResetProbability(1f);
+            ActionDataSelector.ReserveSequence(ActionPatterns.ComboAttackC, "Counter", "Counter", 0.1f, "Attack#1", "Attack#2", 0.1f, "Attack#3").ResetProbability(1f);
 
             ActionCtrler.onActionStart += (actionContext, __) =>
             {
                 if (actionContext.actionName == "Backstep")
                 {
-                    var dashVec = GetWorldTransform().InverseTransformDirection( -GetWorldPosition()).Vector2D().normalized;
+                    var dashVec = GetWorldTransform().InverseTransformDirection(-GetWorldPosition()).Vector2D().normalized;
                     __pawnAnimCtrler.mainAnimator.SetFloat("DashX", dashVec.x);
                     __pawnAnimCtrler.mainAnimator.SetFloat("DashY", dashVec.z);
                 }
@@ -157,7 +132,7 @@ namespace Game
             {
                 if (status == PawnStatus.Groggy || status == PawnStatus.Staggered || status == PawnStatus.KnockDown)
                     ActionDataSelector.CancelSequences();
-                
+
                 //* 그로기 시작 이벤트 
                 if (status == PawnStatus.Groggy)
                     PawnEventManager.Instance.SendPawnStatusEvent(this, PawnStatus.Groggy, 1f, PawnStatusCtrler.GetDuration(PawnStatus.Groggy));
@@ -167,10 +142,6 @@ namespace Game
             {
                 if (status == PawnStatus.Groggy)
                 {
-                    jellyMeshCtrler.FadeOut(0.5f);
-                    // jellyMeshCtrler.Die(5f);
-                    // jellyMeshCtrler.FinishHook();
-
                     //* 막타 Hit 애님이 온전 출력되는 시간 딜레이 
                     Observable.Timer(TimeSpan.FromSeconds(1.5f)).Subscribe(_ => __pawnAnimCtrler.mainAnimator.SetBool("IsGroggy", false)).AddTo(this);
 
@@ -222,7 +193,7 @@ namespace Game
                 if (StatusCtrler.CheckStatus(PawnStatus.CanNotAction) || StatusCtrler.CheckStatus(PawnStatus.Staggered))
                     return;
 
-                if (ActionDataSelector.EvaluateSequence(ActionPatterns.ShieldAttackA) && c.TryGetComponent<PawnColliderHelper>(out var colliderHelper) && colliderHelper.pawnBrain.PawnBB.common.pawnName == "Hero")
+                if (ActionDataSelector.EvaluateSequence(ActionPatterns.ShieldAttackA, 1f) && c.TryGetComponent<PawnColliderHelper>(out var colliderHelper) && colliderHelper.pawnBrain.PawnBB.common.pawnName == "Hero")
                 {
                     ActionDataSelector.EnqueueSequence(UnityEngine.Random.Range(0, 2) > 0 ? ActionPatterns.ShieldAttackA : ActionPatterns.ShieldAttackB);
                     ActionDataSelector.BeginCoolTime(ActionPatterns.ShieldAttackA, 1f);
@@ -242,7 +213,7 @@ namespace Game
                 {
                     var nextActionData = ActionDataSelector.AdvanceSequence();
                     if (nextActionData != null)
-                    {   
+                    {
                         if (ActionCtrler.CheckActionRunning()) ActionCtrler.CancelAction(false);
                         ActionCtrler.SetPendingAction(nextActionData.actionName, string.Empty, string.Empty, ActionDataSelector.CurrSequence().GetPaddingTime());
                     }
@@ -259,7 +230,7 @@ namespace Game
 
             if (StatusCtrler.CheckStatus(PawnStatus.CanNotAction) || StatusCtrler.CheckStatus(PawnStatus.Staggered))
                 return;
-                
+
 #if UNITY_EDITOR
             if (ActionDataSelector.debugActionSelectDisabled)
                 return;
@@ -267,52 +238,31 @@ namespace Game
 
             if (ActionDataSelector.CurrSequence() == null)
             {
-                // if (ActionDataSelector.EvaluateSequence(ActionPatterns.Leap))
-                // {
-                //     ActionDataSelector.EnqueueSequence(ActionPatterns.Leap).BeginCoolTime(BB.action.leapCoolTime);
-                // }
-                // else if (ActionDataSelector.EvaluateSequence(ActionPatterns.MissileA))
-                // {
-                //     ActionDataSelector.EnqueueSequence(GetWorldPosition().Magnitude2D() < BB.action.backstepTriggerDistance ? ActionPatterns.MissileA : ActionPatterns.MissileB);
-                //     ActionDataSelector.BeginCoolTime(ActionPatterns.MissileA, BB.action.missileCoolTime);
-                //     ActionDataSelector.BeginCoolTime(ActionPatterns.MissileB, BB.action.missileCoolTime);
-                // }
-                // else
+                var distanceToTarget = coreColliderHelper.GetDistanceSimple(BB.TargetBrain.coreColliderHelper);
+                if (distanceToTarget < BB.action.comboAttackDistance)
                 {
-                    var distanceToTarget = coreColliderHelper.GetDistanceSimple(BB.TargetBrain.coreColliderHelper);
-                    if (distanceToTarget < BB.action.comboAttackDistance)
+                    var comboAttackPick = ActionPatterns.None;
+                    switch (UnityEngine.Random.Range(0, 3))
                     {
-                        var comboAttackPick = ActionPatterns.None;
-                        switch (UnityEngine.Random.Range(0, 3))
-                        {
-                            case 0: comboAttackPick = ActionPatterns.ComboAttackA; break;
-                            case 1: comboAttackPick = ActionPatterns.ComboAttackB; break;
-                            case 2: comboAttackPick = ActionPatterns.ComboAttackC; break;
-                        }
-                    
-                        if (CheckTargetVisibility() && ActionDataSelector.EvaluateSequence(comboAttackPick))
-                        {
-                            ActionDataSelector.EnqueueSequence(comboAttackPick);
-                            ActionDataSelector.BeginCoolTime(ActionPatterns.ComboAttackA, BB.action.comboAttackCoolTime);
-                            ActionDataSelector.BeginCoolTime(ActionPatterns.ComboAttackB, BB.action.comboAttackCoolTime);
-                            ActionDataSelector.BeginCoolTime(ActionPatterns.ComboAttackC, BB.action.comboAttackCoolTime);
-                        }
+                        case 0: comboAttackPick = ActionPatterns.ComboAttackA; break;
+                        case 1: comboAttackPick = ActionPatterns.ComboAttackB; break;
+                        case 2: comboAttackPick = ActionPatterns.ComboAttackC; break;
                     }
-                    else
+
+                    if (CheckTargetVisibility() && ActionDataSelector.EvaluateSequence(comboAttackPick, 1f))
                     {
-                        var jumpAttackPick = Rand.Dice(2) == 1 ? ActionPatterns.JumpAttackA : ActionPatterns.JumpAttackB;
-
-                        //* 미사일 패턴이 중복되지 않도록 미사일 쿨타임이 존재하면 'JumpAttackB'는 선택하지 않음
-                        if (jumpAttackPick == ActionPatterns.JumpAttackB && Mathf.Max(ActionDataSelector.GetRemainCoolTime(ActionPatterns.MissileA), ActionDataSelector.GetRemainCoolTime(ActionPatterns.MissileB)) > 0f)
-                            jumpAttackPick = ActionPatterns.JumpAttackA;
-
-
-                        if (CheckTargetVisibility() && ActionDataSelector.EvaluateSequence(jumpAttackPick))
-                        {
-                            ActionDataSelector.EnqueueSequence(jumpAttackPick);
-                            ActionDataSelector.BeginCoolTime(ActionPatterns.JumpAttackA, BB.action.jumpAttackCoolTime);
-                            ActionDataSelector.BeginCoolTime(ActionPatterns.JumpAttackB, BB.action.jumpAttackCoolTime);
-                        }
+                        ActionDataSelector.EnqueueSequence(comboAttackPick);
+                        ActionDataSelector.BeginCoolTime(ActionPatterns.ComboAttackA, BB.action.comboAttackCoolTime);
+                        ActionDataSelector.BeginCoolTime(ActionPatterns.ComboAttackB, BB.action.comboAttackCoolTime);
+                        ActionDataSelector.BeginCoolTime(ActionPatterns.ComboAttackC, BB.action.comboAttackCoolTime);
+                    }
+                }
+                else
+                {
+                    if (CheckTargetVisibility() && ActionDataSelector.EvaluateSequence(ActionPatterns.JumpAttack, 1f))
+                    {
+                        ActionDataSelector.EnqueueSequence(ActionPatterns.JumpAttack);
+                        ActionDataSelector.BeginCoolTime(ActionPatterns.JumpAttack, BB.action.jumpAttackCoolTime);
                     }
                 }
             }
@@ -329,13 +279,13 @@ namespace Game
             }
             else if (damageContext.actionResult == ActionResults.Blocked)
             {
-                // if (ActionDataSelector.CurrSequence() == null && ActionDataSelector.EvaluateSequence(ActionPatterns.CounterA))
-                // {
-                //     var counterPick = UnityEngine.Random.Range(0, 2) > 0 ? ActionPatterns.CounterA : ActionPatterns.CounterB;
-                //     ActionDataSelector.EnqueueSequence(UnityEngine.Random.Range(0, 2) > 0 ? ActionPatterns.CounterA : ActionPatterns.CounterB);
-                //     ActionDataSelector.BeginCoolTime(ActionPatterns.CounterA, BB.action.counterCoolTime);
-                //     ActionDataSelector.BeginCoolTime(ActionPatterns.CounterA, BB.action.counterCoolTime);
-                // }
+                if (ActionDataSelector.CurrSequence() == null && ActionDataSelector.EvaluateSequence(ActionPatterns.CounterA, 1f))
+                {
+                    var counterPick = UnityEngine.Random.Range(0, 2) > 0 ? ActionPatterns.CounterA : ActionPatterns.CounterB;
+                    ActionDataSelector.EnqueueSequence(UnityEngine.Random.Range(0, 2) > 0 ? ActionPatterns.CounterA : ActionPatterns.CounterB);
+                    ActionDataSelector.BeginCoolTime(ActionPatterns.CounterA, BB.action.counterCoolTime);
+                    ActionDataSelector.BeginCoolTime(ActionPatterns.CounterA, BB.action.counterCoolTime);
+                }
             }
         }
 

@@ -8,7 +8,7 @@ using ZLinq;
 namespace Game
 {
     public class PawnActionDataSelector : MonoBehaviour
-    {   
+    {
         public class ActionSequence
         {
             public ActionSequence(PawnActionDataSelector selector, int hashCode, string sequenceName, MainTable.ActionData[] sequenceData, Dictionary<int, float> paddindTimeData)
@@ -34,13 +34,23 @@ namespace Game
             public MainTable.ActionData Next() => ++__currIndex < __sequenceData.Length ? __sequenceData[__currIndex] : null;
             public float GetPaddingTime() => (__paddingTimeData?.ContainsKey(__currIndex) ?? false) ? __paddingTimeData[__currIndex] : 0f;
             public float GetRemainCoolTime() => maxCoolTime > 0f ? Mathf.Max(0f, maxCoolTime + __beginTimeStamp - Time.time) : 0f;
-            public void BeginCoolTime(float coolTime) { __beginTimeStamp = Time.time; maxCoolTime = coolTime; }
+            public ActionSequence BeginCoolTimeInternal(float coolTime)
+            {
+                __beginTimeStamp = Time.time;
+                maxCoolTime = coolTime;
+                return this;
+            }
+            public ActionSequence CancelCoolTimeInternal()
+            {
+                __beginTimeStamp = 0f;
+                return this;
+            }
             public bool Evaluate(float probConstraint, float staminaConstraint)
             {
                 if (GetRemainCoolTime() > 0f)
                     return false;
 
-                if (currProb < probConstraint) 
+                if (currProb < probConstraint)
                     return false;
 
                 foreach (var d in __sequenceData)
@@ -76,7 +86,7 @@ namespace Game
             var paddingTimeData = new Dictionary<int, float>();
             for (int i = 0; i < actionNames.Length; i++)
             {
-                if (actionNames[i] is string s) 
+                if (actionNames[i] is string s)
                     actionData.Add(DatasheetManager.Instance.GetActionData(__pawnBrain.PawnBB.common.pawnId, s));
                 else if (actionNames[i] is float f)
                     paddingTimeData.Add(actionData.Count, f);
@@ -90,21 +100,21 @@ namespace Game
 
         public ActionSequence GetSequence<T>(T alias) where T : struct, Enum
         {
-            if (__reservedSequences.TryGetValue(alias.GetHashCode(), out var ret)) 
+            if (__reservedSequences.TryGetValue(alias.GetHashCode(), out var ret))
                 return ret;
             else
                 return null;
         }
 
         public ActionSequence EnqueueSequence<T>(T alias) where T : struct, Enum
-        { 
+        {
             var sequence = GetSequence<T>(alias);
             Debug.Assert(sequence != null);
 
             return EnqueueSequence(sequence);
         }
         public ActionSequence EnqueueSequence(ActionSequence sequence)
-        { 
+        {
             if (debugActionSelectDisabled)
             {
                 __Logger.LogR2(gameObject, "EnqueueSequence()", "debugEnqueueDisabled", debugActionSelectDisabled);
@@ -130,7 +140,7 @@ namespace Game
             __sequenceQueue.Dequeue();
             return CurrSequence();
         }
-        
+
         public ActionData AdvanceSequence()
         {
             if (__sequenceQueue.TryPeek(out var currSequence))
@@ -206,7 +216,7 @@ namespace Game
         public ActionSequence BeginCoolTime<T>(T alias, float coolTime) where T : struct, Enum
         {
             var seq = GetSequence(alias);
-            seq.BeginCoolTime(coolTime);
+            seq.BeginCoolTimeInternal(coolTime);
             return seq;
         }
         public ActionSequence ReduceCoolTime<T>(T alias, float deltaTime) where T : struct, Enum
@@ -221,7 +231,7 @@ namespace Game
             seq.maxCoolTime = 0f;
             return seq;
         }
-        public float GetRemainCoolTime<T>(T alias) where T: struct, Enum
+        public float GetRemainCoolTime<T>(T alias) where T : struct, Enum
         {
             return GetSequence(alias)?.GetRemainCoolTime() ?? 0f;
         }

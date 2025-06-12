@@ -22,7 +22,7 @@ namespace Game
         public override void OnFinishSpawnHandler()
         {
             base.OnFinishSpawnHandler();
-            BB.HostBrain.roboDogFormationCtrler.AssignRoboDog(this);
+            // BB.HostBrain.roboDogFormationCtrler.AssignRoboDog(this);
         }
 #endregion
 

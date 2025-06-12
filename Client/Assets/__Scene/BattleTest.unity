@@ -15579,43 +15579,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7bfade561d7fb6246810be0a1f6f096a, type: 3}
---- !u!84 &831899842
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 640
-  m_Height: 360
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 94
-  m_ColorFormat: 4
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 1
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 0
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!4 &832990462 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1708051050916658922, guid: 21032c5a0415f1840b9b09b9ccc78502, type: 3}
@@ -30216,6 +30179,87 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7210471230131241780, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
   m_PrefabInstance: {fileID: 1337260035}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1341219837
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 791442315315432696, guid: b1d83639664904ca1becf7eaa2df8ba5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 791442315315432696, guid: b1d83639664904ca1becf7eaa2df8ba5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 791442315315432696, guid: b1d83639664904ca1becf7eaa2df8ba5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 791442315315432696, guid: b1d83639664904ca1becf7eaa2df8ba5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 791442315315432696, guid: b1d83639664904ca1becf7eaa2df8ba5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 791442315315432696, guid: b1d83639664904ca1becf7eaa2df8ba5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 791442315315432696, guid: b1d83639664904ca1becf7eaa2df8ba5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 791442315315432696, guid: b1d83639664904ca1becf7eaa2df8ba5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 791442315315432696, guid: b1d83639664904ca1becf7eaa2df8ba5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 791442315315432696, guid: b1d83639664904ca1becf7eaa2df8ba5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1626602440402030822, guid: b1d83639664904ca1becf7eaa2df8ba5, type: 3}
+      propertyPath: body.spawnDropAccel
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1626602440402030822, guid: b1d83639664904ca1becf7eaa2df8ba5, type: 3}
+      propertyPath: body.spawnDropSpeed
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 1626602440402030822, guid: b1d83639664904ca1becf7eaa2df8ba5, type: 3}
+      propertyPath: body.spawnDropDistance
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1626602440402030822, guid: b1d83639664904ca1becf7eaa2df8ba5, type: 3}
+      propertyPath: body.spawnDropDirection.x
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1626602440402030822, guid: b1d83639664904ca1becf7eaa2df8ba5, type: 3}
+      propertyPath: body.spawnDropDirection.y
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1626602440402030822, guid: b1d83639664904ca1becf7eaa2df8ba5, type: 3}
+      propertyPath: body.spawnDropdDirection.x
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8861700421523015734, guid: b1d83639664904ca1becf7eaa2df8ba5, type: 3}
+      propertyPath: m_Name
+      value: RoboSoldier-Tutorial
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b1d83639664904ca1becf7eaa2df8ba5, type: 3}
 --- !u!1001 &1341280602
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -31757,6 +31801,43 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cd222070ecb872c45a9b80704c1fdd28, type: 3}
+--- !u!84 &1449420565
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 640
+  m_Height: 360
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 94
+  m_ColorFormat: 4
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 1
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 0
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!4 &1449431951 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7210471230131241780, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
@@ -34857,6 +34938,10 @@ PrefabInstance:
     - target: {fileID: 8861700421523015734, guid: efc1683b84cd04e1b82f3ffd3068ba41, type: 3}
       propertyPath: m_Name
       value: RoboSoldier
+      objectReference: {fileID: 0}
+    - target: {fileID: 8861700421523015734, guid: efc1683b84cd04e1b82f3ffd3068ba41, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -46215,7 +46300,7 @@ PrefabInstance:
     - target: {fileID: 5839498371252988597, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 831899842}
+      objectReference: {fileID: 1449420565}
     - target: {fileID: 6719027917663992577, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
       propertyPath: m_Name
       value: CameraSystem
@@ -46291,4 +46376,5 @@ SceneRoots:
   - {fileID: 2059298114}
   - {fileID: 990659328}
   - {fileID: 1056628798}
+  - {fileID: 1341219837}
   - {fileID: 1619168635}

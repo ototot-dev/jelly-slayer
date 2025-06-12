@@ -154,8 +154,9 @@ namespace Game
 
         public override void EmitActionHandler(GameObject emitPrefab, Transform emitPoint, int emitNum)
         {
-            var hoveringDuration = __brain.ActionDataSelector.CurrSequence() == __brain.ActionDataSelector.GetSequence(RoboSoldierBrain.ActionPatterns.Leap) ?
-                __brain.BB.action.hoveringDurationB : __brain.BB.action.hoveringDurationA;
+            // var hoveringDuration = __brain.ActionDataSelector.CurrSequence() == __brain.ActionDataSelector.GetSequence(RoboSoldierBrain.ActionPatterns.Leap) ?
+            //     __brain.BB.action.hoveringDurationB : __brain.BB.action.hoveringDurationA;
+            var hoveringDuration = __brain.BB.action.hoveringDurationA;
 
             if (emitPrefab == __brain.BB.MissilePrefab)
             {
