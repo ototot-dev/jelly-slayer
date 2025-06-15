@@ -230,8 +230,8 @@ namespace Game
             pawnObj.transform.position = new Vector3(tx, ty, tz);
 
             // Spawn Message
-            //var mode = GameContext.Instance.launcher.currGameMode;
-            //mode?.SendMessage("PawnSpawned", pawnObj, SendMessageOptions.DontRequireReceiver);
+            var mode = GameContext.Instance.launcher.currGameMode;
+            mode?.SendMessage("PawnSpawned", pawnObj, SendMessageOptions.DontRequireReceiver);
         }
 
         public void SpawnPawn(string pawnName, string spawnTag)
@@ -250,8 +250,8 @@ namespace Game
                     Debug.Log("SpawnPawn SpawnTag Error: " + spawnTag);
             }
             // Spawn Message
-            //var mode = GameContext.Instance.launcher.currGameMode;
-            //mode?.SendMessage("PawnSpawned", pawnObj, SendMessageOptions.DontRequireReceiver);
+            var mode = GameContext.Instance.launcher.currGameMode;
+            mode?.SendMessage("PawnSpawned", pawnObj, SendMessageOptions.DontRequireReceiver);
         }
 
         public void SendMessage(string tag, string msg) 

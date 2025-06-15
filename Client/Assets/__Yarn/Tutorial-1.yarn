@@ -1,4 +1,4 @@
-title: Tutorial-1
+title: Tutorial1
 tags:
 ---
 <<fadeIn 0.1>>
@@ -27,6 +27,7 @@ tags:
 <<setLightIntensity SunLight 1>>
 <<wait 0.3>>
 
+
 케이: <size=40>뭐야?</size> 갑자기?
 
 <<wait 2>>
@@ -37,38 +38,120 @@ tags:
 <<wait 4>>
 <<setCameraSlayer>>
 
+<<jump Tutorial1battle4>>
+
 케이: <shake>으악? 저게 뭐야?</shake>
 드론: 이런, 방어 시스템이 발동한 모양이네.
 케이: 방어 시스템이라... 이쪽이 안전한 길 아니었어?
 드론: 걱정하지마. 이 기지의 방어 시스템은 해킹이 가능하거든. 
-드론: 기본적인 전투를 익혀 볼래?
+드론: 내가 적을 해킹할테니 기본적인 전투를 익혀 볼래?
 	-> 케이: <shake>나보고 저거랑 싸우라는 거야?</shake>
-		<<jump Tutorial1battle>>
+		<<jump Tutorial1battle1>>
 	-> 케이: 아니
-		<<jump Tutorial1battle>>
+		<<jump Tutorial1battle1>>
 ===
 
-title: Tutorial1battle
+// --------------------------------------------------------------------------
+title: Tutorial1battle1
 ---
 드론: 좋아. 지금 제어권을 해킹했어. 기본적인 공격을 연습해봐.
 케이: 이 깡통이... 남의 말을 안듣네...
-드론: 네가 얼마나 강력한 전사인지 알고 있어. 연습해봐.
+드론: 네가 얼마나 강력한 전사인지 알고 있어. 무기를 너에게 전송했으니 연습해봐.
+
+<<wait 1>>
 
 <<showSword>>
-<<sendMsgToGameMode SetCombatMode>>
-<<sendMsgToGameMode StartTutorialAttack>>
-<<showMessagePopup "일반 공격" "공격키를 사용해서 적을 공격하세요" 8>>
+
+// 일반 공격 ---------------------------------------
+<<sendMsgToGameMode SetCombat>>
+<<sendMsgToGameMode StartMode_NormalAttack>>
+<<showMessagePopup "일반 공격" "공격키를 사용해서 적을 3회 공격하세요" 8>>
 
 <<waitCheck>>
 
 <<wait 2>>
 
-드론: 훌륭해. 이제 다시 공격해봐.
+===
 
-<<showMessagePopup "강공격" "강공격으로 적의 방어를 무너뜨릴 수 있습니다. 공격키를 길게 눌러서 적을 공격하세요" 8>>
-// 적이 가드하기 시작, 강공격 트라이
+// --------------------------------------------------------------------------
+title: Tutorial1battle2
+---
 
-// 적이 공격함, 가드 연습
+// 강공격 ---------------------------------------
+드론: 훌륭해. 하지만 적이 가드할 경우 대미지를 줄 수가 없어. 
+케이: 저 상태에서 적이 가드한다고?
+드론: 그래. 그 경우 모으기 공격으로 적의 가드를 깨뜨릴 수 있지.
+
+<<wait 1>>
+
+<<showSword>>
+
+<<sendMsgToGameMode SetCombat>>
+<<sendMsgToGameMode StartMode_PowerAttack>>
+<<sendMsgToGameMode RoboSoldierStartGuard>>
+<<showMessagePopup "강공격" "강공격으로 적의 방어를 무너뜨릴 수 있습니다. 공격키를 길게 눌러서 방어를 무너뜨리세요." 8>>
+
+<<waitCheck>>
+
+<<wait 1>>
+
+<<jump Tutorial1battle3>>
+
+===
+
+// --------------------------------------------------------------------------
+title: Tutorial1battle3
+---
+// 가드 --------------------------------------------------------------------
+드론: 좋아. 이제 가드를 알려줄 께. 적을 바라보면 자동으로 가드할 수 있어.
+케이: 그게 쉬운게 아니야.
+드론: 적의 공격을 가드해 봐.
+
+<<sendMsgToGameMode SetCombat>>
+<<sendMsgToGameMode StartMode_Guard>>
+<<sendMsgToGameMode RoboSoldierStartAttack>>
+<<showMessagePopup "가드" "적의 공격은 가드할 수 있습니다. 상대의 공격을 3회 가드하세요." 4>>
+
+<<waitCheck>>
+
+<<sendMsgToGameMode RoboSoldierEndAttack>>
+
+<<wait 1>>
+
+<<jump Tutorial1battle4>>
+
+===
+
+// 회피 --------------------------------------------------------------------
+// --------------------------------------------------------------------------
+title: Tutorial1battle4
+---
+
+<<wait 1>>
+
+드론: 역시 금방하네. 적의 공격은 회피할 수 도 있어. 이번엔 적의 공격을 회피해봐.
+
+<<wait 1>>
+
+<<sendMsgToGameMode SetCombat>>
+<<sendMsgToGameMode StartMode_Evade>>
+<<sendMsgToGameMode RoboSoldierStartAttack>>
+<<showMessagePopup "회피" "회피는 가드보다 적은 스테미너를 소비합니다. 상대의 공격을 3회 회피하세요." 8>>
+
+<<wait 1>>
+
+// 물약 --------------------------------------------------------------------
+<<showMessagePopup "물약" "체력이 떨어지면 물약으로 회복할 수 있습니다. 물약으로 체력을 회복하세요." 8>>
+
+<<wait 1>>
+
+<<showMessagePopup "패링" "상대 공격 직전에 가드하면 패링할 수 있습니다. 상대의 공격을 3회 패링하세요." 8>>
+
+<<wait 1>>
+
+<<showMessagePopup "그로기" "그로기에 빠진 적에게 공격을 하면 몇배의 대미지를 줄 수 있습니다. 상대를 쓰러뜨리세요." 8>>
+
+// 적이 공격함, 가연습
 
 // 적이 공격함, 패링 연습
 

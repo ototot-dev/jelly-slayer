@@ -46,7 +46,7 @@ namespace Game
                     }
                     else
                     {
-                        __brain.jellyMeshCtrler.ShowHitColor(0.2f);
+                        __brain.jellyMeshCtrler?.ShowHitColor(0.2f);
                         // SoundManager.Instance.PlayWithClip(__brain.BB.audios.onHitFleshClip);
                     }
 

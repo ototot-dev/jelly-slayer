@@ -16,6 +16,10 @@ namespace Game
     {
         None,
         NormalAttack,
+        PowerAttack,
+
+        Guard,
+        Evade,
     }
     public enum TutorialScene 
     {
@@ -37,6 +41,8 @@ namespace Game
         public TutorialMode _tutorialMode = TutorialMode.None;
         private bool _isInCombat = false;
         private int _attackCount = 0;
+
+        private TutorialRoboSoldierBrain _roboBrain;
 
         public override bool IsInCombat() => _isInCombat;
 
@@ -86,6 +92,9 @@ namespace Game
                 GameContext.Instance.playerCtrler.SpawnSlayerPawn(true);
                 GameContext.Instance.playerCtrler.possessedBrain.transform.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
                 GameContext.Instance.playerCtrler.possessedBrain.TryGetComponent<SlayerAnimController>(out var animCtrler);
+
+                GameContext.Instance.playerCtrler.possessedBrain.PawnHP.onDamaged += ((damageContex) => { 
+                });
             }
             else
             {
@@ -178,8 +187,8 @@ namespace Game
                 InitPlayerCharacter(spawnPoint);
 
                 InitCamera();
-
-                InitLoadingPageCtrler("Tutorial-1", () => { });
+                // Tutorial1
+                InitLoadingPageCtrler("Tutorial1", () => { });
             };
         }
         public IEnumerator ChangeRoom_Coroutine()
@@ -202,6 +211,37 @@ namespace Game
             yield return new WaitForSeconds(1f);
         }
 
+        public void PawnSpawned(GameObject obj) 
+        {
+            var pawn = obj.GetComponent<PawnBrainController>();
+            if (pawn.PawnBB.common.pawnId == PawnId.RoboSoldier)
+            {
+                _roboBrain = (TutorialRoboSoldierBrain)pawn;
+
+                pawn.PawnHP.onDamaged += ((damageContext) =>
+                {
+                    CheckDamage(damageContext);
+                });
+                /*
+                pawn.PawnHP.onAvoided += ((_, reason) => 
+                {
+                    if (reason == "Dodge") 
+                    {
+                        EvadeDamage();
+                    }
+                });
+                //*/
+            }
+            var slayerBrain = GameContext.Instance.playerCtrler.possessedBrain;
+            slayerBrain.PawnHP.onAvoided += ((_, reason) =>
+            {
+                if (reason == "Dodge")
+                {
+                    EvadeDamage();
+                }
+            });
+        }
+
         void Update()
         {
             //* 다이얼로그 진행 중에 AnyKeyDown 처리
@@ -214,18 +254,121 @@ namespace Game
                 }
             }
         }
+
         #region TUTORIAL
-        public void SetCombatMode()
+
+        void CheckDamage(PawnHeartPointDispatcher.DamageContext damageContext) 
+        {
+            var slayerBrain = GameContext.Instance.playerCtrler.possessedBrain;
+            switch (_tutorialMode)
+            {
+                case TutorialMode.NormalAttack:
+                    _attackCount++;
+                    if (_attackCount >= 3)
+                    {
+                        _attackCount = 0;
+                        __dialogueDispatcher._isWaitCheck = true;
+                        _tutorialMode = TutorialMode.None;
+                    }
+                    break;
+                case TutorialMode.PowerAttack:
+                    //if (damageContext.actionResult == ActionResults.GuardBreak)
+                    {
+                        _attackCount++;
+                        if (_attackCount >= 3)
+                        {
+                            _attackCount = 0;
+                            __dialogueDispatcher._isWaitCheck = true;
+                            _tutorialMode = TutorialMode.None;
+                        }
+                    }
+                    break;
+                case TutorialMode.Guard:
+                    if (damageContext.actionResult == ActionResults.Blocked && damageContext.receiverBrain == slayerBrain)
+                    {
+                        _attackCount++;
+                        if (_attackCount >= 3)
+                        {
+                            _attackCount = 0;
+                            __dialogueDispatcher._isWaitCheck = true;
+                            _tutorialMode = TutorialMode.None;
+                        }
+                    }
+                    break;
+            }
+        }
+        void EvadeDamage()
+        {
+            if (_tutorialMode != TutorialMode.Evade)
+                return;
+
+            _attackCount++;
+            if (_attackCount >= 3)
+            {
+                _attackCount = 0;
+                __dialogueDispatcher._isWaitCheck = true;
+                _tutorialMode = TutorialMode.None;
+            }
+        }
+
+        public void SetCombat()
         {
             _isInCombat = true;
         }
-        public void ResetCombatMode()
+        
+        public void ResetCombat()
         {
             _isInCombat = false;
         }
-        public void StartTutorialAttack()
+        
+        public void StartMode_NormalAttack()
         {
+            _attackCount = 0;
             _tutorialMode = TutorialMode.NormalAttack;
+        }
+
+        public void StartMode_PowerAttack()
+        {
+            _attackCount = 0;
+            _tutorialMode = TutorialMode.PowerAttack;
+        }
+
+        public void StartMode_Guard() 
+        {
+            _attackCount = 0;
+            _tutorialMode = TutorialMode.Guard;
+        }
+
+        public void StartMode_Evade() 
+        {
+            _attackCount = 0;
+            _tutorialMode = TutorialMode.Evade;
+        }
+
+        public void RoboSoldierStartGuard() 
+        {
+            if (_roboBrain == null)
+                return;
+
+            _roboBrain.tutorialActionEnabled.Value = true;
+            _roboBrain.tutorialGuardEnabled.Value = false;
+        }
+
+        public void RoboSoldierStartAttack() 
+        {
+            if (_roboBrain == null)
+                return;
+
+            _roboBrain.tutorialActionEnabled.Value = true;
+            _roboBrain.tutorialComboAttackEnbaled.Value = true;
+        }
+        public void RoboSoldierEndAttack()
+        {
+            if (_roboBrain == null)
+                return;
+
+            _roboBrain.tutorialActionEnabled.Value = false;
+            _roboBrain.tutorialComboAttackEnbaled.Value = false;
         }
 
         public void OnReceivePawnActionStart(PawnBrainController sender, string actionName)
@@ -240,17 +383,6 @@ namespace Game
         {
             if (damageContext.senderBrain == GameContext.Instance.playerCtrler.possessedBrain) 
             {
-                switch (_tutorialMode)
-                {
-                    case TutorialMode.NormalAttack:
-                        _attackCount++;
-                        if (_attackCount >= 3)
-                        {
-                            __dialogueDispatcher._isWaitCheck = true;
-                            _tutorialMode = TutorialMode.None;
-                        }
-                        break;
-                }
             }
         }
 
