@@ -118,7 +118,8 @@ namespace Game
             __runner.AddCommandHandler<string, float, float, float>("spawnPawnByVector", SpawnPawnByVector);
             __runner.AddCommandHandler<string>("setCameraTarget", SetCameraTarget);
             __runner.AddCommandHandler("setCameraSlayer", SetCameraSlayer);
-            __runner.AddCommandHandler<string, string, float>("showMessagePopup", ShowMessagePopup); 
+            __runner.AddCommandHandler<string, string, float>("showMessagePopup", ShowMessagePopup);
+            __runner.AddCommandHandler<string, float>("setLightIntensity", SetLightIntensity);
         }
 
         public void Vignetee(float intensity, float smoothness, float blendTime)
@@ -229,8 +230,8 @@ namespace Game
             pawnObj.transform.position = new Vector3(tx, ty, tz);
 
             // Spawn Message
-            //var mode = GameContext.Instance.launcher.currGameMode;
-            //mode?.SendMessage("PawnSpawned", pawnObj, SendMessageOptions.DontRequireReceiver);
+            var mode = GameContext.Instance.launcher.currGameMode;
+            mode?.SendMessage("PawnSpawned", pawnObj, SendMessageOptions.DontRequireReceiver);
         }
 
         public void SpawnPawn(string pawnName, string spawnTag)
@@ -249,17 +250,31 @@ namespace Game
                     Debug.Log("SpawnPawn SpawnTag Error: " + spawnTag);
             }
             // Spawn Message
-            //var mode = GameContext.Instance.launcher.currGameMode;
-            //mode?.SendMessage("PawnSpawned", pawnObj, SendMessageOptions.DontRequireReceiver);
+            var mode = GameContext.Instance.launcher.currGameMode;
+            mode?.SendMessage("PawnSpawned", pawnObj, SendMessageOptions.DontRequireReceiver);
         }
 
         public void SendMessage(string tag, string msg) 
         {
             var obj = TaggerSystem.FindGameObjectWithTag(tag);
             if (obj == null)
+            {
                 Debug.Log("YarnCommand: Not Found Object, " + msg);
-
+                return;
+            }
             obj.SendMessage(msg, SendMessageOptions.DontRequireReceiver);
+        }
+        public void SetLightIntensity(string tag, float intensity)
+        {
+            var obj = TaggerSystem.FindGameObjectWithTag(tag);
+            if (obj == null)
+            {
+                Debug.Log("YarnCommand: Not Found Object, " + tag);
+                return;
+            }
+            Light light = obj.GetComponent<Light>();
+            if (light != null)
+                light.intensity = intensity;
         }
 
         public void SendMessageToGameMode(string msg) 

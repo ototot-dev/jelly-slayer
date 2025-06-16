@@ -275,7 +275,7 @@ namespace Game
             if (damageContext.actionResult == ActionResults.Damaged)
             {
                 Color color = (PawnBB.IsGroggy == true) ? Color.yellow : Color.white;
-                GameContext.Instance.damageTextManager.Create(damageContext.finalDamage.ToString("0"), damageContext.hitPoint, 1, color);
+                GameContext.Instance.damageTextManager?.Create(damageContext.finalDamage.ToString("0"), damageContext.hitPoint, 1, color);
             }
             else if (damageContext.actionResult == ActionResults.Blocked)
             {

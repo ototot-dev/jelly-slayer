@@ -924,6 +924,18 @@ PrefabInstance:
       propertyPath: m_LookAt
       value: 
       objectReference: {fileID: 504578203}
+    - target: {fileID: 2491043699385655447, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
+      propertyPath: m_XDamping
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2491043699385655447, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
+      propertyPath: m_YDamping
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2491043699385655447, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
+      propertyPath: m_ZDamping
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5679921616131172754, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.0000008477105
@@ -931,7 +943,7 @@ PrefabInstance:
     - target: {fileID: 5839498371252988597, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 1606363634}
+      objectReference: {fileID: 1620709261}
     - target: {fileID: 6215147742582434749, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
       propertyPath: m_LocalScale.x
       value: 14.222222
@@ -983,7 +995,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2833115351986871298, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1790903382}
   m_SourcePrefab: {fileID: 100100000, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
 --- !u!1 &1406454961
 GameObject:
@@ -1189,7 +1204,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!84 &1606363634
+--- !u!84 &1620709261
 RenderTexture:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1226,6 +1241,38 @@ RenderTexture:
   m_Dimension: 2
   m_VolumeDepth: 1
   m_ShadowSamplingMode: 2
+--- !u!1 &1790903376 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2833115351986871298, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
+  m_PrefabInstance: {fileID: 1366469139}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1790903382
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1790903376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ee01e66702087b4798e633ca34c7956, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blurConfig: {fileID: 11400000, guid: 38a5a284016f6ac429b5248b7bd52fe9, type: 2}
+  downsample: 0
+  blurRegion:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  maxUpdateRate: Infinity
+  cullPadding: 0
+  preview: 0
+  backgroundFill:
+    mode: 0
+    color: {r: 1, g: 1, b: 1, a: 1}
+  skipCulling: 0
 --- !u!1 &1851434472
 GameObject:
   m_ObjectHideFlags: 0
