@@ -9,6 +9,6 @@ AssetOrigin:
   serializedVersion: 1
   productId: 270038
   packageName: Critter Environment
-  packageVersion: 2.3
+  packageVersion: 2.3.2
   assetPath: Assets/Critter/3DPixelArtEnvironment/Shaders/URP_ShaderGraphCustomLighting/CustomLighting.hlsl
-  uploadId: 729467
+  uploadId: 754948

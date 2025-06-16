@@ -19,7 +19,7 @@ public class SampleTweenSelector : MonoBehaviour {
         tweenSelector.query.activeStates.Add("show");
 
         // Apply it.
-        tweenSelector.query.Apply();
+        tweenSelector.query.Execute();
     }
         
 }

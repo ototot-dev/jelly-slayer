@@ -314,13 +314,22 @@ namespace NodeCanvas.Editor
             var subTreeVariables = owner.graph.blackboard.variables.Values;
             foreach ( var variable in subTreeVariables ) {
 
-                if ( variable is Variable<VariableSeperator> ) { continue; }
                 if ( !variable.isExposedPublic || variable.isPropertyBound ) { continue; }
+                // if ( variable is Variable<VariableSeperator> ) { continue; }
 
+                if (variable is Variable<VariableSeperator>){
+                    GUILayout.Space(5);
+                    GUI.color = Color.yellow;
+                    GUILayout.Label(string.Format("<b>{0}</b>", variable.name.ToUpper()), Styles.leftLabel);
+                    GUI.color = Color.white;        
+                    continue;            
+                }
+                
                 if ( !separatorDrawn ) {
                     separatorDrawn = true;
                     EditorUtils.Separator();
-                    EditorGUILayout.HelpBox("Exposed Graph Variables. Use the arrows button to override/parametrize the variable. Doing this will not change the graph serialization. Prefab overrides are also supported.", MessageType.None);
+                    GUILayout.Label("▼ <b>Exposed</b> Graph Blackboard Variables");
+                    EditorGUILayout.HelpBox("Use the arrows button to override/parametrize a variable. Doing this will not change the graph serialization. Prefab overrides are also supported.", MessageType.None);
                 }
 
                 if ( owner.exposedParameters == null ) { owner.exposedParameters = new System.Collections.Generic.List<ExposedParameter>(); }
@@ -346,7 +355,9 @@ namespace NodeCanvas.Editor
                 GUILayout.BeginHorizontal();
                 var info = new InspectedFieldInfo();
                 info.unityObjectContext = owner;
+                GUILayout.BeginVertical();
                 exposedParam.valueBoxed = EditorUtils.DrawEditorFieldDirect(new GUIContent(variable.name), exposedParam.valueBoxed, variable.varType, info);
+                GUILayout.EndVertical();
                 if ( GUILayout.Button(EditorUtils.GetTempContent("▼▲", null, "Remove Override"), Styles.centerLabel, GUILayout.Width(24)) ) {
                     UndoUtility.RecordObject(owner, "Remove Override");
                     // DISABLE: was creating confusion when editing multiple graphowner instances using asset graphs and having different variable overrides

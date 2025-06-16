@@ -960,12 +960,15 @@ namespace NodeCanvas.Framework
 
             if ( fullDrawPass || drawCanvas.Overlaps(rect) ) {
                 var canHaveMoreOutConnection = outConnections.Count < maxOutConnections || maxOutConnections == -1;
-                Rect nodeOutputBox = default(Rect);
+                Rect nodeOutputBox = default;
                 if ( graph.flowDirection == PlanarDirection.Vertical ) {
-                    nodeOutputBox = new Rect(rect.x, rect.yMax - 2, rect.width, canHaveMoreOutConnection ? 12 : 10);
+                    nodeOutputBox = new Rect(0, 0, canHaveMoreOutConnection ? rect.width : 30, 12);
+                    nodeOutputBox.center = new Vector2(rect.center.x, rect.yMax + 4);
                 }
                 if ( graph.flowDirection == PlanarDirection.Horizontal ) {
-                    nodeOutputBox = new Rect(rect.xMax, rect.yMin, canHaveMoreOutConnection ? 12 : 10, rect.height);
+                    nodeOutputBox = new Rect(0, 0, 12, canHaveMoreOutConnection ? rect.height : 30);
+                    nodeOutputBox.yMin += 2;
+                    nodeOutputBox.center = new Vector2(rect.xMax + 4, rect.center.y);
                 }
                 Styles.Draw(nodeOutputBox, StyleSheet.nodePortContainer);
 

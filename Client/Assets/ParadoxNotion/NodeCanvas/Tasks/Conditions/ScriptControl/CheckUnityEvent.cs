@@ -65,7 +65,7 @@ namespace NodeCanvas.Tasks.Conditions
             {
                 if ( _eventInfo == null ) { return "No Event Selected"; }
                 if ( targetMember == null ) { return _eventInfo.AsString().FormatError(); }
-                return string.Format("'{0}' Raised", targetMember.Name);
+                return string.Format("{0}.{1}", agentInfo, targetMember.Name);
             }
         }
 
@@ -173,7 +173,7 @@ namespace NodeCanvas.Tasks.Conditions
             {
                 if ( _eventInfo == null ) { return "No Event Selected"; }
                 if ( targetMember == null ) { return _eventInfo.AsString().FormatError(); }
-                return string.Format("'{0}' Raised", targetMember.Name);
+                return string.Format("{0}.{1}", agentInfo, targetMember.Name);
             }
         }
 

@@ -721,10 +721,10 @@ namespace Game
                 return;
                 
             Debug.Log("OnBurst");
-            if (possessedBrain.BB.stat.rage.Value < possessedBrain.BB.stat.maxRage.Value)
+            if (possessedBrain.BB.stat.burst.Value < possessedBrain.BB.stat.maxBurst.Value)
                 return;
 
-            possessedBrain.BB.stat.rage.Value = 0;
+            possessedBrain.BB.stat.burst.Value = 0;
             possessedBrain.ActionCtrler.SetPendingAction("Burst");
         }
     }

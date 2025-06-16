@@ -196,6 +196,7 @@ namespace ParadoxNotion.Serialization.FullSerializer
                 new fsTypeConverter { Serializer = this },
                 new fsEnumConverter { Serializer = this },
                 new fsPrimitiveConverter { Serializer = this },
+                new fsGuidConverter { Serializer = this },
                 new fsArrayConverter { Serializer = this },
                 new fsDictionaryConverter { Serializer = this },
                 new fsListConverter { Serializer = this },

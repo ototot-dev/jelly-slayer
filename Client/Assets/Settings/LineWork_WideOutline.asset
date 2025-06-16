@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1beecfe6c40d4fc397be59c6d99409a5, type: 3}
   m_Name: LineWork_WideOutline
   m_EditorClassIdentifier: 
-  injectionPoint: 550
+  injectionPoint: 450
   showInSceneView: 1
   outlines:
   - {fileID: 2382762410974546833}

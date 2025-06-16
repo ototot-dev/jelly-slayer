@@ -8,13 +8,13 @@ namespace NodeCanvas.BehaviourTrees
 {
 
     [Category("Composites")]
-    [Description("Quick way to execute the left or the right child, based on a Condition Task.")]
+    [Description("Quick way to execute the left or the right child based on a Condition Task.")]
     [ParadoxNotion.Design.Icon("Condition")]
     [Color("b3ff7f")]
     public class BinarySelector : BTNode, ITaskAssignable<ConditionTask>
     {
 
-        [Tooltip("If true, the condition will be re-evaluated per frame.")]
+        [Tooltip("If true, the condition will be re-evaluated per tick.")]
         public bool dynamic;
 
         [SerializeField]
@@ -22,12 +22,10 @@ namespace NodeCanvas.BehaviourTrees
 
         private int succeedIndex;
 
-        public override int maxOutConnections { get { return 2; } }
-        public override Alignment2x2 commentsAlignment { get { return Alignment2x2.Right; } }
+        public override int maxOutConnections => 2;
+        public override Alignment2x2 commentsAlignment => Alignment2x2.Right;
 
-        public override string name {
-            get { return base.name.ToUpper(); }
-        }
+        public override string name => base.name.ToUpper();
 
         public Task task {
             get { return condition; }
@@ -61,7 +59,7 @@ namespace NodeCanvas.BehaviourTrees
         }
 
         protected override void OnReset() {
-            if ( condition != null ) { condition.Disable(); }
+            condition?.Disable();
         }
 
 

@@ -15,16 +15,16 @@ namespace FIMSpace.FSpine
                 if (SpineTransforms.Count > 2)
                 {
                     CreateSpineChain(SpineTransforms[0], SpineTransforms[SpineTransforms.Count - 1]);
-                    Debug.Log("[SPINE ANIMATOR] Auto Bone Conversion from old version of Spine Animator! Please select your objects with Spine Animator to pre-convert it instead of automatically doing it when game Starts! (" + name + ")");
+                    Debug.Log("[SPINAL ANIMATOR] Auto Bone Conversion from old version of Spine Animator! Please select your objects with Spine Animator to pre-convert it instead of automatically doing it when game Starts! (" + name + ")");
                 }
                 else
                 {
-                    Debug.Log("[SPINE ANIMATOR] could not initialize Spine Animator inside '" + name + "' because there are no bones to animate!");
+                    Debug.Log("[SPINAL ANIMATOR] could not initialize Spine Animator inside '" + name + "' because there are no bones to animate!");
                     return;
                 }
             }
 
-            if (initialized) { Debug.Log("[Spine Animator] " + name + " is already initialized!"); return; }
+            if (initialized) { Debug.Log("[Spinal Animator] " + name + " is already initialized!"); return; }
 
             if (BaseTransform == null) BaseTransform = FindBaseTransform();
 
@@ -60,7 +60,7 @@ namespace FIMSpace.FSpine
                     }
                     else
                     {
-                        UnityEngine.Debug.Log( "[Spine Animator] Check your spine bones hierarchy in '"+name+"'. Some bones are very short, consider removing them from the spine chain." );
+                        UnityEngine.Debug.Log( "[Spinal Animator] Check your spine bones hierarchy in '"+name+"'. Some bones are very short, consider removing them from the spine chain." );
                     }
 
                 }
@@ -104,7 +104,7 @@ namespace FIMSpace.FSpine
         {
             if (start == null || end == null)
             {
-                Debug.Log("[SPINE ANIMATOR] Can't create spine chain if one of the bones is null!");
+                Debug.Log("[SPINAL ANIMATOR] Can't create spine chain if one of the bones is null!");
                 return;
             }
 
@@ -116,7 +116,7 @@ namespace FIMSpace.FSpine
 
             if (p == null)
             {
-                Debug.Log("[SPINE ANIMATOR] '" + start.name + "' is not child of '" + end.name + "' !");
+                Debug.Log("[SPINAL ANIMATOR] '" + start.name + "' is not child of '" + end.name + "' !");
                 return;
             }
 

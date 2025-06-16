@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 31fc71bd0ff6b405eb414af5a1153e25
+guid: afa7c58e07ab1449a86087c37b1dd675
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 11400000
@@ -10,7 +10,7 @@ AssetOrigin:
   serializedVersion: 1
   productId: 154245
   packageName: Legs Animator
-  packageVersion: 1.0.3
+  packageVersion: 1.0.4.4
   assetPath: Assets/FImpossible Creations/Plugins - Animating/Legs Animator/Presets
     Directory/Leg Custom Module Presets/Utility_Step Further with Velocity.asset
-  uploadId: 722436
+  uploadId: 759872

@@ -8,10 +8,10 @@ using UnityEditor;
 namespace FIMSpace.FSpine
 {
     [DefaultExecutionOrder(-12)]
-    [AddComponentMenu("FImpossible Creations/Spine Animator Utilities/Spine Animator Queuer")]
+    [AddComponentMenu("FImpossible Creations/Spinal Animator Utilities/Spinal Animator Queuer")]
     public class SpineAnimatorQueuer : MonoBehaviour
     {
-        [Tooltip("Can be used to fade out all spine animators")]
+        [Tooltip("Can be used to fade out all spinal animators")]
         [FPD_Suffix(0f, 1f)]
         public float SpineAnimatorsAmount = 1f;
 
@@ -75,7 +75,7 @@ namespace FIMSpace.FSpine
             serializedObject.Update();
 
             if (!Application.isPlaying)
-                EditorGUILayout.HelpBox("Spine Animators will be disabled in playmode but this component will update them in defined update order internally", MessageType.Info);
+                EditorGUILayout.HelpBox("Spinal Animators will be disabled in playmode but this component will update them in defined update order internally", MessageType.Info);
 
             Color preC = GUI.color;
             GUI.color = new Color(0.7f, 0.7f, 0.975f, .85f);
@@ -112,7 +112,7 @@ namespace FIMSpace.FSpine
 
                 if (pre != null)
                 {
-                    if (pre._editor_Title != "Spine Animator 2")
+                    if (pre._editor_Title != "Spinal Animator 2")
                         title += pre._editor_Title;
 
                     GUIContent t = new GUIContent(title);

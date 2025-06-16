@@ -4,9 +4,10 @@ using UnityEngine;
 namespace FIMSpace.FSpine
 {
     /// <summary>
-    /// FM: Main component for spine-chain-follow procedural animation
+    /// Main component for spine-chain-follow procedural animation.
+    /// Component name will remain named as FSpineAnimator to avoid component break on different filename/in file name in case of updating plugin.
     /// </summary>
-    [AddComponentMenu("FImpossible Creations/Spine Animator 2")]
+    [AddComponentMenu("FImpossible Creations/Spinal Animator 2")]
     [DefaultExecutionOrder(-11)]
     [HelpURL( "https://assetstore.unity.com/packages/tools/animation/spine-animator-128322" )]
     public partial class FSpineAnimator : MonoBehaviour, UnityEngine.EventSystems.IDropHandler, IFHierarchyIcon
@@ -17,7 +18,7 @@ namespace FIMSpace.FSpine
 
         #region Inspector Variables ---------------------------
 
-        /// <summary> List of Spine Animator's bones used for animation </summary>
+        /// <summary> List of Spinal Animator's bones used for animation </summary>
         public List<SpineBone> SpineBones;
         /// <summary> Transforms list is no more used, it remains here for bones import to new version. Use SpineBones[].Transform </summary>
         public List<Transform> SpineTransforms;
@@ -31,7 +32,7 @@ namespace FIMSpace.FSpine
         #endregion
 
 
-        [Tooltip("Main character object - by default it is game object to which Spine Animator is attached.\n\nYou can use it to control spine of character from different game object.")]
+        [Tooltip("Main character object - by default it is game object to which Spinal Animator is attached.\n\nYou can use it to control spine of character from different game object.")]
         public Transform BaseTransform;
         /// <summary> ForwardReference is no more used, it remains here for compatibility import to new version. Use BaseTransform now </summary>
         public Transform ForwardReference;
@@ -48,7 +49,7 @@ namespace FIMSpace.FSpine
         public bool ReverseForward = false;
 
 
-        //[Tooltip("If you want spine animator motion to be connected with keyframed animation motion, don't use this when your object isn't animated.")]
+        //[Tooltip("If you want spinal animator motion to be connected with keyframed animation motion, don't use this when your object isn't animated.")]
         //public bool SyncWithAnimator = true;
 
         //[Tooltip("If your skeleton have not animated keyframes in animation clip then bones would start doing circles with this option disabled.\n\nIn most cases all keyframes are filled, if you're sure for baked keyframes you can disable this option to avoid some not needed calculations.")]
@@ -61,7 +62,7 @@ namespace FIMSpace.FSpine
 
         /// <summary> AnchorRoot is no more used, it remains here for compatibility import to new version. Use HeadAnchor now </summary>
         public Transform AnchorRoot = null;
-        [Tooltip("Connecting lead bone position to given transform, useful when it is tail and you already animating spine with other Spine Animator component.")]
+        [Tooltip("Connecting lead bone position to given transform, useful when it is tail and you already animating spine with other Spinal Animator component.")]
         public Transform HeadAnchor = null;
         [Tooltip("Letting head anchor to animate rotation")]
         public bool AnimateAnchor = true;
@@ -74,7 +75,7 @@ namespace FIMSpace.FSpine
         [Tooltip("List of bone positioning/rotation fixers if using paws positioning with IK controlls disconnected out of arms/legs in the hierarchy")]
         public List<SpineAnimator_FixIKControlledBones> BonesFixers = new List<SpineAnimator_FixIKControlledBones>();
 
-        [Tooltip("Useful when you use few spine animators and want to rely on animated position and rotation by other spine animator.")]
+        [Tooltip("Useful when you use few spinal animators and want to rely on animated position and rotation by other spinal animator.")]
         public bool UpdateAsLast = false;
         /// <summary> Queue to last udpate is no longer used, use "UpdateAsLast" now </summary>
         public bool QueueToLastUpdate = false;
@@ -85,10 +86,10 @@ namespace FIMSpace.FSpine
         [Tooltip("Often when you drop model to scene, it's initial pose is much different than animations, which causes problems, this toggle solves it at start.")]
         public bool StartAfterTPose = true;
 
-        [Tooltip("If you want spine animator to stop computing when choosed mesh is not visible in any camera view (editor's scene camera is detecting it too)")]
+        [Tooltip("If you want spinal animator to stop computing when choosed mesh is not visible in any camera view (editor's scene camera is detecting it too)")]
         public Renderer OptimizeWithMesh = null;
 
-        [Tooltip("Delta Time for Spine Animator calculations")]
+        [Tooltip("Delta Time for Spinal Animator calculations")]
         public EFDeltaType DeltaType = EFDeltaType.SafeDelta;
 
         [Tooltip("Making update rate stable for target rate.\nIf this value is = 0 then update rate is unlimited.")]
@@ -97,7 +98,7 @@ namespace FIMSpace.FSpine
         [Tooltip("In some cases you need to use chain corrections, it will cost a bit more in performance, not much but always.")]
         public bool UseCorrections = false;
 
-        [Tooltip("Sometimes offsetting model's pivot position gives better results using spine animator, offset forward axis so front legs are in centrum and see the difference (generating additional transform inside hierarchy)")]
+        [Tooltip("Sometimes offsetting model's pivot position gives better results using spinal animator, offset forward axis so front legs are in centrum and see the difference (generating additional transform inside hierarchy)")]
         public Vector3 MainPivotOffset = new Vector3(0f, 0f, 0f);
         [Tooltip("Generating offset runtime only, allows you to adjust it on prefabs on scene")] public bool PivotOffsetOnStart = true;
 
@@ -226,7 +227,7 @@ namespace FIMSpace.FSpine
         bool updateSpineAnimator = false;
         internal void Update()
         {
-            #region Conditions to do any calculations within Spine Animator
+            #region Conditions to do any calculations within Spinal Animator
 
             if (!initialized)
             {
@@ -263,7 +264,7 @@ namespace FIMSpace.FSpine
 
             if (SpineBones.Count == 0)
             {
-                Debug.LogError("[SPINE ANIMATOR] No spine bones defined in " + name + " !");
+                Debug.LogError("[SPINAL ANIMATOR] No spine bones defined in " + name + " !");
                 initialized = false;
                 updateSpineAnimator = false;
                 return;

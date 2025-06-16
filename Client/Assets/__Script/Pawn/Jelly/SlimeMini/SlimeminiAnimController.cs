@@ -39,7 +39,7 @@ namespace Game
                     jellyTweenSelector.query.activeClasses.Clear();
                     jellyTweenSelector.query.activeStates.Clear();
                     jellyTweenSelector.query.activeClasses.Add("prejump");
-                    jellyTweenSelector.query.Apply();
+                    jellyTweenSelector.query.Execute();
                 }
                 else
                 {
@@ -49,7 +49,7 @@ namespace Game
                     jellyTweenSelector.query.activeStates.Clear();
                     jellyTweenSelector.query.activeClasses.Add("landing");
                     jellyTweenSelector.query.activeStates.Add("small");
-                    jellyTweenSelector.query.Apply();
+                    jellyTweenSelector.query.Execute();
                 }
             }).AddTo(this);
 

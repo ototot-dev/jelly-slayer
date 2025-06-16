@@ -68,13 +68,6 @@
         MouseOver = 2
     }
 
-    ///<summary> Enumeration for boolean status result</summary>
-	public enum CompactStatus
-    {
-        Failure = 0,
-        Success = 1
-    }
-
     ///<summary> Enumeration for Animation playing direction</summary>
     public enum PlayDirections
     {

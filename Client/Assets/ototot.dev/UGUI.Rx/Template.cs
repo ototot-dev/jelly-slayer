@@ -294,7 +294,7 @@ namespace UGUI.Rx
                 var tweenNames = GetTestTweenNames();
 
                 foreach (var q in query)
-                    q.Init(this, tweenNames);
+                    q.Initialize(this, tweenNames);
 
                 ShowAsObservable().Subscribe();
             }

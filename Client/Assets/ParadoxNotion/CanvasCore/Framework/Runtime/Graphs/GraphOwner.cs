@@ -292,7 +292,7 @@ namespace NodeCanvas.Framework
         }
 
         ///<summary>Initialize the bound or asset graph. This is called in Awake automatically, but it's public so that you can call this manually to pre-initialize when gameobject is deactive, if required.</summary>
-        public void Initialize() {
+        public void Initialize(System.Action callback = null) {
 
             Debug.Assert(Application.isPlaying, "GraphOwner Initialize should have been called in runtime only");
 
@@ -346,11 +346,13 @@ namespace NodeCanvas.Framework
                         InvokeStartEvent();
                     }
                     initialized = true;
+                    callback?.Invoke();
                 });
             } else {
                 graph.LoadOverwrite(loadData);
                 BindExposedParameters();
                 initialized = true;
+                callback?.Invoke();
             }
         }
 

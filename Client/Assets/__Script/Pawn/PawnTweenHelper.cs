@@ -47,7 +47,7 @@ namespace Game
                 .Subscribe(_ => 
                 {
                     TweenSelector.query.activeStates.Clear();
-                    TweenSelector.query.Apply();
+                    TweenSelector.query.Execute();
 
                     Debug.Assert(__rotateEmoticonDisposable != null);
                     

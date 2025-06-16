@@ -32,14 +32,14 @@ namespace Retween.Rx
                 if (clearBeforeAdd)
                     activeClasses.Clear();
                 if (activeClasses.Add(name.Substring(1)) && applyAfterAdd)
-                    Apply();
+                    Execute();
             }
             else if (name.StartsWith(":"))
             {
                 if (clearBeforeAdd)
                     activeStates.Clear();
                 if (activeStates.Add(name.Substring(1)) && applyAfterAdd)
-                    Apply();
+                    Execute();
             }
             else
             {
@@ -52,12 +52,12 @@ namespace Retween.Rx
             if (name.StartsWith("."))
             {
                 if (activeClasses.Remove(name.Substring(1)) && applyAfterRemove)
-                    Apply();
+                    Execute();
             }
             else if (name.StartsWith(":"))
             {
                 if (activeStates.Remove(name.Substring(1)) && applyAfterRemove)
-                    Apply();
+                    Execute();
             }
             else
             {
@@ -70,12 +70,12 @@ namespace Retween.Rx
             if (targetName.StartsWith("."))
             {
                 if (activeClasses.Remove(targetName.Substring(1)) && applyAfterRemove)
-                    Apply();
+                    Execute();
             }
             else if (targetName.StartsWith(":"))
             {
                 if (activeStates.Remove(targetName.Substring(1)) && applyAfterRemove)
-                    Apply();
+                    Execute();
             }
             else
             {
@@ -87,14 +87,14 @@ namespace Retween.Rx
                 activeClasses.Add(targetName.Substring(1));
 
                 if (applyAfterAdd)
-                    Apply();
+                    Execute();
             }
             else if (targetName.StartsWith(":"))
             {
                 activeStates.Remove(targetName.Substring(1));
 
                 if (applyAfterAdd)
-                    Apply();
+                    Execute();
             }
             else
             {
@@ -102,7 +102,7 @@ namespace Retween.Rx
             }
         }
     
-        public void Apply(bool rollbackOnly = false)
+        public void Execute(bool rollbackOnly = false)
         {
 #if UNITY_EDITOR
             if (!Application.isPlaying)

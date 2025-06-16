@@ -1,7 +1,7 @@
 __________________________________________________________________________________________
 
 Package "Leaning Animator"
-Version 1.0.3.0
+Version 1.0.3.1
 
 Made by FImpossible Creations - Filip Moeglich
 https://www.FilipMoeglich.pl
@@ -51,6 +51,9 @@ MAIN FEATURES:
 
 __________________________________________________________________________________________
 Changelog:
+
+Version 1.0.3.1:
+- Added User_RotateOrigin user methods for custom additive pose rotation
 
 Version 1.0.3.0:
 - Added on recompile support (reinitializing leaning animator on compilation end during playmode)

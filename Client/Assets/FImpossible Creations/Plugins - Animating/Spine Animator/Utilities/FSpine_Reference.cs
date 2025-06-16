@@ -3,7 +3,7 @@
 namespace FIMSpace.FSpine
 {
     /// <summary>
-    /// Just to hold reference to main spine animator
+    /// Just to hold reference to main spinal animator
     /// </summary>
     public class FSpine_Reference : MonoBehaviour
     {

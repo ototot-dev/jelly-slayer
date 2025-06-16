@@ -18,6 +18,7 @@ namespace FIMSpace.FProceduralAnimation
 
                 public Quaternion RotInAttachementLocal;
                 public bool NoTransform { get; private set; }
+                public bool IsValid => (NoTransform == false && AttachedTo != null);
 
                 public GlueAttachement(Leg leg, RaycastHit legGroundHit)
                 {

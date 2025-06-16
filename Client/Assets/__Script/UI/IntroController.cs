@@ -53,7 +53,7 @@ namespace Game
             {
                 var query = template.GetComponentById<TextStyleSelector>("press-any-key-text").query;
                 query.activeStates.Add("show");
-                query.Apply();
+                query.Execute();
 
                 Observable.Timer(TimeSpan.FromSeconds(1f)).Subscribe(_ =>
                 {
@@ -61,13 +61,13 @@ namespace Game
 
                     __pressAnyKeyFocusQuery.activeStates.Clear();
                     __pressAnyKeyFocusQuery.activeStates.Add("show");
-                    __pressAnyKeyFocusQuery.Apply();
+                    __pressAnyKeyFocusQuery.Execute();
 
                     Observable.Timer(TimeSpan.FromSeconds(1f)).Subscribe(_ =>
                     {
                         __pressAnyKeyFocusQuery.activeStates.Clear();
                         __pressAnyKeyFocusQuery.activeStates.Add("heartbeat");
-                        __pressAnyKeyFocusQuery.Apply();
+                        __pressAnyKeyFocusQuery.Execute();
                     }).AddToHide(this);
                 }).AddToHide(this);
             }).AddToHide(this);
@@ -77,12 +77,12 @@ namespace Game
                 var focusQuery = template.GetComponentById<PanelStyleSelector>("press-any-key-focus").query;
                 focusQuery.activeStates.Clear();
                 focusQuery.activeStates.Add("hide");
-                focusQuery.Apply();
+                focusQuery.Execute();
 
                 var textQuery = template.GetComponentById<TextStyleSelector>("press-any-key-text").query;
                 textQuery.activeStates.Clear();
                 textQuery.activeStates.Add("hide");
-                textQuery.Apply();
+                textQuery.Execute();
 
                 Observable.Timer(TimeSpan.FromSeconds(0.5f)).Subscribe(_ =>
                 {
@@ -90,11 +90,11 @@ namespace Game
 
                     var optionsQuery = template.GetComponentById<PanelStyleSelector>("options").query;
                     optionsQuery.activeStates.Add("show");
-                    optionsQuery.Apply();
+                    optionsQuery.Execute();
 
                     __optionFocusQuery.activeStates.Clear();
                     __optionFocusQuery.activeStates.Add("show");
-                    __optionFocusQuery.Apply();
+                    __optionFocusQuery.Execute();
 
                     __newGameButton.interactable = __continueButton.interactable = __settingButton.interactable = __exitButton.interactable = true;
                 }).AddToHide(this);
@@ -122,7 +122,7 @@ namespace Game
 
             __optionFocusQuery.activeStates.Clear();
             __optionFocusQuery.activeStates.Add("hide");
-            __optionFocusQuery.Apply();
+            __optionFocusQuery.Execute();
 
             this.HideAsObservable().Subscribe();
         }
@@ -136,9 +136,9 @@ namespace Game
             __optionFocusRect.SetSiblingIndex(0);
 
             __optionFocusQuery.activeStates.Clear();
-            __optionFocusQuery.Apply();
+            __optionFocusQuery.Execute();
             __optionFocusQuery.activeStates.Add("show");
-            __optionFocusQuery.Apply();
+            __optionFocusQuery.Execute();
         }
 
         string __currFocusOptionId;

@@ -251,11 +251,11 @@ public partial class FSpineAnimator_Editor
                 EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
 
                 if (Get.OptimizeWithMesh.isVisible)
-                    EditorGUILayout.LabelField("Spine Animator Is Active", FGUI_Resources.HeaderStyle);
+                    EditorGUILayout.LabelField("Spinal Animator Is Active", FGUI_Resources.HeaderStyle);
                 else
                 {
                     GUI.enabled = false;
-                    EditorGUILayout.LabelField("Spine Animator Is Inactive", FGUI_Resources.HeaderStyle);
+                    EditorGUILayout.LabelField("Spinal Animator Is Inactive", FGUI_Resources.HeaderStyle);
                     GUI.enabled = true;
                 }
 

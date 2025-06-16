@@ -10,7 +10,7 @@ namespace NodeCanvas.Tasks.Conditions
     [Description("Check the parent state status. This condition is only meant to be used along with an FSM system.")]
     public class CheckStateStatus : ConditionTask
     {
-        public CompactStatus status = CompactStatus.Success;
+        public BooleanStatus status = BooleanStatus.Success;
 
         protected override string info {
             get { return string.Format("State == {0}", status); }

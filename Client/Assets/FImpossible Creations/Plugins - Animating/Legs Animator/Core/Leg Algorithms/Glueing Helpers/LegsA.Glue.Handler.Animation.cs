@@ -464,7 +464,7 @@ namespace FIMSpace.FProceduralAnimation
                                     }
 
                                     if( oppositeleg._UsingCustomRaycast == false )
-                                        if( oppositeleg.G_AttachementHandler.legMoveAnimation.attached )
+                                        if( oppositeleg.G_AttachementHandler.legMoveAnimation.attached && oppositeleg.G_Attachement.IsValid )
                                         {
                                             float distToAttach = ( leg.RootSpaceToWorld( oppositeleg.AnkleH.LastKeyframeRootPos ) - oppositeleg.G_Attachement.GetRelevantHitPoint() ).magnitude;
                                             float scaleRef = Owner.ScaleReference * 0.4f;

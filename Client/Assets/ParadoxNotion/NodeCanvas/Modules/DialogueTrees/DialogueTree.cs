@@ -288,6 +288,16 @@ namespace NodeCanvas.DialogueTrees
         ///----------------------------------------------------------------------------------------------
         ///---------------------------------------UNITY EDITOR-------------------------------------------
 #if UNITY_EDITOR
+
+        protected override void OnGraphEditorToolbar() {
+            UnityEditor.EditorGUIUtility.SetIconSize(new Vector2(14, 14));
+            if ( GUILayout.Button(ParadoxNotion.Design.EditorUtils.GetTempContent(NodeCanvas.Editor.StyleSheet.flag, "Open Localization Editor"), UnityEditor.EditorStyles.toolbarButton) ) {
+                NodeCanvas.Editor.GraphLocalization.ShowWindow();
+            }
+            UnityEditor.EditorGUIUtility.SetIconSize(Vector2.zero);
+        }
+
+
         [UnityEditor.MenuItem("Tools/ParadoxNotion/NodeCanvas/Create/Dialogue Tree Object", false, 2)]
         static void Editor_CreateGraph() {
             var dt = new GameObject("DialogueTree").AddComponent<DialogueTreeController>();

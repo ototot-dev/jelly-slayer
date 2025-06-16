@@ -208,12 +208,14 @@ namespace FIMSpace.FProceduralAnimation
 
 
         internal Coroutine standUpCoroutine = null;
+        public bool IsStandUpCoroutineRunning { get; private set; } = false;
 
         /// <summary> Helper flag, is true when calling Get Up from ragdolled but standing on both legs pose </summary>
         public bool GetUpCall_StandingRestore { get; private set; } = false;
 
         internal IEnumerator _IE_TransitionToStandingMode( float duration, float animatorFadeOffFor = 0.6f, float animatorTransitionDelay = 0.1f, float freezeSourceAnimatedHips = 0f, float delay = 0f, bool isOnLegsRestoreCall = false, float? targetMusclesPower = null, float? targetHardMatching = null )
         {
+            IsStandUpCoroutineRunning = true;
             GetUpCall_StandingRestore = isOnLegsRestoreCall;
 
             if( delay > 0f )
@@ -243,7 +245,7 @@ namespace FIMSpace.FProceduralAnimation
 
             while( elapsed < duration )
             {
-                if( AnimatingMode != EAnimatingMode.Standing ) { StandUpTransitionBlend = 1f; yield break; }
+                if( AnimatingMode != EAnimatingMode.Standing ) { StandUpTransitionBlend = 1f; IsStandUpCoroutineRunning = false; yield break; }
 
                 elapsed += delta;
                 float progress = elapsed / duration;
@@ -282,6 +284,7 @@ namespace FIMSpace.FProceduralAnimation
                 }
             }
 
+            IsStandUpCoroutineRunning = false;
             yield break;
         }
 

@@ -360,7 +360,7 @@ namespace FIMSpace.FProceduralAnimation
             }
 
             if (_setupik_selected_leg == -1)
-                if (Button_Refresh())
+                if (Button_Refresh("Refresh Legs IK feet preparation parameters"))
                 {
                     RefreshAllLegsAnkleAxes();
                 }

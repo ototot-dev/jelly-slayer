@@ -2,40 +2,57 @@ using ParadoxNotion;
 using NodeCanvas.Framework;
 using UnityEngine;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace NodeCanvas.DialogueTrees
 {
 
-    ///<summary>An interface to use for whats being said by a dialogue actor</summary>
+    ///<summary>An interface to use for what is being said by a dialogue actor</summary>
     public interface IStatement
     {
         string text { get; }
         AudioClip audio { get; }
         string meta { get; }
+
+        string GetLocalizedText(Locales lang);
+        AudioClip GetLocalizedAudio(Locales lang);
     }
 
-    ///<summary>Holds data of what's being said usualy by an actor</summary>
+    ///<summary>Holds data of what's being said by a dialogue actor</summary>
     [System.Serializable]
     public class Statement : IStatement
     {
+        ///<summary>A statement localization</summary>
+        [System.Serializable]
+        public class Localization
+        {
+            public string text;
+            public AudioClip audio;
+        }
 
         [SerializeField] private string _text = string.Empty;
         [SerializeField] private AudioClip _audio;
         [SerializeField] private string _meta = string.Empty;
+        [SerializeField] private Dictionary<Locales, Localization> _localizations;
 
         public string text {
-            get { return _text; }
-            set { _text = value; }
+            get => _text;
+            set => _text = value;
         }
 
         public AudioClip audio {
-            get { return _audio; }
-            set { _audio = value; }
+            get => _audio;
+            set => _audio = value;
         }
 
         public string meta {
-            get { return _meta; }
-            set { _meta = value; }
+            get => _meta;
+            set => _meta = value;
+        }
+
+        public Dictionary<Locales, Localization> localizations {
+            get => _localizations;
+            set => _localizations = value;
         }
 
         //required
@@ -55,26 +72,47 @@ namespace NodeCanvas.DialogueTrees
             this.meta = meta;
         }
 
-        ///<summary>Replace the text of the statement found in brackets, with blackboard variables ToString and returns a Statement copy</summary>
-        public IStatement BlackboardReplace(IBlackboard bb) {
+        ///<summary>Returns the localized text for provided language. If it doesn't exist, returns the default text.</summary>
+        public string GetLocalizedText(Locales lang) {
+            if ( lang != Locales.Default && localizations.TryGetValue(lang, out Localization loc) ) {
+                return loc.text;
+            }
+            return text;
+        }
+
+        ///<summary>Returns the localized AudioClip for provided language. If it doesn't exist, returns the default AudioClip.</summary>
+        public AudioClip GetLocalizedAudio(Locales lang) {
+            if ( lang != Locales.Default && localizations.TryGetValue(lang, out Localization loc) ) {
+                return loc.audio;
+            }
+            return audio;
+        }
+
+        ///<summary>Replace the text of the statement found in brackets, with blackboard variables and actor parameters names and returns a Statement copy</summary>
+        public IStatement ProcessStatementBrackets(IBlackboard bb, DialogueTree dlg) {
             var copy = ParadoxNotion.Serialization.JSONSerializer.Clone<Statement>(this);
 
             copy.text = copy.text.ReplaceWithin('[', ']', (input) =>
             {
-                object o = null;
                 if ( bb != null ) { //referenced blackboard replace
-                    var v = bb.GetVariable(input, typeof(object));
-                    if ( v != null ) { o = v.value; }
+                    var variable = bb.GetVariable(input, typeof(object));
+                    if ( variable != null ) { return variable.value.ToString(); }
                 }
 
                 if ( input.Contains("/") ) { //global blackboard replace
                     var globalBB = GlobalBlackboard.Find(input.Split('/').First());
                     if ( globalBB != null ) {
-                        var v = globalBB.GetVariable(input.Split('/').Last(), typeof(object));
-                        if ( v != null ) { o = v.value; }
+                        var variable = globalBB.GetVariable(input.Split('/').Last(), typeof(object));
+                        if ( variable != null ) { return variable.value.ToString(); }
                     }
                 }
-                return o != null ? o.ToString() : input;
+
+                if ( dlg != null ) {
+                    var actor = dlg.GetActorReferenceByName(input);
+                    return actor.name;
+                }
+
+                return input;
             });
 
             return copy;

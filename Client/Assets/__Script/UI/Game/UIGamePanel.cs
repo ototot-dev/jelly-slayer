@@ -86,8 +86,8 @@ public class UIGamePanel : MonoBehaviour
         _playerSpSlider.value = (maxStamina > 0) ? _heroBrain.PawnBB.stat.stamina.Value / maxStamina : 0;
 
         // Rage Value
-        var maxRage = _heroBrain.PawnBB.stat.maxRage.Value;
-        _playerRageSlider.value = (maxRage > 0) ? _heroBrain.PawnBB.stat.rage.Value / maxRage : 0;
+        var maxRage = _heroBrain.PawnBB.stat.maxBurst.Value;
+        _playerRageSlider.value = (maxRage > 0) ? _heroBrain.PawnBB.stat.burst.Value / maxRage : 0;
 
         // Enemy HP Value
         if (_attackedPawn != null)

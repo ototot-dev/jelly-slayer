@@ -35,7 +35,7 @@ public partial class FSpineAnimator_Editor
             if (Get.SpineBones == null || Get.SpineBones.Count < 1)
             {
                 GUILayout.BeginHorizontal(FEditor_Styles.YellowBackground);
-                EditorGUILayout.HelpBox("Put here two marginal bones from hierarchy and click 'Get' to create spine chain of section you want to animate with spine animator", MessageType.Info);
+                EditorGUILayout.HelpBox("Put here two marginal bones from hierarchy and click 'Get' to create spine chain of section you want to animate with spinal animator", MessageType.Info);
                 GUILayout.EndHorizontal();
 
 
@@ -330,7 +330,7 @@ public partial class FSpineAnimator_Editor
             EditorGUIUtility.labelWidth = 74f;
 
             if (!headBone) GUI.color = new Color(0.9f, 0.3f, 0.3f, 0.9f);
-            headBone = (Transform)EditorGUILayout.ObjectField(new GUIContent("Head bone", "Head bone or some bone before, it's important to be in front of spine and not included in spine animator's chain"), headBone, typeof(Transform), true);
+            headBone = (Transform)EditorGUILayout.ObjectField(new GUIContent("Head bone", "Head bone or some bone before, it's important to be in front of spine and not included in spinal animator's chain"), headBone, typeof(Transform), true);
             GUI.color = preCol;
 
             EditorGUI.indentLevel++;

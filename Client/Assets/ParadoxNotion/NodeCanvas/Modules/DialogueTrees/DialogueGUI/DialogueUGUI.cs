@@ -11,6 +11,8 @@ namespace NodeCanvas.DialogueTrees.UI.Examples
     public class DialogueUGUI : MonoBehaviour, IPointerClickHandler
     {
 
+        public Locales language;
+
         [System.Serializable]
         public class SubtitleDelays
         {
@@ -45,9 +47,7 @@ namespace NodeCanvas.DialogueTrees.UI.Examples
         private bool isWaitingChoice;
 
         private AudioSource _localSource;
-        private AudioSource localSource {
-            get { return _localSource != null ? _localSource : _localSource = gameObject.AddComponent<AudioSource>(); }
-        }
+        private AudioSource localSource => _localSource != null ? _localSource : _localSource = gameObject.AddComponent<AudioSource>();
 
 
         private bool anyKeyDown;
@@ -91,7 +91,7 @@ namespace NodeCanvas.DialogueTrees.UI.Examples
             subtitlesGroup.gameObject.SetActive(false);
             optionsGroup.gameObject.SetActive(false);
             StopAllCoroutines();
-            if ( playSource != null ) playSource.Stop();
+            playSource?.Stop();
         }
 
         void OnDialogueFinished(DialogueTree dlg) {
@@ -106,7 +106,7 @@ namespace NodeCanvas.DialogueTrees.UI.Examples
                 cachedButtons = null;
             }
             StopAllCoroutines();
-            if ( playSource != null ) playSource.Stop();
+            playSource?.Stop();
         }
 
         ///----------------------------------------------------------------------------------------------
@@ -117,8 +117,8 @@ namespace NodeCanvas.DialogueTrees.UI.Examples
 
         IEnumerator Internal_OnSubtitlesRequestInfo(SubtitlesRequestInfo info) {
 
-            var text = info.statement.text;
-            var audio = info.statement.audio;
+            var text = info.statement.GetLocalizedText(language);
+            var audio = info.statement.GetLocalizedAudio(language);
             var actor = info.actor;
 
             subtitlesGroup.gameObject.SetActive(true);
@@ -132,7 +132,7 @@ namespace NodeCanvas.DialogueTrees.UI.Examples
             actorPortrait.sprite = actor.portraitSprite;
 
             if ( audio != null ) {
-                var actorSource = actor.transform != null ? actor.transform.GetComponent<AudioSource>() : null;
+                var actorSource = actor.transform?.GetComponent<AudioSource>();
                 playSource = actorSource != null ? actorSource : localSource;
                 playSource.clip = audio;
                 playSource.Play();
@@ -149,7 +149,7 @@ namespace NodeCanvas.DialogueTrees.UI.Examples
             }
 
             if ( audio == null ) {
-                var tempText = "";
+                var tempText = string.Empty;
                 var inputDown = false;
                 if ( skipOnInput ) {
                     StartCoroutine(CheckInput(() => { inputDown = true; }));
@@ -241,7 +241,7 @@ namespace NodeCanvas.DialogueTrees.UI.Examples
                 btn.gameObject.SetActive(true);
                 btn.transform.SetParent(optionsGroup.transform, false);
                 btn.transform.localPosition = (Vector3)optionButton.transform.localPosition - new Vector3(0, buttonHeight * i, 0);
-                btn.GetComponentInChildren<Text>().text = pair.Key.text;
+                btn.GetComponentInChildren<Text>().text = pair.Key.GetLocalizedText(language);
                 cachedButtons.Add(btn, pair.Value);
                 btn.onClick.AddListener(() => { Finalize(info, cachedButtons[btn]); });
                 i++;
@@ -249,8 +249,8 @@ namespace NodeCanvas.DialogueTrees.UI.Examples
 
             if ( info.showLastStatement ) {
                 subtitlesGroup.gameObject.SetActive(true);
-                var newY = optionsGroup.position.y + optionsGroup.sizeDelta.y + 1;
-                subtitlesGroup.position = new Vector3(subtitlesGroup.position.x, newY, subtitlesGroup.position.z);
+                var newY = optionsGroup.anchoredPosition.y + optionsGroup.sizeDelta.y + 1;
+                subtitlesGroup.anchoredPosition = new Vector2(subtitlesGroup.anchoredPosition.x, newY);
             }
 
             if ( info.availableTime > 0 ) {

@@ -5,7 +5,7 @@ namespace FIMSpace.FSpine
     public partial class FSpineAnimator
     {
         /// <summary>
-        /// Searching for second spine animator in parent, if there is not then transform of this game object is returned
+        /// Searching for second spinal animator in parent, if there is not then transform of this game object is returned
         /// </summary>
         public Transform FindBaseTransform()
         {

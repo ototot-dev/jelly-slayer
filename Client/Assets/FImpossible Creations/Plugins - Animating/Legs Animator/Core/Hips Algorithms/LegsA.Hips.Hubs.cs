@@ -5,7 +5,7 @@ namespace FIMSpace.FProceduralAnimation
 {
     public partial class LegsAnimator
     {
-        [Tooltip("If this model is created out of multiple leg bones hubs, you can define it here")]
+        [Tooltip("If this model is created out of multiple leg bones hubs, you can define it here. Assigned transform must be parent of legs, in order to work properly!")]
         public List<Transform> ExtraHipsHubs = new List<Transform>();
         public enum EHipsHubsHandling
         {

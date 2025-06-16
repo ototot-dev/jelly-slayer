@@ -15,14 +15,14 @@ namespace NodeCanvas.DialogueTrees
     public class FinishNode : DTNode
     {
 
-        public CompactStatus finishState = CompactStatus.Success;
+        public BooleanStatus finishState = BooleanStatus.Success;
 
         public override int maxOutConnections { get { return 0; } }
         public override bool requireActorSelection { get { return false; } }
 
         protected override Status OnExecute(Component agent, IBlackboard bb) {
             status = (Status)finishState;
-            DLGTree.Stop(finishState == CompactStatus.Success ? true : false);
+            DLGTree.Stop(finishState == BooleanStatus.Success ? true : false);
             return status;
         }
 

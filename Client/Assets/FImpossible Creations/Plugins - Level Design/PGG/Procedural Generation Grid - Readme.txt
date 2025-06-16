@@ -1,7 +1,7 @@
 __________________________________________________________________________________________
 
 Package "Procedural Generation Grid"
-Version 1.6.6.2.8 (Beta)
+Version 1.6.6.2.11 (Beta)
 
 Made by FImpossible Creations - Filip Moeglich
 https://www.FilipMoeglich.pl
@@ -64,6 +64,21 @@ Description:
 - Package is providing additional packages for randomly placing smaller objects in physical space using Unity’s collision system (Object’s Stamper and Pipe Generator)
 
 __________________________________________________________________________________________
+
+Beta Version 1.6.6.2.11:
+- Fixed wrong math under Field Planners 'RoundPositionAccordingly' method:
+It can result in slightly different rooms placements if used 'Tight Placement' node and when used grids with cell size greater than 2.
+(after converting position to other grid local space, it was scaling position with self world cell scale, now its otherScale / selfScale inside otherLocal to adjust it)
+
+Beta Version 1.6.6.2.10:
+- Added Path Length Zero is Fail to the Path Find Planner Node - can be useful to drive doorway commands generating using Start and Towards cells
+- Added Get Cell Size node
+- Checkers have now possibility to hold reference to the parent FieldPlanner if assigned to any planner
+
+Beta Version 1.6.6.2.9:
+- Implemented OnSpawnProcessor which allows to execute custom actions when FieldSetup is instantiating objects on the scene
+To use it you need to create custom class inheriting OnSpawnProcessor, generate its instance for example with [CreateAssetMenu]
+then assign the instance in the inspector window of FieldSetup.
 
 Beta Version 1.6.6.2.8:
 - Implemented Spawn Actions which allows to call custom code after generating object on the scene

@@ -77,14 +77,14 @@ namespace Game
                     var query = GetComponentById<ImageStyleSelector>("body").query;
                     query.activeStates.Remove("hide");
                     query.activeStates.Add("show");
-                    query.Apply();
+                    query.Execute();
                 }
                 else
                 {
                     var query = GetComponentById<ImageStyleSelector>("body").query;
                     query.activeStates.Remove("show");
                     query.activeStates.Add("hide");
-                    query.Apply();
+                    query.Execute();
                 }
             }).AddToHide(this);
 
@@ -109,7 +109,7 @@ namespace Game
 
             var query = GetComponentById<ImageStyleSelector>("body").query;
             query.activeStates.Add("heartbeat");
-            query.Apply();
+            query.Execute();
         }
 
         public override void OnPreHide()
@@ -118,7 +118,7 @@ namespace Game
 
             var query = GetComponentById<ImageStyleSelector>("body").query;
             query.activeStates.Remove("heartbeat");
-            query.Apply();
+            query.Execute();
 
             //* PlayerController에서 해제도 직접 함
             GameContext.Instance.playerCtrler.interactionKeyCtrlers.Remove(this);

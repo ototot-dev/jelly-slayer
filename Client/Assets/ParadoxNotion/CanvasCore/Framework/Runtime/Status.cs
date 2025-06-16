@@ -17,4 +17,27 @@
         ///<summary>The operation is considered optional and is neither Success nor Failure.</summary>
         Optional = 5,
     }
+
+    ///<summary> Enumeration for boolean status result</summary>
+	public enum BooleanStatus
+    {
+        Failure = 0,
+        Success = 1
+    }
+
+    ///<summary>Usual final Statuses. Castable to Status</summary>
+    public enum FinalStatus
+    {
+        Failure = 0,
+        Success = 1,
+        Optional = 5,
+    }
+
+    ///<summary>Used for policies</summary>
+    public enum BehaviourPolicy
+    {
+        OnFailure = 0,
+        OnSuccess = 1,
+        OnSuccessOrFailure = 2,
+    }
 }

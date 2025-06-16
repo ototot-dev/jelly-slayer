@@ -30,7 +30,7 @@ namespace Retween.Rx
         {
             if (query.activeClasses.Count > 0 || query.activeStates.Count > 0)
             {
-                query.Apply();
+                query.Execute();
 
                 if (query.forceCompleteTweenOnStart)
                 {
@@ -43,6 +43,7 @@ namespace Retween.Rx
             }
         }
 
+        public Transform tweenSheet;
         public TweenSelectorQuery query = new();
         public HashSet<TweenName> matchingResults = new();
         public readonly Dictionary<TweenName, TweenAnimState> tweenAnimStates = new();

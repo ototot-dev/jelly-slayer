@@ -12,6 +12,8 @@ namespace FIMSpace.Generating.Checker
 
     public partial class CheckerField3D : ICheckerReference
     {
+        /// <summary> Only if actually assigned to some planner </summary>
+        public FIMSpace.Generating.Planning.FieldPlanner ParentPlanner = null;
         /// <summary> Implemented mainly for the SubFields </summary>
         public FIMSpace.Generating.Planning.FieldPlanner SubFieldPlannerReference = null;
         public CheckerField3D CheckerReference { get { return this; } }

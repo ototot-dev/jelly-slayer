@@ -980,6 +980,7 @@ namespace FlowCanvas
                     if ( value is UnityEngine.Object && value as UnityEngine.Object != null ) {
                         labelString = string.Format("<b><color=#66ff33>{0}</color></b>", ( value as UnityEngine.Object ).name);
                     } else {
+                        GUI.color = Color.white.WithAlpha(0.8f);
                         labelString = value.ToStringAdvanced();
                         if ( labelString == port.type.ToString() ) {
                             labelString = null;

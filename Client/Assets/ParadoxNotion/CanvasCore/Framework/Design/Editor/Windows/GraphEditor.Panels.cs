@@ -15,6 +15,7 @@ namespace NodeCanvas.Editor
 
         private const float PANELS_Y = 2;
         private static float inspectorPanelHeight;
+        private static float inspectorPanelXMax;
         private static float blackboardPanelHeight;
         private static bool isResizingInspectorPanel;
         private static bool isResizingBlackboardPanel;
@@ -176,6 +177,7 @@ namespace NodeCanvas.Editor
 
             inspectorPanel.x += canvasRect.x;
             inspectorPanel.y += canvasRect.y;
+            inspectorPanelXMax = inspectorPanel.xMax;
 
             return inspectorPanel;
         }
@@ -200,6 +202,7 @@ namespace NodeCanvas.Editor
             blackboardPanel.y = posY;
             blackboardPanel.width = Prefs.blackboardPanelWidth;
             blackboardPanel.height = blackboardPanelHeight;
+            blackboardPanel.xMin = Mathf.Max(blackboardPanel.xMin, inspectorPanelXMax + 2);
 
             var resizeRect = Rect.MinMaxRect(blackboardPanel.xMin - 2, blackboardPanel.yMin, blackboardPanel.xMin + 2, blackboardPanel.yMax);
             EditorGUIUtility.AddCursorRect(resizeRect, MouseCursor.ResizeHorizontal);

@@ -5,7 +5,7 @@ namespace FIMSpace.FSpine
     public partial class FSpineAnimator
     {
         [FPD_Percentage(0f, 1f)]
-        [Tooltip("You can use this variable to blend intensity of spine animator motion over skeleton animation\n\nValue = 1: Animation with spine Animator motion\nValue = 0: Only skeleton animation")]
+        [Tooltip("You can use this variable to blend intensity of spinal animator motion over skeleton animation\n\nValue = 1: Animation with spinal Animator motion\nValue = 0: Only skeleton animation")]
         public float SpineAnimatorAmount = 1f;
 
         Quaternion Rotate180 = Quaternion.Euler(0f, 180f, 0f);

@@ -27,7 +27,7 @@ public class SampleOverlayButton : MonoBehaviour {
             .Where(_ => button.interactable)
             .Subscribe(_ => {
                 tweenSelector.query.activeStates.Add(__hoverStr);
-                tweenSelector.query.Apply();
+                tweenSelector.query.Execute();
 
                 IsHover = true;
             }).AddTo(this);
@@ -36,7 +36,7 @@ public class SampleOverlayButton : MonoBehaviour {
             .Where(_ => button.interactable)
             .Subscribe(_ => {
                 tweenSelector.query.activeStates.Remove(__hoverStr);
-                tweenSelector.query.Apply();
+                tweenSelector.query.Execute();
 
                 IsHover = false;
             }).AddTo(this);
@@ -46,7 +46,7 @@ public class SampleOverlayButton : MonoBehaviour {
             .Subscribe(_ => {
                 tweenSelector.query.activeStates.Remove(__hoverStr);
                 tweenSelector.query.activeStates.Add(__pressedStr);
-                tweenSelector.query.Apply();
+                tweenSelector.query.Execute();
             })
             .AddTo(this);
 
@@ -56,7 +56,7 @@ public class SampleOverlayButton : MonoBehaviour {
                 tweenSelector.query.activeStates.Remove(__pressedStr);
                 if (IsHover)
                     tweenSelector.query.activeStates.Add(__hoverStr);
-                tweenSelector.query.Apply();
+                tweenSelector.query.Execute();
             })
             .AddTo(this);
     }

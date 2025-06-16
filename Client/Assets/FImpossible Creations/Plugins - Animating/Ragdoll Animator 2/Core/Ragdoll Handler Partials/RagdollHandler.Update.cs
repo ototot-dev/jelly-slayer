@@ -89,6 +89,7 @@ namespace FIMSpace.FProceduralAnimation
                         foreach (var bone in chain.BoneSetups)
                             bone.BoneProcessor.ResetPoseParameters();
 
+                    animatingModeChanged = true;
                     _wasSleepDisable = false;
                     _wasDisableUpdating = false;
                 }

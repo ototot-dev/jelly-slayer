@@ -40,6 +40,7 @@ namespace FIMSpace.FProceduralAnimation
         private void Start()
         {
             _started = true;
+            if (baseTransform == null) baseTransform = transform;
             AllowUpdate = false;
 
             if (DelayedInitialization == false) Initialize();

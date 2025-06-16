@@ -20,7 +20,7 @@ public partial class FSpineAnimator_Editor : Editor
     public override void OnInspectorGUI()
     {
 
-        Undo.RecordObject(target, "Spine Animator Inspector");
+        Undo.RecordObject(target, "Spinal Animator Inspector");
 
         serializedObject.Update();
 

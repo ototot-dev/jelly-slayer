@@ -14,7 +14,7 @@ namespace NodeCanvas.BehaviourTrees
     public class Sequencer : BTComposite
     {
 
-        [Tooltip("If true, then higher priority children are re-evaluated per frame and if either returns Failure, then the Sequencer will immediately stop and return Failure as well.")]
+        [Tooltip("If true, then higher priority children are re-evaluated per tick and if either returns Failure, then the Sequencer will immediately stop and return Failure as well.")]
         public bool dynamic;
         [Tooltip("If true, the children order of execution is shuffled each time the Sequencer resets.")]
         public bool random;
@@ -70,6 +70,11 @@ namespace NodeCanvas.BehaviourTrees
         ///----------------------------------------------------------------------------------------------
         ///---------------------------------------UNITY EDITOR-------------------------------------------
 #if UNITY_EDITOR
+
+        public override string GetConnectionInfo(int index) {
+            return random && graph.isRunning ? index.ToString() : null;
+        }
+
         protected override void OnNodeGUI() {
             if ( dynamic ) { GUILayout.Label("<b>DYNAMIC</b>"); }
             if ( random ) { GUILayout.Label("<b>RANDOM</b>"); }

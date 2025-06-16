@@ -18,7 +18,7 @@ namespace NodeCanvas.Tasks.Actions
         protected override void OnExecute() {
             var index = Random.Range(0, statements.Count);
             var statement = statements[index];
-            var tempStatement = statement.BlackboardReplace(blackboard);
+            var tempStatement = statement.ProcessStatementBrackets(blackboard, ownerSystem as DialogueTree);
             var info = new SubtitlesRequestInfo(agent, tempStatement, EndAction);
             DialogueTree.RequestSubtitles(info);
         }

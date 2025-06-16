@@ -4,6 +4,8 @@ using System.Linq;
 using UniRx;
 using Unity.Linq;
 using Retween.Rx;
+using log4net.Util;
+using UnityEngine;
 
 namespace UGUI.Rx
 {
@@ -13,7 +15,7 @@ namespace UGUI.Rx
         public string id;
         public Template template;
 
-        public virtual void Init(Template template, TweenName[] tweenNames)
+        public virtual void Initialize(Template template, TweenName[] tweenNames)
         {
             this.template = template;
 
@@ -57,7 +59,7 @@ namespace UGUI.Rx
                 {
                     query.activeStates.Remove(__hideStateName);
                     query.activeStates.Add(__showStateName);
-                    query.Apply();
+                    query.Execute();
                 }
 
                 ++ShowCount;
@@ -106,7 +108,7 @@ namespace UGUI.Rx
                 {
                     query.activeStates.Remove(__showStateName);
                     query.activeStates.Add(__hideStateName);
-                    query.Apply();
+                    query.Execute();
                 }
 
                 ++HideCount;

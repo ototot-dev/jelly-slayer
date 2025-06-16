@@ -74,6 +74,9 @@ namespace FIMSpace.FProceduralAnimation
 
             /// <summary> To avoid using for() loops but while() for better performance (Only Playmode) </summary>
             [field:NonSerialized] public Leg NextLeg { get; private set; }
+            public void SetNextLeg(Leg next) { NextLeg = next; }
+            public void RefreshPlaymodeIndex(int idx) { PlaymodeIndex = idx; }
+
             [field: NonSerialized] public HipsReference ParentHub { get; private set; }
             // Unity throws serialization depth limit warning when it's using {get; private set;} ¯\_(ツ)_/¯ 
             // Finally! [field:NonSerialized] seems to fix it!!!
@@ -91,7 +94,7 @@ namespace FIMSpace.FProceduralAnimation
             {
                 if (creator != null) Owner = creator;
                 PlaymodeIndex = index;
-                NextLeg = nextLeg;
+                SetNextLeg(nextLeg);
                 LegStretchLimit = 1f;
                 BlendWeight = 1f;
                 InternalModuleBlendWeight = 1f;

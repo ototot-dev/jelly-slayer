@@ -23,7 +23,7 @@ namespace FIMSpace.FSpine
         [Range(0f, 1f)]
         public float gizmosAlpha = 0.85f;
         float _editor_arrowsAlpha = 2f;
-        public string _editor_Title = "Spine Animator 2";
+        public string _editor_Title = "Spinal Animator 2";
 
         void OnDrawGizmos()
         {

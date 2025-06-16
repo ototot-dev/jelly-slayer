@@ -47,9 +47,7 @@ namespace NodeCanvas.BehaviourTrees
         }
 
         protected override void OnReset() {
-            if ( currentInstance != null ) {
-                currentInstance.Stop();
-            }
+            currentInstance?.Stop();
         }
     }
 }

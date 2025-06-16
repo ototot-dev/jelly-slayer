@@ -173,7 +173,8 @@ namespace Game
 
             onUpdate += () =>
             {
-                BB.stat.RecoverStamina(Mathf.Max(ActionCtrler.LastActionTimeStamp, PawnHP.LastDamageTimeStamp, Movement.LastJumpTimeStamp), Time.deltaTime);
+                if (Time.time - Mathf.Max(ActionCtrler.LastActionTimeStamp, PawnHP.LastDamageTimeStamp, Movement.LastJumpTimeStamp) > BB.stat.staminaRecoverTimeThreshold)
+                    BB.stat.RecoverStamina(Mathf.Max(ActionCtrler.LastActionTimeStamp, PawnHP.LastDamageTimeStamp, Movement.LastJumpTimeStamp), Time.deltaTime);
                 BB.stat.ReduceStance(PawnHP.LastDamageTimeStamp, Time.deltaTime);
             };
 
@@ -279,13 +280,13 @@ namespace Game
         }
         public void AddRagePoint(float rage)
         {
-            if (BB.stat.rage.Value >= BB.stat.maxRage.Value)
+            if (BB.stat.burst.Value >= BB.stat.maxBurst.Value)
                 return;
 
-            BB.stat.rage.Value += rage;
-            if (BB.stat.rage.Value >= BB.stat.maxRage.Value) 
+            BB.stat.burst.Value += rage;
+            if (BB.stat.burst.Value >= BB.stat.maxBurst.Value) 
             {
-                BB.stat.rage.Value = BB.stat.maxRage.Value;
+                BB.stat.burst.Value = BB.stat.maxBurst.Value;
             }
         }
 

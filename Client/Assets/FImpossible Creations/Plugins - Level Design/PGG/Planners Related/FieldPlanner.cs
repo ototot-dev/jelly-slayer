@@ -365,6 +365,7 @@ namespace FIMSpace.Generating.Planning
 
             PrepareInitialChecker();
             LatestResult.Checker = GetInitialChecker();
+            LatestResult.Checker.ParentPlanner = this;
 
             if (duplicateId >= 0) // If it's duplicate -> include it inside main planner duplicates list
             {

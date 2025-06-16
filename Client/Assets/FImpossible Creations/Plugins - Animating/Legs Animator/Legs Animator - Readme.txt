@@ -1,7 +1,7 @@
 __________________________________________________________________________________________
 
 Package "Legs Animator"
-Version 1.0.4.1
+Version 1.0.4.4.1
 
 Made by FImpossible Creations - Filip Moeglich
 http://fimpossiblecreations.pl
@@ -60,6 +60,19 @@ Check Manual for more
 
 
 __________________________________________________________________________________________
+
+Version 1.0.4.4.1
+- Fixed legs IK floor level refresh when doing ik setup on the rotated model
+
+Version 1.0.4.4
+- Added possibility to remove leg during playmode. myLegsAnimator.RemoveLeg(index)
+
+Version 1.0.4.3
+- Additional null protection for gluing attachements unexpected transform destruction
+- Legs Blend Only On Idle example module
+
+Version 1.0.4.2
+- Fix for delayed initialization error on the build
 
 Version 1.0.4.1
 - Added 'Do Step Animation On Distance Factor' under gluing motion settings, to allow applying hips motion on smaller steps

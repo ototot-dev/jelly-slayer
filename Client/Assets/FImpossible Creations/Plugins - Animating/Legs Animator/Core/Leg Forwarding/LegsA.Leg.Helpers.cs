@@ -57,8 +57,13 @@ namespace FIMSpace.FProceduralAnimation
             public void RefreshLegAnkleToHeelAndFeet(Transform baseT)
             {
                 if (BoneEnd == null) return;
+
                 Vector3 wGroundPos = BoneEnd.position;
-                wGroundPos.y = baseT.position.y;
+
+                Vector3 locGroundPos = baseT.InverseTransformPoint(wGroundPos); // Align on base transform floor position
+                locGroundPos.y = 0f;
+                wGroundPos = baseT.TransformPoint(locGroundPos);
+
                 AnkleToHeel = BoneEnd.InverseTransformPoint(wGroundPos);
                 AnkleToFeetEnd = BoneEnd.InverseTransformPoint(wGroundPos + baseT.forward * ScaleRef * 0.15f);
             }

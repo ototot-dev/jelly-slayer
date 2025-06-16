@@ -42,7 +42,7 @@ public partial class FSpineAnimator_Editor
             if (Get.SpineAnimatorAmount >= 1f)
             {
                 GUI.color = new Color(1f, 1f, 1f, 0.8f);
-                EditorGUILayout.LabelField(new GUIContent( "Spine Amount must be < 100% for weight sliders", "When Spine Animator Amount is 99% or less it enables blending then you can use motion weight blending sliders below"), FGUI_Resources.HeaderStyle);
+                EditorGUILayout.LabelField(new GUIContent( "Spine Amount must be < 100% for weight sliders", "When Spinal Animator Amount is 99% or less it enables blending then you can use motion weight blending sliders below"), FGUI_Resources.HeaderStyle);
                 GUILayout.Space(3); GUI.color = c;
             }
 

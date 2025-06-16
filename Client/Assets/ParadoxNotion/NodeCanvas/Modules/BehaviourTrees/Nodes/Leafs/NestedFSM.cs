@@ -9,7 +9,7 @@ namespace NodeCanvas.BehaviourTrees
 {
 
     [Name("Sub FSM")]
-    [Description("Executes a sub FSM. Returns Running while the sub FSM is active. If a Success or Failure State is selected, then it will return Success or Failure as soon as the Nested FSM enters that state at which point the sub FSM will also be stoped. If the sub FSM ends otherwise, this node will return Success.")]
+    [Description("Executes a sub FSM. Returns Running while the sub FSM is active. If a Success or Failure State is selected, then it will return Success or Failure as soon as the sub FSM enters that state at which point the sub FSM will also be stoped. If the sub FSM ends otherwise, this node will return Success.")]
     [ParadoxNotion.Design.Icon("FSM")]
     [DropReferenceType(typeof(FSM))]
     public class NestedFSM : BTNodeNested<FSM>
@@ -61,9 +61,7 @@ namespace NodeCanvas.BehaviourTrees
         }
 
         protected override void OnReset() {
-            if ( currentInstance != null ) {
-                currentInstance.Stop();
-            }
+            currentInstance?.Stop();
         }
 
         ///----------------------------------------------------------------------------------------------

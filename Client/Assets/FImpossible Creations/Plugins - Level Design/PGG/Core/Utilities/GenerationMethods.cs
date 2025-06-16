@@ -30,6 +30,10 @@ namespace FIMSpace.Generating
             Matrix4x4 matrix = Matrix4x4.identity;
             if (spawnMatrix != null) matrix = spawnMatrix.Value;
 
+            if (preset.OnSpawnProcessors != null)
+                for (int p = 0; p < preset.OnSpawnProcessors.Count; p++)
+                    preset.OnSpawnProcessors[p].OnInstantiationBegin(grid, container);
+
             FGenGraph<FieldCell, FGenPoint> runGraph;
             int subCount = 0;
             if (grid.SubGraphs != null) subCount = grid.SubGraphs.Count;
@@ -172,6 +176,11 @@ namespace FIMSpace.Generating
                                     }
                                 }
 
+                                if (preset.OnSpawnProcessors != null)
+                                    for (int p = 0; p < preset.OnSpawnProcessors.Count; p++)
+                                    {
+                                        preset.OnSpawnProcessors[p].OnInstantiateObject(spawn, spawned, cell, grid, container);
+                                    }
                             }
                             else
                             {
@@ -180,6 +189,7 @@ namespace FIMSpace.Generating
                                     for (int pe = 0; pe < spawn.OnGeneratedEvents.Count; pe++)
                                         spawn.OnGeneratedEvents[pe].Invoke(null);
                             }
+
 
 
                             // Additional generated feature
@@ -205,6 +215,12 @@ namespace FIMSpace.Generating
                                     if (emitter != null) generatorsCollected.Add(emitter);
 
                                     listToFillWithSpawns.Add(spwna);
+
+                                    if (preset.OnSpawnProcessors != null)
+                                        for (int p = 0; p < preset.OnSpawnProcessors.Count; p++)
+                                        {
+                                            preset.OnSpawnProcessors[p].OnInstantiateAdditionalObject(spawn, spwna, cell, grid, container);
+                                        }
                                 }
 
                             }
@@ -220,6 +236,10 @@ namespace FIMSpace.Generating
                 if (afterSpawnCalls[a].Action == null) continue;
                 afterSpawnCalls[a].Action.OnAfterAllObjectsSpawned(afterSpawnCalls[a].Spawn, afterSpawnCalls[a].Spawned, afterSpawnCalls[a].Cell, generatorsCollected, grid, container, preset);
             }
+
+            if (preset.OnSpawnProcessors != null)
+                for (int p = 0; p < preset.OnSpawnProcessors.Count; p++)
+                    preset.OnSpawnProcessors[p].OnInstantiationCompleted(grid, container);
 
             preset.ClearTemporaryContainers();
 
@@ -797,21 +817,21 @@ namespace FIMSpace.Generating
             List<MeshRenderer> searchRend = new List<MeshRenderer>();
             List<LODGroup> searchLODs = new List<LODGroup>();
 
-            for( int i = 0; i < toCombineSearch.Count; i++ )
+            for (int i = 0; i < toCombineSearch.Count; i++)
             {
                 GameObject tile = toCombineSearch[i];
 
-                foreach( Transform t in tile.transform.GetComponentsInChildren<Transform>() )
+                foreach (Transform t in tile.transform.GetComponentsInChildren<Transform>())
                 {
                     MeshRenderer m = t.GetComponent<MeshRenderer>();
                     LODGroup lod = t.GetComponent<LODGroup>();
-                    if( lod ) searchLODs.Add( lod );
+                    if (lod) searchLODs.Add(lod);
 
-                    if( m )
-                        if( m.sharedMaterials.Length > 0 )
-                            if( m.sharedMaterials[0] != null ) // /Only single material/ renderers with not null materials
+                    if (m)
+                        if (m.sharedMaterials.Length > 0)
+                            if (m.sharedMaterials[0] != null) // /Only single material/ renderers with not null materials
                             {
-                                searchRend.Add( m );
+                                searchRend.Add(m);
                             }
                 }
             }
@@ -824,35 +844,35 @@ namespace FIMSpace.Generating
             List<Renderer> lodHelperList = new List<Renderer>();
             List<Renderer> lodHelperToRemoveList = new List<Renderer>();
 
-            foreach( var lod in searchLODs )
+            foreach (var lod in searchLODs)
             {
                 lodHelperList.Clear();
                 lodHelperToRemoveList.Clear();
 
                 // Add all lod 0 renderers
                 var lods = lod.GetLODs();
-                if( lods.Length == 0 ) continue;
+                if (lods.Length == 0) continue;
 
                 var rends = lods[0].renderers;
-                foreach( var r in rends ) lodHelperList.Add( r ); // Add main lod to combine
+                foreach (var r in rends) lodHelperList.Add(r); // Add main lod to combine
 
-                for( int i = 1; i < lods.Length; i++ ) // Add higher level lods
+                for (int i = 1; i < lods.Length; i++) // Add higher level lods
                 {
                     rends = lods[i].renderers;
-                    foreach( var r in rends ) lodHelperToRemoveList.Add( r );
+                    foreach (var r in rends) lodHelperToRemoveList.Add(r);
                 }
 
                 // Remove from to remove list, duplicated meshes of main lod
-                foreach( var r in lodHelperList ) lodHelperToRemoveList.Remove( r );
+                foreach (var r in lodHelperList) lodHelperToRemoveList.Remove(r);
 
                 // Discard not used lods
-                foreach( var r in lodHelperToRemoveList )
+                foreach (var r in lodHelperToRemoveList)
                 {
-                    searchRend.Remove( r as MeshRenderer );
-                    if( r == null ) continue;
+                    searchRend.Remove(r as MeshRenderer);
+                    if (r == null) continue;
                     MeshFilter f = r.GetComponent<MeshFilter>();
-                    if( f ) FGenerators.DestroyObject( f );
-                    FGenerators.DestroyObject( r );
+                    if (f) FGenerators.DestroyObject(f);
+                    FGenerators.DestroyObject(r);
                 }
 
                 lod.enabled = false;
@@ -864,25 +884,25 @@ namespace FIMSpace.Generating
             #region Arrange renderers per material
 
 
-            foreach( MeshRenderer m in searchRend )
+            foreach (MeshRenderer m in searchRend)
             {
-                if( m.GetComponent<PGGIgnoreCombining>() == null ) // Check if not ignoring this mesh 
+                if (m.GetComponent<PGGIgnoreCombining>() == null) // Check if not ignoring this mesh 
                 {
                     MeshFilter filter = m.gameObject.GetComponent<MeshFilter>();
 
-                    if( filter ) if( filter.sharedMesh != null ) // Mesh filter with not null mesh required
+                    if (filter) if (filter.sharedMesh != null) // Mesh filter with not null mesh required
                         {
-                            var kMat = new CombineMaterialComparer( m.sharedMaterials );
-                            if( materialMeshes.ContainsKey( kMat ) == false ) materialMeshes.Add( kMat, new List<MeshFilter>() );
+                            var kMat = new CombineMaterialComparer(m.sharedMaterials);
+                            if (materialMeshes.ContainsKey(kMat) == false) materialMeshes.Add(kMat, new List<MeshFilter>());
 
-                            materialMeshes[kMat].Add( filter );
-                            if( setStatic ) m.gameObject.isStatic = true;
+                            materialMeshes[kMat].Add(filter);
+                            if (setStatic) m.gameObject.isStatic = true;
 
                             try
                             {
-                                FGenerators.DestroyObject( m ); // Clean ref to renderer component on the scene
+                                FGenerators.DestroyObject(m); // Clean ref to renderer component on the scene
                             }
-                            catch( System.Exception )
+                            catch (System.Exception)
                             {
                                 m.enabled = false; // In case some component depends on it, then just disable
                             }

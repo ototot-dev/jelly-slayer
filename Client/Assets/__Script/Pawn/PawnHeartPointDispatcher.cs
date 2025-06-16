@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Obi;
 using UniRx;
-using Unity.VisualScripting;
-using UnityEditor.Timeline.Actions;
 using UnityEngine;
 
 namespace Game
@@ -170,6 +167,22 @@ namespace Game
                 actionResult = ActionResults.None;
                 groggyBreakHit = false;
                 finalDamage = -1;
+            }
+
+            public DamageContext(float finalDamage)
+            {
+                timeStamp = Time.time;
+                hitPoint = Vector3.zero;
+                hitCollider = null;
+                insufficientStamina = false;
+                projectile = null;
+                senderActionSpecialTag = receiverActionSpecialTag = string.Empty;
+                senderActionData = receiverActionData = null;
+                senderBrain = receiverBrain = null;
+                senderPenalty = receiverPenalty = new(PawnStatus.None, -1);
+                actionResult = ActionResults.None;
+                groggyBreakHit = false;
+                this.finalDamage = finalDamage;
             }
         }
 

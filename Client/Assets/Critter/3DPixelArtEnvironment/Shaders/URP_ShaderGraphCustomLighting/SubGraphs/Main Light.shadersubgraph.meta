@@ -12,7 +12,7 @@ AssetOrigin:
   serializedVersion: 1
   productId: 270038
   packageName: Critter Environment
-  packageVersion: 2.3
+  packageVersion: 2.3.2
   assetPath: Assets/Critter/3DPixelArtEnvironment/Shaders/URP_ShaderGraphCustomLighting/SubGraphs/Main
     Light.shadersubgraph
-  uploadId: 729467
+  uploadId: 754948

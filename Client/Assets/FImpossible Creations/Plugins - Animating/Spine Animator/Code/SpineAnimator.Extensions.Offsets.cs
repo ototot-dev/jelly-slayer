@@ -57,7 +57,7 @@ namespace FIMSpace.FSpine
                 // Generating pivot offset transform - quickest way without defining other stuff
                 if (!mainPivotOffsetTransform)
                 {
-                    mainPivotOffsetTransform = new GameObject("Main Pivot Offset-Spine Animator-" + name).transform;
+                    mainPivotOffsetTransform = new GameObject("Main Pivot Offset-Spinal Animator-" + name).transform;
                     mainPivotOffsetTransform.SetParent(GetBaseTransform(), false);
                     mainPivotOffsetTransform.localPosition = Vector3.zero;
                     mainPivotOffsetTransform.localRotation = Quaternion.identity;

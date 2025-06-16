@@ -156,6 +156,18 @@ namespace ParadoxNotion.Design
 
         ///----------------------------------------------------------------------------------------------
 
+        private static GUIStyle _wrapLabel;
+        public static GUIStyle wrapLabel {
+            get
+            {
+                if ( _wrapLabel == null ) {
+                    _wrapLabel = new GUIStyle(topLeftLabel);
+                    _wrapLabel.wordWrap = true;
+                }
+                return _wrapLabel;
+            }
+        }
+
         private static GUIStyle _wrapTextArea;
         public static GUIStyle wrapTextArea {
             get

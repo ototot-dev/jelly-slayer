@@ -76,7 +76,7 @@ namespace FIMSpace.FSpine
             DrawDefaultInspector();
             GUILayout.Space(5f);
 
-            UnityEditor.EditorGUILayout.HelpBox("Component will try to sync this object with spine animator motion (Use this component if bone's hierarchy is wrong connected", UnityEditor.MessageType.Info);
+            UnityEditor.EditorGUILayout.HelpBox("Component will try to sync this object with spinal animator motion (Use this component if bone's hierarchy is wrong connected", UnityEditor.MessageType.Info);
         }
     }
 #endif

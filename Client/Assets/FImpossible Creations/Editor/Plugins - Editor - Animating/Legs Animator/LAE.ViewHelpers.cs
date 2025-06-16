@@ -12,7 +12,7 @@ namespace FIMSpace.FProceduralAnimation
 
         public static GUIStyle BGInBoxStyle { get { if (__inBoxStyle != null) return __inBoxStyle; __inBoxStyle = new GUIStyle(); __inBoxStyle.border = new RectOffset(4, 4, 4, 4); __inBoxStyle.padding = new RectOffset(10, 10, 6, 6); __inBoxStyle.margin = new RectOffset(0, 0, 0, 0); return __inBoxStyle; } }
         private static GUIStyle __inBoxStyle = null;
-        public static Texture2D Tex_Pixel { get { if (__texpixl != null ) return __texpixl; __texpixl = new Texture2D(1, 1); __texpixl.SetPixel(0, 0, Color.white); __texpixl.Apply(false, true); return __texpixl; } }
+        public static Texture2D Tex_Pixel { get { if (__texpixl != null) return __texpixl; __texpixl = new Texture2D(1, 1); __texpixl.SetPixel(0, 0, Color.white); __texpixl.Apply(false, true); return __texpixl; } }
         private static Texture2D __texpixl = null;
         public static GUIStyle StyleColorBG { get { if (__StlcolBG != null) { if (__StlcolBG.normal.background != null) return __StlcolBG; } __StlcolBG = new GUIStyle(EditorStyles.label); Texture2D bg = Tex_Pixel; __StlcolBG.focused.background = bg; __StlcolBG.active.background = bg; __StlcolBG.normal.background = bg; __StlcolBG.border = new RectOffset(0, 0, 0, 0); return __StlcolBG; } }
         private static GUIStyle __StlcolBG = null;
@@ -40,7 +40,7 @@ namespace FIMSpace.FProceduralAnimation
 
         /// <summary> End horizontal </summary>
         void EH() { EditorGUILayout.EndHorizontal(); }
-        
+
         /// <summary> Begin horizontal </summary>
         void BV(GUIStyle style = null)
         {
@@ -54,10 +54,15 @@ namespace FIMSpace.FProceduralAnimation
         void EV() { EditorGUILayout.EndVertical(); }
 
 
-        bool Button_Refresh()
+        bool Button_Refresh(string tooltip = "")
         {
-            _requestRepaint = true;
-            return GUILayout.Button(FGUI_Resources.Tex_Refresh, FGUI_Resources.ButtonStyle, GUILayout.Height(18), GUILayout.Width(23));
+            if (GUILayout.Button(new GUIContent(FGUI_Resources.Tex_Refresh, tooltip), FGUI_Resources.ButtonStyle, GUILayout.Height(18), GUILayout.Width(23)))
+            {
+                _requestRepaint = true;
+                return true;
+            }
+
+            return false;
         }
 
         void Helper_Header(string title, Texture tex)
@@ -109,7 +114,7 @@ namespace FIMSpace.FProceduralAnimation
             int height = 20; int lim = 357;
             bool narrow = EditorGUIUtility.currentViewWidth < lim;
             if (overrideWidth != 0f && overrideWidth < 60f) narrow = true;
-            
+
             if (!narrow)
             {
                 if (_DrawCatButton(new GUIContent("  " + Lang(lang), icon), height, overrideWidth))

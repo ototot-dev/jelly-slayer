@@ -43,14 +43,48 @@ namespace PixelCamera
         /// </summary>
         void Update()
         {
-            this.UpdateZoom(Input.mouseScrollDelta.y, Input.GetKey(KeyCode.LeftControl));
+            bool updateCamera = false;
+            float mouseScrollDeltaY = 0f;
+            #if !ENABLE_INPUT_SYSTEM
+                Input.GetKey(KeyCode.LeftControl);
+                mouseScrollDeltaY = Input.mouseScrollDelta.y;
+            #else
+                updateCamera = UnityEngine.InputSystem.Keyboard.current.leftCtrlKey.isPressed;
+                mouseScrollDeltaY = UnityEngine.InputSystem.Mouse.current.scroll.ReadValue().y;
+            #endif
+            this.UpdateZoom(mouseScrollDeltaY, updateCamera);
+            
+            float verticalInput = 0f;
+            float horizontalInput = 0f;
+            #if !ENABLE_INPUT_SYSTEM
+                verticalInput = Input.GetAxisRaw("Vertical");
+                horizontalInput = Input.GetAxisRaw("Horizontal");
+            #else
+                verticalInput = UnityEngine.InputSystem.Keyboard.current.wKey.isPressed ? 1f : 0f;
+                verticalInput -= UnityEngine.InputSystem.Keyboard.current.sKey.isPressed ? 1f : 0f;
+                horizontalInput = UnityEngine.InputSystem.Keyboard.current.dKey.isPressed ? 1f : 0f;
+                horizontalInput -= UnityEngine.InputSystem.Keyboard.current.aKey.isPressed ? 1f : 0f;
+            #endif
 
-            this.UpdateMovement(Input.GetAxisRaw("Vertical"), Input.GetAxisRaw("Horizontal"), this.MoveSpeed * Time.deltaTime);
+            this.UpdateMovement(verticalInput, horizontalInput, this.MoveSpeed * Time.deltaTime);
 
-            this.UpdateRotation((Input.mousePosition.x - this.previousMousePosition) * this.DragSpeed, 
-                                Input.mousePosition.x, 
-                                Input.GetMouseButton(1), 
-                                Input.GetMouseButtonUp(1));
+            float mousePosX = 0f;
+            bool inputting = false;
+            bool inputStopped = false;
+            #if !ENABLE_INPUT_SYSTEM
+                mousePosX = Input.mousePosition.x;
+                inputting = Input.GetMouseButton(1);
+                inputStopped = Input.GetMouseButtonUp(1);
+            #else
+                mousePosX = UnityEngine.InputSystem.Mouse.current.position.x.ReadValue();
+                inputting = UnityEngine.InputSystem.Mouse.current.rightButton.isPressed;
+                inputStopped = UnityEngine.InputSystem.Mouse.current.rightButton.wasReleasedThisFrame;
+            #endif
+
+            this.UpdateRotation((mousePosX - this.previousMousePosition) * this.DragSpeed, 
+                                mousePosX, 
+                                inputting,
+                                inputStopped); 
         }
 
         /// <summary>

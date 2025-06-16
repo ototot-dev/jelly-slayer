@@ -8,30 +8,24 @@ namespace ParadoxNotion
     public static class OperationTools
     {
 
-
         public static string GetOperationString(OperationMethod om) {
 
             if ( om == OperationMethod.Set )
                 return " = ";
-
             if ( om == OperationMethod.Add )
                 return " += ";
-
             if ( om == OperationMethod.Subtract )
                 return " -= ";
-
             if ( om == OperationMethod.Multiply )
                 return " *= ";
-
             if ( om == OperationMethod.Divide )
                 return " /= ";
-
             return string.Empty;
         }
 
         public static float Operate(float a, float b, OperationMethod om, float delta = 1f) {
             if ( om == OperationMethod.Set )
-                return b;
+                return b * delta;
             if ( om == OperationMethod.Add )
                 return a + ( b * delta );
             if ( om == OperationMethod.Subtract )
@@ -57,10 +51,9 @@ namespace ParadoxNotion
             return a;
         }
 
-
         public static Vector3 Operate(Vector3 a, Vector3 b, OperationMethod om, float delta = 1f) {
             if ( om == OperationMethod.Set )
-                return b;
+                return b * delta;
             if ( om == OperationMethod.Add )
                 return a + ( b * delta );
             if ( om == OperationMethod.Subtract )
@@ -78,19 +71,14 @@ namespace ParadoxNotion
 
             if ( cm == CompareMethod.EqualTo )
                 return " == ";
-
             if ( cm == CompareMethod.GreaterThan )
                 return " > ";
-
             if ( cm == CompareMethod.LessThan )
                 return " < ";
-
             if ( cm == CompareMethod.GreaterOrEqualTo )
                 return " >= ";
-
             if ( cm == CompareMethod.LessOrEqualTo )
                 return " <= ";
-
             return string.Empty;
         }
 

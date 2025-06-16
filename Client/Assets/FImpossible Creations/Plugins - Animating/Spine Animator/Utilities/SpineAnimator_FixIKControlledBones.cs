@@ -8,7 +8,7 @@ using UnityEditor;
 namespace FIMSpace.FSpine
 {
     [DefaultExecutionOrder(-12)]
-    [AddComponentMenu("FImpossible Creations/Spine Animator Utilities/Spine Animator IK Controlled Bone Fixer")]
+    [AddComponentMenu("FImpossible Creations/Spinal Animator Utilities/Spinal Animator IK Controlled Bone Fixer")]
     public class SpineAnimator_FixIKControlledBones : MonoBehaviour
     {
         public Transform SkeletonParentBone;

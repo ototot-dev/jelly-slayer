@@ -41,6 +41,8 @@ namespace FIMSpace.Generating
 
         [SerializeField][HideInInspector] private List<FieldModification> disabledMods = new List<FieldModification>();
 
+        [Tooltip("OnSpawnProcessors can be assigned to proceed operations on every single spawned object by the FieldSetup")]
+        public List<OnSpawnProcessor> OnSpawnProcessors = new List<OnSpawnProcessor>();
 
         private void Awake()
         {

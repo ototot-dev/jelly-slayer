@@ -196,6 +196,39 @@ namespace FIMSpace.FProceduralAnimation
             return lackingBone;
         }
 
+        /// <summary>
+        /// Removing leg reference from the LegsAnimator system and refreshing other legs properties
+        /// </summary>
+        public void RemoveLeg(int id)
+        {
+            if (id < 0) return;
+            if (id >= Legs.Count) return;
+
+            var leg = Legs[id];
+
+            Leg parentLeg = null;
+
+            var opposideIds = new System.Collections.Generic.Dictionary<Leg, Leg>();
+
+            for (int i = 0; i < Legs.Count; i++)
+            {
+                if (Legs[i].OppositeLegIndex == id) Legs[i].OppositeLegIndex = (-1);
+                else if (Legs[i].OppositeLegIndex != -1) opposideIds.Add(Legs[i], Legs[i].GetOppositeLegReference(this));
+
+                if (parentLeg == null) if (Legs[i].NextLeg == leg) { parentLeg = Legs[i]; }
+            }
+
+            parentLeg.SetNextLeg(leg.NextLeg);
+
+            Legs.RemoveAt(id);
+            leg.ParentHub.ChildLegs.Remove(leg);
+
+            for (int i = 0; i < Legs.Count; i++) Legs[i].RefreshPlaymodeIndex(i);
+
+            foreach (var legPair in opposideIds) legPair.Key.OppositeLegIndex = legPair.Value.PlaymodeIndex;
+
+            for (int i = 0; i < Legs.Count; i++) Legs[i].RefreshHasOppositeLeg();
+        }
 
     }
 

@@ -104,7 +104,13 @@ namespace CritterVolumetricLighting
 		
 		private void HandleQ()
 		{
-			if (Input.GetKeyDown(KeyCode.Q))
+			bool qPressed = false;
+			#if ENABLE_INPUT_SYSTEM
+				qPressed = UnityEngine.InputSystem.Keyboard.current.qKey.isPressed;
+			#else
+				qPressed = Input.GetKey(KeyCode.Q);
+			#endif
+			if (qPressed)
 			{
 				_cdTimerQ = 0;
 				float moveAngle;
@@ -135,7 +141,13 @@ namespace CritterVolumetricLighting
 		
 		private void HandleE()
 		{
-			if (Input.GetKeyDown(KeyCode.E))
+			bool ePressed = false;
+			#if ENABLE_INPUT_SYSTEM
+				ePressed = UnityEngine.InputSystem.Keyboard.current.eKey.isPressed;
+			#else
+				ePressed = Input.GetKey(KeyCode.E);
+			#endif
+			if (ePressed)
 			{
 				_cdTimerE = 0;
 				float moveAngle;
@@ -175,22 +187,41 @@ namespace CritterVolumetricLighting
 
 			// Movement based on input
 			Vector3 movement = Vector3.zero;
-			if (Input.GetKey(KeyCode.W))
-			{
-				movement += forwardDirection;
-			}
-			if (Input.GetKey(KeyCode.S))
-			{
-				movement -= forwardDirection;
-			}
-			if (Input.GetKey(KeyCode.A))
-			{
-				movement -= rightDirection;
-			}
-			if (Input.GetKey(KeyCode.D))
-			{
-				movement += rightDirection;
-			}
+			# if ENABLE_INPUT_SYSTEM
+				if (UnityEngine.InputSystem.Keyboard.current.wKey.isPressed)
+				{
+					movement += forwardDirection;
+				}
+				if (UnityEngine.InputSystem.Keyboard.current.sKey.isPressed)
+				{
+					movement -= forwardDirection;
+				}
+				if (UnityEngine.InputSystem.Keyboard.current.aKey.isPressed)
+				{
+					movement -= rightDirection;
+				}
+				if (UnityEngine.InputSystem.Keyboard.current.dKey.isPressed)
+				{
+					movement += rightDirection;
+				}
+			#else
+				if (Input.GetKey(KeyCode.W))
+				{
+					movement += forwardDirection;
+				}
+				if (Input.GetKey(KeyCode.S))
+				{
+					movement -= forwardDirection;
+				}
+				if (Input.GetKey(KeyCode.A))
+				{
+					movement -= rightDirection;
+				}
+				if (Input.GetKey(KeyCode.D))
+				{
+					movement += rightDirection;
+				}
+			#endif
 
 			// Normalize the movement vector to prevent faster diagonal movement
 			if (movement.magnitude > 1f)
@@ -198,13 +229,23 @@ namespace CritterVolumetricLighting
 				movement.Normalize();
 			}
 
-			if (Input.GetKey(KeyCode.LeftShift))
-			{
-				_movementMultiplier = 3f;
-			} else 
-			{
-				_movementMultiplier = 1f;
-			}
+			# if ENABLE_INPUT_SYSTEM
+				if (UnityEngine.InputSystem.Keyboard.current.spaceKey.isPressed)
+				{
+					_movementMultiplier = 3f;
+				} else 
+				{
+					_movementMultiplier = 1f;
+				}
+			#else
+				if (Input.GetKey(KeyCode.LeftShift))
+				{
+					_movementMultiplier = 3f;
+				} else 
+				{
+					_movementMultiplier = 1f;
+				}
+			#endif
 			
 			mover.Translate(movement * movementSpeed * Time.deltaTime * _movementMultiplier);
 		}

@@ -19,15 +19,15 @@ namespace UGUI.Rx
         public StringReactiveProperty RegexPattern = new StringReactiveProperty(string.Empty);
         Regex __regex;
 
-        public override void Init(Template owner, TweenName[] tweenNames)
+        public override void Initialize(Template owner, TweenName[] tweenNames)
         {
-            base.Init(owner, tweenNames);
+            base.Initialize(owner, tweenNames);
 
             var inputField = GetComponent<InputField>();
 
             query.activeStates.Add(inputField.interactable ? __normalStr : __disabledStr);
             query.activeStates.Add(__emptyStr);
-            query.Apply();
+            query.Execute();
 
             var skipFirst = true;
 
@@ -47,7 +47,7 @@ namespace UGUI.Rx
                         query.activeStates.Add(__disabledStr);
                     }
 
-                    query.Apply();
+                    query.Execute();
                 })
                 .AddTo(this);
 
@@ -60,7 +60,7 @@ namespace UGUI.Rx
                     query.activeStates.Remove(__normalStr);
                     query.activeStates.Add(__hoverStr);
 
-                    query.Apply();
+                    query.Execute();
 
                     IsHover = true;
                 })
@@ -74,7 +74,7 @@ namespace UGUI.Rx
                 {
                     query.activeStates.Remove(__hoverStr);
                     query.activeStates.Add(__normalStr);
-                    query.Apply();
+                    query.Execute();
 
                     IsHover = false;
                 })
@@ -115,7 +115,7 @@ namespace UGUI.Rx
                         query.activeStates.Remove(__emptyStr);
                     }
 
-                    query.Apply();
+                    query.Execute();
                 })
                 .AddTo(this);
 

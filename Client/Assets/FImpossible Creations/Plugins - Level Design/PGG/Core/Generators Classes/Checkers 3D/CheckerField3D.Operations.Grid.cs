@@ -128,7 +128,7 @@ namespace FIMSpace.Generating.Checker
         {
             Matrix4x4 mx = accordingTo.Matrix;
             Vector3 pos = accordingTo.MatrixInverse.MultiplyPoint3x4(position);
-            pos = FVectorMethods.FlattenVector(pos, scale);
+            pos = FVectorMethods.FlattenVector(pos, scale / accordingTo.RootScale.x);
             return mx.MultiplyPoint3x4(pos);
         }
 

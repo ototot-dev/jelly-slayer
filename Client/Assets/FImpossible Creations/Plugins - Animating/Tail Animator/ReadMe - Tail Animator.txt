@@ -1,7 +1,7 @@
 ﻿_________________________________________________________________________________________________________
 
 Package "Tail Animator V2"
-Version 2.0.6.2
+Version 2.0.7
 
 Made by FImpossible Creations - Filip Moeglich
 https://www.FilipMoeglich.pl
@@ -59,10 +59,8 @@ Description:
 _________________________________________________________________________________________________________
 Version history:
 
-V2.0.6.2
+V2.0.7
 - Support for CharacterController collider
-
-V2.0.6.1
 - Added IK Invert Order option for Tail Animator IK
 
 V2.0.6

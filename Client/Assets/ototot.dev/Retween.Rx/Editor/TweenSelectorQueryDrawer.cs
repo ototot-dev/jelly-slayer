@@ -3,6 +3,8 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UGUI.Rx;
+using Unity.Linq;
 
 #if ENABLE_DOTWEEN_SEQUENCE
 using DG.Tweening;
@@ -66,8 +68,8 @@ namespace Retween.Rx
 
             if (GUI.Button(drawRect, "Update Tween Sources"))
             {
-                if (query.TargetSelector != null)
-                    UpdateTweenSources(query.TargetSelector.transform, query, tweensProperty);
+                if (query.TargetSelector != null && query.TargetSelector.tweenSheet != null)
+                    UpdateTweenSources(query.TargetSelector.tweenSheet, query, tweensProperty);
 
                 query.BuildSelectables();
             }
@@ -240,7 +242,7 @@ namespace Retween.Rx
             }
 
             if (hasDirty && Application.isPlaying)
-                query.Apply();
+                query.Execute();
 
             drawRect.x = position.x;
             drawRect.width = position.width;

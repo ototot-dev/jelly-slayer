@@ -65,7 +65,7 @@ namespace UGUI.Rx
 
             var tweenNames = GetTweenNames();
             foreach (var q in query)
-                q.Init(template, tweenNames);
+                q.Initialize(template, tweenNames);
 
             template.gameObject.SetActive(true);
         }

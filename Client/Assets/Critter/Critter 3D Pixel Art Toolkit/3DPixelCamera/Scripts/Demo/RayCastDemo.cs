@@ -10,10 +10,20 @@ namespace PixelCamera
         public Camera ViewCamera;
         void Update()
         {
-            if (Input.GetMouseButtonDown(0))
+            bool castRay = false;
+            Vector3 mousePosition = Vector3.zero;
+            # if !ENABLE_INPUT_SYSTEM
+                castRay = Input.GetMouseButtonDown(0);
+                mousePosition = Input.mousePosition;
+            #else
+                castRay = UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame;
+                mousePosition = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
+            #endif
+
+            if (castRay)
             {
                 Debug.Log("Casting ray");
-                var ray = this.ViewCamera.ScreenPointToRay(Input.mousePosition); // This is the important part. Use the view camera to cast them.
+                var ray = this.ViewCamera.ScreenPointToRay(mousePosition); // This is the important part. Use the view camera to cast them.
                 if (Physics.Raycast(ray, out var hit))
                 {
                     Debug.Log("Ray hit " + hit.transform.name);

@@ -10,10 +10,10 @@ namespace NodeCanvas.BehaviourTrees
     abstract public class BTComposite : BTNode
     {
 
-        public override string name { get { return base.name.ToUpper(); } }
+        public override string name => base.name.ToUpper();
 
-        sealed public override int maxOutConnections { get { return -1; } }
-        sealed public override Alignment2x2 commentsAlignment { get { return Alignment2x2.Right; } }
+        sealed public override int maxOutConnections => -1;
+        sealed public override Alignment2x2 commentsAlignment => Alignment2x2.Right;
 
         ///----------------------------------------------------------------------------------------------
         ///---------------------------------------UNITY EDITOR-------------------------------------------

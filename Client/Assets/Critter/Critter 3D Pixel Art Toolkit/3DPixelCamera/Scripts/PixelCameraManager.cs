@@ -1,7 +1,6 @@
 namespace PixelCamera
 {
     using UnityEngine;
-    using Cinemachine;
 
     /// <summary>
     /// Tooltips for Unity editor

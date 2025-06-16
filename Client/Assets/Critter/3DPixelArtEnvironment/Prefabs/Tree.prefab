@@ -99,10 +99,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UseSubMesh: 1
   SubMeshIndex: 1
-  Density: 0.4
-  DistanceOffset: 0.2
-  InstanceConfigurations:
+  Density: 0.2
+  InstancingSettings:
   - Mesh: {fileID: 2065297463509329499, guid: ac7e1da50dbeb60439433bf8bf24153d, type: 3}
     Material: {fileID: 2100000, guid: 479e9a9d893b1ec48909c98262d08324, type: 2}
     Probability: 1
-    Scale: 1.5
+    Scale: 1
+    NormalOffset: 0.05

@@ -113,6 +113,7 @@ namespace FIMSpace.FProceduralAnimation
 
         protected virtual RA2BoneCollisionHandlerBase GetCollisionHandler( RagdollChainBone bone )
         {
+            if (bone.MainBoneCollider == null) return null;
             return bone.MainBoneCollider.GetComponent<RA2BoneCollisionHandler>();
         }
 

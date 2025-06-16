@@ -7,7 +7,7 @@ namespace NodeCanvas.BehaviourTrees
 {
 
     [Category("Decorators")]
-    [Description("Returns Running until the assigned condition becomes true, after which the decorated child is executed.")]
+    [Description("Returns Running until the assigned condition becomes true. When true, the decorated child is executed and its status returned.")]
     [ParadoxNotion.Design.Icon("Halt")]
     public class WaitUntil : BTDecorator, ITaskAssignable<ConditionTask>
     {
@@ -58,7 +58,7 @@ namespace NodeCanvas.BehaviourTrees
         }
 
         protected override void OnReset() {
-            if ( condition != null ) { condition.Disable(); }
+            condition?.Disable();
             accessed = false;
         }
     }

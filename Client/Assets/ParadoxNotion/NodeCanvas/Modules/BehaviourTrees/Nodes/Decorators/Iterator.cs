@@ -49,7 +49,7 @@ namespace NodeCanvas.BehaviourTrees
 
         private int currentIndex;
 
-        private IList list => targetList != null ? targetList.value : null;
+        private IList list => targetList?.value;
 
         protected override Status OnExecute(Component agent, IBlackboard blackboard) {
 
@@ -117,7 +117,7 @@ namespace NodeCanvas.BehaviourTrees
 
         protected override void OnNodeInspectorGUI() {
             DrawDefaultInspector();
-            var argType = targetList.refType != null ? targetList.refType.GetEnumerableElementType() : null;
+            var argType = targetList.refType?.GetEnumerableElementType();
             if ( current.varType != argType ) { current.SetType(argType); }
         }
 #endif

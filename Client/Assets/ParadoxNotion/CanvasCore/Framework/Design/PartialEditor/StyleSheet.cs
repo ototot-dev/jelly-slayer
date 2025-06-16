@@ -75,6 +75,7 @@ namespace NodeCanvas.Editor
             public Texture2D log;
             public Texture2D lens;
             public Texture2D refactor;
+            public Texture2D flag;
             public Texture2D verboseLevel1;
             public Texture2D verboseLevel2;
             public Texture2D verboseLevel3;
@@ -220,6 +221,10 @@ namespace NodeCanvas.Editor
 
         public static Texture2D refactor {
             get { return styleSheet.icons.refactor; }
+        }
+
+        public static Texture2D flag {
+            get { return styleSheet.icons.flag; }
         }
 
         public static Texture2D verboseLevel1 {

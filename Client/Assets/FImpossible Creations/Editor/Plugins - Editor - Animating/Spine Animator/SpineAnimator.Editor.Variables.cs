@@ -179,7 +179,7 @@ public partial class FSpineAnimator_Editor
             }
 
 
-        // Detecting if using few spine animators
+        // Detecting if using few spinal animators
         if (Get.BaseTransform != Get.transform)
         {
             if (Get.BaseTransform != null)
@@ -236,7 +236,7 @@ public partial class FSpineAnimator_Editor
                         serializedObject.Update();
                         serializedObject.ApplyModifiedProperties();
 
-                        Debug.Log("[Spine Animator] Successfully converted old bones setup to new version of Spine Animator (" + Get.name + ") If it is prefab please apply this changes.");
+                        Debug.Log("[Spinal Animator] Successfully converted old bones setup to new version of Spine Animator (" + Get.name + ") If it is prefab please apply this changes.");
                     }
                 }
     }

@@ -537,7 +537,7 @@ MonoBehaviour:
         m_Top: 0
         m_Bottom: 0
       m_Font: {fileID: 0}
-      m_FontSize: 9
+      m_FontSize: 11
       m_FontStyle: 0
       m_Alignment: 3
       m_WordWrap: 0
@@ -604,12 +604,12 @@ MonoBehaviour:
         m_Top: 0
         m_Bottom: 0
       m_Font: {fileID: 0}
-      m_FontSize: 9
+      m_FontSize: 11
       m_FontStyle: 0
       m_Alignment: 0
       m_WordWrap: 1
       m_RichText: 1
-      m_TextClipping: 1
+      m_TextClipping: 0
       m_ImagePosition: 0
       m_ContentOffset: {x: 0, y: 0}
       m_FixedWidth: 0
@@ -1209,12 +1209,12 @@ MonoBehaviour:
       m_Font: {fileID: 0}
       m_FontSize: 14
       m_FontStyle: 1
-      m_Alignment: 4
+      m_Alignment: 3
       m_WordWrap: 0
       m_RichText: 1
       m_TextClipping: 0
       m_ImagePosition: 3
-      m_ContentOffset: {x: 0, y: 0}
+      m_ContentOffset: {x: 15, y: 0}
       m_FixedWidth: 0
       m_FixedHeight: 0
       m_StretchWidth: 1
@@ -1301,6 +1301,7 @@ MonoBehaviour:
     log: {fileID: 2800000, guid: 7002f50ea12a4f2419d3a22cd2931629, type: 3}
     lens: {fileID: 2800000, guid: b70a85fbb4eb7bf46bb6345f7b0ff842, type: 3}
     refactor: {fileID: 2800000, guid: deab6b3165ab396408e7333c5580ef74, type: 3}
+    flag: {fileID: 2800000, guid: 38a8a3c0531011847b034f3cb4e0370e, type: 3}
     verboseLevel1: {fileID: 2800000, guid: 54e96ea4c35de7544a6b8f80768337c0, type: 3}
     verboseLevel2: {fileID: 2800000, guid: 3cd33e6f1767ed74aa82280df4fb66b7, type: 3}
     verboseLevel3: {fileID: 2800000, guid: 25a5033cf1bf9a94096ed81195e713e3, type: 3}

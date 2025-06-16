@@ -12,9 +12,9 @@ namespace UGUI.Rx
     {
         public bool IsMouseHover { get; protected set; }
 
-        public override void Init(Template owner, TweenName[] tweenNames)
+        public override void Initialize(Template owner, TweenName[] tweenNames)
         {
-            base.Init(owner, tweenNames);
+            base.Initialize(owner, tweenNames);
 
             var selectable = GetComponent<Selectable>();
             Debug.Assert(selectable != null);
@@ -47,7 +47,7 @@ namespace UGUI.Rx
                         query.activeStates.Add(__disabledStr);
                     }
 
-                    query.Apply();
+                    query.Execute();
                 }).AddTo(this));
 
             __disposables.Add(
@@ -55,7 +55,7 @@ namespace UGUI.Rx
                 {
                     query.activeStates.Remove(__normalStr);
                     query.activeStates.Add(__hoverStr);
-                    query.Apply();
+                    query.Execute();
 
                     IsMouseHover = true;
                 }).AddTo(this));
@@ -65,7 +65,7 @@ namespace UGUI.Rx
                 {
                     query.activeStates.Remove(__hoverStr);
                     query.activeStates.Add(__normalStr);
-                    query.Apply();
+                    query.Execute();
 
                     IsMouseHover = false;
                 }).AddTo(this));
@@ -76,7 +76,7 @@ namespace UGUI.Rx
                     query.activeStates.Remove(__normalStr);
                     query.activeStates.Remove(__hoverStr);
                     query.activeStates.Add(__pressedStr);
-                    query.Apply();
+                    query.Execute();
                 }).AddTo(this));
 
             __disposables.Add(
@@ -84,7 +84,7 @@ namespace UGUI.Rx
                 {
                     query.activeStates.Remove(__pressedStr);
                     query.activeStates.Add(IsMouseHover ? __hoverStr : __normalStr);
-                    query.Apply();
+                    query.Execute();
                 }).AddTo(this));
         }
 

@@ -1720,7 +1720,7 @@ namespace Game.NodeCanvasExtension
                     selector.value.query.activeStates.Add(s);
             }
 
-            selector.value.query.Apply();
+            selector.value.query.Execute();
             EndAction(true);
         }
     }
