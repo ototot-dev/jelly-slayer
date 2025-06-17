@@ -25,6 +25,8 @@ namespace Retween.Rx
         int __runNumCounter = 0;
         int ReserveRunNumber() { return ++__runNumCounter; }
 
+        public Dictionary<TweenAnim, TweenAnimState> tweenStates = new();
+
         void Awake()
         {
             if (!TryGetComponent<Animation>(out __anim))
@@ -41,7 +43,6 @@ namespace Retween.Rx
         }
 
         Animation __anim;
-        public Dictionary<TweenAnim, TweenAnimState> tweenStates = new();
 
         public IObservable<TweenAnimState> Run(TweenAnim tweenAnim, bool resetElapsed = false)
         {

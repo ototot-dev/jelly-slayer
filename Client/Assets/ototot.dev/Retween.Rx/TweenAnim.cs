@@ -33,6 +33,7 @@ namespace Retween.Rx
 
         [Header("Transition")]
         public Transition transition = new(false);
+        public bool restartOnExecuted = false;
         public bool rewindOnCancelled = false;
         public bool rewindOnRollback = false;
         public bool runRollback = false;
@@ -44,8 +45,7 @@ namespace Retween.Rx
         {
             get
             {
-                if (__tweenName == null)
-                    __tweenName = GetComponent<TweenName>();
+                __tweenName ??= GetComponent<TweenName>();
                 return __tweenName;
             }
         }

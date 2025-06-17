@@ -118,9 +118,8 @@ namespace Game
                 null, 
                 out Vector2 screenPos
             );
-            
-            if (__canvasScaler == null)
-                __canvasScaler = template.transform.parent.GetComponent<CanvasScaler>();
+
+            __canvasScaler ??= GameContext.Instance.canvasManager.GetComponent<CanvasScaler>();
 
             // to force the dialogue bubble to be fully on screen, clamp the bubble rectangle within the screen bounds
             if (constrainToViewportMargin >= 0f)
