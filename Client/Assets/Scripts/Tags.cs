@@ -14,6 +14,7 @@ public static class Tags
         "SunLight",
         "Door",
         "Phone",
+        "Door2",
     };
     public static class Ungrouped
     {
@@ -57,8 +58,10 @@ public static class Tags
         {
             "Door",
             "Phone",
+            "Door2",
         };
         public const string Door = "Door";
         public const string Phone = "Phone";
+        public const string Door2 = "Door2";
     }
 }
