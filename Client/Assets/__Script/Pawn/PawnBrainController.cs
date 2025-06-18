@@ -18,6 +18,7 @@ namespace Game
         public virtual void ChangeDecision(int newDecision) { }
         public virtual Vector3 GetInteractionKeyAttachPoint() => Vector3.zero;
         public virtual Vector3 GetBubbleDialogueAttachPoint() => coreColliderHelper != null ? coreColliderHelper.transform.position + coreColliderHelper.GetCapsuleHeight() * Vector3.up : transform.position;
+        public virtual Vector3 GetStatusBarAttachPoint() => coreColliderHelper != null ? coreColliderHelper.transform.position + coreColliderHelper.GetCapsuleHeight() * Vector3.up : transform.position;
         public virtual Vector3 GetWorldForward() => coreColliderHelper != null ? coreColliderHelper.transform.forward : transform.forward;
         public virtual Vector3 GetWorldPosition() => coreColliderHelper != null ? coreColliderHelper.transform.position : transform.position;
         public virtual Quaternion GetWorldRotation() => coreColliderHelper != null ? coreColliderHelper.transform.rotation : transform.rotation;

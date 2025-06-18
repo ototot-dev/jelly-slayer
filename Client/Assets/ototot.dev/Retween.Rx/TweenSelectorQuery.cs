@@ -116,7 +116,24 @@ namespace Retween.Rx
             {
                 if (t.TweenName.Match(TargetSelector))
                 {
-                    if (!rollbackOnly && !TargetSelector.matchingResults.Contains(t.TweenName))
+                    var matchingResultExist = TargetSelector.matchingResults.Contains(t.TweenName);
+
+                    if (matchingResultExist && t.restartOnExecuted && TargetSelector.Player.tweenStates.TryGetValue(t, out var state))
+                    {
+                        if (state.IsRunning)
+                        {
+                            state.elapsed = TweenPlayer.MIN_ELAPSED_TIME;
+
+                            Debug.Log($"TweenSelector => {t.gameObject.name} in TweenAnim elapsed is reset.");
+                        }
+                        else
+                        {
+                            TargetSelector.Player.Run(t, !t.rewindOnCancelled && !t.runRollback)?.Subscribe();
+
+                            // Debug.Log($"TweenSelector => {t.gameObject.name} in TweenAnim is selected.");
+                        }
+                    }
+                    else if (!matchingResultExist && !rollbackOnly)
                     {
                         TargetSelector.matchingResults.Add(t.TweenName);
                         TargetSelector.Player.Run(t, !t.rewindOnCancelled && !t.runRollback)?.Subscribe();
