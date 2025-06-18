@@ -114,6 +114,7 @@ namespace Game
             __runner.AddCommandHandler<string, float, int, bool>("tweenShake", TweenShake);
             __runner.AddCommandHandler<string, string>("sendMsg", SendMessage);
             __runner.AddCommandHandler<string>("sendMsgToGameMode", SendMessageToGameMode);
+            __runner.AddCommandHandler<string, string>("sendMsgToGameModeParam", SendMessageToGameModeParam);
             __runner.AddCommandHandler<string, string>("spawnPawn", SpawnPawn);
             __runner.AddCommandHandler<string, float, float, float>("spawnPawnByVector", SpawnPawnByVector);
             __runner.AddCommandHandler<string>("setCameraTarget", SetCameraTarget);
@@ -284,6 +285,14 @@ namespace Game
                 return;
 
             mode.SendMessage(msg, SendMessageOptions.DontRequireReceiver);
+        }
+        public void SendMessageToGameModeParam(string msg, string param)
+        {
+            var mode = GameContext.Instance.launcher.currGameMode;
+            if (mode == null)
+                return;
+
+            mode.SendMessage(msg, param, SendMessageOptions.DontRequireReceiver);
         }
 
         public void SetCameraTarget(string targetTag) 

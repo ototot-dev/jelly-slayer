@@ -14,11 +14,18 @@ namespace Game
     public enum TutorialMode 
     {
         None,
+
         NormalAttack,
         PowerAttack,
 
         Guard,
         Evade,
+        Heal,
+        Parry,
+
+        Groggy,
+
+        End,
     }
     public enum TutorialScene 
     {
@@ -38,8 +45,8 @@ namespace Game
 
         [Header("Tutorial")]
         public TutorialMode _tutorialMode = TutorialMode.None;
-        private bool _isInCombat = false;
-        private int _attackCount = 0;
+        [SerializeField] private bool _isInCombat = false;
+        [SerializeField] private int _attackCount = 0;
 
         private TutorialRoboSoldierBrain _roboBrain;
 
@@ -192,6 +199,8 @@ namespace Game
                 InitCamera();
                 // Tutorial1
                 InitLoadingPageCtrler("Tutorial1", () => { });
+
+                InitSlayerBrainHandler();
             };
         }
         public IEnumerator ChangeRoom_Coroutine()
@@ -214,28 +223,15 @@ namespace Game
             yield return new WaitForSeconds(1f);
         }
 
-        public void PawnSpawned(GameObject obj) 
+        void InitSlayerBrainHandler() 
         {
-            var pawn = obj.GetComponent<PawnBrainController>();
-            if (pawn.PawnBB.common.pawnId == PawnId.RoboSoldier)
-            {
-                _roboBrain = (TutorialRoboSoldierBrain)pawn;
-
-                pawn.PawnHP.onDamaged += ((damageContext) =>
-                {
-                    CheckDamage(damageContext);
-                });
-                /*
-                pawn.PawnHP.onAvoided += ((_, reason) => 
-                {
-                    if (reason == "Dodge") 
-                    {
-                        EvadeDamage();
-                    }
-                });
-                //*/
-            }
             var slayerBrain = GameContext.Instance.playerCtrler.possessedBrain;
+            slayerBrain.PawnHP.onDamaged += ((damageContext) =>
+            {
+                CheckSlayerDamage(damageContext);
+            });
+
+            // 회피 처리
             slayerBrain.PawnHP.onAvoided += ((_, reason) =>
             {
                 if (reason == "Dodge")
@@ -243,6 +239,43 @@ namespace Game
                     EvadeDamage();
                 }
             });
+            // 물약 처리
+            slayerBrain.PawnStatusCtrler.onStatusActive += ((status) =>
+            {
+                if (status == PawnStatus.HPRegen && _tutorialMode == TutorialMode.Heal)
+                {
+                    _attackCount = 0;
+                    __dialogueDispatcher._isWaitCheck = true;
+                    _tutorialMode = TutorialMode.None;
+                }
+            });
+        }
+
+        public void PawnSpawned(GameObject obj) 
+        {
+            var pawn = obj.GetComponent<PawnBrainController>();
+            if (pawn.PawnBB.common.pawnId == PawnId.RoboSoldier)
+            {
+                switch (pawn.PawnBB.common.pawnId) 
+                {
+                    case PawnId.RoboSoldier:
+                        {
+                            _roboBrain = (TutorialRoboSoldierBrain)pawn;
+                            pawn.PawnHP.onDamaged += ((damageContext) =>
+                            {
+                                CheckRoboSoldierDamage(damageContext);
+                            });
+                            pawn.PawnHP.onDead += ((damageContext) =>
+                            {
+                                if (_tutorialMode == TutorialMode.Groggy)
+                                {
+                                    EndMode();
+                                }
+                            });
+                        }
+                        break;
+                }
+            }
         }
 
         void Update()
@@ -260,41 +293,64 @@ namespace Game
 
         #region TUTORIAL
 
-        void CheckDamage(PawnHeartPointDispatcher.DamageContext damageContext) 
+        void EndMode() 
+        {
+            _attackCount = 0;
+            __dialogueDispatcher._isWaitCheck = true;
+            _tutorialMode = TutorialMode.None;
+        }
+
+        void CheckRoboSoldierDamage(PawnHeartPointDispatcher.DamageContext damageContext) 
         {
             var slayerBrain = GameContext.Instance.playerCtrler.possessedBrain;
             switch (_tutorialMode)
             {
                 case TutorialMode.NormalAttack:
-                    _attackCount++;
-                    if (_attackCount >= 3)
+                    if (damageContext.actionResult == ActionResults.Damaged && damageContext.senderBrain == slayerBrain)
                     {
-                        _attackCount = 0;
-                        __dialogueDispatcher._isWaitCheck = true;
-                        _tutorialMode = TutorialMode.None;
+                        _attackCount++;
+                        if (_attackCount >= 3)
+                        {
+                            EndMode();
+                        }
                     }
-                    break;
+                    break;                    
                 case TutorialMode.PowerAttack:
                     //if (damageContext.actionResult == ActionResults.GuardBreak)
                     {
                         _attackCount++;
                         if (_attackCount >= 3)
                         {
-                            _attackCount = 0;
-                            __dialogueDispatcher._isWaitCheck = true;
-                            _tutorialMode = TutorialMode.None;
+                            EndMode();
                         }
                     }
-                    break;
+                    break;         
+            }
+        }
+
+
+        void CheckSlayerDamage(PawnHeartPointDispatcher.DamageContext damageContext)
+        {
+            var slayerBrain = GameContext.Instance.playerCtrler.possessedBrain;
+            switch (_tutorialMode)
+            {
                 case TutorialMode.Guard:
                     if (damageContext.actionResult == ActionResults.Blocked && damageContext.receiverBrain == slayerBrain)
                     {
                         _attackCount++;
                         if (_attackCount >= 3)
                         {
-                            _attackCount = 0;
-                            __dialogueDispatcher._isWaitCheck = true;
-                            _tutorialMode = TutorialMode.None;
+                            EndMode();
+                        }
+                    }
+                    break;
+                case TutorialMode.Parry:
+                    if (damageContext.actionResult == ActionResults.GuardParrying && damageContext.receiverBrain == slayerBrain)
+                    {
+                        _attackCount++;
+                        if (_attackCount >= 3)
+                        {
+                            EndMode();
                         }
                     }
                     break;
@@ -308,9 +364,7 @@ namespace Game
             _attackCount++;
             if (_attackCount >= 3)
             {
-                _attackCount = 0;
-                __dialogueDispatcher._isWaitCheck = true;
-                _tutorialMode = TutorialMode.None;
+                EndMode();
             }
         }
 
@@ -323,29 +377,28 @@ namespace Game
         {
             _isInCombat = false;
         }
-        
-        public void StartMode_NormalAttack()
+
+        void SetMode(TutorialMode mode) 
         {
             _attackCount = 0;
-            _tutorialMode = TutorialMode.NormalAttack;
+            _tutorialMode = mode;
         }
 
-        public void StartMode_PowerAttack()
+        void SetTutorialMode(string mode)
         {
-            _attackCount = 0;
-            _tutorialMode = TutorialMode.PowerAttack;
+            if (Enum.TryParse<TutorialMode>(mode, out TutorialMode result))
+            {
+                SetMode(result);
+            }
         }
 
-        public void StartMode_Guard() 
-        {
-            _attackCount = 0;
-            _tutorialMode = TutorialMode.Guard;
-        }
-
-        public void StartMode_Evade() 
-        {
-            _attackCount = 0;
-            _tutorialMode = TutorialMode.Evade;
+        public void SetPawnToGroggy() 
+        { 
+            // 강제 그로기 셋팅
+            _roboBrain.StatusCtrler.AddStatus(PawnStatus.Groggy, 1, 10000);
+            _roboBrain.AnimCtrler.mainAnimator.SetBool("IsGroggy", true);
+            _roboBrain.AnimCtrler.mainAnimator.SetTrigger("OnGroggy");
+            _roboBrain.BB.common.isInvincible.Value = false;
         }
 
         public void RoboSoldierStartGuard() 
