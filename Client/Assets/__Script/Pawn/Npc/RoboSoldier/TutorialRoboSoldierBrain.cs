@@ -1,3 +1,5 @@
+using Game.UI;
+using UGUI.Rx;
 using UniRx;
 using UnityEngine;
 
@@ -17,6 +19,9 @@ namespace Game
         protected override void StartInternal()
         {
             base.StartInternal();
+
+            new BossStatusBarController(this).Load(GameObject.FindFirstObjectByType<BossStatusBarTemplate>()).Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
+            
 
             void __ChangeStatus(PawnStatus status, bool v)
             {

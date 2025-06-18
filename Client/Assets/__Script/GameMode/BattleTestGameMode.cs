@@ -18,7 +18,7 @@ namespace Game
             // new GamePanelController().Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
 
             new PlayerStatusBarController().Load(GameObject.FindFirstObjectByType<PlayerStatusBarTemplate>()).Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
-            new BossStatusBarController().Load(GameObject.FindFirstObjectByType<BossStatusBarTemplate>()).Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
+            new BossStatusBarController(GameContext.Instance.playerCtrler.possessedBrain).Load(GameObject.FindFirstObjectByType<BossStatusBarTemplate>()).Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
             new FloatingStatusBarController(GameContext.Instance.playerCtrler.possessedBrain).Load(GameObject.FindFirstObjectByType<FloatingStatusBarTemplate>()).Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
 
             var confinerBoundingBox = TaggerSystem.FindGameObjectWithTag("ConfinerBoundingBox").GetComponent<BoxCollider>();

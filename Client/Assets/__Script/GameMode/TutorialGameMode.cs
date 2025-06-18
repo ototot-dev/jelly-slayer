@@ -6,8 +6,7 @@ using UniRx;
 using UGUI.Rx;
 using Yarn.Unity;
 using ZLinq;
-using NUnit.Framework;
-using System.Collections.Generic;
+using Game.UI;
 
 
 namespace Game
@@ -59,7 +58,7 @@ namespace Game
             __dialogueDispatcher = gameObject.AddComponent<TutorialDialogueDispatcher>();
         }
 
-        void Start() 
+        void Start()
         {
             PawnEventManager.Instance.RegisterEventListener(this as IPawnEventListener);
         }
@@ -93,7 +92,8 @@ namespace Game
                 GameContext.Instance.playerCtrler.possessedBrain.transform.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
                 GameContext.Instance.playerCtrler.possessedBrain.TryGetComponent<SlayerAnimController>(out var animCtrler);
 
-                GameContext.Instance.playerCtrler.possessedBrain.PawnHP.onDamaged += ((damageContex) => { 
+                GameContext.Instance.playerCtrler.possessedBrain.PawnHP.onDamaged += ((damageContex) =>
+                {
                 });
             }
             else
@@ -103,6 +103,9 @@ namespace Game
                 //* LegAnimator 다시 활성화
                 Observable.Timer(TimeSpan.FromSeconds(0.1f)).Subscribe(_ => GameContext.Instance.playerCtrler.possessedBrain.AnimCtrler.legAnimator.enabled = true);
             }
+            
+            new PlayerStatusBarController().Load(GameObject.FindFirstObjectByType<PlayerStatusBarTemplate>()).Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
+            //new FloatingStatusBarController(GameContext.Instance.playerCtrler.possessedBrain).Load(GameObject.FindFirstObjectByType<FloatingStatusBarTemplate>()).Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
         }
 
         void InitBubbleDialogue(string nodeName) 

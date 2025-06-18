@@ -7,9 +7,15 @@ namespace Game.UI
     [Template(path: "UI/template/boss-status-bar")]
     public class BossStatusBarController : StatusBarController
     {
+        public BossStatusBarController(PawnBrainController hostBrain)
+        {
+            __hostBrain = hostBrain;
+        }
+
         StatusBarData __heartPointBarData = new();
         StatusBarData __stanceBarData = new();
         BossStatusBarTemplate __template;
+        PawnBrainController __hostBrain;
 
         public override void OnPreShow()
         {
@@ -32,11 +38,11 @@ namespace Game.UI
             __stanceBarData.indicatorStyleSelector = GetComponentById<ImageStyleSelector>("stance-indicator");
             __stanceBarData.blurCanvanGroup = GetComponentById<CanvasGroup>("stance-blur");
 
-            __heartPointBarData.prevValue = GameContext.Instance.playerCtrler.possessedBrain.BB.stat.heartPoint.Value;
-            __stanceBarData.prevValue = GameContext.Instance.playerCtrler.possessedBrain.BB.stat.stance.Value;
+            __heartPointBarData.prevValue = __hostBrain.PawnBB.stat.heartPoint.Value;
+            __stanceBarData.prevValue = __hostBrain.PawnBB.stat.stance.Value;
 
-            GameContext.Instance.playerCtrler.possessedBrain.BB.stat.heartPoint.Subscribe(_ => OnHeartPointChanged()).AddToHide(this);
-            GameContext.Instance.playerCtrler.possessedBrain.BB.stat.stance.Subscribe(_ => OnStanceChangedHandler()).AddToHide(this);
+            __hostBrain.PawnBB.stat.heartPoint.Subscribe(_ => OnHeartPointChanged()).AddToHide(this);
+            __hostBrain.PawnBB.stat.stance.Subscribe(_ => OnStanceChangedHandler()).AddToHide(this);
         }
 
         public override void OnPostShow()
@@ -64,7 +70,7 @@ namespace Game.UI
 
         void OnHeartPointChanged()
         {
-            var stat = GameContext.Instance.playerCtrler.possessedBrain.BB.stat;
+            var stat = __hostBrain.PawnBB.stat;
             var heartPointRatio = stat.heartPoint.Value / stat.maxHeartPoint.Value;
 
             __heartPointBarData.startSizeDelta = __heartPointBarData.endSizeDelta;
@@ -90,7 +96,7 @@ namespace Game.UI
 
         void OnStanceChangedHandler()
         {
-            var stat = GameContext.Instance.playerCtrler.possessedBrain.BB.stat;
+            var stat = __hostBrain.PawnBB.stat;
             var stanceRatio = stat.stance.Value / stat.maxStance.Value;
 
             __stanceBarData.startSizeDelta = __stanceBarData.endSizeDelta;
