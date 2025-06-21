@@ -25,6 +25,11 @@ namespace Game
 
         Groggy,
 
+        FreeBattle,
+
+        Room1_Step1,
+        Room1_Step2,
+
         End,
     }
     public enum TutorialScene 
@@ -47,6 +52,7 @@ namespace Game
         public TutorialMode _tutorialMode = TutorialMode.None;
         [SerializeField] private bool _isInCombat = false;
         [SerializeField] private int _attackCount = 0;
+        [SerializeField] private int _deadCount = 0;
 
         private TutorialRoboSoldierBrain _roboBrain;
 
@@ -185,10 +191,10 @@ namespace Game
         {
             GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
 
-            __currSceneName = "Tutorial-1";
+            __currSceneName = "Tutorial-2";
 
             //* 로딩 시작
-            __loadingPageCtrler = new LoadingPageController(new string[] { }, new string[] { "Tutorial-1" });
+            __loadingPageCtrler = new LoadingPageController(new string[] { }, new string[] { "Tutorial-2" });
             __loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
             __loadingPageCtrler.onLoadingCompleted += () =>
             {
@@ -198,7 +204,7 @@ namespace Game
 
                 InitCamera();
                 // Tutorial1
-                InitLoadingPageCtrler("Tutorial1", () => { });
+                InitLoadingPageCtrler("Tutorial2", () => { });
 
                 InitSlayerBrainHandler();
             };
@@ -254,27 +260,46 @@ namespace Game
         public void PawnSpawned(GameObject obj) 
         {
             var pawn = obj.GetComponent<PawnBrainController>();
-            if (pawn.PawnBB.common.pawnId == PawnId.RoboSoldier)
+            switch (pawn.PawnBB.common.pawnId) 
             {
-                switch (pawn.PawnBB.common.pawnId) 
-                {
-                    case PawnId.RoboSoldier:
+                case PawnId.RoboSoldier:
+                    {
+                        _roboBrain = (TutorialRoboSoldierBrain)pawn;
+                        pawn.PawnHP.onDamaged += ((damageContext) =>
                         {
-                            _roboBrain = (TutorialRoboSoldierBrain)pawn;
-                            pawn.PawnHP.onDamaged += ((damageContext) =>
+                            CheckRoboSoldierDamage(damageContext);
+                        });
+                        pawn.PawnHP.onDead += ((damageContext) =>
+                        {
+                            if (_tutorialMode == TutorialMode.Groggy)
                             {
-                                CheckRoboSoldierDamage(damageContext);
-                            });
-                            pawn.PawnHP.onDead += ((damageContext) =>
+                                EndMode();
+                            }
+                        });
+                    }
+                    break;
+                case PawnId.Alien:
+                    pawn.PawnHP.onDead += ((damageContext) =>
+                    {
+                        if (_tutorialMode == TutorialMode.Room1_Step1)
+                        {
+                            _deadCount++;
+                            if (_deadCount >= 2)
                             {
-                                if (_tutorialMode == TutorialMode.Groggy)
-                                {
-                                    EndMode();
-                                }
-                            });
+                                EndMode();
+                            }
                         }
-                        break;
-                }
+                        else if (_tutorialMode == TutorialMode.Room1_Step2) 
+                        {
+                            _deadCount++;
+                            if (_deadCount >= 2)
+                            {
+                                EndMode();
+                            }
+                        }
+                    });
+                    break;
+                
             }
         }
 
@@ -295,6 +320,7 @@ namespace Game
 
         void EndMode() 
         {
+            _deadCount = 0;
             _attackCount = 0;
             __dialogueDispatcher._isWaitCheck = true;
             _tutorialMode = TutorialMode.None;

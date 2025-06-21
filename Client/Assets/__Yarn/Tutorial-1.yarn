@@ -16,7 +16,7 @@ tags:
 
 <<wait 2>>
 
-<<setLightIntensity  SunLight 0.6>>
+<<setLightIntensity SunLight 0.6>>
 <<wait 0.1>>
 <<setLightIntensity SunLight 0.1>>
 <<wait 0.1>>

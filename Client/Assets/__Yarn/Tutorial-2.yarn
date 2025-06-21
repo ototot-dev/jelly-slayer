@@ -1,0 +1,52 @@
+title: Tutorial2
+tags:
+---
+<<fadeIn 0.1>>
+<<vignette 0.4 0.9 0>>
+<<hideMechArm>>
+<<hideSword>>
+<<wait 0.1>>
+<<fadeOut 1>>
+<<wait 0.1>>
+<<vignette 0.3 0.2 1>>
+<<setLightIntensity SunLight 1>>
+<<spawnPawn DroneBot DroneBotSpawnPoint>>
+
+드론: 여긴 위험해. 빨리 탈출하자
+드론: 잠깐. 적이 있는거 같네.
+
+<<showSword>>
+<<sendMsgToGameMode SetCombat>>
+<<sendMsgToGameModeParam SetTutorialMode Room1_Step1>>
+<<showMessagePopup "일반 공격" "공격키를 누르면 상대를 공격할 수 있습니다." 4>>
+
+<<wait 1>>
+
+//<<setCameraTarget CameraPoint>>
+<<spawnPawn Alien SP1>>
+<<wait 1>>
+<<spawnPawn Alien SP2>>
+
+<<waitCheck>>
+
+<<wait 1>>
+
+케이: 이쪽이 안전한 길 아니었어?
+드론: 안전한 길 같은 건 없어. 
+
+<<wait 1>>
+
+<<sendMsgToGameMode SetCombat>>
+<<sendMsgToGameModeParam SetTutorialMode Room1_Step2>>
+
+<<spawnPawn Alien SP3>>
+<<wait 1>>
+<<spawnPawn Alien SP4>>
+
+<<waitCheck>>
+
+드론: 전부 해치웠나? 그럼 반대쪽 문으로 빠져나가.
+
+<<showAndWaitInteractionKey "Door2">>
+
+===
