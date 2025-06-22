@@ -36,6 +36,7 @@ namespace Game
     {
         Tutorial_0,     // 시작 씬, 전화
         Tutorial_1,     // 적 조우
+        Tutorial_2,     // RoboSoldier
     }
 
     public class TutorialGameMode : BaseGameMode, IPawnEventListener
@@ -46,7 +47,7 @@ namespace Game
         LoadingPageController __loadingPageCtrler;
         string __currSceneName;
 
-        public TutorialScene _startScene = TutorialScene.Tutorial_0;
+        public TutorialScene _curScene = TutorialScene.Tutorial_1;
 
         [Header("Tutorial")]
         public TutorialMode _tutorialMode = TutorialMode.None;
@@ -78,9 +79,13 @@ namespace Game
 
         public override IObservable<Unit> EnterAsObservable()
         {
-            //InitStartRoom();
-            InitTurorial1Room();
-
+            _curScene = GameContext.Instance.launcher._tutorialStartScene;
+            switch (_curScene) 
+            {
+                case TutorialScene.Tutorial_0: InitStartRoom(); break;
+                case TutorialScene.Tutorial_1: InitTurorialRoom_1(); break;
+                case TutorialScene.Tutorial_2: InitTurorialRoom_2(); break;
+            }
             //Observable.FromCoroutine(ChangeRoom_Coroutine);
 
             return Observable.NextFrame();
@@ -171,6 +176,7 @@ namespace Game
             GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
 
             __currSceneName = "Tutorial-0";
+            _curScene = TutorialScene.Tutorial_0;
 
             //* 로딩 시작
             __loadingPageCtrler = new LoadingPageController(new string[] { "Pawn/Player/Slayer-K", "Pawn/Player/DrontBot" }, new string[] { "Tutorial-0" });
@@ -187,11 +193,13 @@ namespace Game
             };
         }
 
-        void InitTurorial1Room() 
+        // 긴 복도 + 적 출현
+        void InitTurorialRoom_1() 
         {
             GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
 
             __currSceneName = "Tutorial-2";
+            _curScene = TutorialScene.Tutorial_1;
 
             //* 로딩 시작
             __loadingPageCtrler = new LoadingPageController(new string[] { }, new string[] { "Tutorial-2" });
@@ -209,6 +217,32 @@ namespace Game
                 InitSlayerBrainHandler();
             };
         }
+
+        // 긴 복도 + 로보 솔저
+        void InitTurorialRoom_2()
+        {
+            GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
+
+            __currSceneName = "Tutorial-1";
+            _curScene = TutorialScene.Tutorial_2;
+
+            //* 로딩 시작
+            __loadingPageCtrler = new LoadingPageController(new string[] { }, new string[] { "Tutorial-1" });
+            __loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
+            __loadingPageCtrler.onLoadingCompleted += () =>
+            {
+                //* 슬레이어 초기 위치 
+                var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint").transform;
+                InitPlayerCharacter(spawnPoint);
+
+                InitCamera();
+                // Tutorial1
+                InitLoadingPageCtrler("Tutorial3", () => { });
+
+                InitSlayerBrainHandler();
+            };
+        }
+
         public IEnumerator ChangeRoom_Coroutine()
         {
             __dialogueDispatcher.StopDialogue();
@@ -221,8 +255,12 @@ namespace Game
             //* 현재 Scene 제거
             yield return SceneManager.UnloadSceneAsync(__currSceneName).AsObservable().ToYieldInstruction();
 
-            InitTurorial1Room();
-
+            // Next Room
+            switch (_curScene) 
+            {
+                case TutorialScene.Tutorial_0: InitTurorialRoom_1(); break;
+                case TutorialScene.Tutorial_1: InitTurorialRoom_2(); break;
+            }
             yield return new WaitUntil(() => __loadingPageCtrler == null);
 
             GameContext.Instance.canvasManager.FadeOut(1f);

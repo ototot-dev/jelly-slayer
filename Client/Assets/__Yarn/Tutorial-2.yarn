@@ -13,7 +13,8 @@ tags:
 <<spawnPawn DroneBot DroneBotSpawnPoint>>
 
 드론: 여긴 위험해. 빨리 탈출하자
-드론: 잠깐. 적이 있는거 같네.
+드론: 잠깐. 적이 있어. 조심해야 해.
+케이: 하... XDO%
 
 <<showSword>>
 <<sendMsgToGameMode SetCombat>>
@@ -22,7 +23,6 @@ tags:
 
 <<wait 1>>
 
-//<<setCameraTarget CameraPoint>>
 <<spawnPawn Alien SP1>>
 <<wait 1>>
 <<spawnPawn Alien SP2>>
@@ -45,7 +45,11 @@ tags:
 
 <<waitCheck>>
 
-드론: 전부 해치웠나? 그럼 반대쪽 문으로 빠져나가.
+<<wait 1>>
+
+드론: 생각보다 더 잘 싸우네."
+케이: 이 정도는 연습 상대도 안돼.
+드론: 그래. 이제 반대쪽 문으로 빠져나가자.
 
 <<showAndWaitInteractionKey "Door2">>
 
