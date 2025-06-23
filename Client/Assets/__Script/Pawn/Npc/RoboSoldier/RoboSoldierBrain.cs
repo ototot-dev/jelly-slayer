@@ -68,7 +68,7 @@ namespace Game
             var oldCollisionLayers = Movement.GetCharacterMovement().collisionLayers;
 
             //* 강하 중에 벽에 걸리지 않도록 충돌 레이어를 임시로 변경함
-            Movement.GetCharacterMovement().collisionLayers = LayerMask.GetMask("Terrain");
+            Movement.GetCharacterMovement().collisionLayers = LayerMask.GetMask("Floor");
             Observable.EveryFixedUpdate().TakeWhile(_ => !Movement.IsOnGround).Subscribe(_ =>
             {
                 dropVelocity += Time.fixedDeltaTime * BB.body.spawnDropAccel * BB.body.spawnDropDirection;
@@ -89,7 +89,7 @@ namespace Game
             yield return new WaitForSeconds(2f);
 
             Movement.GetCharacterMovement().velocity = Vector3.zero;
-            Movement.GetCharacterMovement().collisionLayers = LayerMask.GetMask("Terrain");
+            Movement.GetCharacterMovement().collisionLayers = LayerMask.GetMask("Floor");
 
             BB.common.isSpawnFinished.Value = true;
             PawnEventManager.Instance.SendPawnSpawningEvent(this, PawnSpawnStates.SpawnFinished);

@@ -102,7 +102,10 @@ namespace Game
             GUILayout.Label("Toggle");
             GUILayout.BeginVertical();
             {
-                actionDataSelector.debugActionSelectDisabled = GUILayout.Toggle(actionDataSelector.debugActionSelectDisabled, "Action Disabled");
+                serializedObject.Update();
+                serializedObject.FindProperty("debugActionSelectDisabled").boolValue = GUILayout.Toggle(serializedObject.FindProperty("debugActionSelectDisabled").boolValue, "Action Disabled");
+                serializedObject.ApplyModifiedProperties();
+
                 actionDataSelector.GetComponent<PawnMovement>().freezeMovement = GUILayout.Toggle(actionDataSelector.GetComponent<PawnMovement>().freezeMovement, "Movement Disabled");
             }
             GUILayout.EndHorizontal();

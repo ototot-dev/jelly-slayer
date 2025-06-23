@@ -43,7 +43,7 @@ namespace Game
             {
                 __onCollisionEnterDisposalbe = bodyCollider.OnCollisionEnterAsObservable().Subscribe(c =>
                 {
-                    if (LayerMask.LayerToName(c.gameObject.layer) == "Terrain")
+                    if (LayerMask.LayerToName(c.gameObject.layer) == "Floor")
                     {
                         __isGrounded = true;
                         __onCollisionEnterDisposalbe.Dispose();

@@ -95,7 +95,7 @@ namespace Game
                 {
                     var zone = new GameObject($"Zone[{x},{y}]");
 
-                    zone.layer = LayerMask.NameToLayer("Terrain");
+                    zone.layer = LayerMask.NameToLayer("Floor");
                     zone.transform.position = new Vector3(ZoneLength * x, 0, ZoneLength * y);
 
                     zone.AddComponent<MeshFilter>();
@@ -152,7 +152,7 @@ namespace Game
         /// <summary>
         /// 
         /// </summary>
-        public static string LayerName => "Terrain";
+        public static string LayerName => "Floor";
 
         /// <summary>
         /// 

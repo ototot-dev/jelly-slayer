@@ -339,16 +339,17 @@ namespace Game
 
                     if (__traceDrawGizmosEnabled)
                     {
-                            var drawPosition0 = currPosition;
-                            var drawPosition1 = __prevTracePosition;
+                        var drawPosition0 = currPosition;
+                        var drawPosition1 = __prevTracePosition;
+                        var drawRadius = __traceSphereCollider.radius;
 
-                            GizmosDrawer.Instance.Draw(__traceDrawGizmosDuration, () =>
-                            {
-                                Gizmos.color = Color.yellow;
-                                Gizmos.DrawSphere(currPosition, __traceSphereCollider.radius);
-                                Gizmos.DrawSphere(__prevTracePosition, __traceSphereCollider.radius);
-                                Gizmos.DrawSphere(0.5f * (currPosition + __prevTracePosition), __traceSphereCollider.radius);
-                            });
+                        GizmosDrawer.Instance.Draw(__traceDrawGizmosDuration, () =>
+                        {
+                            Gizmos.color = Color.yellow;
+                            Gizmos.DrawSphere(currPosition, drawRadius);
+                            Gizmos.DrawSphere(__prevTracePosition, drawRadius);
+                            Gizmos.DrawSphere(0.5f * (currPosition + __prevTracePosition), drawRadius);
+                        });
                     }
 
                     __prevTracePosition = currPosition;

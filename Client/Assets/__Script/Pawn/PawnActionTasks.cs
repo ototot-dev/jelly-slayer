@@ -1840,70 +1840,68 @@ namespace Game.NodeCanvasExtension
         public BBParameter<string[]> childNameToBeHidden;
         public bool attachToTransform = false;
         public bool stopWhenActionCanceled = true;
-        PawnActionController __pawnActionCtrler;
-        EffectInstance __fxInstance;
-        IDisposable __showDisposable;
-        float __showTimeStamp;
-        int __capturedActionInstanceId;
 
         protected override void OnExecute()
         {
-            __pawnActionCtrler = agent.GetComponent<PawnActionController>();
-            Debug.Assert(__pawnActionCtrler != null);
-            
-            if (!localToWorld.isNoneOrNull)
+            Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ =>
             {
-                var localToWorldMatrix = Matrix4x4.TRS(localToWorld.value.position, localToWorld.value.rotation, Vector3.one) * Matrix4x4.TRS(position.value, Quaternion.Euler(pitchYawRoll.value), Vector3.one);
-                if (fxPrefab.isNoneOrNull)
-                    __fxInstance = EffectManager.Instance.Show(fxName.value, localToWorldMatrix.GetPosition(), localToWorldMatrix.rotation, scale.value, duration.value, 0f, scalingMode.value, playRate.value);
-                else
-                    __fxInstance = EffectManager.Instance.Show(fxPrefab.value, localToWorldMatrix.GetPosition(), localToWorldMatrix.rotation, scale.value, duration.value, 0f, scalingMode.value, playRate.value);
-            }
-            else
-            {
-                if (fxPrefab.isNoneOrNull)
-                    __fxInstance = EffectManager.Instance.Show(fxName.value, position.value, Quaternion.Euler(pitchYawRoll.value), scale.value, duration.value, 0f, scalingMode.value, playRate.value);
-                else
-                    __fxInstance = EffectManager.Instance.Show(fxPrefab.value, position.value, Quaternion.Euler(pitchYawRoll.value), scale.value, duration.value, 0f, scalingMode.value, playRate.value);
-            }
-            
-            Debug.Assert(__fxInstance != null);
-
-            if (attachToTransform)
-            {
-                Debug.Assert(!localToWorld.isNoneOrNull);
-                __fxInstance.transform.SetParent(localToWorld.value, true);
-            }
-
-            if (!childNameToBeHidden.isNoneOrNull && childNameToBeHidden.value.Length > 0)
-            {
-                for (int i = 0; i < __fxInstance.transform.childCount; i++)
+                EffectInstance fxInstance = null;
+                
+                if (!localToWorld.isNoneOrNull)
                 {
-                    var child = __fxInstance.transform.GetChild(i);
-                    for (int j = 0; j < childNameToBeHidden.value.Length; j++)
+                    var localToWorldMatrix = Matrix4x4.TRS(localToWorld.value.position, localToWorld.value.rotation, Vector3.one) * Matrix4x4.TRS(position.value, Quaternion.Euler(pitchYawRoll.value), Vector3.one);
+                    if (fxPrefab.isNoneOrNull)
+                        fxInstance = EffectManager.Instance.Show(fxName.value, localToWorldMatrix.GetPosition(), localToWorldMatrix.rotation, scale.value, duration.value, 0f, scalingMode.value, playRate.value);
+                    else
+                        fxInstance = EffectManager.Instance.Show(fxPrefab.value, localToWorldMatrix.GetPosition(), localToWorldMatrix.rotation, scale.value, duration.value, 0f, scalingMode.value, playRate.value);
+                }
+                else
+                {
+                    if (fxPrefab.isNoneOrNull)
+                        fxInstance = EffectManager.Instance.Show(fxName.value, position.value, Quaternion.Euler(pitchYawRoll.value), scale.value, duration.value, 0f, scalingMode.value, playRate.value);
+                    else
+                        fxInstance = EffectManager.Instance.Show(fxPrefab.value, position.value, Quaternion.Euler(pitchYawRoll.value), scale.value, duration.value, 0f, scalingMode.value, playRate.value);
+                }
+                
+                Debug.Assert(fxInstance != null);
+
+                if (attachToTransform)
+                    fxInstance.transform.SetParent(localToWorld.value, true);
+
+                if (!childNameToBeHidden.isNoneOrNull && childNameToBeHidden.value.Length > 0)
+                {
+                    for (int i = 0; i < fxInstance.transform.childCount; i++)
                     {
-                        if (childNameToBeHidden.value[j] == child.name)
+                        var child = fxInstance.transform.GetChild(i);
+                        for (int j = 0; j < childNameToBeHidden.value.Length; j++)
                         {
-                            child.gameObject.SetActive(false);
-                            break;
+                            if (childNameToBeHidden.value[j] == child.name)
+                            {
+                                child.gameObject.SetActive(false);
+                                break;
+                            }
                         }
                     }
                 }
-            }
 
-            __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;
-            if (stopWhenActionCanceled)
-            {
-                __showDisposable = Observable.EveryUpdate().Subscribe(_ =>
+                var pawnActionCtrler = agent.GetComponent<PawnActionController>();
+                var capturedActionInstanceId = pawnActionCtrler.currActionContext.actionInstanceId;
+                
+                if (stopWhenActionCanceled)
                 {
-                    if (!__pawnActionCtrler.CheckActionRunning() || __pawnActionCtrler.currActionContext.actionInstanceId != __capturedActionInstanceId)
+                    IDisposable cancelDisposable = null;
+
+                    cancelDisposable = Observable.EveryUpdate().Subscribe(_ =>
                     {
-                        __fxInstance.gameObject.SetActive(false);
-                        __showDisposable?.Dispose();
-                        __showDisposable = null;
-                    }
-                }).AddTo(agent);
-            }
+                        if (!pawnActionCtrler.CheckActionRunning() || pawnActionCtrler.currActionContext.actionInstanceId != capturedActionInstanceId)
+                        {
+                            fxInstance.gameObject.SetActive(false);
+                            cancelDisposable?.Dispose();
+                            cancelDisposable = null;
+                        }
+                    }).AddTo(agent);
+                }
+            });
 
             EndAction(true);
         }

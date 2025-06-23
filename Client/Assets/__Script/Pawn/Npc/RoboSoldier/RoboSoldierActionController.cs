@@ -234,7 +234,7 @@ namespace Game
             laserRenderer.FadeIn(0.2f, 0.1f);
             yield return new WaitForSeconds(0.1f);
 
-            var hitLayerMask = LayerMask.GetMask("Terrain", "PhysicsBody", "HitBox", "HitBoxBlocking", "Obstacle");
+            var hitLayerMask = LayerMask.GetMask("Floor", "PhysicsBody", "HitBox", "HitBoxBlocking", "Obstacle");
             var hitOffset = 0.1f;
             var sendDamageTimeStamp = 0f;
 

@@ -19,6 +19,8 @@ namespace Game
         Warrior,
         SlimeBoss,
         SlimeMini,
+        HumanBot,
+        Rapax,
     }
 
     [UGS(typeof(PawnStatus))]

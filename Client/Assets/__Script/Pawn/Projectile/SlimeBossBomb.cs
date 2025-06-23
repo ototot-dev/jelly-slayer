@@ -28,7 +28,7 @@ namespace Game
             //* Terrain 디텍션 코드
             bodyCollider.OnCollisionEnterAsObservable().Subscribe(c =>
             {
-                if ((c.gameObject.layer & LayerMask.NameToLayer("Terrain")) > 0)
+                if ((c.gameObject.layer & LayerMask.NameToLayer("Floor")) > 0)
                     __isGrounded = true;
             }).AddTo(this);
 

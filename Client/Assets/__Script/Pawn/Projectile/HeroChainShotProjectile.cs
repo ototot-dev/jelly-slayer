@@ -24,7 +24,7 @@ namespace Game
             /*
             rigidBodyCollider.OnCollisionEnterAsObservable().Subscribe(c =>
             {
-                if ((c.gameObject.layer & LayerMask.NameToLayer("Terrain")) > 0)
+                if ((c.gameObject.layer & LayerMask.NameToLayer("Floor")) > 0)
                     __isGrounded = true;
             }).AddTo(this);
             */

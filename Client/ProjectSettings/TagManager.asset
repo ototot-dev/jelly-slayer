@@ -5,11 +5,14 @@ TagManager:
   serializedVersion: 3
   tags:
   - VisibilityBlocker
+  - Hero
+  - FxTemporaire
+  - Jelly
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Terrain
+  - Floor
   - Water
   - UI
   - Pawn

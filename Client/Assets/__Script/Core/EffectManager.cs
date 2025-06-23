@@ -26,7 +26,8 @@ namespace Game
             
             if (__particleSystem != null || TryGetComponent<ParticleSystem>(out __particleSystem))
             {
-                var mainModule = __particleSystem.main; 
+                var mainModule = __particleSystem.main;
+                
                 mainModule.loop = true;
                 mainModule.simulationSpeed = playRate;
                 __particleSystem.Play();
@@ -42,7 +43,8 @@ namespace Game
 
             if (__particleSystem != null || TryGetComponent<ParticleSystem>(out __particleSystem))
             {
-                var mainModule = __particleSystem.main; 
+                var mainModule = __particleSystem.main;
+
                 mainModule.loop = false;
                 mainModule.simulationSpeed = playRate;
                 __particleSystem.Play();
@@ -111,6 +113,7 @@ namespace Game
         public GameObject ShowAndForget(GameObject sourcePrefab, Vector3 position, Quaternion rotation, Vector3 scale, ParticleSystemScalingMode scalingMode = ParticleSystemScalingMode.Local, float playRate = 1f)
         {
             var instance = Instantiate(sourcePrefab, position, rotation);
+
             if (scale != Vector3.zero && instance.TryGetComponent<ParticleSystem>(out var particleSystem))
             {
                 if (particleSystem.main.scalingMode != scalingMode)
@@ -129,6 +132,7 @@ namespace Game
         public EffectInstance ShowLooping(string effectName, Vector3 position, Quaternion rotation, Vector3 scale, float waitingTime = 0f, ParticleSystemScalingMode scalingMode = ParticleSystemScalingMode.Local, float playRate = 1f)
         {
             var instance = GetInstance(effectName, position, rotation, scale, scalingMode);
+
             if (waitingTime > 0)
             {
                 // instance.gameObject.SetActive(false);
@@ -150,13 +154,13 @@ namespace Game
         public EffectInstance Show(string effectName, Vector3 position, Quaternion rotation, Vector3 scale, float duration = -1f, float waitingTime = 0f, ParticleSystemScalingMode scalingMode = ParticleSystemScalingMode.Local, float playRate = 1f)
         {
             var instance = GetInstance(effectName, position, rotation, scale, scalingMode);
+            
             if (waitingTime > 0f)
             {
-                // instance.gameObject.SetActive(false);
-                Observable.Timer(TimeSpan.FromSeconds(waitingTime)).Subscribe(_ => 
-                { 
-                    instance.gameObject.SetActive(true); 
-                    instance.Play(duration, playRate); 
+                Observable.Timer(TimeSpan.FromSeconds(waitingTime)).Subscribe(_ =>
+                {
+                    instance.gameObject.SetActive(true);
+                    instance.Play(duration, playRate);
                 }).AddTo(instance);
             }
             else
@@ -173,6 +177,7 @@ namespace Game
             Debug.Assert(sourcePrefab != null);
 
             var instance = GetInstance(sourcePrefab, position, rotation, scale, scalingMode);
+
             if (waitingTime > 0f)
                 Observable.Timer(TimeSpan.FromSeconds(waitingTime)).Subscribe(_ => instance.PlayLooping()).AddTo(instance);
             else
@@ -186,6 +191,7 @@ namespace Game
             Debug.Assert(sourcePrefab != null);
 
             var instance = GetInstance(sourcePrefab, position, rotation, scale, scalingMode);
+
             if (waitingTime > 0f)
             {
                 Observable.Timer(TimeSpan.FromSeconds(waitingTime)).Subscribe(_ =>
@@ -206,6 +212,7 @@ namespace Game
         EffectInstance GetInstance(string sourcePath, Vector3 position, Quaternion rotation, Vector3 scale, ParticleSystemScalingMode scalingMode)
         {
             var handler = ObjectPoolingSystem.Instance.GetObject<ObjectPoolableHandler>(sourcePath, position, rotation);
+
             if (!handler.TryGetComponent<EffectInstance>(out var ret))
                 ret = handler.gameObject.AddComponent<EffectInstance>();
 
@@ -226,6 +233,7 @@ namespace Game
         EffectInstance GetInstance(GameObject sourcePrefab, Vector3 position, Quaternion rotation, Vector3 scale, ParticleSystemScalingMode scalingMode)
         {
             var handler = ObjectPoolingSystem.Instance.GetObject<ObjectPoolableHandler>(sourcePrefab, position, rotation);
+
             if (!handler.TryGetComponent<EffectInstance>(out var ret))
                 ret = handler.gameObject.AddComponent<EffectInstance>();
 

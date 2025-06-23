@@ -165,7 +165,7 @@ namespace Game
         };
 
 #if UNITY_EDITOR
-        [HideInInspector]
+        [HideInInspector, SerializeField]
         public bool debugActionSelectDisabled;
         public Dictionary<int, ActionSequence> ReservedSequences => __reservedSequences;
         public Dictionary<MainTable.ActionData, ActionDataState> ActionDataStates => __actionDataStates;
