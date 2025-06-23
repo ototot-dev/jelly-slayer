@@ -124,7 +124,7 @@ namespace Retween.Rx
                         {
                             state.elapsed = TweenPlayer.MIN_ELAPSED_TIME;
 
-                            Debug.Log($"TweenSelector => {t.gameObject.name} in TweenAnim elapsed is reset.");
+                            // Debug.Log($"TweenSelector => {t.gameObject.name} in TweenAnim elapsed is reset.");
                         }
                         else
                         {
