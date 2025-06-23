@@ -8,13 +8,16 @@ public static class Tags
         "PlayerSpawnPoint",
         "ConfinerBoundingBox",
         "AlienSpawnPoint",
-        "EnemySpawnPoint",
         "CameraPoint",
         "Slayer",
         "SunLight",
         "Door",
         "Phone",
         "Door2",
+        "SP2",
+        "SP1",
+        "SP3",
+        "SP4",
     };
     public static class Ungrouped
     {
@@ -25,7 +28,6 @@ public static class Tags
             "PlayerSpawnPoint",
             "ConfinerBoundingBox",
             "AlienSpawnPoint",
-            "EnemySpawnPoint",
             "CameraPoint",
         };
         public const string K = "K";
@@ -33,7 +35,6 @@ public static class Tags
         public const string PlayerSpawnPoint = "PlayerSpawnPoint";
         public const string ConfinerBoundingBox = "ConfinerBoundingBox";
         public const string AlienSpawnPoint = "AlienSpawnPoint";
-        public const string EnemySpawnPoint = "EnemySpawnPoint";
         public const string CameraPoint = "CameraPoint";
     }
     public static class Pawn
@@ -63,5 +64,19 @@ public static class Tags
         public const string Door = "Door";
         public const string Phone = "Phone";
         public const string Door2 = "Door2";
+    }
+    public static class Spawn
+    {
+        public static readonly string[] All = new string[]
+        {
+            "SP2",
+            "SP1",
+            "SP3",
+            "SP4",
+        };
+        public const string SP2 = "SP2";
+        public const string SP1 = "SP1";
+        public const string SP3 = "SP3";
+        public const string SP4 = "SP4";
     }
 }

@@ -16,6 +16,7 @@ namespace Game
     {
         public string displayName;
         public string commandName;
+        //public string commadnData;
         public IntReactiveProperty keyPressedCount = new();
         public bool IsInteractableFinished => hideCount > 0;
         public bool IsInteractableEnabled => __attachable.GetEnanbled();

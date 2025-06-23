@@ -26,6 +26,9 @@ namespace Game
         public bool IsGameModeChanging() => __changeGameModeDisposable != null;
         IDisposable __changeGameModeDisposable;
 
+
+        public TutorialScene _tutorialStartScene;
+
         void Awake()
         {
             GameContext.Instance.launcher = this;

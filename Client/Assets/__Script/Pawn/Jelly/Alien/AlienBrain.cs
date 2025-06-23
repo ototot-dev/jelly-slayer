@@ -123,7 +123,11 @@ namespace Game
         {
             base.DamageReceiverHandler(ref damageContext);
 
-            if (damageContext.actionResult == ActionResults.Blocked)
+            if (damageContext.actionResult == ActionResults.Damaged)
+            {
+                CreateDamageText(ref damageContext);
+            }
+            else if (damageContext.actionResult == ActionResults.Blocked)
             {       
                 if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && CheckTargetVisibility())
                 {

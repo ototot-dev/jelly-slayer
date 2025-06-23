@@ -467,7 +467,9 @@ namespace Game
 
         public void OnPunch(InputValue value)
         {
-            if (GameContext.Instance.launcher.currGameMode == null || !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput() || !GameContext.Instance.launcher.currGameMode.IsInCombat())
+            if (GameContext.Instance.launcher.currGameMode == null || 
+                !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput() || 
+                !GameContext.Instance.launcher.currGameMode.IsInCombat())
                 return;
             if (possessedBrain == null)
                 return;
