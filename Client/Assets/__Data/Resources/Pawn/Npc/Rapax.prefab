@@ -1236,7 +1236,7 @@ MonoBehaviour:
   baseTransform: {fileID: 0}
   Hips: {fileID: 7101986894665982569}
   ScaleReferenceMode: 3
-  finalScaleReference: 1.215161
+  finalScaleReference: 1.2151611
   finalScaleReferenceSqrt: 0.1
   customScaleReferenceValue: 0.5
   DelayedInitialization: 0
@@ -6710,7 +6710,7 @@ MonoBehaviour:
     maxSpacingDistance: 3
     minApproachDistance: 1
   action:
-    comboAttackCoolTime: 1
+    comboAttackCoolTime: 5
     comboAttackDistance: 3
     jumpAttackCoolTime: 10
     jumpAttackDistance: 5

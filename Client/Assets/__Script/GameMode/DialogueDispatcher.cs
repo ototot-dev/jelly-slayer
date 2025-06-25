@@ -112,6 +112,7 @@ namespace Game
             __runner.AddCommandHandler<string>("showAndWaitInteractionKey", ShowAndWaitInteractionKey);
             __runner.AddCommandHandler("waitCheck", WaitCheck);
             __runner.AddCommandHandler<string, float, int, bool>("tweenShake", TweenShake);
+            __runner.AddCommandHandler<string, bool>("setActive", SetActive);
             __runner.AddCommandHandler<string, string>("sendMsg", SendMessage);
             __runner.AddCommandHandler<string>("sendMsgToGameMode", SendMessageToGameMode);
             __runner.AddCommandHandler<string, string>("sendMsgToGameModeParam", SendMessageToGameModeParam);
@@ -253,6 +254,17 @@ namespace Game
             // Spawn Message
             var mode = GameContext.Instance.launcher.currGameMode;
             mode?.SendMessage("PawnSpawned", pawnObj, SendMessageOptions.DontRequireReceiver);
+        }
+
+        public void SetActive(string tag, bool isActive) 
+        {
+            var obj = TaggerSystem.FindGameObjectWithTag(tag);
+            if (obj == null)
+            {
+                Debug.Log("YarnCommand: Not Found Object, " + isActive);
+                return;
+            }
+            obj.SetActive(isActive);
         }
 
         public void SendMessage(string tag, string msg) 

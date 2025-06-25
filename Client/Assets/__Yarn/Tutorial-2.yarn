@@ -14,7 +14,7 @@ tags:
 
 드론: 여긴 위험해. 빨리 탈출하자
 드론: 잠깐. 적이 있어. 조심해야 해.
-케이: 하... XDO%
+케이: 하... XDO%. 이게 뭔 일이야.
 
 <<showSword>>
 <<sendMsgToGameMode SetCombat>>
@@ -23,9 +23,9 @@ tags:
 
 <<wait 1>>
 
-<<spawnPawn Alien SP1>>
+<<spawnPawn Rapax SP1>>
 <<wait 1>>
-<<spawnPawn Alien SP2>>
+<<spawnPawn Rapax SP2>>
 
 <<waitCheck>>
 
@@ -36,12 +36,13 @@ tags:
 
 <<wait 1>>
 
+<<setActive Col1 false>>
 <<sendMsgToGameMode SetCombat>>
 <<sendMsgToGameModeParam SetTutorialMode Room1_Step2>>
 
-<<spawnPawn Alien SP3>>
+<<spawnPawn Rapax SP3>>
 <<wait 1>>
-<<spawnPawn Alien SP4>>
+<<spawnPawn Rapax SP4>>
 
 <<waitCheck>>
 

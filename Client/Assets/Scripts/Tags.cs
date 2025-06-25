@@ -11,6 +11,7 @@ public static class Tags
         "CameraPoint",
         "Slayer",
         "SunLight",
+        "Col1",
         "Door",
         "Phone",
         "Door2",
@@ -50,8 +51,10 @@ public static class Tags
         public static readonly string[] All = new string[]
         {
             "SunLight",
+            "Col1",
         };
         public const string SunLight = "SunLight";
+        public const string Col1 = "Col1";
     }
     public static class Interactable
     {

@@ -79,6 +79,8 @@ namespace Game
 
         public override IObservable<Unit> EnterAsObservable()
         {
+            InitPlayerCharacter(transform);
+
             _curScene = GameContext.Instance.launcher._tutorialStartScene;
             switch (_curScene) 
             {
@@ -113,17 +115,18 @@ namespace Game
                 GameContext.Instance.playerCtrler.possessedBrain.PawnHP.onDamaged += ((damageContex) =>
                 {
                 });
-            }
-            else
-            {
-                (GameContext.Instance.playerCtrler.possessedBrain as IPawnMovable).Teleport(spawnPoint.position);
+                InitSlayerBrainHandler();
 
-                //* LegAnimator 다시 활성화
-                Observable.Timer(TimeSpan.FromSeconds(0.1f)).Subscribe(_ => GameContext.Instance.playerCtrler.possessedBrain.AnimCtrler.legAnimator.enabled = true);
+                new PlayerStatusBarController().Load(GameObject.FindFirstObjectByType<PlayerStatusBarTemplate>()).Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
             }
-            
-            new PlayerStatusBarController().Load(GameObject.FindFirstObjectByType<PlayerStatusBarTemplate>()).Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
-            //new FloatingStatusBarController(GameContext.Instance.playerCtrler.possessedBrain).Load(GameObject.FindFirstObjectByType<FloatingStatusBarTemplate>()).Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
+        }
+
+        void RefreshPlayerCharacter(Transform spawnPoint)
+        { 
+            (GameContext.Instance.playerCtrler.possessedBrain as IPawnMovable).Teleport(spawnPoint.position);
+
+            //* LegAnimator 다시 활성화
+            Observable.Timer(TimeSpan.FromSeconds(0.1f)).Subscribe(_ => GameContext.Instance.playerCtrler.possessedBrain.AnimCtrler.legAnimator.enabled = true);
         }
 
         void InitBubbleDialogue(string nodeName) 
@@ -185,7 +188,7 @@ namespace Game
             {
                 //* 슬레이어 초기 위치 
                 var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint").transform;
-                InitPlayerCharacter(spawnPoint);
+                RefreshPlayerCharacter(spawnPoint);
 
                 InitCamera();
 
@@ -208,13 +211,11 @@ namespace Game
             {
                 //* 슬레이어 초기 위치 
                 var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint").transform;
-                InitPlayerCharacter(spawnPoint);
+                RefreshPlayerCharacter(spawnPoint);
 
                 InitCamera();
                 // Tutorial1
                 InitLoadingPageCtrler("Tutorial2", () => { });
-
-                InitSlayerBrainHandler();
             };
         }
 
@@ -233,13 +234,13 @@ namespace Game
             {
                 //* 슬레이어 초기 위치 
                 var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint").transform;
-                InitPlayerCharacter(spawnPoint);
+                RefreshPlayerCharacter(spawnPoint);
 
                 InitCamera();
                 // Tutorial1
                 InitLoadingPageCtrler("Tutorial3", () => { });
 
-                InitSlayerBrainHandler();
+
             };
         }
 
@@ -316,7 +317,7 @@ namespace Game
                         });
                     }
                     break;
-                case PawnId.Alien:
+                case PawnId.Rapax:
                     pawn.PawnHP.onDead += ((damageContext) =>
                     {
                         if (_tutorialMode == TutorialMode.Room1_Step1)
