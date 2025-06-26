@@ -78,8 +78,12 @@ namespace Game.UI
 
             if (__heartPointBarData.sizeDeltaDisposable == null)
                 StartSizeDeltaTransition(__heartPointBarData, heartPointRatio);
+
+            if (stat.heartPoint.Value <= 0) {
+                this.HideAsObservable().Subscribe(_ => this.Unload());
+            };
         }
-        
+
         CanvasScaler __canvasScaler;
 
         /// <summary>Calculates where to put dialogue bubble based on worldPosition and any desired screen margins. 
