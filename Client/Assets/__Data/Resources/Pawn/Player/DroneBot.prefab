@@ -56706,6 +56706,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
+  restartOnExecuted: 0
   rewindOnCancelled: 0
   rewindOnRollback: 0
   runRollback: 0
@@ -91864,6 +91865,68 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8635402860330716699}
   m_LocalEulerAnglesHint: {x: -0.00000031715734, y: 0.00000021108711, z: 0.043940365}
+--- !u!1 &7376182144552615201
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 618246144710531310}
+  - component: {fileID: 4818286777517381892}
+  - component: {fileID: 2072021573463574906}
+  m_Layer: 0
+  m_Name: VisibilityChecker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &618246144710531310
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7376182144552615201}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5714658555218957785}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &4818286777517381892
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7376182144552615201}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!135 &2072021573463574906
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7376182144552615201}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7425207270069763440
 GameObject:
   m_ObjectHideFlags: 0
@@ -96983,11 +97046,11 @@ MonoBehaviour:
       value: 1
     maxStamina:
       value: 1
+    maxBurst:
+      value: 1
     maxStance:
       value: 1
     maxKnockDown:
-      value: 1
-    maxRage:
       value: 1
     maxGroggyHitCount:
       value: 0
@@ -96997,13 +97060,13 @@ MonoBehaviour:
       value: 1
     stamina:
       value: 1
+    burst:
+      value: 0
     stance:
       value: 0
     knockDown:
       value: 0
     groggyHitCount:
-      value: 0
-    rage:
       value: 0
     poise: 0
     guardStrength: 0
@@ -97049,7 +97112,7 @@ MonoBehaviour:
     jetBoostFx: {fileID: 2028202623014272037}
     orbBlueFx: {fileID: 8888411162842883850}
   children:
-    visibilityChecker: {fileID: 5837912316178079623}
+    visibilityChecker: {fileID: 2072021573463574906}
 --- !u!114 &6890239069593880897
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102168,6 +102231,7 @@ Transform:
   - {fileID: 4542963267371593217}
   - {fileID: 1010111623572483013}
   - {fileID: 6940965085841085857}
+  - {fileID: 618246144710531310}
   - {fileID: 8104689195946743072}
   - {fileID: 3649728771516259486}
   m_Father: {fileID: 3753345909184225122}
@@ -102302,6 +102366,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4df3992772f9943379cadac72220ae26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tweenSheet: {fileID: 0}
   query:
     forceCompleteTweenOnStart: 0
     initialClasses: []

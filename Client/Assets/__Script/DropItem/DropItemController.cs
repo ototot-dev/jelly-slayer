@@ -57,7 +57,7 @@ namespace Game
             rigidBody.GetComponent<SphereCollider>().OnCollisionEnterAsObservable().Subscribe(c =>
             {
                 // 땅과 접촉했다면 enablePickUpWaitingTime을 무시하고 바로 Trigger를 활성화한다.
-                if (!touchCollider.enabled && c.gameObject.layer == LayerMask.NameToLayer("Terrain"))
+                if (!touchCollider.enabled && c.gameObject.layer == LayerMask.NameToLayer("Floor"))
                 {
                     touchCollider.enabled = true;
                     onPickUpEnabled?.Invoke();

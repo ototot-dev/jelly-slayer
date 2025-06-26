@@ -169,7 +169,7 @@ namespace Game
 
                     //* Assault 액션 중에는 뚫는 것을 허용하도록 레이어값 변경
                     __brain.BB.HostBrain.Movement.capsule.gameObject.layer = LayerMask.NameToLayer("Default");
-                    __brain.BB.HostBrain.Movement.GetCharacterMovement().collisionLayers = LayerMask.GetMask("Terrain", "Obstacle");
+                    __brain.BB.HostBrain.Movement.GetCharacterMovement().collisionLayers = LayerMask.GetMask("Floor", "Obstacle");
 
                     __brain.BB.resource.jetBoostFx.Play(true);
                     __brain.BB.resource.orbBlueFx.Play(true);
@@ -189,7 +189,7 @@ namespace Game
 
                     //* Assault 액션 중에는 뚫는 것을 허용하도록 레이어값 변경
                     __brain.BB.HostBrain.Movement.capsule.gameObject.layer = LayerMask.NameToLayer("Default");
-                    __brain.BB.HostBrain.Movement.GetCharacterMovement().collisionLayers = LayerMask.GetMask("Terrain", "Obstacle");
+                    __brain.BB.HostBrain.Movement.GetCharacterMovement().collisionLayers = LayerMask.GetMask("Floor", "Obstacle");
 
                     var startPosition = __brain.BB.HostBrain.GetWorldPosition().AdjustY(__brain.Movement.GetHangingPointOffsetVector().y + 0.5f);
                     var teleportFx = EffectManager.Instance.Show(__brain.BB.resource.protonExplosionFx, __brain.GetWorldPosition(), __brain.GetWorldRotation(), 0.5f * Vector3.one, 0.1f);
