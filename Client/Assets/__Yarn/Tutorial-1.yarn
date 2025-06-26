@@ -33,7 +33,7 @@ tags:
 <<wait 2>>
 
 <<setCameraTarget CameraPoint>>
-<<spawnPawn RoboSoldier EnemySpawnPoint>>
+<<spawnPawn RoboSoldier SP1>>
 
 <<wait 4>>
 <<setCameraSlayer>>

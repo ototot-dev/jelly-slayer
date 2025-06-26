@@ -109,6 +109,12 @@ namespace Game
             __ecmMovement.ClearAccumulatedForces();
         }
 
+        public void Stop() 
+        {
+            __ecmMovement.velocity = Vector3.zero;
+            __ecmMovement.ClearAccumulatedForces();
+        }
+
         public void FaceTo(Vector3 direction)
         {
             faceVec = direction.normalized;

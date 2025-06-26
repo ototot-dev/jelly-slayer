@@ -13,7 +13,7 @@ tags:
 <<spawnPawn DroneBot DroneBotSpawnPoint>>
 
 드론: 여긴 위험해. 빨리 탈출하자
-드론: 잠깐. 적이 있어. 조심해야 해.
+드론: 잠깐. 전방에 적이 있어. 조심해.
 케이: 하... XDO%. 이게 뭔 일이야.
 
 <<showSword>>
@@ -27,7 +27,14 @@ tags:
 <<wait 1>>
 <<spawnPawn Rapax SP2>>
 
-<<waitCheck>>
+===
+
+// step1 end --------------------------------------------------------------------
+title: Tutorial2_step2_1
+tags:
+---
+
+<<sendMsgToGameMode ResetCombat>>
 
 <<wait 1>>
 
@@ -37,16 +44,43 @@ tags:
 <<wait 1>>
 
 <<setActive Col1 false>>
+<<setConfinerVolume ConfinerBoundingBox2>>
 <<sendMsgToGameMode SetCombat>>
+
+===
+
+// step1 end --------------------------------------------------------------------
+title: Tutorial2_step2_2
+tags:
+---
+
 <<sendMsgToGameModeParam SetTutorialMode Room1_Step2>>
 
 <<spawnPawn Rapax SP3>>
-<<wait 1>>
 <<spawnPawn Rapax SP4>>
+<<wait 1>>
+<<spawnPawn Rapax SP5>>
+<<spawnPawn Rapax SP6>>
+
+<<showMessagePopup "회피" "회피는 가드보다 적은 스테미너를 소비합니다." 4>>
+
+===
+
+// step1 end --------------------------------------------------------------------
+title: Tutorial2_step3
+tags:
+---
+
+<<sendMsgToGameModeParam SetTutorialMode Room1_Step3>>
+
+<<spawnPawn RoboSoldier SP7>>
+<<sendMsgToGameMode RoboSoldierStartAttack>>
+
+<<wait 1>>
+
+<<sendMsgToGameMode SetCombat>>
 
 <<waitCheck>>
-
-<<wait 1>>
 
 드론: 생각보다 더 잘 싸우네."
 케이: 이 정도는 연습 상대도 안돼.
@@ -55,3 +89,4 @@ tags:
 <<showAndWaitInteractionKey "Door2">>
 
 ===
+

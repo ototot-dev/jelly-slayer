@@ -9,6 +9,7 @@ public static class Tags
         "ConfinerBoundingBox",
         "AlienSpawnPoint",
         "CameraPoint",
+        "ConfinerBoundingBox2",
         "Slayer",
         "SunLight",
         "Col1",
@@ -19,6 +20,9 @@ public static class Tags
         "SP1",
         "SP3",
         "SP4",
+        "SP5",
+        "SP6",
+        "SP7",
     };
     public static class Ungrouped
     {
@@ -30,6 +34,7 @@ public static class Tags
             "ConfinerBoundingBox",
             "AlienSpawnPoint",
             "CameraPoint",
+            "ConfinerBoundingBox2",
         };
         public const string K = "K";
         public const string DroneBotSpawnPoint = "DroneBotSpawnPoint";
@@ -37,6 +42,7 @@ public static class Tags
         public const string ConfinerBoundingBox = "ConfinerBoundingBox";
         public const string AlienSpawnPoint = "AlienSpawnPoint";
         public const string CameraPoint = "CameraPoint";
+        public const string ConfinerBoundingBox2 = "ConfinerBoundingBox2";
     }
     public static class Pawn
     {
@@ -76,10 +82,16 @@ public static class Tags
             "SP1",
             "SP3",
             "SP4",
+            "SP5",
+            "SP6",
+            "SP7",
         };
         public const string SP2 = "SP2";
         public const string SP1 = "SP1";
         public const string SP3 = "SP3";
         public const string SP4 = "SP4";
+        public const string SP5 = "SP5";
+        public const string SP6 = "SP6";
+        public const string SP7 = "SP7";
     }
 }

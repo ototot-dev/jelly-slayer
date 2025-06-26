@@ -7,6 +7,7 @@ using UGUI.Rx;
 using Yarn.Unity;
 using ZLinq;
 using Game.UI;
+using UnityEditor.Experimental.GraphView;
 
 
 namespace Game
@@ -29,6 +30,7 @@ namespace Game
 
         Room1_Step1,
         Room1_Step2,
+        Room1_Step3,
 
         End,
     }
@@ -135,9 +137,11 @@ namespace Game
             {
                 __dialogueDispatcher.onRunLine = null;
                 __dialogueDispatcher.onDialoqueComplete = null;
+
+                __dialogueDispatcher.StopDialogue();
+                __dialogueDispatcher.StartDialogue(nodeName);
             }
             var obj = GameObject.Find("3d-bubble-dialogue");
-
             BubbleDialoqueController controller;
             if (obj != null)
                 controller = new BubbleDialoqueController().Load(obj.GetComponent<Template>());
@@ -145,7 +149,6 @@ namespace Game
                 controller = new BubbleDialoqueController().Load();
 
             controller.Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
-            __dialogueDispatcher.StartDialogue(nodeName);
         }
 
         void InitLoadingPageCtrler(string nodeName, Action action = null) 
@@ -239,9 +242,17 @@ namespace Game
                 InitCamera();
                 // Tutorial1
                 InitLoadingPageCtrler("Tutorial3", () => { });
-
-
             };
+        }
+
+        public void DoEventCollider(int mode) 
+        {
+            switch (mode) 
+            {
+                case 0:
+                    InitBubbleDialogue("Tutorial2_step2_2");
+                    break;
+            }
         }
 
         public IEnumerator ChangeRoom_Coroutine()
@@ -326,6 +337,11 @@ namespace Game
                             if (_deadCount >= 2)
                             {
                                 EndMode();
+                                InitBubbleDialogue("Tutorial2_step2_1");
+                            }
+                            else 
+                            {
+                                __dialogueDispatcher.ShowMessagePopup("가드", "적의 공격은 자동으로 가드할 수 있습니다.", 4);
                             }
                         }
                         else if (_tutorialMode == TutorialMode.Room1_Step2) 
@@ -334,6 +350,8 @@ namespace Game
                             if (_deadCount >= 2)
                             {
                                 EndMode();
+                                if (__dialogueDispatcher != null)
+                                    __dialogueDispatcher.StartDialogue("Tutorial2_step3");
                             }
                         }
                     });
@@ -441,6 +459,12 @@ namespace Game
         public void ResetCombat()
         {
             _isInCombat = false;
+
+            var slayerBrain = GameContext.Instance.playerCtrler.possessedBrain;
+            if (slayerBrain != null) 
+            {
+                slayerBrain.Movement.Stop();
+            }
         }
 
         void SetMode(TutorialMode mode) 
