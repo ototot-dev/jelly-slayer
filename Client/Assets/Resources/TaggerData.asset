@@ -29,6 +29,10 @@ MonoBehaviour:
   - SP3
   - SP4
   - Col1
+  - ConfinerBoundingBox2
+  - SP5
+  - SP6
+  - SP7
   _serializedGroups:
   - _name: Ungrouped
     _tags:
@@ -38,6 +42,7 @@ MonoBehaviour:
     - ConfinerBoundingBox
     - AlienSpawnPoint
     - CameraPoint
+    - ConfinerBoundingBox2
     _isSingleton: 0
   - _name: Pawn
     _tags:
@@ -60,83 +65,98 @@ MonoBehaviour:
     - SP1
     - SP3
     - SP4
+    - SP5
+    - SP6
+    - SP7
     _isSingleton: 0
-  _serializedIDs: 00000000020000001100000004000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f00000012000000130000001400000015000000160000001700000018000000190000001a0000001b000000
+  _serializedIDs: 00000000020000001100000004000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f00000012000000130000001400000015000000160000001700000018000000190000001a0000001b0000001c0000001d0000001e0000001f000000
   _serializedLinkIdKeys: 05000000010000001000000003000000
   _serializedLinkIdValues: 03000000000000000200000000000000
   _serializedTagArrays:
   - _array: 00000000
     _maskArray: ffffffff
-    _version: 72
+    _version: 84
   - _array: 01000000
     _maskArray: ffffffff
-    _version: 74
+    _version: 86
   - _array: 81000000
     _maskArray: ffffffff
-    _version: 75
+    _version: 87
   - _array: 02000000
     _maskArray: ffffffff
-    _version: 60
+    _version: 72
   - _array: 04000000
     _maskArray: ffffffff
-    _version: 64
+    _version: 76
   - _array: 08000000
     _maskArray: ffffffff
-    _version: 52
+    _version: 64
   - _array: 10000000
     _maskArray: ffffffff
-    _version: 64
+    _version: 76
   - _array: 20000000
     _maskArray: ffffffff
-    _version: 46
+    _version: 58
   - _array: 09000000
     _maskArray: ffffffff
-    _version: 53
+    _version: 65
   - _array: 0b000000
     _maskArray: ffffffff
-    _version: 54
+    _version: 66
   - _array: 1b000000
     _maskArray: ffffffff
-    _version: 55
+    _version: 67
   - _array: 1a000000
     _maskArray: ffffffff
-    _version: 56
+    _version: 68
   - _array: 18000000
     _maskArray: ffffffff
-    _version: 57
+    _version: 69
   - _array: 40000000
     _maskArray: ffffffff
-    _version: 64
+    _version: 76
   - _array: 80000000
     _maskArray: ffffffff
-    _version: 76
+    _version: 88
   - _array: 00010000
     _maskArray: ffffffff
-    _version: 73
+    _version: 85
   - _array: 00020000
     _maskArray: ffffffff
-    _version: 73
+    _version: 85
   - _array: 00040000
     _maskArray: ffffffff
-    _version: 16
+    _version: 28
   - _array: 00080000
     _maskArray: ffffffff
-    _version: 73
+    _version: 85
   - _array: 00100000
     _maskArray: ffffffff
-    _version: 73
+    _version: 85
   - _array: 00110000
     _maskArray: ffffffff
-    _version: 74
+    _version: 86
   - _array: 00200000
     _maskArray: ffffffff
-    _version: 73
+    _version: 85
   - _array: 00400000
     _maskArray: ffffffff
-    _version: 73
+    _version: 85
   - _array: 00800000
     _maskArray: ffffffff
-    _version: 1
+    _version: 13
+  - _array: 00000100
+    _maskArray: ffffffff
+    _version: 85
+  - _array: 00000200
+    _maskArray: ffffffff
+    _version: 85
+  - _array: 00000400
+    _maskArray: ffffffff
+    _version: 85
+  - _array: 00000800
+    _maskArray: ffffffff
+    _version: 85
   _tagColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
@@ -154,4 +174,8 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
-  _version: 27
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  _version: 30

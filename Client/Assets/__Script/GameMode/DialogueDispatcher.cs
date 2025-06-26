@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Linq;
 using FinalFactory;
@@ -120,6 +120,7 @@ namespace Game
             __runner.AddCommandHandler<string, float, float, float>("spawnPawnByVector", SpawnPawnByVector);
             __runner.AddCommandHandler<string>("setCameraTarget", SetCameraTarget);
             __runner.AddCommandHandler("setCameraSlayer", SetCameraSlayer);
+            __runner.AddCommandHandler<string>("setConfinerVolume", SetConfinerVolume);
             __runner.AddCommandHandler<string, string, float>("showMessagePopup", ShowMessagePopup);
             __runner.AddCommandHandler<string, float>("setLightIntensity", SetLightIntensity);
         }
@@ -322,6 +323,14 @@ namespace Game
         {
             var slayerBrain = GameContext.Instance.playerCtrler.possessedBrain;
             GameContext.Instance.cameraCtrler.virtualCamera.Follow = slayerBrain.coreColliderHelper.transform;
+        }
+
+        public void SetConfinerVolume(string volumeTag) 
+        {
+            //* 카메라 이동 영역 셋팅
+            var confinerBoundingBox = TaggerSystem.FindGameObjectWithTag(volumeTag).GetComponent<BoxCollider>();
+            if (confinerBoundingBox != null)
+                GameContext.Instance.cameraCtrler.RefreshConfinerVolume(confinerBoundingBox, Quaternion.Euler(45f, 45f, 0f), 10f);
         }
 
         public void ShowMessagePopup(string title, string text, float showDuration) 
