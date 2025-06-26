@@ -53,7 +53,7 @@ namespace Game
 
             return base.StartOnHitAction(ref damageContext, isAddictiveAction);
         }
-        
+
         public override IDisposable StartOnKnockDownAction(ref PawnHeartPointDispatcher.DamageContext damageContext, bool isAddictiveAction = false)
         {
 #if UNITY_EDITOR
@@ -106,6 +106,14 @@ namespace Game
             }).AddTo(this);
 
             return null;
+        }
+        
+        public override void EmitActionHandler(GameObject emitPrefab, Transform emitPoint, int emitNum)
+        {
+            Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ =>
+            {
+                ObjectPoolingSystem.Instance.GetObject<RoboCannonMissile>(emitPrefab, emitPoint.position, emitPoint.rotation).Pop(__brain, (__brain.BB.action.missileSpeed * emitPoint.forward).AdjustY(0.2f), Vector3.one);
+            }).AddTo(this);
         }
     }
 }

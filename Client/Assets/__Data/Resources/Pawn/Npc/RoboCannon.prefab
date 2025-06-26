@@ -27373,6 +27373,7 @@ MonoBehaviour:
     bodyBone: {fileID: 3002484417781374514}
     barrelBone: {fileID: 1844130231729722366}
     lookAtPoint: {fileID: 6891804858605220839}
+    missileEmitPoint: {fileID: 9072612133726969625}
     specialKeyAttachPoint: {fileID: 3926185472062868249}
   resource:
     hitColor: {fileID: 2100000, guid: a352a16cd87054b82af9135444ad0122, type: 2}
@@ -27404,7 +27405,8 @@ MonoBehaviour:
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"BodySlam":{"_value":4,"_name":"BodySlam","_id":"df6ef16a-add9-47aa-b731-e0971a94ba21","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"LeapFx":{"_value":5,"_name":"LeapFx","_id":"17e845d3-82ed-4c5a-aa9f-c41c25c952b1","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"ShieldAttackCollider":{"_name":"ShieldAttackCollider","_id":"6116a8ff-eb33-448e-b22e-9f0afd9a965c","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Collider,
-    UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}}}'
+    UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"MissileProjectile":{"_value":6,"_name":"MissileProjectile","_id":"cbfecc24-9b67-43de-a108-6c328071b0ac","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}}}'
   _objectReferences:
   - {fileID: 0}
   - {fileID: 6209972863228401158, guid: d5e3d90705ce3874fa0f0f63ae0c7726, type: 3}
@@ -27412,6 +27414,7 @@ MonoBehaviour:
   - {fileID: 5741126187209887343, guid: 8d8c1676b1e5dca46b3c777afd3f7e39, type: 3}
   - {fileID: 1541482542063588452, guid: 6103ef73125cad74a80cf8dd0703772c, type: 3}
   - {fileID: 780422899590546167, guid: 13a4cb697e4720f448fb19f3ebb39c5b, type: 3}
+  - {fileID: 3083626412401777055, guid: 208cbeb59181b4fe580d1281a1361b67, type: 3}
   _serializedVariables:
   - _json: '{"_value":1,"_name":"SlashRoundRed","_id":"812c51af-1b2b-4c18-aa17-0d3fd55b1286","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
       UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
@@ -27441,6 +27444,11 @@ MonoBehaviour:
   - _json: '{"_name":"ShieldAttackCollider","_id":"6116a8ff-eb33-448e-b22e-9f0afd9a965c","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Collider,
       UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
     _references: []
+  - _json: '{"_value":1,"_name":"MissileProjectile","_id":"cbfecc24-9b67-43de-a108-6c328071b0ac","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
+    _references:
+    - {fileID: 0}
+    - {fileID: 3083626412401777055, guid: 208cbeb59181b4fe580d1281a1361b67, type: 3}
 --- !u!114 &2400619284663164098
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27454,7 +27462,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _serializedExposedParameters: []
-  _boundGraphSerialization: '{"type":"NodeCanvas.StateMachines.FSM","nodes":[{"_actionList":{"executionMode":1,"actions":[]},"_name":"Spawning","_position":{"x":727.0,"y":170.0},"$type":"NodeCanvas.StateMachines.ActionState","$id":"0"},{"_nestedBT":{"_value":1},"_name":"Idle","_position":{"x":931.0,"y":260.0},"$type":"NodeCanvas.StateMachines.NestedBTState","$id":"1"},{"_nestedBT":{"_value":2},"_name":"Combat","_position":{"x":686.0,"y":409.0},"$type":"NodeCanvas.StateMachines.NestedBTState","$id":"2"},{"_position":{"x":720.0,"y":720.0},"$type":"NodeCanvas.StateMachines.AnyState","$id":"3"},{"_actionList":{"executionMode":1,"actions":[]},"_name":"Dead","_position":{"x":537.0,"y":586.0},"$type":"NodeCanvas.StateMachines.ActionState","$id":"4"},{"_subTree":{"_value":3},"_position":{"x":880.0,"y":554.0},"$type":"NodeCanvas.StateMachines.ConcurrentSubTree"}],"connections":[{"_condition":{"valueA":{"_name":"IsSpawnFinished","_targetVariableID":"b1b58c8b-92aa-452e-9423-9c91da38ac17"},"valueB":{"_value":true},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsInCombat","_targetVariableID":"74ac0c50-29aa-4bbd-a69e-9e2d35a39766"},"valueB":{"_value":true},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsInCombat","_targetVariableID":"74ac0c50-29aa-4bbd-a69e-9e2d35a39766"},"valueB":{},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"2"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsDead","_targetVariableID":"eff68c68-967f-4024-85f0-64bd5c05adac"},"valueB":{"_value":true},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"3"},"_targetNode":{"$ref":"4"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsDead","_targetVariableID":"eff68c68-967f-4024-85f0-64bd5c05adac"},"valueB":{},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"4"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.StateMachines.FSMConnection"}],"canvasGroups":[],"localBlackboard":{"_variables":{"IsSpawnFinished":{"_propertyPath":"Game.RoboCannonBlackboard.IsSpawnFinished","_name":"IsSpawnFinished","_id":"b1b58c8b-92aa-452e-9423-9c91da38ac17","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
+  _boundGraphSerialization: '{"type":"NodeCanvas.StateMachines.FSM","nodes":[{"_actionList":{"executionMode":1,"actions":[]},"_name":"Spawning","_position":{"x":727.0,"y":170.0},"$type":"NodeCanvas.StateMachines.ActionState","$id":"0"},{"_nestedBT":{"_value":1},"_name":"Idle","_position":{"x":931.0,"y":260.0},"$type":"NodeCanvas.StateMachines.NestedBTState","$id":"1"},{"_nestedBT":{"_value":2},"_name":"Combat","_position":{"x":686.0,"y":409.0},"$type":"NodeCanvas.StateMachines.NestedBTState","$id":"2"},{"_position":{"x":720.0,"y":720.0},"$type":"NodeCanvas.StateMachines.AnyState","$id":"3"},{"_actionList":{"executionMode":1,"actions":[]},"_name":"Dead","_position":{"x":537.0,"y":586.0},"$type":"NodeCanvas.StateMachines.ActionState","$id":"4"},{"_subTree":{"_value":3},"_position":{"x":880.0,"y":553.0},"$type":"NodeCanvas.StateMachines.ConcurrentSubTree"}],"connections":[{"_condition":{"valueA":{"_name":"IsSpawnFinished","_targetVariableID":"b1b58c8b-92aa-452e-9423-9c91da38ac17"},"valueB":{"_value":true},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsInCombat","_targetVariableID":"74ac0c50-29aa-4bbd-a69e-9e2d35a39766"},"valueB":{"_value":true},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsInCombat","_targetVariableID":"74ac0c50-29aa-4bbd-a69e-9e2d35a39766"},"valueB":{},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"2"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsDead","_targetVariableID":"eff68c68-967f-4024-85f0-64bd5c05adac"},"valueB":{"_value":true},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"3"},"_targetNode":{"$ref":"4"},"$type":"NodeCanvas.StateMachines.FSMConnection"},{"_condition":{"valueA":{"_name":"IsDead","_targetVariableID":"eff68c68-967f-4024-85f0-64bd5c05adac"},"valueB":{},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"},"_sourceNode":{"$ref":"4"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.StateMachines.FSMConnection"}],"canvasGroups":[],"localBlackboard":{"_variables":{"IsSpawnFinished":{"_propertyPath":"Game.RoboCannonBlackboard.IsSpawnFinished","_name":"IsSpawnFinished","_id":"b1b58c8b-92aa-452e-9423-9c91da38ac17","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
     mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},"IsInCombat":{"_propertyPath":"Game.RoboCannonBlackboard.IsInCombat","_name":"IsInCombat","_id":"74ac0c50-29aa-4bbd-a69e-9e2d35a39766","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
     mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},"IsDead":{"_propertyPath":"Game.RoboCannonBlackboard.IsDead","_name":"IsDead","_id":"eff68c68-967f-4024-85f0-64bd5c05adac","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
     mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"}}}}'
@@ -37628,7 +37636,7 @@ Animator:
   m_GameObject: {fileID: 8252680977736026644}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: ae51f2fbcce7a6749aef31ae5d213162, type: 3}
-  m_Controller: {fileID: 9100000, guid: dee0e62d7eb4e674c9db0f8fc2963538, type: 2}
+  m_Controller: {fileID: 9100000, guid: bfa22d788b15148498fba2b026ed7384, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

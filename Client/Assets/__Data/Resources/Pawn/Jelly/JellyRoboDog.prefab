@@ -4811,11 +4811,11 @@ MonoBehaviour:
       value: 1
     maxStamina:
       value: 1
+    maxBurst:
+      value: 1
     maxStance:
       value: 1
     maxKnockDown:
-      value: 1
-    maxRage:
       value: 1
     maxGroggyHitCount:
       value: 0
@@ -4825,13 +4825,13 @@ MonoBehaviour:
       value: 1
     stamina:
       value: 1
+    burst:
+      value: 0
     stance:
       value: 0
     knockDown:
       value: 0
     groggyHitCount:
-      value: 0
-    rage:
       value: 0
     poise: 0
     guardStrength: 0
@@ -4944,7 +4944,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: bb2a656ac9bf942499cea31a0cef85da, type: 2}
   - {fileID: 11400000, guid: 414e62828819a49f58b12590bea98bcb, type: 2}
   _boundGraphSource:
-    _version: 3.31
+    _version: 3.33
     _category: 
     _comments: 
     _translation: {x: -365, y: -151}

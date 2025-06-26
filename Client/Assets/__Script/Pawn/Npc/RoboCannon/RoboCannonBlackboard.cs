@@ -13,6 +13,7 @@ namespace Game
         public override float MinSpacingDistance => body.minSpacingDistance;
         public override float MaxSpacingDistance => body.maxSpacingDistance;
         public override float MinApproachDistance => body.minApproachDistance;
+        public Transform MissileEmitPoint => children.missileEmitPoint;
 
         [Serializable]
         public class Body
@@ -32,6 +33,9 @@ namespace Game
         [Serializable]
         public class Action
         {
+            [Header("Fire")]
+            public float missileSpeed = 1f;
+
             [Header("ComboAttack")]
             public float comboAttackCoolTime = 1f;
             public float comboAttackDistance = 1f;
@@ -51,6 +55,7 @@ namespace Game
             public Transform bodyBone;
             public Transform barrelBone;
             public Transform lookAtPoint;
+            public Transform missileEmitPoint;
             public Transform specialKeyAttachPoint;
         }
 
