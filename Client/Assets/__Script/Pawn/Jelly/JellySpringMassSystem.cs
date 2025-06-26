@@ -73,7 +73,7 @@ namespace Game
 
                 //* boundsCenter 에서 position 까지 Raycast 검사를 해서 linkedBone 위치값을 수정함
                 var rayVec = position - system.boundsCenter.position;
-                if (Physics.Raycast(system.boundsCenter.position, rayVec.normalized, out var hit, rayVec.magnitude, LayerMask.GetMask("Terrain")))
+                if (Physics.Raycast(system.boundsCenter.position, rayVec.normalized, out var hit, rayVec.magnitude, LayerMask.GetMask("Floor")))
                 {
                     // __Logger.LogR(system.gameObject, "NetPoint collision detected", "hit.point", hit.point);
                     linkedBone.position = 0.5f * (position + hit.point);

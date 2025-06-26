@@ -430,7 +430,7 @@ namespace Game
 
                     rigidBody.OnCollisionEnterAsObservable().TakeWhile(_ => !bloodDropFx.isPlaying).Subscribe(c =>
                     {
-                        if (c.gameObject.layer == LayerMask.NameToLayer("Terrain"))
+                        if (c.gameObject.layer == LayerMask.NameToLayer("Floor"))
                             bloodDropFx.Play();
                     }).AddTo(this);
                 }
@@ -452,7 +452,7 @@ namespace Game
 
                     rigidBody.OnCollisionEnterAsObservable().TakeWhile(_ => !bloodDropFx.isPlaying).Subscribe(c =>
                     {
-                        if (c.gameObject.layer == LayerMask.NameToLayer("Terrain"))
+                        if (c.gameObject.layer == LayerMask.NameToLayer("Floor"))
                             bloodDropFx.Play();
                     }).AddTo(this);
                 }

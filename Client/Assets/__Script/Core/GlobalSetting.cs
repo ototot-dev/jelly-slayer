@@ -13,7 +13,7 @@ namespace Game
         /// <summary>
         /// 
         /// </summary>
-        public string TerrainLayerName => "Terrain";
+        public string TerrainLayerName => "Floor";
 
 
     }
