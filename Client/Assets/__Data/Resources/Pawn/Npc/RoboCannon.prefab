@@ -27283,9 +27283,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   common:
-    pawnId: 15
-    pawnName: Rapax
-    displayName: Rapax
+    pawnId: 5
+    pawnName: RoboCannon
+    displayName: RoboCannon
     spawnWaitingTime: 1
     despawnWaitingTime: 1
     isSpawnFinished:
@@ -27355,7 +27355,7 @@ MonoBehaviour:
       value: 0
   body:
     moveSpeed: 0.5
-    aimRotateSpeed: 30
+    aimRotateSpeed: 90
     knockDownImpulse: {x: 0, y: 0}
     spacingInDistance: 6
     spacingOutDistance: 7
@@ -37628,7 +37628,7 @@ Animator:
   m_GameObject: {fileID: 8252680977736026644}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: ae51f2fbcce7a6749aef31ae5d213162, type: 3}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: dee0e62d7eb4e674c9db0f8fc2963538, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -37726,7 +37726,7 @@ MonoBehaviour:
       _uObject: {fileID: 0}
       VariableType: 0
       _rangeHelper: {x: 0, y: 0.3, z: 0, w: 0}
-  - Enabled: 1
+  - Enabled: 0
     Parent: {fileID: 1598793301024553388}
     ModuleReference: {fileID: 11400000, guid: d1c896ee3bafddf43b0dd1f38ec2a9e9, type: 2}
     customStringList: []
@@ -38310,10 +38310,10 @@ MonoBehaviour:
   _Editor_EnsureCount: 0
   _Editor_OnValidateTrigger: 1
   _EditorAllowAutoUpdateFeetParams: 1
-  _EditorCategory: 0
+  _EditorCategory: 1
   _EditorSetupCategory: 0
   _EditorMotionCategory: 3
-  _EditorExtraCategory: 0
+  _EditorExtraCategory: 2
   setupPose:
     MainHipsPose:
       SourceTransform: {fileID: 0}

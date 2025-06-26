@@ -1236,7 +1236,7 @@ MonoBehaviour:
   baseTransform: {fileID: 0}
   Hips: {fileID: 7101986894665982569}
   ScaleReferenceMode: 3
-  finalScaleReference: 1.2151611
+  finalScaleReference: 1.215161
   finalScaleReferenceSqrt: 0.1
   customScaleReferenceValue: 0.5
   DelayedInitialization: 0
@@ -6628,7 +6628,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   common:
-    pawnId: 15
+    pawnId: 16
     pawnName: Rapax
     displayName: Rapax
     spawnWaitingTime: 1

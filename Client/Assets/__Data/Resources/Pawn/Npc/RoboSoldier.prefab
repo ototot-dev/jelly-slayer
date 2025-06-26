@@ -32205,6 +32205,7 @@ MonoBehaviour:
       variables: []
     IsHumanoid: 1
     dummyContainer: {fileID: 0}
+    inBetweenPreGenerateMemory: []
     skeletonFillExtraBonesList: []
     MusclesPower: 1
     SpringsValue: 1500
@@ -60842,7 +60843,6 @@ MonoBehaviour:
   lateUpdateEnabled: 1
   fixedUpdateEnabled: 1
   jellyMeshCtrler: {fileID: 0}
-  roboDogFormationCtrler: {fileID: 0}
 --- !u!114 &1626602440402030822
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60856,7 +60856,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   common:
-    pawnId: 5
+    pawnId: 6
     pawnName: RoboSoldier
     displayName: 
     spawnWaitingTime: -1
@@ -60882,11 +60882,11 @@ MonoBehaviour:
       value: 1
     maxStamina:
       value: 1
+    maxBurst:
+      value: 1
     maxStance:
       value: 1
     maxKnockDown:
-      value: 1
-    maxRage:
       value: 1
     maxGroggyHitCount:
       value: 0
@@ -60896,13 +60896,13 @@ MonoBehaviour:
       value: 1
     stamina:
       value: 1
+    burst:
+      value: 0
     stance:
       value: 0
     knockDown:
       value: 0
     groggyHitCount:
-      value: 0
-    rage:
       value: 0
     poise: 0
     guardStrength: 0
@@ -60935,8 +60935,11 @@ MonoBehaviour:
       value: 0
     isGuarding:
       value: 0
-    getUpWaitTime: 1
-    walkSpeed: 1
+    spawnDropDirection: {x: 0, y: 0, z: 0}
+    spawnDropDistance: 1
+    spawnDropAccel: 1
+    spawnDropSpeed: 1
+    moveSpeed: 1
     jumpHeight: 2
     glidingDuration: -1
     glidingAmplitude: 1

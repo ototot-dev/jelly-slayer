@@ -12459,7 +12459,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   common:
-    pawnId: 7
+    pawnId: 15
     pawnName: Alien
     displayName: HumanBot
     spawnWaitingTime: 1

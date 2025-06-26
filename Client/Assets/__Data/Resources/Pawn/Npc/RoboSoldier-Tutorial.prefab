@@ -32040,7 +32040,7 @@ MonoBehaviour:
   baseTransform: {fileID: 0}
   Hips: {fileID: 2152633521541674416}
   ScaleReferenceMode: 3
-  finalScaleReference: 1.0652912
+  finalScaleReference: 1.0652913
   finalScaleReferenceSqrt: 0.1
   customScaleReferenceValue: 0.5
   DelayedInitialization: 0
@@ -32205,6 +32205,7 @@ MonoBehaviour:
       variables: []
     IsHumanoid: 1
     dummyContainer: {fileID: 0}
+    inBetweenPreGenerateMemory: []
     skeletonFillExtraBonesList: []
     MusclesPower: 1
     SpringsValue: 1500
@@ -60830,7 +60831,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   common:
-    pawnId: 5
+    pawnId: 6
     pawnName: RoboSoldier
     displayName: 
     spawnWaitingTime: -1
@@ -60856,11 +60857,11 @@ MonoBehaviour:
       value: 1
     maxStamina:
       value: 1
+    maxBurst:
+      value: 1
     maxStance:
       value: 1
     maxKnockDown:
-      value: 1
-    maxRage:
       value: 1
     maxGroggyHitCount:
       value: 0
@@ -60870,13 +60871,13 @@ MonoBehaviour:
       value: 1
     stamina:
       value: 1
+    burst:
+      value: 0
     stance:
       value: 0
     knockDown:
       value: 0
     groggyHitCount:
-      value: 0
-    rage:
       value: 0
     poise: 0
     guardStrength: 0
