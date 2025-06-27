@@ -35,14 +35,15 @@ namespace Game
         {
             [Header("Fire")]
             public float missileSpeed = 1f;
+            public float fireCoomTime = 1f;
 
-            [Header("ComboAttack")]
-            public float comboAttackCoolTime = 1f;
-            public float comboAttackDistance = 1f;
+            // [Header("ComboAttack")]
+            // public float comboAttackCoolTime = 1f;
+            // public float comboAttackDistance = 1f;
 
-            [Header("JumpAttack")]
-            public float jumpAttackCoolTime = 10f;
-            public float jumpAttackDistance = 1f;
+            // [Header("JumpAttack")]
+            // public float jumpAttackCoolTime = 10f;
+            // public float jumpAttackDistance = 1f;
         }
 
         public Action action = new();

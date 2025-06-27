@@ -27149,7 +27149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51753b4002b0d48c299cb80bc4ef44cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debugActionSelectDisabled: 1
+  debugActionSelectDisabled: 0
 --- !u!114 &5550322024165424679
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27203,7 +27203,7 @@ MonoBehaviour:
   moveSpeed: 1
   moveAccel: 1
   moveBrake: 0
-  rotateSpeed: 45
+  rotateSpeed: 2.1
   gravity: {x: 0, y: -9.81, z: 0}
   moveVec: {x: 0, y: 0, z: 0}
   faceVec: {x: 0, y: 0, z: 1}
@@ -27363,10 +27363,8 @@ MonoBehaviour:
     maxSpacingDistance: 5
     minApproachDistance: 1
   action:
-    comboAttackCoolTime: 1
-    comboAttackDistance: 1
-    jumpAttackCoolTime: 10
-    jumpAttackDistance: 1
+    missileSpeed: 10
+    fireCoomTime: 1
   children:
     hitColorRenderers: []
     bodyMeshParent: {fileID: 946935023983357076}

@@ -37,9 +37,7 @@ namespace Game
         public enum ActionPatterns : int
         {
             None = -1,
-            ComboAttackA,
-            ComboAttackB,
-            JumpAttack,
+            Fire,
             Max,
         }
 
@@ -48,9 +46,7 @@ namespace Game
             base.StartInternal();
 
             //* 액션 패턴 등록
-            ActionDataSelector.ReserveSequence(ActionPatterns.ComboAttackA, "Attack#1", "Attack#2").ResetProbability(1f);
-            ActionDataSelector.ReserveSequence(ActionPatterns.ComboAttackB, "Attack#1", "Attack#2", 0.1f, "Attack#3").ResetProbability(1f);
-            ActionDataSelector.ReserveSequence(ActionPatterns.JumpAttack, "JumpAttack").ResetProbability(1f).BeginCoolTime(BB.action.jumpAttackCoolTime);
+            ActionDataSelector.ReserveSequence(ActionPatterns.Fire, "Fire").ResetProbability(1f).BeginCoolTime(BB.action.fireCoomTime);
 
             BB.common.isSpawnFinished.Skip(1).Subscribe(v =>
             {
@@ -106,33 +102,10 @@ namespace Game
                 return;
 #endif
 
-            if (ActionDataSelector.CurrSequence() == null)
+            if (ActionDataSelector.CurrSequence() == null && CheckTargetVisibility() && ActionDataSelector.EvaluateSequence(ActionPatterns.Fire, 1f))
             {
-                var distanceToTarget = coreColliderHelper.GetDistanceSimple(BB.TargetBrain.coreColliderHelper);
-                if (distanceToTarget < BB.action.comboAttackDistance)
-                {
-                    var comboAttackPick = ActionPatterns.None;
-                    switch (Rand.Dice(2))
-                    {
-                        case 1: comboAttackPick = ActionPatterns.ComboAttackA; break;
-                        case 2: comboAttackPick = ActionPatterns.ComboAttackB; break;
-                    }
-
-                    if (CheckTargetVisibility() && ActionDataSelector.EvaluateSequence(comboAttackPick, 1f))
-                    {
-                        ActionDataSelector.EnqueueSequence(comboAttackPick);
-                        ActionDataSelector.BeginCoolTime(ActionPatterns.ComboAttackA, BB.action.comboAttackCoolTime);
-                        ActionDataSelector.BeginCoolTime(ActionPatterns.ComboAttackB, BB.action.comboAttackCoolTime);
-                    }
-                }
-                else
-                {
-                    if (CheckTargetVisibility() && ActionDataSelector.EvaluateSequence(ActionPatterns.JumpAttack, 1f))
-                    {
-                        ActionDataSelector.EnqueueSequence(ActionPatterns.JumpAttack);
-                        ActionDataSelector.BeginCoolTime(ActionPatterns.JumpAttack, BB.action.jumpAttackCoolTime);
-                    }
-                }
+                ActionDataSelector.EnqueueSequence(ActionPatterns.Fire);
+                ActionDataSelector.BeginCoolTime(ActionPatterns.Fire, BB.action.fireCoomTime);
             }
         }
 
