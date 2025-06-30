@@ -80,7 +80,7 @@ namespace Game
         public PawnColliderHelper rightLeg1_colliderHelper;
         public PawnColliderHelper rightLeg2_colliderHelper;
 
-        public override PawnColliderHelper GetHookingColliderHelper() => ActionCtrler.hookingPointColliderHelper;
+        public override PawnColliderHelper GetHookingColliderHelper() => BB.children.hookingPointColliderHelper;
         public Etasphera42_Blackboard BB { get; private set; }
         public Etasphera42_Movement Movement { get; private set; }
         public Etasphera42_AnimController AnimCtrler { get; private set; }

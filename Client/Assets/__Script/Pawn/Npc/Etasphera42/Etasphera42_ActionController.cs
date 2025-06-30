@@ -9,10 +9,6 @@ namespace Game
 {
     public class Etasphera42_ActionController : NpcQuadWalkActionController
     {
-        [Header("Component")]
-        public PawnColliderHelper dashActionColliderHelper;
-        public PawnColliderHelper hookingPointColliderHelper;
-
         public override bool CheckAddictiveActionRunning(string actionName)
         {
             return __laserB_disposable != null && actionName == "LaserB";
@@ -28,11 +24,11 @@ namespace Game
                 ShowHitColor(hitColliderHelper);
 
                 if (damageContext.senderActionData.actionName.StartsWith("Kick"))
-                    EffectManager.Instance.Show(__brain.BB.graphics.onKickHitFx, hitColliderHelper.GetWorldCenter(), Quaternion.identity, Vector3.one, 1f);
+                    EffectManager.Instance.Show(__brain.BB.resource.onKickHitFx, hitColliderHelper.GetWorldCenter(), Quaternion.identity, Vector3.one, 1f);
                 else if (damageContext.senderActionData.actionName.StartsWith("Heavy"))
-                    EffectManager.Instance.Show(__brain.BB.graphics.onBigHitFx, hitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()) * Quaternion.Euler(90f, 0f, 0f), Vector3.one, 1f);
+                    EffectManager.Instance.Show(__brain.BB.resource.onBigHitFx, hitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()) * Quaternion.Euler(90f, 0f, 0f), Vector3.one, 1f);
                 else
-                    EffectManager.Instance.Show(__brain.BB.graphics.onHitFx, hitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()) * Quaternion.Euler(90f, 0f, 0f), Vector3.one, 1f);
+                    EffectManager.Instance.Show(__brain.BB.resource.onHitFx, hitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(damageContext.hitPoint - __brain.bodyHitColliderHelper.GetWorldCenter()) * Quaternion.Euler(90f, 0f, 0f), Vector3.one, 1f);
 
                 SoundManager.Instance.Play(SoundID.HIT_FLESH);
             }
@@ -103,9 +99,9 @@ namespace Game
                     .DoOnCancel(() => 
                     {
                         currActionContext.actionDisposable = null;
-                        __brain.BB.attachment.laserA_Renderer.flashFx.Stop();
-                        __brain.BB.attachment.laserA_Renderer.hitFx.Stop();
-                        __brain.BB.attachment.laserA_Renderer.FadeOut(0.2f);
+                        __brain.BB.children.laserA_Renderer.flashFx.Stop();
+                        __brain.BB.children.laserA_Renderer.hitFx.Stop();
+                        __brain.BB.children.laserA_Renderer.FadeOut(0.2f);
                     })
                     .DoOnCompleted(() => currActionContext.actionDisposable = null)
                     .Subscribe().AddTo(this);
@@ -119,9 +115,9 @@ namespace Game
                     .DoOnCancel(() => 
                     {
                         __laserB_disposable = null;
-                        __brain.BB.attachment.laserB_Renderer.flashFx.Stop();
-                        __brain.BB.attachment.laserB_Renderer.hitFx.Stop();
-                        __brain.BB.attachment.laserB_Renderer.FadeOut(0.2f);
+                        __brain.BB.children.laserB_Renderer.flashFx.Stop();
+                        __brain.BB.children.laserB_Renderer.hitFx.Stop();
+                        __brain.BB.children.laserB_Renderer.FadeOut(0.2f);
                     })
                     .DoOnCompleted(() => __laserB_disposable = null)
                     .Subscribe().AddTo(this);
@@ -158,8 +154,8 @@ namespace Game
                 yield return null;
 
             __brain.AnimCtrler.legAnimator.User_AddImpulse(new ImpulseExecutor(0.8f * Vector3.down, Vector3.zero, 0.2f));
-            EffectManager.Instance.Show(__brain.BB.graphics.onJumpSlamFx1, __brain.coreColliderHelper.transform.position, Quaternion.identity, Vector3.one);
-            EffectManager.Instance.Show(__brain.BB.graphics.onJumpSlamFx2, __brain.coreColliderHelper.transform.position, Quaternion.identity, 1.5f * Vector3.one);
+            EffectManager.Instance.Show(__brain.BB.resource.onJumpSlamFx1, __brain.coreColliderHelper.transform.position, Quaternion.identity, Vector3.one);
+            EffectManager.Instance.Show(__brain.BB.resource.onJumpSlamFx2, __brain.coreColliderHelper.transform.position, Quaternion.identity, 1.5f * Vector3.one);
 
             yield return Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.1f))).Do(_ =>
             {
@@ -173,7 +169,7 @@ namespace Game
 
         IEnumerator LaserA_ActionCoroutine()
         {
-            var laserRenderer = __brain.BB.attachment.laserA_Renderer;
+            var laserRenderer = __brain.BB.children.laserA_Renderer;
 
             laserRenderer.flashFx.Play();
             laserRenderer.hitFx.Play();
@@ -184,7 +180,7 @@ namespace Game
                 .Do(_ => 
                 {
                     laserRenderer.hitFx.transform.position = laserRenderer.transform.position + 0.1f * laserRenderer.transform.forward;
-                    __brain.BB.attachment.laserAimPoint.position = __brain.BB.TargetColliderHelper.GetWorldCenter() + 0.2f * Vector3.up;
+                    __brain.BB.children.laserAimPoint.position = __brain.BB.TargetColliderHelper.GetWorldCenter() + 0.2f * Vector3.up;
                 }).ToYieldInstruction();
             
             //* 레이저 Fade-In
@@ -200,7 +196,7 @@ namespace Game
             yield return Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(__brain.BB.action.laserA_approachDuration))).Do(_ =>
             {
                 if ((Time.time - waitApproachTimeStamp) > 0.2f)
-                    __brain.BB.attachment.laserAimPoint.position = __brain.BB.attachment.laserAimPoint.position.LerpSpeed(__brain.BB.TargetColliderHelper.GetWorldCenter() + 0.2f * Vector3.up, __brain.BB.action.laserA_approachSpeed, Time.deltaTime);
+                    __brain.BB.children.laserAimPoint.position = __brain.BB.children.laserAimPoint.position.LerpSpeed(__brain.BB.TargetColliderHelper.GetWorldCenter() + 0.2f * Vector3.up, __brain.BB.action.laserA_approachSpeed, Time.deltaTime);
 
                 var hitIndex = LaserActionTraceTarget(laserRenderer.transform.position, laserRenderer.transform.forward, laserRenderer.lineWidth * 0.5f, __brain.BB.action.laserA_maxDistance, hitLayerMask);
                 if (hitIndex >= 0)
@@ -235,7 +231,7 @@ namespace Game
                 if (hitIndex >= 0)
                     laserRenderer.hitFx.transform.position = __hitsNonAlloc[hitIndex].point + hitOffset * __hitsNonAlloc[hitIndex].normal;
                 else
-                    laserRenderer.hitFx.transform.position = laserRenderer.hitFx.transform.position.LerpSpeed(__brain.BB.attachment.laserAimPoint.position, __brain.BB.action.laserA_forwardSpeed, Time.deltaTime);
+                    laserRenderer.hitFx.transform.position = laserRenderer.hitFx.transform.position.LerpSpeed(__brain.BB.children.laserAimPoint.position, __brain.BB.action.laserA_forwardSpeed, Time.deltaTime);
 
                 if (hitIndex >= 0 && __hitsNonAlloc[hitIndex].collider.TryGetComponent<PawnColliderHelper>(out var hitColliderHelper) && hitColliderHelper.pawnBrain == __brain.BB.TargetColliderHelper.pawnBrain)
                 {
@@ -254,7 +250,7 @@ namespace Game
                     sweepAlpha += Time.deltaTime / __brain.BB.action.laserA_sweepDuration;
                 }
 
-                __brain.BB.attachment.laserAimPoint.position = laserRenderer.transform.position + __brain.BB.action.laserA_maxDistance * Vector3.Slerp(sweepStartVec, sweepEndVec, sweepAlpha);
+                __brain.BB.children.laserAimPoint.position = laserRenderer.transform.position + __brain.BB.action.laserA_maxDistance * Vector3.Slerp(sweepStartVec, sweepEndVec, sweepAlpha);
             }).ToYieldInstruction();
 
             //* 레이저 발사 종료
@@ -267,13 +263,13 @@ namespace Game
 
         IEnumerator LaserB_ActionCoroutine()
         {
-            var laserRenderer = __brain.BB.attachment.laserB_Renderer;
+            var laserRenderer = __brain.BB.children.laserB_Renderer;
             laserRenderer.flashFx.Play();
 
             //* 차징 스텝
             yield return Observable.EveryLateUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(__brain.BB.action.laserB_charingDuration))).Do(_ =>
             {
-                laserRenderer.hitFx.transform.position = __brain.BB.attachment.laserAimPoint.position = __brain.BB.TargetColliderHelper.GetWorldCenter();
+                laserRenderer.hitFx.transform.position = __brain.BB.children.laserAimPoint.position = __brain.BB.TargetColliderHelper.GetWorldCenter();
             }).ToYieldInstruction();
 
             //* 레이저 Fade-In        
@@ -289,7 +285,7 @@ namespace Game
             {
                 //* 히트하지 전까지만 목표를 추적함
                 if (!__brain.BB.TargetColliderHelper.pawnBrain.PawnBB.IsDown)
-                    __brain.BB.attachment.laserAimPoint.position = __brain.BB.TargetColliderHelper.GetWorldCenter();
+                    __brain.BB.children.laserAimPoint.position = __brain.BB.TargetColliderHelper.GetWorldCenter();
 
                 var hitIndex = LaserActionTraceTarget(laserRenderer.transform.position, laserRenderer.transform.forward, laserRenderer.lineWidth, __brain.BB.action.laserB_maxDistance, hitLayerMask);
                 if (hitIndex >= 0 && __hitsNonAlloc[hitIndex].collider.TryGetComponent<PawnColliderHelper>(out var hitColliderHelper) && hitColliderHelper.pawnBrain == __brain.BB.TargetColliderHelper.pawnBrain)
@@ -354,7 +350,7 @@ namespace Game
                 hitBoxIndex = Etasphera42_Brain.HitBoxIndices.Body;
                 if (!__hitColorRenderers.ContainsKey(Etasphera42_Brain.HitBoxIndices.Body))
                 {
-                    __hitColorRenderers.Add(Etasphera42_Brain.HitBoxIndices.Body, __brain.BB.attachment.body_meshRenderers);
+                    __hitColorRenderers.Add(Etasphera42_Brain.HitBoxIndices.Body, __brain.BB.children.body_meshRenderers);
                     __hitColorDisposables.Add(Etasphera42_Brain.HitBoxIndices.Body, null);
                 }
             }
@@ -363,7 +359,7 @@ namespace Game
                 hitBoxIndex = Etasphera42_Brain.HitBoxIndices.LeftLeg1;
                 if (!__hitColorRenderers.ContainsKey(Etasphera42_Brain.HitBoxIndices.LeftLeg1))
                 {
-                    __hitColorRenderers.Add(Etasphera42_Brain.HitBoxIndices.LeftLeg1, __brain.BB.attachment.leftLeg1_meshRenderes);
+                    __hitColorRenderers.Add(Etasphera42_Brain.HitBoxIndices.LeftLeg1, __brain.BB.children.leftLeg1_meshRenderes);
                     __hitColorDisposables.Add(Etasphera42_Brain.HitBoxIndices.LeftLeg1, null);
                 }
             }
@@ -372,7 +368,7 @@ namespace Game
                 hitBoxIndex = Etasphera42_Brain.HitBoxIndices.LeftLeg2;
                 if (!__hitColorRenderers.ContainsKey(Etasphera42_Brain.HitBoxIndices.LeftLeg2))
                 {
-                    __hitColorRenderers.Add(Etasphera42_Brain.HitBoxIndices.LeftLeg2, __brain.BB.attachment.leftLeg2_meshRenderes);
+                    __hitColorRenderers.Add(Etasphera42_Brain.HitBoxIndices.LeftLeg2, __brain.BB.children.leftLeg2_meshRenderes);
                     __hitColorDisposables.Add(Etasphera42_Brain.HitBoxIndices.LeftLeg2, null);
                 }
             }
@@ -381,7 +377,7 @@ namespace Game
                 hitBoxIndex = Etasphera42_Brain.HitBoxIndices.RightLeg1;
                 if (!__hitColorRenderers.ContainsKey(Etasphera42_Brain.HitBoxIndices.RightLeg1))
                 {
-                    __hitColorRenderers.Add(Etasphera42_Brain.HitBoxIndices.RightLeg1, __brain.BB.attachment.rightLeg1_meshRenderes);
+                    __hitColorRenderers.Add(Etasphera42_Brain.HitBoxIndices.RightLeg1, __brain.BB.children.rightLeg1_meshRenderes);
                     __hitColorDisposables.Add(Etasphera42_Brain.HitBoxIndices.RightLeg1, null);
                 }
             }
@@ -390,7 +386,7 @@ namespace Game
                 hitBoxIndex = Etasphera42_Brain.HitBoxIndices.RightLeg2;
                 if (!__hitColorRenderers.ContainsKey(Etasphera42_Brain.HitBoxIndices.RightLeg2))
                 {
-                    __hitColorRenderers.Add(Etasphera42_Brain.HitBoxIndices.RightLeg2, __brain.BB.attachment.rightLeg2_meshRenderes);
+                    __hitColorRenderers.Add(Etasphera42_Brain.HitBoxIndices.RightLeg2, __brain.BB.children.rightLeg2_meshRenderes);
                     __hitColorDisposables.Add(Etasphera42_Brain.HitBoxIndices.RightLeg2, null);
                 }
             }
@@ -400,7 +396,7 @@ namespace Game
             }
 
             foreach (var r in __hitColorRenderers[hitBoxIndex])
-                r.materials = new Material[] { r.material, new(__brain.BB.graphics.hitColor) };
+                r.materials = new Material[] { r.material, new(__brain.BB.resource.hitColor) };
 
             __hitColorDisposables[hitBoxIndex]?.Dispose();
             __hitColorDisposables[hitBoxIndex] = Observable.Timer(TimeSpan.FromMilliseconds(100)).Subscribe(_ => 
@@ -414,21 +410,21 @@ namespace Game
         public override void EmitActionHandler(GameObject emitPrefab, Transform emitPoint, int emitNum)
         {
             __nextFrameObservable ??= Observable.NextFrame(FrameCountType.EndOfFrame);
-            if (emitPrefab == __brain.BB.action.bulletPrefab)
+            if (emitPrefab.GetComponent<Etasphera42_Bullet>() != null)
             {
                 __nextFrameObservable.Subscribe(_ =>
                 {
                     ObjectPoolingSystem.Instance.GetObject<Etasphera42_Bullet>(emitPrefab, emitPoint.position + UnityEngine.Random.Range(-0.2f, 0.2f) * Vector3.right, emitPoint.rotation).Go(__brain, 20f, 0.5f);
                 });
             }
-            else if (emitPrefab == __brain.BB.action.framePrefab)
+            else if (emitPrefab.GetComponent<Etasphera42_Frame>() != null)
             {
                 __nextFrameObservable.Subscribe(_ =>
                 {
                     ObjectPoolingSystem.Instance.GetObject<Etasphera42_Frame>(emitPrefab, emitPoint.position + UnityEngine.Random.Range(-0.2f, 0.2f) * Vector3.right, emitPoint.rotation).Go(__brain, 20f, 1f);
                 });
             }
-            else if (emitPrefab == __brain.BB.action.bombPrefab)
+            else if (emitPrefab.GetComponent<Etasphera42_Bomb>() != null)
             {
                 __nextFrameObservable.Subscribe(_ =>
                 {

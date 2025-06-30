@@ -25972,7 +25972,7 @@ GameObject:
   - component: {fileID: 2909659972003230112}
   - component: {fileID: 937681607665347987}
   m_Layer: 0
-  m_Name: JellyEtasphera42
+  m_Name: Etasphera42
   m_TagString: Jelly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26042,7 +26042,6 @@ MonoBehaviour:
   nearVisionLen: 2
   soundSensorTrigger: {fileID: 2921741053752323708}
   touchSensorTrigger: {fileID: 3531390869193977627}
-  touchSensorTriggers: []
   drawGizmosEnabled: 0
 --- !u!114 &723816571671492862
 MonoBehaviour:
@@ -26138,8 +26137,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a56188e9acf24a3a82f835d499111da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dashActionColliderHelper: {fileID: 7251042235063517488}
-  hookingPointColliderHelper: {fileID: 8485575613732742549}
 --- !u!114 &6584163374789468568
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26154,7 +26151,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coreColliderHelper: {fileID: 2304260753377672933}
   bodyHitColliderHelper: {fileID: 7762583263965785145}
-  parryColliderHelper: {fileID: 0}
   parryHitColliderHelper: {fileID: 0}
   shieldHitColliderHelper: {fileID: 0}
   hookingPointColliderHelper: {fileID: 0}
@@ -26165,6 +26161,7 @@ MonoBehaviour:
   updateEnabled: 1
   lateUpdateEnabled: 1
   fixedUpdateEnabled: 1
+  jellyMeshCtrler: {fileID: 0}
   leftLeg1_colliderHelper: {fileID: 1798167167811104726}
   leftLeg2_colliderHelper: {fileID: 7901147414094264253}
   rightLeg1_colliderHelper: {fileID: 1953545904694058999}
@@ -26208,11 +26205,11 @@ MonoBehaviour:
       value: 1
     maxStamina:
       value: 1
+    maxBurst:
+      value: 1
     maxStance:
       value: 1
     maxKnockDown:
-      value: 1
-    maxRage:
       value: 1
     maxGroggyHitCount:
       value: 0
@@ -26222,13 +26219,13 @@ MonoBehaviour:
       value: 1
     stamina:
       value: 1
+    burst:
+      value: 0
     stance:
       value: 0
     knockDown:
       value: 0
     groggyHitCount:
-      value: 0
-    rage:
       value: 0
     poise: 0
     guardStrength: 0
@@ -26271,12 +26268,9 @@ MonoBehaviour:
       value: 0
     isJumping:
       value: 0
-    bulletPrefab: {fileID: 5195597221496436211, guid: 41c245f423d1f47dc8a1f148fb6d93ce, type: 3}
     bulletTurretRotateSpeed: 1
     bulletMaxShakeAngle: 1
-    framePrefab: {fileID: 5195597221496436211, guid: 42a3d4a3e7cc14b60a4d1509837bd83e, type: 3}
     torchTurretRotateSpeed: 1
-    bombPrefab: {fileID: 0}
     laserA_damageInterval: 0.1
     laserA_maxDistance: 1
     laserA_forwardSpeed: 1
@@ -26290,18 +26284,7 @@ MonoBehaviour:
     laserB_forwardSpeed: 1
     laserB_turretRotateSpeed: 1
     laserB_charingDuration: 1
-  graphics:
-    hitColor: {fileID: 2100000, guid: a352a16cd87054b82af9135444ad0122, type: 2}
-    onHitFx: {fileID: 3011233550371498735, guid: 24e37d54f259141abb7ebbc527b8bf4e, type: 3}
-    onBigHitFx: {fileID: 3011233550371498735, guid: 24e37d54f259141abb7ebbc527b8bf4e, type: 3}
-    onKickHitFx: {fileID: 3011233550371498735, guid: 24e37d54f259141abb7ebbc527b8bf4e, type: 3}
-    onBleedingFx: {fileID: 3011233550371498735, guid: 8502543f66322458a81956cdd59fe959, type: 3}
-    onMissedFx: {fileID: 8338894570034044190, guid: 727c6a11e51e81140a330e6639938e26, type: 3}
-    onBlockedFx: {fileID: 4961553964636584268, guid: d7027452566465c47aeacb4cdcf40015, type: 3}
-    onGuardBreakFx: {fileID: 8905666514069622321, guid: a84cbbb54404c3d499340f02e684aab0, type: 3}
-    onJumpSlamFx1: {fileID: 1541482542063588452, guid: 6103ef73125cad74a80cf8dd0703772c, type: 3}
-    onJumpSlamFx2: {fileID: 5741126187209887343, guid: 8d8c1676b1e5dca46b3c777afd3f7e39, type: 3}
-  attachment:
+  children:
     body_meshRenderers:
     - {fileID: 6339278072063373808}
     - {fileID: 163073324543339050}
@@ -26349,9 +26332,25 @@ MonoBehaviour:
     - {fileID: 3930799030225362276}
     - {fileID: 7582083278417983294}
     - {fileID: 4329359356516953012}
-    laserAimPoint: {fileID: 0}
     laserA_Renderer: {fileID: 9022285480948331079}
     laserB_Renderer: {fileID: 1607441678788026250}
+    laserAimPoint: {fileID: 8249829599663094313}
+    dashActionColliderHelper: {fileID: 7251042235063517488}
+    hookingPointColliderHelper: {fileID: 8485575613732742549}
+  resource:
+    hitColor: {fileID: 2100000, guid: a352a16cd87054b82af9135444ad0122, type: 2}
+    onHitFx: {fileID: 3011233550371498735, guid: 24e37d54f259141abb7ebbc527b8bf4e, type: 3}
+    onBigHitFx: {fileID: 3011233550371498735, guid: 24e37d54f259141abb7ebbc527b8bf4e, type: 3}
+    onKickHitFx: {fileID: 3011233550371498735, guid: 24e37d54f259141abb7ebbc527b8bf4e, type: 3}
+    onBleedingFx: {fileID: 3011233550371498735, guid: 8502543f66322458a81956cdd59fe959, type: 3}
+    onMissedFx: {fileID: 8338894570034044190, guid: 727c6a11e51e81140a330e6639938e26, type: 3}
+    onBlockedFx: {fileID: 4961553964636584268, guid: d7027452566465c47aeacb4cdcf40015, type: 3}
+    onGuardBreakFx: {fileID: 8905666514069622321, guid: a84cbbb54404c3d499340f02e684aab0, type: 3}
+    onJumpSlamFx1: {fileID: 1541482542063588452, guid: 6103ef73125cad74a80cf8dd0703772c, type: 3}
+    onJumpSlamFx2: {fileID: 5741126187209887343, guid: 8d8c1676b1e5dca46b3c777afd3f7e39, type: 3}
+    bulletProjectile: {fileID: 5195597221496436211, guid: 41c245f423d1f47dc8a1f148fb6d93ce, type: 3}
+    frameProjectile: {fileID: 5195597221496436211, guid: 42a3d4a3e7cc14b60a4d1509837bd83e, type: 3}
+    bombProjectile: {fileID: 3083626412401777055, guid: 14a40d111e678473c881515177c08a54, type: 3}
 --- !u!114 &2909659972003230112
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26369,30 +26368,24 @@ MonoBehaviour:
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"MagicPillarBlastRed":{"_value":1,"_name":"MagicPillarBlastRed","_id":"3b4d98d4-d3a3-4c3d-a537-4a0f468b9cdb","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"GroundSlam":{"_value":2,"_name":"GroundSlam","_id":"3ea2abb1-ff32-453f-9778-983376e1d10e","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"BodySlam":{"_value":3,"_name":"BodySlam","_id":"df6ef16a-add9-47aa-b731-e0971a94ba21","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
-    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"Bullet":{"_value":4,"_name":"Bullet","_id":"b4b1c665-d528-4f5b-9391-88cf5e3ae8ca","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
-    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"weapon_emit_r":{"_value":5,"_name":"weapon_emit_r","_id":"42ce7270-e0e0-47de-b83e-0f92dc692e93","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Transform,
-    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"weapon_emit_l":{"_value":6,"_name":"weapon_emit_l","_id":"bee3cf50-f733-4c4b-8167-73034be3d7ec","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Transform,
-    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"Flame":{"_value":7,"_name":"Flame","_id":"af5e9e1b-f677-4b58-af3d-5b442beb5d4f","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
-    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"turret_emit_c":{"_value":8,"_name":"turret_emit_c","_id":"c345c25e-2d17-47cc-a248-c779f5c637bb","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Transform,
-    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"FlamethrowerFastALT":{"_value":9,"_name":"FlamethrowerFastALT","_id":"a3aabf31-8162-432b-aa7e-e48d714ffc58","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
-    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"FireGasLeak":{"_value":10,"_name":"FireGasLeak","_id":"95d8ed05-6304-45d4-9b7f-ea3d93e30e55","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
-    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"LaserBeam4":{"_value":11,"_name":"LaserBeam4","_id":"2779c46e-5cce-479d-9967-ffdf5d2bb984","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
-    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"Bomb":{"_value":12,"_name":"Bomb","_id":"c15b3f3d-1ec1-4e1c-81bc-1b67dc89d71f","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"weapon_emit_r":{"_value":4,"_name":"weapon_emit_r","_id":"42ce7270-e0e0-47de-b83e-0f92dc692e93","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Transform,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"weapon_emit_l":{"_value":5,"_name":"weapon_emit_l","_id":"bee3cf50-f733-4c4b-8167-73034be3d7ec","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Transform,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"turret_emit_c":{"_value":6,"_name":"turret_emit_c","_id":"c345c25e-2d17-47cc-a248-c779f5c637bb","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Transform,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"FlamethrowerFastALT":{"_value":7,"_name":"FlamethrowerFastALT","_id":"a3aabf31-8162-432b-aa7e-e48d714ffc58","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"FireGasLeak":{"_value":8,"_name":"FireGasLeak","_id":"95d8ed05-6304-45d4-9b7f-ea3d93e30e55","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"LaserBeam4":{"_value":9,"_name":"LaserBeam4","_id":"2779c46e-5cce-479d-9967-ffdf5d2bb984","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}}}'
   _objectReferences:
   - {fileID: 0}
   - {fileID: 5629602492193098048, guid: 265bf097dd85fb144b689a6ac2211310, type: 3}
   - {fileID: 5741126187209887343, guid: 8d8c1676b1e5dca46b3c777afd3f7e39, type: 3}
   - {fileID: 1541482542063588452, guid: 6103ef73125cad74a80cf8dd0703772c, type: 3}
-  - {fileID: 5195597221496436211, guid: 41c245f423d1f47dc8a1f148fb6d93ce, type: 3}
   - {fileID: 5988263372065376072}
   - {fileID: 1812363836777562092}
-  - {fileID: 5195597221496436211, guid: 42a3d4a3e7cc14b60a4d1509837bd83e, type: 3}
   - {fileID: 3050505489214289573}
   - {fileID: 8521172216894664528}
   - {fileID: 2793051550035908383}
   - {fileID: 3715311985180013520}
-  - {fileID: 3083626412401777055, guid: 14a40d111e678473c881515177c08a54, type: 3}
   _serializedVariables:
   - _json: '{"_name":"SlashRoundRed","_id":"812c51af-1b2b-4c18-aa17-0d3fd55b1286","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
       UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
@@ -26412,11 +26405,6 @@ MonoBehaviour:
     _references:
     - {fileID: 0}
     - {fileID: 1541482542063588452, guid: 6103ef73125cad74a80cf8dd0703772c, type: 3}
-  - _json: '{"_value":1,"_name":"Bullet","_id":"b4b1c665-d528-4f5b-9391-88cf5e3ae8ca","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
-      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
-    _references:
-    - {fileID: 0}
-    - {fileID: 5195597221496436211, guid: 41c245f423d1f47dc8a1f148fb6d93ce, type: 3}
   - _json: '{"_value":1,"_name":"weapon_emit_r","_id":"42ce7270-e0e0-47de-b83e-0f92dc692e93","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Transform,
       UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
     _references:
@@ -26427,11 +26415,6 @@ MonoBehaviour:
     _references:
     - {fileID: 0}
     - {fileID: 1812363836777562092}
-  - _json: '{"_value":1,"_name":"Flame","_id":"af5e9e1b-f677-4b58-af3d-5b442beb5d4f","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
-      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
-    _references:
-    - {fileID: 0}
-    - {fileID: 5195597221496436211, guid: 42a3d4a3e7cc14b60a4d1509837bd83e, type: 3}
   - _json: '{"_value":1,"_name":"turret_emit_c","_id":"c345c25e-2d17-47cc-a248-c779f5c637bb","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Transform,
       UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
     _references:
@@ -26452,11 +26435,6 @@ MonoBehaviour:
     _references:
     - {fileID: 0}
     - {fileID: 3715311985180013520}
-  - _json: '{"_value":1,"_name":"Bomb","_id":"c15b3f3d-1ec1-4e1c-81bc-1b67dc89d71f","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
-      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
-    _references:
-    - {fileID: 0}
-    - {fileID: 3083626412401777055, guid: 14a40d111e678473c881515177c08a54, type: 3}
 --- !u!114 &937681607665347987
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26480,7 +26458,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 159d9b68ffc9241f29d9a6a3cf0aa862, type: 2}
   - {fileID: 11400000, guid: cdb1030a60eba4f1aab17ee4474264a0, type: 2}
   _boundGraphSource:
-    _version: 3.31
+    _version: 3.33
     _category: 
     _comments: 
     _translation: {x: -335, y: 190}
@@ -139407,6 +139385,7 @@ MonoBehaviour:
       variables: []
     IsHumanoid: 0
     dummyContainer: {fileID: 0}
+    inBetweenPreGenerateMemory: []
     skeletonFillExtraBonesList: []
     MusclesPower: 1
     SpringsValue: 1500

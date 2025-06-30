@@ -132,7 +132,7 @@ namespace Game
 
             __brain.onLateUpdate += () =>
             {
-                __brain.ActionCtrler.hookingPointColliderHelper.transform.position = hookingPoint.transform.position;
+                __brain.BB.children.hookingPointColliderHelper.transform.position = hookingPoint.transform.position;
 
                 // if (__brain.BB.IsDriving)
                 //     pelves.transform.localRotation *= Quaternion.Euler(90f, 0f, 0f);
@@ -147,13 +147,13 @@ namespace Game
                         else if (__brain.ActionCtrler.CurrActionName == "Torch")
                             UpdateTurretRotation(targetPoint, __brain.BB.action.torchTurretRotateSpeed, TurretIndices.Base);
                         else if (__brain.ActionCtrler.CurrActionName == "LaserA")
-                            UpdateTurretRotation(__brain.BB.attachment.laserAimPoint.position, __brain.BB.action.laserA_turretRotateSpeed, TurretIndices.Base);
+                            UpdateTurretRotation(__brain.BB.children.laserAimPoint.position, __brain.BB.action.laserA_turretRotateSpeed, TurretIndices.Base);
                         else 
                             UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Base);
                         
                         UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Left);
                         UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Right);
-                        UpdateTurretRotation(__brain.ActionCtrler.CheckAddictiveActionRunning("LaserB") ? __brain.BB.attachment.laserAimPoint.position : targetPoint, __brain.BB.action.laserB_turretRotateSpeed, TurretIndices.Top);
+                        UpdateTurretRotation(__brain.ActionCtrler.CheckAddictiveActionRunning("LaserB") ? __brain.BB.children.laserAimPoint.position : targetPoint, __brain.BB.action.laserB_turretRotateSpeed, TurretIndices.Top);
 
                     }
                     else
@@ -161,7 +161,7 @@ namespace Game
                         UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Base);
                         UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Left);
                         UpdateTurretRotation(targetPoint, __brain.BB.body.turretRotateSpeed, TurretIndices.Right);
-                        UpdateTurretRotation(__brain.ActionCtrler.CheckAddictiveActionRunning("LaserB") ? __brain.BB.attachment.laserAimPoint.position : targetPoint, __brain.BB.action.laserB_turretRotateSpeed, TurretIndices.Top);
+                        UpdateTurretRotation(__brain.ActionCtrler.CheckAddictiveActionRunning("LaserB") ? __brain.BB.children.laserAimPoint.position : targetPoint, __brain.BB.action.laserB_turretRotateSpeed, TurretIndices.Top);
                     }
                 }
             };

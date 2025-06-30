@@ -16,9 +16,11 @@ namespace Game
         public override float MinApproachDistance => body.minApproachDistance;
         public float HoldPositionRate => body.holdPositionRate;
         public float MoveAroundRate => body.moveAroundRate;
-        public GameObject BulletPrefab => action.bulletPrefab;
-        public GameObject FlamePrefab => action.framePrefab;
-        public GameObject BombPrefab => action.bombPrefab;
+        public PawnColliderHelper DashActionColliderHelper => children.dashActionColliderHelper;
+        public GameObject BulletProjectile => resource.bulletProjectile;
+        public GameObject FlameProjectile => resource.frameProjectile;
+        public GameObject BombProjectile => resource.bombProjectile;
+
 
         [Serializable]
         public class Body
@@ -47,16 +49,11 @@ namespace Game
             public BoolReactiveProperty isJumping = new();
 
             [Header("Bullet")]
-            public GameObject bulletPrefab;
             public float bulletTurretRotateSpeed = 1f;
             public float bulletMaxShakeAngle = 1f;
 
-            [Header("Torch")]
-            public GameObject framePrefab;
+            [Header("Frame")]
             public float torchTurretRotateSpeed = 1f;
-
-            [Header("Bomb")]
-            public GameObject bombPrefab;
 
             [Header("LaserA")]
             public float laserA_damageInterval = 0.1f;
@@ -79,9 +76,29 @@ namespace Game
         public Action action = new();
 
         [Serializable]
-        public class Graphics
+        public class Children
         {
+            public SkinnedMeshRenderer[] body_meshRenderers;
+            public SkinnedMeshRenderer[] leftLeg1_meshRenderes;
+            public SkinnedMeshRenderer[] leftLeg2_meshRenderes;
+            public SkinnedMeshRenderer[] rightLeg1_meshRenderes;
+            public SkinnedMeshRenderer[] rightLeg2_meshRenderes;
+            public Etasphera42_LaserRenderer laserA_Renderer;
+            public Etasphera42_LaserRenderer laserB_Renderer;
+            public Transform laserAimPoint;
+            public PawnColliderHelper dashActionColliderHelper;
+            public PawnColliderHelper hookingPointColliderHelper;
+        }
+
+        public Children children = new();
+
+        [Serializable]
+        public class Resource
+        {
+            [Header("Material")]
             public Material hitColor;
+
+            [Header("Fx")]
             public GameObject onHitFx;
             public GameObject onBigHitFx;
             public GameObject onKickHitFx;
@@ -91,23 +108,14 @@ namespace Game
             public GameObject onGuardBreakFx;
             public GameObject onJumpSlamFx1;
             public GameObject onJumpSlamFx2;
+
+
+            [Header("Prefab")]
+            public GameObject bulletProjectile;
+            public GameObject frameProjectile;
+            public GameObject bombProjectile;
         }
 
-        public Graphics graphics = new();
-
-        [Serializable]
-        public class Attachment
-        {
-            public SkinnedMeshRenderer[] body_meshRenderers;
-            public SkinnedMeshRenderer[] leftLeg1_meshRenderes;
-            public SkinnedMeshRenderer[] leftLeg2_meshRenderes;
-            public SkinnedMeshRenderer[] rightLeg1_meshRenderes;
-            public SkinnedMeshRenderer[] rightLeg2_meshRenderes;
-            public Transform laserAimPoint;
-            public Etasphera42_LaserRenderer laserA_Renderer;
-            public Etasphera42_LaserRenderer laserB_Renderer;
-        }
-
-        public Attachment attachment = new();
+        public Resource resource = new();
     }
 }
