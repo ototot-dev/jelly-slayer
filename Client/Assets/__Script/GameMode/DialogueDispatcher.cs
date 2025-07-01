@@ -246,11 +246,25 @@ namespace Game
 
             if (spawnTag.Length > 0)
             {
-                GameObject tagObj = TaggerSystem.FindGameObjectWithTag(spawnTag);
-                if (tagObj != null)
-                    pawnObj.transform.position = tagObj.transform.position;
+                if (spawnTag == "Player")
+                {
+                    var brain = GameContext.Instance.playerCtrler.possessedBrain;
+                    if (brain != null) 
+                    {
+                        pawnObj.transform.position = brain.GetWorldPosition();
+                    }
+                }
                 else
-                    Debug.Log("SpawnPawn SpawnTag Error: " + spawnTag);
+                {
+                    GameObject tagObj = TaggerSystem.FindGameObjectWithTag(spawnTag);
+                    if (tagObj != null)
+                    {
+                        pawnObj.transform.position = tagObj.transform.position;
+                        pawnObj.transform.rotation = tagObj.transform.rotation;
+                    }
+                    else
+                        Debug.Log("SpawnPawn SpawnTag Error: " + spawnTag);
+                }
             }
             // Spawn Message
             var mode = GameContext.Instance.launcher.currGameMode;

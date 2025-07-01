@@ -1,4 +1,4 @@
-title: Tutorial-2
+title: Tutorial-4
 tags:
 ---
 <<fadeIn 0.1>>
@@ -11,24 +11,24 @@ tags:
 <<vignette 0.3 0.2 1>>
 <<setLightIntensity SunLight 1>>
 <<spawnPawn DroneBot DroneBotSpawnPoint>>
-<<spawnPawn Rapax SP1>>
-<<spawnPawn Rapax SP2>>
+<<spawnPawn RoboCannon SP1>>
+<<spawnPawn RoboCannon SP2>>
 
 드론: 여긴 위험해. 빨리 탈출하자
 드론: 잠깐. 전방에 적이 있어. 조심해.
-케이: 저건... 괴물이잖아?
+케이: 하... XDO%. 이게 뭔 일이야.
 
 <<showSword>>
 <<sendMsgToGameMode SetCombat>>
-<<sendMsgToGameModeParam SetTutorialMode Room2_Step1>>
-<<showMessagePopup "일반 공격" "공격키를 누르면 상대를 공격할 수 있습니다." 4>>
+<<sendMsgToGameModeParam SetTutorialMode Room4_Step1>>
+<<showMessagePopup "원거리 패링" "상대 공격에 맞춰서 방어하면 탄알을 튕겨낼 수 있습니다." 4>>
 
 <<wait 1>>
 
 ===
 
 // step1 end --------------------------------------------------------------------
-title: Tutorial2_step2_1
+title: Tutorial4_step2_1
 tags:
 ---
 
@@ -36,8 +36,8 @@ tags:
 
 <<wait 1>>
 
-케이: 헉헉... 이것들은 뭐야?
-드론: 라펙스 들이야. 건물이 오래 방치되서 흘러들어온거 같네.
+케이: 이쪽이 안전한 길 아니었어?
+드론: 안전한 길 같은 건 없어. 
 
 <<wait 1>>
 
@@ -50,11 +50,11 @@ tags:
 ===
 
 // step1 end --------------------------------------------------------------------
-title: Tutorial2_step2_2
+title: Tutorial4_step2_2
 tags:
 ---
 
-<<sendMsgToGameModeParam SetTutorialMode Room2_Step2>>
+<<sendMsgToGameModeParam SetTutorialMode Room1_Step2>>
 
 <<spawnPawn Rapax SP3>>
 <<spawnPawn Rapax SP4>>
@@ -67,11 +67,11 @@ tags:
 ===
 
 // step1 end --------------------------------------------------------------------
-title: Tutorial2_step3
+title: Tutorial4_step3
 tags:
 ---
 
-<<sendMsgToGameModeParam SetTutorialMode Room2_Step3>>
+<<sendMsgToGameModeParam SetTutorialMode Room1_Step3>>
 
 <<showMessagePopup "패링" "적의 공격 타이밍에 가드하면 파링할수 있습니다." 4>>
 
@@ -85,7 +85,7 @@ tags:
 ===
 
 // step1 end --------------------------------------------------------------------
-title: Tutorial2_step4
+title: Tutorial4_step4
 tags:
 ---
 <<sendMsgToGameMode RoboSoldierStartAttack>>

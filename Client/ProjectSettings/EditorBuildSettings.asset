@@ -9,14 +9,17 @@ EditorBuildSettings:
     path: Assets/__Scene/Game.unity
     guid: 61ff8023b199147c586879b387329f65
   - enabled: 1
-    path: Assets/__Scene/Tutorial/Tutorial-0.unity
+    path: Assets/__Scene/Tutorial/Tutorial-PhoneRoom.unity
     guid: c8d0849b131274e4bb4fe5205373cd14
   - enabled: 1
-    path: Assets/__Scene/Tutorial/Tutorial-1.unity
+    path: Assets/__Scene/Tutorial/Tutorial-BattleRoom.unity
     guid: bde3c67306f6a4363832eed4f19d9bcc
   - enabled: 1
-    path: Assets/__Scene/Tutorial/Tutorial-2.unity
+    path: Assets/__Scene/Tutorial/Tutorial-ShortCorridor.unity
     guid: c7223902bad81434abb49d1502227765
+  - enabled: 1
+    path: Assets/__Scene/Tutorial/Tutorial-LongCorridor.unity
+    guid: 2b35a2703378111438be03d9501a0e92
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 391b8e6a6b43c40219c650859c703134, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: f536414d33fcb447ebfb47de4551c2f4, type: 3}
