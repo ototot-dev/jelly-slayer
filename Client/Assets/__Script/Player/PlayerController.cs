@@ -698,7 +698,7 @@ namespace Game
                 return;
 
             Debug.Log("<color=red>OnDrink</color>");
-            possessedBrain.ActionCtrler.SetPendingAction("DrinkPotion");
+            possessedBrain.ActionCtrler.SetPendingAction("DrinkPotion"); 
         }
 
         public void OnBurst(InputValue value)

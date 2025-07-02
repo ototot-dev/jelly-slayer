@@ -1034,7 +1034,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bodyMeshRenderer: {fileID: 3244703593147971087}
-  swordMeshRenderer: {fileID: 0}
+  swordMeshRenderer: {fileID: 3372592520764019716}
   mechArmRenderers:
   - {fileID: 2132723217248930319}
   - {fileID: 6727123505348413996}
@@ -29758,6 +29758,11 @@ PrefabInstance:
       addedObject: {fileID: 3635994939628137719}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 923e2c857250b784eb3a49ce857086c2, type: 3}
+--- !u!23 &3372592520764019716 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2359886, guid: 923e2c857250b784eb3a49ce857086c2, type: 3}
+  m_PrefabInstance: {fileID: 3372592520765855306}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3372592520765924138 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 472416, guid: 923e2c857250b784eb3a49ce857086c2, type: 3}
