@@ -770,6 +770,7 @@ namespace Game.NodeCanvasExtension
                 EndAction(true);
 
             var stateBehaviour =__pawnAnimCtrler.FindObservableStateMachineTriggerEx(stateName.value);
+
             Debug.Assert(stateBehaviour != null);
 
             __pawnActionCtrler.currActionContext.manualAdvanceSpeed = 0;
@@ -777,7 +778,9 @@ namespace Game.NodeCanvasExtension
             {
                 if (__pawnActionCtrler.currActionContext.manualAdvanceEnabled)
                     __pawnActionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
+
                 __pawnActionCtrler.currActionContext.preMotionTimeStamp = Time.time;
+                
                 EndAction(true);
             }).AddTo(agent);
         }
@@ -835,12 +838,13 @@ namespace Game.NodeCanvasExtension
     [Category("Pawn")]
     public class DelayAction : ActionTask
     {
-        protected override string info => $"Delay {delayTime} secs";
+        protected override string info => $"Delay {delayTime} secs" + (interruptEnabled.value ? " <b>!!</b>" : string.Empty);
         public BBParameter<float> delayTime = 1f;
         public BBParameter<float> randomRangeMin = -0.1f;
         public BBParameter<float> randomRangeMax = 0.1f;
         public BBParameter<float> animAdvanceSinusoidalAmplitude = 0.1f;
         public BBParameter<float> animAdvanceSinusoidalFrequence = 1f;
+        public BBParameter<bool> interruptEnabled = false;
         PawnActionController __pawnActionCtrler;
         int __capturedActionInstanceId;
         float __waitDuration;
@@ -859,6 +863,9 @@ namespace Game.NodeCanvasExtension
             __manualAdvanceSpeedCached = __pawnActionCtrler.currActionContext.manualAdvanceSpeed;
             __manualAdvanceTimeCached =  __pawnActionCtrler.currActionContext.manualAdvanceTime;
             __pawnActionCtrler.currActionContext.manualAdvanceSpeed = 0;
+
+            if (interruptEnabled.value)
+                __pawnActionCtrler.SetInterruptEnabled(true);
         }
 
         protected override void OnUpdate()
@@ -884,6 +891,9 @@ namespace Game.NodeCanvasExtension
         {
             base.OnStop(interrupted);
             __pawnActionCtrler.currActionContext.manualAdvanceSpeed = __manualAdvanceSpeedCached;
+
+            if (interruptEnabled.value)
+                __pawnActionCtrler.SetInterruptEnabled(false);
         }
     }
 
@@ -907,6 +917,7 @@ namespace Game.NodeCanvasExtension
             Debug.Assert(pawnMovable != null);
 
             var executeTimeStamp = Time.time;
+
             actionCtrler.currActionContext.homingRotationDisposable?.Dispose();
             actionCtrler.currActionContext.homingRotationDisposable = Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds((duration.value > 0f ? duration.value : 3600f))))
                 .DoOnCancel(() => 
@@ -923,6 +934,7 @@ namespace Game.NodeCanvasExtension
                 {
                     var fromRotation = Quaternion.LookRotation(pawnBrain.coreColliderHelper.transform.forward.Vector2D().normalized);
                     var toRotation = Quaternion.LookRotation((target.value.position - pawnBrain.coreColliderHelper.transform.position).Vector2D().normalized);
+
                     pawnMovable.FaceTo(Quaternion.RotateTowards(fromRotation, toRotation, rotateSpeed.value * Time.deltaTime) * Vector3.forward);
                 }).AddTo(agent);
 
@@ -976,6 +988,7 @@ namespace Game.NodeCanvasExtension
             Debug.Assert(pawnMovable != null);
 
             __capturedActionInstanceId =  actionCtrler.currActionContext.actionInstanceId;
+
             if (endActionWhenReachToTarget)
             {
                 actionCtrler.WaitAction();
@@ -1142,12 +1155,14 @@ namespace Game.NodeCanvasExtension
 
                     var rootMotionSpeed = impulseSpeed.value;
                     var elapsedTime = Time.time - impulseStartTimeStamp;
+
                     if (accelDuration.value > 0f && elapsedTime < accelDuration.value)
                         rootMotionSpeed = impulseSpeed.value * ParadoxNotion.Animation.Easing.Ease(accelEase.value, 0f, 1f, elapsedTime / accelDuration.value);
                     else if (breakDuration.value > 0f && elapsedTime > duration.value + Mathf.Max(0f, accelDuration.value))
                         rootMotionSpeed = impulseSpeed.value * ParadoxNotion.Animation.Easing.Ease(breakEase.value, 0f, 1f, 1f - (elapsedTime - duration.value - Mathf.Max(0f, accelDuration.value)) / breakDuration.value);
 
                     var rootMotionVec = rootMotionSpeed * pawnBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                    
                     if (actionCtrler.CanRootMotion(rootMotionVec))
                         pawnMovable.AddRootMotion(Time.deltaTime * rootMotionVec, Quaternion.identity, Time.deltaTime);
                 }).AddTo(agent);
@@ -1193,6 +1208,7 @@ namespace Game.NodeCanvasExtension
             Debug.Assert(pawnMovable != null);
 
             __capturedActionInstanceId =  actionCtrler.currActionContext.actionInstanceId;
+
             __falllingTimeStamp = Time.time;
             __fallingDisposable = Observable.EveryUpdate().Subscribe(_ =>
             {   
@@ -1371,6 +1387,7 @@ namespace Game.NodeCanvasExtension
             {
                 //* Duration 없는 단발성 Trace인 경우엔 Trace 진행 방향은 필요없음
                 traceDirection.value = 0;
+                
                 __sampleNum = 1;
                 __sentDamageBrains.Clear();
                 __traceDisposable = Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ => TraceSampleInternal()).AddTo(agent);
@@ -1512,6 +1529,7 @@ namespace Game.NodeCanvasExtension
     {
         protected override string info => base.info + $" <b>{newValue}</b>";
         public float newValue;
+
         protected override void OnExecute()
         {
             if (agent.TryGetComponent<PawnActionController>(out var actionCtrler) && actionCtrler.CheckActionRunning())
@@ -1526,6 +1544,7 @@ namespace Game.NodeCanvasExtension
     {
         protected override string info => base.info + $" <b>{newValue}</b>";
         public float newValue;
+
         protected override void OnExecute()
         {
             if (agent.TryGetComponent<PawnActionController>(out var actionCtrler) && actionCtrler.CheckActionRunning())

@@ -2,7 +2,6 @@
 using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
-using UGUI.Rx;
 using UniRx;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -116,7 +115,7 @@ namespace Game
                 return false;
 
             targetBrain.owner = this;
-            possessedBrain = targetBrain as SlayerBrain;
+            possessedBrain = targetBrain;
 
             targetBrain.transform.SetParent(transform, true);
             targetBrain.OnPossessedHandler();
@@ -138,18 +137,22 @@ namespace Game
 
         void Start()
         {
-            PawnEventManager.Instance.RegisterEventListener(this as IPawnEventListener);
+            PawnEventManager.Instance.RegisterEventListener(this);
         }
 
         void Update()
         {
-            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
-                return;
-            if (possessedBrain == null)
+            if (!CanProcessInput())
                 return;
 
-            possessedBrain.Movement.freezeRotation = GameContext.Instance.launcher.currGameMode.IsInCombat();
+            HandleMovement();
+            HandleRotation();
+        }
 
+        bool CanProcessInput() => possessedBrain != null && GameContext.Instance.launcher.currGameMode?.CanPlayerConsumeInput() == true;
+
+        void HandleMovement()
+        {
             if (inputMoveVec.Value.sqrMagnitude > 0)
             {
                 var isAction = possessedBrain.BB.IsGuarding || possessedBrain.BB.IsPunchCharging;
@@ -163,8 +166,13 @@ namespace Game
             else
             {
                 possessedBrain.Movement.moveVec = Vector3.zero;
-                possessedBrain.Movement.moveSpeed = 0;
+                possessedBrain.Movement.moveSpeed = possessedBrain.BB.body.walkSpeed;
             }
+        }
+
+        void HandleRotation()
+        {
+            possessedBrain.Movement.freezeRotation = GameContext.Instance.launcher.currGameMode.IsInCombat();
 
             if (possessedBrain.Movement.freezeRotation)
             {
@@ -182,9 +190,7 @@ namespace Game
 
         public void OnMove(InputValue value)
         {
-            if (GameContext.Instance.launcher.currGameMode == null || !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
-                return;
-            if (possessedBrain == null)
+            if (!CanProcessInput())
                 return;
 
             inputMoveVec.Value = value.Get<Vector2>();
@@ -192,9 +198,7 @@ namespace Game
 
         public void OnLook(InputValue value)
         {
-            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
-                return;
-            if (possessedBrain == null)
+            if (!CanProcessInput())
                 return;
                 
             if (GameContext.Instance.cameraCtrler != null &&
@@ -203,9 +207,7 @@ namespace Game
         }
         public void OnGuard(InputValue value)
         {
-            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
-                return;
-            if (possessedBrain == null)
+            if (!CanProcessInput())
                 return;
 
             possessedBrain.BB.body.isGuarding.Value = value.Get<float>() > 0;
@@ -225,9 +227,7 @@ namespace Game
 
         public void OnJump(InputValue value)
         {
-            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
-                return;
-            if (GameContext.Instance.dialogueRunner?.IsDialogueRunning ?? false)
+            if (!CanProcessInput())
                 return;
 
             __jumpHangingDisposable ??= Observable.EveryUpdate().Where(_ => __jumpExecutedTimeStamp > __jumpReleasedTimeStamp).Subscribe(_ =>
@@ -294,9 +294,7 @@ namespace Game
 
         public void OnNextTarget()
         {
-            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
-                return;
-            if (possessedBrain == null)
+            if (!CanProcessInput())
                 return;
 
             if (possessedBrain.BB.TargetPawn == null)
@@ -344,9 +342,7 @@ namespace Game
 
         public void OnPrevTarget()
         {
-            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
-                return;
-            if (possessedBrain == null)
+            if (!CanProcessInput())
                 return;
 
             if (possessedBrain.BB.TargetPawn == null)
@@ -385,9 +381,7 @@ namespace Game
 
         public void OnRoll()
         {
-            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
-                return;
-            if (possessedBrain == null)
+            if (!CanProcessInput())
                 return;
 
             if (_isEnable_Roll == false)
@@ -406,8 +400,8 @@ namespace Game
             if (possessedBrain.ActionCtrler.CheckActionRunning())
                 possessedBrain.ActionCtrler.CancelAction(false);
 
-            var rollingXZ = Vector3.zero;
-            var rollingVec = Vector3.zero;
+            Vector3 rollingXZ;
+            Vector3 rollingVec;
             if (possessedBrain.Movement.moveVec == Vector3.zero)
             {
                 rollingXZ = Vector3.back;
@@ -467,11 +461,7 @@ namespace Game
 
         public void OnPunch(InputValue value)
         {
-            if (GameContext.Instance.launcher.currGameMode == null || 
-                !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput() || 
-                !GameContext.Instance.launcher.currGameMode.IsInCombat())
-                return;
-            if (possessedBrain == null)
+            if (!CanProcessInput() || !GameContext.Instance.launcher.currGameMode.IsInCombat())
                 return;
 
             if (_isEnable_Parry == false)
@@ -517,19 +507,17 @@ namespace Game
 
         public void OnAttack(InputValue value)
         {
-            if (GameContext.Instance.launcher.currGameMode == null || !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput() || !GameContext.Instance.launcher.currGameMode.IsInCombat())
-                return;
-            if (possessedBrain == null)
+            if (!CanProcessInput() || !GameContext.Instance.launcher.currGameMode.IsInCombat())
                 return;
                 
             if (_isEnable_NormalAttack == false)
                 return;
 
-            var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsRolling && !possessedBrain.BB.IsHanging;;
+            var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsRolling && !possessedBrain.BB.IsHanging;
             // var canAction2 = canAction1 && !MyHeroBrain.PawnBB.IsThrowing && !MyHeroBrain.PawnBB.IsGrabbed;
             var canAction3 = canAction1 && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
 
-            var isJellyActive = (boundJellyMesh.Value != null);
+            var isJellyActive = boundJellyMesh.Value != null;
         
             if (canAction3)
             {
@@ -551,7 +539,11 @@ namespace Game
                             possessedBrain.ActionCtrler.CancelAction(false);
                             possessedBrain.ActionCtrler.SetPendingAction("Slash#3");
                             break;
-                        case "GroggyAttack#1":
+                        case "Slash#3":
+                            possessedBrain.ActionCtrler.CancelAction(false);
+                            possessedBrain.ActionCtrler.SetPendingAction("Slash#4");
+                            break;
+                        case "GroggyAttack#1": 
                             if (isJellyActive == true)
                             {
                                 possessedBrain.ActionCtrler.CancelAction(false);
@@ -597,9 +589,7 @@ namespace Game
 
         public void OnGroggyAttack(InputValue value)
         {
-            if (GameContext.Instance.launcher.currGameMode == null || !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput() || !GameContext.Instance.launcher.currGameMode.IsInCombat())
-                return;
-            if (possessedBrain == null)
+            if (!CanProcessInput() || !GameContext.Instance.launcher.currGameMode.IsInCombat())
                 return;
 
             if (_isEnable_NormalAttack == false)
@@ -644,9 +634,7 @@ namespace Game
 
         public void OnSpecialAttack(InputValue value)
         {
-            if (GameContext.Instance.launcher.currGameMode == null || !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
-                return;
-            if (possessedBrain == null)
+            if (!CanProcessInput() || !GameContext.Instance.launcher.currGameMode.IsInCombat())
                 return;
 
             if (value.isPressed)
@@ -706,9 +694,7 @@ namespace Game
 
         public void OnDrink() 
         {
-            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
-                return;
-            if (possessedBrain == null)
+            if (!CanProcessInput() || !GameContext.Instance.launcher.currGameMode.IsInCombat())
                 return;
 
             Debug.Log("<color=red>OnDrink</color>");
@@ -717,9 +703,7 @@ namespace Game
 
         public void OnBurst(InputValue value)
         {
-            if (GameContext.Instance.launcher.currGameMode != null && !GameContext.Instance.launcher.currGameMode.CanPlayerConsumeInput())
-                return;
-            if (possessedBrain == null)
+            if (!CanProcessInput() || !GameContext.Instance.launcher.currGameMode.IsInCombat())
                 return;
                 
             Debug.Log("OnBurst");

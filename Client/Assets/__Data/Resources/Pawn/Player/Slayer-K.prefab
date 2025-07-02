@@ -780,7 +780,7 @@ GameObject:
   - component: {fileID: 6873228617776499816}
   m_Layer: 0
   m_Name: Slayer-K
-  m_TagString: Hero
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -816,7 +816,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 352d56696aba6374fa7fdf47e19af82f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _tagId: 2
+  _tagId: 17
 --- !u!114 &2413320803077063668
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -907,8 +907,8 @@ MonoBehaviour:
   freezeRotation: 1
   rootMotionEnabled: 1
   moveSpeed: 1
-  moveAccel: 20
-  moveBrake: 20
+  moveAccel: 10
+  moveBrake: 10
   rotateSpeed: 30
   gravity: {x: 0, y: -19.81, z: 0}
   moveVec: {x: 0, y: 0, z: 0}
@@ -1003,7 +1003,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   common:
     pawnId: 1
-    pawnName: Hero
+    pawnName: Slayer
     displayName: 
     spawnWaitingTime: 1
     despawnWaitingTime: 1
@@ -1028,11 +1028,11 @@ MonoBehaviour:
       value: 1
     maxStamina:
       value: 1
+    maxBurst:
+      value: 1
     maxStance:
       value: 1
     maxKnockDown:
-      value: 1
-    maxRage:
       value: 1
     maxGroggyHitCount:
       value: 0
@@ -1042,13 +1042,13 @@ MonoBehaviour:
       value: 1
     stamina:
       value: 1
+    burst:
+      value: 0
     stance:
       value: 1
     knockDown:
       value: 1
     groggyHitCount:
-      value: 0
-    rage:
       value: 0
     poise: 0
     guardStrength: 0
@@ -1184,7 +1184,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 11400000, guid: 31e804ec6c67b442fad1c9502b3d6aa3, type: 2}
   _boundGraphSource:
-    _version: 3.31
+    _version: 3.33
     _category: 
     _comments: 
     _translation: {x: 185, y: -191}
@@ -3307,7 +3307,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8103817657370640181
 Transform:
   m_ObjectHideFlags: 0
@@ -8107,216 +8107,6 @@ MonoBehaviour:
       _uObject: {fileID: 0}
       VariableType: 0
       _rangeHelper: {x: 0, y: 1, z: 0, w: 0}
-  - Enabled: 0
-    Parent: {fileID: 3673634840836888687}
-    ModuleReference: {fileID: 11400000, guid: d1c896ee3bafddf43b0dd1f38ec2a9e9, type: 2}
-    customStringList: []
-    customObjectList: []
-    variables:
-    - VariableName: Redirect Hips
-      Tooltip: Overall blend for hips rotation / position adjustement on different
-        movement angles.
-      _value: {x: 0.9, y: 0, z: 0, w: 0}
-      _string: 
-      _curve:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      _uObject: {fileID: 0}
-      VariableType: 0
-      _rangeHelper: {x: 0, y: 1, z: 0, w: 0}
-    - VariableName: Redirect Foots
-      Tooltip: Rotating foots towards desired movement direction to match it.
-      _value: {x: 0.8, y: 0, z: 0, w: 0}
-      _string: 
-      _curve:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      _uObject: {fileID: 0}
-      VariableType: 0
-      _rangeHelper: {x: 0, y: 1, z: 0, w: 0}
-    - VariableName: Redirect Knees
-      Tooltip: Adjusting IK knees bend direction to match movement direction.
-      _value: {x: 0.4, y: 0, z: 0, w: 0}
-      _string: 
-      _curve:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      _uObject: {fileID: 0}
-      VariableType: 0
-      _rangeHelper: {x: 0, y: 1, z: 0, w: 0}
-    - VariableName: Limit Leg Raise
-      Tooltip: Limiting how hight legs should be raised. It can be helpful when some
-        running animations tends to raise legs too high on running backwards.
-      _value: {x: 0.15, y: 0, z: 0, w: 0}
-      _string: 
-      _curve:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      _uObject: {fileID: 0}
-      VariableType: 0
-      _rangeHelper: {x: 0, y: 0.3, z: 0, w: 0}
-    - VariableName: Transitions Duration
-      Tooltip: How rapidly the procedural adjustements should be executed.
-      _value: {x: 0.375, y: 0, z: 0, w: 0}
-      _string: 
-      _curve:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      _uObject: {fileID: 0}
-      VariableType: 0
-      _rangeHelper: {x: 0, y: 0.6, z: 0, w: 0}
-    - VariableName: Fix Backward Foots
-      Tooltip: Fixing foots rotation which happens during running backwards.
-      _value: {x: 1, y: 0, z: 0, w: 0}
-      _string: 
-      _curve:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      _uObject: {fileID: 0}
-      VariableType: 0
-      _rangeHelper: {x: 0, y: 1, z: 0, w: 0}
-    - VariableName: Adjust Stretched
-      Tooltip: Adjusting hips position and rotation when legs redirecting causes
-        too big offset of feet from the hips.
-      _value: {x: 0.55, y: 0, z: 0, w: 0}
-      _string: 
-      _curve:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      _uObject: {fileID: 0}
-      VariableType: 0
-      _rangeHelper: {x: 0, y: 1, z: 0, w: 0}
-    - VariableName: Restore Spine
-      Tooltip: Restoring spine rotation which is rotated by the hips rotation adjuster,
-        to face head forward instead of desired direction.
-      _value: {x: 0.4, y: 0, z: 0, w: 0}
-      _string: 
-      _curve:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      _uObject: {fileID: 0}
-      VariableType: 0
-      _rangeHelper: {x: 0, y: 1, z: 0, w: 0}
-    - VariableName: Disable When Jumping
-      Tooltip: 
-      _value: {x: 0, y: 0, z: 0, w: 0}
-      _string: 
-      _curve:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      _uObject: {fileID: 0}
-      VariableType: 1
-      _rangeHelper: {x: 0, y: 0, z: 0, w: 0}
-    - VariableName: Animator World X Dir
-      Tooltip: (Optional) Using unity animator's variable to define X world direction
-        for this module's algorithm. (no need for Legs Animator module access through
-        code)
-      _value: {x: 0, y: 0, z: 0, w: 0}
-      _string: 
-      _curve:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      _uObject: {fileID: 0}
-      VariableType: 4
-      _rangeHelper: {x: 0, y: 0, z: 0, w: 0}
-    - VariableName: Use Rigidbody For Dir
-      Tooltip: Using attached rigidbody velocity to define current desired movement
-        direction for the module's algorithm. (no need for coding!)
-      _value: {x: 0, y: 0, z: 0, w: 0}
-      _string: 
-      _curve:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      _uObject: {fileID: 0}
-      VariableType: 1
-      _rangeHelper: {x: 0, y: 0, z: 0, w: 0}
-    - VariableName: Redirect Feet
-      Tooltip: Rotating feet towards desired movement direction to match it.
-      _value: {x: 0.8, y: 0, z: 0, w: 0}
-      _string: 
-      _curve:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      _uObject: {fileID: 0}
-      VariableType: 0
-      _rangeHelper: {x: 0, y: 1, z: 0, w: 0}
-    - VariableName: Fix Backward Feet
-      Tooltip: Fixing feet rotation which happens during running backwards.
-      _value: {x: 1, y: 0, z: 0, w: 0}
-      _string: 
-      _curve:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      _uObject: {fileID: 0}
-      VariableType: 0
-      _rangeHelper: {x: 0, y: 1, z: 0, w: 0}
-    - VariableName: Extra Smoother
-      Tooltip: Applying extra smoothing to the leg motion.
-      _value: {x: 0, y: 0, z: 0, w: 0}
-      _string: 
-      _curve:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      _uObject: {fileID: 0}
-      VariableType: 0
-      _rangeHelper: {x: -1, y: 2, z: 0, w: 0}
-    - VariableName: Re-adjust with hips offset
-      Tooltip: Re-adjusting resulting feet ik positions with the hips offset. Can
-        improve hips offset feeling but can cause minimalistic feet jitters during
-        movement gluing.
-      _value: {x: 0, y: 0, z: 0, w: 0}
-      _string: 
-      _curve:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      _uObject: {fileID: 0}
-      VariableType: 1
-      _rangeHelper: {x: 0, y: 0, z: 0, w: 0}
   - Enabled: 1
     Parent: {fileID: 3673634840836888687}
     ModuleReference: {fileID: 11400000, guid: 1e5bd3f5b649d1b45b9f6e323910b76b, type: 2}
@@ -8943,7 +8733,7 @@ MonoBehaviour:
   handler:
     _Editor_SelectedChain: 3
     _Editor_ChainCategory: 1
-    _EditorCategory: 3
+    _EditorCategory: 4
     _EditorMainCategory: 0
     _EditorMotionCategory: 0
     m_hemi: {fileID: -2508796484986968503, guid: 44d994eaad14fdf49a2dd378b4d62094, type: 3}
@@ -9566,6 +9356,19 @@ MonoBehaviour:
         _uObject: {fileID: 0}
         VariableType: 1
         _rangeHelper: {x: 0, y: 0, z: 0, w: 0}
+      - VariableName: Orientation Mode
+        Tooltip: Define how target rotation should be calculated.
+        _value: {x: 1, y: 0, z: 0, w: 1}
+        _string: 
+        _curve:
+          serializedVersion: 2
+          m_Curve: []
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+        _uObject: {fileID: 0}
+        VariableType: 0
+        _rangeHelper: {x: 0, y: 0, z: 0, w: 0}
     - CustomName: 
       enabled: 1
       FeatureReference: {fileID: 11400000, guid: 32dfb57052c6ffa4d89b8a344451d9d0, type: 2}
@@ -9727,6 +9530,7 @@ MonoBehaviour:
         _rangeHelper: {x: 0.01, y: 5, z: 0, w: 0}
     IsHumanoid: 1
     dummyContainer: {fileID: 0}
+    inBetweenPreGenerateMemory: []
     skeletonFillExtraBonesList: []
     MusclesPower: 1
     SpringsValue: 1500
@@ -23323,6 +23127,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8103817657370640181}
+  - {fileID: 458730795184651764}
   m_Father: {fileID: 3244703593161533067}
   m_LocalEulerAnglesHint: {x: -2.18, y: 266.441, z: 83.593}
 --- !u!1 &4233535069068618711
@@ -26620,7 +26425,7 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Radius: 2
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Center: {x: 0, y: 2, z: 0}
 --- !u!1 &7141088432369821830
 GameObject:
   m_ObjectHideFlags: 0
@@ -29443,6 +29248,84 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1001 &455980086014332876
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 244103361750439637}
+    m_Modifications:
+    - target: {fileID: 1055332362650044, guid: 47e9018ab1553a240b35adfe2ea4bce5, type: 3}
+      propertyPath: m_Name
+      value: Katana_LOD_PBR
+      objectReference: {fileID: 0}
+    - target: {fileID: 4022299771155000, guid: 47e9018ab1553a240b35adfe2ea4bce5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 4022299771155000, guid: 47e9018ab1553a240b35adfe2ea4bce5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 4022299771155000, guid: 47e9018ab1553a240b35adfe2ea4bce5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 4022299771155000, guid: 47e9018ab1553a240b35adfe2ea4bce5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4022299771155000, guid: 47e9018ab1553a240b35adfe2ea4bce5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4022299771155000, guid: 47e9018ab1553a240b35adfe2ea4bce5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4022299771155000, guid: 47e9018ab1553a240b35adfe2ea4bce5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4022299771155000, guid: 47e9018ab1553a240b35adfe2ea4bce5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4022299771155000, guid: 47e9018ab1553a240b35adfe2ea4bce5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4022299771155000, guid: 47e9018ab1553a240b35adfe2ea4bce5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4022299771155000, guid: 47e9018ab1553a240b35adfe2ea4bce5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 4022299771155000, guid: 47e9018ab1553a240b35adfe2ea4bce5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 4022299771155000, guid: 47e9018ab1553a240b35adfe2ea4bce5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4022299771155000, guid: 47e9018ab1553a240b35adfe2ea4bce5, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 47e9018ab1553a240b35adfe2ea4bce5, type: 3}
+--- !u!4 &458730795184651764 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4022299771155000, guid: 47e9018ab1553a240b35adfe2ea4bce5, type: 3}
+  m_PrefabInstance: {fileID: 455980086014332876}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1127170306918934391
 PrefabInstance:
   m_ObjectHideFlags: 0

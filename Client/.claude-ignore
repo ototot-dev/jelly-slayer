@@ -1,0 +1,80 @@
+# Unity specific files
+Library/
+Temp/
+Obj/
+Build/
+Builds/
+Logs/
+UserSettings/
+Assets/__Data/
+Assets/__Submodule/
+
+# Unity generated files
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Unity cache and meta files for large assets
+*.meta
+*.unity_meta
+
+# Asset bundles
+*.bundle
+
+# Version control
+.git/
+.gitignore
+.gitattributes
+
+# IDE files
+.vscode/
+.vs/
+.idea/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Build artifacts
+*.apk
+*.aab
+*.ipa
+*.exe
+
+# Large media files
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+*.wav
+*.mp3
+*.ogg
+*.flac
+
+# Documentation
+*.pdf
+*.doc
+*.docx
+
+# Compressed files
+*.zip
+*.rar
+*.7z
+*.tar.gz
