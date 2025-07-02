@@ -194,7 +194,7 @@ namespace Game
                     leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
                     leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
 
-                    mainAnimator.SetLayerWeight((int)LayerIndices.LeftArm, 1f);
+                    mainAnimator.SetLayerWeight((int)LayerIndices.LeftArm, __brain.ActionCtrler.CurrActionName == "Slash#1" || __brain.ActionCtrler.CurrActionName == "Slash#2" ? 0f : 1f);
                     mainAnimator.SetLayerWeight((int)LayerIndices.RightArm, 0f);
                 }
                 else
