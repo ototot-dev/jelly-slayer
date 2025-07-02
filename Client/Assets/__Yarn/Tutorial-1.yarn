@@ -1,228 +1,97 @@
-title: Tutorial1
+﻿title: Tutorial-1
 tags:
 ---
-<<fadeIn 0.1>>
+
 <<vignette 0.4 0.9 0>>
 <<hideMechArm>>
 <<hideSword>>
+<<sleep>>
 <<wait 2>>
 <<fadeOut 1>>
 <<wait 2>>
 <<vignette 0.3 0.2 1>>
+
+케이: 크윽...
+케이: '몸이 움직이지 않아....'
+케이: 커억.. 컥. 컥...
+// 몸을 뒤척이며 일어난다.
+
+케이: 으윽... 여긴... 어디지?
+// 기침 후 몸을 일으킨다.
+
+<<getUp>>
+<<wait 6>>
+
+<<showAndWaitInteractionKey "Door">>
+
+케이: 여긴...<waitfor=1>나한테 무슨 일이 있었던거야?
+// 주변은 작고 어두운 방. 딱히 아무런 장식도 없다.
+<<wait 1>>
+
+<<setCameraTarget Phone>>
+
+// 1.5 초간 50 만큼 shake (fadeout 안함)
+<<tweenShake Phone 2 50 false>>
+<<playSound PHONE_RING>> // 따르릉
+<<wait 3>>
+
+케이: 무슨 소리야?
+
+// 전화벨 소리와 함께 폰부스가 밝아진다.
+// 케이는 몸을 돌려 전화박스를 발견한다.
+
+<<tweenShake Phone 2 50 false>>
+<<playSound PHONE_RING>> // 따르릉
+<<wait 3>>
+
+케이: 공중... 전화?
+
+<<tweenShake Phone 2 50 false>>
+<<playSound PHONE_RING>> // 따르릉
+<<wait 1>>
+
+<<showMessagePopup "" "방향키를 사용해서 이동하세요" 8>>
+
+//<<showAndWaitInteractionKey "Door">>
+<<showAndWaitInteractionKey "Phone">>
+ 
+// 케이는 천천히 몸을 움직인다. 잠시 망설이다 전화를 받는다.
+<<playSound PHONE_PICKUP>> // 철컥.
+<<wait 1>>
+
+케이: 여보세요?
+???: 드디어 연결이 되었군...  케이.
+케이: 이봐요? 누구시죠? 절 아시나요?
+???: 시간이 없어. 다행히 지금 통화로 너의 위치를 특정했다.
+
+// 순간 짜증나는표정 (이모지)
+케이: <shake><size=40>뭐???<sprite name=smile> 당신 누구야? 지금 무슨 일인데?</size></shake> 
+???: 길게 통화는 못하니 잘 들어. 너는 위험에 처해 있어.
+???: 하지만 우리가 널 도와줄 누군가를 보내줄께.
+
+<<playSound PHONE_PICKUP>> // 뚜... 전화 끊어짐
+// 케이가 전화 내려놓음.
+<<wait 2>>
+
+케이: 하... 끊어 버렸네.
+케이: 이게 무슨 소리야? 위험이라니....
+
+<<wait 0.5>>
+
+// 갑자기 드론이 날아온다.
 <<spawnPawn DroneBot DroneBotSpawnPoint>>
+<<wait 6>>
 
-케이: 여긴 어두운데.
-드론: 이쪽으로 쭉 가면 탈출로야.
+드론: 드디어 발견했네. 케이. 우리가 널 찾으려고 얼마나 노력했는지.
+케이: 뭐야? 아까 전화한 게 당신인가?
+드론: 시간이 없어. 일단 도망가야 해. 이쪽으로 가자.
 
-<<wait 2>>
-
-<<setLightIntensity SunLight 0.6>>
-<<wait 0.1>>
-<<setLightIntensity SunLight 0.1>>
-<<wait 0.1>>
-<<setLightIntensity SunLight 0.6>>
-<<wait 0.1>>
-<<setLightIntensity SunLight 0.1>>
-<<wait 0.6>>
-<<setLightIntensity SunLight 1>>
-<<wait 0.3>>
-
-
-케이: <size=40>뭐야?</size> 갑자기?
-
-<<wait 2>>
-
-<<setCameraTarget CameraPoint>>
-<<spawnPawn RoboSoldier SP1>>
-
-<<wait 4>>
 <<setCameraSlayer>>
-
-//<<jump Tutorial1_parry>>
-
-케이: <shake>으악? 저게 뭐야?</shake>
-드론: 이런, 방어 시스템이 발동한 모양이네.
-케이: 방어 시스템이라... 
-드론: 걱정하지마. 기지의 방어 시스템은 해킹이 가능하거든. 
-드론: 내가 적을 해킹할테니 기본적인 전투를 익혀 볼래?
-	-> 케이: <shake>나보고 저거랑 싸우라는 거야?</shake>
-		<<jump Tutorial1_normalattack>>
-	-> 케이: 아니
-		<<jump Tutorial1_normalattack>>
-
-==
-
--------------------------------------------------------------
-title: Tutorial1_normalattack
----
-드론: 좋아. 지금 제어권을 해킹했어. 기본적인 공격을 연습해봐.
-케이: 이 XO%R... 남의 말을 안듣네...
-드론: 네가 얼마나 강력한 전사인지 알고 있어. 무기를 너에게 전송했으니 연습해봐.
-
 <<wait 1>>
 
-<<showSword>>
+<<showMessagePopup "" "오른쪽 문으로 나가세요." 8>>
+// 드론이 문쪽으로 날아가서 선회
 
-<<sendMsgToGameMode SetCombat>>
-<<sendMsgToGameModeParam SetTutorialMode NormalAttack>>
-<<showMessagePopup "일반 공격" "공격키를 사용해서 적을 3회 공격하세요" 8>>
-
-<<waitCheck>>
-
-<<wait 2>>
-
-//<<jump Tutorial1_powerattack>>
-<<jump Tutorial1_guard>>
+<<showAndWaitInteractionKey "Door">>
 
 ===
-
-// 강공격 --------------------------------------------------------------------
-title: Tutorial1_powerattack
----
-
-드론: 훌륭해. 하지만 적이 가드할 경우 대미지를 줄 수가 없어. 
-케이: 저 상태에서 적이 가드한다고?
-드론: 그래. 그 경우 모으기 공격으로 적의 가드를 깨뜨릴 수 있지.
-
-<<wait 1>>
-
-<<showSword>>
-
-<<sendMsgToGameMode SetCombat>>
-<<sendMsgToGameModeParam SetTutorialMode PowerAttack>>
-<<sendMsgToGameMode RoboSoldierStartGuard>>
-<<showMessagePopup "강공격" "강공격으로 적의 방어를 무너뜨릴 수 있습니다. 공격키를 길게 눌러서 방어를 무너뜨리세요." 8>>
-
-<<waitCheck>>
-
-<<wait 1>>
-
-<<jump Tutorial1_guard>>
-
-===
-
-// 가드 --------------------------------------------------------------------
-title: Tutorial1_guard
----
-
-드론: 좋아. 이제 가드를 알려줄 께. 적을 바라보면 자동으로 가드할 수 있어.
-케이: 그게 쉬운게 아니야.
-드론: 적의 공격을 가드해 봐.
-
-<<sendMsgToGameMode SetCombat>>
-<<sendMsgToGameModeParam SetTutorialMode Guard>>
-<<sendMsgToGameMode RoboSoldierStartAttack>>
-<<showMessagePopup "가드" "적의 공격은 가드할 수 있습니다. 상대의 공격을 3회 가드하세요." 4>>
-
-<<waitCheck>>
-<<sendMsgToGameMode RoboSoldierEndAttack>>
-
-<<wait 1>>
-
-<<jump Tutorial1_evade>>
-
-===
-
-// 회피 --------------------------------------------------------------------
-title: Tutorial1_evade
----
-
-<<wait 1>>
-
-드론: 역시 금방하네. 적의 공격은 회피할 수 도 있어. 이번엔 적의 공격을 회피해봐.
-
-<<wait 1>>
-
-<<sendMsgToGameMode SetCombat>>
-<<sendMsgToGameModeParam SetTutorialMode Evade>>
-<<sendMsgToGameMode RoboSoldierStartAttack>>
-<<showMessagePopup "회피" "회피는 가드보다 적은 스테미너를 소비합니다. 상대의 공격을 3회 회피하세요." 8>>
-
-<<waitCheck>>
-<<sendMsgToGameMode ResetCombat>>
-<<sendMsgToGameMode RoboSoldierEndAttack>>
-
-<<wait 2>>
-
-드론: 역시 빠르네
-
-<<wait 1>>
-
-<<jump Tutorial1_heal>>
-
-===
-
-// 물약 --------------------------------------------------------------------
-title: Tutorial1_heal
----
-드론: 체력이 떨어지면 힐링 팩터로 회복 할 수 있어
-
-<<wait 1>>
-
-<<sendMsgToGameMode SetCombat>>
-<<sendMsgToGameModeParam SetTutorialMode Heal>>
-<<showMessagePopup "물약" "체력이 떨어지면 물약으로 회복할 수 있습니다. 물약으로 체력을 회복하세요." 8>>
-
-<<waitCheck>>
-<<sendMsgToGameMode ResetCombat>>
-<<sendMsgToGameMode RoboSoldierEndAttack>>
-
-<<wait 2>>
-
-드론: 물약을 마시면 서서히 체력을 회복할 수 있어.
-
-<<wait 1>>
-
-<<jump Tutorial1_parry>>
-
-===
-
-// 패링 --------------------------------------------------------------------
-title: Tutorial1_parry
----
-드론: 이제 거의 다 왔어. 중요한 걸 알려줄께. 
-케이: 그렇게 말하니 살짝 걱정이 되는군
-드론: 적이 공격하기 직전에 방어하면 상대의 공격을 받아칠 수 있어
-케이: <size=40>직전</size> 이란 말이 신경 쓰이는걸?
-드론: 그래. 하지만 패리에 성공하면 상대를 무너뜨릴 수 있어. 바로 연습해봐.
-
-<<wait 1>>
-
-<<sendMsgToGameMode SetCombat>>
-<<sendMsgToGameModeParam SetTutorialMode Parry>>
-<<sendMsgToGameMode RoboSoldierStartAttack>>
-<<showMessagePopup "패링" "상대 공격 직전에 가드하면 패링할 수 있습니다. 상대의 공격을 3회 패링하세요." 8>>
-
-<<waitCheck>>
-<<sendMsgToGameMode ResetCombat>>
-<<sendMsgToGameMode RoboSoldierEndAttack>>
-
-// 그로기 --------------------------------------------------------------------
-<<sendMsgToGameMode SetPawnToGroggy>>
-<<wait 1>>
-
-케이: 헉헉.... 저거 왜 저래?
-드론: 패링하면 상대를 그로기 상태로 만들 수 있어. 무방비 상태지...
-케이: 어떡하면 되는데? 공격하면 돼?
-드론: 그래. 끝장을 봐.
-
-<<wait 1>>
-<<sendMsgToGameMode SetCombat>>
-<<sendMsgToGameModeParam SetTutorialMode Groggy>>
-<<showMessagePopup "그로기" "그로기에 빠진 적에게 공격을 하면 몇배의 대미지를 줄 수 있습니다. 상대를 쓰러뜨리세요." 8>>
-
-// 그로기 빠진 적을 공격한다
-<<waitCheck>>
-<<sendMsgToGameMode ResetCombat>>
-<<sendMsgToGameModeParam SetTutorialMode End>>
-
-<<wait 1>>
-
-드론: 대단하네. 이렇게 빠르게 습득할 줄이야...
-케이: 이정도는... 예전에 다 마스터 했던 거야.
-드론: 좋아, 준비는 된거 같네. 이제 빠져나가자.
-
-<<showAndWaitInteractionKey "Door2">>
-
-===
-

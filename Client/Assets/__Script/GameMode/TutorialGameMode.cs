@@ -8,6 +8,8 @@ using Yarn.Unity;
 using ZLinq;
 using Game.UI;
 using UnityEditor.Experimental.GraphView;
+using NUnit.Framework;
+using System.Collections.Generic;
 
 
 namespace Game
@@ -28,17 +30,24 @@ namespace Game
 
         FreeBattle,
 
-        Room1_Step1,
-        Room1_Step2,
-        Room1_Step3,
+        Room2_Step1,
+        Room2_Step2,
+        Room2_Step3,
+
+        Room3_Step1,
+        Room3_Step2,
+
+        Room4_Step1,
 
         End,
     }
     public enum TutorialScene 
     {
-        Tutorial_0,     // 시작 씬, 전화
-        Tutorial_1,     // 적 조우
-        Tutorial_2,     // RoboSoldier
+        Tutorial_1,     // 시작 씬, 전화
+        Tutorial_2,     // 적 조우, Rapex
+        Tutorial_3,     // RoboSoldier
+        Tutorial_4,     // 원거리 적
+        Tutorial_5,     // M82
     }
 
     public class TutorialGameMode : BaseGameMode, IPawnEventListener
@@ -58,6 +67,8 @@ namespace Game
         [SerializeField] private int _deadCount = 0;
 
         private TutorialRoboSoldierBrain _roboBrain;
+
+        private List<PawnBrainController> _pawnList = new ();
 
         public override bool IsInCombat() => _isInCombat;
 
@@ -86,9 +97,11 @@ namespace Game
             _curScene = GameContext.Instance.launcher._tutorialStartScene;
             switch (_curScene) 
             {
-                case TutorialScene.Tutorial_0: InitStartRoom(); break;
-                case TutorialScene.Tutorial_1: InitTurorialRoom_1(); break;
+                case TutorialScene.Tutorial_1: InitStartRoom(); break;
                 case TutorialScene.Tutorial_2: InitTurorialRoom_2(); break;
+                case TutorialScene.Tutorial_3: InitTurorialRoom_3(); break;
+                case TutorialScene.Tutorial_4: InitTurorialRoom_4(); break;
+                case TutorialScene.Tutorial_5: InitTurorialRoom_5(); break;
             }
             //Observable.FromCoroutine(ChangeRoom_Coroutine);
 
@@ -181,11 +194,12 @@ namespace Game
         { 
             GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
 
-            __currSceneName = "Tutorial-0";
-            _curScene = TutorialScene.Tutorial_0;
+            __currSceneName = "Tutorial-PhoneRoom";
+            _curScene = TutorialScene.Tutorial_1;
 
             //* 로딩 시작
-            __loadingPageCtrler = new LoadingPageController(new string[] { "Pawn/Player/Slayer-K", "Pawn/Player/DrontBot" }, new string[] { "Tutorial-0" });
+            __loadingPageCtrler = new LoadingPageController(new string[] { "Pawn/Player/Slayer-K", "Pawn/Player/DrontBot" }, 
+                new string[] { __currSceneName });
             __loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
             __loadingPageCtrler.onLoadingCompleted += () =>
             {
@@ -195,43 +209,21 @@ namespace Game
 
                 InitCamera();
 
-                InitLoadingPageCtrler("Tutorial-0", () => { });
+                InitLoadingPageCtrler("Tutorial-1", () => { });
             };
         }
 
         // 긴 복도 + 적 출현
-        void InitTurorialRoom_1() 
+        void InitTurorialRoom_2() 
         {
             GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
 
-            __currSceneName = "Tutorial-2";
-            _curScene = TutorialScene.Tutorial_1;
-
-            //* 로딩 시작
-            __loadingPageCtrler = new LoadingPageController(new string[] { }, new string[] { "Tutorial-2" });
-            __loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
-            __loadingPageCtrler.onLoadingCompleted += () =>
-            {
-                //* 슬레이어 초기 위치 
-                var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint").transform;
-                RefreshPlayerCharacter(spawnPoint);
-
-                InitCamera();
-                // Tutorial1
-                InitLoadingPageCtrler("Tutorial2", () => { });
-            };
-        }
-
-        // 긴 복도 + 로보 솔저
-        void InitTurorialRoom_2()
-        {
-            GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
-
-            __currSceneName = "Tutorial-1";
+            __currSceneName = "Tutorial-ShortCorridor";
             _curScene = TutorialScene.Tutorial_2;
 
             //* 로딩 시작
-            __loadingPageCtrler = new LoadingPageController(new string[] { }, new string[] { "Tutorial-1" });
+            __loadingPageCtrler = new LoadingPageController(new string[] { "Pawn/Npc/Rapex" }, 
+                new string[] { __currSceneName });
             __loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
             __loadingPageCtrler.onLoadingCompleted += () =>
             {
@@ -241,7 +233,79 @@ namespace Game
 
                 InitCamera();
                 // Tutorial1
-                InitLoadingPageCtrler("Tutorial3", () => { });
+                InitLoadingPageCtrler("Tutorial-2", () => { });
+            };
+        }
+
+        // 로보 솔저
+        void InitTurorialRoom_3()
+        {
+            GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
+
+            __currSceneName = "Tutorial-ShortCorridor";
+            _curScene = TutorialScene.Tutorial_3;
+
+            //* 로딩 시작
+            __loadingPageCtrler = new LoadingPageController(new string[] { "Pawn/Npc/Rapex", "Pawn/Npc/RoboSoldier-Tutorial" }, 
+                new string[] { __currSceneName });
+            __loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
+            __loadingPageCtrler.onLoadingCompleted += () =>
+            {
+                //* 슬레이어 초기 위치 
+                var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint").transform;
+                RefreshPlayerCharacter(spawnPoint);
+
+                InitCamera();
+                // Tutorial1
+                InitLoadingPageCtrler("Tutorial-3", () => { });
+            };
+        }
+
+        // 원거리 적
+        void InitTurorialRoom_4()
+        {
+            GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
+
+            __currSceneName = "Tutorial-ShortCorridor";
+            _curScene = TutorialScene.Tutorial_4;
+
+            //* 로딩 시작
+            __loadingPageCtrler = new LoadingPageController(new string[] { "Pawn/Npc/RoboCannon" }, 
+                new string[] { __currSceneName });
+            __loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
+            __loadingPageCtrler.onLoadingCompleted += () =>
+            {
+                //* 슬레이어 초기 위치 
+                var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint").transform;
+                RefreshPlayerCharacter(spawnPoint);
+
+                InitCamera();
+                // Tutorial1
+                InitLoadingPageCtrler("Tutorial-4", () => { });
+            };
+        }
+
+        // M82
+        void InitTurorialRoom_5()
+        {
+            GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
+
+            __currSceneName = "Tutorial-BattleRoom";
+            _curScene = TutorialScene.Tutorial_5;
+
+            //* 로딩 시작
+            __loadingPageCtrler = new LoadingPageController(new string[] { "Pawn/Npc/Etasphera42" }, 
+                new string[] { __currSceneName });
+            __loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
+            __loadingPageCtrler.onLoadingCompleted += () =>
+            {
+                //* 슬레이어 초기 위치 
+                var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint").transform;
+                RefreshPlayerCharacter(spawnPoint);
+
+                InitCamera();
+                // Tutorial1
+                InitLoadingPageCtrler("Tutorial-5", () => { });
             };
         }
 
@@ -262,16 +326,27 @@ namespace Game
             //* 현재 맵이 Unload되면 에러가 발생해서 강제 비활성화
             GameContext.Instance.playerCtrler.possessedBrain.AnimCtrler.legAnimator.enabled = false;
             GameContext.Instance.canvasManager.FadeIn(Color.black, 1f);
+
             yield return new WaitForSeconds(1f);
 
             //* 현재 Scene 제거
             yield return SceneManager.UnloadSceneAsync(__currSceneName).AsObservable().ToYieldInstruction();
 
+            foreach (var pawn in _pawnList)
+            {
+                if (pawn != null && pawn.gameObject != null)
+                    Destroy(pawn.gameObject);
+            }
+            _pawnList.Clear();
+
+
             // Next Room
             switch (_curScene) 
             {
-                case TutorialScene.Tutorial_0: InitTurorialRoom_1(); break;
                 case TutorialScene.Tutorial_1: InitTurorialRoom_2(); break;
+                case TutorialScene.Tutorial_2: InitTurorialRoom_3(); break;
+                case TutorialScene.Tutorial_3: InitTurorialRoom_4(); break;
+                case TutorialScene.Tutorial_4: InitTurorialRoom_5(); break;
             }
             yield return new WaitUntil(() => __loadingPageCtrler == null);
 
@@ -310,6 +385,8 @@ namespace Game
         public void PawnSpawned(GameObject obj) 
         {
             var pawn = obj.GetComponent<PawnBrainController>();
+            _pawnList.Add(pawn);
+
             switch (pawn.PawnBB.common.pawnId) 
             {
                 case PawnId.RoboSoldier:
@@ -321,7 +398,7 @@ namespace Game
                         });
                         pawn.PawnHP.onDead += ((damageContext) =>
                         {
-                            if (_tutorialMode == TutorialMode.Groggy)
+                            if (_tutorialMode == TutorialMode.Room3_Step2)
                             {
                                 EndMode();
                             }
@@ -331,28 +408,43 @@ namespace Game
                 case PawnId.Rapax:
                     pawn.PawnHP.onDead += ((damageContext) =>
                     {
-                        if (_tutorialMode == TutorialMode.Room1_Step1)
+                        switch (_tutorialMode) 
                         {
-                            _deadCount++;
-                            if (_deadCount >= 2)
-                            {
-                                EndMode();
-                                InitBubbleDialogue("Tutorial2_step2_1");
-                            }
-                            else 
-                            {
-                                __dialogueDispatcher.ShowMessagePopup("가드", "적의 공격은 자동으로 가드할 수 있습니다.", 4);
-                            }
-                        }
-                        else if (_tutorialMode == TutorialMode.Room1_Step2) 
-                        {
-                            _deadCount++;
-                            if (_deadCount >= 2)
-                            {
-                                EndMode();
-                                if (__dialogueDispatcher != null)
-                                    __dialogueDispatcher.StartDialogue("Tutorial2_step3");
-                            }
+                            case TutorialMode.Room2_Step1:
+                                {
+                                    _deadCount++;
+                                    if (_deadCount >= 2)
+                                    {
+                                        EndMode();
+                                        InitBubbleDialogue("Tutorial2_step2_1");
+                                    }
+                                    else
+                                    {
+                                        __dialogueDispatcher.ShowMessagePopup("가드", "적의 공격은 자동으로 가드할 수 있습니다.", 4);
+                                    }
+                                }
+                                break;
+                            case TutorialMode.Room2_Step2:
+                                {
+                                    _deadCount++;
+                                    if (_deadCount >= 4)
+                                    {
+                                        EndMode();
+                                        InitBubbleDialogue("Tutorial2_step3");
+                                    }
+                                }
+                                break;
+                            // Room3 : RoboSoldier
+                            case TutorialMode.Room3_Step1:
+                                {
+                                    _deadCount++;
+                                    if (_deadCount >= 4)
+                                    {
+                                        EndMode();
+                                        InitBubbleDialogue("Tutorial3_step2");
+                                    }
+                                }
+                                break;
                         }
                     });
                     break;
@@ -371,6 +463,14 @@ namespace Game
                         lineView.UserRequestedViewAdvancement();
                 }
             }
+            if (Input.GetKeyDown(KeyCode.F11) == true) 
+            {
+                if (_roboBrain != null) {
+                    var heart = _roboBrain.GetComponent<PawnHeartPointDispatcher>();
+                    if (heart != null)
+                        heart.Die("cheat");
+                }
+            }
         }
 
         #region TUTORIAL
@@ -381,6 +481,22 @@ namespace Game
             _attackCount = 0;
             __dialogueDispatcher._isWaitCheck = true;
             _tutorialMode = TutorialMode.None;
+        }
+
+        public void StopAllRapax() 
+        {
+            /*
+            foreach (var pawn in _pawnList)
+            {
+                if (pawn != null && pawn.PawnBB.IsDead == false) 
+                {
+                    var selector = pawn.GetComponent<PawnActionDataSelector>();
+                    if (selector != null) {
+                        selector.debugActionSelectDisabled = true;
+                    }
+                }
+            }
+            */
         }
 
         void CheckRoboSoldierDamage(PawnHeartPointDispatcher.DamageContext damageContext) 
