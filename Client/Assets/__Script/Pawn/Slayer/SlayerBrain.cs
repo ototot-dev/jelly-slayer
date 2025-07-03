@@ -66,7 +66,7 @@ namespace Game
         void IPawnMovable.AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation, float deltaTime) { Movement.AddRootMotion(deltaPosition, deltaRotation, deltaTime); }
         void IPawnMovable.StartJump(float jumpHeight) {}
         void IPawnMovable.FinishJump() {}
-        void IPawnMovable.Teleport(Vector3 destination) { Movement.Teleport(destination); }
+        void IPawnMovable.Teleport(Vector3 destination, Quaternion rot) { Movement.Teleport(destination, rot); }
         void IPawnMovable.MoveTo(Vector3 destination) { Debug.Assert(false); }
         void IPawnMovable.FaceTo(Vector3 lookAt) { Movement.FaceTo(lookAt); }
         void IPawnMovable.Stop() {}

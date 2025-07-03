@@ -24,10 +24,6 @@ tags:
 
 <<wait 0.5>>
 
-케이: 아... 또야!
-
-<<wait 0.5>>
-
 <<sendMsgToGameMode SetCombat>>
 <<sendMsgToGameModeParam SetTutorialMode Room3_Step1>>
 <<showMessagePopup "회피" "회피는 가드보다 적은 스테미너를 소비합니다." 4>>
@@ -47,7 +43,7 @@ tags:
 
 케이: <shake>으악? 저게 뭐야?</shake>
 드론: 이런, 방어 시스템이 발동한 모양이네.
-케이: 방어 시스템이라... 
+케이: 방어 시스템이라고? 
 
 <<wait 1>>
 

@@ -45,7 +45,7 @@ namespace Game
         void AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation, float deltaTime);
         void StartJump(float jumpHeight);
         void FinishJump();
-        void Teleport(Vector3 destination);
+        void Teleport(Vector3 destination, Quaternion rot);
         void MoveTo(Vector3 destination);
         void FaceTo(Vector3 direction);
         void Stop();

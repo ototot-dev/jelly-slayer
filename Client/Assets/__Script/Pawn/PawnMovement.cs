@@ -1,5 +1,6 @@
 using System;
 using Cinemachine.Utility;
+using FinalFactory.Utilities;
 using UniRx;
 using UnityEngine;
 
@@ -107,6 +108,18 @@ namespace Game
             __ecmMovement.SetPosition(stickToGround ? TerrainManager.GetTerrainPoint(destination) : destination);
             __ecmMovement.velocity = Vector3.zero;
             __ecmMovement.ClearAccumulatedForces();
+        }
+
+        public void Teleport(Vector3 destination, Quaternion rot, bool stickToGround = true)
+        {
+            Debug.Log("Teleport ; " + destination + ", " + rot);
+
+            __ecmMovement.SetPosition(stickToGround ? TerrainManager.GetTerrainPoint(destination) : destination);
+            __ecmMovement.SetRotation(rot);
+            __ecmMovement.velocity = Vector3.zero;
+            __ecmMovement.ClearAccumulatedForces();
+
+            FaceTo(rot.Forward());
         }
 
         public void Stop() 
