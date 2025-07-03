@@ -112,7 +112,7 @@ namespace Game
 
         public void Teleport(Vector3 destination, Quaternion rot, bool stickToGround = true)
         {
-            Debug.Log("Teleport ; " + destination + ", " + rot);
+            //Debug.Log("Teleport ; " + destination + ", " + rot);
 
             __ecmMovement.SetPosition(stickToGround ? TerrainManager.GetTerrainPoint(destination) : destination);
             __ecmMovement.SetRotation(rot);

@@ -37,7 +37,9 @@ title: Tutorial3_step2
 tags:
 ---
 
-<<spawnPawn RoboSoldier SP1>>
+<<wait 2>>
+
+<<spawnPawn RoboSoldier Player>>
 
 <<wait 1>>
 
@@ -50,7 +52,7 @@ tags:
 <<showSword>>
 <<sendMsgToGameModeParam SetTutorialMode Room3_Step2>>
 <<sendMsgToGameMode SetCombat>>
-<<showMessagePopup "가드" "적의 공격은 방향을 맞추면 자동으로 가드할 수 있습니다." 4>>
+<<showMessagePopup "패링" "적의 공격에 맞춰 방어하면 상대의 공격을 튕겨낼 수 있습니다." 4>>
 
 <<waitCheck>>
 
