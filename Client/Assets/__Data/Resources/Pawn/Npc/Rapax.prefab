@@ -1236,7 +1236,7 @@ MonoBehaviour:
   baseTransform: {fileID: 0}
   Hips: {fileID: 7101986894665982569}
   ScaleReferenceMode: 3
-  finalScaleReference: 1.215161
+  finalScaleReference: 1.2151611
   finalScaleReferenceSqrt: 0.1
   customScaleReferenceValue: 0.5
   DelayedInitialization: 0
@@ -6727,8 +6727,8 @@ MonoBehaviour:
     onHitFx: {fileID: 3011233550371498735, guid: 24e37d54f259141abb7ebbc527b8bf4e, type: 3}
     onBleedingFx: {fileID: 3011233550371498735, guid: 8502543f66322458a81956cdd59fe959, type: 3}
     onMissedFx: {fileID: 8338894570034044190, guid: 727c6a11e51e81140a330e6639938e26, type: 3}
-    onHitAudioClip: {fileID: 8300000, guid: 93fc0b243c8d39441a33d29e6146b688, type: 3}
-    onHitAudioClip2: {fileID: 8300000, guid: 35eae8e878b98514f88e01aa5665f5d9, type: 3}
+    onHitAudioClip: {fileID: 8300000, guid: acea6a52dbd689c4bb6582cc412eb86f, type: 3}
+    onHitAudioClip2: {fileID: 8300000, guid: 1fb5c72a8e42f4b4ca01ef6f874b7b04, type: 3}
     onBleedingAudioClip: {fileID: 8300000, guid: bba0a0725054ad0419aecf461293c8e9, type: 3}
     onMissedAudioClip: {fileID: 8300000, guid: b47bb87ddf4afcc49ba83a4999cf050e, type: 3}
     onHitFleshClip: {fileID: 8300000, guid: 1fb5c72a8e42f4b4ca01ef6f874b7b04, type: 3}
@@ -6847,8 +6847,8 @@ MonoBehaviour:
     _version: 3.33
     _category: 
     _comments: 
-    _translation: {x: -251.19414, y: 135.92143}
-    _zoomFactor: 1
+    _translation: {x: -461, y: -191}
+    _zoomFactor: 0.8943569
   _firstActivation: 0
   _enableAction: 0
   _disableAction: 0

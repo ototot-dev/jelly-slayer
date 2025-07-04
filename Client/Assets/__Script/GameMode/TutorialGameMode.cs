@@ -34,8 +34,9 @@ namespace Game
         Room2_Step2,
         Room2_Step3,
 
-        Room3_Step1,
-        Room3_Step2,
+        Room3_Step1, // 라펙스 4기
+        Room3_Step2, // 물약 회복
+        Room3_Step3, // 로보솔저
 
         Room4_Step1,
 
@@ -129,9 +130,18 @@ namespace Game
                 GameContext.Instance.playerCtrler.possessedBrain.transform.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
                 GameContext.Instance.playerCtrler.possessedBrain.TryGetComponent<SlayerAnimController>(out var animCtrler);
 
-                GameContext.Instance.playerCtrler.possessedBrain.PawnHP.onDamaged += ((damageContex) =>
-                {
+                GameContext.Instance.playerCtrler.possessedBrain.PawnHP.onDamaged += ((damageContex) => {
+                    int kk = 0;
                 });
+                GameContext.Instance.playerCtrler.possessedBrain.StatusCtrler.onStatusActive += ((pawnStatus) => {
+
+                    if (pawnStatus == PawnStatus.HPRegen && _tutorialMode == TutorialMode.Room3_Step2) {
+
+                        EndMode();
+                        InitBubbleDialogue("Tutorial3_step3");
+                    }
+                });
+
                 InitSlayerBrainHandler();
 
                 new PlayerStatusBarController().Load(GameObject.FindFirstObjectByType<PlayerStatusBarTemplate>()).Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
@@ -400,7 +410,7 @@ namespace Game
                         });
                         pawn.PawnHP.onDead += ((damageContext) =>
                         {
-                            if (_tutorialMode == TutorialMode.Room3_Step2)
+                            if (_tutorialMode == TutorialMode.Room3_Step3)
                             {
                                 EndMode();
                             }
@@ -426,21 +436,11 @@ namespace Game
                                     }
                                 }
                                 break;
-                            case TutorialMode.Room2_Step2:
-                                {
-                                    _deadCount++;
-                                    if (_deadCount >= 4)
-                                    {
-                                        EndMode();
-                                        InitBubbleDialogue("Tutorial2_step3");
-                                    }
-                                }
-                                break;
                             // Room3 : RoboSoldier
                             case TutorialMode.Room3_Step1:
                                 {
                                     _deadCount++;
-                                    if (_deadCount >= 4)
+                                    if (_deadCount >= 3)
                                     {
                                         EndMode();
                                         InitBubbleDialogue("Tutorial3_step2");
@@ -486,6 +486,25 @@ namespace Game
                         });
                     }
                     break;
+            }
+        }
+
+        void StartBattleRoboSoldier(string command)
+        {
+            if(command == "true")
+                EnableRoboSoldier(true);
+        }
+        void EnableRoboSoldier(bool isEnable) 
+        { 
+            if (_roboBrain != null) 
+            {
+                _roboBrain.tutorialMoveEnabled.Value = isEnable;
+                _roboBrain.tutorialGuardEnabled.Value = isEnable;
+                _roboBrain.tutorialActionEnabled.Value = isEnable;
+                _roboBrain.tutorialComboAttackEnbaled.Value = isEnable;
+                _roboBrain.tutorialCounterAttackEnbaled.Value = isEnable;
+                //_roboBrain.tutorialShieldAttackEnbaled.Value = isEnable;
+                //_roboBrain.tutorialJumpActtackEnbaled.Value = isEnable;
             }
         }
 

@@ -35,6 +35,7 @@ namespace Game
         public bool _isEnable_Jump = true;
         public bool _isEnable_Guard = true;
         public bool _isEnable_Parry = true;
+        public bool _isEnable_Drink = true;
 
 #region IPawnEventListener 구현
         void IPawnEventListener.OnReceivePawnActionStart(PawnBrainController sender, string actionName) 
@@ -695,6 +696,8 @@ namespace Game
         public void OnDrink() 
         {
             if (!CanProcessInput() || !GameContext.Instance.launcher.currGameMode.IsInCombat())
+                return;
+            if (_isEnable_Drink == false)
                 return;
 
             Debug.Log("<color=red>OnDrink</color>");
