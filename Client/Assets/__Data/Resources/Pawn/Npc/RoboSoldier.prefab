@@ -32040,7 +32040,7 @@ MonoBehaviour:
   baseTransform: {fileID: 0}
   Hips: {fileID: 2152633521541674416}
   ScaleReferenceMode: 3
-  finalScaleReference: 1.0652913
+  finalScaleReference: 1.0652912
   finalScaleReferenceSqrt: 0.1
   customScaleReferenceValue: 0.5
   DelayedInitialization: 0
@@ -60935,10 +60935,10 @@ MonoBehaviour:
       value: 0
     isGuarding:
       value: 0
-    spawnDropDirection: {x: 0, y: 0, z: 0}
-    spawnDropDistance: 1
-    spawnDropAccel: 1
-    spawnDropSpeed: 1
+    spawnDropDirection: {x: -1, y: -1, z: 0}
+    spawnDropDistance: 10
+    spawnDropAccel: 20
+    spawnDropSpeed: 200
     moveSpeed: 1
     jumpHeight: 2
     glidingDuration: -1
