@@ -16,7 +16,7 @@ tags:
 
 드론: 여긴 위험해. 빨리 탈출하자
 드론: 잠깐. 전방에 적이 있어. 조심해.
-케이: 저건... 괴물이잖아?
+케이: 저건... 괴물이잖아? 저런게 왜...
 
 <<showSword>>
 <<sendMsgToGameMode SetCombat>>
@@ -38,6 +38,8 @@ tags:
 
 케이: 헉헉... 이것들은 뭐야?
 드론: 라펙스 들이야. 건물이 오래 방치되서 흘러들어온거 같네.
+케이: 라펙스? 그런 생물은 들어 본적도 없는데?
+드론: 지금은 설명할 시간이 없어.
 
 <<wait 1>>
 
@@ -49,59 +51,4 @@ tags:
 
 ===
 
-// step1 end --------------------------------------------------------------------
-title: Tutorial2_step2_2
-tags:
----
-
-<<sendMsgToGameModeParam SetTutorialMode Room2_Step2>>
-
-<<spawnPawn Rapax SP3>>
-<<spawnPawn Rapax SP4>>
-<<wait 1>>
-<<spawnPawn Rapax SP5>>
-<<spawnPawn Rapax SP6>>
-
-<<showMessagePopup "회피" "회피는 가드보다 적은 스테미너를 소비합니다." 4>>
-
-===
-
-// step1 end --------------------------------------------------------------------
-title: Tutorial2_step3
-tags:
----
-
-<<sendMsgToGameModeParam SetTutorialMode Room2_Step3>>
-
-<<showMessagePopup "패링" "적의 공격 타이밍에 가드하면 파링할수 있습니다." 4>>
-
-// 플레이어 위치에 로보 솔저 소환
-<<spawnPawn RoboSoldier Player>>
-
-<<wait 1>>
-
-케이: 으악!
-
-===
-
-// step1 end --------------------------------------------------------------------
-title: Tutorial2_step4
-tags:
----
-<<sendMsgToGameMode RoboSoldierStartAttack>>
-
-<<wait 1>>
-
-<<sendMsgToGameMode SetCombat>>
-<<sendMsgToGameMode StopAllRapax>>
-
-<<waitCheck>>
-
-드론: 생각보다 더 잘 싸우네."
-케이: 이 정도는 연습 상대도 안돼.
-드론: 그래. 이제 반대쪽 문으로 빠져나가자.
-
-<<showAndWaitInteractionKey "Door2">>
-
-===
 

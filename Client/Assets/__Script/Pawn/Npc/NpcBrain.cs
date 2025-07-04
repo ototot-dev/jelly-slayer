@@ -40,7 +40,7 @@ namespace Game
         void IPawnMovable.AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation, float deltaTime) { __pawnMovement.AddRootMotion(deltaPosition, deltaRotation, deltaTime); }
         void IPawnMovable.StartJump(float jumpHeight) { StartJumpInternal(jumpHeight); }
         void IPawnMovable.FinishJump() { FinishJumpInternal(); }
-        void IPawnMovable.Teleport(Vector3 destination) { __pawnMovement.Teleport(destination); }
+        void IPawnMovable.Teleport(Vector3 destination, Quaternion rot) { __pawnMovement.Teleport(destination, rot); }
         void IPawnMovable.MoveTo(Vector3 destination) { __pawnMovement.destination = destination; }
         void IPawnMovable.FaceTo(Vector3 direction) { __pawnMovement.FaceTo(direction); }
         void IPawnMovable.Stop() { __pawnMovement.Stop(); }

@@ -32,14 +32,15 @@ tags:
 <<wait 2>>
 
 <<setCameraTarget CameraPoint>>
-<<spawnPawn RoboSoldier SP1>>
+<<spawnPawn Etasphera42 SP1>>
 
 <<wait 4>>
 <<setCameraSlayer>>
 
-케이: <shake>으악? 저게 뭐야?</shake>
-드론: 이런, 방어 시스템이 발동한 모양이네.
-케이: 방어 시스템이라... 
+케이: 저건 좀 위험해 보이는데?
+드론: 저건 42식 전투 머신인데... 저런게 왜 여기 있지?
+케이: 거봐. 위험한 거지?
+드론: 해결 방법을 찾아볼께. 일단 조심해.
 
 <<wait 1>>
 

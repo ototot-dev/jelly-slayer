@@ -39,6 +39,8 @@ namespace Game
 
         Room4_Step1,
 
+        Room5_Step1,
+
         End,
     }
     public enum TutorialScene 
@@ -138,7 +140,7 @@ namespace Game
 
         void RefreshPlayerCharacter(Transform spawnPoint)
         { 
-            (GameContext.Instance.playerCtrler.possessedBrain as IPawnMovable).Teleport(spawnPoint.position);
+            (GameContext.Instance.playerCtrler.possessedBrain as IPawnMovable).Teleport(spawnPoint.position, spawnPoint.rotation);
 
             //* LegAnimator 다시 활성화
             Observable.Timer(TimeSpan.FromSeconds(0.1f)).Subscribe(_ => GameContext.Instance.playerCtrler.possessedBrain.AnimCtrler.legAnimator.enabled = true);
@@ -448,7 +450,42 @@ namespace Game
                         }
                     });
                     break;
-                
+                case PawnId.RoboCannon:
+                    {
+                        pawn.PawnHP.onDead += ((damageContext) => {
+                            switch (_tutorialMode)
+                            {
+                                case TutorialMode.Room4_Step1:
+                                    {
+                                        _deadCount++;
+                                        if (_deadCount >= 2)
+                                        {
+                                            EndMode();
+                                        }
+                                    }
+                                    break;
+                            }
+                        });
+                    }
+                    break;
+                case PawnId.Etasphera42:
+                    {
+                        pawn.PawnHP.onDead += ((damageContext) => {
+                            switch (_tutorialMode)
+                            {
+                                case TutorialMode.Room5_Step1:
+                                    {
+                                        _deadCount++;
+                                        if (_deadCount >= 1)
+                                        {
+                                            EndMode();
+                                        }
+                                    }
+                                    break;
+                            }
+                        });
+                    }
+                    break;
             }
         }
 
