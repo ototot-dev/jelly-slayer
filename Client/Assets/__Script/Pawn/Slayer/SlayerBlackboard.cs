@@ -39,7 +39,7 @@ namespace Game
 
         [Serializable]
         public class Action
-        {   
+        {
             public ReactiveProperty<PawnBrainController> encounterBrain = new();
             public IntReactiveProperty punchChargingLevel = new(-1);
             public float punchChargingAnimAdvanceSpeed = 1f;
@@ -48,6 +48,14 @@ namespace Game
             public float punchChargingAnimAdvanceOffsetSinFrequency = 1f;
             public float guardParryDuration = 0.1f;
             public float guardParryRootMotionMultiplier = 1f;
+
+            [Header("Chainsaw")]
+            public float chainsawAnimClipLength = 1f;
+            public float chainsawAnimAdvanceSpeed = 1f;
+            public float chainsawAnimAdvanceHoldTime = 1f;
+            public float chainsawAnimAdvanceHoldDuration = 1f;
+            public float chainsawAnimAdvanceOffsetAmplitude = 0f;
+            public float chainsawAnimAdvanceOffsetSinFrequency = 1f;
         }
 
         public Action action = new();

@@ -1,7 +1,6 @@
 using System;
 using UniRx;
 using UnityEngine;
-using XftWeapon;
 
 namespace Game
 {
@@ -9,10 +8,6 @@ namespace Game
     {
         [Header("Component")]
         public Transform counterActionCollider;
-        public XWeaponTrail leftKnifeTrailA;
-        public XWeaponTrail leftKnifeTrailB;
-        public XWeaponTrail rightKnifeTrailA;
-        public XWeaponTrail rightKnifeTrailB;
 
         public override bool CanBlockAction(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {

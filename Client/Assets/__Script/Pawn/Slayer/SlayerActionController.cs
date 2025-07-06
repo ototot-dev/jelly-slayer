@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Linq;
 using UniRx;
 using UnityEngine;
@@ -16,8 +17,11 @@ namespace Game
             if (!base.CanRootMotion(rootMotionVec))
                 return false;
 
+            if (__brain.BB.IsJumping)
+                return false;
+
             if (__brain.BB.IsRolling || __brain.BB.TargetBrain == null || !__brain.SensorCtrler.TouchingColliders.Contains(__brain.BB.TargetBrain.coreColliderHelper.pawnCollider))
-                return true;
+                    return true;
 
             //* RootMotion으로 목표물을 밀지 않도록 목표물의 TouchingColliders와 접축할 정도로 가깝다면 rootMotionVec가 목표물에서 멀어지는 방향일때만 적용해준다.
             return __brain.coreColliderHelper.GetDistanceDelta(__brain.BB.TargetBrain.coreColliderHelper, rootMotionVec) > 0f;
@@ -270,6 +274,53 @@ namespace Game
             }).AddTo(this);
 
             return null;
+        }
+
+        IEnumerator ChainsawActionCoroutine()
+        {
+            //* Chainsaw 시동 애님
+            __brain.AnimCtrler.mainAnimator.SetInteger("AnimId", 100);
+            __brain.AnimCtrler.mainAnimator.SetTrigger("OnAction");
+
+            yield return __brain.AnimCtrler.FindObservableStateMachineTriggerEx("Chainsaw (Slash)").OnStateEnterAsObservable().Take(1)
+                // .DoOnCancel(() => __Logger.LogR2(gameObject, "ChainsawActionCoroutine", "FindObservableStateMachineTriggerEx() canceled"))
+                // .DoOnCompleted(() => __Logger.LogR2(gameObject, "ChainsawActionCoroutine", "FindObservableStateMachineTriggerEx() completed"))
+                .ToYieldInstruction();
+
+            var animAdvance = 0f;
+            var animAdvanceOffset = 0f;
+
+            while (animAdvance < __brain.BB.action.chainsawAnimAdvanceHoldTime)
+            {
+                animAdvance += __brain.BB.action.chainsawAnimAdvanceSpeed * Time.deltaTime;
+                __brain.AnimCtrler.mainAnimator.SetFloat("AnimAdvance", animAdvance);
+
+                yield return null;
+            }
+
+            var animAdvanceHoldTimeStamp = Time.time;
+
+            while (Time.time - animAdvanceHoldTimeStamp < __brain.BB.action.chainsawAnimAdvanceHoldDuration)
+            {
+                animAdvanceOffset += __brain.BB.action.chainsawAnimAdvanceOffsetSinFrequency * 2f * Mathf.PI * Time.deltaTime;
+                __brain.AnimCtrler.mainAnimator.SetFloat("AnimAdvance", animAdvance + __brain.BB.action.chainsawAnimAdvanceOffsetAmplitude * Mathf.Sin(animAdvanceOffset));
+                    
+                yield return null;
+            }
+
+            while (animAdvance < __brain.BB.action.chainsawAnimClipLength)
+            {
+                animAdvance += __brain.BB.action.chainsawAnimAdvanceSpeed * Time.deltaTime;
+                __brain.AnimCtrler.mainAnimator.SetFloat("AnimAdvance", animAdvance);
+
+                yield return null;
+            }
+
+            //* Chainsaw 종료 애님
+            __brain.AnimCtrler.mainAnimator.SetInteger("AnimId", 102);
+            __brain.AnimCtrler.mainAnimator.SetTrigger("OnAction");
+
+            yield return new WaitForSeconds(1f);
         }
 
         Material[] __bodyMeshRenderersCached;

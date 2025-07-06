@@ -150,13 +150,14 @@ namespace Game
         }
 
         bool CanProcessInput() => possessedBrain != null && GameContext.Instance.launcher.currGameMode?.CanPlayerConsumeInput() == true;
+        bool CheckPossessedPawnBusy() => !possessedBrain.BB.IsSpawnFinished || possessedBrain.BB.IsDead || possessedBrain.BB.IsGroggy || possessedBrain.BB.IsDown || possessedBrain.BB.IsRolling;
+        bool CanExecuteAction() => (!possessedBrain.ActionCtrler.CheckActionRunning() || possessedBrain.ActionCtrler.CanInterruptAction()) && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
 
         void HandleMovement()
         {
             if (inputMoveVec.Value.sqrMagnitude > 0)
             {
-                var isAction = possessedBrain.BB.IsGuarding || possessedBrain.BB.IsPunchCharging;
-                possessedBrain.Movement.moveSpeed = isAction ? possessedBrain.BB.body.guardSpeed : possessedBrain.BB.body.walkSpeed;
+                possessedBrain.Movement.moveSpeed = (possessedBrain.BB.IsGuarding || possessedBrain.BB.IsPunchCharging) ? possessedBrain.BB.body.guardSpeed : possessedBrain.BB.body.walkSpeed;
                 possessedBrain.Movement.moveVec = Quaternion.AngleAxis(45, Vector3.up) * new Vector3(inputMoveVec.Value.x, 0, inputMoveVec.Value.y);
 
                 //* Strafe 모드가 아닌 경우엔 이동 방향과 회전 방향이 동일함
@@ -211,12 +212,13 @@ namespace Game
                 return;
 
             possessedBrain.BB.body.isGuarding.Value = value.Get<float>() > 0;
+            
             if (possessedBrain.BB.IsGuarding)
             {
-                var canParry1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsJumping && !possessedBrain.BB.IsRolling;
-                var canParry2 = canParry1 && (!possessedBrain.ActionCtrler.CheckActionRunning() || possessedBrain.ActionCtrler.CanInterruptAction());
-                var canParry3 = canParry2 && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered) && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.CanNotGuard);
-                if (canParry3)
+                if (!CheckPossessedPawnBusy() || !CanExecuteAction())
+                    return;
+                    
+                if (!possessedBrain.StatusCtrler.CheckStatus(PawnStatus.CanNotGuard))
                     possessedBrain.StatusCtrler.AddStatus(PawnStatus.GuardParrying, 1f, possessedBrain.BB.action.guardParryDuration);
             }
         }
@@ -230,6 +232,18 @@ namespace Game
             if (!CanProcessInput())
                 return;
 
+            if (!value.isPressed)
+            {
+                __jumpReleasedTimeStamp = Time.time;
+                return;
+            }
+            
+            if (CheckPossessedPawnBusy() || !CanExecuteAction())
+                return;
+
+            if (possessedBrain.ActionCtrler.CheckActionRunning())
+                possessedBrain.ActionCtrler.CancelAction(false);
+
             __jumpHangingDisposable ??= Observable.EveryUpdate().Where(_ => __jumpExecutedTimeStamp > __jumpReleasedTimeStamp).Subscribe(_ =>
             {
                 //* Catch 판정은 0.1초로 셋팅
@@ -237,60 +251,28 @@ namespace Game
                 if (!possessedBrain.BB.IsHanging && droneBot != null && droneBot.BB.CurrDecision != DroneBotBrain.Decisions.Catch && Time.time - __jumpExecutedTimeStamp > 0.1f)
                     possessedBrain.Movement.PrepareHanging(droneBot, 0.2f);
             }).AddTo(this);
-
-            float jumpStaminaCost = 10;
-
-            if (value.isPressed)
-            {   
-                var canJump1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsJumping && !possessedBrain.BB.IsRolling;
-                var canJump2 = canJump1 && (!possessedBrain.ActionCtrler.CheckActionRunning() || possessedBrain.ActionCtrler.CanInterruptAction()) && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
-
-                if (canJump2)
-                {
-                    if (possessedBrain.ActionCtrler.CheckActionRunning())
-                        possessedBrain.ActionCtrler.CancelAction(false);
-                        
-                    if (possessedBrain.BB.IsHanging)
-                    {
-                        //* 점프 방향을 셋팅해줌
-                        possessedBrain.Movement.GetCharacterMovement().velocity = possessedBrain.BB.body.hangingBrain.Value.Movement.CurrVelocity;
-                        possessedBrain.Movement.FinishHanging();
-                        possessedBrain.Movement.StartJump(possessedBrain.BB.body.jumpHeight);
-                    }
-                    else
-                    {
-                        //* 재귀적으로 Haning이 일어나지 않도록 'IsHanging'이 falsed인 경우에만 __jumpExecutedTimeStamp 값을 갱신해서 __jumpHangingDisposable이 동작하도록 한다
-                        __jumpExecutedTimeStamp = Time.time;
-
-                        possessedBrain.Movement.StartJump(possessedBrain.BB.body.jumpHeight);
-                        possessedBrain.BB.stat.ReduceStamina(jumpStaminaCost);
-                    }
-
-                    PawnEventManager.Instance.SendPawnActionEvent(possessedBrain, "OnJump");
-                }
+                
+            if (possessedBrain.BB.IsHanging)
+            {
+                //* 점프 방향을 셋팅해줌
+                possessedBrain.Movement.GetCharacterMovement().velocity = possessedBrain.BB.body.hangingBrain.Value.Movement.CurrVelocity;
+                possessedBrain.Movement.FinishHanging();
+                possessedBrain.Movement.StartJump(possessedBrain.BB.body.jumpHeight);
             }
             else
             {
-                __jumpReleasedTimeStamp = Time.time;
-            }
-        }
+                //* 재귀적으로 Haning이 일어나지 않도록 'IsHanging'이 falsed인 경우에만 __jumpExecutedTimeStamp 값을 갱신해서 __jumpHangingDisposable이 동작하도록 한다
+                __jumpExecutedTimeStamp = Time.time;
 
-        /*
-        public void OnSwap() 
-        {
-            Debug.Log("OnSwap");
-            WEAPONSLOT weaponSlot;
-            if (MyHeroBrain._weaponSlot == WEAPONSLOT.MAINSLOT)
-            {
-                weaponSlot = WEAPONSLOT.SUBSLOT;
+                //! 점프 코스트 하드코딩
+                float jumpStaminaCost = 10;
+
+                possessedBrain.Movement.StartJump(possessedBrain.BB.body.jumpHeight);
+                possessedBrain.BB.stat.ReduceStamina(jumpStaminaCost);
             }
-            else
-            {
-                weaponSlot = WEAPONSLOT.MAINSLOT;
-            }
-            MyHeroBrain.ChangeWeapon(weaponSlot);
+
+            PawnEventManager.Instance.SendPawnActionEvent(possessedBrain, "OnJump");
         }
-        */
 
         public void OnNextTarget()
         {
@@ -381,21 +363,22 @@ namespace Game
 
         public void OnRoll()
         {
-            if (!CanProcessInput())
+            if (_isEnable_Roll == false)
                 return;
 
-            if (_isEnable_Roll == false)
+            if (!CanProcessInput())
+                return;
+            if (CheckPossessedPawnBusy())
+                return;
+
+            var canRoll1 = !possessedBrain.ActionCtrler.CheckActionRunning() || possessedBrain.ActionCtrler.CanInterruptAction();
+            var canRoll2 = canRoll1 & !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.CanNotRoll);
+
+            if (!canRoll2)
                 return;
 
             var actionData = DatasheetManager.Instance.GetActionData(possessedBrain.PawnBB.common.pawnId, "Rolling");
             Debug.Assert(actionData != null);
-
-            // 대쉬 가능 체크
-            var canRolling1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsJumping && !possessedBrain.BB.IsRolling;
-            var canRolling2 = canRolling1 && (!possessedBrain.ActionCtrler.CheckActionRunning() || possessedBrain.ActionCtrler.CanInterruptAction()) && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.CanNotRoll);
-
-            if (canRolling2 == false)
-                return;
 
             if (possessedBrain.ActionCtrler.CheckActionRunning())
                 possessedBrain.ActionCtrler.CancelAction(false);
@@ -464,35 +447,37 @@ namespace Game
             if (!CanProcessInput() || !GameContext.Instance.launcher.currGameMode.IsInCombat())
                 return;
 
-            if (_isEnable_Parry == false)
-                return;
-
-            __punchChargingDisposable ??= Observable.EveryUpdate().Where(_ => __punchPresssedTimeStamp > __punchReleasedTimeStamp).Subscribe(_ =>
-            {
-                if (possessedBrain.ActionCtrler.CheckActionRunning())
-                {
-                    possessedBrain.BB.action.punchChargingLevel.Value = -1;
-                    __punchReleasedTimeStamp = Time.time;
-                    __Logger.LogR2(gameObject, nameof(OnAttack), "Puncg Charging canceled.", "CurrActionName", possessedBrain.ActionCtrler.CurrActionName);
-                }
-                else
-                {
-                    possessedBrain.BB.action.punchChargingLevel.Value = Mathf.FloorToInt(Time.time - __punchPresssedTimeStamp);
-                }
-            }).AddTo(this);
-
             if (value.isPressed)
             {
+                if (!CheckPossessedPawnBusy() && !possessedBrain.BB.IsHanging && CanExecuteAction() && possessedBrain.ActionCtrler.CurrActionName == "Slash#2")
+                {
+                    possessedBrain.ActionCtrler.CancelAction(false);
+                    possessedBrain.ActionCtrler.SetPendingAction("Punch");
+
+                    return;
+                }
+
                 __punchPresssedTimeStamp = Time.time;
+                __punchChargingDisposable ??= Observable.EveryUpdate()
+                    .Subscribe(_ =>
+                    {
+                        possessedBrain.BB.action.punchChargingLevel.Value = possessedBrain.ActionCtrler.CheckActionRunning() ? -1 : Mathf.FloorToInt(Time.time - __punchPresssedTimeStamp);
+
+                        if (possessedBrain.BB.action.punchChargingLevel.Value < 0)
+                        {
+                            __punchChargingDisposable?.Dispose();
+                            __punchChargingDisposable = null;
+                            __punchReleasedTimeStamp = Time.time;
+                        }
+                    }).AddTo(this);
             }
             else
             {
+                __punchChargingDisposable?.Dispose();
+                __punchChargingDisposable = null;
                 __punchReleasedTimeStamp = Time.time;
 
-                var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsRolling && !possessedBrain.BB.IsHanging;
-                var canAction2 = canAction1 && (!possessedBrain.ActionCtrler.CheckActionRunning() || possessedBrain.ActionCtrler.CanInterruptAction()) && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
-
-                if (canAction2 && possessedBrain.BB.action.punchChargingLevel.Value > 0)
+                if (!CheckPossessedPawnBusy() && !possessedBrain.BB.IsHanging && CanExecuteAction() && possessedBrain.BB.action.punchChargingLevel.Value > 0)
                 {
                     if (possessedBrain.ActionCtrler.CheckActionRunning())
                         possessedBrain.ActionCtrler.CancelAction(false);
@@ -509,17 +494,15 @@ namespace Game
         {
             if (!CanProcessInput() || !GameContext.Instance.launcher.currGameMode.IsInCombat())
                 return;
+            if (CheckPossessedPawnBusy() || possessedBrain.BB.IsHanging)
+                return;
                 
             if (_isEnable_NormalAttack == false)
-                return;
-
-            var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsRolling && !possessedBrain.BB.IsHanging;
-            // var canAction2 = canAction1 && !MyHeroBrain.PawnBB.IsThrowing && !MyHeroBrain.PawnBB.IsGrabbed;
-            var canAction3 = canAction1 && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
+                    return;
 
             var isJellyActive = boundJellyMesh.Value != null;
         
-            if (canAction3)
+            if (!possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered))
             {
                 var canNextAction = possessedBrain.ActionCtrler.CheckActionRunning() ? possessedBrain.ActionCtrler.CanInterruptAction() : (Time.time - possessedBrain.ActionCtrler.prevActionContext.finishTimeStamp) < MainTable.PlayerData.GetList().First().actionInputTimePadding;
                 if (canNextAction)
@@ -591,43 +574,39 @@ namespace Game
         {
             if (!CanProcessInput() || !GameContext.Instance.launcher.currGameMode.IsInCombat())
                 return;
-
-            if (_isEnable_NormalAttack == false)
+            if (CheckPossessedPawnBusy() || possessedBrain.BB.IsHanging)
                 return;
 
-            var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsRolling && !possessedBrain.BB.IsHanging; ;
-            var canAction2 = canAction1 && (boundJellyMesh.Value != null);
-            var canAction3 = canAction2 && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
+            if (_isEnable_NormalAttack == false)
+                    return;
 
-            if (value.isPressed)
+            if (value.isPressed && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered))
             {
                 __punchPresssedTimeStamp = Time.time;
 
                 var baseActionName = possessedBrain.ActionCtrler.CheckActionRunning() ? possessedBrain.ActionCtrler.CurrActionName : possessedBrain.ActionCtrler.PrevActionName;
                 var canNextAction = possessedBrain.ActionCtrler.CheckActionRunning() ? possessedBrain.ActionCtrler.CanInterruptAction() : (Time.time - possessedBrain.ActionCtrler.prevActionContext.finishTimeStamp) < MainTable.PlayerData.GetList().First().actionInputTimePadding;
-                if (canAction3)
+
+                if (canNextAction)
                 {
-                    if (canNextAction)
+                    switch (baseActionName)
                     {
-                        switch (baseActionName)
-                        {
-                            case "GroggyAttack#1":
-                                possessedBrain.ActionCtrler.CancelAction(false);
-                                possessedBrain.ActionCtrler.SetPendingAction("GroggyAttack#2");
-                                possessedBrain.Movement.FaceAt(boundJellyMesh.Value.springMassSystem.core.position);
-                                break;
-                            case "GroggyAttack#2":
-                                possessedBrain.ActionCtrler.CancelAction(false);
-                                possessedBrain.ActionCtrler.SetPendingAction("GroggyAttack#3");
-                                possessedBrain.Movement.FaceAt(boundJellyMesh.Value.springMassSystem.core.position);
-                                break;
-                        }
+                        case "GroggyAttack#1":
+                            possessedBrain.ActionCtrler.CancelAction(false);
+                            possessedBrain.ActionCtrler.SetPendingAction("GroggyAttack#2");
+                            possessedBrain.Movement.FaceAt(boundJellyMesh.Value.springMassSystem.core.position);
+                            break;
+                        case "GroggyAttack#2":
+                            possessedBrain.ActionCtrler.CancelAction(false);
+                            possessedBrain.ActionCtrler.SetPendingAction("GroggyAttack#3");
+                            possessedBrain.Movement.FaceAt(boundJellyMesh.Value.springMassSystem.core.position);
+                            break;
                     }
-                    else if (!possessedBrain.ActionCtrler.CheckActionRunning())
-                    {
-                        possessedBrain.ActionCtrler.SetPendingAction("GroggyAttack#1");
-                        possessedBrain.Movement.FaceAt(boundJellyMesh.Value.springMassSystem.core.position);
-                    }
+                }
+                else if (!possessedBrain.ActionCtrler.CheckActionRunning())
+                {
+                    possessedBrain.ActionCtrler.SetPendingAction("GroggyAttack#1");
+                    possessedBrain.Movement.FaceAt(boundJellyMesh.Value.springMassSystem.core.position);
                 }
             }
         }
@@ -665,31 +644,6 @@ namespace Game
                     GameContext.Instance.launcher.currGameMode.ChangeScene("Tutorial-1");
                 }
             }
-            
-            // if (value.isPressed)
-            // {
-            //     var canAction1 = possessedBrain.BB.IsSpawnFinished && !possessedBrain.BB.IsDead && !possessedBrain.BB.IsGroggy && !possessedBrain.BB.IsDown && !possessedBrain.BB.IsRolling && !possessedBrain.BB.IsHanging;
-            //     var canAction2 = canAction1 && interactionKeyCtrler != null && interactionKeyCtrler.PreprocessKeyDown();
-            //     var canAction3 = canAction2 &&  (!possessedBrain.ActionCtrler.CheckActionRunning() || possessedBrain.ActionCtrler.CanInterruptAction()) && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered);
-
-                //     if (canAction3)
-                //     {
-                //         if (possessedBrain.ActionCtrler.CheckActionRunning())
-                //             possessedBrain.ActionCtrler.CancelAction(false);
-
-                //         if (interactionKeyCtrler.commandName == "Assault")
-                //         {
-                //             possessedBrain.droneBotFormationCtrler.PickDroneBot().ActionCtrler.SetPendingAction(interactionKeyCtrler.commandName, interactionKeyCtrler.commandName, string.Empty, 0f);
-                //             interactionKeyCtrler.HideAsObservable().Subscribe(c =>  c.Unload()).AddTo(this);
-                //             interactionKeyCtrler = null;
-                //         }
-                //         else if (interactionKeyCtrler.commandName == "GroggyAttack")
-                //         {
-                //             // possessedBrain.ActionCtrler.SetPendingAction($"GroggyAttack#{++interactionKeyCtrler.actionCount}");
-                //             possessedBrain.Movement.FaceAt(boundJellyMesh.Value.springMassSystem.core.position);
-                //         }
-                //     }
-                // }
         }
 
         public void OnDrink() 

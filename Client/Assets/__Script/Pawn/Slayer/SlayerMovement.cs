@@ -152,6 +152,7 @@ namespace Game
             {
                 if (__prevCapsulePositionY > capsule.position.y && Time.time - __jumpTimeStamp > 2f * Time.fixedDeltaTime)
                     __isJumpFalling = true;
+                    
                 __prevCapsulePositionY = capsule.position.y;
 
                 if (__isJumpFalling && __ecmMovement.isGrounded)

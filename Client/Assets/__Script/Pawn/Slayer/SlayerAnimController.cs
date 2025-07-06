@@ -49,6 +49,7 @@ namespace Game
         Vector3[] __8waysBlendTreePosXY;
         HashSet<int> __runningAnimStateNames = new();
         public bool CheckAnimStateRunning(string stateName) => __runningAnimStateNames.Contains(Animator.StringToHash(stateName));
+        public bool CheckAnimStateRunning(int stateNameHash) => __runningAnimStateNames.Contains(stateNameHash);
 
         public override void OnAnimatorMoveHandler()
         {
@@ -182,6 +183,7 @@ namespace Game
                 mainAnimator.SetFloat("MoveSpeed", 0f);
                 mainAnimator.SetFloat("MoveAnimSpeed", 1f);
                 mainAnimator.SetBool("IsMoving", false);
+                mainAnimator.SetFloat("HangingBlendWeight", 1f);
             }
             else
             {
@@ -194,8 +196,16 @@ namespace Game
                     leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
                     leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
 
-                    mainAnimator.SetLayerWeight((int)LayerIndices.LeftArm, __brain.ActionCtrler.CurrActionName == "Slash#1" || __brain.ActionCtrler.CurrActionName == "Slash#2" ? 0f : 1f);
-                    mainAnimator.SetLayerWeight((int)LayerIndices.RightArm, 0f);
+                    if (__brain.ActionCtrler.CurrActionName.StartsWith("Punch"))
+                    {
+                        mainAnimator.SetLayerWeight((int)LayerIndices.LeftArm, 0f);
+                        mainAnimator.SetLayerWeight((int)LayerIndices.RightArm, 0f);
+                    }
+                    else
+                    {
+                        mainAnimator.SetLayerWeight((int)LayerIndices.LeftArm, __brain.ActionCtrler.CurrActionName == "Slash#1" || __brain.ActionCtrler.CurrActionName == "Slash#2" ? 0f : 1f);
+                        mainAnimator.SetLayerWeight((int)LayerIndices.RightArm, 0f);
+                    }
                 }
                 else
                 {
@@ -264,6 +274,7 @@ namespace Game
                 animMoveVec = animMoveVec.magnitude * Vector3.Lerp(animMoveVec.normalized, animMoveVecClamped.normalized, 0.5f);
                 mainAnimator.SetFloat("MoveX", animMoveVec.x / __brain.Movement.moveSpeed);
                 mainAnimator.SetFloat("MoveY", animMoveVec.z / __brain.Movement.moveSpeed);
+                mainAnimator.SetFloat("HangingBlendWeight", 0f);
             }
         }
 
@@ -374,6 +385,7 @@ namespace Game
                         if (__brain.BB.action.punchChargingLevel.Value >= 0)
                         {
                             animAdvance += __brain.BB.action.punchChargingAnimAdvanceSpeed * Time.deltaTime;
+
                             if (animAdvance > __brain.BB.action.punchChargingAnimAdvanceEnd)
                             {
                                 animAdvance = __brain.BB.action.punchChargingAnimAdvanceEnd;

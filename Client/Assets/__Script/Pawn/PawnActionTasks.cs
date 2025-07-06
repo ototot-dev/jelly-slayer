@@ -6,7 +6,6 @@ using ParadoxNotion.Design;
 using Retween.Rx;
 using UniRx;
 using UnityEngine;
-using XftWeapon;
 
 namespace Game.NodeCanvasExtension
 {
@@ -1929,8 +1928,7 @@ namespace Game.NodeCanvasExtension
     [Category("Pawn")]
     public class ShowTrailFX : ActionTask
     {
-        protected override string info => $"Show Trail-FX <b>{(trailFx.isNoneOrNull ? trailFx.value : string.Empty)}</b>";
-        public BBParameter<XWeaponTrail> trailFx;
+        // protected override string info => $"Show Trail-FX <b>{(trailFx.isNoneOrNull ? trailFx.value : string.Empty)}</b>";
         public BBParameter<Transform> startPoint;
         public BBParameter<Transform> endPoint;
         public BBParameter<float> duration = -1f;
@@ -1942,11 +1940,11 @@ namespace Game.NodeCanvasExtension
 
         protected override void OnExecute()
         {
-            if (trailFx.isNoneOrNull)
-            {
+            // if (trailFx.isNoneOrNull)
+            // {
                 EndAction(true);
                 return;
-            }
+            // }
             
             // __pawnActionCtrler = agent.GetComponent<PawnActionController>();
             // XWeaponTrail trail = null;
@@ -1963,31 +1961,31 @@ namespace Game.NodeCanvasExtension
             // }
             //var trail = trailFx.bb.variables[6];
 
-            if (!startPoint.isNoneOrNull)
-                trailFx.value.PointStart = startPoint.value;
-            if (!endPoint.isNoneOrNull)
-                trailFx.value.PointEnd = endPoint.value;
+            // if (!startPoint.isNoneOrNull)
+            //     trailFx.value.PointStart = startPoint.value;
+            // if (!endPoint.isNoneOrNull)
+            //     trailFx.value.PointEnd = endPoint.value;
 
-            trailFx.value.Activate();
+            // trailFx.value.Activate();
 
-            __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;
-            __showTimeStamp = Time.time;
-            __showDisposable = Observable.EveryUpdate().Subscribe(_ =>
-            {
-                if ((Time.time - __showTimeStamp) > duration.value)
-                {
-                    trailFx.value.Deactivate();
-                    __showDisposable.Dispose();
-                    __showDisposable = null;
-                }
-                else if (stopWhenActionCanceled && __pawnActionCtrler != null && 
-                    (!__pawnActionCtrler.CheckActionRunning() || __pawnActionCtrler.currActionContext.actionInstanceId != __capturedActionInstanceId))
-                {
-                    trailFx.value.Deactivate();
-                    __showDisposable.Dispose();
-                    __showDisposable = null;
-                }
-            }).AddTo(agent);
+            // __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;
+            // __showTimeStamp = Time.time;
+            // __showDisposable = Observable.EveryUpdate().Subscribe(_ =>
+            // {
+            //     if ((Time.time - __showTimeStamp) > duration.value)
+            //     {
+            //         trailFx.value.Deactivate();
+            //         __showDisposable.Dispose();
+            //         __showDisposable = null;
+            //     }
+            //     else if (stopWhenActionCanceled && __pawnActionCtrler != null && 
+            //         (!__pawnActionCtrler.CheckActionRunning() || __pawnActionCtrler.currActionContext.actionInstanceId != __capturedActionInstanceId))
+            //     {
+            //         trailFx.value.Deactivate();
+            //         __showDisposable.Dispose();
+            //         __showDisposable = null;
+            //     }
+            // }).AddTo(agent);
 
             EndAction(true);
         }

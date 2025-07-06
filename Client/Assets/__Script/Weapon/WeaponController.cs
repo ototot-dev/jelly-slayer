@@ -1,5 +1,5 @@
 using UnityEngine;
-using XftWeapon;
+// using XftWeapon;
 
 public class WeaponController : MonoBehaviour
 {
@@ -9,7 +9,7 @@ public class WeaponController : MonoBehaviour
     [Header("Trail")]
     //[SerializeField] MeleeWeaponTrail _trail;
     [SerializeField] TrailRenderer _trailRender;
-    [SerializeField] XWeaponTrail _trailXWeapon;
+    // [SerializeField] XWeaponTrail _trailXWeapon;
 
     // Start is called before the first frame update
     void Start()
@@ -20,13 +20,6 @@ public class WeaponController : MonoBehaviour
         if(_trailRender != null)
         {
             _trailRender.enabled = false;
-        }
-        if (_trailXWeapon != null)
-        {
-            //_trailXWeapon.Init();
-            _trailXWeapon.Activate();
-            //_trailXWeapon.Deactivate();
-            Invoke("XWeaponDeactivate", 0.3f);
         }
     }
 
@@ -54,10 +47,6 @@ public class WeaponController : MonoBehaviour
 
     void XWeaponDeactivate() 
     {
-        if (_trailXWeapon != null)
-        {
-            _trailXWeapon.Deactivate();
-        }
     }
     public void ShowTrail(bool isActive)
     { 
@@ -67,13 +56,6 @@ public class WeaponController : MonoBehaviour
         if (_trailRender != null)
         {
             _trailRender.enabled = isActive;
-        }
-        if (_trailXWeapon != null)
-        {
-            if (isActive == true)
-                _trailXWeapon.Activate();
-            else
-                _trailXWeapon.Deactivate();
         }
     }
 }
