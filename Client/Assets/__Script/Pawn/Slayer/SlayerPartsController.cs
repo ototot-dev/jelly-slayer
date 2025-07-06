@@ -55,7 +55,8 @@ namespace Game
 
         public void SetSwordHidden(bool newHidden)
         {
-            swordMeshRenderer.enabled = !newHidden;
+            //swordMeshRenderer.enabled = !newHidden;
+            swordMeshRenderer.gameObject.SetActive(!newHidden);
         }
 
         public void SetLeftMechArmHidden(bool newHidden)

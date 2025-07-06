@@ -5,6 +5,7 @@ tags:
 <<vignette 0.4 0.9 0>>
 <<hideMechArm>>
 <<hideSword>>
+//<<sendMsgToGameMode SetCombat>>
 <<wait 1>>
 <<fadeOut 1>>
 <<wait 1>>
@@ -20,10 +21,11 @@ tags:
 <<spawnPawn Rapax SP2>>
 <<wait 1>>
 <<spawnPawn Rapax SP3>>
-<<spawnPawn Rapax SP4>>
+//<<spawnPawn Rapax SP4>>
 
 <<wait 0.5>>
 
+<<showSword>>
 <<sendMsgToGameMode SetCombat>>
 <<sendMsgToGameModeParam SetTutorialMode Room3_Step1>>
 <<showMessagePopup "회피" "회피는 가드보다 적은 스테미너를 소비합니다." 4>>
@@ -32,14 +34,37 @@ tags:
 
 ===
 
-// step1 end --------------------------------------------------------------------
+// 물약 회복 --------------------------------------------------------------------
 title: Tutorial3_step2
 tags:
 ---
 
+<<wait 1>>
+
+케이: 크윽...
+드론: 괜찮아? 일단 이걸 사용해.
+
+<<wait 1>>
+
+케이: ...
+
+// 여기서 드링크 기능 추가
+<<sendMsgToGameModeParam SetTutorialMode Room3_Step2>>
+
+<<showMessagePopup "물약" "체력이 떨어지면 물약으로 회복할 수 있습니다." 4>>
+
+===
+
+// 로보솔저 전투 --------------------------------------------------------------------
+title: Tutorial3_step3
+tags:
+---
+
+케이: 크윽...
+
 <<wait 2>>
 
-<<spawnPawn RoboSoldier Player>>
+<<spawnPawn RoboSoldier SP7>>
 
 <<wait 1>>
 
@@ -50,7 +75,8 @@ tags:
 <<wait 1>>
 
 <<showSword>>
-<<sendMsgToGameModeParam SetTutorialMode Room3_Step2>>
+<<sendMsgToGameModeParam SetTutorialMode Room3_Step3>>
+<<sendMsgToGameModeParam StartBattleRoboSoldier true>>
 <<sendMsgToGameMode SetCombat>>
 <<showMessagePopup "패링" "적의 공격에 맞춰 방어하면 상대의 공격을 튕겨낼 수 있습니다." 4>>
 

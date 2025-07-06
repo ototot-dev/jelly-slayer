@@ -32,7 +32,7 @@ title: Tutorial2_step2_1
 tags:
 ---
 
-<<sendMsgToGameMode ResetCombat>>
+//<<sendMsgToGameMode ResetCombat>>
 
 <<wait 1>>
 
