@@ -28,9 +28,12 @@ namespace Game
 
         PawnColliderHelper IPawnTargetable.NextTarget()
         {
-            if (++__currTargetingIndex == HitBoxIndices.Max)
-                __currTargetingIndex = HitBoxIndices.Body;
-            return GetCurrentTarget();
+            return ++__currTargetingIndex == HitBoxIndices.Max ? null : GetCurrentTarget();
+        }
+
+        PawnColliderHelper IPawnTargetable.PrevTarget()
+        {
+            return --__currTargetingIndex < 0 ? null : GetCurrentTarget();
         }
 
         PawnColliderHelper IPawnTargetable.CurrTarget()

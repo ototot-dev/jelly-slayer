@@ -86,7 +86,12 @@ namespace Game
                 __Logger.LogR2(gameObject, "OnReceivePawnDamageContext", "Groggy-Break");
             }
         }
-        void IPawnEventListener.OnReceivePawnSpawningStateChanged(PawnBrainController sender, PawnSpawnStates state) {}
+        void IPawnEventListener.OnReceivePawnSpawningStateChanged(PawnBrainController sender, PawnSpawnStates state)
+        {
+            //* 타겟팅 해제
+            if (state == PawnSpawnStates.DespawningStart && possessedBrain.BB.TargetBrain == sender)
+                possessedBrain.BB.target.targetPawnHP.Value = null;
+        }
 #endregion
 
         public GameObject SpawnSlayerPawn(bool possessImmediately = false)
@@ -302,22 +307,28 @@ namespace Game
                     return;
 
                 var targetableBrains = possessedBrain.PawnSensorCtrler.ListeningColliders.AsValueEnumerable()
-                    .Select(c => c.GetComponent<PawnColliderHelper>())
-                    .Where(h => h != null && h.pawnBrain != null && !h.pawnBrain.PawnBB.IsDead && h.pawnBrain is IPawnTargetable)
-                    .Select(h => h.pawnBrain).Distinct().ToArrayPool();
+                    .Select(c => c.TryGetComponent<PawnColliderHelper>(out var colliderHelper) ? colliderHelper.pawnBrain : null)
+                    .Where(b => b != null && !b.PawnBB.IsDead && b is IPawnTargetable)
+                    .Distinct().ToArrayPool();
+
+                var currTargetIndex = -1;
 
                 for (int i = 0; i < targetableBrains.Size; i++)
                 {
                     if (targetableBrains.Array[i] == possessedBrain.BB.TargetBrain)
                     {
-                        var nextTargetIndex = i + 1;
-                        if (nextTargetIndex >= targetableBrains.Size) nextTargetIndex = 0;
-
-                        possessedBrain.BB.target.targetPawnHP.Value = targetableBrains.Array[nextTargetIndex].PawnHP;
-                        (possessedBrain.BB.TargetBrain as IPawnTargetable).StartTargeting();
+                        currTargetIndex = i;
                         break;
                     }
                 }
+
+                currTargetIndex++;
+
+                if (currTargetIndex >= targetableBrains.Size)
+                    currTargetIndex = 0;
+
+                possessedBrain.BB.target.targetPawnHP.Value = targetableBrains.Array[currTargetIndex].PawnHP;
+                (possessedBrain.BB.TargetBrain as IPawnTargetable).StartTargeting();
 
                 ArrayPool<PawnBrainController>.Shared.Return(targetableBrains.Array, true);
             }
@@ -340,25 +351,40 @@ namespace Game
                 {
                     possessedBrain.BB.target.targetPawnHP.Value = newTarget.pawnBrain.PawnHP;
                     possessedBrain.Movement.freezeRotation = true;
+                    (possessedBrain.BB.TargetBrain as IPawnTargetable).StartTargeting();
                 }
             }
             else
             {
-                var colliderHelpers = possessedBrain.PawnSensorCtrler.ListeningColliders.AsValueEnumerable()
-                    .Select(c => c.GetComponent<PawnColliderHelper>())
-                    .Where(h => h != null && h.pawnBrain != null && !h.pawnBrain.PawnBB.IsDead && h.pawnBrain is IPawnTargetable)
-                    .ToArrayPool();
+                //* 내부 타겟팅 순회
+                if ((possessedBrain.BB.TargetBrain as IPawnTargetable).PrevTarget() != null)
+                    return;
 
-                for (int i = colliderHelpers.Size - 1; i >= 0; i--)
+                var targetableBrains = possessedBrain.PawnSensorCtrler.ListeningColliders.AsValueEnumerable()
+                    .Select(c => c.TryGetComponent<PawnColliderHelper>(out var colliderHelper) ? colliderHelper.pawnBrain : null)
+                    .Where(b => b != null && !b.PawnBB.IsDead && b is IPawnTargetable)
+                    .Distinct().ToArrayPool();
+
+                var currTargetIndex = -1;
+
+                for (int i = 0; i < targetableBrains.Size; i++)
                 {
-                    if (colliderHelpers.Array[i].pawnBrain == possessedBrain.BB.TargetBrain)
+                    if (targetableBrains.Array[i] == possessedBrain.BB.TargetBrain)
                     {
-                        possessedBrain.BB.target.targetPawnHP.Value = (i - 1 >= 0 ? colliderHelpers.Array[i - 1] : colliderHelpers.Array[colliderHelpers.Size - 1]).pawnBrain.PawnHP;
+                        currTargetIndex = i;
                         break;
                     }
                 }
 
-                ArrayPool<PawnColliderHelper>.Shared.Return(colliderHelpers.Array, true);
+                currTargetIndex--;
+
+                if (currTargetIndex < 0)
+                    currTargetIndex = targetableBrains.Size - 1;
+
+                possessedBrain.BB.target.targetPawnHP.Value = targetableBrains.Array[currTargetIndex].PawnHP;
+                (possessedBrain.BB.TargetBrain as IPawnTargetable).StartTargeting();
+
+                ArrayPool<PawnBrainController>.Shared.Return(targetableBrains.Array, true);
             }
         }
 

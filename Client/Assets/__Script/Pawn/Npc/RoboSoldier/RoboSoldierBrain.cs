@@ -17,6 +17,7 @@ namespace Game
         #region IPawnTargetable 구현
         PawnColliderHelper IPawnTargetable.StartTargeting() => bodyHitColliderHelper;
         PawnColliderHelper IPawnTargetable.NextTarget() => null;
+        PawnColliderHelper IPawnTargetable.PrevTarget() => null;
         PawnColliderHelper IPawnTargetable.CurrTarget() => bodyHitColliderHelper;
         void IPawnTargetable.StopTargeting() { }
         #endregion

@@ -9,7 +9,6 @@ namespace Game
         None,
         SpawnStart,
         SpawnFinished,
-        Dead,
         DespawningStart,
         DespawnFinished,
         Max
@@ -55,6 +54,7 @@ namespace Game
     {
         PawnColliderHelper StartTargeting();
         PawnColliderHelper NextTarget();
+        PawnColliderHelper PrevTarget();
         PawnColliderHelper CurrTarget();
         void StopTargeting();
     }

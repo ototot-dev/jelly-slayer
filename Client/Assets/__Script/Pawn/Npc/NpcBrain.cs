@@ -7,15 +7,25 @@ namespace Game
     {
 #region IPawnSpawnable / IPawnMovable 구현
         Vector3 IPawnSpawnable.GetSpawnPosition() => transform.position;
-        public virtual void OnStartSpawnHandler() {}
-        public virtual void OnFinishSpawnHandler() 
+        public virtual void OnStartSpawnHandler()
         { 
+            PawnEventManager.Instance.SendPawnSpawningEvent(this, PawnSpawnStates.SpawnStart);
+        }
+        public virtual void OnFinishSpawnHandler() 
+        {
+            PawnEventManager.Instance.SendPawnSpawningEvent(this, PawnSpawnStates.SpawnFinished);
+
             if (this is IPawnEventListener listener)
                 PawnEventManager.Instance.RegisterEventListener(listener);
         }
-        void IPawnSpawnable.OnDespawnedHandler() {}
+        void IPawnSpawnable.OnDespawnedHandler()
+        {
+            PawnEventManager.Instance.SendPawnSpawningEvent(this, PawnSpawnStates.DespawnFinished);
+        }
         public virtual void OnDeadHandler() 
-        { 
+        {
+            PawnEventManager.Instance.SendPawnSpawningEvent(this, PawnSpawnStates.DespawningStart);
+
             if (this is IPawnEventListener listener)
                 PawnEventManager.Instance.UnregisterEventListener(listener);
 
