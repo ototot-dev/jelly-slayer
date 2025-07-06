@@ -143,7 +143,7 @@ namespace Game
 
                     Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ =>
                     {
-                        EffectManager.Instance.Show(__brain.BB.graphics.onBlockFx, __brain.PartsCtrler.leftMechHandBone.transform.position, Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward, Vector3.up), Vector3.one);
+                        EffectManager.Instance.Show(__brain.BB.graphics.onBlockFx, __brain.PartsCtrler.leftMechHandBone.transform.position, Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward, Vector3.up), 0.5f * Vector3.one);
                         SoundManager.Instance.Play(SoundID.HIT_BLOCK);
                     });
 

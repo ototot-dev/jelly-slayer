@@ -13,7 +13,6 @@ namespace Game
             __brain = GetComponent<RapaxBrain>();
         }
 
-        readonly RaycastHit[] __hitsNonAlloc = new RaycastHit[16];
         IDisposable __hitColorDisposable;
         RapaxBrain __brain;
 

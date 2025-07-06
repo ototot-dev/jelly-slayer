@@ -67,6 +67,7 @@ namespace Game
             public Material hitColor;
 
             [Header("Fx")]
+            public GameObject onSlashFx;
             public GameObject onHitFx;
             public GameObject onBleedingFx;
             public GameObject onMissedFx;

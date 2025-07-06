@@ -137,6 +137,19 @@ namespace Game
             }
         }
 
+        protected override void DamageSenderHandler(ref PawnHeartPointDispatcher.DamageContext damageContext)
+        {
+            base.DamageSenderHandler(ref damageContext);
+
+            var showPosition = ActionCtrler.GetTraceActionCollider() != null ? ActionCtrler.GetTraceActionCollider().transform.position : BB.children.rightHandActionCollider.transform.position;
+
+            //* Slash 이펙트는 Hit 순간에 출력함
+            Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ =>
+            {
+                EffectManager.Instance.Show(BB.resource.onSlashFx, showPosition, Quaternion.identity, Vector3.one);
+            }).AddTo(this);
+        }
+
         protected override void DamageReceiverHandler(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
             base.DamageReceiverHandler(ref damageContext);

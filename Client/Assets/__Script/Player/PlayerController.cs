@@ -212,18 +212,19 @@ namespace Game
                 GameContext.Instance.cameraCtrler.TryGetPickingPointOnTerrain(value.Get<Vector2>(), out var pickingPoint))
                 inputLookVec.Value = (pickingPoint - possessedBrain.Movement.capsule.transform.position).Vector2D().normalized;
         }
+        
         public void OnGuard(InputValue value)
         {
             if (!CanProcessInput())
                 return;
 
             possessedBrain.BB.body.isGuarding.Value = value.Get<float>() > 0;
-            
+
             if (possessedBrain.BB.IsGuarding)
             {
-                if (!CheckPossessedPawnBusy() || !CanExecuteAction())
+                if (CheckPossessedPawnBusy() || !CanExecuteAction())
                     return;
-                    
+
                 if (!possessedBrain.StatusCtrler.CheckStatus(PawnStatus.CanNotGuard))
                     possessedBrain.StatusCtrler.AddStatus(PawnStatus.GuardParrying, 1f, possessedBrain.BB.action.guardParryDuration);
             }

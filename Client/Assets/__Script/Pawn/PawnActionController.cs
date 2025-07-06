@@ -690,7 +690,8 @@ namespace Game
         PawnStatusController.StatusParam[] __debuffParams;
         bool __multiHitEnabled;
         bool __sendDamageOnTrace;
-
+        
+        public Collider GetTraceActionCollider() => __traceCollider;
         public void StartTraceActionTargets(Collider traceCollider, int samplingRate = 60, bool multiHitEnabled = false, PawnStatusController.StatusParam[] debuffParams = null, bool sendDamageImmediately = false, bool drawGizmosEnabled = false, float drawGizmosDuration = 0)
         {
             __traceLayerMask = LayerMask.GetMask(__traceLayerNames.ToArray());
