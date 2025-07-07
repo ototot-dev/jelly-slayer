@@ -155,9 +155,9 @@ namespace Game
                 mainAnimator.SetLayerWeight((int)LayerIndices.LeftArm, 0f);
                 mainAnimator.SetLayerWeight((int)LayerIndices.RightArm, 0f);
                 mainAnimator.SetLayerWeight((int)LayerIndices.Action, 1f);
+                mainAnimator.SetBool("IsMoving", false);
                 mainAnimator.SetFloat("MoveSpeed", 0f);
                 mainAnimator.SetFloat("MoveAnimSpeed", 1f);
-                mainAnimator.SetBool("IsMoving", false);
             }
             else if (__brain.BB.IsHanging)
             {
@@ -180,9 +180,9 @@ namespace Game
                 mainAnimator.SetLayerWeight((int)LayerIndices.LeftArm, 0f);
                 mainAnimator.SetLayerWeight((int)LayerIndices.RightArm, 0f);
                 mainAnimator.SetLayerWeight((int)LayerIndices.Action, __brain.ActionCtrler.GetAdvancedActionLayerWeight(mainAnimator.GetLayerWeight((int)LayerIndices.Action), actionLayerBlendInSpeed, actionLayerBlendOutSpeed, Time.deltaTime));
+                mainAnimator.SetBool("IsMoving", false);
                 mainAnimator.SetFloat("MoveSpeed", 0f);
                 mainAnimator.SetFloat("MoveAnimSpeed", 1f);
-                mainAnimator.SetBool("IsMoving", false);
                 mainAnimator.SetFloat("HangingBlendWeight", 1f);
             }
             else
@@ -252,9 +252,9 @@ namespace Game
                 else
                     mainAnimator.SetLayerWeight((int)LayerIndices.Action, __brain.ActionCtrler.GetAdvancedActionLayerWeight(mainAnimator.GetLayerWeight((int)LayerIndices.Action), actionLayerBlendInSpeed, actionLayerBlendOutSpeed, Time.deltaTime));
 
+                mainAnimator.SetBool("IsMoving", __brain.Movement.CurrVelocity.sqrMagnitude > 0f);
                 mainAnimator.SetFloat("MoveForward", __brain.Movement.freezeRotation ? -1 : __brain.Movement.CurrVelocity.Vector2D().magnitude / __brain.BB.body.walkSpeed);
                 mainAnimator.SetFloat("MoveAnimSpeed", __brain.Movement.freezeRotation ? (__brain.BB.IsGuarding ? 1f : 1.5f) : 1.2f);
-                mainAnimator.SetBool("IsMoving", __brain.Movement.CurrVelocity.sqrMagnitude > 0f);
 
                 __8waysBlendTreePosXY ??= new Vector3[]
                 {
@@ -311,9 +311,9 @@ namespace Game
                 legAnimator.User_SetIsMoving(__brain.Movement.CurrVelocity.sqrMagnitude > 0f);
                 legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround && !__brain.BB.IsJumping && (!__brain.ActionCtrler.CheckActionRunning() || __brain.ActionCtrler.currActionContext.legAnimGlueEnabled));
 
+                mainAnimator.SetBool("IsMoving", __brain.Movement.CurrVelocity.sqrMagnitude > 0f);
                 mainAnimator.SetFloat("MoveForward", __brain.Movement.freezeRotation ? -1 : __brain.Movement.CurrVelocity.Vector2D().magnitude / __brain.BB.body.walkSpeed);
                 mainAnimator.SetFloat("MoveAnimSpeed", __brain.Movement.freezeRotation ? (__brain.BB.IsGuarding ? 1f : 1.5f) : 1.2f);
-                mainAnimator.SetBool("IsMoving", __brain.Movement.CurrVelocity.sqrMagnitude > 0f);
 
                 var animMoveVec = __brain.coreColliderHelper.transform.InverseTransformDirection(__brain.Movement.CurrVelocity).Vector2D();
                 mainAnimator.SetFloat("MoveX", animMoveVec.x / __brain.Movement.moveSpeed);

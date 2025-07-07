@@ -32,13 +32,14 @@ namespace Game
         public float legBoneSimulatorBlendSpeed = 1f;
         public float legBoneSimulatorTargetWeight = 0f;
         public float headBoneScaleFactor = 1f;
-        public Vector3[] moveXmoveY_Table;
+        Vector3[] __8waysBlendTreePosXY;
 
         //* Animator 레이어 인덱스 값 
         enum LayerIndices : int
         {
             Base = 0,
             Action,
+            LeftArm,
             Lower,
             Addictive,
             Max,
@@ -162,15 +163,29 @@ namespace Game
 
                 mainAnimator.SetLayerWeight((int)LayerIndices.Action, __brain.ActionCtrler.GetAdvancedActionLayerWeight(mainAnimator.GetLayerWeight((int)LayerIndices.Action), actionLayerBlendInSpeed, actionLayerBlendOutSpeed, Time.deltaTime));
                 mainAnimator.SetLayerWeight((int)LayerIndices.Addictive, 1f);
+
                 mainAnimator.SetBool("IsMoving", __brain.Movement.CurrVelocity.sqrMagnitude > 0 && !__brain.ActionCtrler.CheckKnockBackRunning());
                 mainAnimator.SetBool("IsMovingStrafe", __brain.Movement.freezeRotation);
                 mainAnimator.SetFloat("MoveSpeed", __brain.Movement.CurrVelocity.magnitude);
                 mainAnimator.SetFloat("MoveAnimSpeed", 1f);
 
-                var animMoveVec = __brain.coreColliderHelper.transform.InverseTransformDirection(__brain.Movement.CurrVelocity).Vector2D();
-                // var animMoveVecClamped = moveXmoveY_Table.OrderBy(v => Vector3.Angle(v, animMoveVec)).First();
+                __8waysBlendTreePosXY ??= new Vector3[]
+                {
+                    new(0f, 0f, 1f),
+                    new(0f, 0f, -1f),
+                    new(-1f, 0f, 1f),
+                    new(-1f, 0f, 0f),
+                    new(-1f, 0f, -1f),
+                    new(1f, 0f, 1f),
+                    new(1f, 0f, 0f),
+                    new(1f, 0f, -1f),
+                };
 
-                // animMoveVecClamped = Vector3.Lerp(animMoveVec, animMoveVecClamped, 0.5f);
+                var animMoveVec = __brain.coreColliderHelper.transform.InverseTransformDirection(__brain.Movement.CurrVelocity).Vector2D();
+                var animMoveVecClamped = __8waysBlendTreePosXY.AsValueEnumerable().OrderBy(v => Vector3.Angle(v, animMoveVec)).First();
+                
+                animMoveVec = animMoveVec.magnitude * Vector3.Lerp(animMoveVec.normalized, animMoveVecClamped.normalized, 0.5f);
+
                 mainAnimator.SetFloat("MoveX", animMoveVec.x / __brain.Movement.moveSpeed);
                 mainAnimator.SetFloat("MoveY", animMoveVec.z / __brain.Movement.moveSpeed);
 
@@ -208,6 +223,8 @@ namespace Game
                         rightArmBoneSimulator.enabled = false;
                 }
 
+                mainAnimator.SetLayerWeight((int)LayerIndices.LeftArm, __brain.ActionCtrler.CheckActionRunning() ? 1f : 0f);
+
                 if ((__brain.BB.IsJumping || __brain.BB.IsGliding || __brain.BB.IsFalling) && !__brain.Movement.IsOnGround)
                     mainAnimator.SetLayerWeight((int)LayerIndices.Lower, Mathf.Clamp01(mainAnimator.GetLayerWeight((int)LayerIndices.Lower) + lowerLayerBlendSpeed * Time.deltaTime));
                 else
@@ -234,7 +251,6 @@ namespace Game
 
                 if (__brain.BB.IsDead)
                 {
-                    // eyeAnimator.MinOpenValue = Mathf.Clamp01(eyeAnimator.MinOpenValue - legAnimGlueBlendSpeed * Time.deltaTime);
                     headAim.weight = 0f;
                     legAnimator.LegsAnimatorBlend = Mathf.Clamp01(legAnimator.LegsAnimatorBlend - legAnimGlueBlendSpeed * Time.deltaTime);
                     legAnimator.User_SetIsMoving(false);
@@ -265,12 +281,6 @@ namespace Game
                     headAim.weight = 1f;
                     legAnimator.LegsAnimatorBlend = 1f;
                     legAnimator.MainGlueBlend = 1f;
-
-                    // if (__brain.BB.IsGuarding || __brain.ActionCtrler.CheckKnockBackRunning())
-                    //     legAnimator.MainGlueBlend = 1f;
-                    // else
-                    //     legAnimator.MainGlueBlend = Mathf.Clamp(legAnimator.MainGlueBlend + (__brain.Movement.CurrVelocity.sqrMagnitude > 0 && !__brain.ActionCtrler.CheckActionRunning() ? -1 : 1) * legAnimGlueBlendSpeed * Time.deltaTime, __brain.Movement.freezeRotation ? 0.8f : 0.9f, 1);
-
                     legAnimator.User_SetIsMoving(__brain.Movement.CurrVelocity.sqrMagnitude > 0 && !__brain.ActionCtrler.CheckActionRunning() && !__brain.ActionCtrler.CheckKnockBackRunning());
                     legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround);
                 }
@@ -281,6 +291,7 @@ namespace Game
                 mainAnimator.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
 
                 rigSetup.weight = 1f;
+
                 if (__brain.ActionCtrler.CheckAddictiveActionRunning("Laser"))
                     __brain.BB.children.lookAtPoint.position = __brain.BB.children.laserAimPoint.position;
                 else if (__brain.BB.TargetBrain != null && __brain.BB.TargetBrain.coreColliderHelper != null)
