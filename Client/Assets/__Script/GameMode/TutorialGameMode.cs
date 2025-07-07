@@ -221,7 +221,7 @@ namespace Game
 
                 InitCamera();
 
-                InitLoadingPageCtrler("Tutorial-1", () => { });
+                InitLoadingPageCtrler("Tutorial-PhoneRoom", () => { });
             };
         }
 
@@ -245,12 +245,12 @@ namespace Game
 
                 InitCamera();
                 // Tutorial1
-                InitLoadingPageCtrler("Tutorial-2", () => { });
+                InitLoadingPageCtrler("Tutorial-Rapex", () => { });
             };
         }
 
         // 로보 솔저
-        void InitTurorialRoom_3()
+        void InitTurorialRoom_4()
         {
             GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
 
@@ -269,12 +269,12 @@ namespace Game
 
                 InitCamera();
                 // Tutorial1
-                InitLoadingPageCtrler("Tutorial-3", () => { });
+                InitLoadingPageCtrler("Tutorial-RoboSoldier", () => { });
             };
         }
 
         // 원거리 적
-        void InitTurorialRoom_4()
+        void InitTurorialRoom_3()
         {
             GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
 
@@ -293,7 +293,7 @@ namespace Game
 
                 InitCamera();
                 // Tutorial1
-                InitLoadingPageCtrler("Tutorial-4", () => { });
+                InitLoadingPageCtrler("Tutorial-RoboCannon", () => { });
             };
         }
 
@@ -317,7 +317,7 @@ namespace Game
 
                 InitCamera();
                 // Tutorial1
-                InitLoadingPageCtrler("Tutorial-5", () => { });
+                InitLoadingPageCtrler("Tutorial-M82", () => { });
             };
         }
 
