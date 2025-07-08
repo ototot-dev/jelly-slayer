@@ -13,6 +13,7 @@ public static class Tags
         "Slayer",
         "SunLight",
         "Col1",
+        "Prop1",
         "Door",
         "Phone",
         "Door2",
@@ -58,9 +59,11 @@ public static class Tags
         {
             "SunLight",
             "Col1",
+            "Prop1",
         };
         public const string SunLight = "SunLight";
         public const string Col1 = "Col1";
+        public const string Prop1 = "Prop1";
     }
     public static class Interactable
     {
