@@ -31,14 +31,16 @@ tags:
 
 케이: <size=40>뭐야?</size> 갑자기?
 
-
 <<wait 2>>
 
 <<spawnPawn Etasphera42 SP1>>
 <<setCameraTarget CameraPoint>>
 
 <<wait 1>>
-<<sendMsg Prop1 Play>>
+<<loadTimeline Timeline/M82Room_open_Timeline>>
+<<bindAnimatorToTrackByName Prop1 M82Room>>
+<<playLoadedTimeline>>
+
 
 <<wait 4>>
 <<setCameraSlayer>>

@@ -6068,7 +6068,6 @@ GameObject:
   m_Component:
   - component: {fileID: 905386664}
   - component: {fileID: 905386666}
-  - component: {fileID: 905386667}
   - component: {fileID: 905386668}
   m_Layer: 0
   m_Name: BossRoom
@@ -6108,20 +6107,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _tagId: 32
---- !u!114 &905386667
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 905386663}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c781f282f31073d4abf811025dfd3dd6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _anim: {fileID: 905386668}
-  dummyButton: 0
 --- !u!95 &905386668
 Animator:
   serializedVersion: 7
@@ -6132,7 +6117,7 @@ Animator:
   m_GameObject: {fileID: 905386663}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7a56c6634b9c227488bd3fb80a04c344, type: 2}
+  m_Controller: {fileID: 0}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
