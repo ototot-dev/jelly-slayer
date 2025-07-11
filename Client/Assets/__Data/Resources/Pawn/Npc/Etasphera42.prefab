@@ -26179,7 +26179,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   common:
-    pawnId: 6
+    pawnId: 9
     pawnName: Etasphera42
     displayName: 
     spawnWaitingTime: 1
@@ -26243,7 +26243,6 @@ MonoBehaviour:
   target:
     targetPawnHP:
       value: {fileID: 0}
-    trail: []
   decision:
     currDecision:
       value: -1

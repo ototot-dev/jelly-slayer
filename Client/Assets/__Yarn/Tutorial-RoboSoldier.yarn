@@ -1,11 +1,11 @@
-title: Tutorial-3
+title: Tutorial-RoboSoldier
 tags:
 ---
 <<fadeIn 0.1>>
 <<vignette 0.4 0.9 0>>
 <<hideMechArm>>
-<<hideSword>>
-//<<sendMsgToGameMode SetCombat>>
+<<showSword>>
+<<sendMsgToGameMode SetCombat>>
 <<wait 1>>
 <<fadeOut 1>>
 <<wait 1>>

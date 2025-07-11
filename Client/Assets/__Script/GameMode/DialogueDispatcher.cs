@@ -123,6 +123,11 @@ namespace Game
             __runner.AddCommandHandler<string>("setConfinerVolume", SetConfinerVolume);
             __runner.AddCommandHandler<string, string, float>("showMessagePopup", ShowMessagePopup);
             __runner.AddCommandHandler<string, float>("setLightIntensity", SetLightIntensity);
+            __runner.AddCommandHandler<string>("playTimeline", PlayTimeline);
+            __runner.AddCommandHandler<string>("loadTimeline", LoadTimeline);
+            __runner.AddCommandHandler("playLoadedTimeline", PlayLoadedTimeline);
+            __runner.AddCommandHandler<string, int>("bindAnimatorToTrack", BindAnimatorToTrack);
+            __runner.AddCommandHandler<string, string>("bindAnimatorToTrackByName", BindAnimatorToTrackByName);
         }
 
         public void Vignetee(float intensity, float smoothness, float blendTime)
@@ -351,6 +356,36 @@ namespace Game
         {
             Debug.Log("showMessagePopup" + title + text);
             new MessagePopupController(title, text, showDuration).Load().ShowDimmed(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
+        }
+
+        public void PlayTimeline(string timelineName)
+        {
+            Debug.Log("YarnCommand PlayTimeline: " + timelineName);
+            TimelineManager.Instance.PlayTimelineByName(timelineName);
+        }
+
+        public void LoadTimeline(string timelineName)
+        {
+            Debug.Log("YarnCommand LoadTimeline: " + timelineName);
+            TimelineManager.Instance.LoadTimeline(timelineName);
+        }
+
+        public void PlayLoadedTimeline()
+        {
+            Debug.Log("YarnCommand PlayLoadedTimeline");
+            TimelineManager.Instance.Play();
+        }
+
+        public void BindAnimatorToTrack(string tagName, int trackIndex)
+        {
+            Debug.Log($"YarnCommand BindAnimatorToTrack: {tagName} -> Track {trackIndex}");
+            TimelineManager.Instance.BindAnimatorToTrack(tagName, trackIndex);
+        }
+
+        public void BindAnimatorToTrackByName(string tagName, string trackName)
+        {
+            Debug.Log($"YarnCommand BindAnimatorToTrackByName: {tagName} -> Track '{trackName}'");
+            TimelineManager.Instance.BindAnimatorToTrackByName(tagName, trackName);
         }
     }
 }

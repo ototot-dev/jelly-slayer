@@ -1,10 +1,12 @@
-title: Tutorial-5
+title: Tutorial-M82
 tags:
 ---
 <<fadeIn 0.1>>
+<<setLightIntensity SunLight 0.1>>
 <<vignette 0.4 0.9 0>>
 <<hideMechArm>>
-<<hideSword>>
+<<showSword>>
+<<sendMsgToGameMode SetCombat>>
 <<wait 2>>
 <<fadeOut 1>>
 <<wait 2>>
@@ -31,14 +33,20 @@ tags:
 
 <<wait 2>>
 
-<<setCameraTarget CameraPoint>>
 <<spawnPawn Etasphera42 SP1>>
+<<setCameraTarget CameraPoint>>
+
+<<wait 1>>
+<<loadTimeline Timeline/M82Room_open_Timeline>>
+<<bindAnimatorToTrackByName Prop1 M82Room>>
+<<playLoadedTimeline>>
+
 
 <<wait 4>>
 <<setCameraSlayer>>
 
 케이: 저건 좀 위험해 보이는데?
-드론: 저건 42식 전투 머신인데... 저런게 왜 여기 있지?
+드론: 저건 82식 전투 머신인데... 저런게 왜 여기 있지?
 케이: 거봐. 위험한 거지?
 드론: 해결 방법을 찾아볼께. 일단 조심해.
 
@@ -48,7 +56,11 @@ tags:
 <<sendMsgToGameMode SetCombat>>
 <<showMessagePopup "가드" "적의 공격은 방향을 맞추면 자동으로 가드할 수 있습니다." 4>>
 
-<<waitCheck>>
+===
+
+title: Tutorial-M82-2
+tags:
+---
 
 <<showAndWaitInteractionKey "Door2">>
 

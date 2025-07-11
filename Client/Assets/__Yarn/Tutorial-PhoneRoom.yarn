@@ -1,4 +1,4 @@
-﻿title: Tutorial-1
+﻿title: Tutorial-PhoneRoom
 tags:
 ---
 
@@ -22,7 +22,7 @@ tags:
 <<getUp>>
 <<wait 6>>
 
-<<showAndWaitInteractionKey "Door">>
+//<<showAndWaitInteractionKey "Door">>
 
 케이: 여긴...<waitfor=1>나한테 무슨 일이 있었던거야?
 // 주변은 작고 어두운 방. 딱히 아무런 장식도 없다.
