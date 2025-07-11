@@ -685,7 +685,7 @@ namespace Game.NodeCanvasExtension
         {
             __pawnActionCtrler = agent.GetComponent<PawnActionController>();
             __pawnActionCtrler.WaitAction();
-            __capturedActionInstanceId =  __pawnActionCtrler.currActionContext.actionInstanceId;
+            __capturedActionInstanceId = __pawnActionCtrler.currActionContext.actionInstanceId;
         }
 
         protected override void OnUpdate()
@@ -700,6 +700,7 @@ namespace Game.NodeCanvasExtension
             {
                 var baseTimeStamp = Time.time - __pawnActionCtrler.currActionContext.manualAdvanceTime;
                 var waitTime = waitFrame.value > 0 ? 1f / __pawnActionCtrler.currActionContext.animClipFps * Mathf.Max(0, waitFrame.value - 1) : __pawnActionCtrler.currActionContext.animClipLength;
+
                 if (!__pawnActionCtrler.CheckWaitAction(waitTime, baseTimeStamp))
                     EndAction(true);
             }
@@ -708,7 +709,9 @@ namespace Game.NodeCanvasExtension
                 //* 'preMotionTimeStamp'값이 있으면. 실제 액션 시작 시간은 preMotionTimeStamp으로 간주함
                 var baseTimeStamp = __pawnActionCtrler.currActionContext.preMotionTimeStamp > 0f ? __pawnActionCtrler.currActionContext.preMotionTimeStamp : (__pawnActionCtrler.currActionContext.startTimeStamp - Mathf.Max(0f, __pawnActionCtrler.currActionContext.animClipLength) * __pawnActionCtrler.currActionContext.animBlendOffset);
                 var waitTime = waitFrame.value > 0 ? 1f / __pawnActionCtrler.currActionContext.animClipFps * Mathf.Max(0, waitFrame.value - 1) : __pawnActionCtrler.currActionContext.animClipLength;
+
                 waitTime /= __pawnActionCtrler.currActionContext.actionSpeed;
+
                 if (!__pawnActionCtrler.CheckWaitAction(waitTime, baseTimeStamp))
                     EndAction(true);
             }
@@ -768,7 +771,7 @@ namespace Game.NodeCanvasExtension
             if (stateName.isNoneOrNull || string.IsNullOrEmpty(stateName.value))
                 EndAction(true);
 
-            var stateBehaviour =__pawnAnimCtrler.FindObservableStateMachineTriggerEx(stateName.value);
+            var stateBehaviour =__pawnAnimCtrler.FindStateMachineTriggerObservable(stateName.value);
 
             Debug.Assert(stateBehaviour != null);
 

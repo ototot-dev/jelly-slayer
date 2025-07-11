@@ -47,22 +47,10 @@ namespace Game
 
         public override void OnAnimatorMoveHandler()
         {
-            if (__brain.BB.IsDown || CheckAnimStateRunning("OnGroggy (Start)") || CheckAnimStateRunning("OnGroggy (Break)"))
+            if (IsRootMotionForced())
                 __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation, Time.deltaTime);
             else if (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
                 __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition, mainAnimator.deltaRotation, Time.deltaTime);
-        }
-
-        public override void OnAnimatorStateEnterHandler(AnimatorStateInfo stateInfo, int layerIndex)
-        {
-            __runningAnimStateNames.Add(stateInfo.shortNameHash);
-            base.OnAnimatorStateEnterHandler(stateInfo, layerIndex);
-        }
-
-        public override void OnAniamtorStateExitHandler(AnimatorStateInfo stateInfo, int layerIndex)
-        {
-            __runningAnimStateNames.Remove(stateInfo.shortNameHash);
-            base.OnAniamtorStateExitHandler(stateInfo, layerIndex);
         }
 
         public override void OnAnimatorFootHandler(bool isRight) 
@@ -71,15 +59,12 @@ namespace Game
             SoundManager.Instance.PlayWithClipPos(__brain.BB.resource.onFootstepClip, pos, false, true, 0.2f);
         }
 
-        public bool CheckAnimStateRunning(string stateName) => __runningAnimStateNames.Contains(Animator.StringToHash(stateName));
-
         void Awake()
         {
             __brain = GetComponent<RoboSoldierBrain>();
         }
 
         RoboSoldierBrain __brain;
-        HashSet<int> __runningAnimStateNames = new();
 
         void Start()
         {
@@ -194,7 +179,7 @@ namespace Game
                     armBoneSimulatorTargetWeight = leftArmBoneSimulator.StimulatorAmount = rightArmBoneSimulator.StimulatorAmount = 0f;
                     if (__brain.ActionCtrler.CurrActionName == "ShieldAttack") leftHandOverride.weight = Mathf.Clamp01(leftHandOverride.weight + __brain.BB.action.shieldAttackRigBlendInSpeed * Time.deltaTime);
                 }
-                else if (CheckAnimStateRunning("OnParried") || CheckAnimStateRunning("OnGroggy (Loop)"))
+                else if (CheckAnimStateTriggered("OnParried") || CheckAnimStateTriggered("OnGroggy (Loop)"))
                 {
                     armBoneSimulatorTargetWeight = 1f;
                     if (__brain.ActionCtrler.CurrActionName != "ShieldAttack") leftHandOverride.weight = Mathf.Clamp01(leftHandOverride.weight - __brain.BB.action.shieldAttackRigBlendOutSpeed * Time.deltaTime);

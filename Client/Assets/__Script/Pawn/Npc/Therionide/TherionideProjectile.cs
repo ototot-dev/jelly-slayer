@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public class RoboCannonMissile : ProjectileMovement, IObjectPoolable
+    public class TherionideProjectile : ProjectileMovement, IObjectPoolable
     {
         #region ISpawnable/IMovable 구현
         void IObjectPoolable.OnGetFromPool() { }
@@ -63,11 +63,11 @@ namespace Game
             {
                 for (int i = 0; i < __traceCount; i++)
                 {
-                    var helper = __traceCollidersNonAlloc[i].GetComponent<PawnColliderHelper>();
-                    Debug.Assert(helper != null);
+                    if (!__traceCollidersNonAlloc[i].TryGetComponent<PawnColliderHelper>(out var colliderHelper))
+                        continue;
 
-                    if (helper.pawnBrain != emitterBrain.Value && helper.pawnBrain.PawnBB.common.pawnName != "Slayer")
-                        emitterBrain.Value.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, emitterBrain.Value, helper.pawnBrain, actionData, string.Empty, __traceCollidersNonAlloc[i], false));
+                    if (colliderHelper.pawnBrain != emitterBrain.Value && colliderHelper.pawnBrain.PawnBB.common.pawnName != "Slayer")
+                        emitterBrain.Value.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, emitterBrain.Value, colliderHelper.pawnBrain, actionData, string.Empty, __traceCollidersNonAlloc[i], false));
                 }
             }
 

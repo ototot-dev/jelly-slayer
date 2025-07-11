@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Animations.Rigging;
 using UnityEngine.Playables;
+using ZLinq;
 
 namespace Game
 {
@@ -19,18 +20,26 @@ namespace Game
         public Rig rigSetup;
         public LegsAnimator legAnimator;
         public RagdollAnimator2 ragdollAnimator;
-        public Action<AnimatorStateInfo, int> onAnimStateEnter;
-        public Action<AnimatorStateInfo, int> onAnimStateExit;
-        readonly Dictionary<string, ObservableStateMachineTriggerEx> __observableStateMachineTriggersCached = new();
 
-        public ObservableStateMachineTriggerEx FindObservableStateMachineTriggerEx(string stateName)
+        readonly Dictionary<string, PawnAnimStateMachineTrigger> __stateMachineTriggerObservables = new();
+        readonly Dictionary<int, PawnAnimStateMachineTrigger> __runningStateMachineTriggers = new();
+        public bool CheckAnimStateTriggered(string stateName) => __runningStateMachineTriggers.ContainsKey(Animator.StringToHash(stateName));
+        public bool CheckAnimStateTriggered(int stateNameHash) => __runningStateMachineTriggers.ContainsKey(stateNameHash);
+
+        public PawnAnimStateMachineTrigger FindStateMachineTriggerObservable(string stateName)
         {
-            if (__observableStateMachineTriggersCached.TryGetValue(stateName, out var ret))
-                return ret;
-            
-            var found = mainAnimator.GetBehaviours<ObservableStateMachineTriggerEx>().First(s => s.stateName == stateName);
-            __observableStateMachineTriggersCached.Add(stateName, found);
+            if (__stateMachineTriggerObservables.TryGetValue(stateName, out var found))
+                return found;
 
+            found = mainAnimator.GetBehaviours<PawnAnimStateMachineTrigger>().FirstOrDefault(t => t.stateName == stateName);
+
+            if (found == null)
+            {
+                __Logger.WarningR2(gameObject, "FindObservableStateMachineTrigger()", "Found failed", "stateName", stateName);
+                return null;
+            }
+
+            __stateMachineTriggerObservables.Add(stateName, found);
             return found;
         }
 
@@ -49,6 +58,8 @@ namespace Game
         protected IDisposable __blendSingleClipDisposable;
         // public bool IsPlayableGraphRunning() => __playableGraph.IsValid() && (__playableGraph.IsPlaying() || __blendSingleClipDisposable != null);
         public bool IsPlayableGraphRunning() => __playableGraph.IsValid() && __playableGraph.IsPlaying();
+        public virtual bool IsRootMotionForced() => __runningStateMachineTriggers.AsValueEnumerable().Any(t => t.Value.isRootMotionForced);
+        public virtual float GetForecedRootMotionMultiplier() => __runningStateMachineTriggers.AsValueEnumerable().FirstOrDefault(t => t.Value.isRootMotionForced).Value.rootMotionMultiplier;
 
         protected virtual void CreatePlayableGraph()
         {
@@ -78,7 +89,7 @@ namespace Game
             __playableClips[__currPlayableClipIndex] = AnimationClipPlayable.Create(__playableGraph, clip);
             __playableGraph.Connect(__playableClips[__currPlayableClipIndex], 0, __playableMixer, __currPlayableClipIndex);
             __playableMixer.SetInputWeight(__currPlayableClipIndex, 0f);
-            
+
             if (!__playableGraph.IsPlaying())
                 __playableGraph.Play();
 
@@ -103,7 +114,7 @@ namespace Game
                 __playableMixer.SetInputWeight(2, Mathf.Clamp01(__playableMixer.GetInputWeight(2) - blendSpeed * Time.deltaTime));
             }).AddTo(this);
         }
-        
+
         public void PlaySingleClip(AnimationClip clip, float blendInTime, float blendOutTime)
         {
             if (!__playableGraph.IsValid()) CreatePlayableGraph();
@@ -151,7 +162,7 @@ namespace Game
 
             __blendSingleClipDisposable?.Dispose();
             __blendSingleClipDisposable = Observable.EveryUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(blendOutTime)))
-                .DoOnCompleted(() => 
+                .DoOnCompleted(() =>
                 {
                     __playableMixer.SetInputWeight(0, 0f);
                     __playableMixer.SetInputWeight(1, 0f);
@@ -165,12 +176,20 @@ namespace Game
                     __playableMixer.SetInputWeight(2, Mathf.Clamp01(__playableMixer.GetInputWeight(2) + blendSpeed * Time.deltaTime));
                 }).AddTo(this);
         }
-    
-        public virtual void OnAnimatorMoveHandler() {}
-        public virtual void OnAnimatorStateEnterHandler(AnimatorStateInfo stateInfo, int layerIndex) { onAnimStateEnter?.Invoke(stateInfo, layerIndex); }
-        public virtual void OnAniamtorStateExitHandler(AnimatorStateInfo stateInfo, int layerIndex) { onAnimStateExit?.Invoke(stateInfo, layerIndex); }
-        public virtual void OnAnimatorFootHandler(bool isRight) {}
-        public virtual void OnRagdollAnimatorFalling() {}
-        public virtual void OnRagdollAnimatorGetUp() {}
+
+        public virtual void OnAnimatorMoveHandler() { }
+        public virtual void OnAnimatorStateEnterHandler(AnimatorStateInfo stateInfo, int layerIndex, PawnAnimStateMachineTrigger trigger)
+        {
+            __Logger.LogR1(gameObject, "OnAnimatorStateEnterHandler()", "stateName", trigger.stateName);
+            __runningStateMachineTriggers.Add(stateInfo.shortNameHash, trigger);
+        }
+        public virtual void OnAniamtorStateExitHandler(AnimatorStateInfo stateInfo, int layerIndex, PawnAnimStateMachineTrigger trigger)
+        {
+            __Logger.LogR1(gameObject, "OnAniamtorStateExitHandler()", "stateName", trigger.stateName);
+            __runningStateMachineTriggers.Remove(stateInfo.shortNameHash);
+        }
+        public virtual void OnAnimatorFootHandler(bool isRight) { }
+        public virtual void OnRagdollAnimatorFalling() { }
+        public virtual void OnRagdollAnimatorGetUp() { }
     }
 }

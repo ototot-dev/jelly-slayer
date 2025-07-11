@@ -47,13 +47,14 @@ namespace Game
 
         SlayerBrain __brain;
         Vector3[] __8waysBlendTreePosXY;
-        HashSet<int> __runningAnimStateNames = new();
-        public bool CheckAnimStateRunning(string stateName) => __runningAnimStateNames.Contains(Animator.StringToHash(stateName));
-        public bool CheckAnimStateRunning(int stateNameHash) => __runningAnimStateNames.Contains(stateNameHash);
 
         public override void OnAnimatorMoveHandler()
         {
-            if ((__brain.ActionCtrler.CheckActionRunning() || CheckAnimStateRunning("OnDown")) && __brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
+            if (IsRootMotionForced())
+            {
+                __brain.Movement.AddRootMotion(GetForecedRootMotionMultiplier() * mainAnimator.deltaPosition, Quaternion.identity, Time.deltaTime);
+            }
+            else if (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
             {
                 //* 평면 방향 RootMotion에 대한 Constraints가 존재하면 값을 0으로 변경해준다.
                 if (__brain.ActionCtrler.CheckRootMotionConstraints(RootMotionConstraints.FreezePositionX, RootMotionConstraints.FreezePositionZ))
@@ -61,33 +62,6 @@ namespace Game
                 else
                     __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition, mainAnimator.deltaRotation, Time.deltaTime);
             }
-            else if (CheckAnimStateRunning("GuardParry"))
-            {
-                __brain.Movement.AddRootMotion(__brain.BB.action.guardParryRootMotionMultiplier * mainAnimator.deltaPosition, Quaternion.identity, Time.deltaTime);
-            }
-        }
-
-        public override void OnAnimatorStateEnterHandler(AnimatorStateInfo stateInfo, int layerIndex)
-        {
-            __runningAnimStateNames.Add(stateInfo.shortNameHash);
-            base.OnAnimatorStateEnterHandler(stateInfo, layerIndex);
-        }
-
-        public override void OnAniamtorStateExitHandler(AnimatorStateInfo stateInfo, int layerIndex)
-        {
-            __runningAnimStateNames.Remove(stateInfo.shortNameHash);
-            base.OnAniamtorStateExitHandler(stateInfo, layerIndex);
-        }
-
-        public override void OnRagdollAnimatorFalling()
-        {
-            // mainAnimator.SetBool("IsFalling", true);
-            // mainAnimator.SetTrigger("OnFalling");
-        }
-
-        public override void OnRagdollAnimatorGetUp()
-        {
-            // mainAnimator.SetBool("IsFalling", false);
         }
 
         void UpdateCombatMode()
@@ -114,7 +88,7 @@ namespace Game
             }
 
             //* Down, Dead 상태에선 Animation 처리를 모두 끈다.
-            if (CheckAnimStateRunning("OnDown") || CheckAnimStateRunning("OnDead"))
+            if (CheckAnimStateTriggered("OnDown") || CheckAnimStateTriggered("OnDead"))
             {
                 rigSetup.weight = 0f;
                 spineOverrideTransform.weight = 0f;
@@ -209,15 +183,15 @@ namespace Game
                 }
                 else
                 {
-                    spineOverrideTransform.weight = (mainAnimator.GetBool("IsGuarding") || CheckAnimStateRunning("GuardParry")) ? 1f : 0f;
+                    spineOverrideTransform.weight = (mainAnimator.GetBool("IsGuarding") || CheckAnimStateTriggered("GuardParry")) ? 1f : 0f;
                     headMultiAim.weight = 1f;
                     leftArmTwoBoneIK.weight = Mathf.Clamp01(leftArmTwoBoneIK.weight.LerpSpeed(0f, 4f, Time.deltaTime));
                     rightArmTwoBoneIK.weight = Mathf.Clamp01(leftArmTwoBoneIK.weight.LerpSpeed(0f, 4f, Time.deltaTime));
                     leftLegBoneSimulator.StimulatorAmount = Mathf.Clamp01(leftLegBoneSimulator.StimulatorAmount.LerpSpeed(0f, 1f, Time.deltaTime));
                     rightLegBoneSimulator.StimulatorAmount = Mathf.Clamp01(rightLegBoneSimulator.StimulatorAmount.LerpSpeed(0f, 1f, Time.deltaTime));
 
-                    mainAnimator.SetLayerWeight((int)LayerIndices.LeftArm, __brain.BB.IsGuarding || CheckAnimStateRunning("DrinkPotion") ? 1f : 0.5f);
-                    mainAnimator.SetLayerWeight((int)LayerIndices.RightArm, __brain.BB.IsGuarding || CheckAnimStateRunning("DrinkPotion") ? 1f : 0f);
+                    mainAnimator.SetLayerWeight((int)LayerIndices.LeftArm, __brain.BB.IsGuarding || CheckAnimStateTriggered("DrinkPotion") ? 1f : 0.5f);
+                    mainAnimator.SetLayerWeight((int)LayerIndices.RightArm, __brain.BB.IsGuarding || CheckAnimStateTriggered("DrinkPotion") ? 1f : 0f);
                 }
 
                 if (!legAnimator.enabled) legAnimator.enabled = true;
@@ -234,7 +208,7 @@ namespace Game
                     mainAnimator.SetBool("IsGuarding", true);
 
                 // TODO: healingPotion Show/Hide 임시 코드
-                if (CheckAnimStateRunning("DrinkPotion"))
+                if (CheckAnimStateTriggered("DrinkPotion"))
                 {
                     if (!__brain.BB.children.healingPotion.activeSelf)
                         __brain.BB.children.healingPotion.SetActive(true);
@@ -245,9 +219,9 @@ namespace Game
                         __brain.BB.children.healingPotion.SetActive(false);
                 }
 
-                if (CheckAnimStateRunning("DrinkPotion"))
+                if (CheckAnimStateTriggered("DrinkPotion"))
                     mainAnimator.SetLayerWeight((int)LayerIndices.Action, 0f);
-                else if (CheckAnimStateRunning("GuardParry"))
+                else if (CheckAnimStateTriggered("GuardParry"))
                     mainAnimator.SetLayerWeight((int)LayerIndices.Action, 1f);
                 else
                     mainAnimator.SetLayerWeight((int)LayerIndices.Action, __brain.ActionCtrler.GetAdvancedActionLayerWeight(mainAnimator.GetLayerWeight((int)LayerIndices.Action), actionLayerBlendInSpeed, actionLayerBlendOutSpeed, Time.deltaTime));
@@ -351,35 +325,35 @@ namespace Game
 
             }).AddTo(this);
 
-            FindObservableStateMachineTriggerEx("Empty (UpperLayer)").OnStateEnterAsObservable().Subscribe(_ => mainAnimator.SetLayerWeight(1, 0f)).AddTo(this);
-            FindObservableStateMachineTriggerEx("Empty (UpperLayer)").OnStateExitAsObservable().Subscribe(_ => mainAnimator.SetLayerWeight(1, 1f)).AddTo(this);
+            FindStateMachineTriggerObservable("Idle (LArm)").OnStateEnterAsObservable().Subscribe(_ => mainAnimator.SetLayerWeight(1, 0f)).AddTo(this);
+            FindStateMachineTriggerObservable("Idle (LArm)").OnStateExitAsObservable().Subscribe(_ => mainAnimator.SetLayerWeight(1, 1f)).AddTo(this);
 
-            FindObservableStateMachineTriggerEx("OnDown (Start)").OnStateEnterAsObservable().Subscribe(s =>
+            FindStateMachineTriggerObservable("OnDown (Start)").OnStateEnterAsObservable().Subscribe(s =>
             {
                 legAnimator.User_FadeToDisabled(0.1f);
                 ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Standing;
                 Observable.Timer(TimeSpan.FromSeconds(0.4f)).Subscribe(_ => ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Falling).AddTo(this);
             }).AddTo(this);
 
-            FindObservableStateMachineTriggerEx("OnDown (End)").OnStateEnterAsObservable().Subscribe(s =>
+            FindStateMachineTriggerObservable("OnDown (End)").OnStateEnterAsObservable().Subscribe(s =>
             {
                 __brain.Movement.GetCharacterMovement().SetPosition(__brain.AnimCtrler.ragdollAnimator.Handler.DummyReference.transform.GetChild(0).position);
                 ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Standing;
             }).AddTo(this);
 
-            FindObservableStateMachineTriggerEx("OnDown (End)").OnStateExitAsObservable().Subscribe(s =>
+            FindStateMachineTriggerObservable("OnDown (End)").OnStateExitAsObservable().Subscribe(s =>
             {
                 legAnimator.User_FadeEnabled(0.1f);
                 ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Off;
             }).AddTo(this);
 
-            FindObservableStateMachineTriggerEx("PunchParry (Charge)").OnStateEnterAsObservable().Subscribe(_ =>
+            FindStateMachineTriggerObservable("PunchParry (Charge)").OnStateEnterAsObservable().Subscribe(_ =>
             {
                 var animAdvance = 0f;
                 var animAdvanceOffset = 0f;
                 mainAnimator.SetFloat("AnimAdvance", animAdvance);
 
-                Observable.EveryUpdate().TakeWhile(_ => CheckAnimStateRunning("PunchParry (Charge)"))
+                Observable.EveryUpdate().TakeWhile(_ => CheckAnimStateTriggered("PunchParry (Charge)"))
                     .Subscribe(_ =>
                     {
                         if (__brain.BB.action.punchChargingLevel.Value >= 0)

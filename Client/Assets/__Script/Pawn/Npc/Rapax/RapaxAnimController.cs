@@ -41,20 +41,10 @@ namespace Game
 
         public override void OnAnimatorMoveHandler()
         {
-           if (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
+            if (IsRootMotionForced())
+                __brain.Movement.AddRootMotion(mainAnimator.deltaPosition, mainAnimator.deltaRotation, Time.deltaTime);
+            else if (__brain.ActionCtrler.CheckActionRunning() && __brain.ActionCtrler.CanRootMotion(mainAnimator.deltaPosition))
                 __brain.Movement.AddRootMotion(__brain.ActionCtrler.GetRootMotionMultiplier() * mainAnimator.deltaPosition, mainAnimator.deltaRotation, Time.deltaTime);
-        }
-
-        public override void OnAnimatorStateEnterHandler(AnimatorStateInfo stateInfo, int layerIndex)
-        {
-            __runningAnimStateNames.Add(stateInfo.shortNameHash);
-            base.OnAnimatorStateEnterHandler(stateInfo, layerIndex);
-        }
-
-        public override void OnAniamtorStateExitHandler(AnimatorStateInfo stateInfo, int layerIndex)
-        {
-            __runningAnimStateNames.Remove(stateInfo.shortNameHash);
-            base.OnAniamtorStateExitHandler(stateInfo, layerIndex);
         }
 
         public override void OnAnimatorFootHandler(bool isRight) 
@@ -62,15 +52,12 @@ namespace Game
             SoundManager.Instance.PlayWithClipPos(__brain.BB.resource.onFootstepClip, __brain.BB.TargetColliderHelper.GetWorldCenter(), false, true, 0.2f);
         }
 
-        public bool CheckAnimStateRunning(string stateName) => __runningAnimStateNames.Contains(Animator.StringToHash(stateName));
-
         void Awake()
         {
             __brain = GetComponent<RapaxBrain>();
         }
 
         RapaxBrain __brain;
-        readonly HashSet<int> __runningAnimStateNames = new();
 
         void Start()
         {

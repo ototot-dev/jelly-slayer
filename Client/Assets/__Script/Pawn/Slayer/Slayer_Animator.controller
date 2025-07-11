@@ -281,45 +281,6 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
---- !u!206 &-8208871530209000607
-BlendTree:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Blend Tree
-  m_Childs:
-  - serializedVersion: 2
-    m_Motion: {fileID: 6932384574408736954}
-    m_Threshold: -1
-    m_Position: {x: 0, y: 0}
-    m_TimeScale: 1
-    m_CycleOffset: 0
-    m_DirectBlendParameter: AnimationPlaySpeed
-    m_Mirror: 0
-  - serializedVersion: 2
-    m_Motion: {fileID: -2068964048777953953}
-    m_Threshold: 0
-    m_Position: {x: 0, y: 0}
-    m_TimeScale: 1
-    m_CycleOffset: 0
-    m_DirectBlendParameter: AnimationPlaySpeed
-    m_Mirror: 0
-  - serializedVersion: 2
-    m_Motion: {fileID: 3816869524316849666}
-    m_Threshold: 1
-    m_Position: {x: 0, y: 0}
-    m_TimeScale: 1
-    m_CycleOffset: 0
-    m_DirectBlendParameter: AnimationPlaySpeed
-    m_Mirror: 0
-  m_BlendParameter: Fall Ground
-  m_BlendParameterY: AnimationPlaySpeed
-  m_MinThreshold: -1
-  m_MaxThreshold: 1
-  m_UseAutomaticThresholds: 0
-  m_NormalizedBlendValues: 0
-  m_BlendType: 0
 --- !u!1101 &-8177061942759516654
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -602,32 +563,6 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!1102 &-7393936778803331042
-AnimatorState:
-  serializedVersion: 6
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: OnFall (Old)
-  m_Speed: 0.5
-  m_CycleOffset: 0
-  m_Transitions: []
-  m_StateMachineBehaviours: []
-  m_Position: {x: 50, y: 50, z: 0}
-  m_IKOnFeet: 0
-  m_WriteDefaultValues: 1
-  m_Mirror: 0
-  m_SpeedParameterActive: 0
-  m_MirrorParameterActive: 0
-  m_CycleOffsetParameterActive: 0
-  m_TimeParameterActive: 0
-  m_Motion: {fileID: -8208871530209000607}
-  m_Tag: 
-  m_SpeedParameter: 
-  m_MirrorParameter: 
-  m_CycleOffsetParameter: 
-  m_TimeParameter: 
 --- !u!1101 &-7218021046361875340
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -665,7 +600,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6f35ab57576f4fba98be87c3c8801c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stateName: Empty (UpperLayer)
+  stateName: Idle (LArm)
+  isRootMotionForced: 0
+  rootMotionMultiplier: 0
 --- !u!1101 &-6917410865765953914
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -1256,19 +1193,6 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
---- !u!114 &-4186831127132040549
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6f35ab57576f4fba98be87c3c8801c6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  stateName: Guard
 --- !u!1102 &-3955072886540130542
 AnimatorState:
   serializedVersion: 6
@@ -1796,6 +1720,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stateName: JumpAttack
+  isRootMotionForced: 0
+  rootMotionMultiplier: 0
 --- !u!1101 &-2867199432806349486
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -2068,6 +1994,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stateName: GuardParry
+  isRootMotionForced: 0
+  rootMotionMultiplier: 0
 --- !u!1102 &-2083770357656141147
 AnimatorState:
   serializedVersion: 6
@@ -2233,8 +2161,7 @@ AnimatorStateMachine:
   m_AnyStateTransitions: []
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
-  m_StateMachineBehaviours:
-  - {fileID: 6790529843845301766}
+  m_StateMachineBehaviours: []
   m_AnyStatePosition: {x: 210, y: -50, z: 0}
   m_EntryPosition: {x: 390, y: -50, z: 0}
   m_ExitPosition: {x: 570, y: -50, z: 0}
@@ -2301,8 +2228,7 @@ AnimatorState:
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 138135278969762662}
-  m_StateMachineBehaviours:
-  - {fileID: 8861484711138779116}
+  m_StateMachineBehaviours: []
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -3105,6 +3031,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stateName: OnDown (Start)
+  isRootMotionForced: 0
+  rootMotionMultiplier: 0
 --- !u!1101 &138135278969762662
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -3469,9 +3397,6 @@ AnimatorStateMachine:
   - serializedVersion: 1
     m_State: {fileID: 2735354119779850764}
     m_Position: {x: 140, y: 100, z: 0}
-  - serializedVersion: 1
-    m_State: {fileID: -7393936778803331042}
-    m_Position: {x: -330, y: 220, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -6215393780843007129}
     m_Position: {x: -90, y: 160, z: 0}
@@ -4548,6 +4473,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stateName: DrinkPotion
+  isRootMotionForced: 0
+  rootMotionMultiplier: 0
 --- !u!1102 &5141100835216988053
 AnimatorState:
   serializedVersion: 6
@@ -4736,7 +4663,7 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: 225217770436068910}
-    m_Position: {x: 362.5, y: 31, z: 0}
+    m_Position: {x: 360, y: 30, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 6097321772857539712}
     m_Position: {x: 360, y: 90, z: 0}
@@ -5001,19 +4928,6 @@ BlendTree:
   m_UseAutomaticThresholds: 1
   m_NormalizedBlendValues: 0
   m_BlendType: 0
---- !u!114 &6790529843845301766
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6f35ab57576f4fba98be87c3c8801c6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  stateName: Guard
 --- !u!1109 &6802092135861309767
 AnimatorTransition:
   m_ObjectHideFlags: 1
@@ -5432,6 +5346,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stateName: OnDown (End)
+  isRootMotionForced: 0
+  rootMotionMultiplier: 0
 --- !u!1102 &8319936776394541755
 AnimatorState:
   serializedVersion: 6
@@ -5481,8 +5397,7 @@ AnimatorStateMachine:
   m_AnyStateTransitions: []
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
-  m_StateMachineBehaviours:
-  - {fileID: -4186831127132040549}
+  m_StateMachineBehaviours: []
   m_AnyStatePosition: {x: 210, y: -50, z: 0}
   m_EntryPosition: {x: 390, y: -50, z: 0}
   m_ExitPosition: {x: 570, y: -50, z: 0}
@@ -5551,19 +5466,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stateName: PunchParry (Charge)
---- !u!114 &8861484711138779116
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6f35ab57576f4fba98be87c3c8801c6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  stateName: DrinkPotion
+  isRootMotionForced: 0
+  rootMotionMultiplier: 0
 --- !u!1101 &8865658146299966741
 AnimatorStateTransition:
   m_ObjectHideFlags: 1

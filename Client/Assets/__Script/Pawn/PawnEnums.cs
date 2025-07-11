@@ -22,6 +22,7 @@ namespace Game
         SlimeMini,
         HumanBot,
         Rapax,
+        Therionide,
     }
 
     [UGS(typeof(PawnStatus))]

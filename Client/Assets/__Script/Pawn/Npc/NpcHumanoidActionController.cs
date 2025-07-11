@@ -1,7 +1,7 @@
 using System;
-using System.Linq;
 using UniRx;
 using UnityEngine;
+using ZLinq;
 
 namespace Game
 {
@@ -108,6 +108,7 @@ namespace Game
             __pawnAnimCtrler.mainAnimator.SetInteger("HitType", 3);
 
             var knockBackVec = __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+
             __knockBackDisposable?.Dispose();
             __knockBackDisposable = Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.receiverActionData.knockBackDistance / __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed)))
                 .DoOnCancel(() => 
@@ -132,6 +133,7 @@ namespace Game
             __pawnAnimCtrler.mainAnimator.SetTrigger("OnParried");
 
             var knockBackDistance = 0f;
+
             if (damageContext.actionResult == ActionResults.PunchParrying)
                 knockBackDistance = damageContext.receiverActionData.knockBackDistance;
             else if (damageContext.actionResult == ActionResults.GuardParrying)
@@ -145,6 +147,7 @@ namespace Game
                 __Logger.LogR1(gameObject, nameof(StartOnParriedAction), "knockBackDistance", knockBackDistance);
 
             var knockBackVec = __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed * damageContext.receiverBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+
             __knockBackDisposable?.Dispose();
             __knockBackDisposable = Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(knockBackDistance / __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed)))
                 .DoOnCancel(() => 
@@ -176,62 +179,35 @@ namespace Game
 
                 __pawnAnimCtrler.mainAnimator.SetBool("IsGroggy", true);
                 __pawnAnimCtrler.mainAnimator.SetTrigger("OnGroggy");
-
-                // var knockBackDistance = 0f;
-                // if (damageContext.actionResult == ActionResults.PunchParried)
-                //     knockBackDistance = damageContext.receiverActionData.knockBackDistance;
-                // else if (damageContext.actionResult == ActionResults.GuardParried)
-                //     knockBackDistance = DatasheetManager.Instance.GetActionData(damageContext.receiverBrain.PawnBB.common.pawnId, "GuardParry")?.knockBackDistance ?? 0f;
-                // else
-                //     Debug.Assert(false);
-
-                // var knockBackVec = __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed * damageContext.receiverBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-                // __knockBackDisposable?.Dispose();
-                // __knockBackDisposable = Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(knockBackDistance / __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed)))
-                //     .DoOnCancel(() =>
-                //     {
-                //         __pawnBrain.InvalidateDecision(0.5f);
-                //         __knockBackDisposable = null;
-                //     })
-                //     .DoOnCompleted(() =>
-                //     {
-                //         __pawnBrain.InvalidateDecision(0.5f);
-                //         __knockBackDisposable = null;
-                //     })
-                //     .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity, Time.fixedDeltaTime))
-                //     .AddTo(this);
             }
-            else
+            else if (damageContext.senderActionData.knockBackDistance > 0f)
             {
-                if (damageContext.senderActionData.knockBackDistance > 0f)
-                {
-                    var knockBackVec = damageContext.senderActionData.actionName == "SpecialKick" ?
-                        __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed * (damageContext.receiverBrain.GetWorldPosition() - damageContext.senderBrain.GetWorldPosition()).Vector2D().normalized :
-                        __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
-                        
-                    __knockBackDisposable?.Dispose();
-                    __knockBackDisposable = Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed)))
-                        .DoOnCancel(() =>
-                        {
-                            __pawnBrain.InvalidateDecision(0.5f);
-                            __knockBackDisposable = null;
+                var knockBackVec = damageContext.senderActionData.actionName == "SpecialKick" ?
+                    __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed * (damageContext.receiverBrain.GetWorldPosition() - damageContext.senderBrain.GetWorldPosition()).Vector2D().normalized :
+                    __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed * damageContext.senderBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                    
+                __knockBackDisposable?.Dispose();
+                __knockBackDisposable = Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(damageContext.senderActionData.knockBackDistance / __humanoidBrain.JellyBB.pawnData_Movement.knockBackSpeed)))
+                    .DoOnCancel(() =>
+                    {
+                        __pawnBrain.InvalidateDecision(0.5f);
+                        __knockBackDisposable = null;
 
-                            //* KnockBack 연출 후에 Groogy 모션 진입
-                            __pawnAnimCtrler.mainAnimator.SetBool("IsGroggy", true);
-                            __pawnAnimCtrler.mainAnimator.SetTrigger("OnGroggy");
-                        })
-                        .DoOnCompleted(() =>
-                        {
-                            __pawnBrain.InvalidateDecision(0.5f);
-                            __knockBackDisposable = null;
+                        //* KnockBack 루트모션 후에 Groogy 모션 진입
+                        __pawnAnimCtrler.mainAnimator.SetBool("IsGroggy", true);
+                        __pawnAnimCtrler.mainAnimator.SetTrigger("OnGroggy");
+                    })
+                    .DoOnCompleted(() =>
+                    {
+                        __pawnBrain.InvalidateDecision(0.5f);
+                        __knockBackDisposable = null;
 
-                            //* KnockBack 연출 후에 Groogy 모션 진입
-                            __pawnAnimCtrler.mainAnimator.SetBool("IsGroggy", true);
-                            __pawnAnimCtrler.mainAnimator.SetTrigger("OnGroggy");
-                        })
-                        .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity, Time.fixedDeltaTime))
-                        .AddTo(this);
-                }
+                        //* KnockBack 루트모션 후에 Groogy 모션 진입
+                        __pawnAnimCtrler.mainAnimator.SetBool("IsGroggy", true);
+                        __pawnAnimCtrler.mainAnimator.SetTrigger("OnGroggy");
+                    })
+                    .Subscribe(_ => __pawnMovement.AddRootMotion(Time.fixedDeltaTime * knockBackVec, Quaternion.identity, Time.fixedDeltaTime))
+                    .AddTo(this);
             }
 
             return null;

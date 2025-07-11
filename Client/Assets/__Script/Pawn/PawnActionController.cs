@@ -545,7 +545,8 @@ namespace Game
 
         public bool CheckWaitAction(float duration, float baseTimeStamp = -1)
         {
-            return Time.time - (baseTimeStamp > 0 ? baseTimeStamp : currActionContext.waitTimeStamp) < duration;
+            var elapsedTime = Time.time - (baseTimeStamp > 0 ? baseTimeStamp : currActionContext.waitTimeStamp);
+            return elapsedTime < duration;
         }
 
         public void CancelAction(bool rewindAction, float rewindSpeed = 1, float rewindDuration = 1)
@@ -690,7 +691,7 @@ namespace Game
         PawnStatusController.StatusParam[] __debuffParams;
         bool __multiHitEnabled;
         bool __sendDamageOnTrace;
-        
+
         public Collider GetTraceActionCollider() => __traceCollider;
         public void StartTraceActionTargets(Collider traceCollider, int samplingRate = 60, bool multiHitEnabled = false, PawnStatusController.StatusParam[] debuffParams = null, bool sendDamageImmediately = false, bool drawGizmosEnabled = false, float drawGizmosDuration = 0)
         {

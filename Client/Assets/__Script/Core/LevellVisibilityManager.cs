@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Analytics;
-using ZLinq;
 
 namespace Game
 {
@@ -10,11 +8,12 @@ namespace Game
         HashSet<SphereCollider> __visibilityChecker = new();
         HashSet<MeshRenderer> __visibilityBlockerRenderers = new();
         static readonly RaycastHit[] __tempHitsNonAlloc = new RaycastHit[16];
-        static readonly HashSet<MeshRenderer> __tmepHitRenderers = new();
+        static readonly HashSet<MeshRenderer> __tempHitRenderers = new();
         static readonly HashSet<MeshRenderer> __tempNoHitRenderers = new();
 
         public bool RegisterChecker(SphereCollider collider)
         {
+            return false;
             return __visibilityChecker.Add(collider);
         }
 
@@ -39,24 +38,24 @@ namespace Game
                     for (int i = 0; i < hitCount; i++)
                     {
                         if (__tempHitsNonAlloc[i].collider.CompareTag("VisibilityBlocker") && __tempHitsNonAlloc[i].collider.TryGetComponent<MeshRenderer>(out var renderer))
-                            __tmepHitRenderers.Add(renderer);
+                            __tempHitRenderers.Add(renderer);
                     }
                 }
             }
 
             foreach (var c in __visibilityBlockerRenderers)
             {
-                if (!__tmepHitRenderers.Contains(c))
+                if (!__tempHitRenderers.Contains(c))
                     __tempNoHitRenderers.Add(c);
             }
 
-            foreach (var r in __tmepHitRenderers)
+            foreach (var r in __tempHitRenderers)
             {
                 __visibilityBlockerRenderers.Add(r);
                 foreach (var m in r.materials)
                 {
-                    m.SetColor("_BaseColor", Color.white.AdjustAlpha(0.2f));
-                    m.SetFloat("_Alpha", 0.2f);
+                    m.SetColor("_BaseColor", Color.white.AdjustAlpha(0.9f));
+                    m.SetFloat("_Alpha", 0.9f);
                 }
             }
 
@@ -65,12 +64,12 @@ namespace Game
                 __visibilityBlockerRenderers.Remove(r);
                 foreach (var m in r.materials)
                 {
-                    m.SetColor("_BaseColor", Color.white.AdjustAlpha(0.5f));
-                    m.SetFloat("_Alpha", 0.5f);
+                    m.SetColor("_BaseColor", Color.white.AdjustAlpha(1f));
+                    m.SetFloat("_Alpha", 1f);
                 }
             }
 
-            __tmepHitRenderers.Clear();
+            __tempHitRenderers.Clear();
             __tempNoHitRenderers.Clear();
         }
     }

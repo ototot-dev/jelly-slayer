@@ -282,7 +282,7 @@ namespace Game
             __brain.AnimCtrler.mainAnimator.SetInteger("AnimId", 100);
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnAction");
 
-            yield return __brain.AnimCtrler.FindObservableStateMachineTriggerEx("Chainsaw (Slash)").OnStateEnterAsObservable().Take(1)
+            yield return __brain.AnimCtrler.FindStateMachineTriggerObservable("Chainsaw (Slash)").OnStateEnterAsObservable().Take(1)
                 // .DoOnCancel(() => __Logger.LogR2(gameObject, "ChainsawActionCoroutine", "FindObservableStateMachineTriggerEx() canceled"))
                 // .DoOnCompleted(() => __Logger.LogR2(gameObject, "ChainsawActionCoroutine", "FindObservableStateMachineTriggerEx() completed"))
                 .ToYieldInstruction();

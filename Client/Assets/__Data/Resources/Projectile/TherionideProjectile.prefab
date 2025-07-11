@@ -9,11 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3083626412401777052}
-  - component: {fileID: 1484950052495980767}
-  - component: {fileID: 3521837419636682943}
-  - component: {fileID: 3261195820247751821}
+  - component: {fileID: -2086344303345174464}
   m_Layer: 9
-  m_Name: RoboCannonMissile
+  m_Name: TherionideProjectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35,55 +33,7 @@ Transform:
   - {fileID: 8207933378420783336}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!54 &1484950052495980767
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3083626412401777055}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!135 &3521837419636682943
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3083626412401777055}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Radius: 0.3
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3261195820247751821
+--- !u!114 &-2086344303345174464
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -92,16 +42,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 3083626412401777055}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46ddd8a65459b489a9cc7cae3fd1600f, type: 3}
+  m_Script: {fileID: 11500000, guid: e493643417cf5445390c8a7ce45698fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bodyCollider: {fileID: 3521837419636682943}
+  bodyCollider: {fileID: 0}
   sensorCollider: {fileID: 2764777944422202085}
   velocity: {x: 0, y: 0, z: 0}
-  gravity: {x: 0, y: -20, z: 0}
+  gravity: {x: 0, y: 0, z: 0}
   sensorLayerMask:
     serializedVersion: 2
-    m_Bits: 6144
+    m_Bits: 14336
   sensorEnabledTime: 0.1
   bodyEnabledTime: 0.1
   despawnWaitingTime: 0.1

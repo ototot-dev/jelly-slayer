@@ -2,39 +2,43 @@ using System.Linq;
 using Game;
 using ZLinq;
 using UnityEngine;
+using UniRx.Triggers.Extension;
 
 public class PawnAnimatorHandler : MonoBehaviour
 {
+    public PawnAnimController GetAnimController() 
+    {
+        __animCtrler ??= gameObject.Ancestors().First(a => a.GetComponent<PawnAnimController>() != null).GetComponent<PawnAnimController>();
+        return __animCtrler;
+    }
+
     PawnAnimController __animCtrler;
 
     void OnAnimatorMove()
     {
-        __animCtrler ??= gameObject.Ancestors().First(a => a.GetComponent<PawnAnimController>() != null).GetComponent<PawnAnimController>();
-        __animCtrler.OnAnimatorMoveHandler();
-    }
-    public void OnAnimatorStateEnter(AnimatorStateInfo stateInfo, int layerIndex)
-    {
-        __animCtrler ??= gameObject.Ancestors().First(a => a.GetComponent<PawnAnimController>() != null).GetComponent<PawnAnimController>();
-        __animCtrler.OnAnimatorStateEnterHandler(stateInfo, layerIndex);
-    }
-    public void OnAniamtorStateExit(AnimatorStateInfo stateInfo, int layerIndex)
-    {
-        __animCtrler ??= gameObject.Ancestors().First(a => a.GetComponent<PawnAnimController>() != null).GetComponent<PawnAnimController>();
-        __animCtrler.OnAniamtorStateExitHandler(stateInfo, layerIndex);
+        if (GetAnimController() != null)
+            GetAnimController().OnAnimatorMoveHandler();
     }
 
+    public void OnAnimatorStateEnter(AnimatorStateInfo stateInfo, int layerIndex, PawnAnimStateMachineTrigger trigger)
+    {
+        if (GetAnimController() != null)
+            GetAnimController().OnAnimatorStateEnterHandler(stateInfo, layerIndex, trigger);
+    }
+
+    public void OnAniamtorStateExit(AnimatorStateInfo stateInfo, int layerIndex, PawnAnimStateMachineTrigger trigger)
+    {
+        if (GetAnimController() != null)
+            GetAnimController().OnAniamtorStateExitHandler(stateInfo, layerIndex, trigger);
+    }
+
+    #region AnimationClip 이벤트 핸들러
     public void OnEventStartJump() { }
     public void OnEventStartLand() { }
     public void OnEventRollingGround() { }
     public void Hit() { }
-    public void FootR()
-    {
-        // __animCtrler?.OnAnimatorFootHandler(true);
-    }
-    public void FootL()
-    {
-        // __animCtrler?.OnAnimatorFootHandler(false);
-    }
+    public void FootR() { }
+    public void FootL() { }
     public void Land() { }
     public void f_start() { }
     public void f_hit() { }
@@ -43,4 +47,5 @@ public class PawnAnimatorHandler : MonoBehaviour
     public void Shoot() { }
     public void StepsEvent() { }
     public void bigShotEvent() { } 
+#endregion
 }
