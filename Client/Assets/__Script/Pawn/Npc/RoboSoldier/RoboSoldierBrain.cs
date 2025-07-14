@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
-using System.Threading;
 using DG.Tweening;
+using UGUI.Rx;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
@@ -23,6 +23,7 @@ namespace Game
         #endregion
 
         public override Vector3 GetInteractionKeyAttachPoint() => BB.children.specialKeyAttachPoint.transform.position;
+        public override float GetInteractionVisibleRadius() => 2f;
         public RoboSoldierBlackboard BB { get; private set; }
         public RoboSoldierMovement Movement { get; private set; }
         public RoboSoldierAnimController AnimCtrler { get; private set; }
@@ -157,6 +158,17 @@ namespace Game
                     InvalidateDecision(3f);
                 }
             };
+
+            AnimCtrler.FindStateMachineTriggerObservable("OnGroggy (Wait)").OnStateEnterAsObservable().Subscribe(_ =>
+            {
+                new InteractionKeyController("E", "Chainsaw", 2f, this).Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
+                bodyHitColliderHelper.gameObject.layer = LayerMask.NameToLayer("HitBox");
+            }).AddTo(this);
+
+            AnimCtrler.FindStateMachineTriggerObservable("OnGroggy (Wait)").OnStateExitAsObservable().Subscribe(_ =>
+            {
+                bodyHitColliderHelper.gameObject.layer = LayerMask.NameToLayer("HitBoxBlocking");
+            }).AddTo(this);
 
             BB.common.isDown.Skip(1).Subscribe(v =>
             {

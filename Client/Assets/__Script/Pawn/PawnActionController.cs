@@ -39,6 +39,7 @@ namespace Game
             public float preMotionTimeStamp;
             public float finishTimeStamp;
             public float waitTimeStamp;
+            public float waitTimeAccum;
             public IDisposable actionDisposable;
             public IDisposable rootMotionDisposable;
             public IDisposable homingRotationDisposable;
@@ -76,6 +77,7 @@ namespace Game
                 preMotionTimeStamp = 0f;
                 finishTimeStamp = 0f;
                 waitTimeStamp = 0f;
+                waitTimeAccum = 0f;
                 actionDisposable = null;
                 rootMotionDisposable = null;
                 homingRotationDisposable = null;
@@ -112,6 +114,7 @@ namespace Game
                 preMotionTimeStamp = 0f;
                 finishTimeStamp = 0f;
                 waitTimeStamp = 0f;
+                waitTimeAccum = 0f;
                 actionDisposable = null;
                 rootMotionDisposable = null;
                 homingRotationDisposable = null;

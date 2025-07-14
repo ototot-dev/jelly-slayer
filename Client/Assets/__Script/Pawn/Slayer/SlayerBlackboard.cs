@@ -96,6 +96,8 @@ namespace Game
         {
             public GameObject healingPotion;
             public SphereCollider visibilityChecker;
+            public MeshRenderer swordMeshRenderer;
+            public MeshRenderer chainsawMeshRenderer;
         }
 
         public Children children = new();

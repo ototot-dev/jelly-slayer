@@ -434,23 +434,40 @@ namespace Game
             };
 
             onParryingEnabled += (_) => __brain.parryHitColliderHelper.pawnCollider.enabled = currActionContext.parryingEnabled;
-            onActionStart += (_, __) => 
+
+            onActionStart += (_, __) =>
             {
-                if ((currActionContext.actionData?.actionName ?? string.Empty) == "Rolling") 
-                    __brain.BB.body.isRolling.Value = true; 
+                var actionName = currActionContext.actionData?.actionName ?? string.Empty;
+
+                if (actionName == "Rolling")
+                    __brain.BB.body.isRolling.Value = true;
+                else if (actionName == "Chainsaw")
+                {
+                    __brain.BB.children.swordMeshRenderer.enabled = false;
+                    __brain.BB.children.chainsawMeshRenderer.enabled = true;
+                }
             };
+
             onActionCanceled += (actionContext, __) => 
             { 
-                __brain.parryHitColliderHelper.pawnCollider.enabled = false; 
-                if ((actionContext.actionData?.actionName ?? string.Empty) == "Rolling") 
+                __brain.BB.children.swordMeshRenderer.enabled = true;
+                __brain.BB.children.chainsawMeshRenderer.enabled = false;
+                __brain.parryHitColliderHelper.pawnCollider.enabled = false;
+
+                if ((actionContext.actionData?.actionName ?? string.Empty) == "Rolling")
                     __brain.BB.body.isRolling.Value = false; 
             };
+
             onActionFinished += (actionContext) => 
             { 
+                __brain.BB.children.swordMeshRenderer.enabled = true;
+                __brain.BB.children.chainsawMeshRenderer.enabled = false;
                 __brain.parryHitColliderHelper.pawnCollider.enabled = false;
-                if ((actionContext.actionData?.actionName ?? string.Empty) == "Rolling") 
+                
+                if ((actionContext.actionData?.actionName ?? string.Empty) == "Rolling")
                     __brain.BB.body.isRolling.Value = false; 
             };
+
             onEmitProjectile += OnEmitProjectile;
         }
 

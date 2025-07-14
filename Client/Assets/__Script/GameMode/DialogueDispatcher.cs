@@ -175,7 +175,7 @@ namespace Game
 
         public void ShowInteractionKey(string tagName)
         {
-            new InteractionKeyController("E", "RunLine", TaggerSystem.FindGameObjectWithTag(tagName).GetComponent<InteractableHandler>()).Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
+            new InteractionKeyController("E", "RunLine", -1f, TaggerSystem.FindGameObjectWithTag(tagName).GetComponent<InteractableHandler>()).Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
         }
 
         public IEnumerator ShowAndWaitInteractionKey(string tagName)
@@ -183,8 +183,8 @@ namespace Game
             var targetInteractable = TaggerSystem.FindGameObjectWithTag(tagName).GetComponent<InteractableHandler>();
             Debug.Assert(targetInteractable != null);
 
-            var interactableKeyCtrler = new InteractionKeyController("E", targetInteractable.GetCommand(), targetInteractable).Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
-            yield return new WaitUntil(() => interactableKeyCtrler.IsInteractableFinished);
+            var interactableKeyCtrler = new InteractionKeyController("E", targetInteractable.GetCommand(), -1f, targetInteractable).Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
+            yield return new WaitUntil(() => interactableKeyCtrler.IsInteractionFinished);
         }
 
         public IEnumerator WaitCheck() 

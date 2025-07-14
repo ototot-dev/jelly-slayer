@@ -2,6 +2,7 @@
 using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
+using UGUI.Rx;
 using UniRx;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -37,8 +38,8 @@ namespace Game
         public bool _isEnable_Parry = true;
         public bool _isEnable_Drink = true;
 
-#region IPawnEventListener 구현
-        void IPawnEventListener.OnReceivePawnActionStart(PawnBrainController sender, string actionName) 
+        #region IPawnEventListener 구현
+        void IPawnEventListener.OnReceivePawnActionStart(PawnBrainController sender, string actionName)
         {
             if (actionName == "OnJellyOut")
             {
@@ -61,7 +62,7 @@ namespace Game
             }
         }
 
-        void IPawnEventListener.OnReceivePawnStatusChanged(PawnBrainController sender, PawnStatus status, float strength, float duration) 
+        void IPawnEventListener.OnReceivePawnStatusChanged(PawnBrainController sender, PawnStatus status, float strength, float duration)
         {
             if (sender is NpcBrain && status == PawnStatus.Groggy && strength > 0f)
             {
@@ -69,7 +70,7 @@ namespace Game
                 // interactionKeyCtrler = new InteractionKeyController(sender, "Assault", "Encounter").Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
             }
         }
-        void IPawnEventListener.OnReceivePawnDamageContext(PawnBrainController sender, PawnHeartPointDispatcher.DamageContext damageContext) 
+        void IPawnEventListener.OnReceivePawnDamageContext(PawnBrainController sender, PawnHeartPointDispatcher.DamageContext damageContext)
         {
             if (damageContext.senderActionSpecialTag == "Encounter")
             {
@@ -92,7 +93,7 @@ namespace Game
             if (state == PawnSpawnStates.DespawningStart && possessedBrain.BB.TargetBrain == sender)
                 possessedBrain.BB.target.targetPawnHP.Value = null;
         }
-#endregion
+        #endregion
 
         public GameObject SpawnSlayerPawn(bool possessImmediately = false)
         {
@@ -207,12 +208,12 @@ namespace Game
         {
             if (!CanProcessInput())
                 return;
-                
+
             if (GameContext.Instance.cameraCtrler != null &&
                 GameContext.Instance.cameraCtrler.TryGetPickingPointOnTerrain(value.Get<Vector2>(), out var pickingPoint))
                 inputLookVec.Value = (pickingPoint - possessedBrain.Movement.capsule.transform.position).Vector2D().normalized;
         }
-        
+
         public void OnGuard(InputValue value)
         {
             if (!CanProcessInput())
@@ -244,7 +245,7 @@ namespace Game
                 __jumpReleasedTimeStamp = Time.time;
                 return;
             }
-            
+
             if (CheckPossessedPawnBusy() || !CanExecuteAction())
                 return;
 
@@ -258,7 +259,7 @@ namespace Game
                 if (!possessedBrain.BB.IsHanging && droneBot != null && droneBot.BB.CurrDecision != DroneBotBrain.Decisions.Catch && Time.time - __jumpExecutedTimeStamp > 0.1f)
                     possessedBrain.Movement.PrepareHanging(droneBot, 0.2f);
             }).AddTo(this);
-                
+
             if (possessedBrain.BB.IsHanging)
             {
                 //* 점프 방향을 셋팅해줌
@@ -524,12 +525,12 @@ namespace Game
                 return;
             if (CheckPossessedPawnBusy() || possessedBrain.BB.IsHanging)
                 return;
-                
+
             if (_isEnable_NormalAttack == false)
-                    return;
+                return;
 
             var isJellyActive = boundJellyMesh.Value != null;
-        
+
             if (!possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered))
             {
                 var canNextAction = possessedBrain.ActionCtrler.CheckActionRunning() ? possessedBrain.ActionCtrler.CanInterruptAction() : (Time.time - possessedBrain.ActionCtrler.prevActionContext.finishTimeStamp) < MainTable.PlayerData.GetList().First().actionInputTimePadding;
@@ -554,7 +555,7 @@ namespace Game
                             possessedBrain.ActionCtrler.CancelAction(false);
                             possessedBrain.ActionCtrler.SetPendingAction("Slash#4");
                             break;
-                        case "GroggyAttack#1": 
+                        case "GroggyAttack#1":
                             if (isJellyActive == true)
                             {
                                 possessedBrain.ActionCtrler.CancelAction(false);
@@ -578,7 +579,7 @@ namespace Game
                     {
                         possessedBrain.ActionCtrler.SetPendingAction("JumpAttack");
                     }
-                    else 
+                    else
                     {
                         if (isJellyActive == true)
                         {
@@ -606,7 +607,7 @@ namespace Game
                 return;
 
             if (_isEnable_NormalAttack == false)
-                    return;
+                return;
 
             if (value.isPressed && !possessedBrain.StatusCtrler.CheckStatus(PawnStatus.Staggered))
             {
@@ -650,7 +651,16 @@ namespace Game
                 if (pressedCtrler == null)
                     return;
 
-                if (pressedCtrler.commandName == "RunLine")
+                if (pressedCtrler.commandName == "Chainsaw")
+                {
+                    if (possessedBrain.ActionCtrler.CheckActionRunning())
+                        possessedBrain.ActionCtrler.CancelAction(false);
+
+                    possessedBrain.ActionCtrler.SetPendingAction("Chainsaw");
+                    
+                    pressedCtrler.HideAsObservable().Subscribe(_ => pressedCtrler.Unload()).AddTo(this);
+                }
+                else if (pressedCtrler.commandName == "RunLine")
                 {
                     pressedCtrler.PostProcessKeyDown(true);
 
@@ -674,7 +684,7 @@ namespace Game
             }
         }
 
-        public void OnDrink() 
+        public void OnDrink()
         {
             if (!CanProcessInput() || !GameContext.Instance.launcher.currGameMode.IsInCombat())
                 return;
@@ -682,14 +692,14 @@ namespace Game
                 return;
 
             Debug.Log("<color=red>OnDrink</color>");
-            possessedBrain.ActionCtrler.SetPendingAction("DrinkPotion"); 
+            possessedBrain.ActionCtrler.SetPendingAction("DrinkPotion");
         }
 
         public void OnBurst(InputValue value)
         {
             if (!CanProcessInput() || !GameContext.Instance.launcher.currGameMode.IsInCombat())
                 return;
-                
+
             Debug.Log("OnBurst");
             if (possessedBrain.BB.stat.burst.Value < possessedBrain.BB.stat.maxBurst.Value)
                 return;

@@ -55,6 +55,7 @@ namespace Game
                     __pawnAnimCtrler.mainAnimator.SetInteger("HitType", damageContext.groggyBreakHit ? 4 : 3);
                 else
                     __pawnAnimCtrler.mainAnimator.SetInteger("HitType", 0);
+                    
                 __pawnAnimCtrler.mainAnimator.SetTrigger("OnHit");
             }
             else if (damageContext.actionResult == ActionResults.Blocked)

@@ -158,7 +158,7 @@ namespace Game
                     armBoneSimulatorTargetWeight = leftArmBoneSimulator.StimulatorAmount = rightArmBoneSimulator.StimulatorAmount = 0f;
                     // if (__brain.ActionCtrler.CurrActionName == "ShieldAttack") leftHandOverride.weight = Mathf.Clamp01(leftHandOverride.weight + __brain.BB.action.shieldAttackRigBlendInSpeed * Time.deltaTime);
                 }
-                else if (CheckAnimStateTriggered("OnParried") || CheckAnimStateTriggered("OnGroggy (Loop)"))
+                else if (CheckAnimStateTriggered("OnParried") || CheckAnimStateTriggered("OnGroggy (Wait)"))
                 {
                     armBoneSimulatorTargetWeight = 1f;
                     // if (__brain.ActionCtrler.CurrActionName != "ShieldAttack") leftHandOverride.weight = Mathf.Clamp01(leftHandOverride.weight - __brain.BB.action.shieldAttackRigBlendOutSpeed * Time.deltaTime);

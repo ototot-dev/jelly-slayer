@@ -16,6 +16,13 @@ namespace Game
             All = 0xFF,
         }
 
+        public enum DistanceMeasureTypes
+        {
+            Simple,
+            ApproachDistance,
+            DistanceBetween,
+        }
+
         public Rigidbody pawnRigidbody;
         public Collider pawnCollider;
         public PawnBrainController pawnBrain;
@@ -30,20 +37,31 @@ namespace Game
         public float GetScaledCapsuleRadius() => GetCapsuleRadius() * pawnCollider.transform.lossyScale.MaxAbsElem();
         public float GetCapsuleHeight() => __capsuleCollider != null ? __capsuleCollider.height : 0f;
         public float GetScaledCapsuleHeight() => GetCapsuleHeight() * pawnCollider.transform.lossyScale.MaxAbsElem();
-
-        public float GetDistanceSimple(PawnColliderHelper targetHelper) => Mathf.Max(0f, (targetHelper.transform.position - transform.position).Vector2D().magnitude);
+        public float GetDistanceSimple(PawnColliderHelper other) => Mathf.Max(0f, (other.transform.position - transform.position).Vector2D().magnitude);
 
         //* sourcePosition에서 자신까지의 거리 (자신의 Collider Raidus 값을 뺀 거리)
-        public float GetApproachDistance(PawnColliderHelper targetHelper) => Mathf.Max(0f, (targetHelper.transform.position - transform.position).Vector2D().magnitude - targetHelper.GetCapsuleRadius());
+        public float GetApproachDistance(PawnColliderHelper other) => Mathf.Max(0f, (other.transform.position - transform.position).Vector2D().magnitude - other.GetCapsuleRadius());
 
         //* 목표점까지 거리에서 자신과 상대 Collider의 Radius 값을 뺀 거리
-        public float GetDistanceBetween(PawnColliderHelper otherHelper) => Mathf.Max(0f, (otherHelper.transform.position - transform.position).Vector2D().magnitude - GetCapsuleRadius() - otherHelper.GetCapsuleRadius());
+        public float GetDistanceBetween(PawnColliderHelper other) => Mathf.Max(0f, (other.transform.position - transform.position).Vector2D().magnitude - GetCapsuleRadius() - other.GetCapsuleRadius());
+
+        //* DistanceMeasureTypes을 인자값으로 받는 함수
+        public float GetDistance(PawnColliderHelper other, DistanceMeasureTypes measureType)
+        {
+            return measureType switch
+            {
+                DistanceMeasureTypes.Simple => GetDistanceSimple(other),
+                DistanceMeasureTypes.ApproachDistance => GetApproachDistance(other),
+                DistanceMeasureTypes.DistanceBetween => GetDistanceBetween(other),
+                _ => 0f,
+            };
+        }
 
         //* deltaVec만큼 움직였을 때 거리이 변화값
-        public float GetDistanceDelta(PawnColliderHelper otherHelper, Vector3 deltaVec)
+        public float GetDistanceDelta(PawnColliderHelper other, Vector3 deltaVec)
         {
-            var currDistance = (otherHelper.transform.position - transform.position).Magnitude2D();
-            var newDistance = (otherHelper.transform.position - (transform.position + deltaVec)).Magnitude2D();
+            var currDistance = (other.transform.position - transform.position).Magnitude2D();
+            var newDistance = (other.transform.position - (transform.position + deltaVec)).Magnitude2D();
             return newDistance - currDistance;
         }
 

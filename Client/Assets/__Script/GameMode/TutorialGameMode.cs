@@ -78,8 +78,9 @@ namespace Game
         public override bool CanPlayerConsumeInput()
         {
             if (__loadingPageCtrler != null) return false;
-            return !__dialogueDispatcher.IsDialogueRunning() || 
-                GameContext.Instance.playerCtrler.interactionKeyCtrlers.AsValueEnumerable().Any(i => i.IsInteractableEnabled) ||
+            
+            return !__dialogueDispatcher.IsDialogueRunning() ||
+                GameContext.Instance.playerCtrler.interactionKeyCtrlers.AsValueEnumerable().Any(i => i.PreprocessKeyDown()) ||
                 _tutorialMode != TutorialMode.None;
         }
 

@@ -30851,43 +30851,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
---- !u!84 &1392246478
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 640
-  m_Height: 360
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 94
-  m_ColorFormat: 4
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 1
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 0
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!4 &1395338184 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7821217888551990375, guid: fec6123700ea2aa44a24818e607ed575, type: 3}
@@ -32349,6 +32312,43 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2023097843968004667, guid: f9e3988fea3fa1c439f7ae24e7297153, type: 3}
   m_PrefabInstance: {fileID: 1841338205}
   m_PrefabAsset: {fileID: 0}
+--- !u!84 &1490804409
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 640
+  m_Height: 360
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 94
+  m_ColorFormat: 4
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 1
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 0
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!4 &1493783520 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2513109410118053051, guid: 4d9a4da9dbbdcb047b89517e1b5b3687, type: 3}
@@ -34785,6 +34785,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3317346212697241151, guid: efc1683b84cd04e1b82f3ffd3068ba41, type: 3}
+      propertyPath: m_Height
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3317346212697241151, guid: efc1683b84cd04e1b82f3ffd3068ba41, type: 3}
+      propertyPath: m_Center.y
+      value: 1.25
+      objectReference: {fileID: 0}
     - target: {fileID: 3431064498782373626, guid: efc1683b84cd04e1b82f3ffd3068ba41, type: 3}
       propertyPath: m_Height
       value: 2.5
@@ -34816,6 +34824,10 @@ PrefabInstance:
     - target: {fileID: 4792855751956606138, guid: efc1683b84cd04e1b82f3ffd3068ba41, type: 3}
       propertyPath: m_LocalRotation.z
       value: -0.9864006
+      objectReference: {fileID: 0}
+    - target: {fileID: 6783572122253413391, guid: efc1683b84cd04e1b82f3ffd3068ba41, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 7988177875491616200, guid: efc1683b84cd04e1b82f3ffd3068ba41, type: 3}
       propertyPath: finalScaleReference
@@ -46378,10 +46390,18 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: -10.833505
       objectReference: {fileID: 0}
+    - target: {fileID: 5679921616131172754, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.0000008477105
+      objectReference: {fileID: 0}
     - target: {fileID: 5839498371252988597, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 1392246478}
+      objectReference: {fileID: 1490804409}
+    - target: {fileID: 6215147742582434749, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 14.222222
+      objectReference: {fileID: 0}
     - target: {fileID: 6719027917663992577, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
       propertyPath: m_Name
       value: CameraSystem

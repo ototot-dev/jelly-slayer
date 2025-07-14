@@ -16,14 +16,19 @@ namespace Game
         public virtual void OnDecisionFinishedHandler() { }
         public virtual void InvalidateDecision(float decisionCoolTime = 0) { }
         public virtual void ChangeDecision(int newDecision) { }
-        public virtual Vector3 GetInteractionKeyAttachPoint() => Vector3.zero;
-        public virtual Vector3 GetBubbleDialogueAttachPoint() => coreColliderHelper != null ? coreColliderHelper.transform.position + coreColliderHelper.GetCapsuleHeight() * Vector3.up : transform.position;
-        public virtual Vector3 GetStatusBarAttachPoint() => coreColliderHelper != null ? coreColliderHelper.transform.position + coreColliderHelper.GetCapsuleHeight() * Vector3.up : transform.position;
         public virtual Vector3 GetWorldForward() => coreColliderHelper != null ? coreColliderHelper.transform.forward : transform.forward;
         public virtual Vector3 GetWorldPosition() => coreColliderHelper != null ? coreColliderHelper.transform.position : transform.position;
         public virtual Quaternion GetWorldRotation() => coreColliderHelper != null ? coreColliderHelper.transform.rotation : transform.rotation;
         public virtual Transform GetWorldTransform() => coreColliderHelper != null ? coreColliderHelper.transform : transform;
         public virtual PawnColliderHelper GetHookingColliderHelper() => hookingPointColliderHelper;
+        public virtual Vector3 GetStatusBarAttachPoint() => coreColliderHelper != null ? coreColliderHelper.transform.position + coreColliderHelper.GetCapsuleHeight() * Vector3.up : transform.position;
+        public virtual Vector3 GetBubbleDialogueAttachPoint() => coreColliderHelper != null ? coreColliderHelper.transform.position + coreColliderHelper.GetCapsuleHeight() * Vector3.up : transform.position;
+
+#region IInteractionKeyAttachable 구현
+        public virtual bool GetInteractionEnanbled() => true;
+        public virtual float GetInteractionVisibleRadius() => -1f;
+        public virtual Vector3 GetInteractionKeyAttachPoint() => coreColliderHelper != null ? coreColliderHelper.transform.position + coreColliderHelper.GetCapsuleHeight() * Vector3.up : transform.position;
+#endregion
 
         [Header("Component")]
         public PawnColliderHelper coreColliderHelper;

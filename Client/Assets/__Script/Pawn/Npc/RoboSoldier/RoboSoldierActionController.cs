@@ -29,13 +29,18 @@ namespace Game
             {
                 if (__brain.BB.IsGroggy)
                 {
-                    if (damageContext.groggyBreakHit || damageContext.senderActionData.actionName == "Assault")
+                    if (damageContext.groggyBreakHit || damageContext.senderActionData.actionName == "Assault" || damageContext.senderActionData.actionName == "Chainsaw")
                     {
                         Observable.Interval(TimeSpan.FromSeconds(0.1f)).Take(3).Subscribe(_ =>
                         {
                             EffectManager.Instance.Show(__brain.BB.resource.onBleedingFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward), 1.5f * Vector3.one)
                                 .transform.SetParent(__brain.bodyHitColliderHelper.transform, true);
                         }).AddTo(this);
+                    }
+                    else if (damageContext.senderActionData.actionName == "Chainsaw")
+                    {
+                        EffectManager.Instance.Show(__brain.BB.resource.onBleedingFx, __brain.bodyHitColliderHelper.GetWorldCenter(), Quaternion.LookRotation(__brain.coreColliderHelper.transform.forward), 1.5f * Vector3.one)
+                            .transform.SetParent(__brain.bodyHitColliderHelper.transform, true);
                     }
 
                     if (damageContext.senderActionData.actionName == "Assault")

@@ -411,6 +411,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
+  restartOnExecuted: 0
   rewindOnCancelled: 0
   rewindOnRollback: 0
   runRollback: 0
@@ -548,7 +549,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a66886e44cbe4f0fb36f2729f7a1e76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clearAnimClips: 1
+  clearAnimClips: 0
 --- !u!114 &5107682318136762139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -561,12 +562,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7ec90a4c6fe9450fad1f0ead3018c66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tweenSheet: {fileID: 0}
   query:
     forceCompleteTweenOnStart: 0
     initialClasses:
     - body
-    initialStates:
-    - heartbeat
+    initialStates: []
     sources:
     - {fileID: 4256359746280125178}
     - {fileID: 1250396437880841771}
@@ -594,12 +595,9 @@ Animation:
   m_Enabled: 1
   serializedVersion: 4
   m_Animation: {fileID: 0}
-  m_Animations:
-  - {fileID: 7400000, guid: 941ea3fc3a1f3427bb172bb1bd5c869c, type: 2}
-  - {fileID: 7400000, guid: 69439ee8f17ca41e185130f04a31da2e, type: 2}
-  - {fileID: 7400000, guid: c6d421b3d648e4f59bbd3dc7ac6e0806, type: 2}
+  m_Animations: []
   m_WrapMode: 0
-  m_PlayAutomatically: 1
+  m_PlayAutomatically: 0
   m_AnimatePhysics: 0
   m_UpdateMode: 0
   m_CullingType: 0
@@ -1014,6 +1012,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
+  restartOnExecuted: 0
   rewindOnCancelled: 0
   rewindOnRollback: 0
   runRollback: 0
@@ -1303,6 +1302,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdbc4678998af48c1b462f045504b14c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tweenSheet: {fileID: 0}
   query:
     forceCompleteTweenOnStart: 0
     initialClasses: []
@@ -1726,6 +1726,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
+  restartOnExecuted: 0
   rewindOnCancelled: 0
   rewindOnRollback: 0
   runRollback: 0

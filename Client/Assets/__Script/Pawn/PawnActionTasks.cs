@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FinalFactory.Tooling;
 using NodeCanvas.Framework;
 using ParadoxNotion.Design;
 using Retween.Rx;
@@ -619,14 +620,21 @@ namespace Game.NodeCanvasExtension
         public BBParameter<float> waitTime = 1f;
         public BBParameter<bool> useCurrentTime = true;
         public BBParameter<bool> interruptEnabled = false;
+        public BBParameter<AnimationCurve> animSpeedMultiplierCurve;
+        PawnAnimController __pawnAnimCtrler;
         PawnActionController __pawnActionCtrler;
+        float __baseAnimSpeed;
         int __capturedActionInstanceId;
 
         protected override void OnExecute()
         {
+            __pawnAnimCtrler = agent.GetComponent<PawnAnimController>();
             __pawnActionCtrler = agent.GetComponent<PawnActionController>();
             __pawnActionCtrler.WaitAction();
             __capturedActionInstanceId =  __pawnActionCtrler.currActionContext.actionInstanceId;
+
+            if (!animSpeedMultiplierCurve.isNoneOrNull)
+                __baseAnimSpeed = __pawnAnimCtrler.mainAnimator.GetFloat("AnimSpeed");
 
             //* 대기 모드이면 Wait 시작 시점에서 interruptEnabled 값을 변경해준다.
             if (useCurrentTime.value)
@@ -653,13 +661,19 @@ namespace Game.NodeCanvasExtension
                 }
                 else
                 {
-                    //* 'preMotionTimeStamp'값이 있으면. 실제 액션 시작 시간은 preMotionTimeStamp으로 간주함
+                    //* 'preMotionTimeStamp'값이 있으면, 실제 액션 시작 시간은 preMotionTimeStamp으로 간주함
                     baseTimeStamp = __pawnActionCtrler.currActionContext.preMotionTimeStamp > 0f ? __pawnActionCtrler.currActionContext.preMotionTimeStamp : __pawnActionCtrler.currActionContext.startTimeStamp;
                 }
             }
 
+            if (!animSpeedMultiplierCurve.isNoneOrNull)
+                __pawnAnimCtrler.mainAnimator.SetFloat("AnimSpeed", __baseAnimSpeed * animSpeedMultiplierCurve.value.Evaluate(Time.time - __pawnActionCtrler.currActionContext.waitTimeStamp));
+
             if (!__pawnActionCtrler.CheckWaitAction(waitTime.value, baseTimeStamp))
+            {
+                __pawnActionCtrler.currActionContext.waitTimeAccum += Time.time - __pawnActionCtrler.currActionContext.waitTimeStamp;
                 EndAction(true);
+            }
         }
 
         protected override void OnStop(bool interrupted)
@@ -669,6 +683,9 @@ namespace Game.NodeCanvasExtension
             //* 대기 모드가 아니면, Wait 종료 시점에서 interruptEnabled 값을 변경해준다.
             if (!useCurrentTime.value)
                 __pawnActionCtrler.SetInterruptEnabled(interruptEnabled.value);
+
+            if (!animSpeedMultiplierCurve.isNoneOrNull)
+                __pawnAnimCtrler.mainAnimator.SetFloat("AnimSpeed", __baseAnimSpeed);
         }
     }
 
@@ -711,6 +728,10 @@ namespace Game.NodeCanvasExtension
                 var waitTime = waitFrame.value > 0 ? 1f / __pawnActionCtrler.currActionContext.animClipFps * Mathf.Max(0, waitFrame.value - 1) : __pawnActionCtrler.currActionContext.animClipLength;
 
                 waitTime /= __pawnActionCtrler.currActionContext.actionSpeed;
+
+                //* WaitAction()으로 경과된 시간이 존재하면, 이 시간은 waitTime에서 제외함
+                if (__pawnActionCtrler.currActionContext.waitTimeAccum > 0f)
+                    waitTime = Mathf.Max(0f, waitTime - __pawnActionCtrler.currActionContext.waitTimeAccum);
 
                 if (!__pawnActionCtrler.CheckWaitAction(waitTime, baseTimeStamp))
                     EndAction(true);
@@ -1080,6 +1101,7 @@ namespace Game.NodeCanvasExtension
         public BBParameter<float> breakDuration = -1f;
         public BBParameter<PawnColliderHelper> targetColliderHelper;
         public BBParameter<float> minApproachDistance = 0.1f;
+        public PawnColliderHelper.DistanceMeasureTypes distanceMeasureMethod = PawnColliderHelper.DistanceMeasureTypes.Simple;
         public bool endActionWhenReachToTarget;
         IDisposable __rootMotionDisposable;
         int __capturedActionInstanceId;
@@ -1145,7 +1167,7 @@ namespace Game.NodeCanvasExtension
                     else if (endActionWhenReachToTarget)
                     {
                         //* Target과 최소 접근 거리에 도달헀으면 RootMotion 적용 안함
-                        if (!targetColliderHelper.isNoneOrNull && targetColliderHelper.value.GetDistanceBetween(pawnBrain.coreColliderHelper) <= minApproachDistance.value)
+                        if (!targetColliderHelper.isNoneOrNull && pawnBrain.coreColliderHelper.GetDistance(targetColliderHelper.value, distanceMeasureMethod) <= minApproachDistance.value)
                         {
                             Debug.Assert(__rootMotionDisposable != null && __rootMotionDisposable == actionCtrler.currActionContext.rootMotionDisposable);
                             __rootMotionDisposable.Dispose();
@@ -1449,32 +1471,30 @@ namespace Game.NodeCanvasExtension
         }
     }
 
-    // [Category("Pawn")]
-    // public class SendDamage : ActionTask
-    // {
-    //     public BBParameter<string> actionDataName;
-    //     public BBParameter<GameObject> actionTarget;
+    [Category("Pawn")]
+    public class SendDamage : ActionTask
+    {
+        public BBParameter<string> actionDataName;
+        public BBParameter<PawnBrainController> targetBrain;
+        public BBParameter<PawnColliderHelper> targetColliderHelper;
 
-    //     protected override void OnExecute()
-    //     {
-    //         var pawnBrain = agent.GetComponent<PawnBrainController>();
-    //         var pawnActionCtrler = agent.GetComponent<PawnActionController>();
+        protected override void OnExecute()
+        {
+            var pawnBrain = agent.GetComponent<PawnBrainController>();
+            var pawnActionCtrler = agent.GetComponent<PawnActionController>();
 
-    //         var actionData = pawnActionCtrler.currActionContext.actionData;
-    //         if (!actionDataName.isNoneOrNull && !string.IsNullOrEmpty(actionDataName.value))
-    //             actionData = DatasheetManager.Instance.GetActionData(pawnBrain.PawnBB.common.pawnId, actionDataName.value);
+            var actionData = pawnActionCtrler.currActionContext.actionData;
+            if (!actionDataName.isNoneOrNull && !string.IsNullOrEmpty(actionDataName.value))
+                actionData = DatasheetManager.Instance.GetActionData(pawnBrain.PawnBB.common.pawnId, actionDataName.value);
 
-    //         Debug.Assert(actionData != null);
-    //         Debug.Assert(!actionTarget.isNoneOrNull);
+            Debug.Assert(actionData != null);
+            Debug.Assert(!targetBrain.isNoneOrNull);
 
-    //         var targetBrain = actionTarget.value.GetComponent<PawnBrainController>();
-    //         Debug.Assert(targetBrain != null);
-
-    //         pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(pawnBrain, targetBrain, actionData, null, false));
+            pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(pawnBrain, targetBrain.value, actionData, string.Empty, targetColliderHelper.value.pawnCollider, false));
             
-    //         EndAction(true);
-    //     }
-    // }
+            EndAction(true);
+        }
+    }
 
     [Category("Pawn")]
     public class EmitProjectile : ActionTask

@@ -6,7 +6,7 @@ namespace Game
     {
         public override Vector3 GetInteractionKeyAttachPoint() => interactableKeyAttachPoint.position;
         public override Vector3 GetBubbleDialogueAttachPoint() => bubbleDialogueAttachPoint.position;
-        public override float GetVisibleRadius() => interactableRadius;
+        public override float GetInteractionVisibleRadius() => interactableRadius;
         public override string GetCommand() => command;
         public Transform interactableKeyAttachPoint;
         public Transform bubbleDialogueAttachPoint;

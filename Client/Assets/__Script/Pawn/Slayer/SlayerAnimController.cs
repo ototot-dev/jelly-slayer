@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FIMSpace.BonesStimulation;
+using MainTable;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
@@ -46,6 +47,9 @@ namespace Game
         }
 
         SlayerBrain __brain;
+        ActionData __punchActionData;
+        ActionData __punchParryActionData;
+        ActionData __chainsawActionData;
         Vector3[] __8waysBlendTreePosXY;
 
         public override void OnAnimatorMoveHandler()
@@ -170,7 +174,16 @@ namespace Game
                     leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
                     leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
 
-                    if (__brain.ActionCtrler.CurrActionName.StartsWith("Punch"))
+                    __punchActionData ??= DatasheetManager.Instance.GetActionData(PawnId.Hero, "Punch");
+                    __punchParryActionData ??= DatasheetManager.Instance.GetActionData(PawnId.Hero, "PunchParry");
+                    __chainsawActionData ??= DatasheetManager.Instance.GetActionData(PawnId.Hero, "Chainsaw");
+
+                    if (__brain.ActionCtrler.currActionContext.actionData == __punchActionData || __brain.ActionCtrler.currActionContext.actionData == __punchParryActionData || __brain.ActionCtrler.currActionContext.actionData == __chainsawActionData)
+                    {
+                        mainAnimator.SetLayerWeight((int)LayerIndices.LeftArm, 0f);
+                        mainAnimator.SetLayerWeight((int)LayerIndices.RightArm, 0f);
+                    }
+                    else if (__brain.ActionCtrler.CurrActionName.StartsWith("Punch"))
                     {
                         mainAnimator.SetLayerWeight((int)LayerIndices.LeftArm, 0f);
                         mainAnimator.SetLayerWeight((int)LayerIndices.RightArm, 0f);
