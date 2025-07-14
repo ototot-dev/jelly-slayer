@@ -42,12 +42,15 @@ namespace AssetInventory
             if (ImageUtils.SYSTEM_IMAGE_TYPES.Contains(info.Type))
             {
                 // take shortcut for images and skip Unity importer
+                // meatmania, windows 에서 에러나서 막아둠 
+                /*
                 if (ImageUtils.ResizeImage(sourcePath, previewFile, AI.Config.upscaleSize, !AI.Config.upscaleLossless, ImageFormat.Png))
                 {
                     StorePreviewResult(new PreviewRequest {DestinationFile = previewFile, Id = info.Id, Icon = Texture2D.grayTexture, SourceFile = sourcePath});
                     onCreated?.Invoke();
                 }
                 else
+                //*/
                 {
                     // try to use original preview
                     string originalPreviewFile = DerivePreviewFile(sourcePath);

@@ -7,7 +7,8 @@ using System.IO;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using Graphics = System.Drawing.Graphics;
+// meatmania, windows 에서 에러나서 막아둠 
+//using Graphics = System.Drawing.Graphics;
 #endif
 using System.Linq;
 using UnityEngine;
@@ -251,10 +252,14 @@ namespace AssetInventory
 #endif
                 // Fallback to full image loading
 #if UNITY_2021_2_OR_NEWER && UNITY_EDITOR_WIN
+                // meatmania, windows 에서 에러나서 막아둠 
+                /*
                 using (Image originalImage = Image.FromFile(path))
                 {
                     return Tuple.Create(originalImage.Width, originalImage.Height);
                 }
+                //*/
+                return null;
 #else
                 Texture2D tmpTexture = new Texture2D(1, 1);
                 byte[] assetContent = File.ReadAllBytes(path);
@@ -276,6 +281,8 @@ namespace AssetInventory
         }
 
 #if UNITY_2021_2_OR_NEWER && UNITY_EDITOR_WIN
+        // meatmania, windows 에서 에러나서 막아둠 
+        /*
         public static bool ResizeImage(string originalFile, string outputFile, int maxSize, bool scaleBeyondSize = true, ImageFormat format = null)
         {
             Image originalImage; // leave here as otherwise temp files will be created by FromFile() for yet unknown reasons 
@@ -329,6 +336,7 @@ namespace AssetInventory
             }
             return true;
         }
+        //*/
 #endif
 
         public static Texture2D Resize(this Texture2D source, int size)

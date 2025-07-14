@@ -388,6 +388,9 @@ namespace AssetInventory
                     #if UNITY_2021_2_OR_NEWER && UNITY_EDITOR_WIN
                     if (AI.Config.upscalePreviews && ImageUtils.SYSTEM_IMAGE_TYPES.Contains(af.Type))
                     {
+                        // meatmania, windows 에서 에러나서 막아둠 
+
+                        /*
                         // scale up preview already during import
                         if (ImageUtils.ResizeImage(assetFile, targetFile, AI.Config.upscaleSize, !AI.Config.upscaleLossless, ImageFormat.Png))
                         {
@@ -395,6 +398,7 @@ namespace AssetInventory
                             af.PreviewState = AssetFile.PreviewOptions.Custom;
                             copyOriginal = false;
                         }
+                        //*/
                     }
                     #endif
                     if (copyOriginal)
