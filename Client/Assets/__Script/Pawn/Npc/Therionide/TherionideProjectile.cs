@@ -56,11 +56,8 @@ namespace Game
                     {
                         emitterBrain.Value.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, emitterBrain.Value, helper.pawnBrain, actionData, string.Empty, helper.pawnBrain.bodyHitColliderHelper.pawnCollider, false));
 
-                        Observable.NextFrame().Subscribe(_ =>
-                        {
-                            if (reflectiveBrain.Value == null)
-                                Explode();
-                        }).AddTo(this);
+                        if (reflectiveBrain.Value == null)
+                            Explode();
                     }
                 }
             };
@@ -81,7 +78,10 @@ namespace Game
                 }).AddTo(this);
             };
 
-            onLifeTimeOut += () => { Explode(); };
+            onLifeTimeOut += () =>
+            {
+                Explode();
+            };
         }
 
         void Explode()
@@ -105,7 +105,8 @@ namespace Game
 
             EffectManager.Instance.Show(explosionFx, transform.position + explosionOffset, Quaternion.identity, Vector3.one);
 
-            Stop(false);
+            if (!IsDespawnPending)
+                Stop(false);
         }
     }
 }

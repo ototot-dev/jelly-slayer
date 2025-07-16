@@ -160,7 +160,12 @@ namespace Game
             }
 
             for (int i = 0; i < __traceCount; i++)
-                onHitSomething?.Invoke(distanceAlmostZero ? __traceCollidersNonAlloc[i] : __traceHitsNonAlloc[i].collider);
+            {
+                var hitCollier = distanceAlmostZero ? __traceCollidersNonAlloc[i] : __traceHitsNonAlloc[i].collider;
+
+                if (hitCollier != null)
+                    onHitSomething?.Invoke(distanceAlmostZero ? __traceCollidersNonAlloc[i] : __traceHitsNonAlloc[i].collider);
+            }
         }
 
         protected Rigidbody __rigidBody;
@@ -250,12 +255,9 @@ namespace Game
 
             if (sensorCollider != null)
                 sensorCollider.enabled = false;
-
-            if (__sensorDisposable != null)
-            {
-                __sensorDisposable.Dispose();
-                __sensorDisposable = null;
-            }
+                
+            __sensorDisposable?.Dispose();
+            __sensorDisposable = null;
 
             if (destroyAfterStopped)
             {
