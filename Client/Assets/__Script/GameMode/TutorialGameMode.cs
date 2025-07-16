@@ -51,6 +51,7 @@ namespace Game
         Tutorial_3,     // RoboSoldier
         Tutorial_4,     // 원거리 적
         Tutorial_5,     // M82
+        Tutorial_6,     // Therionide
     }
 
     public class TutorialGameMode : BaseGameMode, IPawnEventListener
@@ -106,6 +107,7 @@ namespace Game
                 case TutorialScene.Tutorial_3: InitTurorialRoom_3(); break;
                 case TutorialScene.Tutorial_4: InitTurorialRoom_4(); break;
                 case TutorialScene.Tutorial_5: InitTurorialRoom_5(); break;
+                case TutorialScene.Tutorial_6: InitTurorialRoom_6(); break;
             }
             //Observable.FromCoroutine(ChangeRoom_Coroutine);
 
@@ -321,7 +323,29 @@ namespace Game
                 InitLoadingPageCtrler("Tutorial-M82", () => { });
             };
         }
+        // 몽둥이 보스
+        void InitTurorialRoom_6()
+        {
+            GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
 
+            __currSceneName = "Tutorial-BattleRoom";
+            _curScene = TutorialScene.Tutorial_6;
+
+            //* 로딩 시작
+            __loadingPageCtrler = new LoadingPageController(new string[] { "Pawn/Npc/Therionide" },
+                new string[] { __currSceneName });
+            __loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
+            __loadingPageCtrler.onLoadingCompleted += () =>
+            {
+                //* 슬레이어 초기 위치 
+                var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint").transform;
+                RefreshPlayerCharacter(spawnPoint);
+
+                InitCamera();
+                // Tutorial1
+                InitLoadingPageCtrler("Tutorial-Therionide", () => { });
+            };
+        }
         public void DoEventCollider(int mode) 
         {
             switch (mode) 
@@ -357,7 +381,7 @@ namespace Game
             switch (_curScene) 
             {
                 case TutorialScene.Tutorial_1: InitTurorialRoom_2(); break;
-                case TutorialScene.Tutorial_2: InitTurorialRoom_3(); break;
+                case TutorialScene.Tutorial_2: InitTurorialRoom_6(); break;
                 case TutorialScene.Tutorial_3: InitTurorialRoom_4(); break;
                 case TutorialScene.Tutorial_4: InitTurorialRoom_5(); break;
             }
