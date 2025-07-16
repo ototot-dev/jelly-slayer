@@ -46,15 +46,16 @@ void SIMPLEX_BOUNDS (uint3 id : SV_DispatchThreadID)
         
         #if USE_COLLISION_MAT
             int m = collisionMaterialIndices[p];
-            float solidRadius = principalRadii[p].x + collisionMargin + (m >= 0 ? collisionMaterials[m].stickDistance : 0);
+            float solidRadius = principalRadii[p].x + (m >= 0 ? collisionMaterials[m].stickDistance : 0);
         #else
-            float solidRadius = principalRadii[p].x + collisionMargin;
+            float solidRadius = principalRadii[p].x;
         #endif
         
-        // Expand simplex bounds, using both the particle's original position and its velocity:
+        // Expand simplex bounds, using both the particle's original position and its velocity.
+        // Add collision margin for both fluid neighborhood too (prevents explosions at high pressures due to neighborhood deficiency)
         sxBounds.EncapsulateParticle(positions[p],
                                      IntegrateLinear(positions[p], velocities[p], deltaTime * particleCCD), 
-                                     max(solidRadius, fluidMaterials[p].x * 0.5f));
+                                     max(solidRadius, fluidMaterials[p].x * 0.5f) + collisionMargin);
 
         soBounds.EncapsulateParticle(positions[p],
                                      IntegrateLinear(positions[p], velocities[p], deltaTime), 

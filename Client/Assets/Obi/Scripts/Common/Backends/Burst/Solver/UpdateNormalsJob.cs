@@ -12,13 +12,13 @@ namespace Obi
     struct ResetNormals : IJobParallelFor
     {
         [ReadOnly] public NativeArray<int> phases;
-        [WriteOnly] public NativeArray<float4> normals;
+        public NativeArray<float4> normals;
         [WriteOnly] public NativeArray<float4> tangents;
 
         public void Execute(int i)
         {
-            // leave fluid normals intact.
-            if ((phases[i] & (int)ObiUtils.ParticleFlags.Fluid) == 0)
+            // leave fluid and softbody normals intact.
+            if ((phases[i] & (int)ObiUtils.ParticleFlags.Fluid) == 0 && normals[i].w >= 0)
             {
                 normals[i] = float4.zero;
                 tangents[i] = float4.zero;
@@ -74,6 +74,7 @@ namespace Obi
     unsafe struct UpdateEdgeNormalsJob : IJobParallelFor
     {
         [ReadOnly] public NativeArray<int> deformableEdges;
+        [ReadOnly] public NativeArray<float4> velocities;
         [ReadOnly] public NativeArray<float4> wind;
         [ReadOnly] public NativeArray<float4> renderPositions;
 
@@ -85,7 +86,7 @@ namespace Obi
             int p2 = deformableEdges[i * 2 + 1];
 
             float4 edge = renderPositions[p2] - renderPositions[p1];
-            float4 avgWind = (wind[p1] + wind[p2]) * 0.5f;
+            float4 avgWind = (velocities[p1] + velocities[p2]) * 0.5f - (wind[p1] + wind[p2]) * 0.5f;
             float4 normal = avgWind - math.projectsafe(avgWind, edge);
 
             BurstMath.AtomicAdd(normals, p1, normal);
@@ -105,9 +106,9 @@ namespace Obi
 
         public void Execute(int i)
         {
-            if (math.lengthsq(normals[i]) > BurstMath.epsilon &&
-                math.lengthsq(tangents[i]) > BurstMath.epsilon &&
-                (phases[i] & (int)ObiUtils.ParticleFlags.Fluid) == 0)
+            if (((phases[i] & (int)ObiUtils.ParticleFlags.Fluid) == 0 && normals[i].w >= 0) && // not fluid or softbody (no SDF stored)
+                math.lengthsq(normals[i]) > BurstMath.epsilon &&
+                math.lengthsq(tangents[i]) > BurstMath.epsilon)
             {
                 normals[i] = math.normalizesafe(normals[i]);
                 tangents[i] = math.normalizesafe(tangents[i]);

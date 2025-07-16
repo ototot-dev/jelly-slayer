@@ -70,6 +70,8 @@ namespace Obi
 
         public override void ProvideDeformableEdges(ObiNativeIntList deformableEdges)
         {
+            deformableEdgesOffset = deformableEdges.count / 2;
+
             var ropeBlueprint = sharedBlueprint as ObiRopeBlueprintBase;
             if (ropeBlueprint != null && ropeBlueprint.deformableEdges != null)
             {
@@ -77,6 +79,14 @@ namespace Obi
                 for (int i = 0; i < ropeBlueprint.deformableEdges.Length; ++i)
                     deformableEdges.Add(solverIndices[ropeBlueprint.deformableEdges[i]]);
             }
+        }
+
+        public override int GetDeformableEdgeCount()
+        {
+            var ropeBlueprint = sharedBlueprint as ObiRopeBlueprintBase;
+            if (ropeBlueprint != null && ropeBlueprint.deformableEdges != null)
+                return ropeBlueprint.deformableEdges.Length / 2;
+            return 0;
         }
 
         /// <summary>  
@@ -157,6 +167,26 @@ namespace Obi
             if (elements != null && index < elements.Count)
                 return elements[index];
             return null;
+        }
+
+        /// <summary>  
+        /// Returns index of the edge that contains a length-normalized coordinate. It will also return the length-normalized coordinate within the edge.
+        /// </summary>
+        public int GetEdgeAt(float mu, out float elementMu)
+        {
+            elementMu = -1;
+            var ropeBlueprint = sharedBlueprint as ObiRopeBlueprintBase;
+            if (ropeBlueprint != null && ropeBlueprint.deformableEdges != null)
+            {
+                float edgeMu = ropeBlueprint.deformableEdges.Length/2 * Mathf.Clamp(mu, 0, 0.99999f);
+
+                int index = (int)edgeMu;
+                elementMu = edgeMu - index;
+
+                if (index < ropeBlueprint.deformableEdges.Length/2)
+                    return index;
+            }
+            return -1;
         }
 
     }

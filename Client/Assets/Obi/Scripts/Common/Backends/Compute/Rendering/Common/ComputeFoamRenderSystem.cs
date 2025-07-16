@@ -33,7 +33,6 @@ namespace Obi
 #endif
                 renderBatch = new ProceduralRenderBatch<DiffuseParticleVertex>(0, Resources.Load<Material>("ObiMaterials/Fluid/FoamParticles"), new RenderBatchParams(true));
 
-
             renderBatch.vertexCount = (int)m_Solver.maxFoamParticles * 4;
             renderBatch.triangleCount = (int)m_Solver.maxFoamParticles * 2;
             renderBatch.Initialize(layout, true);
@@ -90,11 +89,7 @@ namespace Obi
                     continue;
 
                 // sort by distance to camera:
-                foamShader.SetVector("sortAxis", camera.transform.forward);
-                foamShader.SetBuffer(sortKernel, "inputPositions", solver.abstraction.foamPositions.computeBuffer);
-                foamShader.SetBuffer(sortKernel, "inputVelocities", solver.abstraction.foamVelocities.computeBuffer);
-                foamShader.SetBuffer(sortKernel, "inputColors", solver.abstraction.foamColors.computeBuffer);
-                foamShader.SetBuffer(sortKernel, "inputAttributes", solver.abstraction.foamAttributes.computeBuffer);
+                foamShader.SetVector("sortAxis", solver.abstraction.transform.InverseTransformDirection(camera.transform.forward));
                 foamShader.SetBuffer(sortKernel, "outputPositions", solver.abstraction.foamPositions.computeBuffer);
                 foamShader.SetBuffer(sortKernel, "outputVelocities", solver.abstraction.foamVelocities.computeBuffer);
                 foamShader.SetBuffer(sortKernel, "outputColors", solver.abstraction.foamColors.computeBuffer);
@@ -137,13 +132,19 @@ namespace Obi
 
                 matProps.SetFloat("_FadeDepth", 0);
                 matProps.SetFloat("_VelocityStretching", m_Solver.maxFoamVelocityStretch);
+                matProps.SetFloat("_RadiusScale", m_Solver.foamRadiusScale);
                 matProps.SetFloat("_FadeIn", m_Solver.foamFade.x);
                 matProps.SetFloat("_FadeOut", m_Solver.foamFade.y);
+                matProps.SetFloat("_ScatterDensity", m_Solver.foamVolumeDensity);
+                matProps.SetFloat("_AmbientDensity", m_Solver.foamAmbientDensity);
+                matProps.SetColor("_ScatterColor", m_Solver.foamScatterColor);
+                matProps.SetColor("_AmbientColor", m_Solver.foamAmbientColor);
 
                 var rp = renderBatch.renderParams;
                 rp.worldBounds = m_Solver.bounds;
                 rp.camera = camera;
                 rp.matProps = matProps;
+                rp.shadowCastingMode = ShadowCastingMode.Off;
 
                 Graphics.RenderMesh(rp, renderBatch.mesh, 0, m_Solver.transform.localToWorldMatrix, m_Solver.transform.localToWorldMatrix);
             }

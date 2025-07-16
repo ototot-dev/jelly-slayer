@@ -90,7 +90,7 @@ namespace AmplifyShaderEditor
 
 			}
 
-			PreviewIsDirty = m_continuousPreviewRefresh;
+			PreviewIsDirty = ContinuousPreviewRefresh;
 			FinishPreviewRender = true;
 		}
 

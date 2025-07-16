@@ -41,12 +41,13 @@ namespace Obi
                 int p = simplices[simplexStart + j];
 
                 int m = particleMaterialIndices[p];
-                float solidRadius = radii[p].x + parameters.collisionMargin + (m >= 0 ? collisionMaterials[m].stickDistance : 0);
+                float solidRadius = radii[p].x + (m >= 0 ? collisionMaterials[m].stickDistance : 0);
 
                 // Expand simplex bounds, using both the particle's original position and its velocity.
+                // Add collision margin for both fluid neighborhood too (prevents explosions at high pressures due to neighborhood deficiency)
                 sxBounds.EncapsulateParticle(positions[p],
                                              BurstIntegration.IntegrateLinear(positions[p], velocities[p], dt * parameters.particleCCD),
-                                             math.max(solidRadius, fluidMaterials[p].x * 0.5f));
+                                             math.max(solidRadius, fluidMaterials[p].x * 0.5f) + parameters.collisionMargin);
 
                 soBounds.EncapsulateParticle(positions[p],
                                              BurstIntegration.IntegrateLinear(positions[p], velocities[p], dt),

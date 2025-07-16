@@ -1,3 +1,85 @@
+v1.9.9.1
+
+   Editor
+      * Added "Batch Update Shaders" tool to recompile shaders after updating ASE
+      * Added internal support for Matrix2x2/float2x2 type
+      * Added new User Preferences option "Preview Update Frequency" with default 60hz
+      * Moved Shader Function inspector "Open and Save All" button to a better location
+      * Fixed deleting nodes sometimes causing errors (#423)
+      * Fixed high CPU cost when using Time-dependent nodes (#97)
+      * Fixed "Disable Node Previews" option not having effect on performance (#306)
+      * Fixed Batch Save/Update tools multiple presses on Fetch button causing duplicates
+
+   Templates
+      * Updated templates for SRP 17+
+      * Removed "AlwaysRenderMotionVector" tag from URP17+ Lit and Unlit templates
+
+   Nodes
+      * Renamed "Matrix From Vectors" node to "Matrix Create"
+      * Added "Matrix Split" node
+      * Added "Matrix 2X2" node (#381)
+      * Added "Triplanar Weights" node (#422)
+      * Added "Hash 22" portable hash node
+      * Added subtitle with extra information to "Matrix Create" node
+      * Added subtitle with extra information to "Vector From Matrix" node
+      * Added "vec2 v2 2" style search tags to Vector2/Vector3/Vector4 nodes
+      * Updated "SRP Additional Light" node to support Unity 6.2
+      * Updated "Normal From Height" node to remove unused toggle switch
+      * Fixed "Procedural Sample" node pixelated in Stochastic mode on Metal (#421)
+      * Fixed "Not" node missing a description (#332)
+      * Fixed "Indirect Diffuse Light" node causing builds using mixed lighting to fail (#425)
+      * Fixed SRP 17.2 not recognized by "Switch By SRP Version" node
+      * Fixed "Procedural Sample" and "Stochastic Tiling" previews not working
+
+v1.9.9
+
+   Editor
+      * Added support for Unity 6.1
+      * Added preview support Unity 6.2 (#416)
+      * Renamed "Legacy/*" shaders to "Built-In/*" on template selection menus
+      * Updated template import message to show only when actually relevant
+      * Updated template import message to include [AmplifyShaderEditor] tag
+      * Fixed Project Preferences using old EditorPrefs path to get defaults
+      * Fixed using Clip Pos generating extra interpolator when already defined
+      * Fixed copy-paste from external nodes not working (e.g. Amplify Impostor Node)
+      * Fixed transparency bug when overlapping nodes over specific previews (#382)
+
+   Templates
+      * Added "Specular Highlights" toggle to URP, all versions (#383)
+      * Added "Environment Reflections" toggle to URP, all versions (#383)
+      * Updated Alpha port to always stay visible (#392)
+      * Updated URP 17.x templates to include XRMotionVectors pass
+      * Updated "Legacy/Lit" with simple lit workflow options
+      * Updated "Legacy/Lit" and "Legacy/Unlit" to save interpolators
+      * Updated all templates with extra features for Amplify Impostors compatibility
+      * Fixed Alpha Clipping not working in scene selection to URP, all versions
+      * Fixed "Receive Shadows" toggles (URP, all versions)
+      * Fixed "Switch" node not preserving keyword when changing from Fetch
+      * Fixed Decal template for URP 17x (#390)
+      * Fixed Unlit Build Error URP 17x (#391)
+      * Fixed Decal breaking in Build with baked lighting (#404)
+      * Fixed tessellation texcoord breaking URP Unlit 14 (#411)
+
+   Nodes
+      * Added a "Pixel Offset" input to "Pixelate UV" node (#381)
+      * Added Size input to "Flow" node (#401)
+      * Updated "Function Switch" node max input amount to 20 (#403)
+      * Updated "Switch By SRP Version" node to support 17.1 and 17.2
+      * Updated "Vertex TexCoord" node to display both channels and vector size
+      * Fixed "Screen Params" node ignoring Render Scale in URP
+      * Fixed typo in "Indirect Diffuse Light" node URP15 code
+      * Fixed "Object Bounds" node showing error in shader functions (#362)
+      * Fixed "Indirect Diffuse Light" node typo causing errors in URP 17+ (#376)
+      * Fixed "Dot" node preview (#386)
+      * Fixed "Dither" node not working with Render Scale (#387)
+      * Fixed "Normal From Height" node preview (#388)
+      * Fixed "Flipbook UV Animation" node Current Frame output error (#395)
+      * Fixed BatchRendererGroups Variant Creates Matrix operation Errors (#397)
+      * Fixed "Voronoi" node compiler warnings (#402)
+      * Fixed "SRP Baked GI" node using wrong probe volume directives for URP (#405)
+      * Fixed "View Dir" node not forcing o.Normal output on Surface shader (#406)
+      * Fixed "Triplanar Sample" node UnpackNormalmapRGorAG error on Unity 6.1 (#412)
+
 v1.9.8.1
 
    Editor

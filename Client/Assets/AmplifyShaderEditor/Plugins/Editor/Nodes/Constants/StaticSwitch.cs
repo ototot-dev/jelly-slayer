@@ -279,11 +279,11 @@ namespace AmplifyShaderEditor
 				string value = UIUtils.PropertyFloatToString( m_defaultValue );
 				if ( m_keywordModeType == KeywordModeType.KeywordEnum && m_keywordEnumAmount > 0 )
 				{
-					return PropertyAttributes + "[" + m_keywordModeType.ToString() + "(" + GetKeywordEnumPropertyList() + ")] " + m_propertyName + "(\"" + m_propertyInspectorName + "\", Float) = " + value;
+					return PropertyAttributes + "[" + m_keywordModeType.ToString() + "( " + GetKeywordEnumPropertyList() + " )] " + m_propertyName + "( \"" + m_propertyInspectorName + "\", Float ) = " + value;
 				}
 				else
 				{
-					return PropertyAttributes + "[" + m_keywordModeType.ToString() + "(" + GetPropertyValStr() + ")] " + m_propertyName + "(\"" + m_propertyInspectorName + "\", Float) = " + value;
+					return PropertyAttributes + "[" + m_keywordModeType.ToString() + "( " + GetPropertyValStr() + " )] " + m_propertyName + "( \"" + m_propertyInspectorName + "\", Float ) = " + value;
 				}
 			}
 			return string.Empty;
@@ -455,9 +455,16 @@ namespace AmplifyShaderEditor
 		void PropertyGroup()
 		{
 			EditorGUI.BeginChangeCheck();
+			var prevVarMode = CurrentVarMode;
 			CurrentVarMode = (StaticSwitchVariableMode)EditorGUILayoutEnumPopup( ModeStr, CurrentVarMode );
 			if( EditorGUI.EndChangeCheck() )
 			{
+				if ( prevVarMode == StaticSwitchVariableMode.Fetch && m_currentKeywordId == 0 )
+				{
+					m_propertyName = m_currentKeyword;
+					m_propertyInspectorName = m_currentKeyword;
+				}
+
 				if( CurrentVarMode == StaticSwitchVariableMode.Fetch )
 				{
 					m_keywordModeType = KeywordModeType.Toggle;

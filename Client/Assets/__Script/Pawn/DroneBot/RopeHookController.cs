@@ -215,8 +215,8 @@ namespace Game
 
             // Pin both ends of the rope (this enables two-way interaction between character and rope):
             var batch = new ObiPinConstraintsBatch();
-            batch.AddConstraint(__obiRope.elements[0].particle1, obiSourceCollider, transform.localPosition, Quaternion.identity, 0f, 0f, float.PositiveInfinity);
-            batch.AddConstraint(__obiRope.elements[__obiRope.elements.Count - 1].particle2, obiTargetCollider, targetOffset, Quaternion.identity, 0f, 0f, float.PositiveInfinity);
+            batch.AddConstraint(__obiRope.elements[0].particle1, obiSourceCollider, transform.localPosition, Quaternion.identity, 0f, 0f);
+            batch.AddConstraint(__obiRope.elements[__obiRope.elements.Count - 1].particle2, obiTargetCollider, targetOffset, Quaternion.identity, 0f, 0f);
             batch.activeConstraintCount = 2;
             pinConstraints.AddBatch(batch);
 

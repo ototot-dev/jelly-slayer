@@ -86,7 +86,7 @@ namespace Obi
 
         private void Rope_OnSimulate(ObiActor actor, float simulatedTime, float substepTime)
         {
-            if (!rope.isLoaded || Mathf.Abs(lengthChange) < 0.00001f)
+            if (!rope.isLoaded || Mathf.Abs(lengthChange) < ObiUtils.epsilon)
                 return;
 
             var solver = rope.solver;
@@ -100,6 +100,10 @@ namespace Obi
                 {
                     lengthChange -= m_CursorElement.restLength;
 
+                    // if we subtracted the length of the last element, break out of the loop.
+                    if (rope.elements.Count == 1)
+                        break;
+
                     int index = rope.elements.IndexOf(m_CursorElement);
 
                     if (index >= 0)
@@ -107,26 +111,26 @@ namespace Obi
                         // positive direction:
                         if (direction)
                         {
+                            RemoveParticleAt(solver.particleToActor[m_CursorElement.particle2].indexInActor);
+                            rope.elements.RemoveAt(index);
+
                             if (index < rope.elements.Count)
                             {
-                                RemoveParticleAt(solver.particleToActor[m_CursorElement.particle2].indexInActor);
-                                rope.elements.RemoveAt(index);
-
                                 if (rope.elements[index].particle1 == m_CursorElement.particle2)
                                     rope.elements[index].particle1 = m_CursorElement.particle1;
 
                                 m_CursorElement = rope.elements[index];
                             }
-                            else
+                            else 
                                 m_CursorElement = rope.elements[Mathf.Max(0, index - 1)];
                         }
                         else // negative direction:
                         {
+                            RemoveParticleAt(solver.particleToActor[m_CursorElement.particle1].indexInActor);
+                            rope.elements.RemoveAt(index);
+
                             if (index > 0)
                             {
-                                RemoveParticleAt(solver.particleToActor[m_CursorElement.particle1].indexInActor);
-                                rope.elements.RemoveAt(index);
-
                                 if (rope.elements[index - 1].particle2 == m_CursorElement.particle1)
                                     rope.elements[index - 1].particle2 = m_CursorElement.particle2;
                                 m_CursorElement = rope.elements[index - 1];

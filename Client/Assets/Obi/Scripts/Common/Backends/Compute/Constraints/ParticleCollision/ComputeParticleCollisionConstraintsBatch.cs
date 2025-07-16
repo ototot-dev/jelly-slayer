@@ -11,7 +11,7 @@ namespace Obi
             m_ConstraintType = Oni.ConstraintType.ParticleCollision;
         }
 
-        public override void Initialize(float substepTime)
+        public override void Initialize(float stepTime, float substepTime, int steps, float timeLeft)
         {
             var shader = ((ComputeParticleCollisionConstraints)m_Constraints).constraintsShader;
             int initializeKernel = ((ComputeParticleCollisionConstraints)m_Constraints).initializeKernel;
@@ -42,7 +42,7 @@ namespace Obi
                 shader.SetBuffer(initializeKernel, "invMasses", solverImplementation.invMassesBuffer);
                 shader.SetBuffer(initializeKernel, "invRotationalMasses", solverImplementation.invMassesBuffer);
 
-                shader.SetFloat("deltaTime", substepTime);
+                shader.SetFloat("substepTime", substepTime);
 
                 shader.DispatchIndirect(initializeKernel, this.solverImplementation.particleGrid.dispatchBuffer);
             }
@@ -50,8 +50,6 @@ namespace Obi
 
         public override void Evaluate(float stepTime, float substepTime, int steps, float timeLeft)
         {
-            //if (m_ConstraintCount > 0)
-
             if (solverImplementation.simplexCounts.simplexCount > 0)
             {
                 var shader = ((ComputeParticleCollisionConstraints)m_Constraints).constraintsShader;
@@ -60,6 +58,7 @@ namespace Obi
                 shader.SetBuffer(projectKernel, "particleContacts", solverAbstraction.particleContacts.computeBuffer);
                 shader.SetBuffer(projectKernel, "effectiveMasses", solverAbstraction.particleContactEffectiveMasses.computeBuffer);
                 shader.SetBuffer(projectKernel, "dispatchBuffer", this.solverImplementation.particleGrid.dispatchBuffer);
+                shader.SetBuffer(projectKernel, "collisionMaterials", this.solverImplementation.colliderGrid.materialsBuffer);
 
                 shader.SetBuffer(projectKernel, "simplices", this.solverImplementation.simplices);
                 shader.SetBuffer(projectKernel, "positions", solverImplementation.positionsBuffer);
@@ -67,16 +66,22 @@ namespace Obi
                 shader.SetBuffer(projectKernel, "orientations", solverImplementation.orientationsBuffer);
                 shader.SetBuffer(projectKernel, "prevOrientations", solverImplementation.prevOrientationsBuffer);
                 shader.SetBuffer(projectKernel, "principalRadii", solverImplementation.principalRadiiBuffer);
+                shader.SetBuffer(projectKernel, "fluidInterface", solverImplementation.fluidInterfaceBuffer);
+                shader.SetBuffer(projectKernel, "userData", solverImplementation.userDataBuffer);
                 shader.SetBuffer(projectKernel, "positionConstraintCounts", solverImplementation.positionConstraintCountBuffer);
+                shader.SetBuffer(projectKernel, "orientationConstraintCounts", solverImplementation.orientationConstraintCountBuffer);
+                shader.SetBuffer(projectKernel, "collisionMaterialIndices", solverImplementation.collisionMaterialIndexBuffer);
                 shader.SetBuffer(projectKernel, "deltasAsInt", solverImplementation.positionDeltasIntBuffer);
+                shader.SetBuffer(projectKernel, "orientationDeltasAsInt", solverImplementation.orientationDeltasIntBuffer);
                 shader.SetBuffer(projectKernel, "invMasses", solverImplementation.invMassesBuffer);
 
-                shader.SetFloat("deltaTime", substepTime);
+                shader.SetFloat("maxDepenetration", solverAbstraction.parameters.maxDepenetration);
+                shader.SetFloat("collisionMargin", solverAbstraction.parameters.collisionMargin);
+                shader.SetVector("diffusionMask", solverAbstraction.parameters.diffusionMask);
+                shader.SetFloat("substepTime", substepTime);
 
                 shader.DispatchIndirect(projectKernel, this.solverImplementation.particleGrid.dispatchBuffer);
-
             }
-
         }
 
         public override void Apply(float substepTime)
@@ -90,8 +95,11 @@ namespace Obi
 
                 shader.SetBuffer(applyKernel, "particleIndices", this.solverImplementation.activeParticlesBuffer);
                 shader.SetBuffer(applyKernel, "positions", solverImplementation.positionsBuffer);
+                shader.SetBuffer(applyKernel, "userData", solverImplementation.userDataBuffer);
                 shader.SetBuffer(applyKernel, "positionConstraintCounts", solverImplementation.positionConstraintCountBuffer);
                 shader.SetBuffer(applyKernel, "deltasAsInt", solverImplementation.positionDeltasIntBuffer);
+                shader.SetBuffer(applyKernel, "orientationConstraintCounts", solverImplementation.orientationConstraintCountBuffer);
+                shader.SetBuffer(applyKernel, "orientationDeltasAsInt", solverImplementation.orientationDeltasIntBuffer);
 
                 shader.SetInt("particleCount", this.solverAbstraction.activeParticleCount);
                 shader.SetFloat("sorFactor", parameters.SORFactor);

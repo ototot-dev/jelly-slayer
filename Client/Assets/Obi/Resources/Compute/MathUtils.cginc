@@ -17,9 +17,63 @@
 #define PHASE_SELFCOLLIDE (1 << 24)
 #define PHASE_FLUID (1 << 25)
 #define PHASE_ONESIDED (1 << 26)
+#define PHASE_ISOLATED (1 << 27) // particles that are not part of persistent constraints and can be deleted without ill effects: fluids and granulars
 
 #include "Quaternion.cginc"
 #include "Matrix.cginc"
+
+// Based on Kubelka-Munk theory: https://vanity-ibex.xyz/blog/kubelka_munk_colormixing/
+float4 RGBToAbsorption(float4 rgb)
+{
+    // S (scattering) is assumed to be 1 for all channels 
+    float4 k;
+    k.r = pow(1 - rgb.r, 2) / (2 * rgb.r + EPSILON);
+    k.g = pow(1 - rgb.g, 2) / (2 * rgb.g + EPSILON);
+    k.b = pow(1 - rgb.b, 2) / (2 * rgb.b + EPSILON);
+    k.a = rgb.a;
+    return k;
+}
+
+// Based on Kubelka-Munk theory: https://vanity-ibex.xyz/blog/kubelka_munk_colormixing/
+float4 AbsorptionToRGB(float4 k)
+{
+    // Assuming S=1 for all channels
+    float4 rgb;
+    rgb.r = 1 + k.r - sqrt(k.r * (k.r + 2));
+    rgb.g = 1 + k.g - sqrt(k.g * (k.g + 2));
+    rgb.b = 1 + k.b - sqrt(k.b * (k.b + 2));
+    rgb.a = k.a;
+    return rgb;
+}
+
+//https://www.shadertoy.com/view/4djSRW
+float3 hash33(float3 p3)
+{
+    p3 = frac(p3 * float3(.1031, .1030, .0973));
+    p3 += dot(p3, p3.yxz+33.33);
+    return frac((p3.xxy + p3.yxx)*p3.zyx);
+}
+
+float hash13(float3 p3)
+{
+    p3  = frac(p3 * .1031);
+    p3 += dot(p3, p3.zyx + 31.32);
+    return frac((p3.x + p3.y) * p3.z);
+}
+
+float2 hash21(float p)
+{
+    float3 p3 = frac(float3(p,p,p) * float3(.1031, .1030, .0973));
+    p3 += dot(p3, p3.yzx + 33.33);
+    return frac((p3.xx+p3.yz)*p3.zy);
+}
+
+float3 hash31(float p)
+{
+    float3 p3 = frac(float3(p,p,p) * float3(.1031f, .1030f, .0973f));
+    p3 += dot(p3, p3.yzx + 33.33f);
+    return frac((p3.xxy + p3.yzz) * p3.zyx);
+}
 
 float4 normalizesafe(in float4 v, float4 def = float4(0,0,0,0))
 {
@@ -51,6 +105,11 @@ inline float BaryScale(float4 coords)
 float Remap01(float value, float min_, float max_)
 {
     return (min(value, max_) - min(value, min_)) / (max_ - min_);
+}
+
+float Remap(float value, float min_, float max_, float newmin_, float newmax_)
+{
+    return newmin_ + (value - min_) * (newmax_ - newmin_) / (max_ - min_);
 }
 
 float EllipsoidRadius(float4 normSolverDirection, quaternion orientation, float3 radii)
@@ -125,37 +184,6 @@ float RotationalInvMass(float4x4 inverseInertiaTensor, float4 pos, float4 direct
     return dot(cross(cr.xyz, pos.xyz), direction.xyz);
 }
 
-float4 NearestPointOnEdge(float4 a, float4 b, float4 p, out float mu, bool clampToSegment = true)
-{
-    float4 ap = p - a;
-    float4 ab = b - a;
-    ap.w = 0;
-    ab.w = 0;
-
-    mu = dot(ap, ab) / dot(ab, ab);
-
-    if (clampToSegment)
-        mu = saturate(mu);
-
-    float4 result = a + ab * mu;
-    result.w = 0;
-    return result;
-}
-
-float3 NearestPointOnEdge(float3 a, float3 b, float3 p, out float mu, bool clampToSegment = true)
-{
-    float3 ap = p - a;
-    float3 ab = b - a;
-
-    mu = dot(ap, ab) / dot(ab, ab);
-
-    if (clampToSegment)
-        mu = saturate(mu);
-
-    float3 result = a + ab * mu;
-    return result;
-}
-
 float RaySphereIntersection(float3 rayOrigin, float3 rayDirection, float3 center, float radius)
 {
     float3 oc = rayOrigin - center;
@@ -170,6 +198,69 @@ float RaySphereIntersection(float3 rayOrigin, float3 rayDirection, float3 center
     else{
         return (-b - sqrt(discriminant)) / (2.0f * a);
     }
+}
+
+struct CachedEdge
+{
+    float4 vertex;
+    float4 edge0;
+    float data;
+
+    void Cache(in float4 v1,
+               in float4 v2)
+    {
+        vertex = v1;
+        vertex.w = 0;
+        edge0 = v2 - v1;
+        edge0.w = 0;
+        data = dot(edge0, edge0);
+    }
+};
+
+float4 NearestPointOnEdge(CachedEdge edge, float4 p, out float mu, bool clampToSegment = true)
+{
+    float4 ap = p - edge.vertex;
+    ap.w = 0;
+
+    mu = dot(ap, edge.edge0) / (edge.data + EPSILON);
+
+    if (clampToSegment)
+        mu = saturate(mu);
+
+    float4 result = edge.vertex + edge.edge0 * mu;
+    result.w = 0;
+    return result;
+}
+
+float4 NearestPointOnEdge(float4 a, float4 b, float4 p, out float mu, bool clampToSegment = true)
+{
+    float4 ap = p - a;
+    float4 ab = b - a;
+    ap.w = 0;
+    ab.w = 0;
+
+    mu = dot(ap, ab) / (dot(ab, ab) + EPSILON);
+
+    if (clampToSegment)
+        mu = saturate(mu);
+
+    float4 result = a + ab * mu;
+    result.w = 0;
+    return result;
+}
+
+float3 NearestPointOnEdge(float3 a, float3 b, float3 p, out float mu, bool clampToSegment = true)
+{
+    float3 ap = p - a;
+    float3 ab = b - a;
+
+    mu = dot(ap, ab) / (dot(ab, ab) + EPSILON);
+
+    if (clampToSegment)
+        mu = saturate(mu);
+
+    float3 result = a + ab * mu;
+    return result;
 }
 
 struct CachedTri

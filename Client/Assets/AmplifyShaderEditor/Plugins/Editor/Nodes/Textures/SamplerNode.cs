@@ -2082,24 +2082,24 @@ namespace AmplifyShaderEditor
 			{
 				case TextureType.Texture1D:
 				{
-					return PropertyAttributes + GetTexture1DPropertyValue();
+					return PropertyAttributes + PropertyAttributesSeparator + GetTexture1DPropertyValue();
 				}
 				case TextureType.ProceduralTexture:
 				case TextureType.Texture2D:
 				{
-					return PropertyAttributes + GetTexture2DPropertyValue();
+					return PropertyAttributes + PropertyAttributesSeparator + GetTexture2DPropertyValue();
 				}
 				case TextureType.Texture3D:
 				{
-					return PropertyAttributes + GetTexture3DPropertyValue();
+					return PropertyAttributes + PropertyAttributesSeparator + GetTexture3DPropertyValue();
 				}
 				case TextureType.Cube:
 				{
-					return PropertyAttributes + GetCubePropertyValue();
+					return PropertyAttributes + PropertyAttributesSeparator + GetCubePropertyValue();
 				}
 				case TextureType.Texture2DArray:
 				{
-					return PropertyAttributes + GetTexture2DArrayPropertyValue();
+					return PropertyAttributes + PropertyAttributesSeparator + GetTexture2DArrayPropertyValue();
 				}
 			}
 			return string.Empty;

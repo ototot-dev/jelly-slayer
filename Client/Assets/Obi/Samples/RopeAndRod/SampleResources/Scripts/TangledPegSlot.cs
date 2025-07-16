@@ -1,32 +1,34 @@
 using UnityEngine;
 
-
-public class TangledPegSlot : MonoBehaviour
+namespace Obi.Samples
 {
-    public TangledPeg currentPeg;
-    public Color tintColor;
-
-    private Material instance;
-    private Color normalColor;
-
-    public void Awake()
+    public class TangledPegSlot : MonoBehaviour
     {
-        instance = GetComponent<Renderer>().material;
-        normalColor = instance.color;
-    }
+        public TangledPeg currentPeg;
+        public Color tintColor;
 
-    public void Tint()
-    {
-        instance.color = tintColor;
-    }
+        private Material instance;
+        private Color normalColor;
 
-    public void ResetColor()
-    {
-        instance.color = normalColor;
-    }
+        public void Awake()
+        {
+            instance = GetComponent<Renderer>().material;
+            normalColor = instance.color;
+        }
 
-    public void OnDestroy()
-    {
-        Destroy(instance);
+        public void Tint()
+        {
+            instance.color = tintColor;
+        }
+
+        public void ResetColor()
+        {
+            instance.color = normalColor;
+        }
+
+        public void OnDestroy()
+        {
+            Destroy(instance);
+        }
     }
 }

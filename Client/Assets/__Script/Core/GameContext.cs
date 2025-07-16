@@ -18,5 +18,6 @@ namespace Game
         public HeroSpawnManager heroSpawnManager;
         public DamageTextManager damageTextManager;
         public HPBarManager hpBarManager;
+        public HashSet<InteractionKeyController> interactionKeyCtrlers = new();
     }
 }

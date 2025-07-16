@@ -67,6 +67,7 @@ struct shape
 
 struct forceZone
 {
+    float4 color;
     uint type;
     uint mode;
     uint dampingDir;

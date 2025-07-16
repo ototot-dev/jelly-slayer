@@ -251,6 +251,15 @@ namespace Obi
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void OneSidedNormal2(float4 xij, ref float4 nij)
+        {
+            float dot = math.dot(xij.xyz, nij.xyz);
+            if (dot < 0)
+                nij = xij - 2 * dot * nij;
+            else nij = xij;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float EllipsoidRadius(float4 normSolverDirection, quaternion orientation, float3 radii)
         {
             float3 localDir = math.mul(math.conjugate(orientation), normSolverDirection.xyz);
@@ -341,6 +350,8 @@ namespace Obi
 
         /**         * Modulo operator that also follows intuition for negative arguments. That is , -1 mod 3 = 2, not -1.         */
         [MethodImpl(MethodImplOptions.AggressiveInlining)]        public static float3 nfmod(float3 a, float3 b)        {            return a - b * math.floor(a / b);        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]        public static float nfmod(float a, float b)        {            return a - b * math.floor(a / b);        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float4 diagonal(this float4x4 value)
@@ -707,7 +718,7 @@ namespace Obi
             float4 ap = p - a;
             float4 ab = b - a;
 
-            mu = math.dot(ap, ab) / math.dot(ab, ab);
+            mu = math.dot(ap, ab) / (math.dot(ab, ab) + epsilon);
 
             if (clampToSegment)
                 mu = math.saturate(mu);
@@ -721,7 +732,7 @@ namespace Obi
             float3 ap = p - a;
             float3 ab = b - a;
 
-            mu = math.dot(ap, ab) / math.dot(ab, ab);
+            mu = math.dot(ap, ab) / (math.dot(ab, ab) + epsilon);
 
             if (clampToSegment)
                 mu = math.saturate(mu);
@@ -1017,6 +1028,57 @@ namespace Obi
             {
                 list.RemoveAtSwapBack(list.Length - 1);
             }
+        }
+
+        //https://www.shadertoy.com/view/4djSRW
+        public static float3 Hash33(float3 p3)
+        {
+            p3 = math.frac(p3 * new float3(.1031f, .1030f, .0973f));
+            p3 += math.dot(p3, p3.yxz + 33.33f);
+            return math.frac((p3.xxy + p3.yxx) * p3.zyx);
+        }
+
+        public static float Hash13(float3 p3)
+        {
+            p3 = math.frac(p3 * .1031f);
+            p3 += math.dot(p3, p3.zyx + 31.32f);
+            return math.frac((p3.x + p3.y) * p3.z);
+        }
+
+        public static float2 Hash21(float p)
+        {
+            float3 p3 = math.frac(new float3(p) * new float3(.1031f, .1030f, .0973f));
+            p3 += math.dot(p3, p3.yzx + 33.33f);
+            return math.frac((p3.xx + p3.yz) * p3.zy);
+        }
+
+        public static float3 Hash31(float p)
+        {
+            float3 p3 = math.frac(new float3(p) * new float3(.1031f, .1030f, .0973f));
+            p3 += math.dot(p3, p3.yzx + 33.33f);
+            return math.frac((p3.xxy + p3.yzz) * p3.zyx);
+        }
+
+        public static void RandomInCylinder(float seed, float4 pos, float4 dir, float length, float radius, out float4 position, out float3 velocity)
+        {
+            float3 rand = Hash31(seed);
+
+            float3 b1 = dir.xyz;
+            float3 b2 = math.normalizesafe(math.cross(b1, new float3(1, 0, 0)));
+            float3 b3 = math.cross(b2, b1);
+
+            float theta = rand.y * 2 * math.PI;
+            float2 disc = radius * math.sqrt(rand.x) * new float2(math.cos(theta), math.sin(theta));
+
+            velocity = b2 * disc.x + b3 * disc.y;
+            position = new float4(pos.xyz + b1 * length * rand.z + velocity, 0);
+        }
+
+        public static void RandomInBox(float seed, float4 center, float4 size, out float4 position, out float3 velocity)
+        {
+            float3 rand = Hash31(seed);
+            velocity = (rand - new float3(0.5f, 0.5f, 0.5f)) * size.xyz;
+            position = new float4(center.xyz + velocity, 0);
         }
     }
 }

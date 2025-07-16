@@ -92,7 +92,7 @@ namespace Obi
             {
                 var i = skeletonData[index].firstBone + boneIndex;
                 bonePositions[i] = transform.position;
-                boneScales[i] = transform.localScale;
+                boneScales[i] = transform.lossyScale;
                 boneRotations[i] = transform.rotation;
             }
         }

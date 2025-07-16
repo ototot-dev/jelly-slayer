@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
+using Unity.Collections;
 using System;
 using System.Collections.Generic;
 
@@ -24,11 +25,11 @@ namespace Obi
 
             public int Compare(Oni.Contact x, Oni.Contact y)
             {
-                return CompareByRef(ref x, ref y, solver);
+                return CompareByRef(x, y, solver);
             }
         }
 
-        private static int CompareByRef(ref Oni.Contact a, ref Oni.Contact b, ObiSolver solver)
+        private static int CompareByRef(Oni.Contact a, Oni.Contact b, ObiSolver solver)
         {
             if (a.bodyB == b.bodyB)
             {
@@ -64,7 +65,7 @@ namespace Obi
             solver.OnCollision -= Solver_OnCollision;
         }
 
-        private int FilterOutDistantContacts(Oni.Contact[] data, int count)
+        private int FilterOutDistantContacts(ObiNativeContactList data, int count)
         {
             int filteredCount = count;
 
@@ -72,12 +73,12 @@ namespace Obi
             // moving the ones above the threshold to the end of the array:
             for (int i = count - 1; i >= 0; --i)
                 if (data[i].distance > distanceThreshold)
-                    ObiUtils.Swap(ref data[i], ref data[--filteredCount]);
+                    data.Swap(i, --filteredCount);
 
             return filteredCount;
         }
 
-        private int RemoveDuplicates(Oni.Contact[] data, int count)
+        private int RemoveDuplicates(ObiNativeContactList data, int count)
         {
             if (count == 0)
                 return 0;
@@ -86,13 +87,13 @@ namespace Obi
             // replacing duplicates by the first contact that's different:
             int i = 0, r = 0;
             while (++i != count)
-                if (CompareByRef(ref data[i], ref data[r], solver) != 0 && ++r != i)
+                if (CompareByRef(data[i], data[r], solver) != 0 && ++r != i)
                     data[r] = data[i];
 
             return ++r;
         }
 
-        private void InvokeCallbacks(Oni.Contact[] data, int count)
+        private void InvokeCallbacks(ObiNativeContactList data, int count)
         {
             int a = 0, b = 0;
             int lengthA = count, lengthB = prevCount;
@@ -101,7 +102,7 @@ namespace Obi
             while (a < lengthA && b < lengthB)
             {
                 // compare both contacts: 
-                int compare = CompareByRef(ref data[a], ref prevData[b], solver);
+                int compare = CompareByRef(data[a], prevData[b], solver);
 
                 // call the appropiate event depending on the comparison result:
                 if (compare < 0)
@@ -124,30 +125,26 @@ namespace Obi
 
         void Solver_OnCollision(object sender, ObiNativeContactList contacts)
         {
-            // here we access the internal backing array (Data) directly,
-            // instead of using the accessor property. This slightly improves performance.
-            // note: the backing array length is the lists' capacity, so we
-            // need to use args.contacts.Count to get the actual number of contacts.
-
             // skip all contacts above the distance threshold by moving them to the end of the array:
-            /*int filteredCount = FilterOutDistantContacts(contacts, args.contacts.Count);
+            int filteredCount = FilterOutDistantContacts(contacts, contacts.count);
 
             // sort the remaining contacts by collider, then by actor:
-            Array.Sort(args.contacts.Data, 0, filteredCount, comparer);
+            contacts.AsNativeArray().Slice(0,filteredCount).Sort(comparer);
 
             // remove duplicates:
-            filteredCount = RemoveDuplicates(args.contacts.Data, filteredCount);
+            filteredCount = RemoveDuplicates(contacts, filteredCount);
 
             // zip trough the current and previous contact lists once, invoking events when appropiate.
-            InvokeCallbacks(args.contacts.Data, filteredCount);
+            InvokeCallbacks(contacts, filteredCount);
 
             // store current contact list/count for next frame.
             // could get better performance by double buffering instead of copying:
             if (filteredCount > prevData.Length)
                 Array.Resize(ref prevData, filteredCount);
-            Array.Copy(args.contacts.Data, prevData, filteredCount);
 
-            prevCount = filteredCount;*/
+            contacts.CopyTo(prevData, 0, filteredCount);
+
+            prevCount = filteredCount;
         }
 
     }

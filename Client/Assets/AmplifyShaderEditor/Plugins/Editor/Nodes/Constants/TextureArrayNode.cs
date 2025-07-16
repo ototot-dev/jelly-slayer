@@ -700,15 +700,15 @@ namespace AmplifyShaderEditor
 				if( m_mipMode == MipType.MipBias )
 				{
 					GeneratorUtils.AddCustomArraySamplingMacros( ref dataCollector );
-					result = "ASE_SAMPLE_TEX2DARRAY_GRAD(" + propertyName + ", float3(" + uvs + ", " + index + "), " + m_ddxPort.GeneratePortInstructions( ref dataCollector ) + ", " + m_ddyPort.GeneratePortInstructions( ref dataCollector ) + " )";
+					result = "ASE_SAMPLE_TEX2DARRAY_GRAD( " + propertyName + ", float3( " + uvs + ", " + index + " ), " + m_ddxPort.GeneratePortInstructions( ref dataCollector ) + ", " + m_ddyPort.GeneratePortInstructions( ref dataCollector ) + " )";
 				}
 				else if( m_lodPort.Visible || isVertex )
 				{
-					result = "UNITY_SAMPLE_TEX2DARRAY_LOD(" + propertyName + ", float3(" + uvs + ", " + index + "), " + level + " )";
+					result = "UNITY_SAMPLE_TEX2DARRAY_LOD( " + propertyName + ", float3( " + uvs + ", " + index + " ), " + level + " )";
 				}
 				else
 				{
-					result = "UNITY_SAMPLE_TEX2DARRAY" + ( m_lodPort.Visible || isVertex ? "_LOD" : "" ) + "(" + propertyName + ", float3(" + uvs + ", " + index + ") " + ( m_lodPort.Visible || isVertex ? ", " + level : "" ) + " )";
+					result = "UNITY_SAMPLE_TEX2DARRAY" + ( m_lodPort.Visible || isVertex ? "_LOD" : "" ) + "( " + propertyName + ", float3( " + uvs + ", " + index + " ) " + ( m_lodPort.Visible || isVertex ? ", " + level : "" ) + " )";
 				}
 			}
 
@@ -763,7 +763,7 @@ namespace AmplifyShaderEditor
 
 		public override string GetPropertyValue()
 		{
-			return PropertyAttributes + PropertyName + "(\"" + PropertyInspectorName + "\", 2DArray ) = \"\" {}";
+			return PropertyAttributes + PropertyAttributesSeparator + PropertyName + "( \"" + PropertyInspectorName + "\", 2DArray ) = \"\" {}";
 		}
 
 		public override bool GetUniformData( out string dataType, out string dataName, ref bool fullValue )

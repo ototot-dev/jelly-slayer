@@ -34,7 +34,7 @@ namespace Obi
             m_ConstraintCount = count;
         }
 
-        public override JobHandle Initialize(JobHandle inputDeps, float substepTime)
+        public override JobHandle Initialize(JobHandle inputDeps, float stepTime, float substepTime, int steps, float timeLeft)
         {
             var clearPins = new ClearPinsJob
             {
@@ -53,7 +53,7 @@ namespace Obi
             inputDeps = updatePins.Schedule(m_ConstraintCount, 128, inputDeps);
 
             // clear lambdas:
-            return base.Initialize(inputDeps, substepTime);
+            return base.Initialize(inputDeps, stepTime, substepTime, steps, timeLeft);
         }
 
         public override JobHandle Evaluate(JobHandle inputDeps, float stepTime, float substepTime, int steps, float timeLeft)
@@ -118,6 +118,27 @@ namespace Obi
             return applyConstraints.Schedule(inputDeps);
         }
 
+        public JobHandle ProjectRenderablePositions(JobHandle inputDeps)
+        {
+            var project = new ProjectRenderablePositionsJob()
+            {
+                particleIndices = particleIndices,
+                colliderIndices = colliderIndices,
+                offsets = offsets,
+                stiffnesses = stiffnesses,
+                restDarboux = restDarbouxVectors,
+
+                transforms = ObiColliderWorld.GetInstance().colliderTransforms.AsNativeArray<BurstAffineTransform>(),
+
+                renderablePositions = solverImplementation.renderablePositions,
+                renderableOrientations = solverImplementation.renderableOrientations,
+
+                inertialFrame = ((BurstSolverImpl)constraints.solver).inertialFrame,
+            };
+
+            return project.Schedule(m_ConstraintCount, 16, inputDeps);
+        }
+
         [BurstCompile]
         public unsafe struct ClearPinsJob : IJobParallelFor
         {
@@ -157,6 +178,7 @@ namespace Obi
                 if (colliderIndex < 0)
                     return;
 
+                // Increment the amount of constraints affecting this rigidbody for mass splitting:
                 int rigidbodyIndex = shapes[colliderIndex].rigidbodyIndex;
                 if (rigidbodyIndex >= 0)
                 {
@@ -233,13 +255,12 @@ namespace Obi
                 {
                     var rigidbody = rigidbodies[rigidbodyIndex];
 
-                    // predict rigidbody transform:
-                    var predictedTrfm = transforms[colliderIndex].Integrate(rigidbody.velocity + rigidbodyLinearDeltas[rigidbodyIndex],
-                                                                            rigidbody.angularVelocity + rigidbodyAngularDeltas[rigidbodyIndex], frameEnd);
+                    // predict offset point position using rb velocity at that point (can't integrate transform since position != center of mass)
+                    float4 velocityAtPoint = BurstMath.GetRigidbodyVelocityAtPoint(rigidbodyIndex, inertialFrame.frame.InverseTransformPoint(worldPinOffset), rigidbodies, rigidbodyLinearDeltas, rigidbodyAngularDeltas, inertialFrame);
+                    predictedPinOffset = BurstIntegration.IntegrateLinear(predictedPinOffset, inertialFrame.frame.TransformVector(velocityAtPoint), frameEnd);
 
-                    // predict offset point position and rb rotation at the end of the step:
-                    predictedPinOffset = predictedTrfm.TransformPoint(offsets[i]);
-                    predictedRotation = predictedTrfm.rotation;
+                    // predict rotation at the end of the step:
+                    predictedRotation = BurstIntegration.IntegrateAngular(predictedRotation, rigidbody.angularVelocity + rigidbodyAngularDeltas[rigidbodyIndex], stepTime);
 
                     // calculate linear and angular rigidbody effective masses (mass splitting: multiply by constraint count)
                     rigidbodyLinearW = rigidbody.inverseMass * rigidbody.constraintCount;
@@ -281,7 +302,7 @@ namespace Obi
                     quaternion omega_plus;
                     omega_plus.value = omega.value + restDarboux[i].value;  //delta Omega with - omega_0
                     omega.value -= restDarboux[i].value;                    //delta Omega with + omega_0
-                    if (math.lengthsq(omega.value.xyz) > math.lengthsq(omega_plus.value.xyz))
+                    if (math.lengthsq(omega.value) > math.lengthsq(omega_plus.value))
                         omega = omega_plus;
 
                     float3 dlambda = (omega.value.xyz - compliances.y * lambda.xyz) / (compliances.y + invRotationalMasses[particleIndex] + rigidbodyAngularW + BurstMath.epsilon);
@@ -347,6 +368,40 @@ namespace Obi
                         orientationCounts[p1] = 0;
                     }
                 }
+            }
+        }
+
+        [BurstCompile]
+        public struct ProjectRenderablePositionsJob : IJobParallelFor
+        {
+            [ReadOnly] public NativeArray<int> particleIndices;
+            [ReadOnly] public NativeArray<int> colliderIndices;
+
+            [ReadOnly] public NativeArray<float4> offsets;
+            [ReadOnly] public NativeArray<float2> stiffnesses;
+            [ReadOnly] public NativeArray<quaternion> restDarboux;
+
+            [ReadOnly] public NativeArray<BurstAffineTransform> transforms;
+
+            [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<float4> renderablePositions;
+            [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<quaternion> renderableOrientations;
+
+            [ReadOnly] public BurstInertialFrame inertialFrame;
+
+            public void Execute(int i)
+            {
+                int particleIndex = particleIndices[i];
+                int colliderIndex = colliderIndices[i];
+
+                // no collider to pin to or projection deactivated, so ignore the constraint.
+                if (colliderIndex < 0 || offsets[i].w < 0.5f)
+                    return;
+
+                BurstAffineTransform attachmentMatrix = inertialFrame.frame.Inverse() * transforms[colliderIndex];
+
+                renderablePositions[particleIndex] = attachmentMatrix.TransformPoint(offsets[i]);
+                if (stiffnesses[i].y < 10000)
+                    renderableOrientations[particleIndex] = math.mul(attachmentMatrix.rotation, restDarboux[i]);
             }
         }
     }

@@ -11,10 +11,72 @@ namespace Obi
     [BurstCompile]
     unsafe struct EmitParticlesJob : IJobParallelFor
     {
+        [NativeDisableParallelForRestriction] public NativeArray<float4> outputPositions;
+        [NativeDisableParallelForRestriction] public NativeArray<float4> outputVelocities;
+        [NativeDisableParallelForRestriction] public NativeArray<float4> outputColors;
+        [NativeDisableParallelForRestriction] public NativeArray<float4> outputAttributes;
+
+        [NativeDisableParallelForRestriction] public NativeArray<int> dispatchBuffer;
+
+        public uint emitterShape;
+        public float4 emitterPosition;
+        public quaternion emitterRotation;
+        public float4 emitterSize;
+
+        public float lifetime;
+        public float lifetimeRandom;
+        public float particleSize;
+        public float sizeRandom;
+        public float buoyancy;
+        public float drag;
+        public float airdrag;
+        public float airAging;
+        public float isosurface;
+        public float4 foamColor;
+
+        public float randomSeed;
+        public float deltaTime;
+
+        public void Execute(int i)
+        {
+            int* dispatch = (int*)dispatchBuffer.GetUnsafePtr();
+
+            // atomically increment alive particle counter:
+            int count = Interlocked.Add(ref dispatch[3], 1) - 1;
+
+            if (count < outputPositions.Length)
+            {
+                // initialize foam particle in a random position inside the cylinder spawned by fluid particle:
+                float3 radialVelocity;
+                float4 pos;
+
+                if (emitterShape == 0)
+                    BurstMath.RandomInCylinder(randomSeed + i, -new float4(0, 1, 0, 0) * emitterSize.y * 0.5f, new float4(0, 1, 0, 0), emitterSize.y, math.max(emitterSize.x, emitterSize.z) * 0.5f, out pos, out radialVelocity);
+                else
+                    BurstMath.RandomInBox(randomSeed + i, float4.zero, emitterSize, out pos, out radialVelocity);
+
+                float2 random = BurstMath.Hash21(randomSeed - i);
+
+                // calculate initial life/size/color:
+                float initialLife = math.max (0, lifetime - lifetime * random.x * lifetimeRandom);
+                float initialSize = particleSize - particleSize * random.y * sizeRandom;
+
+                outputPositions[count] = new float4(emitterPosition.xyz + math.rotate(emitterRotation, pos.xyz), 0);
+                outputVelocities[count] = new float4(0,0,0, buoyancy);
+                outputColors[count] = foamColor;
+                outputAttributes[count] = new float4(1, 1 / initialLife, initialSize, BurstMath.PackFloatRGBA(new float4(airAging / 50.0f, airdrag, drag, isosurface)));
+            }
+        }
+    }
+
+    [BurstCompile]
+    unsafe struct GenerateParticlesJob : IJobParallelFor
+    {
         [ReadOnly] [DeallocateOnJobCompletion] public NativeArray<int> activeParticles;
         [ReadOnly] public NativeArray<float4> positions;
         [ReadOnly] public NativeArray<float4> velocities;
         [ReadOnly] public NativeArray<float4> principalRadii;
+        [ReadOnly] public NativeArray<float4> fluidData;
         [NativeDisableParallelForRestriction] public NativeArray<float4> angularVelocities;
 
         [NativeDisableParallelForRestriction] public NativeArray<float4> outputPositions;
@@ -41,40 +103,8 @@ namespace Obi
         public float isosurface;
         public float4 foamColor;
 
+        public float randomSeed;
         public float deltaTime;
-
-        //https://www.shadertoy.com/view/4djSRW
-        float3 hash33(float3 p3)
-        {
-            p3 = math.frac(p3 * new float3(.1031f, .1030f, .0973f));
-            p3 += math.dot(p3, p3.yxz + 33.33f);
-            return math.frac((p3.xxy + p3.yxx) * p3.zyx);
-        }
-
-        float hash13(float3 p3)
-        {
-            p3 = math.frac(p3 * .1031f);
-            p3 += math.dot(p3, p3.zyx + 31.32f);
-            return math.frac((p3.x + p3.y) * p3.z);
-        }
-
-
-        void RandomInCylinder(float seed, float4 pos1, float4 pos2, float radius, out float4 position, out float3 velocity)
-        {
-            float3 rand = hash33(math.lerp(pos1.xyz, pos2.xyz, seed));
-
-            float3 v = pos2.xyz - pos1.xyz;
-            float d = math.length(v);
-            float3 b1 = d > BurstMath.epsilon ? v / d : v;
-            float3 b2 = math.normalizesafe(math.cross(b1, new float3(1, 0, 0)));
-            float3 b3 = math.cross(b2, b1);
-
-            float theta = rand.y * 2 * math.PI;
-            float2 disc = radius * math.sqrt(rand.x) * new float2(math.cos(theta), math.sin(theta));
-
-            velocity = b2 * disc.x + b3 * disc.y;
-            position = new float4(pos1.xyz + b1 * d * rand.z + velocity, 0);
-        }
 
         public void Execute(int i)
         {
@@ -86,7 +116,7 @@ namespace Obi
             float2 potential = BurstMath.UnpackFloatRG(angVel.w);
 
             // calculate foam potential increase:
-            float vorticityPotential = BurstMath.Remap01(math.length(angVel.xyz), vorticityRange.x, vorticityRange.y);
+            float vorticityPotential = BurstMath.Remap01(fluidData[p].z, vorticityRange.x, vorticityRange.y);
             float velocityPotential = BurstMath.Remap01(math.length(velocities[p].xyz), velocityRange.x, velocityRange.y);
             float potentialDelta = velocityPotential * vorticityPotential * deltaTime * potentialIncrease;
 
@@ -108,11 +138,13 @@ namespace Obi
                     // initialize foam particle in a random position inside the cylinder spawned by fluid particle:
                     float3 radialVelocity;
                     float4 pos;
-                    RandomInCylinder(j, positions[p], positions[p] + velocities[p] * deltaTime, principalRadii[p].x, out pos, out radialVelocity);
+                    BurstMath.RandomInCylinder(randomSeed + p + j, positions[p], math.normalizesafe(velocities[p]), math.length(velocities[p]) * deltaTime, principalRadii[p].x, out pos, out radialVelocity);
+
+                    float2 random = BurstMath.Hash21(randomSeed - p - j);
 
                     // calculate initial life/size/color:
-                    float initialLife = velocityPotential * (lifetime - hash13(positions[p].xyz) * lifetime * lifetimeRandom);
-                    float initialSize = particleSize - hash13(positions[p].xyz + new float3(0.51f, 0.23f, 0.1f)) * particleSize * sizeRandom;
+                    float initialLife = velocityPotential * (lifetime - lifetime * random.x * lifetimeRandom);
+                    float initialSize = particleSize - particleSize * random.y * sizeRandom;
 
                     outputPositions[count] = pos;
                     outputVelocities[count] = velocities[p] + new float4(radialVelocity, buoyancy);
@@ -132,6 +164,7 @@ namespace Obi
         [ReadOnly] public NativeArray<float4> positions;
         [ReadOnly] public NativeArray<quaternion> orientations;
         [ReadOnly] public NativeArray<float4> velocities;
+        [ReadOnly] public NativeArray<float4> angularVelocities;
         [ReadOnly] public NativeArray<float4> principalRadii;
         [ReadOnly] public NativeArray<float4> fluidData;
         [ReadOnly] public NativeArray<float4> fluidMaterial;
@@ -160,6 +193,7 @@ namespace Obi
         [ReadOnly] public Oni.SolverParameters parameters;
 
         public float3 agingOverPopulation;
+        public int minFluidNeighbors;
         public float deltaTime;
         public int currentAliveParticles;
 
@@ -189,11 +223,11 @@ namespace Obi
 
                 int offsetCount = ((int)parameters.mode == 1) ? 4 : 8;
                 float4 advectedVelocity = float4.zero;
+                float4 advectedAngVelocity = float4.zero;
                 float kernelSum = -packedData.w;
                 uint neighbourCount = 0;
 
                 float4 diffusePos = inputPositions[count];
-                float4 avgPos = float4.zero;
 
                 for (int k = 0; k < gridLevels.Length; ++k)
                 {
@@ -236,15 +270,17 @@ namespace Obi
                                     {
                                         float3 radii = fluidMaterial[p].x * (principalRadii[p].xyz / principalRadii[p].x);
 
+                                        float4 angVel = new float4(math.cross(angularVelocities[p].xyz, normal.xyz), 0);
+                                        advectedAngVelocity += angVel * densityKernel.W(d, radii.x) / densityKernel.W(0, radii.x);
+
                                         normal.xyz = math.mul(math.conjugate(orientations[p]), normal.xyz) / radii;
                                         d = math.length(normal) * radii.x;
 
-                                        // scale by volume (1 / normalized density)
-                                        float w = (1 / fluidData[p].x) * densityKernel.W(d, radii.x);
+                                        // scale by volume (* 1 / normalized density)
+                                        float w = densityKernel.W(d, radii.x) / fluidData[p].x;
 
                                         kernelSum += w;
                                         advectedVelocity += velocities[p] * w;
-                                        avgPos += positions[p] * w;
                                         neighbourCount++;
                                     }
                                 }
@@ -258,10 +294,10 @@ namespace Obi
                 float agingScale = 1 + BurstMath.Remap01(currentAliveParticles / (float)inputPositions.Length, agingOverPopulation.x, agingOverPopulation.y) * (agingOverPopulation.z - 1);
 
                 // foam/bubble particle:
-                if (kernelSum > BurstMath.epsilon && neighbourCount > 3)
+                if (kernelSum > BurstMath.epsilon && neighbourCount >= minFluidNeighbors)
                 {
                     // advection: 
-                    forces = packedData.z / deltaTime * (advectedVelocity / (kernelSum + packedData.w) - inputVelocities[count]);
+                    forces = packedData.z / deltaTime * (advectedVelocity / (kernelSum + packedData.w) + advectedAngVelocity - inputVelocities[count]);
 
                     // buoyancy:
                     forces -= new float4(parameters.gravity * parameters.foamGravityScale * inputVelocities[count].w * math.saturate(kernelSum), 0);

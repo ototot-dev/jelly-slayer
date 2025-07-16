@@ -28,7 +28,7 @@ namespace Obi
                 if (material != value)
                 {
                     material = value;
-                    needsUpdate = true;
+                    ForceUpdate();
                 }
             }
             get { return material; }
@@ -41,7 +41,7 @@ namespace Obi
                 if (filter != value)
                 {
                     filter = value;
-                    needsUpdate = true;
+                    ForceUpdate();
                 }
             }
             get { return filter; }
@@ -54,7 +54,7 @@ namespace Obi
                 if (!Mathf.Approximately(thickness, value))
                 {
                     thickness = value;
-                    needsUpdate = true;
+                    ForceUpdate();
                 }
             }
             get { return thickness; }
@@ -67,7 +67,7 @@ namespace Obi
                 if (inverted != value)
                 {
                     inverted = value;
-                    needsUpdate = true;
+                    ForceUpdate();
                 }
             }
             get { return inverted; }
@@ -101,7 +101,6 @@ namespace Obi
         protected ObiColliderHandle shapeHandle;
         protected ObiRigidbodyBase obiRigidbody;
         protected bool wasUnityColliderEnabled = true;
-        protected bool needsUpdate = true;
 
         protected ObiShapeTracker tracker;                               /**< tracker object used to determine when to update the collider's shape*/
 
@@ -152,7 +151,6 @@ namespace Obi
 
         protected void AddCollider()
         {
-
             Component unityCollider = GetUnityCollider(ref wasUnityColliderEnabled);
 
             if (unityCollider != null && (shapeHandle == null || !shapeHandle.isValid))
@@ -166,7 +164,6 @@ namespace Obi
                 // Create rigidbody if necessary, and link ourselves to it:
                 CreateRigidbody();
             }
-
         }
 
         protected void RemoveCollider()
@@ -181,9 +178,13 @@ namespace Obi
             }
         }
 
+        /** 
+		 * Flags the collider as needing to be updated from now on. If the object it's on has any editor static flag enabled,
+         * the collider will be again flagged as *not* needing to be updated after its next update.
+		 */
         public void ForceUpdate()
         {
-            needsUpdate = true;
+            ObiColliderWorld.GetInstance().MarkColliderAsNeedingUpdate(shapeHandle);
         }
 
         /** 
@@ -197,13 +198,14 @@ namespace Obi
             if (unityCollider != null)
             {
                 // Only if this object is not static:
-                if (tracker != null && needsUpdate)
+                if (tracker != null) //&& needsUpdate)
                 {
                     tracker.UpdateIfNeeded();
                 }
 
-                // store isStatic, *after* updating the tracker at least once.
-                needsUpdate = !unityCollider.gameObject.isStatic;
+                // check isStatic, *after* updating the tracker at least once.
+                if (unityCollider.gameObject.isStatic)
+                    ObiColliderWorld.GetInstance().MarkColliderAsNotNeedingUpdate(shapeHandle);
             }
             // If the unity collider is null but its handle is valid, the unity collider has been destroyed.
             else if (shapeHandle != null && shapeHandle.isValid)
@@ -212,8 +214,6 @@ namespace Obi
 
         private void OnEnable()
         {
-            needsUpdate = true;
-
             // Initialize using the source collider specified by the user (or find an appropiate one).
             FindSourceCollider();
         }

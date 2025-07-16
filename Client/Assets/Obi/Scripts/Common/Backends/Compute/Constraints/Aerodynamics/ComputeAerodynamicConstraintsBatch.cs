@@ -31,7 +31,7 @@ namespace Obi
                 shader.SetBuffer(projectKernel, "aerodynamicCoeffs", aerodynamicCoeffs);
 
                 shader.SetBuffer(projectKernel, "positions", solverImplementation.positionsBuffer);
-                shader.SetBuffer(projectKernel, "normals", solverImplementation.normalsIntBuffer);
+                shader.SetBuffer(projectKernel, "normals", solverImplementation.normalsBuffer);
                 shader.SetBuffer(projectKernel, "wind", solverImplementation.windBuffer);
                 shader.SetBuffer(projectKernel, "invMasses", solverImplementation.invMassesBuffer);
                 shader.SetBuffer(projectKernel, "velocities", solverImplementation.velocitiesBuffer);

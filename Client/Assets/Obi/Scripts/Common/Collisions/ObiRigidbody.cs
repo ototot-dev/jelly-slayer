@@ -66,15 +66,16 @@ namespace Obi{
         {
             // Rigidbody might not exist, as rigidbody deletion is buffered.
             // This means the unity rigidbody might be deleted before the rigidbody handle is invalidated.
-            if (unityRigidbody == null) return;
+            // Conversely, rigidbodyHandle might be non-null but invalid.
+            if (unityRigidbody == null || !Handle.isValid) return;
 
 
             CacheVelocities(stepTime);
             var world = ObiColliderWorld.GetInstance();
 
-            var rb = world.rigidbodies[handle.index];
+            var rb = world.rigidbodies[Handle.index];
             rb.FromRigidbody(this);
-            world.rigidbodies[handle.index] = rb;
+            world.rigidbodies[Handle.index] = rb;
         }
 
 		/**

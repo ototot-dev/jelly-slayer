@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RopeTenser : MonoBehaviour
+namespace Obi.Samples
 {
-	public float force = 10;
-
-    // Update is called once per frame
-    void Update()
+    public class RopeTenser : MonoBehaviour
     {
-		GetComponent<Rigidbody>().AddForce(Vector3.down * force);
+        public float force = 10;
+
+        // Update is called once per frame
+        void Update()
+        {
+            GetComponent<Rigidbody>().AddForce(Vector3.down * force);
+        }
     }
 }

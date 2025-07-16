@@ -18,6 +18,15 @@ namespace Game
         void IPawnTargetable.StopTargeting() { }
         #endregion
 
+        public override void StartJump(float jumpHeight)
+        {
+            Movement.StartJump(BB.body.jumpHeight);
+        }
+        public override void FinishJump()
+        {
+            Movement.StartFalling();
+        }
+
         public override Vector3 GetInteractionKeyAttachPoint() => BB.children.specialKeyAttachPoint.transform.position;
         public override Vector3 GetStatusBarAttachPoint() => coreColliderHelper.transform.position + coreColliderHelper.GetCapsuleHeight() * Vector3.up;
         public RapaxBlackboard BB { get; private set; }
@@ -148,24 +157,6 @@ namespace Game
             {
                 EffectManager.Instance.Show(BB.resource.onSlashFx, showPosition, Quaternion.identity, Vector3.one);
             }).AddTo(this);
-        }
-
-        protected override void DamageReceiverHandler(ref PawnHeartPointDispatcher.DamageContext damageContext)
-        {
-            base.DamageReceiverHandler(ref damageContext);
-
-            if (damageContext.actionResult == ActionResults.Damaged)
-                GameContext.Instance.damageTextManager?.Create(damageContext.finalDamage.ToString("0"), damageContext.hitPoint, 1, Color.white);
-        }
-
-        protected override void StartJumpInternal(float jumpHeight)
-        {
-            Movement.StartJump(BB.body.jumpHeight);
-        }
-
-        protected override void FinishJumpInternal()
-        {
-            Movement.StartFalling();
         }
     }
 }

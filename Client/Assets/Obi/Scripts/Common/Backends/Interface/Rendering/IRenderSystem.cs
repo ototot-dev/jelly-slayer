@@ -49,6 +49,17 @@ namespace Obi
             return false;
         }
 
+        public bool RemoveRenderer(T renderer)
+        {
+            return list.Remove(renderer);
+        }
+
+        public void RemoveAt(int i)
+        {
+            if (i >= 0 && i < list.Count)
+                list.RemoveAt(i);
+        }
+
         public int IndexOf(T renderer)
         {
             return list.IndexOf(renderer);
@@ -57,11 +68,6 @@ namespace Obi
         public IReadOnlyList<T> AsReadOnly()
         {
             return list.AsReadOnly();
-        }
-
-        public bool RemoveRenderer(T renderer)
-        {
-            return list.Remove(renderer);
         }
 
         public void Clear()

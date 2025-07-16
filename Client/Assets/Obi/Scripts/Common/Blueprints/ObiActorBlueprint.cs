@@ -27,6 +27,7 @@ namespace Obi
         /**Particle components*/
         [HideInInspector] public Vector3[] positions = null;           /**< Particle positions.*/
         [HideInInspector] public Vector4[] restPositions = null;       /**< Particle rest positions, used to filter collisions.*/
+        [HideInInspector] public Vector4[] restNormals = null;         /**< Particle local-space normal in xyz, SDF in w. Used for softbody collisions.*/
 
         [HideInInspector] public Quaternion[] orientations = null;     /**< Particle orientations.*/
         [HideInInspector] public Quaternion[] restOrientations = null; /**< Particle rest orientations.*/
@@ -85,7 +86,8 @@ namespace Obi
 
         public Oni.SimplexType simplexTypes
         {
-            get {
+            get
+            {
                 return Oni.SimplexType.Point | // points (single particles) are always available.
                        (edges != null ? Oni.SimplexType.Edge : 0) |
                        (triangles != null ? Oni.SimplexType.Triangle : 0);
@@ -104,7 +106,7 @@ namespace Obi
             }
         }
 
-        public virtual bool usesTethers 
+        public virtual bool usesTethers
         {
             get { return false; }
         }
@@ -118,6 +120,7 @@ namespace Obi
         {
             positions.Swap(index, m_ActiveParticleCount);
             restPositions.Swap(index, m_ActiveParticleCount);
+            restNormals.Swap(index, m_ActiveParticleCount);
             orientations.Swap(index, m_ActiveParticleCount);
             restOrientations.Swap(index, m_ActiveParticleCount);
             velocities.Swap(index, m_ActiveParticleCount);
@@ -134,7 +137,7 @@ namespace Obi
         public bool edited
         {
             get { return m_Edited; }
-            set { m_Edited = value;}
+            set { m_Edited = value; }
         }
 
         /** 
@@ -175,7 +178,7 @@ namespace Obi
         {
             if (positions.Length > 0)
             {
-                _bounds = new Bounds(positions[0],Vector3.zero);
+                _bounds = new Bounds(positions[0], Vector3.zero);
                 for (int i = 1; i < positions.Length; ++i)
                     _bounds.Encapsulate(positions[i]);
             }
@@ -330,7 +333,7 @@ namespace Obi
         public void GenerateImmediate()
         {
             var g = Generate();
-            while (g.MoveNext()){}
+            while (g.MoveNext()) { }
         }
 
         public IEnumerator Generate()
@@ -378,6 +381,7 @@ namespace Obi
             m_ActiveParticleCount = 0;
             positions = null;
             restPositions = null;
+            restNormals = null;
             orientations = null;
             restOrientations = null;
             velocities = null;

@@ -71,9 +71,9 @@ namespace Obi{
             CacheVelocities(stepTime);
             var world = ObiColliderWorld.GetInstance();
 
-            var rb = world.rigidbodies[handle.index];
+            var rb = world.rigidbodies[Handle.index];
             rb.FromRigidbody(this);
-            world.rigidbodies[handle.index] = rb;
+            world.rigidbodies[Handle.index] = rb;
         }
 
 		/**

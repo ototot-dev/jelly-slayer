@@ -1478,6 +1478,14 @@ namespace AmplifyShaderEditor
 				return attribs;
 			}
 		}
+		public string PropertyAttributesSeparator
+		{
+			get
+			{
+				return string.IsNullOrEmpty( PropertyAttributes ) ? string.Empty : " ";
+			}
+		}
+
 		public virtual void OnDirtyProperty() { }
 		public virtual void OnPropertyNameChanged() { UIUtils.UpdatePropertyDataNode( UniqueId, PropertyInspectorName ); }
 		public virtual void DrawSubProperties() { }

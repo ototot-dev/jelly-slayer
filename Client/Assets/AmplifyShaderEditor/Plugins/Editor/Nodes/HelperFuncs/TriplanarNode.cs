@@ -76,7 +76,7 @@ namespace AmplifyShaderEditor
 		private InputPort m_scalePort;
 		private InputPort m_posPort;
 
-		
+
 		private readonly string m_functionCall = "TriplanarSampling{0}( {1} )";
 		private readonly string m_functionHeader = "inline {0} TriplanarSampling{1}( {2}float3 worldPos, float3 worldNormal, float falloff, float2 tiling, float3 normalScale, float3 index )";
 
@@ -140,15 +140,7 @@ namespace AmplifyShaderEditor
 			bool applyScale = false;
 			if( dataCollector.IsTemplate && dataCollector.IsSRP )
 			{
-				if( dataCollector.TemplateDataCollectorInstance.IsHDRP )
-				{
-					func = "UnpackNormalmapRGorAG";
-				}
-				else
-				{
-					func = "UnpackNormalScale";
-				}
-
+				func = "UnpackNormalScale";
 				if( !scaleInfo )
 				{
 					scale = " , 1.0";

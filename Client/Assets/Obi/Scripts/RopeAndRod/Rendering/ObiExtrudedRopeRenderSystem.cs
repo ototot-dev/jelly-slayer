@@ -133,6 +133,7 @@ namespace Obi
             sectionData.Clear();
             sectionToIndex.Clear();
             sectionOffsets.Clear();
+            sectionIndices.Clear();
 
             vertexOffsets.Clear();
             triangleOffsets.Clear();
@@ -151,7 +152,7 @@ namespace Obi
             sortedRenderers.Clear();
             for (int i = 0; i < renderers.Count; ++i)
             {
-                if (renderers[i].TryGetComponent(out ObiPathSmoother smoother) && smoother.enabled)
+                if (renderers[i].section != null && renderers[i].TryGetComponent(out ObiPathSmoother smoother) && smoother.enabled)
                 {
                     renderers[i].renderParameters.layer = renderers[i].gameObject.layer;
                     batchList.Add(new ProceduralRenderBatch<ProceduralRopeVertex>(i, renderers[i].material, renderers[i].renderParameters));

@@ -183,9 +183,9 @@ namespace Obi
             SetupRuntimeConstraints();
         }
 
-        public override void LoadBlueprint(ObiSolver solver)
+        internal override void LoadBlueprint()
         {
-            base.LoadBlueprint(solver);
+            base.LoadBlueprint();
             RebuildElementsFromConstraints();
             SetupRuntimeConstraints();
         }
@@ -209,6 +209,7 @@ namespace Obi
             SetConstraintsDirty(Oni.ConstraintType.Chain);
             SetConstraintsDirty(Oni.ConstraintType.Aerodynamics);
             SetSelfCollisions(selfCollisions);
+            SetMassScale(m_MassScale);
             RecalculateRestLength();
             SetSimplicesDirty();
         }

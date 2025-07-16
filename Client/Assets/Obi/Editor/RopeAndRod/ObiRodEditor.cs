@@ -28,7 +28,8 @@ namespace Obi
 
         SerializedProperty collisionMaterial;
         SerializedProperty selfCollisions;
-        SerializedProperty surfaceCollisions; 
+        SerializedProperty surfaceCollisions;
+        SerializedProperty massScale;
 
         SerializedProperty stretchShearConstraintsEnabled;
         SerializedProperty stretchCompliance;
@@ -60,6 +61,7 @@ namespace Obi
             collisionMaterial = serializedObject.FindProperty("m_CollisionMaterial");
             selfCollisions = serializedObject.FindProperty("m_SelfCollisions");
             surfaceCollisions = serializedObject.FindProperty("m_SurfaceCollisions");
+            massScale = serializedObject.FindProperty("m_MassScale");
 
             stretchShearConstraintsEnabled = serializedObject.FindProperty("_stretchShearConstraintsEnabled");
             stretchCompliance = serializedObject.FindProperty("_stretchCompliance");
@@ -158,6 +160,8 @@ namespace Obi
 
                 GUILayout.EndHorizontal();
             }
+
+            EditorGUILayout.PropertyField(massScale, new GUIContent("m_MassScale"));
 
             DoEditButton();
 

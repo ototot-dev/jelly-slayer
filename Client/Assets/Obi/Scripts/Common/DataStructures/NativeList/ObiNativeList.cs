@@ -41,6 +41,9 @@ namespace Obi
                     // we first ensure we can hold the previous count, and then set the new one.
                     EnsureCapacity(m_Count);
                     m_Count = Mathf.Min(m_Capacity, value);
+
+                    if (m_ComputeBuffer != null && m_ComputeBuffer.IsValid() && m_ComputeBufferType == GraphicsBuffer.Target.Counter)
+                        m_ComputeBuffer.SetCounterValue((uint)m_Count);
                 }
             }
             get { return m_Count; }
@@ -275,8 +278,6 @@ namespace Obi
         {
             if (m_ComputeBuffer != null && m_ComputeBuffer.IsValid() && noReadbackInFlight)
             {
-                // On counter buffers, we shouldn't read data up to m_Count and then update m_Count with the compute buffer's counter value *afterwards*.
-                // This would lead to reading back less data than we should, so we need to request the entire compute buffer.
                 var nativeArray = AsNativeArray<U>(readcount);
 
                 // When using SafeAsComputeBuffer, we'll get a compute buffer of size 1 even if the list (and the NativeArray) is empty.
@@ -302,6 +303,8 @@ namespace Obi
 
         public void Readback(bool async = true)
         {
+            // On counter buffers, we shouldn't read data up to m_Count and then update m_Count with the compute buffer's counter value *afterwards*.
+            // This would lead to reading back less data than we should, so we need to request the entire compute buffer.
             if (m_ComputeBuffer != null)
                 Readback<T>(m_ComputeBuffer.count, async);
         }
@@ -663,6 +666,11 @@ namespace Obi
         public void* AddressOfElement(int index)
         {
             return (void*) ((byte*)m_AlignedPtr + m_Stride * index);
+        }
+
+        public NativeReference<int> GetCountReference(Allocator alloc)
+        {
+            return new NativeReference<int>(m_Count, alloc);
         }
 
         public IntPtr GetIntPtr()

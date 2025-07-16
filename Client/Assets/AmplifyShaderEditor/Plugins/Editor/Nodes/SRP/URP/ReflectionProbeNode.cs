@@ -72,14 +72,14 @@ namespace AmplifyShaderEditor
 
 			if ( dataCollector.IsSRP && dataCollector.CurrentSRPType == TemplateSRPType.URP )
 			{
-				if ( ASEPackageManagerHelper.PackageSRPVersion >= ( int )ASESRPBaseline.ASE_SRP_12 )
+				if ( ASEPackageManagerHelper.PackageSRPVersion >= ( int )ASESRPBaseline.ASE_SRP_12_0 )
 				{
 					dataCollector.AddToPragmas( UniqueId, "multi_compile_fragment _ _REFLECTION_PROBE_BLENDING" );
 					dataCollector.AddToPragmas( UniqueId, "multi_compile_fragment _ _REFLECTION_PROBE_BOX_PROJECTION" );
 
 				}
 
-				if ( ASEPackageManagerHelper.PackageSRPVersion >= ( int )ASESRPBaseline.ASE_SRP_14 )
+				if ( ASEPackageManagerHelper.PackageSRPVersion >= ( int )ASESRPBaseline.ASE_SRP_14_0 )
 				{
 					dataCollector.AddToPragmas( UniqueId, "multi_compile _ _FORWARD_PLUS" );
 				}

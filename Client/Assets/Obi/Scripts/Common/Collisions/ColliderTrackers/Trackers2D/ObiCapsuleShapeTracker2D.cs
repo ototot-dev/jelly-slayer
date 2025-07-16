@@ -26,9 +26,9 @@ namespace Obi{
             shape.filter = source.Filter;
             shape.SetSign(source.Inverted);
             shape.isTrigger = capsule.isTrigger;
-            shape.rigidbodyIndex = source.Rigidbody != null ? source.Rigidbody.handle.index : -1;
+            shape.rigidbodyIndex = source.Rigidbody != null ? source.Rigidbody.Handle.index : -1;
             shape.materialIndex = source.CollisionMaterial != null ? source.CollisionMaterial.handle.index : -1;
-            shape.forceZoneIndex = source.ForceZone != null ? source.ForceZone.handle.index : -1;
+            shape.forceZoneIndex = source.ForceZone != null ? source.ForceZone.Handle.index : -1;
             shape.contactOffset = source.Thickness;
             shape.center = capsule.offset;
             Vector2 size = capsule.size;

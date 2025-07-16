@@ -11,13 +11,13 @@ namespace Game
     [RequireComponent(typeof(AlienActionController))]
     public class AlienBrain : NpcHumanoidBrain, IPawnTargetable
     {
-#region IPawnTargetable 구현
+        #region IPawnTargetable 구현
         PawnColliderHelper IPawnTargetable.StartTargeting() => bodyHitColliderHelper;
         PawnColliderHelper IPawnTargetable.NextTarget() => null;
         PawnColliderHelper IPawnTargetable.PrevTarget() => null;
         PawnColliderHelper IPawnTargetable.CurrTarget() => bodyHitColliderHelper;
-        void IPawnTargetable.StopTargeting() {}
-#endregion
+        void IPawnTargetable.StopTargeting() { }
+        #endregion
 
         public AlienBlackboard BB { get; private set; }
         public AlienMovement Movement { get; private set; }
@@ -46,7 +46,7 @@ namespace Game
         protected override void StartInternal()
         {
             base.StartInternal();
-            
+
             BB.decision.currDecision.Subscribe(v =>
             {
                 Movement.moveSpeed = v == Decisions.Spacing ? BB.body.walkSpeed : BB.body.runSpeed;
@@ -73,13 +73,13 @@ namespace Game
                         ActionCtrler.SetPendingAction(__combo3ActionData.actionName);
                         ActionCtrler.CancelAction(false);
                     }
-                    else if (ActionCtrler.CurrActionName == "Attack#1") 
+                    else if (ActionCtrler.CurrActionName == "Attack#1")
                     {
                         //* 1타 후에 2타 콤보 공격
                         ActionCtrler.SetPendingAction(__combo2ActionData.actionName);
                         ActionCtrler.CancelAction(false);
                     }
-                    else if (ActionCtrler.CurrActionName == "Attack#2") 
+                    else if (ActionCtrler.CurrActionName == "Attack#2")
                     {
                         //* 2타 후에 3타 콤보 공격
                         ActionCtrler.SetPendingAction(__combo3ActionData.actionName);
@@ -123,18 +123,11 @@ namespace Game
         protected override void DamageReceiverHandler(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
             base.DamageReceiverHandler(ref damageContext);
-
-            if (damageContext.actionResult == ActionResults.Damaged)
+            
+            if (damageContext.actionResult == ActionResults.Blocked && string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && CheckTargetVisibility())
             {
-                CreateDamageText(ref damageContext);
-            }
-            else if (damageContext.actionResult == ActionResults.Blocked)
-            {       
-                if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && CheckTargetVisibility())
-                {
-                    __counterActionData ??= ActionDataSelector.GetActionData("Counter");
-                    ActionCtrler.SetPendingAction(__counterActionData.actionName);
-                }
+                __counterActionData ??= ActionDataSelector.GetActionData("Counter");
+                ActionCtrler.SetPendingAction(__counterActionData.actionName);
             }
         }
     }

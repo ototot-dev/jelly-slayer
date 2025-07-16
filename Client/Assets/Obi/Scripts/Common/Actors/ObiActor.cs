@@ -79,11 +79,31 @@ namespace Obi
         public event ActorStepCallback OnSimulationStart;
 
         /// <summary>
+        /// Called after CPU->GPU data transfers, before collision detection starts.
+        /// </summary>
+        public event ActorStepCallback OnCollisionDetectionStart;
+
+        /// <summary>
+        /// Called before performing substepping.
+        /// </summary>
+        public event ActorStepCallback OnSubstepsStart;
+
+        /// <summary>
+        /// Called after simulation ends.
+        /// </summary>
+        public event ActorStepCallback OnSimulationEnd;
+
+        /// <summary>
+        /// You can use this callback to issue GPU->CPU readbacks.
+        /// </summary>
+        public event ActorCallback OnRequestReadback;
+
+        /// <summary>
         /// Called at the end of each frame, after interpolation but before rendering.
         /// </summary>
         public event ActorStepCallback OnInterpolate;
 
-        [HideInInspector] protected int m_ActiveParticleCount = 0;
+        [HideInInspector] protected ObiNativeIntList m_ActiveParticleCount;
 
         /// <summary>
         /// Index of each one of the actor's particles in the solver.
@@ -95,6 +115,8 @@ namespace Obi
         /// </summary>
         [HideInInspector] public List<int>[] solverBatchOffsets;
 
+        public int deformableEdgesOffset { protected set; get; } /**< index of the first deformable edge in the solver that belongs to this rope.*/
+
         protected ObiSolver m_Solver;
         protected bool m_Loaded = false;
         public int groupID = 0;
@@ -102,14 +124,16 @@ namespace Obi
         private ObiActorBlueprint m_State;
         private ObiActorBlueprint m_BlueprintInstance;
         private ObiPinConstraintsData m_PinConstraints;
+        private ObiPinholeConstraintsData m_PinholeConstraints;
         private BufferedForces bufferedForces = new BufferedForces();
         [SerializeField] [HideInInspector] protected ObiCollisionMaterial m_CollisionMaterial;
         [SerializeField] [HideInInspector] protected bool m_SurfaceCollisions = false;
+        [SerializeField] [HideInInspector] [Min(ObiUtils.epsilon)] protected float m_MassScale = 1;
 
         /// <summary>
         /// The solver in charge of simulating this actor.
         /// </summary>
-        /// This is the first ObiSlver component found up the actor's hierarchy.
+        /// This is the first ObiSolver component found up the actor's hierarchy.
         public ObiSolver solver
         {
             get { return m_Solver; }
@@ -121,7 +145,7 @@ namespace Obi
         /// </summary>
         public bool isLoaded
         {
-            get { return m_Loaded; }
+            get { return m_Solver != null && m_Loaded; }
         }
 
         /// <summary>
@@ -166,6 +190,22 @@ namespace Obi
         }
 
         /// <summary>
+        /// Scale applied to this actor's particle masses.
+        /// </summary>
+        public float massScale
+        {
+            get
+            {
+                return m_MassScale;
+            }
+            set
+            {
+                if (Mathf.Abs(m_MassScale - value) > ObiUtils.epsilon)
+                    SetMassScale(value);
+            }
+        }
+
+        /// <summary>
         /// Amount of particles allocated by this actor.
         /// </summary>
         public int particleCount
@@ -181,6 +221,19 @@ namespace Obi
         /// </summary>
         /// This will always be equal to or smaller than <see cref="particleCount"/>.
         public int activeParticleCount
+        {
+            get
+            {
+                return m_ActiveParticleCount != null ? m_ActiveParticleCount[0]:0;
+            }
+        }
+
+        /// <summary>
+        /// Buffer of size 1 that contains the amount of active particles in use by this actor.
+        /// Useful to modify the amount of active particles from a compute shader.
+        /// </summary>
+        /// This will always be equal to or smaller than <see cref="particleCount"/>.
+        public ObiNativeIntList activeParticleCountBuffer
         {
             get
             {
@@ -294,6 +347,9 @@ namespace Obi
 
         protected virtual void Awake()
         {
+            m_ActiveParticleCount = new ObiNativeIntList();
+            m_ActiveParticleCount.Add(0);
+
 #if UNITY_EDITOR
 
             // Check if this script's GameObject is in a PrefabStage
@@ -319,6 +375,9 @@ namespace Obi
 
         protected virtual void OnDestroy()
         {
+            m_ActiveParticleCount.Dispose();
+            m_ActiveParticleCount = null;
+
             if (m_BlueprintInstance != null)
                 DestroyImmediate(m_BlueprintInstance);
         }
@@ -330,6 +389,7 @@ namespace Obi
                 solverBatchOffsets[i] = new List<int>();
 
             m_PinConstraints = new ObiPinConstraintsData();
+            m_PinholeConstraints = new ObiPinholeConstraintsData();
 
             // when an actor is enabled, grabs the first solver up its hierarchy,
             // initializes it (if not initialized) and gets added to it.
@@ -400,6 +460,31 @@ namespace Obi
             }
         }
 
+        /// <summary>
+        /// Sets the mass of all particles in the actor to their blueprint values, multiplied by a scale factor.
+        /// </summary>
+        /// <param name="scale"> new mass scale.
+        protected void SetMassScale(float scale)
+        {
+            if (Application.isPlaying && isLoaded && particleCount > 0)
+            {
+                scale = Mathf.Max(ObiUtils.epsilon, scale);
+
+                for (int i = 0; i < particleCount; ++i)
+                {
+                    int solverIndex = solverIndices[i];
+
+                    if (m_Solver.invMasses[solverIndex] > 0)
+                        m_Solver.invMasses[solverIndex] = sharedBlueprint.invMasses[i] / scale;
+
+                    if (m_Solver.invRotationalMasses[solverIndex] > 0 && sharedBlueprint.invRotationalMasses != null && i < sharedBlueprint.invRotationalMasses.Length)
+                       m_Solver.invRotationalMasses[solverIndex] = sharedBlueprint.invRotationalMasses[i] / scale;
+                }
+
+                UpdateParticleProperties();
+            }
+        }
+
         protected virtual void OnBlueprintRegenerate(ObiActorBlueprint blueprint)
         {
             // Reload by removing the current blueprint from the solver,
@@ -437,6 +522,11 @@ namespace Obi
         public virtual void ProvideDeformableEdges(ObiNativeIntList deformableEdges)
         {
 
+        }
+
+        public virtual int GetDeformableEdgeCount()
+        {
+            return 0;
         }
 
         /// <summary>
@@ -564,11 +654,11 @@ namespace Obi
                 return false;
 
             // set active particle radius W to 1.
-            var radii = m_Solver.principalRadii[solverIndices[m_ActiveParticleCount]];
+            var radii = m_Solver.principalRadii[solverIndices[activeParticleCount]];
             radii.w = 1;
-            m_Solver.principalRadii[solverIndices[m_ActiveParticleCount]] = radii;
+            m_Solver.principalRadii[solverIndices[activeParticleCount]] = radii;
 
-            m_ActiveParticleCount++;
+            m_ActiveParticleCount[0]++;
             m_Solver.dirtyActiveParticles = true;
             m_Solver.dirtySimplices |= simplexTypes;
 
@@ -589,7 +679,7 @@ namespace Obi
             if (!IsParticleActive(actorIndex))
                 return false;
 
-            m_ActiveParticleCount--;
+            m_ActiveParticleCount[0]--;
 
             // set inactive particle W to zero, this allows renderers to ignore it.
             var radii = m_Solver.principalRadii[solverIndices[actorIndex]];
@@ -628,6 +718,27 @@ namespace Obi
                         m_Solver.phases[solverIndices[i]] |= (int)ObiUtils.ParticleFlags.SelfCollide;
                     else
                         m_Solver.phases[solverIndices[i]] &= ~(int)ObiUtils.ParticleFlags.SelfCollide;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Updates particle phases in the solver at runtime, including or removing the self-collision flag.
+        /// </summary>
+        public virtual void SetDirectionalCollisions(bool dfCollisions)
+        {
+            if (m_Solver != null && Application.isPlaying && isLoaded)
+            {
+                for (int i = 0; i < particleCount; i++)
+                {
+                    var norm = m_Solver.normals[solverIndices[i]];
+
+                    if (dfCollisions)
+                        norm.w = sharedBlueprint.restNormals[i].w;
+                    else
+                        norm.w = 0;
+
+                    m_Solver.normals[solverIndices[i]] = norm;
                 }
             }
         }
@@ -693,6 +804,8 @@ namespace Obi
             // pin constraints are a special case, because they're not stored in a blueprint. They are created at runtime at stored in the actor itself.
             if (type == Oni.ConstraintType.Pin)
                 return m_PinConstraints;
+            if (type == Oni.ConstraintType.Pinhole)
+                return m_PinholeConstraints;
 
             if (sharedBlueprint != null)
                 return sharedBlueprint.GetConstraintsByType(type);
@@ -888,6 +1001,8 @@ namespace Obi
                     m_Solver.invMasses[solverIndex] = invMass;
                     m_Solver.invRotationalMasses[solverIndex] = invMass;
                 }
+
+                UpdateParticleProperties();
             }
         }
 
@@ -1002,6 +1117,11 @@ namespace Obi
                     m_Solver.renderableOrientations[k] = l2sRotation * bp.orientations[i];
                 }
 
+                // for softbodies, xyz values store SDF normal in particle's local space: needs to be transformed using particle orientation during simulation.
+                // w value stores sparse SDF if < 0.
+                if (bp.restNormals != null && i < bp.restNormals.Length)
+                    m_Solver.normals[k] = bp.restNormals[i]; 
+
                 if (bp.restPositions != null && i < bp.restPositions.Length)
                     m_Solver.restPositions[k] = bp.restPositions[i];
 
@@ -1015,10 +1135,10 @@ namespace Obi
                     m_Solver.angularVelocities[k] = l2sTransform.MultiplyVector(bp.angularVelocities[i]);
 
                 if (bp.invMasses != null && i < bp.invMasses.Length)
-                    m_Solver.invMasses[k] = bp.invMasses[i];
+                    m_Solver.invMasses[k] = bp.invMasses[i] / m_MassScale;
 
                 if (bp.invRotationalMasses != null && i < bp.invRotationalMasses.Length)
-                    m_Solver.invRotationalMasses[k] = bp.invRotationalMasses[i];
+                    m_Solver.invRotationalMasses[k] = bp.invRotationalMasses[i] / m_MassScale;
 
                 if (bp.principalRadii != null && i < bp.principalRadii.Length)
                 {
@@ -1041,7 +1161,7 @@ namespace Obi
                 m_Solver.phases[k] = ObiUtils.MakePhase(groupID, 0);
             }
 
-            m_ActiveParticleCount = sourceBlueprint.activeParticleCount;
+            m_ActiveParticleCount[0] = sourceBlueprint.activeParticleCount;
             m_Solver.dirtyActiveParticles = true;
             m_Solver.dirtyDeformableTriangles = true;
             m_Solver.dirtyDeformableEdges = true;
@@ -1056,7 +1176,7 @@ namespace Obi
         private void UnloadBlueprintParticles()
         {
             // Update active particles. 
-            m_ActiveParticleCount = 0;
+            m_ActiveParticleCount[0] = 0;
             m_Solver.dirtyActiveParticles = true;
             m_Solver.dirtyDeformableTriangles = true;
             m_Solver.dirtyDeformableEdges = true;
@@ -1144,9 +1264,9 @@ namespace Obi
         #region Solver callbacks
 
         /// <summary>  
-        /// Loads this actor's blueprint into a given solver. Automatically called by <see cref="ObiSolver"/>.
+        /// Loads this actor's blueprint into the current solver. Automatically called by <see cref="ObiSolver"/>.
         /// </summary> 
-        public virtual void LoadBlueprint(ObiSolver solver)
+        internal virtual void LoadBlueprint()
         {
             var bp = sharedBlueprint;
 
@@ -1166,7 +1286,7 @@ namespace Obi
         /// <summary>  
         /// Unloads this actor's blueprint from a given solver. Automatically called by <see cref="ObiSolver"/>.
         /// </summary> 
-        public virtual void UnloadBlueprint(ObiSolver solver)
+        internal virtual void UnloadBlueprint()
         {
             // instantiate blueprint and store current state in the instance:
             if (Application.isPlaying)
@@ -1212,14 +1332,24 @@ namespace Obi
             }
         }
 
+        public virtual void CollisionDetectionStart(float simulatedTime, float substepTime)
+        {
+            OnCollisionDetectionStart?.Invoke(this, simulatedTime, substepTime);
+        }
+
+        public virtual void SubstepsStart(float simulatedTime, float substepTime)
+        {
+            OnSubstepsStart?.Invoke(this, simulatedTime, substepTime);
+        }
+
         public virtual void SimulationEnd(float simulatedTime, float substepTime)
         {
-
+            OnSimulationEnd?.Invoke(this, simulatedTime, substepTime);
         }
 
         public virtual void RequestReadback()
         {
-
+            OnRequestReadback?.Invoke(this);
         }
 
         public virtual void Interpolate(float simulatedTime, float substepTime)

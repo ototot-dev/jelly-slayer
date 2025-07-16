@@ -19,6 +19,7 @@
 #pragma kernel FindFluidNeighborsInSameLevel
 #pragma kernel FindFluidNeighborsInUpperLevels
 #pragma kernel BuildContactList
+#pragma kernel BuildFluidParticleIndexBuffer
 
 StructuredBuffer<aabb> solverBounds;
 StructuredBuffer<aabb> simplexBounds;
@@ -358,13 +359,17 @@ void InteractionTest(simplexData a, simplexData b)
                                              simplices, a.start, a.size, simplexBary, simplexPoint);
 
         simplexRadiusA = 0; simplexRadiusB = 0;
-        float4 velocityA = FLOAT4_ZERO, velocityB = FLOAT4_ZERO, normalB = FLOAT4_ZERO;
+        float4 velocityA = FLOAT4_ZERO, velocityB = FLOAT4_ZERO, normalA = FLOAT4_ZERO, normalB = FLOAT4_ZERO;
+        float invMassA = 0, invMassB = 0; 
         
         for (j = 0; j < a.size; ++j)
         {
             int particleIndex = simplices[a.start + j];
             simplexRadiusA += principalRadii[particleIndex].x * simplexBary[j];
             velocityA += velocities[particleIndex] * simplexBary[j];
+            float4 nrm = asfloat(normals[particleIndex]);
+            normalA += (nrm.w < 0 ? float4(rotate_vector(orientations[particleIndex],nrm.xyz), nrm.w) : nrm) * simplexBary[j];
+            invMassA += invMasses[particleIndex] * simplexBary[j];
         }
 
         for (j = 0; j < b.size; ++j)
@@ -372,8 +377,14 @@ void InteractionTest(simplexData a, simplexData b)
             int particleIndex = simplices[b.start + j];
             simplexRadiusB += principalRadii[particleIndex].x * surfacePoint.bary[j];
             velocityB += velocities[particleIndex] * surfacePoint.bary[j];
-            normalB += asfloat(normals[particleIndex]) * surfacePoint.bary[j];
+            float4 nrm = asfloat(normals[particleIndex]);
+            normalB += (nrm.w < 0 ? float4(rotate_vector(orientations[particleIndex],nrm.xyz), nrm.w) : nrm) * surfacePoint.bary[j];
+            invMassB += invMasses[particleIndex] * simplexBary[j];
         }
+
+        // no contact between fixed simplices: TODO: make optional
+       //if (!(invMassA > 0 || invMassB > 0)) 
+       //    return;
 
         float dAB = dot(simplexPoint - surfacePoint.pos, surfacePoint.normal);
         float vel = dot(velocityA    - velocityB,        surfacePoint.normal);
@@ -384,6 +395,21 @@ void InteractionTest(simplexData a, simplexData b)
             // adapt collision normal for one-sided simplices:
             if ((b.flags & OneSided) != 0 && categoryA < categoryB)
                 OneSidedNormal(normalB, surfacePoint.normal);
+
+            // during inter-collision, if either particle contains SDF data and they overlap:
+            if (a.group != b.group && (normalB.w < 0 || normalA.w < 0) && dAB * 1.05f <= simplexRadiusA + simplexRadiusB)
+            {
+                // as normal, pick SDF gradient belonging to least penetration distance:
+                float4 nij = normalB;
+                if (normalB.w >= 0 || (normalA.w < 0 && normalB.w < normalA.w))
+                    nij = float4(-normalA.xyz, normalA.w);
+
+                // for boundary particles, use one sided sphere normal:
+                if (abs(nij.w) <= max(simplexRadiusA, simplexRadiusB) * 1.5f)
+                    OneSidedNormal(nij, surfacePoint.normal);
+                else
+                    surfacePoint.normal = nij;
+            }
 
             uint count = particleContacts.IncrementCounter();
             if (count < maxContacts)
@@ -466,15 +492,15 @@ void FindFluidNeighborsInSameLevel (uint3 id : SV_DispatchThreadID)
 {
     unsigned int i = id.x;
     if (i >= dispatchBuffer[3]) return;
-
+    
     // current cell:
     int4 cellCoord = R_cellCoords[sortedFluidIndices[i]];
-    int4 neighborCoord, particleCoord;
+    int4 neighborCoord;
     uint cellIndex, n, end;
 
     float4 d;
     float interactionRadius, cellSize;
-    int fluidB, level;
+    int fluidB;
        
     float4 posA = sortedPositions[i];
     float radA = sortedFluidMaterials[i].x;
@@ -501,16 +527,12 @@ void FindFluidNeighborsInSameLevel (uint3 id : SV_DispatchThreadID)
                 // due to hash collisions, two neighboring cells might map to the same
                 // hash bucket, and we'll add the same set of particles twice to the neighbors list.
                 // So we only consider particles that have the same spatial coordinates as the cell.
-                level = GridLevelForSize(sortedFluidMaterials[fluidB].x);
-                cellSize = CellSizeOfLevel(level);
-                particleCoord = int4(floor((sortedPositions[fluidB] - solverBounds[0].min_)/ cellSize).xyz,level);
-
-                if (any (particleCoord - neighborCoord))
+                if (any (R_cellCoords[sortedFluidIndices[fluidB]] - neighborCoord))
                     continue;
 
                 // calculate particle center distance:
                 d = posA - sortedPositions[fluidB]; d.w = 0;
-                interactionRadius = max(radA, sortedFluidMaterials[fluidB].x);
+                interactionRadius = max(radA, sortedFluidMaterials[fluidB].x) + collisionMargin;
                 
                 if (dot(d,d) <= interactionRadius * interactionRadius && count < maxNeighbors)
                     neighbors[maxNeighbors * i + (count++)] = fluidB; 
@@ -530,12 +552,12 @@ void FindFluidNeighborsInUpperLevels (uint3 id : SV_DispatchThreadID)
     int s = sortedFluidIndices[i];
     
     int4 cellCoord = R_cellCoords[s];
-    int4 parentCellCoords, neighborCoord, particleCoord;
+    int4 parentCellCoords, neighborCoord;
     uint cellIndex, n, end;
 
     float4 d;
     float interactionRadius, cellSize;
-    int fluidB, level;
+    int fluidB;
 
     float4 posA = sortedPositions[i];
     float radA = sortedFluidMaterials[i].x;
@@ -566,16 +588,12 @@ void FindFluidNeighborsInUpperLevels (uint3 id : SV_DispatchThreadID)
                     // due to hash collisions, two neighboring cells might map to the same
                     // hash bucket, and we'll add the same set of particles twice to the neighbors list.
                     // So we only consider particles that have the same spatial coordinates as the cell.
-                    level = GridLevelForSize(sortedFluidMaterials[fluidB].x);
-                    cellSize = CellSizeOfLevel(level);
-                    particleCoord = int4(floor((sortedPositions[fluidB] - solverBounds[0].min_)/ cellSize).xyz,level);
-
-                    if (any (particleCoord - neighborCoord))
+                    if (any (R_cellCoords[sortedFluidIndices[fluidB]] - neighborCoord))
                         continue;
 
                     // calculate particle center distance:
                     d = posA - sortedPositions[fluidB]; d.w = 0;
-                    interactionRadius = max(radA, sortedFluidMaterials[fluidB].x);
+                    interactionRadius = max(radA, sortedFluidMaterials[fluidB].x) + collisionMargin;
                     
                     if (dot(d,d) <= interactionRadius * interactionRadius)
                     {            
@@ -593,8 +611,16 @@ void FindFluidNeighborsInUpperLevels (uint3 id : SV_DispatchThreadID)
             }
         }
     }
+   
+}
 
+[numthreads(128, 1, 1)]
+void BuildFluidParticleIndexBuffer (uint3 id : SV_DispatchThreadID) 
+{
+    unsigned int i = id.x;
+    if (i >= dispatchBuffer[3]) return;
+       
     // convert simplex index to start in indices array.
     int o;
-    sortedFluidIndices[i] = simplices[GetSimplexStartAndSize(s, o)];
+    sortedFluidIndices[i] = simplices[GetSimplexStartAndSize(sortedFluidIndices[i], o)];
 }

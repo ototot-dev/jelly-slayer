@@ -50,6 +50,7 @@ namespace AmplifyShaderEditor
 					case WirePortDataType.FLOAT3: value = "half3(0,0,0)"; break;
 					case WirePortDataType.COLOR:
 					case WirePortDataType.FLOAT4: value = "half4(0,0,0,0)"; break;
+					case WirePortDataType.FLOAT2x2: value = "half2x2(0,0,0,0)"; break;
 					case WirePortDataType.FLOAT3x3: value = "half3x3(0,0,0,0,0,0,0,0,0)"; break;
 					case WirePortDataType.FLOAT4x4: value = "half4x4(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)"; break;
 				}

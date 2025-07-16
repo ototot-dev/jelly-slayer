@@ -89,7 +89,9 @@ namespace Obi
         private List<ObiRigidbodyHandle> rigidbodiesToCreate;
         private List<ObiRigidbodyHandle> rigidbodiesToDestroy;
 
-        private bool updatedThisFrame = false;
+        public int collidersToUpdateCount { private set; get; } = 0;    // amount of colliders that need to be updated. These are always grouped at the start of the collider arrays (handles, shapes, etc).
+
+        private bool dirty = false;
 
         private static ObiColliderWorld instance;
 
@@ -160,7 +162,7 @@ namespace Obi
 
         private void Destroy()
         {
-            updatedThisFrame = false;
+            dirty = false;
             for (int i = 0; i < implementations.Count; ++i)
             {
                 implementations[i].SetColliders(colliderShapes, colliderAabbs, colliderTransforms);
@@ -215,11 +217,11 @@ namespace Obi
 
         private void DestroyIfUnused()
         {
-            // when there are no data and no implementations, the world gets destroyed.
+            // when there is no data and no implementations, the world gets destroyed.
+            // don't check materialHandles.Count == 0, as these are scriptable objects and may outlive the world.
             if (colliderHandles.Count == 0 &&
                 rigidbodyHandles.Count == 0 &&
                 forceZoneHandles.Count == 0 &&
-                materialHandles.Count == 0 &&
                 implementations.Count == 0)
 
                 Destroy();
@@ -409,10 +411,6 @@ namespace Obi
                 // update the index of the handle we swapped with:
                 colliderHandles[index].index = index;
 
-                // force other colliders to update next frame, as the index of the data they reference
-                // (eg the mesh in a MeshCollider) may have changed as a result of deleting this collider's data.
-                for (int i = 0; i < colliderHandles.Count; ++i)                    colliderHandles[i].owner.ForceUpdate();
-
                 // invalidate our handle:
                 // (after updating the swapped one!
                 // in case there's just one handle in the array,
@@ -424,6 +422,10 @@ namespace Obi
                 colliderShapes.count--;
                 colliderAabbs.count--;
                 colliderTransforms.count--;
+
+                // force all colliders to update next frame, as the index of the data they reference
+                // (eg the mesh in a MeshCollider) may have changed as a result of deleting this collider's data.
+                collidersToUpdateCount = colliderHandles.Count;
 
                 DestroyIfUnused();
             }
@@ -493,6 +495,8 @@ namespace Obi
             colliderShapes.Add(new ColliderShape { materialIndex = -1, rigidbodyIndex = -1, dataIndex = -1 });
             colliderAabbs.Add(new Aabb());
             colliderTransforms.Add(new AffineTransform());
+
+            MarkColliderAsNeedingUpdate(handle);
         }
 
         private void CreateForceZoneData(ObiForceZoneHandle handle)
@@ -507,6 +511,59 @@ namespace Obi
             handle.index = rigidbodyHandles.Count;
             rigidbodyHandles.Add(handle);
             rigidbodies.Add(new ColliderRigidbody());
+        }
+
+        public bool DoesColliderRequireToBeUpdated(ObiColliderHandle handle)
+        {
+            if (handle != null && handle.isValid &&
+                handle.index < colliderHandles.Count && handle.index < collidersToUpdateCount)
+                return true;
+            return false;
+        }
+
+        public void MarkColliderAsNeedingUpdate(ObiColliderHandle handle)
+        {
+            if (colliderShapes != null && handle != null && handle.isValid &&
+                handle.index < colliderHandles.Count && handle.index >= collidersToUpdateCount &&
+                collidersToUpdateCount < colliderHandles.Count)
+            {
+                int index = handle.index;
+                int lastIndex = collidersToUpdateCount;
+
+                // swap all collider info:
+                colliderHandles.Swap(index, lastIndex);
+                colliderShapes.Swap(index, lastIndex);
+                colliderAabbs.Swap(index, lastIndex);
+                colliderTransforms.Swap(index, lastIndex);
+
+                // update handles:
+                colliderHandles[lastIndex].index = lastIndex;
+                colliderHandles[index].index = index;
+
+                collidersToUpdateCount++;
+            }
+        }
+
+        public void MarkColliderAsNotNeedingUpdate(ObiColliderHandle handle)
+        {
+            if (colliderShapes != null && handle != null && handle.isValid &&
+                handle.index < colliderHandles.Count && handle.index < collidersToUpdateCount)
+            {
+                int index = handle.index;
+                int lastIndex = collidersToUpdateCount-1;
+
+                // swap all collider info:
+                colliderHandles.Swap(index, lastIndex);
+                colliderShapes.Swap(index, lastIndex);
+                colliderAabbs.Swap(index, lastIndex);
+                colliderTransforms.Swap(index, lastIndex);
+
+                // update handles:
+                colliderHandles[lastIndex].index = lastIndex;
+                colliderHandles[index].index = index;
+
+                collidersToUpdateCount--;
+            }
         }
 
         public void FlushHandleBuffers()
@@ -560,12 +617,12 @@ namespace Obi
           
         }
 
-        public void UpdateWorld(float deltaTime)
+        public void UpdateWorld(float deltaTime, bool updateDynamics = true)
         {
-            if (updatedThisFrame)
+            if (!dirty)
                 return;
 
-            updatedThisFrame = true;
+            dirty = false;
 
             // ensure all objects have valid handles.
             // May destroy the world if it's empty,
@@ -574,7 +631,7 @@ namespace Obi
 
             // update all colliders:
             if (colliderHandles != null)
-                for (int i = 0; i < colliderHandles.Count; ++i)
+                for (int i = 0; i < collidersToUpdateCount; ++i)
                     colliderHandles[i].owner.UpdateIfNeeded();
 
             // update all force zones:
@@ -583,7 +640,7 @@ namespace Obi
                     forceZoneHandles[i].owner.UpdateIfNeeded();
 
             // update rigidbodies:
-            if (rigidbodyHandles != null)
+            if (rigidbodyHandles != null && updateDynamics)
                 for (int i = 0; i < rigidbodyHandles.Count; ++i)
                     rigidbodyHandles[i].owner.UpdateIfNeeded(deltaTime);
 
@@ -604,14 +661,15 @@ namespace Obi
                         implementations[i].SetHeightFieldData(heightFieldContainer.headers, heightFieldContainer.samples);
 
                         // update world implementation:
-                        implementations[i].UpdateWorld(deltaTime);
+                        if (updateDynamics)
+                            implementations[i].UpdateWorld(deltaTime);
                     }
                 }
         }
 
-        public void FrameStart()
+        public void SetDirty()
         {
-            updatedThisFrame = false;
+            dirty = true;
         }
 
         public void UpdateCollisionMaterials()

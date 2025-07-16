@@ -1,8 +1,10 @@
 ﻿#pragma kernel SortFluidData
 
 #pragma kernel Emit
+#pragma kernel EmitShape
 #pragma kernel CopyAliveCount
 #pragma kernel Update
+#pragma kernel Integrate
 #pragma kernel Copy
 
 #pragma kernel Sort
@@ -20,6 +22,7 @@
 StructuredBuffer<int> sortedToOriginal;
 RWStructuredBuffer<float4> sortedPositions;
 RWStructuredBuffer<float4> sortedVelocities;
+RWStructuredBuffer<float4> sortedAngularVelocities;
 RWStructuredBuffer<quaternion> sortedOrientations;
 RWStructuredBuffer<float4> sortedRadii;
 
@@ -38,7 +41,7 @@ StructuredBuffer<float4> principalRadii;
 StructuredBuffer<float4> fluidMaterial;
 StructuredBuffer<float4> fluidData;
 
-StructuredBuffer<float4> inputPositions; // w component is distance to camera
+StructuredBuffer<float4> inputPositions; // w component is distance traveled inside volume (approximate volumetric lighting).
 StructuredBuffer<float4> inputVelocities; // w component is buoyancy
 StructuredBuffer<float4> inputColors;     // rgba diffuse color
 StructuredBuffer<float4> inputAttributes; // currentlifetime, maxlifetime, size, drag
@@ -55,7 +58,14 @@ RWByteAddressBuffer indices;
 // Variables set from the CPU
 uint activeParticleCount;
 uint maxFoamParticles;
+uint particlesToEmit;
 
+uint emitterShape;
+float4 emitterPosition;
+quaternion emitterRotation;
+float4 emitterSize;
+
+uint minFluidNeighbors;
 float2 vorticityRange;
 float2 velocityRange;
 float foamGenerationRate;
@@ -81,6 +91,7 @@ const uint groupHeight;
 const uint stepIndex;
 
 float deltaTime;
+float randomSeed;
 
 static const int4 quadrantOffsets[] =
 {
@@ -94,28 +105,11 @@ static const int4 quadrantOffsets[] =
     int4(1, 1, 1, 1)
 };
 
-//https://www.shadertoy.com/view/4djSRW
-float3 hash33(float3 p3)
+void RandomInCylinder(float seed, float4 pos, float4 dir, float len, float radius, out float4 position, out float3 velocity)
 {
-    p3 = frac(p3 * float3(.1031, .1030, .0973));
-    p3 += dot(p3, p3.yxz+33.33);
-    return frac((p3.xxy + p3.yxx)*p3.zyx);
-}
+    float3 rand = hash31(seed);
 
-float hash13(float3 p3)
-{
-    p3  = frac(p3 * .1031);
-    p3 += dot(p3, p3.zyx + 31.32);
-    return frac((p3.x + p3.y) * p3.z);
-}
-
-void RandomInCylinder(float seed, float4 pos1, float4 pos2, float radius, out float4 position, out float3 velocity)
-{
-    float3 rand = hash33(lerp(pos1.xyz, pos2.xyz, seed));
-
-    float3 v = pos2.xyz - pos1.xyz;
-    float d = length(v);
-    float3 b1 = d > EPSILON ? v / d : v;
+    float3 b1 = dir.xyz;
     float3 b2 = normalizesafe(cross(b1, float3(1,0,0)));
     float3 b3 = cross(b2, b1);
     
@@ -123,7 +117,14 @@ void RandomInCylinder(float seed, float4 pos1, float4 pos2, float radius, out fl
     float2 disc = radius * sqrt(rand.x) * float2(cos(theta),sin(theta));
 
     velocity = b2 * disc.x + b3 * disc.y;
-    position = float4(pos1.xyz + b1 * d * rand.z + velocity,0); 
+    position = float4(pos.xyz + b1 * len * rand.z + velocity,0); 
+}
+
+void RandomInBox(float seed, float4 center, float4 size, out float4 position, out float3 velocity)
+{
+    float3 rand = hash31(seed);
+    velocity = (rand - float3(0.5,0.5,0.5)) * size.xyz;
+    position = float4(center.xyz + velocity,0); 
 }
 
 [numthreads(128, 1, 1)]
@@ -133,10 +134,44 @@ void SortFluidData (uint3 id : SV_DispatchThreadID)
     if (i >= dispatch[3]) return;
     
     int original = sortedToOriginal[i];
-    sortedPositions[i] = float4(positions[original].xyz, 1 / fluidData[original].x);
+    sortedPositions[i] = positions[original];
     sortedVelocities[i] = velocities[original];
+    sortedAngularVelocities[i] = float4(angularVelocities[original].xyz,0);
     sortedOrientations[i] = orientations[original];
-    sortedRadii[i] = fluidMaterial[original].x * (principalRadii[original] / principalRadii[original].x); 
+    sortedRadii[i] = principalRadii[original];
+}
+
+[numthreads(128, 1, 1)]
+void EmitShape (uint3 id : SV_DispatchThreadID)
+{
+    uint i = id.x;
+    if (i >= particlesToEmit) return;
+    
+    // atomically increment alive particle counter:
+    uint count;
+    InterlockedAdd(dispatch[3], 1, count);
+
+    if (count < maxFoamParticles)
+    {
+        // initialize foam particle in a random position inside the cylinder spawned by fluid particle:
+        float3 radialVelocity = float3(0,0,0);
+
+        if (emitterShape == 0)
+            RandomInCylinder(randomSeed + i, -float4(0,1,0,0)*emitterSize.y*0.5, float4(0,1,0,0), emitterSize.y, max(emitterSize.x, emitterSize.z) * 0.5, outputPositions[count], radialVelocity);
+        else
+            RandomInBox(randomSeed + i, FLOAT4_ZERO, emitterSize, outputPositions[count], radialVelocity);
+            
+        float2 random = hash21(randomSeed - i);
+
+        // calculate initial life/size/color:
+        float initialLife = max(0, lifetime - lifetime * random.x * lifetimeRandom);
+        float initialSize = particleSize - particleSize * random.y * sizeRandom;
+        
+        outputPositions[count] = float4(emitterPosition.xyz + rotate_vector(emitterRotation, outputPositions[count].xyz),0);
+        outputVelocities[count] = float4(0,0,0, buoyancy);
+        outputColors[count] = foamColor;
+        outputAttributes[count] = float4(1, 1/initialLife,initialSize,PackFloatRGBA(float4(airAging / 50.0, airDrag, drag, isosurface)));
+    }
 }
 
 [numthreads(128, 1, 1)]
@@ -151,7 +186,7 @@ void Emit (uint3 id : SV_DispatchThreadID)
     float2 potential = UnpackFloatRG(angVel.w);
 
     // calculate fluid potential for foam generation:
-    float vorticityPotential = Remap01(length(angularVelocities[p]), vorticityRange.x, vorticityRange.y); 
+    float vorticityPotential = Remap01(fluidData[p].z, vorticityRange.x, vorticityRange.y); 
     float velocityPotential = Remap01(length(velocities[p]), velocityRange.x, velocityRange.y);
     float potentialDelta = velocityPotential * vorticityPotential * deltaTime * potentialIncrease;
 
@@ -173,11 +208,12 @@ void Emit (uint3 id : SV_DispatchThreadID)
         {
             // initialize foam particle in a random position inside the cylinder spawned by fluid particle:
             float3 radialVelocity;
-            RandomInCylinder(j, positions[p], positions[p] + velocities[p] * deltaTime, principalRadii[p].x, outputPositions[count], radialVelocity);
+            RandomInCylinder(randomSeed + p + j, positions[p], normalizesafe(velocities[p]), length(velocities[p]) * deltaTime, principalRadii[p].x, outputPositions[count], radialVelocity);
             
             // calculate initial life/size/color:
-            float initialLife = potential.y * (lifetime - hash13(positions[p].xyz) * lifetime * lifetimeRandom);
-            float initialSize = particleSize - hash13(positions[p].xyz + float3(0.51,0.23,0.1)) * particleSize * sizeRandom;
+            float2 random = hash21(randomSeed - p - j);
+            float initialLife = max(0, potential.y * (lifetime - lifetime * random.x * lifetimeRandom));
+            float initialSize = particleSize - particleSize * random.y * sizeRandom;
 
             outputVelocities[count] = velocities[p] + float4(radialVelocity, buoyancy);
             outputColors[count] = foamColor;
@@ -218,8 +254,9 @@ void Update (uint3 id : SV_DispatchThreadID)
 
         int offsetCount = (mode == 1) ? 4 : 8;
         float4 advectedVelocity = FLOAT4_ZERO;
+        float4 advectedAngVelocity = FLOAT4_ZERO;
         float kernelSum = -packedData.w;
-        int neighbourCount = 0;
+        uint neighbourCount = 0;
 
         float4 diffusePos = inputPositions[count];
 
@@ -235,7 +272,7 @@ void Update (uint3 id : SV_DispatchThreadID)
             if (mode == 1)
                 cellCoords[2] = 0;
 
-            float4 posInCell = diffusePos - (solverBounds[0].min_ + cellCoords * radius + float4(interactionDist,interactionDist,interactionDist,interactionDist));
+            float4 posInCell = diffusePos - (solverBounds[0].min_ + cellCoords * radius + float4(interactionDist,interactionDist,interactionDist,0));
             int4 quadrant = (int4)sign(posInCell);
             quadrant[3] = l;
            
@@ -262,16 +299,19 @@ void Update (uint3 id : SV_DispatchThreadID)
                     float d = length(normal);
                     if (d <= interactionDist)
                     {
-                        float3 radii = principalRadii[p].xyz;
+                        float3 radii = fluidMaterial[p].x * (principalRadii[p].xyz / principalRadii[p].x);
 
+                        float4 angVel = float4(cross(angularVelocities[p].xyz, normal.xyz),0);
+                        advectedAngVelocity += angVel * Poly6(d, radii.x) / Poly6(0, radii.x);
+                        
                         normal.xyz = rotate_vector(q_conj(orientations[p]), normal.xyz) / radii;
                         d = length(normal.xyz) * radii.x;
 
-                        // velocities.w is volume (1/normalized density):
-                        float w = positions[p].w * Poly6(d, radii.x);
+                        // scale by volume (* 1 / normalized density)
+                        float w = Poly6(d, radii.x) / fluidData[p].x;
 
                         kernelSum += w;
-                        advectedVelocity += velocities[p] * w;
+                        advectedVelocity += float4(velocities[p].xyz,0) * w;
                         neighbourCount++;
                     }
                 }
@@ -283,13 +323,13 @@ void Update (uint3 id : SV_DispatchThreadID)
         float agingScale = 1 + Remap01(dispatch[8] / (float)maxFoamParticles,agingOverPopulation.x,agingOverPopulation.y) * (agingOverPopulation.z - 1);
 
         // foam/bubble particle:
-        if (kernelSum > EPSILON && neighbourCount > 3)
+        if (kernelSum > EPSILON && neighbourCount >= minFluidNeighbors)
         {
             // advection: 
-            forces = packedData.z / deltaTime * (advectedVelocity / (kernelSum + packedData.w) - inputVelocities[count]);
+            forces = packedData.z / deltaTime * (advectedVelocity / (kernelSum + packedData.w) + advectedAngVelocity - inputVelocities[count]);
 
             // buoyancy:
-            forces -= float4(gravity,0) * inputVelocities[count].w * saturate(kernelSum);
+            forces -= float4(gravity,0) * inputVelocities[count].w * saturate(kernelSum); // TODO: larger particles should rise faster.
             
         }
         else // spray:
@@ -306,14 +346,24 @@ void Update (uint3 id : SV_DispatchThreadID)
         forces[3] = 0; 
         
         // update particle data:
-        attributes.x -= attributes.y * deltaTime * agingScale;
+        attributes.x -= attributes.y * deltaTime * agingScale; 
+        //attributes.z += (attributes.y * deltaTime * agingScale) * 0.02; // increase size with age. TODO: maybe do in render shader?
         outputAttributes[aliveCount] = attributes;
         outputColors[aliveCount] = inputColors[count];
 
-        // integrate:
+        // add forces to velocity:
+        outputPositions[aliveCount] = inputPositions[count];
         outputVelocities[aliveCount] = (inputVelocities[count] + forces * deltaTime) * velocityScale;
-        outputPositions[aliveCount] = float4((inputPositions[count] + outputVelocities[aliveCount] * deltaTime).xyz, neighbourCount);
     }
+}
+
+[numthreads(128, 1, 1)]
+void Integrate (uint3 id : SV_DispatchThreadID)
+{
+    unsigned int i = id.x;
+    if (i >= dispatch[3]) return;
+
+    outputPositions[i].xyz += outputVelocities[i].xyz * deltaTime;
 }
 
 [numthreads(128, 1, 1)]
@@ -348,14 +398,14 @@ void Sort(uint3 id : SV_DispatchThreadID)
     // Exit if out of bounds
     if (indexRight >= dispatch[3]) return;
 
-    float4 posLeft = inputPositions[indexLeft];
-    float4 posRight = inputPositions[indexRight];
-    float4 velLeft = inputVelocities[indexLeft];
-    float4 velRight = inputVelocities[indexRight];
-    float4 colorLeft = inputColors[indexLeft];
-    float4 colorRight = inputColors[indexRight];
-    float4 attrLeft = inputAttributes[indexLeft];
-    float4 attrRight = inputAttributes[indexRight];
+    float4 posLeft = outputPositions[indexLeft];
+    float4 posRight = outputPositions[indexRight];
+    float4 velLeft = outputVelocities[indexLeft];
+    float4 velRight = outputVelocities[indexRight];
+    float4 colorLeft = outputColors[indexLeft];
+    float4 colorRight = outputColors[indexRight];
+    float4 attrLeft = outputAttributes[indexLeft];
+    float4 attrRight = outputAttributes[indexRight];
 
     // calculate distance to camera:
     float distLeft = dot(posLeft.xyz, sortAxis.xyz);
@@ -410,7 +460,7 @@ void BuildMesh (uint3 id : SV_DispatchThreadID)
         vertices.Store4((base+7)<<2, asuint( inputColors[i] ));
         
         // velocity and attributes
-        vertices.Store4((base+11)<<2, asuint( inputVelocities[i] ));
+        vertices.Store4((base+11)<<2, asuint( float4(inputVelocities[i].xyz, inputPositions[i].w)));
         vertices.Store4((base+15)<<2, asuint( inputAttributes[i] ));
     }
 

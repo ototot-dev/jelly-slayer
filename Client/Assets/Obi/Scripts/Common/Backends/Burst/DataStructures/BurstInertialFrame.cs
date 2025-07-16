@@ -38,6 +38,11 @@ namespace Obi
             angularAcceleration = float4.zero;
         }
 
+        public float4 VelocityAtPoint(float4 point)
+        {
+            return velocity + new float4(math.cross(angularVelocity.xyz, (point - prevFrame.translation).xyz), 0);
+        }
+
         public void Update(float4 position, float4 scale, quaternion rotation, float dt)
         {
             prevFrame = frame;

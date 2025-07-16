@@ -80,7 +80,7 @@ namespace Game
             if (__loadingPageCtrler != null) return false;
             
             return !__dialogueDispatcher.IsDialogueRunning() ||
-                GameContext.Instance.playerCtrler.interactionKeyCtrlers.AsValueEnumerable().Any(i => i.PreprocessKeyDown()) ||
+                GameContext.Instance.interactionKeyCtrlers.AsValueEnumerable().Any(i => i.PreprocessKeyDown()) ||
                 _tutorialMode != TutorialMode.None;
         }
 

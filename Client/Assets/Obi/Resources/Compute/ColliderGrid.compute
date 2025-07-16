@@ -9,7 +9,7 @@
 #include "AtomicDeltas.cginc"
 #include "Phases.cginc"
 
-#define MAX_CONTACTS_PER_SIMPLEX 32
+#define MAX_CONTACTS_PER_SIMPLEX 64
 
 #pragma kernel Clear
 #pragma kernel BuildUnsortedList
@@ -28,6 +28,7 @@ StructuredBuffer<float> invMasses;
 StructuredBuffer<float4> velocities;
 RWStructuredBuffer<float4> externalForces;
 RWStructuredBuffer<float4> wind;
+RWStructuredBuffer<float4> colors;
 RWStructuredBuffer<float> life;
 
 StructuredBuffer<int> activeParticles;
@@ -377,59 +378,63 @@ void ApplyForceZones (uint3 id : SV_DispatchThreadID)
         for (int j = 0; j < simplexSize; ++j)
         {
             int particleIndex = simplices[simplexStart + j];
+            
+            float dist = -dot(positions[particleIndex] - contacts[i].pointB, contacts[i].normal);
+            if (dist < 0) continue;
+            
+            float4 axis = worldToSolver[0].Multiply(transforms[contacts[i].bodyB]).TransformDirection(float4(0, 0, 1, 0));
+            
+            // calculate falloff region based on min/max distances:
+            float falloff = 1;
+            float range = forceZones[forceZoneIndex].maxDistance - forceZones[forceZoneIndex].minDistance;
+            if (abs(range) > EPSILON)
+                falloff = pow(saturate((dist - forceZones[forceZoneIndex].minDistance) / range), forceZones[forceZoneIndex].falloffPower);
 
+            float forceIntensity = forceZones[forceZoneIndex].intensity * falloff;
+            float dampIntensity  = forceZones[forceZoneIndex].damping * falloff;
+
+            // tint particles:
+            float mix = pow(1 - saturate(forceZones[forceZoneIndex].color.a * falloff),deltaTime);
+            colors[particleIndex] = lerp(forceZones[forceZoneIndex].color, colors[particleIndex], mix);
+
+            // calculate force direction, depending on the type of the force field:
+            float4 result = FLOAT4_ZERO;
+            switch (forceZones[forceZoneIndex].type)
+            {
+                case ZONETYPE_RADIAL:
+                    result = contacts[i].normal * forceIntensity;
+                    break;
+                case ZONETYPE_VORTEX:
+                    result = float4(cross(axis.xyz * forceIntensity, contacts[i].normal.xyz),0);
+                    break;
+                case ZONETYPE_DIRECTIONAL:
+                    result = axis * forceIntensity;
+                    break;
+                default:
+                    AtomicAddLifeDelta(particleIndex, -forceIntensity * deltaTime);
+                    return;
+            }
+
+            // calculate damping along force direction:
+            float4 dampingDir;
+            switch (forceZones[forceZoneIndex].dampingDir)
+            {
+                case DAMPDIR_FORCE:
+                    {
+                        float4 forceDir = normalizesafe(result);
+                        result -= forceDir * dot(velocities[particleIndex], forceDir) * dampIntensity; 
+                    }
+                    break;
+                case DAMPDIR_SURFACE:
+                        result -= contacts[i].normal * dot(velocities[particleIndex], contacts[i].normal) * dampIntensity;
+                    break;
+                default:
+                        result -= velocities[particleIndex] * dampIntensity;
+                    break;
+            }
+            
             if (invMasses[particleIndex] > 0)
             {
-                float dist = -dot(positions[particleIndex] - contacts[i].pointB, contacts[i].normal);
-                if (dist < 0) continue;
-                
-                float4 axis = worldToSolver[0].Multiply(transforms[contacts[i].bodyB]).TransformDirection(float4(0, 0, 1, 0));
-                
-                // calculate falloff region based on min/max distances:
-                float falloff = 1;
-                float range = forceZones[forceZoneIndex].maxDistance - forceZones[forceZoneIndex].minDistance;
-                if (abs(range) > EPSILON)
-                    falloff = pow(saturate((dist - forceZones[forceZoneIndex].minDistance) / range), forceZones[forceZoneIndex].falloffPower);
-
-                float forceIntensity = forceZones[forceZoneIndex].intensity * falloff;
-                float dampIntensity  = forceZones[forceZoneIndex].damping * falloff;
-
-                // calculate force direction, depending on the type of the force field:
-                float4 result = FLOAT4_ZERO;
-                switch (forceZones[forceZoneIndex].type)
-                {
-                    case ZONETYPE_RADIAL:
-                        result = contacts[i].normal * forceIntensity;
-                        break;
-                    case ZONETYPE_VORTEX:
-                        result = float4(cross(axis.xyz * forceIntensity, contacts[i].normal.xyz),0);
-                        break;
-                    case ZONETYPE_DIRECTIONAL:
-                        result = axis * forceIntensity;
-                        break;
-                    default:
-                        AtomicAddLifeDelta(particleIndex, -forceIntensity * deltaTime);
-                        return;
-                }
-
-                // calculate damping along force direction:
-                float4 dampingDir;
-                switch (forceZones[forceZoneIndex].dampingDir)
-                {
-                    case DAMPDIR_FORCE:
-                        {
-                            float4 forceDir = normalizesafe(result);
-                            result -= forceDir * dot(velocities[particleIndex], forceDir) * dampIntensity; 
-                        }
-                        break;
-                    case DAMPDIR_SURFACE:
-                            result -= contacts[i].normal * dot(velocities[particleIndex], contacts[i].normal) * dampIntensity;
-                        break;
-                    default:
-                            result -= velocities[particleIndex] * dampIntensity;
-                        break;
-                }
-                
                 // here we reuse position and orientation delta buffers as velocity and wind buffers for atomic writes:
                 switch (forceZones[forceZoneIndex].mode)
                 {

@@ -226,15 +226,15 @@ namespace Obi
         }
 
 
-        public IEnumerator Voxelize(Matrix4x4 transform, bool generateTriangleIndices = false)
+        public IEnumerator Voxelize(Matrix4x4 transform, Vector3Int axisMask, bool generateTriangleIndices = false)
         {
             voxelSize = Mathf.Max(0.0001f, voxelSize);
 
             var xfBounds = input.bounds.Transform(transform);
 
             // Calculate min and max voxels, adding a 1-voxel margin.
-            origin = GetPointVoxel(xfBounds.min) - new Vector3Int(1, 1, 1);
-            Vector3Int max = GetPointVoxel(xfBounds.max) + new Vector3Int(1, 1, 1); 
+            origin = GetPointVoxel(Vector3.Scale(xfBounds.min, axisMask)) - axisMask; 
+            Vector3Int max = GetPointVoxel(Vector3.Scale(xfBounds.max, axisMask)) + axisMask; 
 
             resolution = new Vector3Int(max.x - origin.x + 1, max.y - origin.y + 1, max.z - origin.z + 1);
 
@@ -263,9 +263,9 @@ namespace Obi
             // Generate surface voxels:
             for (int i = 0; i < triIndices.Length; i += 3)
             {
-                Vector3 v1 = transform.MultiplyPoint3x4(vertices[triIndices[i]]);
-                Vector3 v2 = transform.MultiplyPoint3x4(vertices[triIndices[i + 1]]);
-                Vector3 v3 = transform.MultiplyPoint3x4(vertices[triIndices[i + 2]]);
+                Vector3 v1 = Vector3.Scale(transform.MultiplyPoint3x4(vertices[triIndices[i]]), axisMask);
+                Vector3 v2 = Vector3.Scale(transform.MultiplyPoint3x4(vertices[triIndices[i + 1]]), axisMask);
+                Vector3 v3 = Vector3.Scale(transform.MultiplyPoint3x4(vertices[triIndices[i + 2]]), axisMask);
 
                 Bounds triBounds = GetTriangleBounds(v1, v2, v3);
 
@@ -305,6 +305,34 @@ namespace Obi
                         }
 
                         if (sum % faceNeighborhood.Length != 0 && this[x, y, z] == Voxel.Inside) 
+                            this[x, y, z] = Voxel.Boundary;
+                    }
+        }
+
+        // Ensures boundary voxels are 2D.
+        public void MakeBoundary2D()
+        {
+            for (int x = 0; x < resolution.x; ++x)
+                for (int y = 0; y < resolution.y; ++y)
+                    for (int z = 0; z < resolution.z; ++z)
+                        if (this[x, y, z] == Voxel.Boundary)
+                            this[x, y, z] = Voxel.Inside;
+
+            for (int x = 0; x < resolution.x; ++x)
+                for (int y = 0; y < resolution.y; ++y)
+                    for (int z = 0; z < resolution.z; ++z)
+                    {
+                        int sum = 0;
+                        for (int j = 0; j < faceNeighborhood.Length; ++j)
+                        {
+                            var index = faceNeighborhood[j];
+                            if (VoxelExists(index.x + x, index.y + y, index.z + z) && this[index.x + x, index.y + y, index.z + z] != Voxel.Outside)
+                            {
+                                sum++;
+                            }
+                        }
+
+                        if (sum <= 3 && this[x, y, z] == Voxel.Inside)
                             this[x, y, z] = Voxel.Boundary;
                     }
         }

@@ -2,71 +2,73 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using Obi;
 
-[RequireComponent(typeof(ObiSolver))]
-public class WrapRopeGameController : MonoBehaviour
+namespace Obi.Samples
 {
+    [RequireComponent(typeof(ObiSolver))]
+    public class WrapRopeGameController : MonoBehaviour
+    {
 
-	ObiSolver solver;
+        ObiSolver solver;
 
-	public Wrappable[] wrappables;
-	public UnityEvent onFinish = new UnityEvent();
+        public Wrappable[] wrappables;
+        public UnityEvent onFinish = new UnityEvent();
 
-	private void Awake()
-	{
-		solver = GetComponent<ObiSolver>();
-	}
+        private void Awake()
+        {
+            solver = GetComponent<ObiSolver>();
+        }
 
-	// Start is called before the first frame update
-	void OnEnable()
-	{
-		solver.OnCollision += Solver_OnCollision;
-	}
+        // Start is called before the first frame update
+        void OnEnable()
+        {
+            solver.OnCollision += Solver_OnCollision;
+        }
 
-	private void OnDisable()
-	{
-		solver.OnCollision -= Solver_OnCollision;
-	}
+        private void OnDisable()
+        {
+            solver.OnCollision -= Solver_OnCollision;
+        }
 
-	private void Update()
-	{
-		bool allWrapped = true;
+        private void Update()
+        {
+            bool allWrapped = true;
 
-        // Test our win condition: all pegs must be wrapped.
-		foreach (var wrappable in wrappables)
-		{
-			if (!wrappable.IsWrapped())
-			{
-				allWrapped = false;
-				break;
-			}
-		}
+            // Test our win condition: all pegs must be wrapped.
+            foreach (var wrappable in wrappables)
+            {
+                if (!wrappable.IsWrapped())
+                {
+                    allWrapped = false;
+                    break;
+                }
+            }
 
-		if (allWrapped)
-			onFinish.Invoke();
-	}
+            if (allWrapped)
+                onFinish.Invoke();
+        }
 
-	private void Solver_OnCollision(ObiSolver s, ObiNativeContactList e)
-	{
-		// reset to unwrapped state:
-		foreach (var wrappable in wrappables)
-			wrappable.Reset();
+        private void Solver_OnCollision(ObiSolver s, ObiNativeContactList e)
+        {
+            // reset to unwrapped state:
+            foreach (var wrappable in wrappables)
+                wrappable.Reset();
 
-		var world = ObiColliderWorld.GetInstance();
-		foreach (Oni.Contact contact in e)
-		{
-			// look for actual contacts only:
-			if (contact.distance < 0.025f)
-			{
-				var col = world.colliderHandles[contact.bodyB].owner;
-				if (col != null)
-				{
-					var wrappable = col.GetComponent<Wrappable>();
-                    if (wrappable != null)
-						wrappable.SetWrapped();
-				}
-			}
-		}
-	}
+            var world = ObiColliderWorld.GetInstance();
+            foreach (Oni.Contact contact in e)
+            {
+                // look for actual contacts only:
+                if (contact.distance < 0.025f)
+                {
+                    var col = world.colliderHandles[contact.bodyB].owner;
+                    if (col != null)
+                    {
+                        var wrappable = col.GetComponent<Wrappable>();
+                        if (wrappable != null)
+                            wrappable.SetWrapped();
+                    }
+                }
+            }
+        }
+    }
 }

@@ -1,6 +1,6 @@
 ﻿#include "ColliderDefinitions.cginc"
 #include "ContactHandling.cginc"
-#include "Transform.cginc"
+#include "DistanceFunctions.cginc"
 #include "Simplex.cginc"
 #include "Bounds.cginc"
 #include "SolverParameters.cginc"
@@ -27,56 +27,6 @@ RWStructuredBuffer<uint> dispatchBuffer;
 StructuredBuffer<transform> worldToSolver;
 
 uint maxContacts; 
-
-struct Capsule : IDistanceFunction
-{
-    shape s;
-    transform colliderToSolver;
-    
-    void Evaluate(in float4 pos, in float4 radii, in quaternion orientation, inout SurfacePoint projectedPoint)
-    {
-        float4 center = s.center * colliderToSolver.scale;
-        float4 pnt = colliderToSolver.InverseTransformPointUnscaled(pos) - center;
-
-        if (s.is2D())
-            pnt[2] = 0;
-
-        int direction = (int)s.size.z;
-        float height;
-        float radius;
-        float4 halfVector = float4(0,0,0,0);
-
-        if (direction == 0)
-        {
-            radius = s.size.x * max(colliderToSolver.scale[1], colliderToSolver.scale[2]);
-            height = max(radius, s.size.y * 0.5f * colliderToSolver.scale[0]);
-            halfVector[0] = height - radius;
-        }
-        else if (direction == 1)
-        {
-            radius = s.size.x * max(colliderToSolver.scale[2], colliderToSolver.scale[0]);
-            height = max(radius, s.size.y * 0.5f * colliderToSolver.scale[1]);
-            halfVector[1] = height - radius;
-        }
-        else
-        {
-            radius = s.size.x * max(colliderToSolver.scale[0], colliderToSolver.scale[1]);
-            height = max(radius, s.size.y * 0.5f * colliderToSolver.scale[2]);
-            halfVector[2] = height - radius;
-        }
-
-        float mu;
-        float4 centerLine = NearestPointOnEdge(-halfVector, halfVector, pnt, mu);
-        float4 centerToPoint = pnt - centerLine;
-        float distanceToCenter = length(centerToPoint);
-
-        float4 normal = centerToPoint / (distanceToCenter + EPSILON);
-
-        projectedPoint.pos = colliderToSolver.TransformPointUnscaled(center + centerLine + normal * (radius + s.contactOffset));
-        projectedPoint.normal = colliderToSolver.TransformDirection(normal);
-        projectedPoint.bary = float4(1,0,0,0);
-    }
-};
 
 [numthreads(128, 1, 1)]
 void GenerateContacts (uint3 id : SV_DispatchThreadID) 

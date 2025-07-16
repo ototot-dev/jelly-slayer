@@ -26,6 +26,7 @@ namespace Obi
         public Vector2 vorticityRange = new Vector2(4, 8);
 
         [Header("Foam properties")]
+        public Light volumeLight;
         public Color color = new Color(1,1,1,0.25f);
         public float size = 0.02f;
         [Range(0,1)]
@@ -55,6 +56,8 @@ namespace Obi
         public float density = 0.3f;
         [Range(1, 4)]
         public float smoothingRadius = 2.5f;
+        [Range(0, 1)]
+        public float viscosity = 0.5f;
         [Min(0)]
         public float surfaceTension = 2;
 

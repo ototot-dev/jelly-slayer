@@ -1,18 +1,12 @@
 #include "ColliderDefinitions.cginc"
 #include "ContactHandling.cginc"
-#include "Transform.cginc"
+#include "DistanceFunctions.cginc"
 #include "Simplex.cginc"
 #include "Bounds.cginc"
 #include "SolverParameters.cginc"
 #include "Optimization.cginc"
 
 #pragma kernel GenerateContacts
-
-struct HeightFieldHeader
-{
-    int firstSample;
-    int sampleCount;
-};
 
 StructuredBuffer<float4> positions;
 StructuredBuffer<quaternion> orientations;
@@ -39,32 +33,6 @@ StructuredBuffer<transform> worldToSolver;
 
 uint maxContacts;
 float deltaTime;
-
-struct Heightfield : IDistanceFunction
-{
-    shape s;
-    transform colliderToSolver;
-
-    CachedTri tri;
-    float4 triNormal;
-
-    void Evaluate(in float4 pos, in float4 radii, in quaternion orientation, inout SurfacePoint projectedPoint)
-    {
-        float4 pnt = colliderToSolver.InverseTransformPoint(pos);
-
-        float4 bary;
-        float4 nearestPoint = NearestPointOnTri(tri, pnt, bary);
-        float4 normal = normalizesafe(pnt - nearestPoint);
-
-        // flip the contact normal if it points below ground: (doesn't work with holes)
-        //OneSidedNormal(triNormal, normal);
-
-        projectedPoint.pos = colliderToSolver.TransformPoint(nearestPoint + normal * s.contactOffset);
-        projectedPoint.normal = colliderToSolver.TransformDirection(normal);
-        projectedPoint.bary = float4(1,0,0,0);
-    }
-
-};
 
 [numthreads(128, 1, 1)]
 void GenerateContacts (uint3 id : SV_DispatchThreadID) 

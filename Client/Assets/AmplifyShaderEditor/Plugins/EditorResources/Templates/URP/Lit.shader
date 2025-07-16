@@ -39,9 +39,9 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				PBR:SetPropertyOnSubShader:ChangeTagValue,UniversalMaterialType,Lit
 				PBR:SetShaderProperty:_SpecularHighlights,1
 				PBR:SetShaderProperty:_EnvironmentReflections,1
-				PBR:RemoveDefine:_ASE_LIGHTING_SIMPLE
+				PBR:RemoveDefine:ASE_LIGHTING_SIMPLE
 				Simple:SetOption:Workflow,0
-				Simple:SetDefine:_ASE_LIGHTING_SIMPLE
+				Simple:SetDefine:ASE_LIGHTING_SIMPLE
 				Simple:SetPropertyOnSubShader:ChangeTagValue,UniversalMaterialType,SimpleLit
 				Simple:SetShaderProperty:_SpecularHighlights,0
 				Simple:SetShaderProperty:_EnvironmentReflections,0
@@ -49,18 +49,10 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				Specular:SetDefine:_SPECULAR_SETUP 1
 				Specular:ShowPort:Forward:Specular
 				Specular:HidePort:Forward:Metallic
-				Specular:SetDefine:Forward:pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF
-				Specular:SetDefine:GBuffer:pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF
-				Specular:SetDefine:Forward:pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF
-				Specular:SetDefine:GBuffer:pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF
 				Metallic:SetOption:Lighting Model,0
 				Metallic:RemoveDefine:_SPECULAR_SETUP 1
 				Metallic:ShowPort:Forward:Metallic
 				Metallic:HidePort:Forward:Specular
-				Metallic:RemoveDefine:Forward:pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF
-				Metallic:RemoveDefine:GBuffer:pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF
-				Metallic:RemoveDefine:Forward:pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF
-				Metallic:RemoveDefine:GBuffer:pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF
 			Option:Surface:Opaque,Transparent:Opaque
 				Opaque:SetPropertyOnSubShader:RenderType,Opaque
 				Opaque:SetPropertyOnSubShader:RenderQueue,Geometry
@@ -68,7 +60,6 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				Opaque:HideOption:  Refraction Model
 				Opaque:HideOption:  Blend
 				Opaque:RemoveDefine:_SURFACE_TYPE_TRANSPARENT 1
-				Opaque:HidePort:Forward:Alpha
 				Opaque:RefreshOption:Alpha Clipping
 				Transparent:SetPropertyOnSubShader:RenderType,Transparent
 				Transparent:SetPropertyOnSubShader:RenderQueue,Transparent
@@ -76,7 +67,6 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				Transparent:ShowOption:  Refraction Model
 				Transparent:ShowOption:  Blend
 				Transparent:SetDefine:_SURFACE_TYPE_TRANSPARENT 1
-				Transparent:ShowPort:Forward:Alpha
 			Option:  Refraction Model:None,Legacy:None
 				None,disable:HidePort:Forward:Refraction Index
 				None,disable:HidePort:Forward:Refraction Color
@@ -100,31 +90,16 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				Cull Back:SetPropertyOnSubShader:CullMode,Back
 				Cull Front:SetPropertyOnSubShader:CullMode,Front
 			Option:Alpha Clipping:false,true:true
-				true:ShowPort:Forward:Alpha
 				true:ShowPort:Forward:Alpha Clip Threshold
 				true?Cast Shadows=true:ShowOption:  Use Shadow Threshold
 				true?Surface=Opaque:SetPropertyOnSubShader:RenderType,TransparentCutout
 				true?Surface=Opaque:SetPropertyOnSubShader:RenderQueue,AlphaTest
-				true:SetDefine:Forward:pragma multi_compile_fragment _ALPHATEST_ON
-				true:SetDefine:GBuffer:pragma multi_compile_fragment _ALPHATEST_ON
-				true:SetDefine:Meta:pragma multi_compile_fragment _ALPHATEST_ON
-				true:SetDefine:Universal2D:pragma multi_compile_fragment _ALPHATEST_ON
-				true:SetDefine:ShadowCaster:pragma multi_compile _ALPHATEST_ON
-				true:SetDefine:DepthOnly:pragma multi_compile _ALPHATEST_ON
-				true:SetDefine:DepthNormals:pragma multi_compile _ALPHATEST_ON
-				true:SetDefine:MotionVectors:pragma multi_compile _ALPHATEST_ON
+				true:SetDefine:pragma multi_compile_local _ALPHATEST_ON
 				false:HidePort:Forward:Alpha Clip Threshold
 				false:SetOption:  Use Shadow Threshold,0
 				false:HideOption:  Use Shadow Threshold
 				false:RefreshOption:Surface
-				false:RemoveDefine:Forward:pragma multi_compile_fragment _ALPHATEST_ON
-				false:RemoveDefine:GBuffer:pragma multi_compile_fragment _ALPHATEST_ON
-				false:RemoveDefine:Meta:pragma multi_compile_fragment _ALPHATEST_ON
-				false:RemoveDefine:Universal2D:pragma multi_compile_fragment _ALPHATEST_ON
-				false:RemoveDefine:ShadowCaster:pragma multi_compile _ALPHATEST_ON
-				false:RemoveDefine:DepthOnly:pragma multi_compile _ALPHATEST_ON
-				false:RemoveDefine:DepthNormals:pragma multi_compile _ALPHATEST_ON
-				false:RemoveDefine:MotionVectors:pragma multi_compile _ALPHATEST_ON
+				false:RemoveDefine:pragma multi_compile_local _ALPHATEST_ON
 			Option:  Use Shadow Threshold:false,true:false
 				true:ShowPort:Forward:Alpha Clip Threshold Shadow
 				true:SetDefine:_ALPHATEST_SHADOW_ON 1
@@ -208,36 +183,58 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				true?Alpha Clipping=true:ShowOption:  Use Shadow Threshold
 				false:HideOption:  Use Shadow Threshold
 			Option:Receive Shadows:false,true:true
-				true:SetDefine:Forward:pragma shader_feature_local _RECEIVE_SHADOWS_OFF
-				true:SetDefine:GBuffer:pragma shader_feature_local _RECEIVE_SHADOWS_OFF
-				false:RemoveDefine:Forward:pragma shader_feature_local _RECEIVE_SHADOWS_OFF
-				false:RemoveDefine:GBuffer:pragma shader_feature_local _RECEIVE_SHADOWS_OFF
+				true:RemoveDefine:Forward:pragma multi_compile_local _RECEIVE_SHADOWS_OFF
+				true:RemoveDefine:GBuffer:pragma multi_compile_local _RECEIVE_SHADOWS_OFF
+				true:SetShaderProperty:_ReceiveShadows,1
+				false:SetDefine:Forward:pragma multi_compile_local _RECEIVE_SHADOWS_OFF
+				false:SetDefine:GBuffer:pragma multi_compile_local _RECEIVE_SHADOWS_OFF
+				false:SetShaderProperty:_ReceiveShadows,0
 			Option:Receive SSAO:false,true:true
 				true:SetDefine:Forward:pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
 				false:RemoveDefine:Forward:pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
+			Option:Specular Highlights:false,true:true
+				true:RemoveDefine:Forward:pragma multi_compile_local_fragment _SPECULARHIGHLIGHTS_OFF
+				true:RemoveDefine:GBuffer:pragma multi_compile_local_fragment _SPECULARHIGHLIGHTS_OFF
+				true:SetShaderProperty:_SpecularHighlights,1
+				false:SetDefine:Forward:pragma multi_compile_local_fragment _SPECULARHIGHLIGHTS_OFF
+				false:SetDefine:GBuffer:pragma multi_compile_local_fragment _SPECULARHIGHLIGHTS_OFF
+				false:SetShaderProperty:_SpecularHighlights,0
+			Option:Environment Reflections:false,true:true
+				true:RemoveDefine:Forward:pragma multi_compile_local_fragment _ENVIRONMENTREFLECTIONS_OFF
+				true:RemoveDefine:GBuffer:pragma multi_compile_local_fragment _ENVIRONMENTREFLECTIONS_OFF
+				true:SetShaderProperty:_EnvironmentReflections,1
+				false:SetDefine:Forward:pragma multi_compile_local_fragment _ENVIRONMENTREFLECTIONS_OFF
+				false:SetDefine:GBuffer:pragma multi_compile_local_fragment _ENVIRONMENTREFLECTIONS_OFF
+				false:SetShaderProperty:_EnvironmentReflections,0
 			Option:Motion Vectors:false,true:true
 				true:ShowOption:  Add Precomputed Velocity
-				false:HideOption:  Add Precomputed Velocity
+				true:ShowOption:  XR Motion Vectors
 				true:IncludePass:MotionVectors
-				false:ExcludePass:MotionVectors
 				true:SetOption:Tessellation,0
+				false:HideOption:  Add Precomputed Velocity
+				false:HideOption:  XR Motion Vectors
+				false:ExcludePass:MotionVectors
+				false:ExcludePass:XRMotionVectors
 			Option:  Add Precomputed Velocity:false,true:false
 				true:SetShaderProperty:_AddPrecomputedVelocity,[HideInInspector][ToggleUI] _AddPrecomputedVelocity("Add Precomputed Velocity", Float) = 1
-				false:SetShaderProperty:_AddPrecomputedVelocity,//[HideInInspector][ToggleUI] _AddPrecomputedVelocity("Add Precomputed Velocity", Float) = 1
 				true:SetShaderProperty:_AddPrecomputedVelocity,1
 				true:SetDefine:MotionVectors:pragma shader_feature_local_vertex _ADD_PRECOMPUTED_VELOCITY
+				true:SetDefine:XRMotionVectors:pragma shader_feature_local_vertex _ADD_PRECOMPUTED_VELOCITY
+				false:SetShaderProperty:_AddPrecomputedVelocity,//[HideInInspector][ToggleUI] _AddPrecomputedVelocity("Add Precomputed Velocity", Float) = 1
 				false:RemoveDefine:MotionVectors:pragma shader_feature_local_vertex _ADD_PRECOMPUTED_VELOCITY
+				false:RemoveDefine:XRMotionVectors:pragma shader_feature_local_vertex _ADD_PRECOMPUTED_VELOCITY
+			Option:  XR Motion Vectors:false,true:false
+				true:IncludePass:XRMotionVectors
+				false:ExcludePass:XRMotionVectors
 			Option:GPU Instancing:false,true:true
 				true:SetDefine:Forward:pragma multi_compile_instancing
 				true:SetDefine:GBuffer:pragma multi_compile_instancing
 				true:SetDefine:ShadowCaster:pragma multi_compile_instancing
-				true:SetDefine:MotionVectors:pragma multi_compile_instancing
 				true:SetDefine:DepthOnly:pragma multi_compile_instancing
 				true:SetDefine:DepthNormals:pragma multi_compile_instancing
 				false:RemoveDefine:Forward:pragma multi_compile_instancing
 				false:RemoveDefine:GBuffer:pragma multi_compile_instancing
 				false:RemoveDefine:ShadowCaster:pragma multi_compile_instancing
-				false:RemoveDefine:MotionVectors:pragma multi_compile_instancing
 				false:RemoveDefine:DepthOnly:pragma multi_compile_instancing
 				false:RemoveDefine:DepthNormals:pragma multi_compile_instancing
 				true:SetDefine:Forward:pragma instancing_options renderinglayer
@@ -251,12 +248,14 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				true:SetDefine:DepthOnly:pragma multi_compile _ LOD_FADE_CROSSFADE
 				true:SetDefine:DepthNormals:pragma multi_compile _ LOD_FADE_CROSSFADE
 				true:SetDefine:MotionVectors:pragma multi_compile _ LOD_FADE_CROSSFADE
+				true:SetDefine:XRMotionVectors:pragma multi_compile _ LOD_FADE_CROSSFADE
 				false:RemoveDefine:Forward:pragma multi_compile _ LOD_FADE_CROSSFADE
 				false:RemoveDefine:GBuffer:pragma multi_compile _ LOD_FADE_CROSSFADE
 				false:RemoveDefine:ShadowCaster:pragma multi_compile _ LOD_FADE_CROSSFADE
 				false:RemoveDefine:DepthOnly:pragma multi_compile _ LOD_FADE_CROSSFADE
 				false:RemoveDefine:DepthNormals:pragma multi_compile _ LOD_FADE_CROSSFADE
 				false:RemoveDefine:MotionVectors:pragma multi_compile _ LOD_FADE_CROSSFADE
+				false:RemoveDefine:XRMotionVectors:pragma multi_compile _ LOD_FADE_CROSSFADE
 			Option:Built-in Fog:false,true:true
 				true:SetDefine:Forward:pragma multi_compile_fog
 				true:SetDefine:GBuffer:pragma multi_compile_fog
@@ -341,10 +340,10 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			Option:Write Depth:false,true:false
 				true:SetDefine:ASE_DEPTH_WRITE_ON
 				true:ShowOption:  Early Z
-				true:ShowPort:Forward:Depth Value
+				true:ShowPort:Forward:Depth
 				false,disable:RemoveDefine:ASE_DEPTH_WRITE_ON
 				false,disable:HideOption:  Early Z
-				false,disable:HidePort:Forward:Depth Value
+				false,disable:HidePort:Forward:Depth
 			Option:  Early Z:false,true:false
 				true:SetDefine:ASE_EARLY_Z_DEPTH_OPTIMIZE
 				false,disable:RemoveDefine:ASE_EARLY_Z_DEPTH_OPTIMIZE
@@ -376,6 +375,31 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			Port:Forward:Normal
 				On:SetDefine:_NORMALMAP 1
 		*/
+
+		/*ase_unity_cond_begin:<=10000000*/
+			// A list of master node input port IDs; will be excluded from generated shaders.
+			//  0 => Frag: Base Color
+			//  1 => Frag: Normal
+			//  2 => Frag: Emission
+			//  3 => Frag: Metallic
+			//  4 => Frag: Smoothness
+			//  5 => Frag: Occlusion
+			//  6 => Frag: Alpha
+			//  7 => Frag: Alpha Clip Threshold
+			//  8 => Vert: Vertex Offset
+			//  9 => Frag: Specular
+			// 10 => Vert: Vertex Normal
+			// 11 => Frag: Baked GI
+			// 12 => Frag: Refraction Color
+			// 13 => Frag: Refraction Index
+			// 14 => Frag: Transmission
+			// 15 => Frag: Translucency
+			// 16 => Frag: Alpha Clip Threshold Shadow
+			// 17 => Frag: Depth Value
+			// 18 => Frag: Coat Mask
+			// 20 => Frag: Coat Smoothness
+			// 30 => Vert: Vertex Tangent
+		/*ase_unity_cond_end*/
 
 		Tags
 		{
@@ -524,7 +548,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			#pragma vertex vert
 			#pragma fragment frag
 
-			#if defined(_SPECULAR_SETUP) && defined(_ASE_LIGHTING_SIMPLE)
+			#if defined(_SPECULAR_SETUP) && defined(ASE_LIGHTING_SIMPLE)
 				#define _SPECULAR_COLOR 1
 			#endif
 
@@ -544,8 +568,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			struct Attributes
 			{
 				float4 positionOS : POSITION;
-				float3 normalOS : NORMAL;
-				float4 tangentOS : TANGENT;
+				half3 normalOS : NORMAL;
+				half4 tangentOS : TANGENT;
 				/*ase_vdata:p=p;n=n;t=t*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
@@ -553,15 +577,11 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			struct PackedVaryings
 			{
 				float4 positionCS : SV_POSITION;
-				float4 clipPosV : TEXCOORD0;
-				float3 positionWS : TEXCOORD1;
-				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
-					float4 shadowCoord : TEXCOORD2;
-				#endif
+				float3 positionWS : TEXCOORD0;
 				#if defined(ASE_FOG) || defined(_ADDITIONAL_LIGHTS_VERTEX)
-					half4 fogFactorAndVertexLight : TEXCOORD3;
+					half4 fogFactorAndVertexLight : TEXCOORD1;
 				#endif
-				/*ase_interp(4,):sp=sp;wp=tc1;sc=tc2*/
+				/*ase_interp(2,):sp=sp;wp=tc0.xyz*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -625,13 +645,10 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				#endif
 
 				input.normalOS = /*ase_vert_out:Vertex Normal;Float3;4;-1;_NormalP*/input.normalOS/*end*/;
+				input.tangentOS = /*ase_vert_out:Vertex Tangent;Float4;30;-1;_TangentP*/input.tangentOS/*end*/;
 
 				VertexPositionInputs vertexInput = GetVertexPositionInputs( input.positionOS.xyz );
 				VertexNormalInputs normalInput = GetVertexNormalInputs( input.normalOS, input.tangentOS );
-
-				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
-					output.shadowCoord = GetShadowCoord( vertexInput );
-				#endif
 
 				#if defined(ASE_FOG) || defined(_ADDITIONAL_LIGHTS_VERTEX)
 					output.fogFactorAndVertexLight = 0;
@@ -645,7 +662,6 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				#endif
 
 				output.positionCS = vertexInput.positionCS;
-				output.clipPosV = vertexInput.positionCS;
 				output.positionWS = vertexInput.positionWS;
 				return output;
 			}
@@ -654,7 +670,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			struct VertexControl
 			{
 				float4 positionOS : INTERNALTESSPOS;
-				float3 normalOS : NORMAL;
+				half3 normalOS : NORMAL;
+				half4 tangentOS : TANGENT;
 				/*ase_vcontrol*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
@@ -672,6 +689,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				output.positionOS = input.positionOS;
 				output.normalOS = input.normalOS;
+				output.tangentOS = input.tangentOS;
 				/*ase_control_code:input=Attributes;output=VertexControl*/
 				return output;
 			}
@@ -711,6 +729,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				Attributes output = (Attributes) 0;
 				output.positionOS = patch[0].positionOS * bary.x + patch[1].positionOS * bary.y + patch[2].positionOS * bary.z;
 				output.normalOS = patch[0].normalOS * bary.x + patch[1].normalOS * bary.y + patch[2].normalOS * bary.z;
+				output.tangentOS = patch[0].tangentOS * bary.x + patch[1].tangentOS * bary.y + patch[2].tangentOS * bary.z;
 				/*ase_domain_code:patch=VertexControl;output=Attributes;bary=SV_DomainLocation*/
 				#if defined(ASE_PHONG_TESSELLATION)
 				float3 pp[3];
@@ -734,33 +753,19 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				UNITY_SETUP_INSTANCE_ID( input );
 				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX( input );
 
-				/*ase_local_var:wp*/float3 WorldPosition = input.positionWS;
-				/*ase_local_var:wvd*/float3 WorldViewDirection = GetWorldSpaceNormalizeViewDir( WorldPosition );
-				/*ase_local_var:sc*/float4 ShadowCoords = float4( 0, 0, 0, 0 );
-				/*ase_local_var:sp*/float4 ClipPos = input.clipPosV;
-				/*ase_local_var:spu*/float4 ScreenPos = ComputeScreenPos( input.clipPosV );
-
-				#if defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
-					#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
-						ShadowCoords = input.shadowCoord;
-					#elif defined(MAIN_LIGHT_CALCULATE_SHADOWS)
-						ShadowCoords = TransformWorldToShadowCoord( WorldPosition );
-					#endif
+				#if defined(MAIN_LIGHT_CALCULATE_SHADOWS) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
+					float4 shadowCoord = TransformWorldToShadowCoord(input.positionWS);
+				#else
+					float4 shadowCoord = float4(0, 0, 0, 0);
 				#endif
 
-				WorldViewDirection = SafeNormalize( WorldViewDirection );
-
-				InputData inputData = (InputData)0;
-				inputData.positionWS = WorldPosition;
-				inputData.positionCS = input.positionCS;
-				inputData.viewDirectionWS = WorldViewDirection;
-
-				#ifdef ASE_FOG
-					inputData.fogCoord = InitializeInputDataFog(float4(inputData.positionWS, 1.0), input.fogFactorAndVertexLight.x);
-				#endif
-				#ifdef _ADDITIONAL_LIGHTS_VERTEX
-					inputData.vertexLighting = input.fogFactorAndVertexLight.yzw;
-				#endif
+				/*ase_local_var:wp*/float3 PositionWS = input.positionWS;
+				/*ase_local_var:rwp*/float3 PositionRWS = GetCameraRelativePositionWS( input.positionWS );
+				/*ase_local_var:wvd*/float3 ViewDirWS = GetWorldSpaceNormalizeViewDir( PositionWS );
+				/*ase_local_var:sc*/float4 ShadowCoord = shadowCoord;
+				/*ase_local_var:spn*/float4 ScreenPosNorm = float4( GetNormalizedScreenSpaceUV( input.positionCS ), input.positionCS.zw );
+				/*ase_local_var:sp*/float4 ClipPos = ComputeClipSpacePosition( ScreenPosNorm.xy, input.positionCS.z ) * input.positionCS.w;
+				/*ase_local_var:spu*/float4 ScreenPos = ComputeScreenPos( ClipPos );
 
 				/*ase_frag_code:input=PackedVaryings*/
 
@@ -770,6 +775,20 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 
 				#ifdef _ALPHATEST_ON
 					clip( Alpha - AlphaClipThreshold );
+				#endif
+
+				InputData inputData = (InputData)0;
+				inputData.positionWS = PositionWS;
+				inputData.positionCS = float4( input.positionCS.xy, ClipPos.zw / ClipPos.w );
+				inputData.normalizedScreenSpaceUV = ScreenPosNorm.xy;
+				inputData.viewDirectionWS = ViewDirWS;
+
+				#ifdef ASE_FOG
+					inputData.fogCoord = InitializeInputDataFog(float4(inputData.positionWS, 1.0), input.fogFactorAndVertexLight.x);
+				#endif
+
+				#ifdef _ADDITIONAL_LIGHTS_VERTEX
+					inputData.vertexLighting = input.fogFactorAndVertexLight.yzw;
 				#endif
 
 				#ifdef ASE_FOG
@@ -831,7 +850,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			#pragma vertex vert
 			#pragma fragment frag
 
-			#if defined(_SPECULAR_SETUP) && defined(_ASE_LIGHTING_SIMPLE)
+			#if defined(_SPECULAR_SETUP) && defined(ASE_LIGHTING_SIMPLE)
 				#define _SPECULAR_COLOR 1
 			#endif
 
@@ -875,11 +894,15 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			struct Attributes
 			{
 				float4 positionOS : POSITION;
-				float3 normalOS : NORMAL;
-				float4 tangentOS : TANGENT;
+				half3 normalOS : NORMAL;
+				half4 tangentOS : TANGENT;
 				float4 texcoord : TEXCOORD0;
-				float4 texcoord1 : TEXCOORD1;
-				float4 texcoord2 : TEXCOORD2;
+				#if defined(LIGHTMAP_ON) || defined(ASE_NEEDS_TEXTURE_COORDINATES1)
+					float4 texcoord1 : TEXCOORD1;
+				#endif
+				#if defined(DYNAMICLIGHTMAP_ON) || defined(ASE_NEEDS_TEXTURE_COORDINATES2)
+					float4 texcoord2 : TEXCOORD2;
+				#endif
 				/*ase_vdata:p=p;n=n;t=t;uv0=tc0;uv1=tc1;uv2=tc2*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
@@ -887,24 +910,20 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			struct PackedVaryings
 			{
 				ASE_SV_POSITION_QUALIFIERS float4 positionCS : SV_POSITION;
-				float4 clipPosV : TEXCOORD0;
-				float4 lightmapUVOrVertexSH : TEXCOORD1;
+				float3 positionWS : TEXCOORD0;
+				half3 normalWS : TEXCOORD1;
+				half4 tangentWS : TEXCOORD2;
+				float4 lightmapUVOrVertexSH : TEXCOORD3;
 				#if defined(ASE_FOG) || defined(_ADDITIONAL_LIGHTS_VERTEX)
-					half4 fogFactorAndVertexLight : TEXCOORD2;
-				#endif
-				float4 tSpace0 : TEXCOORD3;
-				float4 tSpace1 : TEXCOORD4;
-				float4 tSpace2 : TEXCOORD5;
-				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
-					float4 shadowCoord : TEXCOORD6;
+					half4 fogFactorAndVertexLight : TEXCOORD4;
 				#endif
 				#if defined(DYNAMICLIGHTMAP_ON)
-					float2 dynamicLightmapUV : TEXCOORD7;
-				#endif	
-				#if defined(USE_APV_PROBE_OCCLUSION)
-					float4 probeOcclusion : TEXCOORD8;
+					float2 dynamicLightmapUV : TEXCOORD5;
 				#endif
-				/*ase_interp(9,):sp=sp;wn.xyz=tc3.xyz;wt.xyz=tc4.xyz;wbt.xyz=tc5.xyz;wp.x=tc3.w;wp.y=tc4.w;wp.z=tc5.w;sc=tc6*/
+				#if defined(USE_APV_PROBE_OCCLUSION)
+					float4 probeOcclusion : TEXCOORD6;
+				#endif
+				/*ase_interp(7,):sp=sp;wp=tc0.xyz;wn.xyz=tc1.xyz;wt=tc2*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -972,20 +991,11 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				VertexPositionInputs vertexInput = GetVertexPositionInputs( input.positionOS.xyz );
 				VertexNormalInputs normalInput = GetVertexNormalInputs( input.normalOS, input.tangentOS );
 
-				output.tSpace0 = float4( normalInput.normalWS, vertexInput.positionWS.x );
-				output.tSpace1 = float4( normalInput.tangentWS, vertexInput.positionWS.y );
-				output.tSpace2 = float4( normalInput.bitangentWS, vertexInput.positionWS.z );
-
-				#if defined(LIGHTMAP_ON)
-					OUTPUT_LIGHTMAP_UV(input.texcoord1, unity_LightmapST, output.lightmapUVOrVertexSH.xy);
-				#else
-					OUTPUT_SH(normalInput.normalWS.xyz, output.lightmapUVOrVertexSH.xyz);
-				#endif
+				OUTPUT_LIGHTMAP_UV(input.texcoord1, unity_LightmapST, output.lightmapUVOrVertexSH.xy);
 				#if defined(DYNAMICLIGHTMAP_ON)
 					output.dynamicLightmapUV.xy = input.texcoord2.xy * unity_DynamicLightmapST.xy + unity_DynamicLightmapST.zw;
 				#endif
-
-				OUTPUT_SH4( vertexInput.positionWS, normalInput.normalWS.xyz, GetWorldSpaceNormalizeViewDir( vertexInput.positionWS ), output.lightmapUVOrVertexSH.xyz, output.probeOcclusion );
+				OUTPUT_SH4(vertexInput.positionWS, normalInput.normalWS.xyz, GetWorldSpaceNormalizeViewDir(vertexInput.positionWS), output.lightmapUVOrVertexSH.xyz, output.probeOcclusion);
 
 				#if defined(ENABLE_TERRAIN_PERPIXEL_NORMAL)
 					output.lightmapUVOrVertexSH.zw = input.texcoord.xy;
@@ -1003,12 +1013,10 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					#endif
 				#endif
 
-				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
-					output.shadowCoord = GetShadowCoord( vertexInput );
-				#endif
-
 				output.positionCS = vertexInput.positionCS;
-				output.clipPosV = vertexInput.positionCS;
+				output.positionWS = vertexInput.positionWS;
+				output.normalWS = normalInput.normalWS;
+				output.tangentWS = float4( normalInput.tangentWS, ( input.tangentOS.w > 0.0 ? 1.0 : -1.0 ) * GetOddNegativeScale() );
 				return output;
 			}
 
@@ -1016,11 +1024,15 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			struct VertexControl
 			{
 				float4 positionOS : INTERNALTESSPOS;
-				float3 normalOS : NORMAL;
-				float4 tangentOS : TANGENT;
+				half3 normalOS : NORMAL;
+				half4 tangentOS : TANGENT;
 				float4 texcoord : TEXCOORD0;
-				float4 texcoord1 : TEXCOORD1;
-				float4 texcoord2 : TEXCOORD2;
+				#if defined(LIGHTMAP_ON) || defined(ASE_NEEDS_TEXTURE_COORDINATES1)
+					float4 texcoord1 : TEXCOORD1;
+				#endif
+				#if defined(DYNAMICLIGHTMAP_ON) || defined(ASE_NEEDS_TEXTURE_COORDINATES2)
+					float4 texcoord2 : TEXCOORD2;
+				#endif
 				/*ase_vcontrol*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
@@ -1040,8 +1052,12 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				output.normalOS = input.normalOS;
 				output.tangentOS = input.tangentOS;
 				output.texcoord = input.texcoord;
-				output.texcoord1 = input.texcoord1;
-				output.texcoord2 = input.texcoord2;
+				#if defined(LIGHTMAP_ON) || defined(ASE_NEEDS_TEXTURE_COORDINATES1)
+					output.texcoord1 = input.texcoord1;
+				#endif
+				#if defined(DYNAMICLIGHTMAP_ON) || defined(ASE_NEEDS_TEXTURE_COORDINATES2)
+					output.texcoord2 = input.texcoord2;
+				#endif
 				/*ase_control_code:input=Attributes;output=VertexControl*/
 				return output;
 			}
@@ -1083,8 +1099,12 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				output.normalOS = patch[0].normalOS * bary.x + patch[1].normalOS * bary.y + patch[2].normalOS * bary.z;
 				output.tangentOS = patch[0].tangentOS * bary.x + patch[1].tangentOS * bary.y + patch[2].tangentOS * bary.z;
 				output.texcoord = patch[0].texcoord * bary.x + patch[1].texcoord * bary.y + patch[2].texcoord * bary.z;
-				output.texcoord1 = patch[0].texcoord1 * bary.x + patch[1].texcoord1 * bary.y + patch[2].texcoord1 * bary.z;
-				output.texcoord2 = patch[0].texcoord2 * bary.x + patch[1].texcoord2 * bary.y + patch[2].texcoord2 * bary.z;
+				#if defined(LIGHTMAP_ON) || defined(ASE_NEEDS_TEXTURE_COORDINATES1)
+					output.texcoord1 = patch[0].texcoord1 * bary.x + patch[1].texcoord1 * bary.y + patch[2].texcoord1 * bary.z;
+				#endif
+				#if defined(DYNAMICLIGHTMAP_ON) || defined(ASE_NEEDS_TEXTURE_COORDINATES2)
+					output.texcoord2 = patch[0].texcoord2 * bary.x + patch[1].texcoord2 * bary.y + patch[2].texcoord2 * bary.z;
+				#endif
 				/*ase_domain_code:patch=VertexControl;output=Attributes;bary=SV_DomainLocation*/
 				#if defined(ASE_PHONG_TESSELLATION)
 				float3 pp[3];
@@ -1104,7 +1124,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			#endif
 
 			half4 frag ( PackedVaryings input
-						#ifdef ASE_DEPTH_WRITE_ON
+						#if defined( ASE_DEPTH_WRITE_ON )
 						,out float outputDepth : ASE_SV_DEPTH
 						#endif
 						#ifdef _WRITE_RENDERING_LAYERS
@@ -1119,42 +1139,42 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					LODFadeCrossFade( input.positionCS );
 				#endif
 
+				#if defined(MAIN_LIGHT_CALCULATE_SHADOWS)
+					float4 shadowCoord = TransformWorldToShadowCoord( input.positionWS );
+				#else
+					float4 shadowCoord = float4(0, 0, 0, 0);
+				#endif
+
+				// @diogo: mikktspace compliant
+				float renormFactor = 1.0 / max( FLT_MIN, length( input.normalWS ) );
+
+				/*ase_local_var:wp*/float3 PositionWS = input.positionWS;
+				/*ase_local_var:rwp*/float3 PositionRWS = GetCameraRelativePositionWS( PositionWS );
+				/*ase_local_var:wvd*/float3 ViewDirWS = GetWorldSpaceNormalizeViewDir( PositionWS );
+				/*ase_local_var:sc*/float4 ShadowCoord = shadowCoord;
+				/*ase_local_var:spn*/float4 ScreenPosNorm = float4( GetNormalizedScreenSpaceUV( input.positionCS ), input.positionCS.zw );
+				/*ase_local_var:sp*/float4 ClipPos = ComputeClipSpacePosition( ScreenPosNorm.xy, input.positionCS.z ) * input.positionCS.w;
+				/*ase_local_var:spu*/float4 ScreenPos = ComputeScreenPos( ClipPos );
+				/*ase_local_var:wt*/float3 TangentWS = input.tangentWS.xyz * renormFactor;
+				/*ase_local_var:wbt*/float3 BitangentWS = cross( input.normalWS, input.tangentWS.xyz ) * input.tangentWS.w * renormFactor;
+				/*ase_local_var:wn*/float3 NormalWS = input.normalWS * renormFactor;
+
 				#if defined(ENABLE_TERRAIN_PERPIXEL_NORMAL)
 					float2 sampleCoords = (input.lightmapUVOrVertexSH.zw / _TerrainHeightmapRecipSize.zw + 0.5f) * _TerrainHeightmapRecipSize.xy;
-					float3 WorldNormal = TransformObjectToWorldNormal(normalize(SAMPLE_TEXTURE2D(_TerrainNormalmapTexture, sampler_TerrainNormalmapTexture, sampleCoords).rgb * 2 - 1));
-					float3 WorldTangent = -cross(GetObjectToWorldMatrix()._13_23_33, WorldNormal);
-					float3 WorldBiTangent = cross(WorldNormal, -WorldTangent);
-				#else
-					/*ase_local_var:wn*/float3 WorldNormal = normalize( input.tSpace0.xyz );
-					/*ase_local_var:wt*/float3 WorldTangent = input.tSpace1.xyz;
-					/*ase_local_var:wbt*/float3 WorldBiTangent = input.tSpace2.xyz;
+					NormalWS = TransformObjectToWorldNormal(normalize(SAMPLE_TEXTURE2D(_TerrainNormalmapTexture, sampler_TerrainNormalmapTexture, sampleCoords).rgb * 2 - 1));
+					TangentWS = -cross(GetObjectToWorldMatrix()._13_23_33, NormalWS);
+					BitangentWS = cross(NormalWS, -TangentWS);
 				#endif
-
-				/*ase_local_var:wp*/float3 WorldPosition = float3(input.tSpace0.w,input.tSpace1.w,input.tSpace2.w);
-				/*ase_local_var:wvd*/float3 WorldViewDirection = GetWorldSpaceNormalizeViewDir( WorldPosition );
-				/*ase_local_var:sc*/float4 ShadowCoords = float4( 0, 0, 0, 0 );
-				/*ase_local_var:sp*/float4 ClipPos = input.clipPosV;
-				/*ase_local_var:spu*/float4 ScreenPos = ComputeScreenPos( input.clipPosV );
-
-				float2 NormalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(input.positionCS);
-
-				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
-					ShadowCoords = input.shadowCoord;
-				#elif defined(MAIN_LIGHT_CALCULATE_SHADOWS)
-					ShadowCoords = TransformWorldToShadowCoord( WorldPosition );
-				#endif
-
-				WorldViewDirection = SafeNormalize( WorldViewDirection );
 
 				/*ase_frag_code:input=PackedVaryings*/
 
 				float3 BaseColor = /*ase_frag_out:Base Color;Float3;0;-1;_BaseColor*/float3(0.5, 0.5, 0.5)/*end*/;
 				float3 Normal = /*ase_frag_out:Normal;Float3;1;-1;_FragNormal*/float3(0, 0, 1)/*end*/;
-				float3 Emission = /*ase_frag_out:Emission;Float3;2;-1;_Emission*/0/*end*/;
 				float3 Specular = /*ase_frag_out:Specular;Float3;9;-1;_Specular*/0.5/*end*/;
 				float Metallic = /*ase_frag_out:Metallic;Float;3;-1;_Metallic*/0/*end*/;
 				float Smoothness = /*ase_frag_out:Smoothness;Float;4;-1;_Smoothness*/0.5/*end*/;
 				float Occlusion = /*ase_frag_out:Occlusion;Float;5;-1;_Occlusion*/1/*end*/;
+				float3 Emission = /*ase_frag_out:Emission;Float3;2;-1;_Emission*/0/*end*/;
 				float Alpha = /*ase_frag_out:Alpha;Float;6;-1;_Alpha*/1/*end*/;
 				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/0.5/*end*/;
 				float AlphaClipThresholdShadow = /*ase_frag_out:Alpha Clip Threshold Shadow;Float;16;-1;_AlphaClipShadow*/0.5/*end*/;
@@ -1164,8 +1184,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				float3 Transmission = /*ase_frag_out:Transmission;Float3;14;-1;_Transmission*/1/*end*/;
 				float3 Translucency = /*ase_frag_out:Translucency;Float3;15;-1;_Translucency*/1/*end*/;
 
-				#ifdef ASE_DEPTH_WRITE_ON
-					float DepthValue = /*ase_frag_out:Depth Value;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
+				#if defined( ASE_DEPTH_WRITE_ON )
+					float DeviceDepth = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/ClipPos.z/*end*/;
 				#endif
 
 				#ifdef _CLEARCOAT
@@ -1177,14 +1197,20 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					clip(Alpha - AlphaClipThreshold);
 				#endif
 
+				#if defined(MAIN_LIGHT_CALCULATE_SHADOWS) && defined(ASE_CHANGES_WORLD_POS)
+					ShadowCoord = TransformWorldToShadowCoord( PositionWS );
+				#endif
+
 				InputData inputData = (InputData)0;
-				inputData.positionWS = WorldPosition;
-				inputData.positionCS = input.positionCS;
-				inputData.viewDirectionWS = WorldViewDirection;
+				inputData.positionWS = PositionWS;
+				inputData.positionCS = float4( input.positionCS.xy, ClipPos.zw / ClipPos.w );
+				inputData.normalizedScreenSpaceUV = ScreenPosNorm.xy;
+				inputData.viewDirectionWS = ViewDirWS;
+				inputData.shadowCoord = ShadowCoord;
 
 				#ifdef _NORMALMAP
 						#if _NORMAL_DROPOFF_TS
-							inputData.normalWS = TransformTangentToWorld(Normal, half3x3(WorldTangent, WorldBiTangent, WorldNormal));
+							inputData.normalWS = TransformTangentToWorld(Normal, half3x3(TangentWS, BitangentWS, NormalWS));
 						#elif _NORMAL_DROPOFF_OS
 							inputData.normalWS = TransformObjectToWorldNormal(Normal);
 						#elif _NORMAL_DROPOFF_WS
@@ -1192,15 +1218,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 						#endif
 					inputData.normalWS = NormalizeNormalPerPixel(inputData.normalWS);
 				#else
-					inputData.normalWS = WorldNormal;
-				#endif
-
-				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
-					inputData.shadowCoord = ShadowCoords;
-				#elif defined(MAIN_LIGHT_CALCULATE_SHADOWS)
-					inputData.shadowCoord = TransformWorldToShadowCoord(inputData.positionWS);
-				#else
-					inputData.shadowCoord = float4(0, 0, 0, 0);
+					inputData.normalWS = NormalWS;
 				#endif
 
 				#ifdef ASE_FOG
@@ -1234,8 +1252,6 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				#ifdef ASE_BAKEDGI
 					inputData.bakedGI = BakedGI;
 				#endif
-
-				inputData.normalizedScreenSpaceUV = NormalizedScreenSpaceUV;
 
 				#if defined(DEBUG_DISPLAY)
 					#if defined(DYNAMICLIGHTMAP_ON)
@@ -1272,7 +1288,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					ApplyDecalToSurfaceData(input.positionCS, surfaceData, inputData);
 				#endif
 
-				#ifdef _ASE_LIGHTING_SIMPLE
+				#ifdef ASE_LIGHTING_SIMPLE
 					half4 color = UniversalFragmentBlinnPhong( inputData, surfaceData);
 				#else
 					half4 color = UniversalFragmentPBR( inputData, surfaceData);
@@ -1371,7 +1387,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 
 				#ifdef ASE_REFRACTION
 					float4 projScreenPos = ScreenPos / ScreenPos.w;
-					float3 refractionOffset = ( RefractionIndex - 1.0 ) * mul( UNITY_MATRIX_V, float4( WorldNormal,0 ) ).xyz * ( 1.0 - dot( WorldNormal, WorldViewDirection ) );
+					float3 refractionOffset = ( RefractionIndex - 1.0 ) * mul( UNITY_MATRIX_V, float4( NormalWS,0 ) ).xyz * ( 1.0 - dot( NormalWS, ViewDirWS ) );
 					projScreenPos.xy += refractionOffset.xy;
 					float3 refraction = SHADERGRAPH_SAMPLE_SCENE_COLOR( projScreenPos.xy ) * RefractionColor;
 					color.rgb = lerp( refraction, color.rgb, color.a );
@@ -1390,8 +1406,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					#endif
 				#endif
 
-				#ifdef ASE_DEPTH_WRITE_ON
-					outputDepth = DepthValue;
+				#if defined( ASE_DEPTH_WRITE_ON )
+					outputDepth = DeviceDepth;
 				#endif
 
 				#ifdef _WRITE_RENDERING_LAYERS
@@ -1426,7 +1442,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			#pragma vertex vert
 			#pragma fragment frag
 
-			#if defined(_SPECULAR_SETUP) && defined(_ASE_LIGHTING_SIMPLE)
+			#if defined(_SPECULAR_SETUP) && defined(ASE_LIGHTING_SIMPLE)
 				#define _SPECULAR_COLOR 1
 			#endif
 
@@ -1462,20 +1478,17 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			struct Attributes
 			{
 				float4 positionOS : POSITION;
-				float3 normalOS : NORMAL;
-				/*ase_vdata:p=p;n=n*/
+				half3 normalOS : NORMAL;
+				half4 tangentOS : TANGENT;
+				/*ase_vdata:p=p;n=n;t=t*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
 			struct PackedVaryings
 			{
 				ASE_SV_POSITION_QUALIFIERS float4 positionCS : SV_POSITION;
-				float4 clipPosV : TEXCOORD0;
-				float3 positionWS : TEXCOORD1;
-				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
-					float4 shadowCoord : TEXCOORD2;
-				#endif
-				/*ase_interp(3,):sp=sp;wp=tc1;sc=tc2*/
+				float3 positionWS : TEXCOORD0;
+				/*ase_interp(1,):sp=sp;wp=tc0.xyz*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -1513,10 +1526,10 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 
 			/*ase_globals*/
 
-			/*ase_funcs*/
-
 			float3 _LightDirection;
 			float3 _LightPosition;
+
+			/*ase_funcs*/
 
 			PackedVaryings VertexFunction( Attributes input/*ase_vert_input*/ )
 			{
@@ -1533,14 +1546,15 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					float3 defaultVertexValue = float3(0, 0, 0);
 				#endif
 
-				float3 vertexValue = /*ase_vert_out:Vertex Offset;Float3;2;-1;_Vertex*/defaultVertexValue/*end*/;
+				float3 vertexValue = /*ase_vert_out:Vertex Offset;Float3;8;-1;_Vertex*/defaultVertexValue/*end*/;
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					input.positionOS.xyz = vertexValue;
 				#else
 					input.positionOS.xyz += vertexValue;
 				#endif
 
-				input.normalOS = /*ase_vert_out:Vertex Normal;Float3;3;-1;_Normal*/input.normalOS/*end*/;
+				input.normalOS = /*ase_vert_out:Vertex Normal;Float3;10;-1;_Normal*/input.normalOS/*end*/;
+				input.tangentOS = /*ase_vert_out:Vertex Tangent;Float4;30;-1;_Tangent*/input.tangentOS/*end*/;
 
 				float3 positionWS = TransformObjectToWorld( input.positionOS.xyz );
 				float3 normalWS = TransformObjectToWorldDir(input.normalOS);
@@ -1556,15 +1570,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				//code for UNITY_REVERSED_Z is moved into Shadows.hlsl from 6000.0.22 and or higher
 				positionCS = ApplyShadowClamping(positionCS);
 
-				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
-					VertexPositionInputs vertexInput = (VertexPositionInputs)0;
-					vertexInput.positionWS = positionWS;
-					vertexInput.positionCS = positionCS;
-					output.shadowCoord = GetShadowCoord( vertexInput );
-				#endif
-
 				output.positionCS = positionCS;
-				output.clipPosV = positionCS;
 				output.positionWS = positionWS;
 				return output;
 			}
@@ -1573,7 +1579,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			struct VertexControl
 			{
 				float4 positionOS : INTERNALTESSPOS;
-				float3 normalOS : NORMAL;
+				half3 normalOS : NORMAL;
+				half4 tangentOS : TANGENT;
 				/*ase_vcontrol*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
@@ -1591,6 +1598,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				output.positionOS = input.positionOS;
 				output.normalOS = input.normalOS;
+				output.tangentOS = input.tangentOS;
 				/*ase_control_code:input=Attributes;output=VertexControl*/
 				return output;
 			}
@@ -1630,6 +1638,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				Attributes output = (Attributes) 0;
 				output.positionOS = patch[0].positionOS * bary.x + patch[1].positionOS * bary.y + patch[2].positionOS * bary.z;
 				output.normalOS = patch[0].normalOS * bary.x + patch[1].normalOS * bary.y + patch[2].normalOS * bary.z;
+				output.tangentOS = patch[0].tangentOS * bary.x + patch[1].tangentOS * bary.y + patch[2].tangentOS * bary.z;
 				/*ase_domain_code:patch=VertexControl;output=Attributes;bary=SV_DomainLocation*/
 				#if defined(ASE_PHONG_TESSELLATION)
 				float3 pp[3];
@@ -1649,7 +1658,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			#endif
 
 			half4 frag(	PackedVaryings input
-						#ifdef ASE_DEPTH_WRITE_ON
+						#if defined( ASE_DEPTH_WRITE_ON )
 						,out float outputDepth : ASE_SV_DEPTH
 						#endif
 						/*ase_frag_input*/ ) : SV_Target
@@ -1657,27 +1666,27 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				UNITY_SETUP_INSTANCE_ID( input );
 				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX( input );
 
-				/*ase_local_var:wp*/float3 WorldPosition = input.positionWS;
-				/*ase_local_var:sc*/float4 ShadowCoords = float4( 0, 0, 0, 0 );
-				/*ase_local_var:sp*/float4 ClipPos = input.clipPosV;
-				/*ase_local_var:spu*/float4 ScreenPos = ComputeScreenPos( input.clipPosV );
-
-				#if defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
-					#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
-						ShadowCoords = input.shadowCoord;
-					#elif defined(MAIN_LIGHT_CALCULATE_SHADOWS)
-						ShadowCoords = TransformWorldToShadowCoord( WorldPosition );
-					#endif
+				#if defined(MAIN_LIGHT_CALCULATE_SHADOWS) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
+					float4 shadowCoord = TransformWorldToShadowCoord(input.positionWS);
+				#else
+					float4 shadowCoord = float4(0, 0, 0, 0);
 				#endif
+
+				/*ase_local_var:wp*/float3 PositionWS = input.positionWS;
+				/*ase_local_var:rwp*/float3 PositionRWS = GetCameraRelativePositionWS( input.positionWS );
+				/*ase_local_var:sc*/float4 ShadowCoord = shadowCoord;
+				/*ase_local_var:spn*/float4 ScreenPosNorm = float4( GetNormalizedScreenSpaceUV( input.positionCS ), input.positionCS.zw );
+				/*ase_local_var:sp*/float4 ClipPos = ComputeClipSpacePosition( ScreenPosNorm.xy, input.positionCS.z ) * input.positionCS.w;
+				/*ase_local_var:spu*/float4 ScreenPos = ComputeScreenPos( ClipPos );
 
 				/*ase_frag_code:input=PackedVaryings*/
 
-				float Alpha = /*ase_frag_out:Alpha;Float;0;-1;_Alpha*/1/*end*/;
-				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;1;-1;_AlphaClip*/0.5/*end*/;
-				float AlphaClipThresholdShadow = /*ase_frag_out:Alpha Clip Threshold Shadow;Float;4;-1;_AlphaClipShadow*/0.5/*end*/;
+				float Alpha = /*ase_frag_out:Alpha;Float;6;-1;_Alpha*/1/*end*/;
+				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/0.5/*end*/;
+				float AlphaClipThresholdShadow = /*ase_frag_out:Alpha Clip Threshold Shadow;Float;16;-1;_AlphaClipShadow*/0.5/*end*/;
 
-				#ifdef ASE_DEPTH_WRITE_ON
-					float DepthValue = /*ase_frag_out:Depth Value;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
+				#if defined( ASE_DEPTH_WRITE_ON )
+					float DeviceDepth = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
 				#endif
 
 				#ifdef _ALPHATEST_ON
@@ -1692,8 +1701,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					LODFadeCrossFade( input.positionCS );
 				#endif
 
-				#ifdef ASE_DEPTH_WRITE_ON
-					outputDepth = DepthValue;
+				#if defined( ASE_DEPTH_WRITE_ON )
+					outputDepth = DeviceDepth;
 				#endif
 
 				return 0;
@@ -1720,7 +1729,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			#pragma vertex vert
 			#pragma fragment frag
 
-			#if defined(_SPECULAR_SETUP) && defined(_ASE_LIGHTING_SIMPLE)
+			#if defined(_SPECULAR_SETUP) && defined(ASE_LIGHTING_SIMPLE)
 				#define _SPECULAR_COLOR 1
 			#endif
 
@@ -1755,20 +1764,17 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			struct Attributes
 			{
 				float4 positionOS : POSITION;
-				float3 normalOS : NORMAL;
-				/*ase_vdata:p=p;n=n*/
+				half3 normalOS : NORMAL;
+				half4 tangentOS : TANGENT;
+				/*ase_vdata:p=p;n=n;t=t*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
 			struct PackedVaryings
 			{
 				ASE_SV_POSITION_QUALIFIERS float4 positionCS : SV_POSITION;
-				float4 clipPosV : TEXCOORD0;
-				float3 positionWS : TEXCOORD1;
-				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
-					float4 shadowCoord : TEXCOORD2;
-				#endif
-				/*ase_interp(3,):sp=sp;wp=tc1;sc=tc2*/
+				float3 positionWS : TEXCOORD0;
+				/*ase_interp(1,):sp=sp;wp=tc0.xyz*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -1823,7 +1829,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					float3 defaultVertexValue = float3(0, 0, 0);
 				#endif
 
-				float3 vertexValue = /*ase_vert_out:Vertex Offset;Float3;2;-1;_Vertex*/defaultVertexValue/*end*/;
+				float3 vertexValue = /*ase_vert_out:Vertex Offset;Float3;8;-1;_Vertex*/defaultVertexValue/*end*/;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					input.positionOS.xyz = vertexValue;
@@ -1831,16 +1837,12 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					input.positionOS.xyz += vertexValue;
 				#endif
 
-				input.normalOS = /*ase_vert_out:Vertex Normal;Float3;3;-1;_Normal*/input.normalOS/*end*/;
+				input.normalOS = /*ase_vert_out:Vertex Normal;Float3;10;-1;_Normal*/input.normalOS/*end*/;
+				input.tangentOS = /*ase_vert_out:Vertex Tangent;Float4;30;-1;_Tangent*/input.tangentOS/*end*/;
 
 				VertexPositionInputs vertexInput = GetVertexPositionInputs( input.positionOS.xyz );
 
-				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
-					output.shadowCoord = GetShadowCoord( vertexInput );
-				#endif
-
 				output.positionCS = vertexInput.positionCS;
-				output.clipPosV = vertexInput.positionCS;
 				output.positionWS = vertexInput.positionWS;
 				return output;
 			}
@@ -1849,7 +1851,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			struct VertexControl
 			{
 				float4 positionOS : INTERNALTESSPOS;
-				float3 normalOS : NORMAL;
+				half3 normalOS : NORMAL;
+				half4 tangentOS : TANGENT;
 				/*ase_vcontrol*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
@@ -1867,6 +1870,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				output.positionOS = input.positionOS;
 				output.normalOS = input.normalOS;
+				output.tangentOS = input.tangentOS;
 				/*ase_control_code:input=Attributes;output=VertexControl*/
 				return output;
 			}
@@ -1906,6 +1910,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				Attributes output = (Attributes) 0;
 				output.positionOS = patch[0].positionOS * bary.x + patch[1].positionOS * bary.y + patch[2].positionOS * bary.z;
 				output.normalOS = patch[0].normalOS * bary.x + patch[1].normalOS * bary.y + patch[2].normalOS * bary.z;
+				output.tangentOS = patch[0].tangentOS * bary.x + patch[1].tangentOS * bary.y + patch[2].tangentOS * bary.z;
 				/*ase_domain_code:patch=VertexControl;output=Attributes;bary=SV_DomainLocation*/
 				#if defined(ASE_PHONG_TESSELLATION)
 				float3 pp[3];
@@ -1925,7 +1930,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			#endif
 
 			half4 frag(	PackedVaryings input
-						#ifdef ASE_DEPTH_WRITE_ON
+						#if defined( ASE_DEPTH_WRITE_ON )
 						,out float outputDepth : ASE_SV_DEPTH
 						#endif
 						/*ase_frag_input*/ ) : SV_Target
@@ -1933,26 +1938,26 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				UNITY_SETUP_INSTANCE_ID(input);
 				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX( input );
 
-				/*ase_local_var:wp*/float3 WorldPosition = input.positionWS;
-				/*ase_local_var:sc*/float4 ShadowCoords = float4( 0, 0, 0, 0 );
-				/*ase_local_var:sp*/float4 ClipPos = input.clipPosV;
-				/*ase_local_var:spu*/float4 ScreenPos = ComputeScreenPos( input.clipPosV );
-
-				#if defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
-					#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
-						ShadowCoords = input.shadowCoord;
-					#elif defined(MAIN_LIGHT_CALCULATE_SHADOWS)
-						ShadowCoords = TransformWorldToShadowCoord( WorldPosition );
-					#endif
+				#if defined(MAIN_LIGHT_CALCULATE_SHADOWS) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
+					float4 shadowCoord = TransformWorldToShadowCoord(input.positionWS);
+				#else
+					float4 shadowCoord = float4(0, 0, 0, 0);
 				#endif
+
+				/*ase_local_var:wp*/float3 PositionWS = input.positionWS;
+				/*ase_local_var:rwp*/float3 PositionRWS = GetCameraRelativePositionWS( input.positionWS );
+				/*ase_local_var:sc*/float4 ShadowCoord = shadowCoord;
+				/*ase_local_var:spn*/float4 ScreenPosNorm = float4( GetNormalizedScreenSpaceUV( input.positionCS ), input.positionCS.zw );
+				/*ase_local_var:sp*/float4 ClipPos = ComputeClipSpacePosition( ScreenPosNorm.xy, input.positionCS.z ) * input.positionCS.w;
+				/*ase_local_var:spu*/float4 ScreenPos = ComputeScreenPos( ClipPos );
 
 				/*ase_frag_code:input=PackedVaryings*/
 
-				float Alpha = /*ase_frag_out:Alpha;Float;0;-1;_Alpha*/1/*end*/;
-				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;1;-1;_AlphaClip*/0.5/*end*/;
+				float Alpha = /*ase_frag_out:Alpha;Float;6;-1;_Alpha*/1/*end*/;
+				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/0.5/*end*/;
 
-				#ifdef ASE_DEPTH_WRITE_ON
-					float DepthValue = /*ase_frag_out:Depth Value;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
+				#if defined( ASE_DEPTH_WRITE_ON )
+					float DeviceDepth = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
 				#endif
 
 				#ifdef _ALPHATEST_ON
@@ -1963,8 +1968,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					LODFadeCrossFade( input.positionCS );
 				#endif
 
-				#ifdef ASE_DEPTH_WRITE_ON
-					outputDepth = DepthValue;
+				#if defined( ASE_DEPTH_WRITE_ON )
+					outputDepth = DeviceDepth;
 				#endif
 
 				return 0;
@@ -1990,7 +1995,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			#pragma vertex vert
 			#pragma fragment frag
 
-			#if defined(_SPECULAR_SETUP) && defined(_ASE_LIGHTING_SIMPLE)
+			#if defined(_SPECULAR_SETUP) && defined(ASE_LIGHTING_SIMPLE)
 				#define _SPECULAR_COLOR 1
 			#endif
 
@@ -2014,28 +2019,24 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			struct Attributes
 			{
 				float4 positionOS : POSITION;
-				float3 normalOS : NORMAL;
+				half3 normalOS : NORMAL;
+				half4 tangentOS : TANGENT;
 				float4 texcoord0 : TEXCOORD0;
 				float4 texcoord1 : TEXCOORD1;
 				float4 texcoord2 : TEXCOORD2;
-				/*ase_vdata:p=p;n=n;uv0=tc0;uv1=tc1;uv2=tc2*/
+				/*ase_vdata:p=p;n=n;t=t;uv0=tc0;uv1=tc1;uv2=tc2*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
 			struct PackedVaryings
 			{
 				float4 positionCS : SV_POSITION;
-				#if defined(ASE_NEEDS_FRAG_WORLD_POSITION)
-					float3 positionWS : TEXCOORD0;
-				#endif
-				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
-					float4 shadowCoord : TEXCOORD1;
-				#endif
+				float3 positionWS : TEXCOORD0;
 				#ifdef EDITOR_VISUALIZATION
-					float4 VizUV : TEXCOORD2;
-					float4 LightCoord : TEXCOORD3;
+					float4 VizUV : TEXCOORD1;
+					float4 LightCoord : TEXCOORD2;
 				#endif
-				/*ase_interp(4,):sp=sp;wp=tc0;sc=tc1*/
+				/*ase_interp(3,):sp=sp;wp=tc0.xyz*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -2090,7 +2091,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					float3 defaultVertexValue = float3(0, 0, 0);
 				#endif
 
-				float3 vertexValue = /*ase_vert_out:Vertex Offset;Float3;4;-1;_Vertex*/defaultVertexValue/*end*/;
+				float3 vertexValue = /*ase_vert_out:Vertex Offset;Float3;8;-1;_Vertex*/defaultVertexValue/*end*/;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					input.positionOS.xyz = vertexValue;
@@ -2098,15 +2099,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					input.positionOS.xyz += vertexValue;
 				#endif
 
-				input.normalOS = /*ase_vert_out:Vertex Normal;Float3;5;-1;_Normal*/input.normalOS/*end*/;
-
-				float3 positionWS = TransformObjectToWorld( input.positionOS.xyz );
-
-				#if defined(ASE_NEEDS_FRAG_WORLD_POSITION)
-					output.positionWS = positionWS;
-				#endif
-
-				output.positionCS = MetaVertexPosition( input.positionOS, input.texcoord1.xy, input.texcoord1.xy, unity_LightmapST, unity_DynamicLightmapST );
+				input.normalOS = /*ase_vert_out:Vertex Normal;Float3;10;-1;_Normal*/input.normalOS/*end*/;
+				input.tangentOS = /*ase_vert_out:Vertex Tangent;Float4;30;-1;_Tangent*/input.tangentOS/*end*/;
 
 				#ifdef EDITOR_VISUALIZATION
 					float2 VizUV = 0;
@@ -2116,13 +2110,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					output.LightCoord = LightCoord;
 				#endif
 
-				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
-					VertexPositionInputs vertexInput = (VertexPositionInputs)0;
-					vertexInput.positionWS = positionWS;
-					vertexInput.positionCS = output.positionCS;
-					output.shadowCoord = GetShadowCoord( vertexInput );
-				#endif
-
+				output.positionCS = MetaVertexPosition( input.positionOS, input.texcoord1.xy, input.texcoord1.xy, unity_LightmapST, unity_DynamicLightmapST );
+				output.positionWS = TransformObjectToWorld( input.positionOS.xyz );
 				return output;
 			}
 
@@ -2130,10 +2119,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			struct VertexControl
 			{
 				float4 positionOS : INTERNALTESSPOS;
-				float3 normalOS : NORMAL;
-				float4 texcoord0 : TEXCOORD0;
-				float4 texcoord1 : TEXCOORD1;
-				float4 texcoord2 : TEXCOORD2;
+				half3 normalOS : NORMAL;
+				half4 tangentOS : TANGENT;
 				/*ase_vcontrol*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
@@ -2151,9 +2138,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				output.positionOS = input.positionOS;
 				output.normalOS = input.normalOS;
-				output.texcoord0 = input.texcoord0;
-				output.texcoord1 = input.texcoord1;
-				output.texcoord2 = input.texcoord2;
+				output.tangentOS = input.tangentOS;
 				/*ase_control_code:input=Attributes;output=VertexControl*/
 				return output;
 			}
@@ -2193,9 +2178,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				Attributes output = (Attributes) 0;
 				output.positionOS = patch[0].positionOS * bary.x + patch[1].positionOS * bary.y + patch[2].positionOS * bary.z;
 				output.normalOS = patch[0].normalOS * bary.x + patch[1].normalOS * bary.y + patch[2].normalOS * bary.z;
-				output.texcoord0 = patch[0].texcoord0 * bary.x + patch[1].texcoord0 * bary.y + patch[2].texcoord0 * bary.z;
-				output.texcoord1 = patch[0].texcoord1 * bary.x + patch[1].texcoord1 * bary.y + patch[2].texcoord1 * bary.z;
-				output.texcoord2 = patch[0].texcoord2 * bary.x + patch[1].texcoord2 * bary.y + patch[2].texcoord2 * bary.z;
+				output.tangentOS = patch[0].tangentOS * bary.x + patch[1].tangentOS * bary.y + patch[2].tangentOS * bary.z;
 				/*ase_domain_code:patch=VertexControl;output=Attributes;bary=SV_DomainLocation*/
 				#if defined(ASE_PHONG_TESSELLATION)
 				float3 pp[3];
@@ -2219,26 +2202,22 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				UNITY_SETUP_INSTANCE_ID(input);
 				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX( input );
 
-				#if defined(ASE_NEEDS_FRAG_WORLD_POSITION)
-					/*ase_local_var:wp*/float3 WorldPosition = input.positionWS;
+				#if defined(MAIN_LIGHT_CALCULATE_SHADOWS) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
+					float4 shadowCoord = TransformWorldToShadowCoord(input.positionWS);
+				#else
+					float4 shadowCoord = float4(0, 0, 0, 0);
 				#endif
 
-				/*ase_local_var:sc*/float4 ShadowCoords = float4( 0, 0, 0, 0 );
-
-				#if defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
-					#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
-						ShadowCoords = input.shadowCoord;
-					#elif defined(MAIN_LIGHT_CALCULATE_SHADOWS)
-						ShadowCoords = TransformWorldToShadowCoord( WorldPosition );
-					#endif
-				#endif
+				/*ase_local_var:wp*/float3 PositionWS = input.positionWS;
+				/*ase_local_var:rwp*/float3 PositionRWS = GetCameraRelativePositionWS( input.positionWS );
+				/*ase_local_var:sc*/float4 ShadowCoord = shadowCoord;
 
 				/*ase_frag_code:input=PackedVaryings*/
 
 				float3 BaseColor = /*ase_frag_out:Base Color;Float3;0;-1;_BaseColor*/float3(0.5, 0.5, 0.5)/*end*/;
-				float3 Emission = /*ase_frag_out:Emission;Float3;1;-1;_Emission*/0/*end*/;
-				float Alpha = /*ase_frag_out:Alpha;Float;2;-1;_Alpha*/1/*end*/;
-				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;3;-1;_AlphaClip*/0.5/*end*/;
+				float3 Emission = /*ase_frag_out:Emission;Float3;2;-1;_Emission*/0/*end*/;
+				float Alpha = /*ase_frag_out:Alpha;Float;6;-1;_Alpha*/1/*end*/;
+				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/0.5/*end*/;
 
 				#ifdef _ALPHATEST_ON
 					clip(Alpha - AlphaClipThreshold);
@@ -2278,7 +2257,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			#pragma vertex vert
 			#pragma fragment frag
 
-			#if defined(_SPECULAR_SETUP) && defined(_ASE_LIGHTING_SIMPLE)
+			#if defined(_SPECULAR_SETUP) && defined(ASE_LIGHTING_SIMPLE)
 				#define _SPECULAR_COLOR 1
 			#endif
 
@@ -2301,21 +2280,17 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			struct Attributes
 			{
 				float4 positionOS : POSITION;
-				float3 normalOS : NORMAL;
-				/*ase_vdata:p=p;n=n*/
+				half3 normalOS : NORMAL;
+				half4 tangentOS : TANGENT;
+				/*ase_vdata:p=p;n=n;t=t*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
 			struct PackedVaryings
 			{
 				float4 positionCS : SV_POSITION;
-				#if defined(ASE_NEEDS_FRAG_WORLD_POSITION)
-					float3 positionWS : TEXCOORD0;
-				#endif
-				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
-					float4 shadowCoord : TEXCOORD1;
-				#endif
-				/*ase_interp(2,):sp=sp;wp=tc0;sc=tc1*/
+				float3 positionWS : TEXCOORD0;
+				/*ase_interp(1,):sp=sp;wp=tc0.xyz*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -2370,7 +2345,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					float3 defaultVertexValue = float3(0, 0, 0);
 				#endif
 
-				float3 vertexValue = /*ase_vert_out:Vertex Offset;Float3;3;-1;_Vertex*/defaultVertexValue/*end*/;
+				float3 vertexValue = /*ase_vert_out:Vertex Offset;Float3;8;-1;_Vertex*/defaultVertexValue/*end*/;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					input.positionOS.xyz = vertexValue;
@@ -2378,19 +2353,13 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					input.positionOS.xyz += vertexValue;
 				#endif
 
-				input.normalOS = /*ase_vert_out:Vertex Normal;Float3;4;-1;_Normal*/input.normalOS/*end*/;
+				input.normalOS = /*ase_vert_out:Vertex Normal;Float3;10;-1;_Normal*/input.normalOS/*end*/;
+				input.tangentOS = /*ase_vert_out:Vertex Tangent;Float4;30;-1;_Tangent*/input.tangentOS/*end*/;
 
 				VertexPositionInputs vertexInput = GetVertexPositionInputs( input.positionOS.xyz );
 
-				#if defined(ASE_NEEDS_FRAG_WORLD_POSITION)
-					output.positionWS = vertexInput.positionWS;
-				#endif
-
-				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
-					output.shadowCoord = GetShadowCoord( vertexInput );
-				#endif
-
 				output.positionCS = vertexInput.positionCS;
+				output.positionWS = vertexInput.positionWS;
 				return output;
 			}
 
@@ -2398,7 +2367,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			struct VertexControl
 			{
 				float4 positionOS : INTERNALTESSPOS;
-				float3 normalOS : NORMAL;
+				half3 normalOS : NORMAL;
+				half4 tangentOS : TANGENT;
 				/*ase_vcontrol*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
@@ -2416,6 +2386,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				output.positionOS = input.positionOS;
 				output.normalOS = input.normalOS;
+				output.tangentOS = input.tangentOS;
 				/*ase_control_code:input=Attributes;output=VertexControl*/
 				return output;
 			}
@@ -2455,6 +2426,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				Attributes output = (Attributes) 0;
 				output.positionOS = patch[0].positionOS * bary.x + patch[1].positionOS * bary.y + patch[2].positionOS * bary.z;
 				output.normalOS = patch[0].normalOS * bary.x + patch[1].normalOS * bary.y + patch[2].normalOS * bary.z;
+				output.tangentOS = patch[0].tangentOS * bary.x + patch[1].tangentOS * bary.y + patch[2].tangentOS * bary.z;
 				/*ase_domain_code:patch=VertexControl;output=Attributes;bary=SV_DomainLocation*/
 				#if defined(ASE_PHONG_TESSELLATION)
 				float3 pp[3];
@@ -2478,25 +2450,21 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				UNITY_SETUP_INSTANCE_ID( input );
 				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX( input );
 
-				#if defined(ASE_NEEDS_FRAG_WORLD_POSITION)
-					/*ase_local_var:wp*/float3 WorldPosition = input.positionWS;
+				#if defined(MAIN_LIGHT_CALCULATE_SHADOWS) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
+					float4 shadowCoord = TransformWorldToShadowCoord(input.positionWS);
+				#else
+					float4 shadowCoord = float4(0, 0, 0, 0);
 				#endif
 
-				/*ase_local_var:sc*/float4 ShadowCoords = float4( 0, 0, 0, 0 );
-
-				#if defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
-					#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
-						ShadowCoords = input.shadowCoord;
-					#elif defined(MAIN_LIGHT_CALCULATE_SHADOWS)
-						ShadowCoords = TransformWorldToShadowCoord( WorldPosition );
-					#endif
-				#endif
+				/*ase_local_var:wp*/float3 PositionWS = input.positionWS;
+				/*ase_local_var:rwp*/float3 PositionRWS = GetCameraRelativePositionWS( input.positionWS );
+				/*ase_local_var:sc*/float4 ShadowCoord = shadowCoord;
 
 				/*ase_frag_code:input=PackedVaryings*/
 
 				float3 BaseColor = /*ase_frag_out:Base Color;Float3;0;-1;_BaseColor*/float3(0.5, 0.5, 0.5)/*end*/;
-				float Alpha = /*ase_frag_out:Alpha;Float;1;-1;_Alpha*/1/*end*/;
-				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;2;-1;_AlphaClip*/0.5/*end*/;
+				float Alpha = /*ase_frag_out:Alpha;Float;6;-1;_Alpha*/1/*end*/;
+				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/0.5/*end*/;
 
 				half4 color = half4(BaseColor, Alpha );
 
@@ -2529,7 +2497,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			#pragma vertex vert
 			#pragma fragment frag
 
-			#if defined(_SPECULAR_SETUP) && defined(_ASE_LIGHTING_SIMPLE)
+			#if defined(_SPECULAR_SETUP) && defined(ASE_LIGHTING_SIMPLE)
 				#define _SPECULAR_COLOR 1
 			#endif
 
@@ -2567,8 +2535,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			struct Attributes
 			{
 				float4 positionOS : POSITION;
-				float3 normalOS : NORMAL;
-				float4 tangentOS : TANGENT;
+				half3 normalOS : NORMAL;
+				half4 tangentOS : TANGENT;
 				/*ase_vdata:p=p;n=n;t=t*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
@@ -2576,14 +2544,10 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			struct PackedVaryings
 			{
 				ASE_SV_POSITION_QUALIFIERS float4 positionCS : SV_POSITION;
-				float4 clipPosV : TEXCOORD0;
-				float3 positionWS : TEXCOORD1;
-				float3 normalWS : TEXCOORD2;
-				float4 tangentWS : TEXCOORD3;
-				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
-					float4 shadowCoord : TEXCOORD4;
-				#endif
-				/*ase_interp(5,):sp=sp;wp=tc1;wn=tc2;wt=tc3;sc=tc4*/
+				float3 positionWS : TEXCOORD0;
+				float3 normalWS : TEXCOORD1;
+				half4 tangentWS : TEXCOORD2;
+				/*ase_interp(3,):sp=sp;wp=tc0.xyz;wn=tc1.xyz;wt=tc2*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -2637,7 +2601,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					float3 defaultVertexValue = float3(0, 0, 0);
 				#endif
 
-				float3 vertexValue = /*ase_vert_out:Vertex Offset;Float3;2;-1;_Vertex*/defaultVertexValue/*end*/;
+				float3 vertexValue = /*ase_vert_out:Vertex Offset;Float3;8;-1;_Vertex*/defaultVertexValue/*end*/;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					input.positionOS.xyz = vertexValue;
@@ -2645,23 +2609,16 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					input.positionOS.xyz += vertexValue;
 				#endif
 
-				input.normalOS = /*ase_vert_out:Vertex Normal;Float3;3;-1;_Normal*/input.normalOS/*end*/;
+				input.normalOS = /*ase_vert_out:Vertex Normal;Float3;10;-1;_Normal*/input.normalOS/*end*/;
 				input.tangentOS = /*ase_vert_out:Vertex Tangent;Float4;30;-1;_Tangent*/input.tangentOS/*end*/;
 
 				VertexPositionInputs vertexInput = GetVertexPositionInputs( input.positionOS.xyz );
-
-				float3 normalWS = TransformObjectToWorldNormal( input.normalOS );
-				float4 tangentWS = float4( TransformObjectToWorldDir( input.tangentOS.xyz ), input.tangentOS.w );
-
-				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
-					output.shadowCoord = GetShadowCoord( vertexInput );
-				#endif
+				VertexNormalInputs normalInput = GetVertexNormalInputs( input.normalOS, input.tangentOS );
 
 				output.positionCS = vertexInput.positionCS;
-				output.clipPosV = vertexInput.positionCS;
 				output.positionWS = vertexInput.positionWS;
-				output.normalWS = normalWS;
-				output.tangentWS = tangentWS;
+				output.normalWS = normalInput.normalWS;
+				output.tangentWS = float4( normalInput.tangentWS, ( input.tangentOS.w > 0.0 ? 1.0 : -1.0 ) * GetOddNegativeScale() );
 				return output;
 			}
 
@@ -2669,8 +2626,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			struct VertexControl
 			{
 				float4 positionOS : INTERNALTESSPOS;
-				float3 normalOS : NORMAL;
-				float4 tangentOS : TANGENT;
+				half3 normalOS : NORMAL;
+				half4 tangentOS : TANGENT;
 				/*ase_vcontrol*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
@@ -2749,7 +2706,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 
 			void frag(	PackedVaryings input
 						, out half4 outNormalWS : SV_Target0
-						#ifdef ASE_DEPTH_WRITE_ON
+						#if defined( ASE_DEPTH_WRITE_ON )
 						,out float outputDepth : ASE_SV_DEPTH
 						#endif
 						#ifdef _WRITE_RENDERING_LAYERS
@@ -2760,29 +2717,33 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				UNITY_SETUP_INSTANCE_ID(input);
 				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX( input );
 
-				/*ase_local_var:sc*/float4 ShadowCoords = float4( 0, 0, 0, 0 );
-				/*ase_local_var:wn*/float3 WorldNormal = input.normalWS;
-				/*ase_local_var:wt*/float4 WorldTangent = input.tangentWS;
-				/*ase_local_var:wp*/float3 WorldPosition = input.positionWS;
-				/*ase_local_var:sp*/float4 ClipPos = input.clipPosV;
-				/*ase_local_var:spu*/float4 ScreenPos = ComputeScreenPos( input.clipPosV );
-
-				#if defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
-					#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
-						ShadowCoords = input.shadowCoord;
-					#elif defined(MAIN_LIGHT_CALCULATE_SHADOWS)
-						ShadowCoords = TransformWorldToShadowCoord( WorldPosition );
-					#endif
+				#if defined(MAIN_LIGHT_CALCULATE_SHADOWS) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
+					float4 shadowCoord = TransformWorldToShadowCoord(input.positionWS);
+				#else
+					float4 shadowCoord = float4(0, 0, 0, 0);
 				#endif
+
+				// @diogo: mikktspace compliant
+				float renormFactor = 1.0 / max( FLT_MIN, length( input.normalWS ) );
+
+				/*ase_local_var:wp*/float3 PositionWS = input.positionWS;
+				/*ase_local_var:rwp*/float3 PositionRWS = GetCameraRelativePositionWS( input.positionWS );
+				/*ase_local_var:sc*/float4 ShadowCoord = shadowCoord;
+				/*ase_local_var:spn*/float4 ScreenPosNorm = float4( GetNormalizedScreenSpaceUV( input.positionCS ), input.positionCS.zw );
+				/*ase_local_var:sp*/float4 ClipPos = ComputeClipSpacePosition( ScreenPosNorm.xy, input.positionCS.z ) * input.positionCS.w;
+				/*ase_local_var:spu*/float4 ScreenPos = ComputeScreenPos( ClipPos );
+				/*ase_local_var:wt*/float3 TangentWS = input.tangentWS.xyz * renormFactor;
+				/*ase_local_var:wbt*/float3 BitangentWS = cross( input.normalWS, input.tangentWS.xyz ) * input.tangentWS.w * renormFactor;
+				/*ase_local_var:wn*/float3 NormalWS = input.normalWS * renormFactor;
 
 				/*ase_frag_code:input=PackedVaryings*/
 
-				float3 Normal = /*ase_frag_out:Normal;Float3;5;-1;_FragNormal*/float3(0, 0, 1)/*end*/;
-				float Alpha = /*ase_frag_out:Alpha;Float;0;-1;_Alpha*/1/*end*/;
-				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;1;-1;_AlphaClip*/0.5/*end*/;
+				float3 Normal = /*ase_frag_out:Normal;Float3;1;-1;_FragNormal*/float3(0, 0, 1)/*end*/;
+				float Alpha = /*ase_frag_out:Alpha;Float;6;-1;_Alpha*/1/*end*/;
+				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/0.5/*end*/;
 
-				#ifdef ASE_DEPTH_WRITE_ON
-					float DepthValue = /*ase_frag_out:Depth Value;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
+				#if defined( ASE_DEPTH_WRITE_ON )
+					float DeviceDepth = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
 				#endif
 
 				#ifdef _ALPHATEST_ON
@@ -2793,28 +2754,26 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					LODFadeCrossFade( input.positionCS );
 				#endif
 
-				#ifdef ASE_DEPTH_WRITE_ON
-					outputDepth = DepthValue;
+				#if defined( ASE_DEPTH_WRITE_ON )
+					outputDepth = DeviceDepth;
 				#endif
 
 				#if defined(_GBUFFER_NORMALS_OCT)
-					float2 octNormalWS = PackNormalOctQuadEncode(WorldNormal);
+					float2 octNormalWS = PackNormalOctQuadEncode(NormalWS);
 					float2 remappedOctNormalWS = saturate(octNormalWS * 0.5 + 0.5);
 					half3 packedNormalWS = PackFloat2To888(remappedOctNormalWS);
 					outNormalWS = half4(packedNormalWS, 0.0);
 				#else
 					#if defined(_NORMALMAP)
 						#if _NORMAL_DROPOFF_TS
-							float crossSign = (WorldTangent.w > 0.0 ? 1.0 : -1.0) * GetOddNegativeScale();
-							float3 bitangent = crossSign * cross(WorldNormal.xyz, WorldTangent.xyz);
-							float3 normalWS = TransformTangentToWorld(Normal, half3x3(WorldTangent.xyz, bitangent, WorldNormal.xyz));
+							float3 normalWS = TransformTangentToWorld(Normal, half3x3(TangentWS, BitangentWS, NormalWS));
 						#elif _NORMAL_DROPOFF_OS
 							float3 normalWS = TransformObjectToWorldNormal(Normal);
 						#elif _NORMAL_DROPOFF_WS
 							float3 normalWS = Normal;
 						#endif
 					#else
-						float3 normalWS = WorldNormal;
+						float3 normalWS = NormalWS;
 					#endif
 					outNormalWS = half4(NormalizeNormalPerPixel(normalWS), 0.0);
 				#endif
@@ -2865,7 +2824,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			#pragma vertex vert
 			#pragma fragment frag
 
-			#if defined(_SPECULAR_SETUP) && defined(_ASE_LIGHTING_SIMPLE)
+			#if defined(_SPECULAR_SETUP) && defined(ASE_LIGHTING_SIMPLE)
 				#define _SPECULAR_COLOR 1
 			#endif
 
@@ -2909,11 +2868,15 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			struct Attributes
 			{
 				float4 positionOS : POSITION;
-				float3 normalOS : NORMAL;
-				float4 tangentOS : TANGENT;
+				half3 normalOS : NORMAL;
+				half4 tangentOS : TANGENT;
 				float4 texcoord : TEXCOORD0;
-				float4 texcoord1 : TEXCOORD1;
-				float4 texcoord2 : TEXCOORD2;
+				#if defined(LIGHTMAP_ON) || defined(ASE_NEEDS_TEXTURE_COORDINATES1)
+					float4 texcoord1 : TEXCOORD1;
+				#endif
+				#if defined(DYNAMICLIGHTMAP_ON) || defined(ASE_NEEDS_TEXTURE_COORDINATES2)
+					float4 texcoord2 : TEXCOORD2;
+				#endif
 				/*ase_vdata:p=p;n=n;t=t;uv0=tc0;uv1=tc1;uv2=tc2*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
@@ -2921,24 +2884,20 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			struct PackedVaryings
 			{
 				ASE_SV_POSITION_QUALIFIERS float4 positionCS : SV_POSITION;
-				float4 clipPosV : TEXCOORD0;
-				float4 lightmapUVOrVertexSH : TEXCOORD1;
+				float3 positionWS : TEXCOORD0;
+				half3 normalWS : TEXCOORD1;
+				half4 tangentWS : TEXCOORD2;
+				float4 lightmapUVOrVertexSH : TEXCOORD3;
 				#if defined(ASE_FOG) || defined(_ADDITIONAL_LIGHTS_VERTEX)
-					half4 fogFactorAndVertexLight : TEXCOORD2;
-				#endif
-				float4 tSpace0 : TEXCOORD3;
-				float4 tSpace1 : TEXCOORD4;
-				float4 tSpace2 : TEXCOORD5;
-				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
-				float4 shadowCoord : TEXCOORD6;
+					half4 fogFactorAndVertexLight : TEXCOORD4;
 				#endif
 				#if defined(DYNAMICLIGHTMAP_ON)
-				float2 dynamicLightmapUV : TEXCOORD7;
+					float2 dynamicLightmapUV : TEXCOORD5;
 				#endif
 				#if defined(USE_APV_PROBE_OCCLUSION)
-					float4 probeOcclusion : TEXCOORD8;
+					float4 probeOcclusion : TEXCOORD6;
 				#endif
-				/*ase_interp(9,):sp=sp;wn.xyz=tc3.xyz;wt.xyz=tc4.xyz;wbt.xyz=tc5.xyz;wp.x=tc3.w;wp.y=tc4.w;wp.z=tc5.w;sc=tc6*/
+				/*ase_interp(7,):sp=sp;wp=tc0.xyz;wn.xyz=tc1.xyz;wt.xyz=tc2.xyz*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -3008,19 +2967,11 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				VertexPositionInputs vertexInput = GetVertexPositionInputs( input.positionOS.xyz );
 				VertexNormalInputs normalInput = GetVertexNormalInputs( input.normalOS, input.tangentOS );
 
-				output.tSpace0 = float4( normalInput.normalWS, vertexInput.positionWS.x);
-				output.tSpace1 = float4( normalInput.tangentWS, vertexInput.positionWS.y);
-				output.tSpace2 = float4( normalInput.bitangentWS, vertexInput.positionWS.z);
-
-				#if defined(LIGHTMAP_ON)
-					OUTPUT_LIGHTMAP_UV(input.texcoord1, unity_LightmapST, output.lightmapUVOrVertexSH.xy);
-				#endif
-
+				OUTPUT_LIGHTMAP_UV(input.texcoord1, unity_LightmapST, output.lightmapUVOrVertexSH.xy);
 				#if defined(DYNAMICLIGHTMAP_ON)
 					output.dynamicLightmapUV.xy = input.texcoord2.xy * unity_DynamicLightmapST.xy + unity_DynamicLightmapST.zw;
 				#endif
-
-				OUTPUT_SH4( vertexInput.positionWS, normalInput.normalWS.xyz, GetWorldSpaceNormalizeViewDir( vertexInput.positionWS ), output.lightmapUVOrVertexSH.xyz, output.probeOcclusion );
+				OUTPUT_SH4(vertexInput.positionWS, normalInput.normalWS.xyz, GetWorldSpaceNormalizeViewDir(vertexInput.positionWS), output.lightmapUVOrVertexSH.xyz, output.probeOcclusion);
 
 				#if defined(ENABLE_TERRAIN_PERPIXEL_NORMAL)
 					output.lightmapUVOrVertexSH.zw = input.texcoord.xy;
@@ -3038,12 +2989,10 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					#endif
 				#endif
 
-				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
-					output.shadowCoord = GetShadowCoord( vertexInput );
-				#endif
-
 				output.positionCS = vertexInput.positionCS;
-				output.clipPosV = vertexInput.positionCS;
+				output.positionWS = vertexInput.positionWS;
+				output.normalWS = normalInput.normalWS;
+				output.tangentWS = float4( normalInput.tangentWS, ( input.tangentOS.w > 0.0 ? 1.0 : -1.0 ) * GetOddNegativeScale() );
 				return output;
 			}
 
@@ -3051,11 +3000,15 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			struct VertexControl
 			{
 				float4 positionOS : INTERNALTESSPOS;
-				float3 normalOS : NORMAL;
-				float4 tangentOS : TANGENT;
+				half3 normalOS : NORMAL;
+				half4 tangentOS : TANGENT;
 				float4 texcoord : TEXCOORD0;
-				float4 texcoord1 : TEXCOORD1;
-				float4 texcoord2 : TEXCOORD2;
+				#if defined(LIGHTMAP_ON) || defined(ASE_NEEDS_TEXTURE_COORDINATES1)
+					float4 texcoord1 : TEXCOORD1;
+				#endif
+				#if defined(DYNAMICLIGHTMAP_ON) || defined(ASE_NEEDS_TEXTURE_COORDINATES2)
+					float4 texcoord2 : TEXCOORD2;
+				#endif
 				/*ase_vcontrol*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
@@ -3075,8 +3028,12 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				output.normalOS = input.normalOS;
 				output.tangentOS = input.tangentOS;
 				output.texcoord = input.texcoord;
-				output.texcoord1 = input.texcoord1;
-				output.texcoord2 = input.texcoord2;
+				#if defined(LIGHTMAP_ON) || defined(ASE_NEEDS_TEXTURE_COORDINATES1)
+					output.texcoord1 = input.texcoord1;
+				#endif
+				#if defined(DYNAMICLIGHTMAP_ON) || defined(ASE_NEEDS_TEXTURE_COORDINATES2)
+					output.texcoord2 = input.texcoord2;
+				#endif
 				/*ase_control_code:input=Attributes;output=VertexControl*/
 				return output;
 			}
@@ -3118,8 +3075,12 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				output.normalOS = patch[0].normalOS * bary.x + patch[1].normalOS * bary.y + patch[2].normalOS * bary.z;
 				output.tangentOS = patch[0].tangentOS * bary.x + patch[1].tangentOS * bary.y + patch[2].tangentOS * bary.z;
 				output.texcoord = patch[0].texcoord * bary.x + patch[1].texcoord * bary.y + patch[2].texcoord * bary.z;
-				output.texcoord1 = patch[0].texcoord1 * bary.x + patch[1].texcoord1 * bary.y + patch[2].texcoord1 * bary.z;
-				output.texcoord2 = patch[0].texcoord2 * bary.x + patch[1].texcoord2 * bary.y + patch[2].texcoord2 * bary.z;
+				#if defined(LIGHTMAP_ON) || defined(ASE_NEEDS_TEXTURE_COORDINATES1)
+					output.texcoord1 = patch[0].texcoord1 * bary.x + patch[1].texcoord1 * bary.y + patch[2].texcoord1 * bary.z;
+				#endif
+				#if defined(DYNAMICLIGHTMAP_ON) || defined(ASE_NEEDS_TEXTURE_COORDINATES2)
+					output.texcoord2 = patch[0].texcoord2 * bary.x + patch[1].texcoord2 * bary.y + patch[2].texcoord2 * bary.z;
+				#endif
 				/*ase_domain_code:patch=VertexControl;output=Attributes;bary=SV_DomainLocation*/
 				#if defined(ASE_PHONG_TESSELLATION)
 				float3 pp[3];
@@ -3139,7 +3100,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			#endif
 
 			FragmentOutput frag ( PackedVaryings input
-								#ifdef ASE_DEPTH_WRITE_ON
+								#if defined( ASE_DEPTH_WRITE_ON )
 								,out float outputDepth : ASE_SV_DEPTH
 								#endif
 								/*ase_frag_input*/ )
@@ -3151,44 +3112,42 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					LODFadeCrossFade( input.positionCS );
 				#endif
 
+				#if defined(MAIN_LIGHT_CALCULATE_SHADOWS)
+					float4 shadowCoord = TransformWorldToShadowCoord( input.positionWS );
+				#else
+					float4 shadowCoord = float4(0, 0, 0, 0);
+				#endif
+
+				// @diogo: mikktspace compliant
+				float renormFactor = 1.0 / max( FLT_MIN, length( input.normalWS ) );
+
+				/*ase_local_var:wp*/float3 PositionWS = input.positionWS;
+				/*ase_local_var:rwp*/float3 PositionRWS = GetCameraRelativePositionWS( PositionWS );
+				/*ase_local_var:wvd*/float3 ViewDirWS = GetWorldSpaceNormalizeViewDir( PositionWS );
+				/*ase_local_var:sc*/float4 ShadowCoord = shadowCoord;
+				/*ase_local_var:spn*/float4 ScreenPosNorm = float4( GetNormalizedScreenSpaceUV( input.positionCS ), input.positionCS.zw );
+				/*ase_local_var:sp*/float4 ClipPos = ComputeClipSpacePosition( ScreenPosNorm.xy, input.positionCS.z ) * input.positionCS.w;
+				/*ase_local_var:spu*/float4 ScreenPos = ComputeScreenPos( ClipPos );
+				/*ase_local_var:wt*/float3 TangentWS = input.tangentWS.xyz * renormFactor;
+				/*ase_local_var:wbt*/float3 BitangentWS = cross( input.normalWS, input.tangentWS.xyz ) * input.tangentWS.w * renormFactor;
+				/*ase_local_var:wn*/float3 NormalWS = input.normalWS * renormFactor;
+
 				#if defined(ENABLE_TERRAIN_PERPIXEL_NORMAL)
 					float2 sampleCoords = (input.lightmapUVOrVertexSH.zw / _TerrainHeightmapRecipSize.zw + 0.5f) * _TerrainHeightmapRecipSize.xy;
-					float3 WorldNormal = TransformObjectToWorldNormal(normalize(SAMPLE_TEXTURE2D(_TerrainNormalmapTexture, sampler_TerrainNormalmapTexture, sampleCoords).rgb * 2 - 1));
-					float3 WorldTangent = -cross(GetObjectToWorldMatrix()._13_23_33, WorldNormal);
-					float3 WorldBiTangent = cross(WorldNormal, -WorldTangent);
-				#else
-					/*ase_local_var:wn*/float3 WorldNormal = normalize( input.tSpace0.xyz );
-					/*ase_local_var:wt*/float3 WorldTangent = input.tSpace1.xyz;
-					/*ase_local_var:wbt*/float3 WorldBiTangent = input.tSpace2.xyz;
+					NormalWS = TransformObjectToWorldNormal(normalize(SAMPLE_TEXTURE2D(_TerrainNormalmapTexture, sampler_TerrainNormalmapTexture, sampleCoords).rgb * 2 - 1));
+					TangentWS = -cross(GetObjectToWorldMatrix()._13_23_33, NormalWS);
+					BitangentWS = cross(NormalWS, -TangentWS);
 				#endif
-
-				/*ase_local_var:wp*/float3 WorldPosition = float3(input.tSpace0.w,input.tSpace1.w,input.tSpace2.w);
-				/*ase_local_var:wvd*/float3 WorldViewDirection = GetWorldSpaceNormalizeViewDir( WorldPosition );
-				/*ase_local_var:sc*/float4 ShadowCoords = float4( 0, 0, 0, 0 );
-				/*ase_local_var:sp*/float4 ClipPos = input.clipPosV;
-				/*ase_local_var:spu*/float4 ScreenPos = ComputeScreenPos( input.clipPosV );
-
-				float2 NormalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(input.positionCS);
-
-				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
-					ShadowCoords = input.shadowCoord;
-				#elif defined(MAIN_LIGHT_CALCULATE_SHADOWS)
-					ShadowCoords = TransformWorldToShadowCoord( WorldPosition );
-				#else
-					ShadowCoords = float4(0, 0, 0, 0);
-				#endif
-
-				WorldViewDirection = SafeNormalize( WorldViewDirection );
 
 				/*ase_frag_code:input=PackedVaryings*/
 
 				float3 BaseColor = /*ase_frag_out:Base Color;Float3;0;-1;_BaseColor*/float3(0.5, 0.5, 0.5)/*end*/;
 				float3 Normal = /*ase_frag_out:Normal;Float3;1;-1;_FragNormal*/float3(0, 0, 1)/*end*/;
-				float3 Emission = /*ase_frag_out:Emission;Float3;2;-1;_Emission*/0/*end*/;
 				float3 Specular = /*ase_frag_out:Specular;Float3;9;-1;_Specular*/0.5/*end*/;
 				float Metallic = /*ase_frag_out:Metallic;Float;3;-1;_Metallic*/0/*end*/;
 				float Smoothness = /*ase_frag_out:Smoothness;Float;4;-1;_Smoothness*/0.5/*end*/;
 				float Occlusion = /*ase_frag_out:Occlusion;Float;5;-1;_Occlusion*/1/*end*/;
+				float3 Emission = /*ase_frag_out:Emission;Float3;2;-1;_Emission*/0/*end*/;
 				float Alpha = /*ase_frag_out:Alpha;Float;6;-1;_Alpha*/1/*end*/;
 				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/0.5/*end*/;
 				float AlphaClipThresholdShadow = /*ase_frag_out:Alpha Clip Threshold Shadow;Float;16;-1;_AlphaClipShadow*/0.5/*end*/;
@@ -3198,33 +3157,38 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				float3 Transmission = /*ase_frag_out:Transmission;Float3;14;-1;_Transmission*/1/*end*/;
 				float3 Translucency = /*ase_frag_out:Translucency;Float3;15;-1;_Translucency*/1/*end*/;
 
-				#ifdef ASE_DEPTH_WRITE_ON
-					float DepthValue = /*ase_frag_out:Depth Value;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
+				#if defined( ASE_DEPTH_WRITE_ON )
+					float DeviceDepth = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/ClipPos.z/*end*/;
 				#endif
 
 				#ifdef _ALPHATEST_ON
 					clip(Alpha - AlphaClipThreshold);
 				#endif
 
+				#if defined(MAIN_LIGHT_CALCULATE_SHADOWS) && defined(ASE_CHANGES_WORLD_POS)
+					ShadowCoord = TransformWorldToShadowCoord( PositionWS );
+				#endif
+
 				InputData inputData = (InputData)0;
-				inputData.positionWS = WorldPosition;
-				inputData.positionCS = input.positionCS;
-				inputData.shadowCoord = ShadowCoords;
+				inputData.positionWS = PositionWS;
+				inputData.positionCS = float4( input.positionCS.xy, ClipPos.zw / ClipPos.w );
+				inputData.normalizedScreenSpaceUV = ScreenPosNorm.xy;
+				inputData.shadowCoord = ShadowCoord;
 
 				#ifdef _NORMALMAP
 					#if _NORMAL_DROPOFF_TS
-						inputData.normalWS = TransformTangentToWorld(Normal, half3x3( WorldTangent, WorldBiTangent, WorldNormal ));
+						inputData.normalWS = TransformTangentToWorld(Normal, half3x3( TangentWS, BitangentWS, NormalWS ));
 					#elif _NORMAL_DROPOFF_OS
 						inputData.normalWS = TransformObjectToWorldNormal(Normal);
 					#elif _NORMAL_DROPOFF_WS
 						inputData.normalWS = Normal;
 					#endif
 				#else
-					inputData.normalWS = WorldNormal;
+					inputData.normalWS = NormalWS;
 				#endif
 
 				inputData.normalWS = NormalizeNormalPerPixel(inputData.normalWS);
-				inputData.viewDirectionWS = SafeNormalize( WorldViewDirection );
+				inputData.viewDirectionWS = SafeNormalize( ViewDirWS );
 
 				#ifdef ASE_FOG
 					// @diogo: no fog applied in GBuffer
@@ -3243,12 +3207,13 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					inputData.bakedGI = SAMPLE_GI(input.lightmapUVOrVertexSH.xy, input.dynamicLightmapUV.xy, SH, inputData.normalWS);
 					inputData.shadowMask = SAMPLE_SHADOWMASK(input.lightmapUVOrVertexSH.xy);
 				#elif !defined(LIGHTMAP_ON) && (defined(PROBE_VOLUMES_L1) || defined(PROBE_VOLUMES_L2))
-					inputData.bakedGI = SAMPLE_GI( SH, GetAbsolutePositionWS(inputData.positionWS),
+					inputData.bakedGI = SAMPLE_GI(SH,
+						GetAbsolutePositionWS(inputData.positionWS),
 						inputData.normalWS,
 						inputData.viewDirectionWS,
 						input.positionCS.xy,
 						input.probeOcclusion,
-						inputData.shadowMask );
+						inputData.shadowMask);
 				#else
 					inputData.bakedGI = SAMPLE_GI(input.lightmapUVOrVertexSH.xy, SH, inputData.normalWS);
 					inputData.shadowMask = SAMPLE_SHADOWMASK(input.lightmapUVOrVertexSH.xy);
@@ -3257,8 +3222,6 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				#ifdef ASE_BAKEDGI
 					inputData.bakedGI = BakedGI;
 				#endif
-
-				inputData.normalizedScreenSpaceUV = NormalizedScreenSpaceUV;
 
 				#if defined(DEBUG_DISPLAY)
 					#if defined(DYNAMICLIGHTMAP_ON)
@@ -3285,8 +3248,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				#endif
 
 				BRDFData brdfData;
-				InitializeBRDFData
-				(BaseColor, Metallic, Specular, Smoothness, Alpha, brdfData);
+				InitializeBRDFData(BaseColor, Metallic, Specular, Smoothness, Alpha, brdfData);
 
 				Light mainLight = GetMainLight(inputData.shadowCoord, inputData.positionWS, inputData.shadowMask);
 				half4 color;
@@ -3298,8 +3260,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					color.rgb *= color.a;
 				#endif
 
-				#ifdef ASE_DEPTH_WRITE_ON
-					outputDepth = DepthValue;
+				#if defined( ASE_DEPTH_WRITE_ON )
+					outputDepth = DeviceDepth;
 				#endif
 
 				return BRDFDataToGbuffer(brdfData, inputData, Smoothness, Emission + color.rgb, Occlusion);
@@ -3326,7 +3288,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			#pragma vertex vert
 			#pragma fragment frag
 
-			#if defined(_SPECULAR_SETUP) && defined(_ASE_LIGHTING_SIMPLE)
+			#if defined(_SPECULAR_SETUP) && defined(ASE_LIGHTING_SIMPLE)
 				#define _SPECULAR_COLOR 1
 			#endif
 
@@ -3351,18 +3313,28 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 
 			/*ase_pragma*/
 
+			#if defined(ASE_EARLY_Z_DEPTH_OPTIMIZE) && (SHADER_TARGET >= 45)
+				#define ASE_SV_DEPTH SV_DepthLessEqual
+				#define ASE_SV_POSITION_QUALIFIERS linear noperspective centroid
+			#else
+				#define ASE_SV_DEPTH SV_Depth
+				#define ASE_SV_POSITION_QUALIFIERS
+			#endif
+
 			struct Attributes
 			{
 				float4 positionOS : POSITION;
-				float3 normalOS : NORMAL;
-				/*ase_vdata:p=p;n=n*/
+				half3 normalOS : NORMAL;
+				half4 tangentOS : TANGENT;
+				/*ase_vdata:p=p;n=n;t=t*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
 			struct PackedVaryings
 			{
-				float4 positionCS : SV_POSITION;
-				/*ase_interp(0,):sp=sp*/
+				ASE_SV_POSITION_QUALIFIERS float4 positionCS : SV_POSITION;
+				float3 positionWS : TEXCOORD0;
+				/*ase_interp(1,):sp=sp;wp=tc0.xyz*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -3425,7 +3397,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					float3 defaultVertexValue = float3(0, 0, 0);
 				#endif
 
-				float3 vertexValue = /*ase_vert_out:Vertex Offset;Float3;2;-1;_Vertex*/defaultVertexValue/*end*/;
+				float3 vertexValue = /*ase_vert_out:Vertex Offset;Float3;8;-1;_Vertex*/defaultVertexValue/*end*/;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					input.positionOS.xyz = vertexValue;
@@ -3433,12 +3405,12 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					input.positionOS.xyz += vertexValue;
 				#endif
 
-				input.normalOS = /*ase_vert_out:Vertex Normal;Float3;3;-1;_Normal*/input.normalOS/*end*/;
+				input.normalOS = /*ase_vert_out:Vertex Normal;Float3;10;-1;_Normal*/input.normalOS/*end*/;
 
-				float3 positionWS = TransformObjectToWorld( input.positionOS.xyz );
+				VertexPositionInputs vertexInput = GetVertexPositionInputs( input.positionOS.xyz );
 
-				output.positionCS = TransformWorldToHClip(positionWS);
-
+				output.positionCS = vertexInput.positionCS;
+				output.positionWS = vertexInput.positionWS;
 				return output;
 			}
 
@@ -3446,7 +3418,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			struct VertexControl
 			{
 				float4 positionOS : INTERNALTESSPOS;
-				float3 normalOS : NORMAL;
+				half3 normalOS : NORMAL;
+				half4 tangentOS : TANGENT;
 				/*ase_vcontrol*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
@@ -3464,6 +3437,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				output.positionOS = input.positionOS;
 				output.normalOS = input.normalOS;
+				output.tangentOS = input.tangentOS;
 				/*ase_control_code:input=Attributes;output=VertexControl*/
 				return output;
 			}
@@ -3503,6 +3477,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				Attributes output = (Attributes) 0;
 				output.positionOS = patch[0].positionOS * bary.x + patch[1].positionOS * bary.y + patch[2].positionOS * bary.z;
 				output.normalOS = patch[0].normalOS * bary.x + patch[1].normalOS * bary.y + patch[2].normalOS * bary.z;
+				output.tangentOS = patch[0].tangentOS * bary.x + patch[1].tangentOS * bary.y + patch[2].tangentOS * bary.z;
 				/*ase_domain_code:patch=VertexControl;output=Attributes;bary=SV_DomainLocation*/
 				#if defined(ASE_PHONG_TESSELLATION)
 				float3 pp[3];
@@ -3521,14 +3496,27 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			}
 			#endif
 
-			half4 frag(PackedVaryings input /*ase_frag_input*/) : SV_Target
+			half4 frag( PackedVaryings input
+				#if defined( ASE_DEPTH_WRITE_ON )
+				,out float outputDepth : ASE_SV_DEPTH
+				#endif
+				/*ase_frag_input*/ ) : SV_Target
 			{
 				SurfaceDescription surfaceDescription = (SurfaceDescription)0;
+
+				/*ase_local_var:wp*/float3 PositionWS = input.positionWS;
+				/*ase_local_var:rwp*/float3 PositionRWS = GetCameraRelativePositionWS( PositionWS );
+				/*ase_local_var:spn*/float4 ScreenPosNorm = float4( GetNormalizedScreenSpaceUV( input.positionCS ), input.positionCS.zw );
+				/*ase_local_var:sp*/float4 ClipPos = ComputeClipSpacePosition( ScreenPosNorm.xy, input.positionCS.z ) * input.positionCS.w;
 
 				/*ase_frag_code:input=PackedVaryings*/
 
 				surfaceDescription.Alpha = /*ase_frag_out:Alpha;Float;0;-1;_Alpha*/1/*end*/;
-				surfaceDescription.AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;1;-1;_AlphaClip*/0.5/*end*/;
+				surfaceDescription.AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/0.5/*end*/;
+
+				#if defined( ASE_DEPTH_WRITE_ON )
+					float DeviceDepth = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
+				#endif
 
 				#if _ALPHATEST_ON
 					float alphaClipThreshold = 0.01f;
@@ -3538,15 +3526,11 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					clip(surfaceDescription.Alpha - alphaClipThreshold);
 				#endif
 
-				half4 outColor = 0;
-
-				#ifdef SCENESELECTIONPASS
-					outColor = half4(_ObjectId, _PassValue, 1.0, 1.0);
-				#elif defined(SCENEPICKINGPASS)
-					outColor = _SelectionID;
+				#if defined( ASE_DEPTH_WRITE_ON )
+					outputDepth = DeviceDepth;
 				#endif
 
-				return outColor;
+				return half4( _ObjectId, _PassValue, 1.0, 1.0 );
 			}
 
 			ENDHLSL
@@ -3569,7 +3553,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			#pragma vertex vert
 			#pragma fragment frag
 
-			#if defined(_SPECULAR_SETUP) && defined(_ASE_LIGHTING_SIMPLE)
+			#if defined(_SPECULAR_SETUP) && defined(ASE_LIGHTING_SIMPLE)
 				#define _SPECULAR_COLOR 1
 			#endif
 
@@ -3594,18 +3578,28 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 
 			/*ase_pragma*/
 
+			#if defined(ASE_EARLY_Z_DEPTH_OPTIMIZE) && (SHADER_TARGET >= 45)
+				#define ASE_SV_DEPTH SV_DepthLessEqual
+				#define ASE_SV_POSITION_QUALIFIERS linear noperspective centroid
+			#else
+				#define ASE_SV_DEPTH SV_Depth
+				#define ASE_SV_POSITION_QUALIFIERS
+			#endif
+
 			struct Attributes
 			{
 				float4 positionOS : POSITION;
-				float3 normalOS : NORMAL;
-				/*ase_vdata:p=p;n=n*/
+				half3 normalOS : NORMAL;
+				half4 tangentOS : TANGENT;
+				/*ase_vdata:p=p;n=n;t=t*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
 			struct PackedVaryings
 			{
-				float4 positionCS : SV_POSITION;
-				/*ase_interp(0,):sp=sp*/
+				ASE_SV_POSITION_QUALIFIERS float4 positionCS : SV_POSITION;
+				float3 positionWS : TEXCOORD0;
+				/*ase_interp(1,):sp=sp;wp=tc0.xyz*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -3651,7 +3645,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				float AlphaClipThreshold;
 			};
 
-			PackedVaryings VertexFunction(Attributes input /*ase_vert_input*/ )
+			PackedVaryings VertexFunction( Attributes input /*ase_vert_input*/ )
 			{
 				PackedVaryings output;
 				ZERO_INITIALIZE(PackedVaryings, output);
@@ -3668,7 +3662,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					float3 defaultVertexValue = float3(0, 0, 0);
 				#endif
 
-				float3 vertexValue = /*ase_vert_out:Vertex Offset;Float3;2;-1;_Vertex*/defaultVertexValue/*end*/;
+				float3 vertexValue = /*ase_vert_out:Vertex Offset;Float3;8;-1;_Vertex*/defaultVertexValue/*end*/;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					input.positionOS.xyz = vertexValue;
@@ -3676,11 +3670,12 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					input.positionOS.xyz += vertexValue;
 				#endif
 
-				input.normalOS = /*ase_vert_out:Vertex Normal;Float3;3;-1;_Normal*/input.normalOS/*end*/;
+				input.normalOS = /*ase_vert_out:Vertex Normal;Float3;10;-1;_Normal*/input.normalOS/*end*/;
 
-				float3 positionWS = TransformObjectToWorld( input.positionOS.xyz );
-				output.positionCS = TransformWorldToHClip(positionWS);
+				VertexPositionInputs vertexInput = GetVertexPositionInputs( input.positionOS.xyz );
 
+				output.positionCS = vertexInput.positionCS;
+				output.positionWS = vertexInput.positionWS;
 				return output;
 			}
 
@@ -3688,7 +3683,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			struct VertexControl
 			{
 				float4 positionOS : INTERNALTESSPOS;
-				float3 normalOS : NORMAL;
+				half3 normalOS : NORMAL;
+				half4 tangentOS : TANGENT;
 				/*ase_vcontrol*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
@@ -3706,6 +3702,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				UNITY_TRANSFER_INSTANCE_ID(input, output);
 				output.positionOS = input.positionOS;
 				output.normalOS = input.normalOS;
+				output.tangentOS = input.tangentOS;
 				/*ase_control_code:input=Attributes;output=VertexControl*/
 				return output;
 			}
@@ -3745,6 +3742,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				Attributes output = (Attributes) 0;
 				output.positionOS = patch[0].positionOS * bary.x + patch[1].positionOS * bary.y + patch[2].positionOS * bary.z;
 				output.normalOS = patch[0].normalOS * bary.x + patch[1].normalOS * bary.y + patch[2].normalOS * bary.z;
+				output.tangentOS = patch[0].tangentOS * bary.x + patch[1].tangentOS * bary.y + patch[2].tangentOS * bary.z;
 				/*ase_domain_code:patch=VertexControl;output=Attributes;bary=SV_DomainLocation*/
 				#if defined(ASE_PHONG_TESSELLATION)
 				float3 pp[3];
@@ -3763,14 +3761,27 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			}
 			#endif
 
-			half4 frag(PackedVaryings input /*ase_frag_input*/) : SV_Target
+			half4 frag( PackedVaryings input
+				#if defined( ASE_DEPTH_WRITE_ON )
+				,out float outputDepth : ASE_SV_DEPTH
+				#endif
+				/*ase_frag_input*/ ) : SV_Target
 			{
 				SurfaceDescription surfaceDescription = (SurfaceDescription)0;
+
+				/*ase_local_var:wp*/float3 PositionWS = input.positionWS;
+				/*ase_local_var:rwp*/float3 PositionRWS = GetCameraRelativePositionWS( PositionWS );
+				/*ase_local_var:spn*/float4 ScreenPosNorm = float4( GetNormalizedScreenSpaceUV( input.positionCS ), input.positionCS.zw );
+				/*ase_local_var:sp*/float4 ClipPos = ComputeClipSpacePosition( ScreenPosNorm.xy, input.positionCS.z ) * input.positionCS.w;
 
 				/*ase_frag_code:input=PackedVaryings*/
 
 				surfaceDescription.Alpha = /*ase_frag_out:Alpha;Float;0;-1;_Alpha*/1/*end*/;
-				surfaceDescription.AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;1;-1;_AlphaClip*/0.5/*end*/;
+				surfaceDescription.AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/0.5/*end*/;
+
+				#if defined( ASE_DEPTH_WRITE_ON )
+					float DeviceDepth = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
+				#endif
 
 				#if _ALPHATEST_ON
 					float alphaClipThreshold = 0.01f;
@@ -3780,17 +3791,12 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 						clip(surfaceDescription.Alpha - alphaClipThreshold);
 				#endif
 
-				half4 outColor = 0;
-
-				#ifdef SCENESELECTIONPASS
-					outColor = half4(_ObjectId, _PassValue, 1.0, 1.0);
-				#elif defined(SCENEPICKINGPASS)
-					outColor = _SelectionID;
+				#if defined( ASE_DEPTH_WRITE_ON )
+					outputDepth = DeviceDepth;
 				#endif
 
-				return outColor;
+				return _SelectionID;
 			}
-
 			ENDHLSL
 		}
 
@@ -3811,10 +3817,10 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			#pragma vertex vert
 			#pragma fragment frag
 
-			#if defined(_SPECULAR_SETUP) && defined(_ASE_LIGHTING_SIMPLE)
+			#if defined(_SPECULAR_SETUP) && defined(ASE_LIGHTING_SIMPLE)
 				#define _SPECULAR_COLOR 1
 			#endif
-	
+
             #define SHADERPASS SHADERPASS_MOTION_VECTORS
 
             #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
@@ -3839,6 +3845,14 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 
 			/*ase_pragma*/
 
+			#if defined(ASE_EARLY_Z_DEPTH_OPTIMIZE) && (SHADER_TARGET >= 45)
+				#define ASE_SV_DEPTH SV_DepthLessEqual
+				#define ASE_SV_POSITION_QUALIFIERS linear noperspective centroid
+			#else
+				#define ASE_SV_DEPTH SV_Depth
+				#define ASE_SV_POSITION_QUALIFIERS
+			#endif
+
 			struct Attributes
 			{
 				float4 positionOS : POSITION;
@@ -3846,7 +3860,9 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				#if _ADD_PRECOMPUTED_VELOCITY
 					float3 alembicMotionVector : TEXCOORD5;
 				#endif
-				/*ase_vdata:p=p;uv4=tc4;uv5=tc5*/
+				half3 normalOS : NORMAL;
+				half4 tangentOS : TANGENT;
+				/*ase_vdata:p=p;n=n;t=t;uv4=tc4;uv5=tc5*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -3855,7 +3871,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				float4 positionCS : SV_POSITION;
 				float4 positionCSNoJitter : TEXCOORD0;
 				float4 previousPositionCSNoJitter : TEXCOORD1;
-				/*ase_interp(2,):sp=sp.xyzw*/
+				float3 positionWS : TEXCOORD2;
+				/*ase_interp(3,):sp=sp.xyzw*/
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -3910,7 +3927,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 					float3 defaultVertexValue = float3(0, 0, 0);
 				#endif
 
-				float3 vertexValue = /*ase_vert_out:Vertex Offset;Float3;2;-1;_Vertex*/defaultVertexValue/*end*/;
+				float3 vertexValue = /*ase_vert_out:Vertex Offset;Float3;8;-1;_Vertex*/defaultVertexValue/*end*/;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					input.positionOS.xyz = vertexValue;
@@ -3921,13 +3938,11 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				VertexPositionInputs vertexInput = GetVertexPositionInputs( input.positionOS.xyz );
 
 				#if defined(APLICATION_SPACE_WARP_MOTION)
-					// We do not need jittered position in ASW
-					output.positionCSNoJitter = mul(_NonJitteredViewProjMatrix, mul(UNITY_MATRIX_M, input.positionOS));;
+					output.positionCSNoJitter = mul(_NonJitteredViewProjMatrix, mul(UNITY_MATRIX_M, input.positionOS));
 					output.positionCS = output.positionCSNoJitter;
 				#else
-					// Jittered. Match the frame.
 					output.positionCS = vertexInput.positionCS;
-					output.positionCSNoJitter = mul( _NonJitteredViewProjMatrix, mul( UNITY_MATRIX_M, input.positionOS));
+					output.positionCSNoJitter = mul(_NonJitteredViewProjMatrix, mul(UNITY_MATRIX_M, input.positionOS));
 				#endif
 
 				float4 prevPos = ( unity_MotionVectorsParams.x == 1 ) ? float4( input.positionOld, 1 ) : input.positionOS;
@@ -3937,6 +3952,9 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				#endif
 
 				output.previousPositionCSNoJitter = mul( _PrevViewProjMatrix, mul( UNITY_PREV_MATRIX_M, prevPos ) );
+
+				output.positionWS = vertexInput.positionWS;
+
 				// removed in ObjectMotionVectors.hlsl found in unity 6000.0.23 and higher
 				//ApplyMotionVectorZBias( output.positionCS );
 				return output;
@@ -3947,22 +3965,46 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				return VertexFunction( input );
 			}
 
-			half4 frag(	PackedVaryings input /*ase_frag_input*/ ) : SV_Target
+			half4 frag(	PackedVaryings input
+				#if defined( ASE_DEPTH_WRITE_ON )
+				,out float outputDepth : ASE_SV_DEPTH
+				#endif
+				/*ase_frag_input*/ ) : SV_Target
 			{
 				UNITY_SETUP_INSTANCE_ID(input);
 				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX( input );
 
+				/*ase_local_var:wp*/float3 PositionWS = input.positionWS;
+				/*ase_local_var:rwp*/float3 PositionRWS = GetCameraRelativePositionWS( PositionWS );
+				/*ase_local_var:spn*/float4 ScreenPosNorm = float4( GetNormalizedScreenSpaceUV( input.positionCS ), input.positionCS.zw );
+				/*ase_local_var:sp*/float4 ClipPos = ComputeClipSpacePosition( ScreenPosNorm.xy, input.positionCS.z ) * input.positionCS.w;
+
 				/*ase_frag_code:input=PackedVaryings*/
 
-				float Alpha = /*ase_frag_out:Alpha;Float;0;-1;_Alpha*/1/*end*/;
-				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;1;-1;_AlphaClip*/0.5/*end*/;
+				float Alpha = /*ase_frag_out:Alpha;Float;6;-1;_Alpha*/1/*end*/;
+				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/0.5/*end*/;
+
+				#if defined( ASE_DEPTH_WRITE_ON )
+					float DeviceDepth = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
+				#endif
 
 				#ifdef _ALPHATEST_ON
 					clip(Alpha - AlphaClipThreshold);
 				#endif
 
+				#if defined(ASE_CHANGES_WORLD_POS)
+					float3 positionOS = mul( GetWorldToObjectMatrix(),  float4( PositionWS, 1.0 ) ).xyz;
+					float3 previousPositionWS = mul( GetPrevObjectToWorldMatrix(),  float4( positionOS, 1.0 ) ).xyz;
+					input.positionCSNoJitter = mul( _NonJitteredViewProjMatrix, float4( PositionWS, 1.0 ) );
+					input.previousPositionCSNoJitter = mul( _PrevViewProjMatrix, float4( previousPositionWS, 1.0 ) );
+				#endif
+
 				#if defined(LOD_FADE_CROSSFADE)
 					LODFadeCrossFade( input.positionCS );
+				#endif
+
+				#if defined( ASE_DEPTH_WRITE_ON )
+					outputDepth = DeviceDepth;
 				#endif
 
 				#if defined(APLICATION_SPACE_WARP_MOTION)
@@ -3970,7 +4012,233 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				#else
 					return float4( CalcNdcMotionVectorFromCsPositions( input.positionCSNoJitter, input.previousPositionCSNoJitter ), 0, 0 );
 				#endif
-			}		
+			}
+			ENDHLSL
+		}
+
+		/*ase_pass*/
+		Pass
+		{
+			/*ase_hide_pass*/
+			Name "XRMotionVectors"
+			Tags
+			{
+				"LightMode" = "XRMotionVectors"
+			}
+
+			ColorMask RGBA
+
+			Stencil
+			{
+				WriteMask 1
+				Ref 1
+				Comp Always
+				Pass Replace
+			}
+
+			HLSLPROGRAM
+
+			#pragma vertex vert
+			#pragma fragment frag
+
+			#define APLICATION_SPACE_WARP_MOTION 1
+
+			#if defined(_SPECULAR_SETUP) && defined(ASE_LIGHTING_SIMPLE)
+				#define _SPECULAR_COLOR 1
+			#endif
+
+            #define SHADERPASS SHADERPASS_MOTION_VECTORS
+
+            #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
+			#include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/RenderingLayers.hlsl"
+		    #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
+		    #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Texture.hlsl"
+		    #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+		    #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+		    #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Input.hlsl"
+		    #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/TextureStack.hlsl"
+            #include_with_pragmas "Packages/com.unity.render-pipelines.core/ShaderLibrary/FoveatedRenderingKeywords.hlsl"
+            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/FoveatedRendering.hlsl"
+            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/DebugMipmapStreamingMacros.hlsl"
+		    #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ShaderGraphFunctions.hlsl"
+		    #include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/ShaderPass.hlsl"
+
+			#if defined(LOD_FADE_CROSSFADE)
+				#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
+			#endif
+
+			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/MotionVectorsCommon.hlsl"
+
+			/*ase_pragma*/
+
+			#if defined(ASE_EARLY_Z_DEPTH_OPTIMIZE) && (SHADER_TARGET >= 45)
+				#define ASE_SV_DEPTH SV_DepthLessEqual
+				#define ASE_SV_POSITION_QUALIFIERS linear noperspective centroid
+			#else
+				#define ASE_SV_DEPTH SV_Depth
+				#define ASE_SV_POSITION_QUALIFIERS
+			#endif
+
+			struct Attributes
+			{
+				float4 positionOS : POSITION;
+				float3 positionOld : TEXCOORD4;
+				#if _ADD_PRECOMPUTED_VELOCITY
+					float3 alembicMotionVector : TEXCOORD5;
+				#endif
+				half3 normalOS : NORMAL;
+				half4 tangentOS : TANGENT;
+				/*ase_vdata:p=p;n=n;t=t;uv4=tc4;uv5=tc5*/
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+			};
+
+			struct PackedVaryings
+			{
+				float4 positionCS : SV_POSITION;
+				float4 positionCSNoJitter : TEXCOORD0;
+				float4 previousPositionCSNoJitter : TEXCOORD1;
+				float3 positionWS : TEXCOORD2;
+				/*ase_interp(3,):sp=sp.xyzw*/
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+				UNITY_VERTEX_OUTPUT_STEREO
+			};
+
+			CBUFFER_START(UnityPerMaterial)
+			#ifdef ASE_TRANSMISSION
+				float _TransmissionShadow;
+			#endif
+			#ifdef ASE_TRANSLUCENCY
+				float _TransStrength;
+				float _TransNormal;
+				float _TransScattering;
+				float _TransDirect;
+				float _TransAmbient;
+				float _TransShadow;
+			#endif
+			#ifdef ASE_TESSELLATION
+				float _TessPhongStrength;
+				float _TessValue;
+				float _TessMin;
+				float _TessMax;
+				float _TessEdgeLength;
+				float _TessMaxDisp;
+			#endif
+			CBUFFER_END
+
+			#ifdef SCENEPICKINGPASS
+				float4 _SelectionID;
+			#endif
+
+			#ifdef SCENESELECTIONPASS
+				int _ObjectId;
+				int _PassValue;
+			#endif
+
+			/*ase_globals*/
+
+			/*ase_funcs*/
+
+			PackedVaryings VertexFunction( Attributes input /*ase_vert_input*/ )
+			{
+				PackedVaryings output = (PackedVaryings)0;
+				UNITY_SETUP_INSTANCE_ID(input);
+				UNITY_TRANSFER_INSTANCE_ID(input, output);
+				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
+
+				/*ase_vert_code:input=Attributes;output=PackedVaryings*/
+
+				#ifdef ASE_ABSOLUTE_VERTEX_POS
+					float3 defaultVertexValue = input.positionOS.xyz;
+				#else
+					float3 defaultVertexValue = float3(0, 0, 0);
+				#endif
+
+				float3 vertexValue = /*ase_vert_out:Vertex Offset;Float3;8;-1;_Vertex*/defaultVertexValue/*end*/;
+
+				#ifdef ASE_ABSOLUTE_VERTEX_POS
+					input.positionOS.xyz = vertexValue;
+				#else
+					input.positionOS.xyz += vertexValue;
+				#endif
+
+				VertexPositionInputs vertexInput = GetVertexPositionInputs( input.positionOS.xyz );
+
+				#if defined(APLICATION_SPACE_WARP_MOTION)
+					output.positionCSNoJitter = mul(_NonJitteredViewProjMatrix, mul(UNITY_MATRIX_M, input.positionOS));;
+					output.positionCS = output.positionCSNoJitter;
+				#else
+					output.positionCS = vertexInput.positionCS;
+					output.positionCSNoJitter = mul(_NonJitteredViewProjMatrix, mul(UNITY_MATRIX_M, input.positionOS));
+				#endif
+
+				float4 prevPos = ( unity_MotionVectorsParams.x == 1 ) ? float4( input.positionOld, 1 ) : input.positionOS;
+
+				#if _ADD_PRECOMPUTED_VELOCITY
+					prevPos = prevPos - float4(input.alembicMotionVector, 0);
+				#endif
+
+				output.previousPositionCSNoJitter = mul( _PrevViewProjMatrix, mul( UNITY_PREV_MATRIX_M, prevPos ) );
+
+				output.positionWS = vertexInput.positionWS;
+
+				// removed in ObjectMotionVectors.hlsl found in unity 6000.0.23 and higher
+				//ApplyMotionVectorZBias( output.positionCS );
+				return output;
+			}
+
+			PackedVaryings vert ( Attributes input )
+			{
+				return VertexFunction( input );
+			}
+
+			half4 frag(	PackedVaryings input
+				#if defined( ASE_DEPTH_WRITE_ON )
+				,out float outputDepth : ASE_SV_DEPTH
+				#endif
+				/*ase_frag_input*/ ) : SV_Target
+			{
+				UNITY_SETUP_INSTANCE_ID(input);
+				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX( input );
+
+				/*ase_local_var:wp*/float3 PositionWS = input.positionWS;
+				/*ase_local_var:rwp*/float3 PositionRWS = GetCameraRelativePositionWS( PositionWS );
+				/*ase_local_var:spn*/float4 ScreenPosNorm = float4( GetNormalizedScreenSpaceUV( input.positionCS ), input.positionCS.zw );
+				/*ase_local_var:sp*/float4 ClipPos = ComputeClipSpacePosition( ScreenPosNorm.xy, input.positionCS.z ) * input.positionCS.w;
+
+				/*ase_frag_code:input=PackedVaryings*/
+
+				float Alpha = /*ase_frag_out:Alpha;Float;6;-1;_Alpha*/1/*end*/;
+				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/0.5/*end*/;
+
+				#if defined( ASE_DEPTH_WRITE_ON )
+					float DeviceDepth = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
+				#endif
+
+				#ifdef _ALPHATEST_ON
+					clip(Alpha - AlphaClipThreshold);
+				#endif
+
+				#if defined(ASE_CHANGES_WORLD_POS)
+					float3 positionOS = mul( GetWorldToObjectMatrix(),  float4( PositionWS, 1.0 ) ).xyz;
+					float3 previousPositionWS = mul( GetPrevObjectToWorldMatrix(),  float4( positionOS, 1.0 ) ).xyz;
+					input.positionCSNoJitter = mul( _NonJitteredViewProjMatrix, float4( PositionWS, 1.0 ) );
+					input.previousPositionCSNoJitter = mul( _PrevViewProjMatrix, float4( previousPositionWS, 1.0 ) );
+				#endif
+
+				#if defined(LOD_FADE_CROSSFADE)
+					LODFadeCrossFade( input.positionCS );
+				#endif
+
+				#if defined( ASE_DEPTH_WRITE_ON )
+					outputDepth = DeviceDepth;
+				#endif
+
+				#if defined(APLICATION_SPACE_WARP_MOTION)
+					return float4( CalcAswNdcMotionVectorFromCsPositions( input.positionCSNoJitter, input.previousPositionCSNoJitter ), 1 );
+				#else
+					return float4( CalcNdcMotionVectorFromCsPositions( input.positionCSNoJitter, input.previousPositionCSNoJitter ), 0, 0 );
+				#endif
+			}
 			ENDHLSL
 		}
 		/*ase_pass_end*/
@@ -3979,3 +4247,4 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 	CustomEditor "UnityEditor.ShaderGraphLitGUI"
 	FallBack "Hidden/Shader Graph/FallbackError"
 }
+

@@ -10,6 +10,7 @@ namespace Obi
         public int initializeKernel;
         public int projectKernel;
         public int applyKernel;
+        public int projectRenderableKernel;
 
         public ComputePinConstraints(ComputeSolverImpl solver) : base(solver, Oni.ConstraintType.Pin)
         {
@@ -18,6 +19,7 @@ namespace Obi
             initializeKernel = constraintsShader.FindKernel("Initialize");
             projectKernel = constraintsShader.FindKernel("Project");
             applyKernel = constraintsShader.FindKernel("Apply");
+            projectRenderableKernel = constraintsShader.FindKernel("ProjectRenderable");
         }
 
         public override IConstraintsBatchImpl CreateConstraintsBatch()
@@ -43,6 +45,17 @@ namespace Obi
         {
             foreach (var batch in batches)
                 batch.WaitForReadback();
+        }
+
+        public void ProjectRenderablePositions()
+        {
+            for (int i = 0; i < batches.Count; ++i)
+            {
+                if (batches[i].enabled)
+                {
+                    batches[i].ProjectRenderablePositions();
+                }
+            }
         }
     }
 }

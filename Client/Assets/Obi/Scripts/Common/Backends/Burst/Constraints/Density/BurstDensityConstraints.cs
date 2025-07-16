@@ -71,17 +71,18 @@ namespace Obi
             {
                 fluidParticles = fluidParticles,
                 positions = m_Solver.positions,
-                orientations = m_Solver.orientations,
-                prevOrientations = m_Solver.prevOrientations,
                 deltas = m_Solver.positionDeltas,
                 counts = m_Solver.positionConstraintCounts,
                 anisotropies = m_Solver.anisotropies,
-                normals = m_Solver.normals
+                normals = m_Solver.normals,
+                fluidData = m_Solver.fluidData,
+                matchingRotations = m_Solver.orientationDeltas, 
+                linearFromAngular = m_Solver.restPositions,
             };
 
             inputDeps = app.Schedule(fluidParticles.Length, 64, inputDeps);
 
-            // apply density positional deltas::
+            // apply density positional deltas:
             for (int i = 0; i < batches.Count; ++i)
             {
                 if (batches[i].enabled)
@@ -94,7 +95,7 @@ namespace Obi
             return inputDeps;
         }
 
-        public JobHandle ApplyVelocityCorrections(JobHandle inputDeps, float deltaTime)
+        public JobHandle CalculateVelocityCorrections(JobHandle inputDeps, float deltaTime)
         {
             for (int i = 0; i < batches.Count; ++i)
             {
@@ -105,6 +106,11 @@ namespace Obi
                 }
             }
 
+            return inputDeps;
+        }
+
+        public JobHandle ApplyVelocityCorrections(JobHandle inputDeps, float deltaTime)
+        {
             inputDeps = ApplyAtmosphere(inputDeps, deltaTime);
             m_Solver.ScheduleBatchedJobsIfNeeded();
 
@@ -170,12 +176,12 @@ namespace Obi
         private JobHandle CalculateLambdas(JobHandle inputDeps, float deltaTime)
         {
             // calculate lagrange multipliers:
-            var calculateLambdas = new CalculateLambdasJob()
+            var calculateLambdas = new CalculateLambdasJob
             {
                 fluidParticles = fluidParticles,
                 positions = m_Solver.positions,
                 prevPositions = m_Solver.prevPositions,
-                orientations = m_Solver.orientations,
+                matchingRotations = m_Solver.restPositions.Reinterpret<quaternion>(),
                 principalRadii = m_Solver.principalRadii,
                 fluidMaterials = m_Solver.fluidMaterials,
                 densityKernel = new Poly6Kernel(m_Solver.abstraction.parameters.mode == Oni.SolverParameters.Mode.Mode2D),
@@ -197,16 +203,24 @@ namespace Obi
 
         private JobHandle ApplyAtmosphere(JobHandle inputDeps, float deltaTime)
         {
-            var conf = new ApplyAtmosphereJob()
+            var conf = new ApplyAtmosphereJob
             {
                 fluidParticles = fluidParticles,
                 wind = m_Solver.wind,
                 fluidInterface = m_Solver.fluidInterface,
-                fluidMaterials = m_Solver.fluidMaterials,
+                fluidMaterials2 = m_Solver.fluidMaterials2,
                 principalRadii = m_Solver.principalRadii,
                 normals = m_Solver.normals,
                 fluidData = m_Solver.fluidData,
                 velocities = m_Solver.velocities,
+                angularVelocities = m_Solver.angularVelocities,
+                vorticity = m_Solver.restOrientations.Reinterpret<float4>(),
+                vorticityAccelerations = m_Solver.orientationDeltas.Reinterpret<float4>(),
+                linearAccelerations = m_Solver.positionDeltas,
+                linearFromAngular = m_Solver.restPositions,
+                angularDiffusion = m_Solver.anisotropies,
+                positions = m_Solver.positions,
+                prevPositions = m_Solver.prevPositions,
                 dt = deltaTime,
                 solverParams = m_Solver.abstraction.parameters
             };
@@ -238,6 +252,7 @@ namespace Obi
                 maxAnisotropy = m_Solver.abstraction.parameters.maxAnisotropy,
                 renderableRadii = m_Solver.renderableRadii,
                 fluidData = m_Solver.fluidData,
+                life = m_Solver.life,
                 solverParams = m_Solver.abstraction.parameters
             };
 
@@ -313,7 +328,7 @@ namespace Obi
             [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<float4> massCenters;
             [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<float4> prevMassCenters;
             [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<float4x4> moments;
-            [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<quaternion> orientations;
+            [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<quaternion> matchingRotations;
 
             [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<float4> deltas;
             [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<int> counts;
@@ -335,7 +350,7 @@ namespace Obi
                 // usually, we'd weight density by mass (density contrast formulation) by dividing by invMass. Then, multiply by invMass when
                 // calculating the state equation (density / restDensity - 1, restDensity = mass / volume, so density * invMass * restVolume - 1
                 // We end up with density / invMass * invMass * restVolume - 1, invMass cancels out.
-                float constraint = math.max(0, data[0] * restVolume - 1);
+                float constraint = math.max(0, data[0] * restVolume - 1) * fluidMaterials[i].w;
 
                 // calculate lambda:
                 data[1] = -constraint / (positions[i].w * data[3] + math.FLT_MIN_NORMAL);
@@ -348,17 +363,15 @@ namespace Obi
                 prevMassCenters[i] /= prevMassCenters[i][3];
 
                 // update moments:
-                moments[i] += (BurstMath.multrnsp4(positions[i], prevPositions[i]) + float4x4.identity * math.pow(principalRadii[i].x, 2) * 0.2f) / positions[i].w;
+                moments[i] += (BurstMath.multrnsp4(positions[i], prevPositions[i]) + float4x4.identity * math.pow(principalRadii[i].x, 2) * 0.001f) / positions[i].w;
                 moments[i] -= M * BurstMath.multrnsp4(massCenters[i], prevMassCenters[i]);
 
                 // extract neighborhood orientation delta:
-                orientations[i] = BurstMath.ExtractRotation(moments[i], quaternion.identity, 2);
+                matchingRotations[i] = BurstMath.ExtractRotation(moments[i], quaternion.identity, 5);
 
                 // viscosity and vorticity:
-                float4 viscGoal = new float4(massCenters[i].xyz + math.rotate(orientations[i], (prevPositions[i] - prevMassCenters[i]).xyz), 0);
-                float4 vortGoal = new float4(massCenters[i].xyz + math.rotate(orientations[i], (positions[i] - massCenters[i]).xyz), 0);
+                float4 viscGoal = new float4(massCenters[i].xyz + math.rotate(matchingRotations[i], (prevPositions[i] - prevMassCenters[i]).xyz), 0);
                 deltas[i] += (viscGoal - positions[i]) * fluidMaterials[i].z;
-                deltas[i] += (vortGoal - positions[i]) * fluidMaterials[i].w * 0.1f;
 
                 counts[i]++;
             }
@@ -372,11 +385,11 @@ namespace Obi
             [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<float4> deltas;
             [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<int> counts;
 
-            [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<quaternion> orientations;
-            [ReadOnly] public NativeArray<quaternion> prevOrientations;
-
             [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<float4> normals;
             [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<float4x4> anisotropies;
+            [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<quaternion> matchingRotations;
+            [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<float4> linearFromAngular;
+            [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<float4> fluidData;
 
             public void Execute(int p)
             {
@@ -391,8 +404,13 @@ namespace Obi
 
                 normals[i] = float4.zero;
                 anisotropies[i] = float4x4.zero;
+                linearFromAngular[i] = float4.zero;
+                matchingRotations[i] = new quaternion(0, 0, 0, 0);
 
-                orientations[i] = math.mul(orientations[i], prevOrientations[i]);
+                // zero out fluidData.z in preparation to accumulate relative velocity.
+                float4 data = fluidData[i];
+                data.z = 0;
+                fluidData[i] = data;
             }
         }
 
@@ -402,11 +420,20 @@ namespace Obi
             [ReadOnly] public NativeList<int> fluidParticles;
             [ReadOnly] public NativeArray<float4> wind;
             [ReadOnly] public NativeArray<float4> fluidInterface;
-            [ReadOnly] public NativeArray<float4> fluidMaterials;
+            [ReadOnly] public NativeArray<float4> fluidMaterials2;
             [ReadOnly] public NativeArray<float4> principalRadii;
             [ReadOnly] public NativeArray<float4> normals;
             [ReadOnly] public NativeArray<float4> fluidData;
+            [ReadOnly] public NativeArray<float4> linearFromAngular;
 
+            [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<float4> positions;
+            [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<float4> prevPositions;
+            [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<float4> linearAccelerations;
+            [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<float4> vorticityAccelerations;
+            [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<float4> vorticity;
+            [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<float4x4> angularDiffusion;
+
+            [NativeDisableContainerSafetyRestriction][NativeDisableParallelForRestriction] public NativeArray<float4> angularVelocities;
             [NativeDisableContainerSafetyRestriction][NativeDisableParallelForRestriction] public NativeArray<float4> velocities;
 
             [ReadOnly] public float dt;
@@ -426,6 +453,23 @@ namespace Obi
 
                 // ambient pressure:
                 velocities[i] += fluidInterface[i].y * normals[i] * dt;
+
+                // angular accel due to baroclinity:
+                angularVelocities[i] += new float4(fluidMaterials2[i].z * math.cross(-normals[i].xyz, -velocityDiff.xyz), 0) * dt;
+                angularVelocities[i] -= fluidMaterials2[i].w * angularDiffusion[i].c0;
+
+                // micropolar vorticity:
+                velocities[i] += fluidMaterials2[i].x * linearAccelerations[i] * dt;
+                vorticity[i] += fluidMaterials2[i].x * (vorticityAccelerations[i] * 0.5f - vorticity[i]) * dt;
+                vorticity[i] -= fluidMaterials2[i].y * angularDiffusion[i].c1;
+
+                linearAccelerations[i] = float4.zero;
+                vorticityAccelerations[i] = float4.zero;
+                angularDiffusion[i] = float4x4.zero;
+
+                // we want to add together linear and angular velocity fields and use result to advect particles without modifying either field:
+                positions[i] += new float4(linearFromAngular[i].xyz * dt,0);
+                prevPositions[i] += new float4(linearFromAngular[i].xyz * dt, 0);
             }
         }
 
@@ -459,6 +503,7 @@ namespace Obi
             [ReadOnly] public NativeArray<float4> principalRadii;
             [ReadOnly] public float maxAnisotropy;
             [ReadOnly] public NativeArray<float4x4> anisotropies;
+            [ReadOnly] public NativeArray<float> life;
 
             [NativeDisableContainerSafetyRestriction][NativeDisableParallelForRestriction] public NativeArray<float4> fluidData;
             [NativeDisableContainerSafetyRestriction][NativeDisableParallelForRestriction] public NativeArray<float4> renderablePositions;
@@ -495,6 +540,12 @@ namespace Obi
                 }
 
                 renderablePositions[i] = math.lerp(renderablePositions[i], anisotropies[i].c3, math.min((maxAnisotropy - 1)/3.0f,1));
+
+                // inactive particles have radii.w == 0, set it right away for particles killed during this frame 
+                // to keep them from being rendered during this frame instead of waiting to do it at the start of next sim step:
+                float4 radii = renderableRadii[i];
+                radii.w = life[i] <= 0 ? 0 : radii.w;
+                renderableRadii[i] = radii;
             }
         }
     }

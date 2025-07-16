@@ -18,7 +18,6 @@ namespace Game
         public ReactiveProperty<Vector2> inputMoveVec = new();
         public ReactiveProperty<Vector3> inputLookVec = new();
         public ReactiveProperty<JellyMeshController> boundJellyMesh = new();
-        public HashSet<InteractionKeyController> interactionKeyCtrlers = new();
 
         [Header("Possess")]
         public StringReactiveProperty playerName = new();
@@ -647,7 +646,8 @@ namespace Game
 
             if (value.isPressed)
             {
-                var pressedCtrler = interactionKeyCtrlers.AsValueEnumerable().FirstOrDefault(i => i.PreprocessKeyDown());
+                var pressedCtrler = GameContext.Instance.interactionKeyCtrlers.AsValueEnumerable().FirstOrDefault(i => i.PreprocessKeyDown());
+
                 if (pressedCtrler == null)
                     return;
 
@@ -657,7 +657,15 @@ namespace Game
                         possessedBrain.ActionCtrler.CancelAction(false);
 
                     possessedBrain.ActionCtrler.SetPendingAction("Chainsaw");
-                    
+                    pressedCtrler.HideAsObservable().Subscribe(_ => pressedCtrler.Unload()).AddTo(this);
+                }
+                else if (pressedCtrler.commandName == "Assault")
+                {
+                    if (possessedBrain.ActionCtrler.CheckActionRunning())
+                        possessedBrain.ActionCtrler.CancelAction(false);
+
+                    // possessedBrain.droneBotFormationCtrler.PickDroneBot().ActionCtrler.SetPendingAction("Assault", "Assault", string.Empty, 0f);
+                    possessedBrain.droneBotFormationCtrler.PickDroneBot().ActionCtrler.SetPendingAction("Assault");
                     pressedCtrler.HideAsObservable().Subscribe(_ => pressedCtrler.Unload()).AddTo(this);
                 }
                 else if (pressedCtrler.commandName == "RunLine")

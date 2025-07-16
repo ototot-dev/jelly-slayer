@@ -5,6 +5,7 @@
 #include "CollisionMaterial.cginc"
 #include "Integration.cginc"
 #include "AtomicDeltas.cginc"
+#include "FluidKernels.cginc"
 
 #pragma kernel Project
 #pragma kernel Apply
@@ -85,8 +86,8 @@ void Project (uint3 id : SV_DispatchThreadID)
     // Add particle angular velocity if rolling contacts are enabled:
     if (material.rollingContacts > 0)
     {
-        rA = -contacts[i].normal * simplexRadiusA;
-        relativeVelocity += float4(cross(angularVelocityA.xyz, rA.xyz), 0);
+        rA = -contacts[i].normal * simplexRadiusA;                          // for fluid particles:
+        relativeVelocity += float4(cross(angularVelocityA.xyz, rA.xyz), 0); //* (Poly6(contacts[i].dist,simplexRadiusA*6) / Poly6(0,simplexRadiusA*6));
     }
 
     // Subtract rigidbody velocity:

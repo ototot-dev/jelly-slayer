@@ -228,7 +228,7 @@ namespace AmplifyShaderEditor
 
 		public override string GetPropertyValue()
 		{
-			return PropertyAttributes + m_propertyName + "(\"" + m_propertyInspectorName + "\", Int) = " + m_defaultValue;
+			return PropertyAttributes + PropertyAttributesSeparator + m_propertyName + "( \"" + m_propertyInspectorName + "\", Int ) = " + m_defaultValue;
 		}
 
 		public override void UpdateMaterial( Material mat )

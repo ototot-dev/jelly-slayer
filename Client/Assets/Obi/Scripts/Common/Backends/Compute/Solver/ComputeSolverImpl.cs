@@ -61,6 +61,7 @@ namespace Obi
         private InertialFrame m_InertialFrame;
 
         // cached particle data arrays (just wrappers over raw unmanaged data held by the abstract solver)
+        public GraphicsBuffer deadIndicesBuffer;
         public GraphicsBuffer positionsBuffer;
         public GraphicsBuffer orientationsBuffer;
         public GraphicsBuffer startPositionsBuffer;
@@ -93,6 +94,7 @@ namespace Obi
         public GraphicsBuffer fluidDataBuffer;
         public GraphicsBuffer userDataBuffer;
         public GraphicsBuffer fluidMaterialsBuffer;
+        public GraphicsBuffer fluidMaterials2Buffer;
         public GraphicsBuffer fluidInterfaceBuffer;
         public GraphicsBuffer anisotropiesBuffer;
 
@@ -115,8 +117,10 @@ namespace Obi
         public GraphicsBuffer activeParticlesBuffer;
         public GraphicsBuffer fluidDispatchBuffer;
 
-        public GraphicsBuffer normalsIntBuffer;
         public GraphicsBuffer tangentsIntBuffer;
+
+        public GraphicsBuffer deformableEdgesBuffer;
+        public GraphicsBuffer deformableTrianglesBuffer;
 
         public GraphicsBuffer solverToWorldBuffer;
         public GraphicsBuffer worldToSolverBuffer;
@@ -144,10 +148,11 @@ namespace Obi
         private ComputeShader solverShader;
         private int applyInertialForcesKernel;
         private int applyRigidbodyDeltasKernel;
-        private int storeStartStateKernel;
         private int predictPositionsKernel;
         private int updateVelocitiesKernel;
         private int updatePositionsKernel;
+        private int updateLifetimesKernel;
+        private int enforceLimitsKernel;
         private int interpolateKernel;
 
         private ComputeShader boundsShader;
@@ -163,9 +168,11 @@ namespace Obi
 
         private ComputeShader foamShader;
         private int sortDataKernel;
+        private int emitShapeFoamKernel;
         private int emitFoamKernel;
         private int copyAliveKernel;
         private int updateFoamKernel;
+        private int integrateFoamKernel;
         private int copyKernel;
 
         private ComputeShader foamDensityShader;
@@ -174,6 +181,9 @@ namespace Obi
         private int sortByGridKernel;
         private int computeDensityKernel;
         private int applyDensityKernel;
+
+        private ComputeShader foamCollisionShader;
+        private int solveDiffuseContactsKernel;
 
         public ComputeSolverImpl(ObiSolver solver)
         {
@@ -194,10 +204,11 @@ namespace Obi
             solverShader = GameObject.Instantiate(Resources.Load<ComputeShader>("Compute/Solver"));
             applyInertialForcesKernel = solverShader.FindKernel("ApplyInertialForces");
             applyRigidbodyDeltasKernel = solverShader.FindKernel("ApplyRigidbodyDeltas");
-            storeStartStateKernel = solverShader.FindKernel("StoreStartState");
+            updateLifetimesKernel = solverShader.FindKernel("UpdateLifetimes");
             predictPositionsKernel = solverShader.FindKernel("PredictPositions");
             updateVelocitiesKernel = solverShader.FindKernel("UpdateVelocities");
             updatePositionsKernel = solverShader.FindKernel("UpdatePositions");
+            enforceLimitsKernel = solverShader.FindKernel("EnforceLimits");
             interpolateKernel = solverShader.FindKernel("Interpolate");
 
             boundsShader = GameObject.Instantiate(Resources.Load<ComputeShader>("Compute/BoundsReduction"));
@@ -213,10 +224,12 @@ namespace Obi
 
             foamShader = GameObject.Instantiate(Resources.Load<ComputeShader>("Compute/FluidFoam"));
             sortDataKernel = foamShader.FindKernel("SortFluidData");
+            emitShapeFoamKernel = foamShader.FindKernel("EmitShape");
             emitFoamKernel = foamShader.FindKernel("Emit");
             copyAliveKernel = foamShader.FindKernel("CopyAliveCount");
             updateFoamKernel = foamShader.FindKernel("Update");
             copyKernel = foamShader.FindKernel("Copy");
+            integrateFoamKernel = foamShader.FindKernel("Integrate");
 
             foamDensityShader = GameObject.Instantiate(Resources.Load<ComputeShader>("Compute/FluidFoamDensity"));
             clearGridKernel = foamDensityShader.FindKernel("Clear");
@@ -224,6 +237,9 @@ namespace Obi
             sortByGridKernel = foamDensityShader.FindKernel("SortByGrid");
             computeDensityKernel = foamDensityShader.FindKernel("ComputeDensity");
             applyDensityKernel = foamDensityShader.FindKernel("ApplyDensity");
+
+            foamCollisionShader = GameObject.Instantiate(Resources.Load<ComputeShader>("Compute/FluidFoamCollisions"));
+            solveDiffuseContactsKernel = foamCollisionShader.FindKernel("SolveDiffuseContacts");
 
             solverToWorldBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, 1, 48);
             solverToWorldArray = new AffineTransform[1];
@@ -255,6 +271,7 @@ namespace Obi
             constraints[(int)Oni.ConstraintType.BendTwist] = new ComputeBendTwistConstraints(this);
             constraints[(int)Oni.ConstraintType.StretchShear] = new ComputeStretchShearConstraints(this);
             constraints[(int)Oni.ConstraintType.Pin] = new ComputePinConstraints(this);
+            constraints[(int)Oni.ConstraintType.Pinhole] = new ComputePinholeConstraints(this);
             constraints[(int)Oni.ConstraintType.Skin] = new ComputeSkinConstraints(this);
             constraints[(int)Oni.ConstraintType.Aerodynamics] = new ComputeAerodynamicConstraints(this);
             constraints[(int)Oni.ConstraintType.Stitch] = new ComputeStitchConstraints(this);
@@ -303,7 +320,6 @@ namespace Obi
             rigidbodyLinearDeltasIntBuffer?.Dispose();
             rigidbodyAngularDeltasIntBuffer?.Dispose();
 
-            normalsIntBuffer?.Dispose();
             tangentsIntBuffer?.Dispose();
 
             simplexBounds?.Dispose();
@@ -342,6 +358,7 @@ namespace Obi
 
             abstraction.restPositions.Upload();
             abstraction.restOrientations.Upload();
+            abstraction.normals.Upload();
             abstraction.principalRadii.Upload();
             abstraction.invMasses.Upload();
             abstraction.invRotationalMasses.Upload();
@@ -349,7 +366,6 @@ namespace Obi
             abstraction.filters.Upload();
             abstraction.externalForces.Upload();
             abstraction.externalTorques.Upload();
-            abstraction.wind.WipeToValue(abstraction.parameters.ambientWind);
             abstraction.wind.Upload();
 
             abstraction.life.Upload();
@@ -357,6 +373,7 @@ namespace Obi
             abstraction.userData.Upload();
             abstraction.fluidInterface.Upload();
             abstraction.fluidMaterials.Upload();
+            abstraction.fluidMaterials2.Upload();
 
             rigidbodyLinearDeltasIntBuffer.SetData(abstraction.rigidbodyLinearDeltas.AsNativeArray<VInt4>());
             rigidbodyAngularDeltasIntBuffer.SetData(abstraction.rigidbodyAngularDeltas.AsNativeArray<VInt4>());
@@ -398,6 +415,10 @@ namespace Obi
             var pm = constraints[(int)Oni.ConstraintType.Pin] as ComputePinConstraints;
             if (pm != null)
                 pm.RequestDataReadback();
+
+            var phm = constraints[(int)Oni.ConstraintType.Pinhole] as ComputePinholeConstraints;
+            if (phm != null)
+                phm.RequestDataReadback();
         }
 
         public void InitializeFrame(Vector4 translation, Vector4 scale, Quaternion rotation)
@@ -441,11 +462,15 @@ namespace Obi
                 solverShader.SetVector("angularVel", angularVel);
                 solverShader.SetVector("eulerAccel", eulerAccel);
                 solverShader.SetVector("inertialAccel", inertialAccel);
+                solverShader.SetVector("ambientWind", abstraction.parameters.ambientWind);
+                solverShader.SetBool("inertialWind", abstraction.windSpace == Space.World);
 
                 solverShader.SetBuffer(applyInertialForcesKernel, "activeParticles", activeParticlesBuffer);
                 solverShader.SetBuffer(applyInertialForcesKernel, "positions", positionsBuffer);
                 solverShader.SetBuffer(applyInertialForcesKernel, "velocities", velocitiesBuffer);
                 solverShader.SetBuffer(applyInertialForcesKernel, "invMasses", invMassesBuffer);
+                solverShader.SetBuffer(applyInertialForcesKernel, "wind", windBuffer);
+                solverShader.SetBuffer(applyInertialForcesKernel, "inertialSolverFrame", inertialFrameBuffer);
 
                 solverShader.Dispatch(applyInertialForcesKernel, threadGroups, 1, 1);
             }
@@ -457,7 +482,7 @@ namespace Obi
         {
             if (indices.count > 0)
             {
-                var deformableTrianglesBuffer = indices.AsComputeBuffer<int>();
+                deformableTrianglesBuffer = indices.AsComputeBuffer<int>();
                 var deformableUVsBuffer = uvs.AsComputeBuffer<Vector2>();
 
                 deformableTrisShader.SetBuffer(updateNormalsKernel, "deformableTriangles", deformableTrianglesBuffer);
@@ -470,7 +495,7 @@ namespace Obi
         {
             if (indices.count > 0)
             {
-                var deformableEdgesBuffer = indices.AsComputeBuffer<int>();
+                deformableEdgesBuffer = indices.AsComputeBuffer<int>();
 
                 deformableTrisShader.SetBuffer(updateEdgeNormalsKernel, "deformableEdges", deformableEdgesBuffer);
                 deformableTrisShader.SetInt("edgeCount", deformableEdgeCount);
@@ -546,6 +571,7 @@ namespace Obi
                 solverShader.SetBuffer(predictPositionsKernel, "activeParticles", activeParticlesBuffer);
                 solverShader.SetBuffer(updateVelocitiesKernel, "activeParticles", activeParticlesBuffer);
                 solverShader.SetBuffer(updatePositionsKernel, "activeParticles", activeParticlesBuffer);
+                solverShader.SetBuffer(enforceLimitsKernel, "activeParticles", activeParticlesBuffer);
             }
         }
 
@@ -554,6 +580,8 @@ namespace Obi
             if (activeParticleCount > 0 && reducedBounds != null)
             {
                 boundsShader.SetFloat("deltaTime", stepTime);
+                boundsShader.SetFloat("collisionMargin", abstraction.parameters.collisionMargin);
+                boundsShader.SetFloat("particleCCD", abstraction.parameters.particleCCD);
 
                 int boundsCount = simplexCounts.simplexCount;
                 int threadGroups = ComputeMath.ThreadGroupCount(boundsCount, 256);
@@ -597,6 +625,13 @@ namespace Obi
                 while (threadGroups > 1);
 
                 boundsRequest = AsyncGPUReadback.Request(reducedBounds, 32, 0);
+
+                // update lifetimes:
+                solverShader.SetFloat("deltaTime",stepTime);
+                solverShader.SetBuffer(updateLifetimesKernel, "activeParticles", activeParticlesBuffer);
+                solverShader.SetBuffer(updateLifetimesKernel, "life", lifeBuffer);
+                solverShader.SetBuffer(updateLifetimesKernel, "deadParticles", deadIndicesBuffer);
+                solverShader.Dispatch(updateLifetimesKernel, ComputeMath.ThreadGroupCount(activeParticleCount, 128), 1, 1);
             }
 
             return inputDeps;
@@ -650,6 +685,7 @@ namespace Obi
 
         public void ParticleCountChanged(ObiSolver solver)
         {
+            deadIndicesBuffer = abstraction.deadParticles.AsComputeBuffer<int>(abstraction.deadParticles.capacity, GraphicsBuffer.Target.Counter);
             colorsBuffer = abstraction.colors.AsComputeBuffer<Vector4>();
             positionsBuffer = abstraction.positions.AsComputeBuffer<Vector4>();
             orientationsBuffer = abstraction.orientations.AsComputeBuffer<Quaternion>();
@@ -683,6 +719,7 @@ namespace Obi
             userDataBuffer = abstraction.userData.AsComputeBuffer<Vector4>();
             fluidInterfaceBuffer = abstraction.fluidInterface.AsComputeBuffer<Vector4>();
             fluidMaterialsBuffer = abstraction.fluidMaterials.AsComputeBuffer<Vector4>();
+            fluidMaterials2Buffer = abstraction.fluidMaterials2.AsComputeBuffer<Vector4>();
             anisotropiesBuffer = abstraction.anisotropies.AsComputeBuffer<Matrix4x4>();
 
             normalsBuffer = abstraction.normals.AsComputeBuffer<Vector4>();
@@ -713,12 +750,6 @@ namespace Obi
                 orientationDeltasIntBuffer.SetData(new Vector4[abstraction.orientationDeltas.count]);
             }
 
-            if (normalsIntBuffer != null)
-            {
-                normalsIntBuffer.Dispose();
-                normalsIntBuffer = null;
-            }
-
             if (tangentsIntBuffer != null)
             {
                 tangentsIntBuffer.Dispose();
@@ -727,12 +758,8 @@ namespace Obi
 
             if (abstraction.normals.count > 0)
             {
-                var zeroes = new VInt4[abstraction.normals.count];
-                normalsIntBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, abstraction.normals.count, abstraction.normals.stride);
-                normalsIntBuffer.SetData(zeroes);
-
                 tangentsIntBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, abstraction.normals.count, abstraction.normals.stride);
-                tangentsIntBuffer.SetData(zeroes);
+                tangentsIntBuffer.SetData(new VInt4[abstraction.normals.count]);
             }
 
             if (positionsBuffer != null) solverShader.SetBuffer(predictPositionsKernel, "positions", positionsBuffer);
@@ -764,23 +791,21 @@ namespace Obi
             if (velocitiesBuffer != null) solverShader.SetBuffer(updatePositionsKernel, "velocities", velocitiesBuffer);
             if (angularVelocitiesBuffer != null) solverShader.SetBuffer(updatePositionsKernel, "angularVelocities", angularVelocitiesBuffer);
 
+            if (positionsBuffer != null) solverShader.SetBuffer(enforceLimitsKernel, "positions", positionsBuffer);
+            if (prevPositionsBuffer != null) solverShader.SetBuffer(enforceLimitsKernel, "prevPositions", prevPositionsBuffer);
+            if (lifeBuffer != null) solverShader.SetBuffer(enforceLimitsKernel, "life", lifeBuffer);
+            if (phasesBuffer != null) solverShader.SetBuffer(enforceLimitsKernel, "phases", phasesBuffer);
+
             if (positionsBuffer != null) solverShader.SetBuffer(interpolateKernel, "positions", positionsBuffer);
-            if (startPositionsBuffer != null) solverShader.SetBuffer(interpolateKernel, "R_startPositions", startPositionsBuffer);
-            if (endPositionsBuffer != null) solverShader.SetBuffer(interpolateKernel, "R_endPositions", endPositionsBuffer);
+            if (startPositionsBuffer != null) solverShader.SetBuffer(interpolateKernel, "startPositions", startPositionsBuffer);
+            if (endPositionsBuffer != null) solverShader.SetBuffer(interpolateKernel, "endPositions", endPositionsBuffer);
             if (renderablePositionsBuffer != null) solverShader.SetBuffer(interpolateKernel, "renderablePositions", renderablePositionsBuffer);
             if (orientationsBuffer != null) solverShader.SetBuffer(interpolateKernel, "orientations", orientationsBuffer);
-            if (startOrientationsBuffer != null) solverShader.SetBuffer(interpolateKernel, "R_startOrientations", startOrientationsBuffer);
-            if (endOrientationsBuffer != null) solverShader.SetBuffer(interpolateKernel, "R_endOrientations", endOrientationsBuffer);
+            if (startOrientationsBuffer != null) solverShader.SetBuffer(interpolateKernel, "startOrientations", startOrientationsBuffer);
+            if (endOrientationsBuffer != null) solverShader.SetBuffer(interpolateKernel, "endOrientations", endOrientationsBuffer);
             if (renderableOrientationsBuffer != null) solverShader.SetBuffer(interpolateKernel, "renderableOrientations", renderableOrientationsBuffer);
             if (principalRadiiBuffer != null) solverShader.SetBuffer(interpolateKernel, "principalRadii", principalRadiiBuffer);
             if (renderableRadiiBuffer != null) solverShader.SetBuffer(interpolateKernel, "renderableRadii", renderableRadiiBuffer);
-
-            if (positionsBuffer != null) solverShader.SetBuffer(storeStartStateKernel, "positions", positionsBuffer);
-            if (startPositionsBuffer != null) solverShader.SetBuffer(storeStartStateKernel, "startPositions", startPositionsBuffer);
-            if (endPositionsBuffer != null) solverShader.SetBuffer(storeStartStateKernel, "endPositions", endPositionsBuffer);
-            if (orientationsBuffer != null) solverShader.SetBuffer(storeStartStateKernel, "orientations", orientationsBuffer);
-            if (startOrientationsBuffer != null) solverShader.SetBuffer(storeStartStateKernel, "startOrientations", startOrientationsBuffer);
-            if (endOrientationsBuffer != null) solverShader.SetBuffer(storeStartStateKernel, "endOrientations", endOrientationsBuffer);
         }
 
         public void MaxFoamParticleCountChanged(ObiSolver solver)
@@ -869,6 +894,10 @@ namespace Obi
             if (pm != null)
                 pm.WaitForReadback();
 
+            var phm = constraints[(int)Oni.ConstraintType.Pinhole] as ComputePinholeConstraints;
+            if (phm != null)
+                phm.WaitForReadback();
+
             abstraction.externalForces.WipeToZero();
             abstraction.externalTorques.WipeToZero();
             abstraction.externalForces.Upload();
@@ -892,7 +921,7 @@ namespace Obi
 
             if (particleCollisionParameters.enabled ||
                 densityParameters.enabled)            {
-                UpdateFoamDensity();
+                UpdateDiffuseDensity(stepTime);
 
                 UnityEngine.Profiling.Profiler.BeginSample("Build Simplex Grid");
                 particleGrid.BuildGrid(this, stepTime);
@@ -927,44 +956,65 @@ namespace Obi
 
         public IObiJobHandle Substep(IObiJobHandle handle, float stepTime, float substepTime, int steps, float timeLeft)
         {
+            int threadGroups = ComputeMath.ThreadGroupCount(activeParticleCount, 128);
+            solverShader.SetInt("particleCount", activeParticleCount);
+
             // if there's no active particles yet, don't do anything:
             if (activeParticleCount > 0)
             {
-                int threadGroups = ComputeMath.ThreadGroupCount(activeParticleCount, 128);
-                solverShader.SetInt("particleCount", activeParticleCount);
-
                 solverShader.SetFloat("deltaTime", substepTime);
                 solverShader.SetFloat("velocityScale", Mathf.Pow(1 - Mathf.Clamp(m_Solver.parameters.damping, 0, 1), substepTime));
-
-                // Apply aerodynamics
-                constraints[(int)Oni.ConstraintType.Aerodynamics].Project(stepTime, substepTime, steps, timeLeft);
 
                 // Predict positions:
                 solverShader.Dispatch(predictPositionsKernel, threadGroups, 1, 1);
 
                 ApplyConstraints(stepTime, substepTime, steps, timeLeft);
 
-                // Update velocities;
+                EnforceLimits(threadGroups);
+
+                // Update velocities:
                 solverShader.Dispatch(updateVelocitiesKernel, threadGroups, 1, 1);
 
-                // Postprocess velocities:
-                ApplyVelocityCorrections(substepTime);
-
-                // Update positions:
-                solverShader.Dispatch(updatePositionsKernel, threadGroups, 1, 1);
+                // Calculate velocity adjustments (forces, etc):
+                CalculateVelocityCorrections(stepTime, substepTime, steps, timeLeft);
             }
 
-            // Update diffuse particles:
+            // Update diffuse particles: (need to have calculated velocity corrections first, to measure vorticity/velocity)
             int substepsLeft = Mathf.RoundToInt(timeLeft / substepTime);
             int foamPadding = Mathf.CeilToInt(abstraction.substeps / (float)abstraction.foamSubsteps);
 
             if (substepsLeft % foamPadding == 0)
+            {
                 UpdateDiffuseParticles(substepTime * foamPadding);
+                UpdateDiffuseCollisions(substepTime * foamPadding);
+                IntegrateDiffuseParticles(substepTime * foamPadding);
+            }
+
+            // Update particle positions:
+            if (activeParticleCount > 0)
+            {
+                UpdatePositions(substepTime, threadGroups);
+            }
 
             return handle;
         }
 
-        private void ApplyVelocityCorrections(float deltaTime)
+        private void CalculateVelocityCorrections(float stepTime, float substepTime, int steps, float timeLeft)
+        {
+            // Apply aerodynamic constraints:
+            constraints[(int)Oni.ConstraintType.Aerodynamics].Project(stepTime, substepTime, steps, timeLeft);
+
+            var densityParameters = m_Solver.GetConstraintParameters(Oni.ConstraintType.Density);
+
+            if (densityParameters.enabled)
+            {
+                var d = constraints[(int)Oni.ConstraintType.Density] as ComputeDensityConstraints;
+                if (d != null)
+                    d.CalculateVelocityCorrections(substepTime);
+            }
+        }
+
+        private void UpdatePositions(float deltaTime, int threadGroups)
         {
             var densityParameters = m_Solver.GetConstraintParameters(Oni.ConstraintType.Density);
 
@@ -974,25 +1024,40 @@ namespace Obi
                 if (d != null)
                     d.ApplyVelocityCorrections(deltaTime);
             }
+
+            // Update positions:
+            solverShader.Dispatch(updatePositionsKernel, threadGroups, 1, 1);
         }
 
-        private void ApplyConstraints(float stepTime, float substepTime, int substeps, float timeLeft)
+        private void ApplyConstraints(float stepTime, float substepTime, int steps, float timeLeft)
         {
             // calculate max amount of iterations required, and initialize constraints..
-            int maxIterations = 0;            for (int i = 0; i < Oni.ConstraintTypeCount; ++i)            {                var parameters = m_Solver.GetConstraintParameters((Oni.ConstraintType)i);                if (parameters.enabled)                {                    maxIterations = Mathf.Max(maxIterations, parameters.iterations);                    constraints[i].Initialize(substepTime);                }            }
+            int maxIterations = 0;            for (int i = 0; i < Oni.ConstraintTypeCount; ++i)            {                var parameters = m_Solver.GetConstraintParameters((Oni.ConstraintType)i);                if (parameters.enabled)                {                    maxIterations = Mathf.Max(maxIterations, parameters.iterations);                    constraints[i].Initialize(stepTime, substepTime, steps, timeLeft);                }            }
 
             // calculate iteration paddings:
             for (int i = 0; i < Oni.ConstraintTypeCount; ++i)            {                var parameters = m_Solver.GetConstraintParameters((Oni.ConstraintType)i);                if (parameters.enabled && parameters.iterations > 0)                    padding[i] = Mathf.CeilToInt(maxIterations / (float)parameters.iterations);                else                    padding[i] = maxIterations;            }
 
             // perform projection iterations:
-            for (int i = 1; i < maxIterations; ++i)            {                for (int j = 0; j < Oni.ConstraintTypeCount; ++j)                {                    if (j != (int)Oni.ConstraintType.Aerodynamics)                    {                        var parameters = m_Solver.GetConstraintParameters((Oni.ConstraintType)j);                        if (parameters.enabled && i % padding[j] == 0)                            constraints[j].Project(stepTime, substepTime, substeps, timeLeft);                    }                }            }
+            for (int i = 1; i < maxIterations; ++i)            {                for (int j = 0; j < Oni.ConstraintTypeCount; ++j)                {                    if (j != (int)Oni.ConstraintType.Aerodynamics)                    {                        var parameters = m_Solver.GetConstraintParameters((Oni.ConstraintType)j);                        if (parameters.enabled && i % padding[j] == 0)                            constraints[j].Project(stepTime, substepTime, steps, timeLeft);                    }                }            }
 
             // final iteration, all groups together:
-            for (int i = 0; i < Oni.ConstraintTypeCount; ++i)            {                if (i != (int)Oni.ConstraintType.Aerodynamics)                {                    var parameters = m_Solver.GetConstraintParameters((Oni.ConstraintType)i);                    if (parameters.enabled && parameters.iterations > 0)                        constraints[i].Project(stepTime, substepTime, substeps, timeLeft);                }            }
+            for (int i = 0; i < Oni.ConstraintTypeCount; ++i)            {                if (i != (int)Oni.ConstraintType.Aerodynamics)                {                    var parameters = m_Solver.GetConstraintParameters((Oni.ConstraintType)i);                    if (parameters.enabled && parameters.iterations > 0)                        constraints[i].Project(stepTime, substepTime, steps, timeLeft);                }            }
 
             // Despite friction constraints being applied after collision (since coulomb friction depends on normal impulse)
             // we perform a collision iteration right at the end to ensure the final state meets the Signorini-Fichera conditions.
-            var param = m_Solver.GetConstraintParameters(Oni.ConstraintType.ParticleCollision);            if (param.enabled && param.iterations > 0)                constraints[(int)Oni.ConstraintType.ParticleCollision].Project(stepTime, substepTime, substeps, timeLeft);            param = m_Solver.GetConstraintParameters(Oni.ConstraintType.Collision);            if (param.enabled && param.iterations > 0)                constraints[(int)Oni.ConstraintType.Collision].Project(stepTime, substepTime, substeps, timeLeft);
+            var param = m_Solver.GetConstraintParameters(Oni.ConstraintType.ParticleCollision);            if (param.enabled && param.iterations > 0)                constraints[(int)Oni.ConstraintType.ParticleCollision].Project(stepTime, substepTime, steps, timeLeft);            param = m_Solver.GetConstraintParameters(Oni.ConstraintType.Collision);            if (param.enabled && param.iterations > 0)                constraints[(int)Oni.ConstraintType.Collision].Project(stepTime, substepTime, steps, timeLeft);
+        }
+
+        private void EnforceLimits(int threadGroups)
+        {
+            if (abstraction.useLimits)
+            {
+                // keep particles within bounds:
+                solverShader.SetBool("killOffLimits", abstraction.killOffLimitsParticles);
+                solverShader.SetVector("boundaryLimitsMin", abstraction.boundaryLimits.min);
+                solverShader.SetVector("boundaryLimitsMax", abstraction.boundaryLimits.max);
+                solverShader.Dispatch(enforceLimitsKernel, threadGroups, 1, 1);
+            }
         }
 
         public IObiJobHandle ApplyInterpolation(IObiJobHandle inputDeps, ObiNativeVector4List startPositions, ObiNativeQuaternionList startOrientations, float stepTime, float unsimulatedTime)
@@ -1011,13 +1076,13 @@ namespace Obi
             solverShader.Dispatch(interpolateKernel, threadGroups, 1, 1);
 
             // Reset normals:
-            if ((deformableTriangleCount > 0 || deformableEdgeCount > 0) && normalsIntBuffer != null)
+            if ((deformableTriangleCount > 0 || deformableEdgeCount > 0) && normalsBuffer != null)
             {
-                threadGroups = ComputeMath.ThreadGroupCount(normalsIntBuffer.count, 128);
-                deformableTrisShader.SetInt("normalsCount", normalsIntBuffer.count);
+                threadGroups = ComputeMath.ThreadGroupCount(normalsBuffer.count, 128);
+                deformableTrisShader.SetInt("normalsCount", normalsBuffer.count);
                 deformableTrisShader.SetBuffer(resetNormalsKernel, "phases", phasesBuffer);
-                deformableTrisShader.SetBuffer(resetNormalsKernel, "normals", normalsIntBuffer);
-                deformableTrisShader.SetBuffer(resetNormalsKernel, "tangents", tangentsIntBuffer);
+                deformableTrisShader.SetBuffer(resetNormalsKernel, "normals", normalsBuffer);
+                deformableTrisShader.SetBuffer(resetNormalsKernel, "tangentsInt", tangentsIntBuffer);
 
                 deformableTrisShader.Dispatch(resetNormalsKernel, threadGroups, 1, 1);
 
@@ -1026,8 +1091,8 @@ namespace Obi
                 {
                     threadGroups = ComputeMath.ThreadGroupCount(deformableTriangleCount, 128);
                     deformableTrisShader.SetBuffer(updateNormalsKernel, "renderablePositions", renderablePositionsBuffer);
-                    deformableTrisShader.SetBuffer(updateNormalsKernel, "normals", normalsIntBuffer);
-                    deformableTrisShader.SetBuffer(updateNormalsKernel, "tangents", tangentsIntBuffer);
+                    deformableTrisShader.SetBuffer(updateNormalsKernel, "normalsInt", normalsBuffer);
+                    deformableTrisShader.SetBuffer(updateNormalsKernel, "tangentsInt", tangentsIntBuffer);
 
                     deformableTrisShader.Dispatch(updateNormalsKernel, threadGroups, 1, 1);
                 }
@@ -1037,21 +1102,29 @@ namespace Obi
                 {
                     threadGroups = ComputeMath.ThreadGroupCount(deformableEdgeCount, 128);
                     deformableTrisShader.SetBuffer(updateEdgeNormalsKernel, "renderablePositions", renderablePositionsBuffer);
+                    deformableTrisShader.SetBuffer(updateEdgeNormalsKernel, "velocities", velocitiesBuffer);
                     deformableTrisShader.SetBuffer(updateEdgeNormalsKernel, "wind", windBuffer);
-                    deformableTrisShader.SetBuffer(updateEdgeNormalsKernel, "normals", normalsIntBuffer);
+                    deformableTrisShader.SetBuffer(updateEdgeNormalsKernel, "normalsInt", normalsBuffer);
 
                     deformableTrisShader.Dispatch(updateEdgeNormalsKernel, threadGroups, 1, 1);
                 }
 
                 // Update particle orientations
-                threadGroups = ComputeMath.ThreadGroupCount(normalsIntBuffer.count, 128);
+                threadGroups = ComputeMath.ThreadGroupCount(normalsBuffer.count, 128);
                 deformableTrisShader.SetBuffer(orientationFromNormalsKernel, "phases", phasesBuffer);
                 deformableTrisShader.SetBuffer(orientationFromNormalsKernel, "renderableOrientations", renderableOrientationsBuffer);
-                deformableTrisShader.SetBuffer(orientationFromNormalsKernel, "normals", normalsIntBuffer);
-                deformableTrisShader.SetBuffer(orientationFromNormalsKernel, "tangents", tangentsIntBuffer);
+                deformableTrisShader.SetBuffer(orientationFromNormalsKernel, "normals", normalsBuffer);
+                deformableTrisShader.SetBuffer(orientationFromNormalsKernel, "tangentsInt", tangentsIntBuffer);
 
                 deformableTrisShader.Dispatch(orientationFromNormalsKernel, threadGroups, 1, 1);
             }
+
+            // project renderable position/orientation of pinned particles:
+            var pinparam = abstraction.GetConstraintParameters(Oni.ConstraintType.Pin);            if (pinparam.enabled && pinparam.iterations > 0)
+            {
+                var d = constraints[(int)Oni.ConstraintType.Pin] as ComputePinConstraints;
+                if (Application.isPlaying && d != null)
+                    d.ProjectRenderablePositions();            }
 
             //make sure density constraints are enabled, otherwise particles have no neighbors and neighbor lists will be uninitialized.
             var param = m_Solver.GetConstraintParameters(Oni.ConstraintType.Density);            if (param.enabled && param.iterations > 0)
@@ -1065,13 +1138,13 @@ namespace Obi
             return inputDeps;
         }
 
-        private void UpdateFoamDensity()
+        private void UpdateDiffuseDensity(float deltaTime)
         {
             var system = abstraction.GetRenderSystem<ObiFoamGenerator>() as ComputeFoamRenderSystem;
             if (system != null && m_Solver.maxFoamParticles > 0 && particleGrid.cellCounts != null)
             {
                 for (int i = 0; i < system.renderers.Count; ++i)
-                {
+                { 
                     // solver indices compute buffer may be null 
                     if (system.renderers[i].pressure > 0 && 
                         system.renderers[i].actor.solverIndices?.computeBuffer != null)
@@ -1080,14 +1153,16 @@ namespace Obi
                         float radius = system.renderers[i].size * scale;
 
                         int cellThreadGroups = ComputeMath.ThreadGroupCount(particleGrid.cellCounts.count, 128);
+                        foamDensityShader.SetFloat("deltaTime", deltaTime);
                         foamDensityShader.SetInt("maxCells", particleGrid.cellCounts.count);
                         foamDensityShader.SetInt("maxFoamParticles", abstraction.foamPositions.computeBuffer.count);
                         foamDensityShader.SetInt("mode", (int)abstraction.parameters.mode);
                         foamDensityShader.SetFloat("pressure", system.renderers[i].pressure);
                         foamDensityShader.SetFloat("particleRadius", radius);
                         foamDensityShader.SetFloat("smoothingRadius", radius * 2 * system.renderers[i].smoothingRadius);
-                        foamDensityShader.SetFloat("invMass", 1000 * Mathf.Pow(radius * 2, 3 - (int)abstraction.parameters.mode));
                         foamDensityShader.SetFloat("surfaceTension", system.renderers[i].surfaceTension);
+                        foamDensityShader.SetFloat("viscosity", system.renderers[i].viscosity);
+                        foamDensityShader.SetVector("volumeLightDirection", system.renderers[i].volumeLight != null ? abstraction.transform.InverseTransformDirection(system.renderers[i].volumeLight.transform.forward) : Vector3.down);
 
                         foamDensityShader.SetBuffer(clearGridKernel, "cellStart", particleGrid.cellOffsets);
                         foamDensityShader.SetBuffer(clearGridKernel, "cellCounts", particleGrid.cellCounts);
@@ -1103,7 +1178,9 @@ namespace Obi
                         particleGrid.cellsPrefixSum.Sum(particleGrid.cellCounts, particleGrid.cellOffsets);
 
                         foamDensityShader.SetBuffer(sortByGridKernel, "inputPositions", abstraction.foamPositions.computeBuffer);
+                        foamDensityShader.SetBuffer(sortByGridKernel, "inputVelocities", abstraction.foamVelocities.computeBuffer);
                         foamDensityShader.SetBuffer(sortByGridKernel, "sortedPositions", auxPositions);
+                        foamDensityShader.SetBuffer(sortByGridKernel, "sortedVelocities", auxVelocities);
                         foamDensityShader.SetBuffer(sortByGridKernel, "sortedToOriginal", auxSortedToOriginal);
                         foamDensityShader.SetBuffer(sortByGridKernel, "offsetInCell", auxOffsetInCell);
                         foamDensityShader.SetBuffer(sortByGridKernel, "cellStart", particleGrid.cellOffsets);
@@ -1113,16 +1190,18 @@ namespace Obi
 
                         foamDensityShader.SetBuffer(computeDensityKernel, "inputPositions", abstraction.foamPositions.computeBuffer);
                         foamDensityShader.SetBuffer(computeDensityKernel, "sortedPositions", auxPositions);
-                        foamDensityShader.SetBuffer(computeDensityKernel, "fluidData", auxVelocities);
+                        foamDensityShader.SetBuffer(computeDensityKernel, "fluidData", auxColors);
                         foamDensityShader.SetBuffer(computeDensityKernel, "cellStart", particleGrid.cellOffsets);
                         foamDensityShader.SetBuffer(computeDensityKernel, "cellCounts", particleGrid.cellCounts);
                         foamDensityShader.SetBuffer(computeDensityKernel, "dispatch", abstraction.foamCount.computeBuffer);
                         foamDensityShader.DispatchIndirect(computeDensityKernel, abstraction.foamCount.computeBuffer);
 
                         foamDensityShader.SetBuffer(applyDensityKernel, "inputPositions", abstraction.foamPositions.computeBuffer);
+                        foamDensityShader.SetBuffer(applyDensityKernel, "inputVelocities", abstraction.foamVelocities.computeBuffer);
                         foamDensityShader.SetBuffer(applyDensityKernel, "sortedPositions", auxPositions);
+                        foamDensityShader.SetBuffer(applyDensityKernel, "sortedVelocities", auxVelocities);
                         foamDensityShader.SetBuffer(applyDensityKernel, "sortedToOriginal", auxSortedToOriginal);
-                        foamDensityShader.SetBuffer(applyDensityKernel, "fluidData", auxVelocities);
+                        foamDensityShader.SetBuffer(applyDensityKernel, "fluidData", auxColors);
                         foamDensityShader.SetBuffer(applyDensityKernel, "cellStart", particleGrid.cellOffsets);
                         foamDensityShader.SetBuffer(applyDensityKernel, "cellCounts", particleGrid.cellCounts);
                         foamDensityShader.SetBuffer(applyDensityKernel, "dispatch", abstraction.foamCount.computeBuffer);
@@ -1134,45 +1213,100 @@ namespace Obi
                 activeFoamParticleCount = 0;
         }
 
+        private void UpdateDiffuseCollisions(float deltaTime)
+        {
+            if (!abstraction.foamCollisions) return;
+
+            foamCollisionShader.SetFloat("radiusScale", 0.3f);
+            foamCollisionShader.SetFloat("colliderCount", colliderGrid.colliderCount);
+            foamCollisionShader.SetInt("maxCells", ComputeColliderWorld.maxCells);
+            foamCollisionShader.SetInt("cellsPerCollider", ComputeColliderWorld.cellsPerCollider);
+            foamCollisionShader.SetInt("shapeTypeCount", Oni.ColliderShapeTypeCount);
+            foamCollisionShader.SetFloat("deltaTime", deltaTime);
+
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "inputPositions", abstraction.foamPositions.computeBuffer);
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "inputVelocities", abstraction.foamVelocities.computeBuffer);
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "inputAttributes", abstraction.foamAttributes.computeBuffer);
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "aabbs", colliderGrid.aabbsBuffer);
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "transforms", colliderGrid.transformsBuffer);
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "shapes", colliderGrid.shapesBuffer);
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "rigidbodies", colliderGrid.rigidbodiesBuffer);
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "sortedColliderIndices", colliderGrid.sortedColliderIndicesBuffer);
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "levelPopulation", colliderGrid.levelPopulation);
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "cellOffsets", colliderGrid.cellOffsetsBuffer);
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "cellCounts", colliderGrid.cellCountsBuffer);
+
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "triangleMeshHeaders", colliderGrid.triangleMeshHeaders);
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "bihNodes", colliderGrid.bihNodes);
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "triangles", colliderGrid.triangles);
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "vertices", colliderGrid.vertices);
+
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "edgeMeshHeaders", colliderGrid.edgeMeshHeaders);
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "edgeBihNodes", colliderGrid.edgeBihNodes);
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "edges", colliderGrid.edges);
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "edgeVertices", colliderGrid.edgeVertices);
+
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "distanceFieldHeaders", colliderGrid.distanceFieldHeaders);
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "dfNodes", colliderGrid.dfNodes);
+
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "heightFieldHeaders", colliderGrid.heightFieldHeaders);
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "heightFieldSamples", colliderGrid.heightFieldSamples);
+
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "worldToSolver", worldToSolverBuffer);
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "solverToWorld", solverToWorldBuffer);
+
+            foamCollisionShader.SetBuffer(solveDiffuseContactsKernel, "dispatch", abstraction.foamCount.computeBuffer);
+            foamCollisionShader.DispatchIndirect(solveDiffuseContactsKernel, abstraction.foamCount.computeBuffer);
+        }
+
         private void UpdateDiffuseParticles(float deltaTime)
         {
             var system = abstraction.GetRenderSystem<ObiFoamGenerator>() as ComputeFoamRenderSystem;
-            if (system != null && m_Solver.maxFoamParticles > 0 && particleGrid.sortedUserDataColor != null)
+            if (system != null && m_Solver.maxFoamParticles > 0 && particleGrid.sortedLinearVel != null)
             {
                 foamShader.SetFloat("deltaTime", deltaTime);
+                foamShader.SetFloat("randomSeed", Time.frameCount % 16535 + Random.value);
                 foamShader.SetVector("gravity", m_Solver.parameters.gravity * m_Solver.parameters.foamGravityScale);
                 foamShader.SetVector("agingOverPopulation", new Vector3(m_Solver.foamAccelAgingRange.x, m_Solver.foamAccelAgingRange.y, m_Solver.foamAccelAging));
                 foamShader.SetInt("maxFoamParticles", abstraction.foamPositions.computeBuffer.count);
+                foamShader.SetInt("minFluidNeighbors", abstraction.foamMinNeighbors);
                 foamShader.SetInt("maxCells", particleGrid.maxCells);
 
                 foamShader.SetInt("pointCount", simplexCounts.pointCount);
                 foamShader.SetInt("edgeCount", simplexCounts.edgeCount);
                 foamShader.SetInt("triangleCount", simplexCounts.triangleCount);
 
-                foamShader.SetBuffer(sortDataKernel, "positions", prevPositionsBuffer);
+                foamShader.SetBuffer(sortDataKernel, "positions", positionsBuffer);
                 foamShader.SetBuffer(sortDataKernel, "velocities", velocitiesBuffer);
+                foamShader.SetBuffer(sortDataKernel, "angularVelocities", angularVelocitiesBuffer);
                 foamShader.SetBuffer(sortDataKernel, "orientations", renderableOrientationsBuffer);
                 foamShader.SetBuffer(sortDataKernel, "principalRadii", renderableRadiiBuffer);
                 foamShader.SetBuffer(sortDataKernel, "sortedPositions", particleGrid.sortedPositions);
-                foamShader.SetBuffer(sortDataKernel, "sortedVelocities", particleGrid.sortedFluidDataVel);
+                foamShader.SetBuffer(sortDataKernel, "sortedVelocities", particleGrid.sortedLinearVel); 
+                foamShader.SetBuffer(sortDataKernel, "sortedAngularVelocities", particleGrid.sortedAngularVel);
                 foamShader.SetBuffer(sortDataKernel, "sortedOrientations", particleGrid.sortedPrevPosOrientations);
-                foamShader.SetBuffer(sortDataKernel, "sortedRadii", particleGrid.sortedPrincipalRadii);
+                foamShader.SetBuffer(sortDataKernel, "sortedRadii", particleGrid.sortedPrincipalRadii); 
                 foamShader.SetBuffer(sortDataKernel, "sortedToOriginal", particleGrid.sortedFluidIndices);
-                foamShader.SetBuffer(sortDataKernel, "fluidMaterial", fluidMaterialsBuffer);
-                foamShader.SetBuffer(sortDataKernel, "fluidData", fluidDataBuffer);
                 foamShader.SetBuffer(sortDataKernel, "dispatch", fluidDispatchBuffer);
                 foamShader.DispatchIndirect(sortDataKernel, fluidDispatchBuffer);
 
                 int threadGroups;
-                foamShader.SetBuffer(emitFoamKernel, "positions", prevPositionsBuffer);
+                foamShader.SetBuffer(emitFoamKernel, "positions", positionsBuffer);
                 foamShader.SetBuffer(emitFoamKernel, "velocities", velocitiesBuffer);
                 foamShader.SetBuffer(emitFoamKernel, "angularVelocities", angularVelocitiesBuffer);
+                foamShader.SetBuffer(emitFoamKernel, "fluidData", fluidDataBuffer);
                 foamShader.SetBuffer(emitFoamKernel, "principalRadii", principalRadiiBuffer);
                 foamShader.SetBuffer(emitFoamKernel, "outputPositions", abstraction.foamPositions.computeBuffer);
                 foamShader.SetBuffer(emitFoamKernel, "outputVelocities", abstraction.foamVelocities.computeBuffer);
                 foamShader.SetBuffer(emitFoamKernel, "outputColors", abstraction.foamColors.computeBuffer);
                 foamShader.SetBuffer(emitFoamKernel, "outputAttributes", abstraction.foamAttributes.computeBuffer);
                 foamShader.SetBuffer(emitFoamKernel, "dispatch", abstraction.foamCount.computeBuffer);
+
+                foamShader.SetBuffer(emitShapeFoamKernel, "outputPositions", abstraction.foamPositions.computeBuffer);
+                foamShader.SetBuffer(emitShapeFoamKernel, "outputVelocities", abstraction.foamVelocities.computeBuffer);
+                foamShader.SetBuffer(emitShapeFoamKernel, "outputColors", abstraction.foamColors.computeBuffer);
+                foamShader.SetBuffer(emitShapeFoamKernel, "outputAttributes", abstraction.foamAttributes.computeBuffer);
+                foamShader.SetBuffer(emitShapeFoamKernel, "dispatch", abstraction.foamCount.computeBuffer);
                 for (int i = 0; i < system.renderers.Count; ++i)
                 {
                     // solver indices compute buffer may be null 
@@ -1197,8 +1331,23 @@ namespace Obi
                         foamShader.SetFloat("lifetimeRandom", system.renderers[i].lifetimeRandom);
                         foamShader.SetVector("foamColor", system.renderers[i].color);
 
-                        foamShader.SetBuffer(emitFoamKernel, "activeParticles", system.renderers[i].actor.solverIndices.computeBuffer);
-                        foamShader.Dispatch(emitFoamKernel, threadGroups, 1, 1);
+                        if (system.renderers[i] is ObiFoamEmitter)
+                        {
+                            var emitter = system.renderers[i] as ObiFoamEmitter;
+                            int particlesToEmit = emitter.GetParticleNumberToEmit(deltaTime);
+                            threadGroups = ComputeMath.ThreadGroupCount(particlesToEmit, 128);
+                            foamShader.SetInt("particlesToEmit", particlesToEmit);
+                            foamShader.SetInt("emitterShape", (int)emitter.shape);
+                            foamShader.SetVector("emitterPosition", emitter.shapeTransform != null? abstraction.transform.InverseTransformPoint(emitter.shapeTransform.position) : Vector3.zero);
+                            foamShader.SetVector("emitterRotation", (emitter.shapeTransform != null ? emitter.shapeTransform.rotation * Quaternion.Inverse(abstraction.transform.rotation): Quaternion.identity).AsVector4());
+                            foamShader.SetVector("emitterSize", emitter.shapeSize);
+                            foamShader.Dispatch(emitShapeFoamKernel, threadGroups, 1, 1);
+                        }
+                        else // generator
+                        {
+                            foamShader.SetBuffer(emitFoamKernel, "activeParticles", system.renderers[i].actor.solverIndices.computeBuffer);
+                            foamShader.Dispatch(emitFoamKernel, threadGroups, 1, 1);
+                        }
                     }
                 }
 
@@ -1214,7 +1363,10 @@ namespace Obi
                 foamShader.SetBuffer(updateFoamKernel, "positions", particleGrid.sortedPositions);
                 foamShader.SetBuffer(updateFoamKernel, "orientations", particleGrid.sortedPrevPosOrientations);
                 foamShader.SetBuffer(updateFoamKernel, "principalRadii", particleGrid.sortedPrincipalRadii);
-                foamShader.SetBuffer(updateFoamKernel, "velocities", particleGrid.sortedFluidDataVel);
+                foamShader.SetBuffer(updateFoamKernel, "velocities", particleGrid.sortedLinearVel);
+                foamShader.SetBuffer(updateFoamKernel, "angularVelocities", particleGrid.sortedAngularVel);
+                foamShader.SetBuffer(updateFoamKernel, "fluidMaterial", particleGrid.sortedFluidMaterials);
+                foamShader.SetBuffer(updateFoamKernel, "fluidData", particleGrid.sortedFluidData);
                 foamShader.SetBuffer(updateFoamKernel, "fluidSimplices", particleGrid.sortedSimplexToFluid);
                 foamShader.SetBuffer(updateFoamKernel, "sortedToOriginal", particleGrid.sortedFluidIndices);
                 foamShader.SetBuffer(updateFoamKernel, "inputPositions", abstraction.foamPositions.computeBuffer);
@@ -1248,6 +1400,17 @@ namespace Obi
             }
             else
                 activeFoamParticleCount = 0;
+        }
+
+        private void IntegrateDiffuseParticles(float deltaTime)
+        {
+            foamShader.SetFloat("deltaTime", deltaTime);
+
+            foamShader.SetBuffer(integrateFoamKernel, "outputPositions", abstraction.foamPositions.computeBuffer);
+            foamShader.SetBuffer(integrateFoamKernel, "outputVelocities", abstraction.foamVelocities.computeBuffer);
+
+            foamShader.SetBuffer(integrateFoamKernel, "dispatch", abstraction.foamCount.computeBuffer);
+            foamShader.DispatchIndirect(integrateFoamKernel, abstraction.foamCount.computeBuffer);
         }
 
         public void SpatialQuery(ObiNativeQueryShapeList shapes, ObiNativeAffineTransformList transforms, ObiNativeQueryResultList results)        {

@@ -11,7 +11,11 @@ namespace Game
     {
         #region ISpawnable/IMovable 구현
         void IObjectPoolable.OnGetFromPool() { }
-        void IObjectPoolable.OnReturnedToPool() { }
+        void IObjectPoolable.OnReturnedToPool()
+        {
+            emitterBrain.Value = null;
+            reflectiveBrain.Value = null;
+        }
         #endregion
 
         [Header("Attachment")]
@@ -35,9 +39,37 @@ namespace Game
             onHitSomething += (c) =>
             {
                 if (c.gameObject.layer == LayerMask.NameToLayer("Obstacle"))
+                {
                     Explode();
-                else if (c.gameObject.TryGetComponent<PawnColliderHelper>(out var helper) && helper.pawnBrain.PawnBB.common.pawnId == PawnId.Hero)
-                    Explode();
+                }
+                else if (c.gameObject.TryGetComponent<PawnColliderHelper>(out var helper))
+                {
+                    if (reflectiveBrain.Value != null)
+                    {
+                        if (helper.pawnBrain != emitterBrain.Value)
+                            return;
+
+                        reflectiveBrain.Value.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, reflectiveBrain.Value, emitterBrain.Value, actionData, string.Empty, emitterBrain.Value.bodyHitColliderHelper.pawnCollider, false));
+                        Explode();
+                    }
+                    else if (helper.pawnBrain.PawnBB.common.pawnId == PawnId.Hero)
+                    {
+                        emitterBrain.Value.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, emitterBrain.Value, helper.pawnBrain, actionData, string.Empty, helper.pawnBrain.bodyHitColliderHelper.pawnCollider, false));
+
+                        Observable.NextFrame().Subscribe(_ =>
+                        {
+                            if (reflectiveBrain.Value == null)
+                                Explode();
+                        }).AddTo(this);
+                    }
+                }
+            };
+
+            onReflected += (b) =>
+            {
+                reflectiveBrain.Value = b;
+                //* 진행 방향을 emitterBrain 쪽으로 변경
+                velocity = velocity.magnitude * (Quaternion.LookRotation(emitterBrain.Value.bodyHitColliderHelper.GetWorldCenter() - transform.position) * Vector3.forward);
             };
 
             onStopMove += () =>

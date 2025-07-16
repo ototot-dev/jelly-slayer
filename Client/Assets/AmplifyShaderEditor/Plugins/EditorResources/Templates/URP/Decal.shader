@@ -29,14 +29,21 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 				true:SetPropertyOnPass:DecalGBufferProjector:ColorMask2,true,true,true,false
 				true:SetPropertyOnPass:DBufferMesh:ColorMask1,true,true,true,true
 				true:SetPropertyOnPass:DecalGBufferMesh:ColorMask2,true,true,true,false
+				true:ShowPort:DecalScreenSpaceProjector:Normal
+				true:ShowOption:  Blend
 				false:RemoveDefine:_MATERIAL_AFFECTS_NORMAL 1
 				false:SetPropertyOnPass:DBufferProjector:ColorMask1,false,false,false,false
 				false:SetPropertyOnPass:DecalGBufferProjector:ColorMask2,false,false,false,false
 				false:SetPropertyOnPass:DBufferMesh:ColorMask1,false,false,false,false
 				false:SetPropertyOnPass:DecalGBufferMesh:ColorMask2,false,false,false,false
-			Option:Blend:false,true:true
+				false:HidePort:DecalScreenSpaceProjector:Normal
+				false:HideOption:  Blend
+				false:SetOption:  Blend,0
+			Option:  Blend:false,true:true
 				true:SetDefine:_MATERIAL_AFFECTS_NORMAL_BLEND 1
+				true:ShowPort:DecalScreenSpaceProjector:Normal Alpha
 				false:RemoveDefine:_MATERIAL_AFFECTS_NORMAL_BLEND 1
+				false:HidePort:DecalScreenSpaceProjector:Normal Alpha
 			Option:Affect MAOS:false,true:false
 				true:SetDefine: _MATERIAL_AFFECTS_MAOS 1
 				true:ShowPort:DecalScreenSpaceProjector:Metallic
@@ -84,7 +91,7 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 				false:RemoveDefine:DecalScreenSpaceProjector:DECAL_ANGLE_FADE 1
 				false:RemoveDefine:DecalProjectorForwardEmissive:DECAL_ANGLE_FADE 1
 				false:RemoveDefine:DecalGBufferProjector:DECAL_ANGLE_FADE 1
-				false:RemoveDefine:DBufferProjector:DECAL_ANGLE_FADE 1	
+				false:RemoveDefine:DBufferProjector:DECAL_ANGLE_FADE 1
 				true:SetShaderProperty:_DecalAngleFadeSupported,[HideInInspector] _DecalAngleFadeSupported("Decal Angle Fade Supported", Float) = 1
 				false:SetShaderProperty:_DecalAngleFadeSupported,//[HideInInspector] _DecalAngleFadeSupported("Decal Angle Fade Supported", Float) = 1
 		*/
@@ -146,13 +153,6 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
             #define HAVE_MESH_MODIFICATION
             #define SHADERPASS SHADERPASS_DBUFFER_PROJECTOR
 
-			#if _RENDER_PASS_ENABLED
-			#define GBUFFER3 0
-			#define GBUFFER4 1
-			FRAMEBUFFER_INPUT_X_HALF(GBUFFER3);
-			FRAMEBUFFER_INPUT_X_HALF(GBUFFER4);
-			#endif
-
 			#include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
             #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Texture.hlsl"
@@ -173,6 +173,13 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 			#if defined(LOD_FADE_CROSSFADE)
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
             #endif
+
+			#if _RENDER_PASS_ENABLED
+			#define GBUFFER3 0
+			#define GBUFFER4 1
+			FRAMEBUFFER_INPUT_X_HALF(GBUFFER3);
+			FRAMEBUFFER_INPUT_X_HALF(GBUFFER4);
+			#endif
 
 			/*ase_pragma*/
 
@@ -260,7 +267,6 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
                         float sgn = input.tangentWS.w;
                         float3 bitangent = sgn * cross(input.normalWS.xyz, input.tangentWS.xyz);
                         half3x3 tangentToWorld = half3x3(input.tangentWS.xyz, bitangent.xyz, input.normalWS.xyz);
-        
                         surfaceData.normalWS.xyz = normalize(TransformTangentToWorld(surfaceDescription.NormalTS, tangentToWorld));
                     #else
 						surfaceData.normalWS.xyz = normalize(half3(input.normalWS));
@@ -399,14 +405,18 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 
 				float2 positionSS = FoveatedRemapNonUniformToLinearCS(packedInput.positionCS.xy) * _ScreenSize.zw;
 
-				/*ase_local_var:sp*/float4 positionCS = ComputeClipSpacePosition( positionSS, depth );
+				float4 positionCS = ComputeClipSpacePosition( positionSS, depth );
 				float4 hpositionVS = mul( UNITY_MATRIX_I_P, positionCS );
-				/*ase_local_var:rwp*/float3 positionRWS = mul( ( float3x3 )UNITY_MATRIX_I_V, hpositionVS.xyz / hpositionVS.w );
-				/*ase_local_var:wp*/float3 positionWS = positionRWS + _WorldSpaceCameraPos;
-				/*ase_local_var:op*/float3 positionOS = TransformWorldToObject( positionWS );
-				/*ase_local_var:vp*/float3 positionVS = TransformWorldToView( positionWS );
 
-				float3 positionDS = TransformWorldToObject(positionWS);
+				/*ase_local_var:spn*/float4 ScreenPosNorm = float4( positionSS, positionCS.zw );
+				/*ase_local_var:sp*/float4 ClipPos = positionCS * packedInput.positionCS.w;
+				/*ase_local_var:spu*/float4 ScreenPos = ComputeScreenPos( ClipPos );
+				/*ase_local_var:rwp*/float3 PositionRWS = mul( ( float3x3 )UNITY_MATRIX_I_V, hpositionVS.xyz / hpositionVS.w );
+				/*ase_local_var:wp*/float3 PositionWS = PositionRWS + _WorldSpaceCameraPos;
+				/*ase_local_var:op*/float3 PositionOS = TransformWorldToObject( PositionWS );
+				/*ase_local_var:vp*/float3 PositionVS = TransformWorldToView( PositionWS );
+
+				float3 positionDS = TransformWorldToObject(PositionWS);
 				positionDS = positionDS * float3(1.0, -1.0, 1.0);
 
 				float clipValue = 0.5 - Max3(abs(positionDS).x, abs(positionDS).y, abs(positionDS).z);
@@ -497,13 +507,6 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 
             #define SHADERPASS SHADERPASS_FORWARD_EMISSIVE_PROJECTOR
 
-			#if _RENDER_PASS_ENABLED
-			#define GBUFFER3 0
-			#define GBUFFER4 1
-			FRAMEBUFFER_INPUT_X_HALF(GBUFFER3);
-			FRAMEBUFFER_INPUT_X_HALF(GBUFFER4);
-			#endif
-
 			#include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
             #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Texture.hlsl"
@@ -523,6 +526,13 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 		    #if defined(LOD_FADE_CROSSFADE)
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
             #endif
+
+			#if _RENDER_PASS_ENABLED
+			#define GBUFFER3 0
+			#define GBUFFER4 1
+			FRAMEBUFFER_INPUT_X_HALF(GBUFFER3);
+			FRAMEBUFFER_INPUT_X_HALF(GBUFFER4);
+			#endif
 
 			/*ase_pragma*/
 
@@ -718,14 +728,18 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 
 				float2 positionSS = FoveatedRemapNonUniformToLinearCS(packedInput.positionCS.xy) * _ScreenSize.zw;
 
-				/*ase_local_var:sp*/float4 positionCS = ComputeClipSpacePosition( positionSS, depth );
+				float4 positionCS = ComputeClipSpacePosition( positionSS, depth );
 				float4 hpositionVS = mul( UNITY_MATRIX_I_P, positionCS );
-				/*ase_local_var:rwp*/float3 positionRWS = mul( ( float3x3 )UNITY_MATRIX_I_V, hpositionVS.xyz / hpositionVS.w );
-				/*ase_local_var:wp*/float3 positionWS = positionRWS + _WorldSpaceCameraPos;
-				/*ase_local_var:op*/float3 positionOS = TransformWorldToObject( positionWS );
-				/*ase_local_var:vp*/float3 positionVS = TransformWorldToView( positionWS );
 
-				float3 positionDS = TransformWorldToObject(positionWS);
+				/*ase_local_var:spn*/float4 ScreenPosNorm = float4( positionSS, positionCS.zw );
+				/*ase_local_var:sp*/float4 ClipPos = positionCS * packedInput.positionCS.w;
+				/*ase_local_var:spu*/float4 ScreenPos = ComputeScreenPos( ClipPos );
+				/*ase_local_var:rwp*/float3 PositionRWS = mul( ( float3x3 )UNITY_MATRIX_I_V, hpositionVS.xyz / hpositionVS.w );
+				/*ase_local_var:wp*/float3 PositionWS = PositionRWS + _WorldSpaceCameraPos;
+				/*ase_local_var:op*/float3 PositionOS = TransformWorldToObject( PositionWS );
+				/*ase_local_var:vp*/float3 PositionVS = TransformWorldToView( PositionWS );
+
+				float3 positionDS = TransformWorldToObject(PositionWS);
 				positionDS = positionDS * float3(1.0, -1.0, 1.0);
 
 				float clipValue = 0.5 - Max3(abs(positionDS).x, abs(positionDS).y, abs(positionDS).z);
@@ -831,13 +845,6 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 
             #define SHADERPASS SHADERPASS_DECAL_SCREEN_SPACE_PROJECTOR
 
-			#if _RENDER_PASS_ENABLED
-			#define GBUFFER3 0
-			#define GBUFFER4 1
-			FRAMEBUFFER_INPUT_X_HALF(GBUFFER3);
-			FRAMEBUFFER_INPUT_X_HALF(GBUFFER4);
-			#endif
-
 			#include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
             #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Texture.hlsl"
@@ -857,6 +864,13 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 		    #if defined(LOD_FADE_CROSSFADE)
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
             #endif
+
+			#if _RENDER_PASS_ENABLED
+			#define GBUFFER3 0
+			#define GBUFFER4 1
+			FRAMEBUFFER_INPUT_X_HALF(GBUFFER3);
+			FRAMEBUFFER_INPUT_X_HALF(GBUFFER4);
+			#endif
 
 			/*ase_pragma*/
 
@@ -957,7 +971,6 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
                         float sgn = input.tangentWS.w;
                         float3 bitangent = sgn * cross(input.normalWS.xyz, input.tangentWS.xyz);
                         half3x3 tangentToWorld = half3x3(input.tangentWS.xyz, bitangent.xyz, input.normalWS.xyz);
-        
                         surfaceData.normalWS.xyz = normalize(TransformTangentToWorld(surfaceDescription.NormalTS, tangentToWorld));
                     #else
 						surfaceData.normalWS.xyz = normalize(half3(input.normalWS));
@@ -1039,9 +1052,9 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 				#endif
 
 				#if defined(VARYINGS_NEED_DYNAMIC_LIGHTMAP_UV) && defined(DYNAMICLIGHTMAP_ON)
-					inputData.bakedGI = SAMPLE_GI(input.staticLightmapUV, input.dynamicLightmapUV.xy, half3(input.sh), normalWS);
+					inputData.bakedGI = SAMPLE_GI(input.lightmapUVs.xy, input.lightmapUVs.zw, half3(input.sh), normalWS);
 					#if defined(VARYINGS_NEED_STATIC_LIGHTMAP_UV)
-					inputData.shadowMask = SAMPLE_SHADOWMASK(input.staticLightmapUV);
+					inputData.shadowMask = SAMPLE_SHADOWMASK(input.lightmapUVs.xy);
 					#endif
 				#elif defined(VARYINGS_NEED_STATIC_LIGHTMAP_UV)
 				#if !defined(LIGHTMAP_ON) && (defined(PROBE_VOLUMES_L1) || defined(PROBE_VOLUMES_L2))
@@ -1053,19 +1066,19 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 					input.probeOcclusion,
 					inputData.shadowMask);
 				#else
-					inputData.bakedGI = SAMPLE_GI(input.staticLightmapUV, half3(input.sh), normalWS);
+					inputData.bakedGI = SAMPLE_GI(input.lightmapUVs.xy, half3(input.sh), normalWS);
 					#if defined(VARYINGS_NEED_STATIC_LIGHTMAP_UV)
-					inputData.shadowMask = SAMPLE_SHADOWMASK(input.staticLightmapUV);
+					inputData.shadowMask = SAMPLE_SHADOWMASK(input.lightmapUVs.xy);
 					#endif
 				#endif
 				#endif
 
 				#if defined(DEBUG_DISPLAY)
 					#if defined(VARYINGS_NEED_DYNAMIC_LIGHTMAP_UV) && defined(DYNAMICLIGHTMAP_ON)
-						inputData.dynamicLightmapUV = input.dynamicLightmapUV.xy;
+						inputData.dynamicLightmapUV = input.lightmapUVs.zw;
 					#endif
 					#if defined(VARYINGS_NEED_STATIC_LIGHTMAP_UV) && defined(LIGHTMAP_ON)
-						inputData.staticLightmapUV = input.staticLightmapUV
+						inputData.staticLightmapUV = input.lightmapUVs.xy;
 					#elif defined(VARYINGS_NEED_SH)
 						inputData.vertexSH = input.sh;
 					#endif
@@ -1122,11 +1135,11 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 				packedOutput.viewDirectionWS.xyz =  GetWorldSpaceViewDir(positionWS);
 
 				#if defined(LIGHTMAP_ON)
-					OUTPUT_LIGHTMAP_UV(inputMesh.uv1, unity_LightmapST, packedOutput.staticLightmapUV);
+					OUTPUT_LIGHTMAP_UV(inputMesh.uv1, unity_LightmapST, packedOutput.lightmapUVs.xy);
 				#endif
 
 				#if defined(DYNAMICLIGHTMAP_ON)
-					packedOutput.dynamicLightmapUV.xy = inputMesh.uv2.xy * unity_DynamicLightmapST.xy + unity_DynamicLightmapST.zw;
+					packedOutput.lightmapUVs.zw = inputMesh.uv2.xy * unity_DynamicLightmapST.xy + unity_DynamicLightmapST.zw;
 				#endif
 
 				#if !defined(LIGHTMAP_ON)
@@ -1186,14 +1199,18 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 
 				float2 positionSS = FoveatedRemapNonUniformToLinearCS(packedInput.positionCS.xy) * _ScreenSize.zw;
 
-				/*ase_local_var:sp*/float4 positionCS = ComputeClipSpacePosition( positionSS, depth );
+				float4 positionCS = ComputeClipSpacePosition( positionSS, depth );
 				float4 hpositionVS = mul( UNITY_MATRIX_I_P, positionCS );
-				/*ase_local_var:rwp*/float3 positionRWS = mul( ( float3x3 )UNITY_MATRIX_I_V, hpositionVS.xyz / hpositionVS.w );
-				/*ase_local_var:wp*/float3 positionWS = positionRWS + _WorldSpaceCameraPos;
-				/*ase_local_var:op*/float3 positionOS = TransformWorldToObject( positionWS );
-				/*ase_local_var:vp*/float3 positionVS = TransformWorldToView( positionWS );
 
-				float3 positionDS = TransformWorldToObject(positionWS);
+				/*ase_local_var:spn*/float4 ScreenPosNorm = float4( positionSS, positionCS.zw );
+				/*ase_local_var:sp*/float4 ClipPos = positionCS * packedInput.positionCS.w;
+				/*ase_local_var:spu*/float4 ScreenPos = ComputeScreenPos( ClipPos );
+				/*ase_local_var:rwp*/float3 PositionRWS = mul( ( float3x3 )UNITY_MATRIX_I_V, hpositionVS.xyz / hpositionVS.w );
+				/*ase_local_var:wp*/float3 PositionWS = PositionRWS + _WorldSpaceCameraPos;
+				/*ase_local_var:op*/float3 PositionOS = TransformWorldToObject( PositionWS );
+				/*ase_local_var:vp*/float3 PositionVS = TransformWorldToView( PositionWS );
+
+				float3 positionDS = TransformWorldToObject(PositionWS);
 				positionDS = positionDS * float3(1.0, -1.0, 1.0);
 
 				float clipValue = 0.5 - Max3(abs(positionDS).x, abs(positionDS).y, abs(positionDS).z);
@@ -1257,7 +1274,7 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 				#endif
 
 				InputData inputData;
-				InitializeInputData( packedInput, positionWS, surfaceData.normalWS.xyz, viewDirectionWS, inputData);
+				InitializeInputData( packedInput, PositionWS, surfaceData.normalWS.xyz, viewDirectionWS, inputData);
 
 				SurfaceData surface = (SurfaceData)0;
 				GetSurface(surfaceData, surface);
@@ -1324,13 +1341,6 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 
             #define SHADERPASS SHADERPASS_DECAL_GBUFFER_PROJECTOR
 
-			#if _RENDER_PASS_ENABLED
-			#define GBUFFER3 0
-			#define GBUFFER4 1
-			FRAMEBUFFER_INPUT_X_HALF(GBUFFER3);
-			FRAMEBUFFER_INPUT_X_HALF(GBUFFER4);
-			#endif
-
 			#include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
             #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Texture.hlsl"
@@ -1351,6 +1361,13 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 		    #if defined(LOD_FADE_CROSSFADE)
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
             #endif
+
+			#if _RENDER_PASS_ENABLED
+			#define GBUFFER3 0
+			#define GBUFFER4 1
+			FRAMEBUFFER_INPUT_X_HALF(GBUFFER3);
+			FRAMEBUFFER_INPUT_X_HALF(GBUFFER4);
+			#endif
 
 			/*ase_pragma*/
 
@@ -1450,7 +1467,6 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
                         float sgn = input.tangentWS.w;
                         float3 bitangent = sgn * cross(input.normalWS.xyz, input.tangentWS.xyz);
                         half3x3 tangentToWorld = half3x3(input.tangentWS.xyz, bitangent.xyz, input.normalWS.xyz);
-        
                         surfaceData.normalWS.xyz = normalize(TransformTangentToWorld(surfaceDescription.NormalTS, tangentToWorld));
                     #else
 						surfaceData.normalWS.xyz = normalize(half3(input.normalWS));
@@ -1532,9 +1548,9 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 				#endif
 
 				#if defined(VARYINGS_NEED_DYNAMIC_LIGHTMAP_UV) && defined(DYNAMICLIGHTMAP_ON)
-					inputData.bakedGI = SAMPLE_GI(input.staticLightmapUV, input.dynamicLightmapUV.xy, half3(input.sh), normalWS);
+					inputData.bakedGI = SAMPLE_GI(input.lightmapUVs.xy, input.lightmapUVs.zw, half3(input.sh), normalWS);
 					#if defined(VARYINGS_NEED_STATIC_LIGHTMAP_UV)
-					inputData.shadowMask = SAMPLE_SHADOWMASK(input.staticLightmapUV);
+					inputData.shadowMask = SAMPLE_SHADOWMASK(input.lightmapUVs.xy);
 					#endif
 				#elif defined(VARYINGS_NEED_STATIC_LIGHTMAP_UV)
 				#if !defined(LIGHTMAP_ON) && (defined(PROBE_VOLUMES_L1) || defined(PROBE_VOLUMES_L2))
@@ -1546,19 +1562,19 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 					input.probeOcclusion,
 					inputData.shadowMask);
 				#else
-					inputData.bakedGI = SAMPLE_GI(input.staticLightmapUV, half3(input.sh), normalWS);
+					inputData.bakedGI = SAMPLE_GI(input.lightmapUVs.xy, half3(input.sh), normalWS);
 					#if defined(VARYINGS_NEED_STATIC_LIGHTMAP_UV)
-					inputData.shadowMask = SAMPLE_SHADOWMASK(input.staticLightmapUV);
+					inputData.shadowMask = SAMPLE_SHADOWMASK(input.lightmapUVs.xy);
 					#endif
 				#endif
 				#endif
 
 				#if defined(DEBUG_DISPLAY)
 					#if defined(VARYINGS_NEED_DYNAMIC_LIGHTMAP_UV) && defined(DYNAMICLIGHTMAP_ON)
-						inputData.dynamicLightmapUV = input.dynamicLightmapUV.xy;
+						inputData.dynamicLightmapUV = input.lightmapUVs.zw;
 					#endif
 					#if defined(VARYINGS_NEED_STATIC_LIGHTMAP_UV) && defined(LIGHTMAP_ON)
-						inputData.staticLightmapUV = input.staticLightmapUV
+						inputData.staticLightmapUV = input.lightmapUVs.xy;
 					#elif defined(VARYINGS_NEED_SH)
 						inputData.vertexSH = input.sh;
 					#endif
@@ -1605,11 +1621,11 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 				packedOutput.viewDirectionWS.xyz =  GetWorldSpaceViewDir(positionWS);
 
 				#if defined(LIGHTMAP_ON)
-					OUTPUT_LIGHTMAP_UV(inputMesh.uv1, unity_LightmapST, packedOutput.staticLightmapUV);
+					OUTPUT_LIGHTMAP_UV(inputMesh.uv1, unity_LightmapST, packedOutput.lightmapUVs.xy);
 				#endif
 
 				#if defined(DYNAMICLIGHTMAP_ON)
-					packedOutput.dynamicLightmapUV.xy = inputMesh.uv2.xy * unity_DynamicLightmapST.xy + unity_DynamicLightmapST.zw;
+					packedOutput.lightmapUVs.zw = inputMesh.uv2.xy * unity_DynamicLightmapST.xy + unity_DynamicLightmapST.zw;
 				#endif
 
 				#if !defined(LIGHTMAP_ON)
@@ -1669,14 +1685,18 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 
 				float2 positionSS = FoveatedRemapNonUniformToLinearCS(packedInput.positionCS.xy) * _ScreenSize.zw;
 
-				/*ase_local_var:sp*/float4 positionCS = ComputeClipSpacePosition( positionSS, depth );
+				float4 positionCS = ComputeClipSpacePosition( positionSS, depth );
 				float4 hpositionVS = mul( UNITY_MATRIX_I_P, positionCS );
-				/*ase_local_var:rwp*/float3 positionRWS = mul( ( float3x3 )UNITY_MATRIX_I_V, hpositionVS.xyz / hpositionVS.w );
-				/*ase_local_var:wp*/float3 positionWS = positionRWS + _WorldSpaceCameraPos;
-				/*ase_local_var:op*/float3 positionOS = TransformWorldToObject( positionWS );
-				/*ase_local_var:vp*/float3 positionVS = TransformWorldToView( positionWS );
 
-				float3 positionDS = TransformWorldToObject(positionWS);
+				/*ase_local_var:spn*/float4 ScreenPosNorm = float4( positionSS, positionCS.zw );
+				/*ase_local_var:sp*/float4 ClipPos = positionCS * packedInput.positionCS.w;
+				/*ase_local_var:spu*/float4 ScreenPos = ComputeScreenPos( ClipPos );
+				/*ase_local_var:rwp*/float3 PositionRWS = mul( ( float3x3 )UNITY_MATRIX_I_V, hpositionVS.xyz / hpositionVS.w );
+				/*ase_local_var:wp*/float3 PositionWS = PositionRWS + _WorldSpaceCameraPos;
+				/*ase_local_var:op*/float3 PositionOS = TransformWorldToObject( PositionWS );
+				/*ase_local_var:vp*/float3 PositionVS = TransformWorldToView( PositionWS );
+
+				float3 positionDS = TransformWorldToObject(PositionWS);
 				positionDS = positionDS * float3(1.0, -1.0, 1.0);
 
 				float clipValue = 0.5 - Max3(abs(positionDS).x, abs(positionDS).y, abs(positionDS).z);
@@ -1735,12 +1755,13 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 				GetSurfaceData(surfaceDescription, angleFadeFactor, surfaceData);
 
 				half3 normalToPack = surfaceData.normalWS.xyz;
+
 				#ifdef DECAL_RECONSTRUCT_NORMAL
 					surfaceData.normalWS.xyz = normalize(lerp(normalWS.xyz, surfaceData.normalWS.xyz, surfaceData.normalWS.w));
 				#endif
 
 					InputData inputData;
-					InitializeInputData(packedInput, positionWS, surfaceData.normalWS.xyz, viewDirectionWS, inputData);
+					InitializeInputData(packedInput, PositionWS, surfaceData.normalWS.xyz, viewDirectionWS, inputData);
 
 					SurfaceData surface = (SurfaceData)0;
 					GetSurface(surfaceData, surface);
@@ -1756,16 +1777,27 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 					half3 color = 0;
 				#endif
 
-				#pragma warning (disable : 3578) // The output value isn't completely initialized.
-				half3 packedNormalWS = PackNormal(normalToPack);
+				//PassGBuffer.template
+				half3 packedNormalWS = PackNormal(surfaceData.normalWS.xyz);
 				fragmentOutput.GBuffer0 = half4(surfaceData.baseColor.rgb, surfaceData.baseColor.a);
 				fragmentOutput.GBuffer1 = 0;
 				fragmentOutput.GBuffer2 = half4(packedNormalWS, surfaceData.normalWS.a);
+				#if defined(AFFECT_BASE_COLOR) || defined(AFFECT_EMISSIVE)
 				fragmentOutput.GBuffer3 = half4(surfaceData.emissive + color, surfaceData.baseColor.a);
-				#if OUTPUT_SHADOWMASK
-					fragmentOutput.GBuffer4 = inputData.shadowMask; // will have unity_ProbesOcclusion value if subtractive lighting is used (baked)
+				#else
+				fragmentOutput.GBuffer3 = 0;
 				#endif
-				#pragma warning (default : 3578) // Restore output value isn't completely initialized.
+				#if _RENDER_PASS_ENABLED
+				fragmentOutput.GBuffer4 = inputData.positionCS.xy;
+				#if OUTPUT_SHADOWMASK
+				fragmentOutput.GBuffer5 = inputData.shadowMask;
+				#endif
+				#else
+
+				#if OUTPUT_SHADOWMASK
+				fragmentOutput.GBuffer4 = inputData.shadowMask;
+				#endif
+				#endif
 
 			}
             ENDHLSL
@@ -1818,13 +1850,6 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 
             #define SHADERPASS SHADERPASS_DBUFFER_MESH
 
-			#if _RENDER_PASS_ENABLED
-			#define GBUFFER3 0
-			#define GBUFFER4 1
-			FRAMEBUFFER_INPUT_X_HALF(GBUFFER3);
-			FRAMEBUFFER_INPUT_X_HALF(GBUFFER4);
-			#endif
-
 			#include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
             #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Texture.hlsl"
@@ -1845,6 +1870,13 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 			#if defined(LOD_FADE_CROSSFADE)
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
             #endif
+
+			#if _RENDER_PASS_ENABLED
+			#define GBUFFER3 0
+			#define GBUFFER4 1
+			FRAMEBUFFER_INPUT_X_HALF(GBUFFER3);
+			FRAMEBUFFER_INPUT_X_HALF(GBUFFER4);
+			#endif
 
             /*ase_pragma*/
 
@@ -1940,7 +1972,6 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
                         float sgn = input.tangentWS.w;
                         float3 bitangent = sgn * cross(input.normalWS.xyz, input.tangentWS.xyz);
                         half3x3 tangentToWorld = half3x3(input.tangentWS.xyz, bitangent.xyz, input.normalWS.xyz);
-        
                         surfaceData.normalWS.xyz = normalize(TransformTangentToWorld(surfaceDescription.NormalTS, tangentToWorld));
                     #else
 						surfaceData.normalWS.xyz = normalize(half3(input.normalWS));
@@ -2160,13 +2191,6 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 
             #define SHADERPASS SHADERPASS_FORWARD_EMISSIVE_MESH
 
-			#if _RENDER_PASS_ENABLED
-			#define GBUFFER3 0
-			#define GBUFFER4 1
-			FRAMEBUFFER_INPUT_X_HALF(GBUFFER3);
-			FRAMEBUFFER_INPUT_X_HALF(GBUFFER4);
-			#endif
-
 			#include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
             #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Texture.hlsl"
@@ -2186,6 +2210,13 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 			#if defined(LOD_FADE_CROSSFADE)
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
             #endif
+
+			#if _RENDER_PASS_ENABLED
+			#define GBUFFER3 0
+			#define GBUFFER4 1
+			FRAMEBUFFER_INPUT_X_HALF(GBUFFER3);
+			FRAMEBUFFER_INPUT_X_HALF(GBUFFER4);
+			#endif
 
 			/*ase_pragma*/
 
@@ -2512,13 +2543,6 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 
             #define SHADERPASS SHADERPASS_DECAL_SCREEN_SPACE_MESH
 
-			#if _RENDER_PASS_ENABLED
-			#define GBUFFER3 0
-			#define GBUFFER4 1
-			FRAMEBUFFER_INPUT_X_HALF(GBUFFER3);
-			FRAMEBUFFER_INPUT_X_HALF(GBUFFER4);
-			#endif
-
 			#include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
             #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Texture.hlsl"
@@ -2538,6 +2562,13 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 			#if defined(LOD_FADE_CROSSFADE)
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
             #endif
+
+			#if _RENDER_PASS_ENABLED
+			#define GBUFFER3 0
+			#define GBUFFER4 1
+			FRAMEBUFFER_INPUT_X_HALF(GBUFFER3);
+			FRAMEBUFFER_INPUT_X_HALF(GBUFFER4);
+			#endif
 
 			/*ase_pragma*/
 
@@ -2645,7 +2676,6 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
                         float sgn = input.tangentWS.w;
                         float3 bitangent = sgn * cross(input.normalWS.xyz, input.tangentWS.xyz);
                         half3x3 tangentToWorld = half3x3(input.tangentWS.xyz, bitangent.xyz, input.normalWS.xyz);
-        
                         surfaceData.normalWS.xyz = normalize(TransformTangentToWorld(surfaceDescription.NormalTS, tangentToWorld));
                     #else
 						surfaceData.normalWS.xyz = normalize(half3(input.normalWS));
@@ -2737,9 +2767,9 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 				#endif
 
 				#if defined(VARYINGS_NEED_DYNAMIC_LIGHTMAP_UV) && defined(DYNAMICLIGHTMAP_ON)
-					inputData.bakedGI = SAMPLE_GI(input.staticLightmapUV, input.dynamicLightmapUV.xy, half3(input.sh), normalWS);
+					inputData.bakedGI = SAMPLE_GI(input.lightmapUVs.xy, input.lightmapUVs.zw, half3(input.sh), normalWS);
 					#if defined(VARYINGS_NEED_STATIC_LIGHTMAP_UV)
-					inputData.shadowMask = SAMPLE_SHADOWMASK(input.staticLightmapUV);
+					inputData.shadowMask = SAMPLE_SHADOWMASK(input.lightmapUVs.xy);
 					#endif
 				#elif defined(VARYINGS_NEED_STATIC_LIGHTMAP_UV)
 				#if !defined(LIGHTMAP_ON) && (defined(PROBE_VOLUMES_L1) || defined(PROBE_VOLUMES_L2))
@@ -2751,19 +2781,19 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 					input.probeOcclusion,
 					inputData.shadowMask);
 				#else
-					inputData.bakedGI = SAMPLE_GI(input.staticLightmapUV, half3(input.sh), normalWS);
+					inputData.bakedGI = SAMPLE_GI(input.lightmapUVs.xy, half3(input.sh), normalWS);
 					#if defined(VARYINGS_NEED_STATIC_LIGHTMAP_UV)
-					inputData.shadowMask = SAMPLE_SHADOWMASK(input.staticLightmapUV);
+					inputData.shadowMask = SAMPLE_SHADOWMASK(input.lightmapUVs.xy);
 					#endif
 				#endif
 				#endif
 
 				#if defined(DEBUG_DISPLAY)
 					#if defined(VARYINGS_NEED_DYNAMIC_LIGHTMAP_UV) && defined(DYNAMICLIGHTMAP_ON)
-						inputData.dynamicLightmapUV = input.dynamicLightmapUV.xy;
+						inputData.dynamicLightmapUV = input.lightmapUVs.zw;
 					#endif
 					#if defined(VARYINGS_NEED_STATIC_LIGHTMAP_UV) && defined(LIGHTMAP_ON)
-						inputData.staticLightmapUV = input.staticLightmapUV
+						inputData.staticLightmapUV = input.lightmapUVs.xy;
 					#elif defined(VARYINGS_NEED_SH)
 						inputData.vertexSH = input.sh;
 					#endif
@@ -2835,11 +2865,11 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 				packedOutput.viewDirectionWS.xyz =  GetWorldSpaceViewDir(positionWS);
 
 				#if defined(LIGHTMAP_ON)
-					OUTPUT_LIGHTMAP_UV(inputMesh.uv1, unity_LightmapST, packedOutput.staticLightmapUV);
+					OUTPUT_LIGHTMAP_UV(inputMesh.uv1, unity_LightmapST, packedOutput.lightmapUVs.xy);
 				#endif
 
 				#if defined(DYNAMICLIGHTMAP_ON)
-					packedOutput.dynamicLightmapUV.xy = inputMesh.uv2.xy * unity_DynamicLightmapST.xy + unity_DynamicLightmapST.zw;
+					packedOutput.lightmapUVs.zw = inputMesh.uv2.xy * unity_DynamicLightmapST.xy + unity_DynamicLightmapST.zw;
 				#endif
 
 				#if !defined(LIGHTMAP_ON)
@@ -2992,13 +3022,6 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 
             #define SHADERPASS SHADERPASS_DECAL_GBUFFER_MESH
 
-			#if _RENDER_PASS_ENABLED
-			#define GBUFFER3 0
-			#define GBUFFER4 1
-			FRAMEBUFFER_INPUT_X_HALF(GBUFFER3);
-			FRAMEBUFFER_INPUT_X_HALF(GBUFFER4);
-			#endif
-
 			#include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
             #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
 			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Texture.hlsl"
@@ -3019,6 +3042,13 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 			#if defined(LOD_FADE_CROSSFADE)
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
             #endif
+
+			#if _RENDER_PASS_ENABLED
+			#define GBUFFER3 0
+			#define GBUFFER4 1
+			FRAMEBUFFER_INPUT_X_HALF(GBUFFER3);
+			FRAMEBUFFER_INPUT_X_HALF(GBUFFER4);
+			#endif
 
 			/*ase_pragma*/
 
@@ -3126,7 +3156,6 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
                         float sgn = input.tangentWS.w;
                         float3 bitangent = sgn * cross(input.normalWS.xyz, input.tangentWS.xyz);
                         half3x3 tangentToWorld = half3x3(input.tangentWS.xyz, bitangent.xyz, input.normalWS.xyz);
-        
                         surfaceData.normalWS.xyz = normalize(TransformTangentToWorld(surfaceDescription.NormalTS, tangentToWorld));
                     #else
 						surfaceData.normalWS.xyz = normalize(half3(input.normalWS));
@@ -3217,9 +3246,9 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 				#endif
 
 				#if defined(VARYINGS_NEED_DYNAMIC_LIGHTMAP_UV) && defined(DYNAMICLIGHTMAP_ON)
-					inputData.bakedGI = SAMPLE_GI(input.staticLightmapUV, input.dynamicLightmapUV.xy, half3(input.sh), normalWS);
+					inputData.bakedGI = SAMPLE_GI(input.lightmapUVs.xy, input.lightmapUVs.zw, half3(input.sh), normalWS);
 					#if defined(VARYINGS_NEED_STATIC_LIGHTMAP_UV)
-					inputData.shadowMask = SAMPLE_SHADOWMASK(input.staticLightmapUV);
+					inputData.shadowMask = SAMPLE_SHADOWMASK(input.lightmapUVs.xy);
 					#endif
 				#elif defined(VARYINGS_NEED_STATIC_LIGHTMAP_UV)
 				#if !defined(LIGHTMAP_ON) && (defined(PROBE_VOLUMES_L1) || defined(PROBE_VOLUMES_L2))
@@ -3231,19 +3260,19 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 					input.probeOcclusion,
 					inputData.shadowMask);
 				#else
-					inputData.bakedGI = SAMPLE_GI(input.staticLightmapUV, half3(input.sh), normalWS);
+					inputData.bakedGI = SAMPLE_GI(input.lightmapUVs.xy, half3(input.sh), normalWS);
 					#if defined(VARYINGS_NEED_STATIC_LIGHTMAP_UV)
-					inputData.shadowMask = SAMPLE_SHADOWMASK(input.staticLightmapUV);
+					inputData.shadowMask = SAMPLE_SHADOWMASK(input.lightmapUVs.xy);
 					#endif
 				#endif
 				#endif
 
 				#if defined(DEBUG_DISPLAY)
 					#if defined(VARYINGS_NEED_DYNAMIC_LIGHTMAP_UV) && defined(DYNAMICLIGHTMAP_ON)
-						inputData.dynamicLightmapUV = input.dynamicLightmapUV.xy;
+						inputData.dynamicLightmapUV = input.lightmapUVs.zw;
 					#endif
 					#if defined(VARYINGS_NEED_STATIC_LIGHTMAP_UV) && defined(LIGHTMAP_ON)
-						inputData.staticLightmapUV = input.staticLightmapUV
+						inputData.staticLightmapUV = input.lightmapUVs.xy;
 					#elif defined(VARYINGS_NEED_SH)
 						inputData.vertexSH = input.sh;
 					#endif
@@ -3308,11 +3337,11 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 				packedOutput.viewDirectionWS.xyz =  GetWorldSpaceViewDir(positionWS);
 
 				#if defined(LIGHTMAP_ON)
-					OUTPUT_LIGHTMAP_UV(inputMesh.uv1, unity_LightmapST, packedOutput.staticLightmapUV);
+					OUTPUT_LIGHTMAP_UV(inputMesh.uv1, unity_LightmapST, packedOutput.lightmapUVs.xy);
 				#endif
 
 				#if defined(DYNAMICLIGHTMAP_ON)
-					packedOutput.dynamicLightmapUV.xy = inputMesh.uv2.xy * unity_DynamicLightmapST.xy + unity_DynamicLightmapST.zw;
+					packedOutput.lightmapUVs.zw = inputMesh.uv2.xy * unity_DynamicLightmapST.xy + unity_DynamicLightmapST.zw;
 				#endif
 
 				#if !defined(LIGHTMAP_ON)
@@ -3418,9 +3447,11 @@ Shader  /*ase_name*/"Hidden/Universal/Decal"/*end*/
 				fragmentOutput.GBuffer1 = 0;
 				fragmentOutput.GBuffer2 = half4(packedNormalWS, surfaceData.normalWS.a);
 				fragmentOutput.GBuffer3 = half4(surfaceData.emissive + color, surfaceData.baseColor.a);
+
 				#if OUTPUT_SHADOWMASK
-					fragmentOutput.GBuffer4 = inputData.shadowMask; // will have unity_ProbesOcclusion value if subtractive lighting is used (baked)
+					fragmentOutput.GBuffer4 = inputData.shadowMask;
 				#endif
+
 				#pragma warning (default : 3578) // Restore output value isn't completely initialized.
 
 			}

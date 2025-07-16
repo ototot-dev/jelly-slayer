@@ -34,6 +34,7 @@ namespace Obi
     [AddComponentMenu("Physics/Obi/Obi Solver", 800)]
     [ExecuteInEditMode]
     [DisallowMultipleComponent]
+    [HelpURL("https://obi.virtualmethodstudio.com/manual/7.0/obisolver.html")]
     public sealed class ObiSolver : MonoBehaviour
     {
         static ProfilerMarker m_StateInterpolationPerfMarker = new ProfilerMarker("ApplyStateInterpolation");
@@ -122,9 +123,11 @@ namespace Obi
         public event SolverCallback OnUpdateParameters;
         public event SolverCallback OnParticleCountChanged;
 
-        public event SolverStepCallback OnSimulationStart; /**< Called at the start of physics simulation, before updating active particles, constraints, etc.*/
-        public event SolverCallback OnRequestReadback;
-        public event SolverStepCallback OnSimulationEnd; /**< Called at the end of physics simulation.*/
+        public event SolverStepCallback OnSimulationStart; /**< Called right before scheduling a simulation step, before updating active particles, constraints, etc.*/
+        public event SolverStepCallback OnCollisionDetectionStart; /**< Called right after CPU->GPU data transfer, before scheduling collision detection and spatial queries.*/
+        public event SolverStepCallback OnSubstepsStart; /**< Called right after scheduling collision detection and spatial queries, before scheduling substeps.*/
+        public event SolverCallback OnRequestReadback;    /**< Called right after scheduling all substeps (before completing simulation).*/
+        public event SolverStepCallback OnSimulationEnd; /**< Called when a simulation step has been completed.*/
         public event SolverStepCallback OnInterpolate; /**< Called every frame after interpolation, right before updating rendering.*/
 
         [Tooltip("If enabled, will force the solver to keep simulating even when not visible from any camera.")]
@@ -180,6 +183,10 @@ namespace Obi
         public uint maxParticleNeighbors = 128;
         public uint maxParticleContacts = 6;
 
+        public bool useLimits = false;
+        public bool killOffLimitsParticles = false;
+        public Bounds boundaryLimits = new Bounds(Vector3.zero, new Vector3(10, 10, 10));
+
         public Vector3 gravity = new Vector3(0, -9.81f, 0);
         public Space gravitySpace = Space.Self;
 
@@ -189,9 +196,20 @@ namespace Obi
         [Min(1)]
         public int foamSubsteps = 1;
 
+        [Tooltip("Minimum amount of fluid particles around a foam particle necessary for the foam to be advected, instead of following a ballistic trajectory.")]
+        [Min(0)]
+        public int foamMinNeighbors = 3;
+
+        [Tooltip("When enabled, each individual foam particle will be tested for collisions against ObiColliders.")]
+        public bool foamCollisions = false;
+
         [Tooltip("Foam particles can stretch along the direction of their velocity. This parameter controls the maximum amount of stretch.")]
         [Range(0, 3)]
         public float maxFoamVelocityStretch = 0.3f;
+
+        [Tooltip("Scales the size of foam particles.")]
+        [Min(0)]
+        public float foamRadiusScale = 1;
 
         [Tooltip("Determines how foam particles fade in/out during its lifetime.")]
         [MinMax(0, 1)]
@@ -204,6 +222,20 @@ namespace Obi
         [Tooltip("Determines the utilization % range in which particles age faster.")]
         [Min(1)]
         public float foamAccelAging = 4;
+
+        [Tooltip("Color of the light scattered by foam.")]
+        [Min(0)]
+        public float foamVolumeDensity = 0.1f;
+
+        [Tooltip("Color of the light scattered by foam.")]
+        [Min(0)]
+        public float foamAmbientDensity = 0.02f;
+
+        [Tooltip("Color of the light scattered by foam.")]
+        public Color foamScatterColor = new Color(0.8f,0.75f,0.7f,1);
+
+        [Tooltip("Color used for foam ambient lighting.")]
+        public Color foamAmbientColor = new Color(0.4f, 0.5f, 0.6f, 1);
 
         [Tooltip("How much does world-space linear inertia affect particles in the solver.")]
         [Range(0, 1)]
@@ -277,6 +309,7 @@ namespace Obi
         public Oni.ConstraintParameters shapeMatchingConstraintParameters = new Oni.ConstraintParameters(true, Oni.ConstraintParameters.EvaluationOrder.Parallel, 1);
         public Oni.ConstraintParameters tetherConstraintParameters = new Oni.ConstraintParameters(true, Oni.ConstraintParameters.EvaluationOrder.Parallel, 1);
         public Oni.ConstraintParameters pinConstraintParameters = new Oni.ConstraintParameters(true, Oni.ConstraintParameters.EvaluationOrder.Parallel, 1);
+        public Oni.ConstraintParameters pinholeConstraintParameters = new Oni.ConstraintParameters(true, Oni.ConstraintParameters.EvaluationOrder.Parallel, 1);
         public Oni.ConstraintParameters stitchConstraintParameters = new Oni.ConstraintParameters(true, Oni.ConstraintParameters.EvaluationOrder.Parallel, 1);
         public Oni.ConstraintParameters densityConstraintParameters = new Oni.ConstraintParameters(true, Oni.ConstraintParameters.EvaluationOrder.Parallel, 1);
         public Oni.ConstraintParameters stretchShearConstraintParameters = new Oni.ConstraintParameters(true, Oni.ConstraintParameters.EvaluationOrder.Sequential, 1);
@@ -296,6 +329,7 @@ namespace Obi
         // status:
         [NonSerialized] private ObiNativeIntList m_ActiveParticles;
         [NonSerialized] private ObiNativeIntList m_Simplices;
+        [NonSerialized] private ObiNativeIntList m_DeadParticles;
 
         // positions:
         [NonSerialized] private ObiNativeVector4List m_Positions;
@@ -313,7 +347,7 @@ namespace Obi
 
         [NonSerialized] private ObiNativeQuaternionList m_StartOrientations;
         [NonSerialized] private ObiNativeQuaternionList m_EndOrientations;
-        [NonSerialized] private ObiNativeQuaternionList m_RenderableOrientations; /**< renderable particle orientations.*/
+        [NonSerialized] private ObiNativeQuaternionList m_RenderableOrientations;
 
         // velocities:
         [NonSerialized] private ObiNativeVector4List m_Velocities;
@@ -347,8 +381,9 @@ namespace Obi
         // fluids:
         [NonSerialized] private ObiNativeFloatList m_Life;
         [NonSerialized] private ObiNativeVector4List m_FluidData;
-        [NonSerialized] private ObiNativeVector4List m_FluidMaterials; /**< fluidRadius / surfTension / viscosity / vorticity */
-        [NonSerialized] private ObiNativeVector4List m_FluidInterface; /**< drag / pressure / buoyancy / miscibility */
+        [NonSerialized] private ObiNativeVector4List m_FluidMaterials;  /**< fluidRadius / surfTension / viscosity / pressure */ 
+        [NonSerialized] private ObiNativeVector4List m_FluidMaterials2; /**< vorticity / vorticity diffusion / baroclinity / baroclinity diffusion */
+        [NonSerialized] private ObiNativeVector4List m_FluidInterface; /**< drag / ambient pressure / buoyancy / miscibility */
         [NonSerialized] private ObiNativeVector4List m_UserData;
         [NonSerialized] private ObiNativeMatrix4x4List m_Anisotropy;
 
@@ -462,6 +497,17 @@ namespace Obi
                     m_ActiveParticles = new ObiNativeIntList();
 
                 return m_ActiveParticles;
+            }
+        }
+
+        public ObiNativeIntList deadParticles
+        {
+            get
+            {
+                if (m_DeadParticles == null)
+                    m_DeadParticles = new ObiNativeIntList();
+                
+                return m_DeadParticles;
             }
         }
 
@@ -935,6 +981,16 @@ namespace Obi
             }
         }
 
+        public ObiNativeVector4List fluidMaterials2
+        {
+            get
+            {
+                if (m_FluidMaterials2 == null)
+                    m_FluidMaterials2 = new ObiNativeVector4List();
+                return m_FluidMaterials2;
+            }
+        }
+
         public ObiNativeMatrix4x4List anisotropies
         {
             get
@@ -1113,9 +1169,6 @@ namespace Obi
             // first fixed update this frame:
             if (steps++ == 0)
             {
-                // Signal the start of a frame, so we know the world needs to be updated this frame.
-                ObiColliderWorld.GetInstance().FrameStart();
-
                 // Wait for the previous frame's simulation to end and GPU data to be available.
                 if (bufferedSynchronization == Synchronization.Asynchronous)
                     CompleteSimulation();
@@ -1123,9 +1176,9 @@ namespace Obi
 
             if (bufferedSynchronization == Synchronization.SynchronousFixed)
             {
-                // Update collider world, making sure it will also update after FixedUpdate() for solvers not using fixed sync.
+                // Update collider world:
+                ObiColliderWorld.GetInstance().SetDirty();
                 ObiColliderWorld.GetInstance().UpdateWorld(Time.fixedDeltaTime);
-                ObiColliderWorld.GetInstance().FrameStart();
 
                 // kick off this step's simulation, and immediately wait for it to complete:
                 StartSimulation(Time.fixedDeltaTime, 1);
@@ -1136,12 +1189,7 @@ namespace Obi
 
         private void Update()
         {
-            // Make sure ObiColliderWorld updates after all solvers have called CompleteSimulation() on their FixedUpdate.
-            // This way we can be sure no physics updates are in flight.
-            if (steps > 0 && bufferedSynchronization != Synchronization.SynchronousFixed)
-            {
-                ObiColliderWorld.GetInstance().UpdateWorld(Time.fixedDeltaTime * steps);
-            }
+            ObiColliderWorld.GetInstance().SetDirty();
         }
 
         private void LateUpdate()
@@ -1151,7 +1199,16 @@ namespace Obi
 
             // Accumulate amount of time to simulate (duration of the frame - time already simulated)
             if (Application.isPlaying)
+            {
+                // Make sure ObiColliderWorld updates after all solvers have called CompleteSimulation() on their FixedUpdate.
+                // This way we can be sure no physics updates are in flight.
+                // Only update acceleration structures and rigidbodies if a physics step will take place.
+                ObiColliderWorld.GetInstance().UpdateWorld(Time.fixedDeltaTime * steps, steps > 0 && bufferedSynchronization != Synchronization.SynchronousFixed);
+
+                // Accumulate time and clamp it to a single timestep, in case the simulation is lagging behind rendering (dropping time).
                 accumulatedTime += Time.deltaTime - Time.fixedDeltaTime * steps;
+                accumulatedTime = Mathf.Clamp(accumulatedTime, 0, Time.fixedDeltaTime);
+            }
             else
             {
                 // if in editor, we don't accumulate any simulation time
@@ -1181,6 +1238,13 @@ namespace Obi
             // Reset step counter to zero, now that
             // simulation tasks for this frame have been dispatched.
             steps = 0;
+        }
+
+        private void OnApplicationQuit()
+        {
+            // Make sure solvers finish their simulation before Unity automatically destroys collider world
+            // when closing app or exiting play mode.
+            OnDestroy();
         }
 
         private void OnDestroy()
@@ -1248,6 +1312,7 @@ namespace Obi
                 m_Constraints[(int)Oni.ConstraintType.Tether] = new ObiTetherConstraintsData();
                 m_Constraints[(int)Oni.ConstraintType.Skin] = new ObiSkinConstraintsData();
                 m_Constraints[(int)Oni.ConstraintType.Pin] = new ObiPinConstraintsData();
+                m_Constraints[(int)Oni.ConstraintType.Pinhole] = new ObiPinholeConstraintsData();
 
                 // Create the solver:
                 implementation = m_SimulationBackend.CreateSolver(this, 0);
@@ -1260,9 +1325,10 @@ namespace Obi
                 // Initialize moving transform:
                 InitializeTransformFrame();
 
-                // Initial collider world update:
-                ObiColliderWorld.GetInstance().FrameStart();
+                // Force initial collider world update:
+                ObiColliderWorld.GetInstance().SetDirty();
                 ObiColliderWorld.GetInstance().UpdateWorld(0);
+                ObiColliderWorld.GetInstance().SetDirty();
 
                 OnInitialize?.Invoke(this);
 
@@ -1341,6 +1407,7 @@ namespace Obi
         private void FreeParticleArrays()
         {
             activeParticles.Dispose();
+            deadParticles.Dispose();
             simplices.Dispose();
             points.Dispose();
             edges.Dispose();
@@ -1371,6 +1438,7 @@ namespace Obi
             renderableRadii.Dispose();
             fluidInterface.Dispose();
             fluidMaterials.Dispose();
+            fluidMaterials2.Dispose();
             foamPositions.Dispose();
             foamVelocities.Dispose();
             foamColors.Dispose();
@@ -1404,6 +1472,7 @@ namespace Obi
             deformableEdges.Dispose();
 
             m_ActiveParticles = null;
+            m_DeadParticles = null;
             m_Simplices = null;
             m_Points = null;
             m_Edges = null;
@@ -1445,6 +1514,7 @@ namespace Obi
             m_UserData = null;
             m_FluidInterface = null;
             m_FluidMaterials = null;
+            m_FluidMaterials2 = null;
             m_FoamPositions = null;
             m_FoamVelocities = null;
             m_FoamColors = null;
@@ -1473,6 +1543,7 @@ namespace Obi
             if (count >= positions.count)
             {
                 colors.ResizeInitialized(count, Color.white);
+                deadParticles.ResizeInitialized(count);
                 startPositions.ResizeInitialized(count);
                 endPositions.ResizeInitialized(count);
                 positions.ResizeInitialized(count);
@@ -1496,8 +1567,9 @@ namespace Obi
                 renderableRadii.ResizeInitialized(count);
                 fluidInterface.ResizeInitialized(count);
                 fluidMaterials.ResizeInitialized(count);
+                fluidMaterials2.ResizeInitialized(count);
                 anisotropies.ResizeInitialized(count);
-                life.ResizeInitialized(count);
+                life.ResizeInitialized(count, float.PositiveInfinity);
                 fluidData.ResizeInitialized(count);
                 userData.ResizeInitialized(count);
                 externalForces.ResizeInitialized(count);
@@ -1508,6 +1580,9 @@ namespace Obi
                 positionConstraintCounts.ResizeInitialized(count);
                 orientationConstraintCounts.ResizeInitialized(count);
                 normals.ResizeInitialized(count);
+
+                // reset dead particles counter to zero.
+                deadParticles.count = 0;
             }
 
             if (count >= m_ParticleToActor.Length)
@@ -1593,6 +1668,22 @@ namespace Obi
             }
         }
 
+        private void NotifyDeceasedParticles()
+        {
+            deadParticles.WaitForReadback();
+
+            int dead = deadParticles.count;
+            for (int i = 0; i < dead; ++i)
+            {
+                int index = deadParticles[i];
+                var pa = particleToActor[index];
+                if (pa != null)
+                    pa.actor.DeactivateParticle(pa.indexInActor);
+            }
+
+            deadParticles.count = 0;
+        }
+
         public void StartSimulation(float stepDelta, int simulationSteps)
         {
             if (simulationSteps > 0)
@@ -1605,6 +1696,10 @@ namespace Obi
 
                 // only update buffered synchronization before starting a new step.
                 bufferedSynchronization = synchronization;
+
+                // notify actors of dead particles, so they can deactivate them. Do this before inserting new actors,
+                // as actor insertion might trigger a resizing of the deadParticles buffer.
+                NotifyDeceasedParticles();
 
                 // AddActor() calls are buffered, new actors should be inserted as this particular point in time:
                 while (addBuffer.TryDequeue(out ObiActor actor))
@@ -1657,10 +1752,14 @@ namespace Obi
                     // CPU -> GPU data transfer
                     implementation.PushData();
 
+                    OnCollisionDetectionStart?.Invoke(this, timeToSimulate, substepTime);
+                    foreach (ObiActor actor in actors)
+                        actor.CollisionDetectionStart(timeToSimulate, substepTime);
+
                     // Update inertial reference frame:
                     simulationHandle = UpdateTransformFrame(simulatedTime);
 
-                    // Calculate bounds:
+                    // Calculate bounds and update particle lifetimes.
                     simulationHandle = implementation.UpdateBounds(simulationHandle, simulatedTime);
 
                     // Perform collision detection:
@@ -1673,6 +1772,10 @@ namespace Obi
                     // Perform queued queries. This ensures queries "see" the same state as collision callbacks, and ensures no
                     // data races (queries performed while the simulation is running).
                     FlushSpatialQueries();
+
+                    OnSubstepsStart?.Invoke(this, timeToSimulate, substepTime);
+                    foreach (ObiActor actor in actors)
+                        actor.SubstepsStart(timeToSimulate, substepTime);
 
                     // Divide each step into multiple substeps:
                     float timeLeft = simulatedTime;         
@@ -1769,9 +1872,10 @@ namespace Obi
                 {
                     // interpolate physics state:
                     simulationHandle = implementation.ApplyInterpolation(simulationHandle, startPositions, startOrientations, Time.fixedDeltaTime, unsimulatedTime);
-                    simulationHandle?.Complete();
                 }
             }
+
+            simulationHandle?.Complete();
 
             // test bounds against all cameras to update visibility.
             UpdateVisibility();
@@ -1897,7 +2001,7 @@ namespace Obi
             // If we are in charge of this actor indeed, perform all steps necessary to release it.
             if (index >= 0)
             {
-                actor.UnloadBlueprint(this);
+                actor.UnloadBlueprint();
 
                 for (int i = 0; i < actor.solverIndices.count; ++i)
                     particleToActor[actor.solverIndices[i]] = null;
@@ -1946,7 +2050,7 @@ namespace Obi
                 freeGroupIDs.Push(actors.Count);
             actor.groupID = freeGroupIDs.Pop();
 
-            actor.LoadBlueprint(this);
+            actor.LoadBlueprint();
 
             implementation.ParticleCountChanged(this);
             OnParticleCountChanged?.Invoke(this);
@@ -1987,6 +2091,8 @@ namespace Obi
 
             implementation.SetConstraintGroupParameters(Oni.ConstraintType.Pin, ref pinConstraintParameters);
 
+            implementation.SetConstraintGroupParameters(Oni.ConstraintType.Pinhole, ref pinholeConstraintParameters);
+
             implementation.SetConstraintGroupParameters(Oni.ConstraintType.Stitch, ref stitchConstraintParameters);
 
             implementation.SetConstraintGroupParameters(Oni.ConstraintType.StretchShear, ref stretchShearConstraintParameters);
@@ -2024,6 +2130,7 @@ namespace Obi
                 case Oni.ConstraintType.ShapeMatching: return shapeMatchingConstraintParameters;
                 case Oni.ConstraintType.Tether: return tetherConstraintParameters;
                 case Oni.ConstraintType.Pin: return pinConstraintParameters;
+                case Oni.ConstraintType.Pinhole: return pinholeConstraintParameters;
                 case Oni.ConstraintType.Stitch: return stitchConstraintParameters;
                 case Oni.ConstraintType.Density: return densityConstraintParameters;
                 case Oni.ConstraintType.StretchShear: return stretchShearConstraintParameters;
@@ -2245,9 +2352,8 @@ namespace Obi
         /**
          * Updates solver bounds, then checks if they're visible from at least one camera. If so, sets isVisible to true, false otherwise.
          */
-                    private void UpdateVisibility()
+        private void UpdateVisibility()
         {
-
             using (m_UpdateVisibilityPerfMarker.Auto())
             {
                 using (m_GetSolverBoundsPerfMarker.Auto())

@@ -42,6 +42,7 @@
                 	float3 lightDir : TEXCOORD2;
                 	float3 a2 : TEXCOORD3;
                 	float3 a3 : TEXCOORD4;
+                  //float3x3 P : TEXCOORD5;
                 };
 
                 struct fout 
@@ -65,6 +66,7 @@
                 	o.mapping = float4(v.corner.xy,1/length(eye),radius); // A[1]
                 	o.viewRay = mul((float3x3)UNITY_MATRIX_V,view); 	  // A[0]
                 	o.color = v.color * _Color;
+                  //o.P = float3x3(v.t0.xyz,v.t1.xyz,v.t2.xyz);
 
                 	BuildAuxiliaryNormalVectors(v.vertex,worldPos,view,P,IP,o.a2,o.a3);
                 			
@@ -85,6 +87,19 @@
 
                     // clip space position:
                     float4 pos = mul(UNITY_MATRIX_P,float4(p,1.0));
+
+                    // local space normal, use to calculate UVs
+                   /*float3 ln = mul(mul((float3x3)i.P,UNITY_MATRIX_I_V) ,n);
+
+                    float2 uv = float2(
+                      // atan returns a value between -pi and pi
+                      // so we divide by pi * 2 to get -0.5 to 0.5
+                      atan2(ln.x, ln.y) / (3.1415 * 2.0),
+                      // acos returns 0.0 at the top, pi at the bottom
+                      // so we flip the y to align with Unity's OpenGL style
+                      // texture UVs so 0.0 is at the bottom
+                      acos(-ln.z) / 3.1415
+                    );*/
 
                     // simple lighting: ambient
                     float3 modelUp = mul (UNITY_MATRIX_IT_MV,float3(0,1,0));

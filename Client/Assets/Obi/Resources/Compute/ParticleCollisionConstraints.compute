@@ -2,11 +2,13 @@
 #pragma kernel Project
 #pragma kernel Apply
 
+#include "SolverParameters.cginc"
 #include "ContactHandling.cginc"
 #include "ColliderDefinitions.cginc"
 #include "CollisionMaterial.cginc"
 #include "Simplex.cginc"
 #include "AtomicDeltas.cginc"
+
 
 StructuredBuffer<int> particleIndices;
 
@@ -16,11 +18,13 @@ StructuredBuffer<float> invRotationalMasses;
 StructuredBuffer<float4> principalRadii;
 StructuredBuffer<float4> velocities;
 StructuredBuffer<float4> prevPositions;
+StructuredBuffer<float4> fluidInterface;
 StructuredBuffer<quaternion> prevOrientations;
 StructuredBuffer<quaternion> orientations;
 
 RWStructuredBuffer<float4> positions;
 RWStructuredBuffer<float4> deltas;
+RWStructuredBuffer<float4> userData;
 
 // Vulkan workaround: don't declare a RW array after a counter/append one (particleContacts) since the counter overlaps the first entry in the next array.
 RWStructuredBuffer<contactMasses> effectiveMasses;
@@ -29,9 +33,7 @@ StructuredBuffer<uint> dispatchBuffer;
 
 // Variables set from the CPU
 uint particleCount;
-float deltaTime;
-float shockPropagation;
-float4 gravity;
+float substepTime;
 float sorFactor;
 
 [numthreads(128, 1, 1)]
@@ -87,12 +89,10 @@ void Initialize (uint3 id : SV_DispatchThreadID)
     simplexPrevPositionB.w = 0;
 
     // update contact distance
-    float dAB = dot(simplexPrevPositionA - simplexPrevPositionB, particleContacts[i].normal);
-    particleContacts[i].dist = dAB - (simplexRadiusA + simplexRadiusB);
+    float4 contactPointA = simplexPrevPositionA - particleContacts[i].normal * simplexRadiusA;
+    float4 contactPointB = simplexPrevPositionB + particleContacts[i].normal * simplexRadiusB;
 
-    // calculate contact points:
-    float4 contactPointA = simplexPrevPositionB + particleContacts[i].normal * (particleContacts[i].dist + simplexRadiusB);
-    float4 contactPointB = simplexPrevPositionA - particleContacts[i].normal * (particleContacts[i].dist + simplexRadiusA);
+    particleContacts[i].dist = dot(contactPointA - contactPointB, particleContacts[i].normal);
 
     // update contact basis:
     CalculateBasis(simplexVelocityA - simplexVelocityB, particleContacts[i].normal,particleContacts[i].tangent);
@@ -123,8 +123,13 @@ void Project (uint3 id : SV_DispatchThreadID)
     int simplexStartA = GetSimplexStartAndSize(particleContacts[i].bodyA, simplexSizeA);
     int simplexStartB = GetSimplexStartAndSize(particleContacts[i].bodyB, simplexSizeB);
 
-    float4 simplexPositionA = float4(0,0,0,0), simplexPositionB = float4(0,0,0,0);
+    // Combine collision materials (use material from first particle in simplex)
+    collisionMaterial material = CombineCollisionMaterials(collisionMaterialIndices[simplices[simplexStartA]], collisionMaterialIndices[simplices[simplexStartB]]);
+
+    float4 simplexPositionA = FLOAT4_ZERO, simplexPositionB = FLOAT4_ZERO;
     float simplexRadiusA = 0, simplexRadiusB = 0;
+    float4 simplexUserDataA = FLOAT4_ZERO, simplexUserDataB = FLOAT4_ZERO;
+    float miscibility = 0;
 
     int j = 0;
     for (j = 0; j < simplexSizeA; ++j)
@@ -132,12 +137,16 @@ void Project (uint3 id : SV_DispatchThreadID)
         int particleIndex = simplices[simplexStartA + j];
         simplexPositionA += positions[particleIndex] * particleContacts[i].pointA[j];
         simplexRadiusA += EllipsoidRadius(particleContacts[i].normal, orientations[particleIndex], principalRadii[particleIndex].xyz) * particleContacts[i].pointA[j];
+        simplexUserDataA += userData[particleIndex] * particleContacts[i].pointA[j];
+        miscibility += fluidInterface[particleIndex].w * particleContacts[i].pointA[j];
     }
     for (j = 0; j < simplexSizeB; ++j)
     {
         int particleIndex = simplices[simplexStartB + j];
         simplexPositionB += positions[particleIndex] * particleContacts[i].pointB[j];
         simplexRadiusB += EllipsoidRadius(particleContacts[i].normal, orientations[particleIndex], principalRadii[particleIndex].xyz) * particleContacts[i].pointA[j];
+        simplexUserDataB += userData[particleIndex] * particleContacts[i].pointB[j];
+        miscibility += fluidInterface[particleIndex].w * particleContacts[i].pointB[j];
     }
 
     simplexPositionA.w = 0;
@@ -148,13 +157,16 @@ void Project (uint3 id : SV_DispatchThreadID)
 
     float normalInvMass = effectiveMasses[i].normalInvMassA + effectiveMasses[i].normalInvMassB;
 
-    float lambda = SolvePenetration(particleContacts[i], normalInvMass, posA, posB, 10);
+    // adhesion:
+    float lambda = SolveAdhesion(particleContacts[i], normalInvMass, posA, posB, material.stickDistance, material.stickiness, substepTime);
+
+    lambda += SolvePenetration(particleContacts[i], normalInvMass, posA, posB, maxDepenetration * substepTime);
 
     if (abs(lambda) > EPSILON)
     {
-        float shock = shockPropagation * dot(particleContacts[i].normal, normalizesafe(gravity));
+        float shock = shockPropagation * dot(particleContacts[i].normal.xyz, normalizesafe(gravity));
         float4 delta = lambda * particleContacts[i].normal;
-       
+               
         float baryScale = BaryScale(particleContacts[i].pointA);
         for (j = 0; j < simplexSizeA; ++j)
         {
@@ -171,6 +183,19 @@ void Project (uint3 id : SV_DispatchThreadID)
             AtomicAddPositionDelta(particleIndex, delta2);
         }
     }
+
+    // property diffusion:
+    if (particleContacts[i].dist < collisionMargin)
+    {
+        float diffusionSpeed = miscibility * 0.5 * substepTime;
+        float4 userDelta = (simplexUserDataB - simplexUserDataA) * diffusionMask * diffusionSpeed;
+
+        for (j = 0; j < simplexSizeA; ++j)
+            AtomicAddOrientationDelta(simplices[simplexStartA + j], userDelta * particleContacts[i].pointA[j]);
+           
+        for (j = 0; j < simplexSizeB; ++j)
+            AtomicAddOrientationDelta(simplices[simplexStartB + j], -userDelta * particleContacts[i].pointB[j]);
+    }
 }
 
 [numthreads(128, 1, 1)]
@@ -183,7 +208,7 @@ void Apply (uint3 id : SV_DispatchThreadID)
     int p = particleIndices[threadIndex];
  
     ApplyPositionDelta(positions, p, sorFactor);
-   
+    ApplyUserDataDelta(userData, p);
 }
 
 

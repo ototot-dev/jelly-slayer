@@ -12,11 +12,14 @@ StructuredBuffer<float2> deformableTriangleUVs;
 StructuredBuffer<int> deformableEdges;
 
 StructuredBuffer<float4> renderablePositions;
+StructuredBuffer<float4> velocities;
 StructuredBuffer<float4> wind;
 StructuredBuffer<int> phases;
 
-RWStructuredBuffer<uint4> normals;
-RWStructuredBuffer<uint4> tangents;
+RWStructuredBuffer<float4> normals;
+
+RWStructuredBuffer<uint4> normalsInt;
+RWStructuredBuffer<uint4> tangentsInt;
 RWStructuredBuffer<quaternion> renderableOrientations;
 
 // Variables set from the CPU
@@ -26,17 +29,17 @@ uint edgeCount;
 
 void AccumulateNormal(in int index, in float4 delta)
 {
-    InterlockedAddFloat(normals, index, 0, delta.x);
-    InterlockedAddFloat(normals, index, 1, delta.y);
-    InterlockedAddFloat(normals, index, 2, delta.z);
+    InterlockedAddFloat(normalsInt, index, 0, delta.x);
+    InterlockedAddFloat(normalsInt, index, 1, delta.y);
+    InterlockedAddFloat(normalsInt, index, 2, delta.z);
 }
 
 void AccumulateTangent(in int index, in float4 delta)
 {
-    InterlockedAddFloat(tangents, index, 0, delta.x);
-    InterlockedAddFloat(tangents, index, 1, delta.y);
-    InterlockedAddFloat(tangents, index, 2, delta.z);
-    InterlockedAddFloat(tangents, index, 3, delta.w);
+    InterlockedAddFloat(tangentsInt, index, 0, delta.x);
+    InterlockedAddFloat(tangentsInt, index, 1, delta.y);
+    InterlockedAddFloat(tangentsInt, index, 2, delta.z);
+    InterlockedAddFloat(tangentsInt, index, 3, delta.w);
 }
 
 [numthreads(128, 1, 1)]
@@ -44,11 +47,12 @@ void ResetNormals (uint3 id : SV_DispatchThreadID)
 {
     uint i = id.x;
     if (i >= normalsCount) return;
-
-    if ((phases[i] & (int)PHASE_FLUID) == 0)
+    
+    // leave fluid and softbody normalsInt intact.
+    if ((phases[i] & (int)PHASE_FLUID) == 0 && normals[i].w >= 0)
     {
-        normals[i] = asuint(FLOAT4_ZERO);
-        tangents[i] = asuint(FLOAT4_ZERO);
+        normals[i] = FLOAT4_ZERO;
+        tangentsInt[i] = asuint(FLOAT4_ZERO);
     }
 }
 
@@ -107,7 +111,7 @@ void UpdateEdgeNormals (uint3 id : SV_DispatchThreadID)
     int p2 = deformableEdges[i * 2 + 1];
 
     float4 edge = renderablePositions[p2] - renderablePositions[p1];
-    float4 avgWind = (wind[p1] + wind[p2]) * 0.5f;
+    float4 avgWind = (velocities[p1] + velocities[p2]) * 0.5f - (wind[p1] + wind[p2]) * 0.5f;
     float denom =  dot(edge, edge);
     float4 normal = avgWind - (denom < EPSILON ? FLOAT4_ZERO : edge * dot(avgWind, edge) / denom);
 
@@ -121,19 +125,19 @@ void OrientationFromNormals (uint3 id : SV_DispatchThreadID)
     uint i = id.x;
     if (i >= normalsCount) return;
 
-    if ((phases[i] & (int)PHASE_FLUID) == 0)
+    if ((phases[i] & (int)PHASE_FLUID) == 0 && normals[i].w >= 0) // not fluid or softbody (no SDF stored))
     {
-        float4 normal = asfloat(normals[i]);
-        float4 tangent = asfloat(tangents[i]);
+        float4 normal = normals[i];
+        float4 tangent = asfloat(tangentsInt[i]);
 
         if (dot(normal, normal) > EPSILON &&
             dot(tangent, tangent) > EPSILON)
         {
-            normals[i] = asuint(normalizesafe(normal));
-            tangents[i] = asuint(normalizesafe(tangent));
+            normals[i] = normalizesafe(normal);
+            tangentsInt[i] = asuint(normalizesafe(tangent));
 
             // particle orientation from normal/tangent:
-            renderableOrientations[i] = q_look_at(asfloat(normals[i]).xyz, asfloat(tangents[i]).xyz);
+            renderableOrientations[i] = q_look_at(normals[i].xyz, asfloat(tangentsInt[i]).xyz);
         }
     }
 }

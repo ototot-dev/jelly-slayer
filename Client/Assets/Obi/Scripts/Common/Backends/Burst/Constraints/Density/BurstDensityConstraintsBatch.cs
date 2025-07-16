@@ -17,7 +17,7 @@ namespace Obi
             m_ConstraintType = Oni.ConstraintType.Density;
         }
 
-        public override JobHandle Initialize(JobHandle inputDeps, float substepTime)
+        public override JobHandle Initialize(JobHandle inputDeps, float stepTime, float substepTime, int steps, float timeLeft)
         {
             return inputDeps;
         }
@@ -75,13 +75,27 @@ namespace Obi
             var vorticity = new NormalsJob()
             {
                 invMasses = solverImplementation.invMasses,
+                positions = solverImplementation.positions,
                 principalRadii = solverImplementation.principalRadii,
                 fluidMaterials = solverImplementation.fluidMaterials,
+                fluidMaterials2 = solverImplementation.fluidMaterials2,
                 fluidData = solverImplementation.fluidData,
                 fluidInterface = solverImplementation.fluidInterface,
+                velocities = solverImplementation.velocities,
+                angularVelocities = solverImplementation.angularVelocities,
+
+                vorticityAccelerations = solverImplementation.orientationDeltas.Reinterpret<float4>(),
+                vorticity = solverImplementation.restOrientations.Reinterpret<float4>(),
+                linearAccelerations = solverImplementation.positionDeltas,
+                linearFromAngular = solverImplementation.restPositions,
+                angularDiffusion = solverImplementation.anisotropies,
+
                 userData = solverImplementation.userData,
                 pairs = ((BurstSolverImpl)constraints.solver).fluidInteractions,
                 normals = solverImplementation.normals,
+                densityKernel = new Poly6Kernel(solverAbstraction.parameters.mode == Oni.SolverParameters.Mode.Mode2D),
+                gradKernel = new SpikyKernel(solverAbstraction.parameters.mode == Oni.SolverParameters.Mode.Mode2D),
+                solverParams = solverAbstraction.parameters,
                 batchData = batchData,
                 dt = deltaTime,
             };
@@ -95,7 +109,7 @@ namespace Obi
             {
                 positions = solverImplementation.positions,
                 prevPositions = solverImplementation.prevPositions,
-                orientations = solverImplementation.orientations,
+                matchingRotations = solverImplementation.restPositions.Reinterpret<quaternion>(),
                 pairs = ((BurstSolverImpl)constraints.solver).fluidInteractions,
                 massCenters = solverImplementation.normals,
                 prevMassCenters = solverImplementation.renderablePositions,
@@ -190,8 +204,8 @@ namespace Obi
                     prevMassCenters[pair.particleA] += wAvg * new float4(prevPositions[pair.particleB].xyz, 1) / positions[pair.particleB].w;
                     prevMassCenters[pair.particleB] += wAvg * new float4(prevPositions[pair.particleA].xyz, 1) / positions[pair.particleA].w;
 
-                    moments[pair.particleA] += wAvg * (BurstMath.multrnsp4(positions[pair.particleB], prevPositions[pair.particleB]) + float4x4.identity * math.pow(principalRadii[pair.particleB].x, 2) * 0.2f) / positions[pair.particleB].w;
-                    moments[pair.particleB] += wAvg * (BurstMath.multrnsp4(positions[pair.particleA], prevPositions[pair.particleA]) + float4x4.identity * math.pow(principalRadii[pair.particleA].x, 2) * 0.2f) / positions[pair.particleA].w;
+                    moments[pair.particleA] += wAvg * (BurstMath.multrnsp4(positions[pair.particleB], prevPositions[pair.particleB]) + float4x4.identity * math.pow(principalRadii[pair.particleB].x, 2) * 0.001f) / positions[pair.particleB].w;
+                    moments[pair.particleB] += wAvg * (BurstMath.multrnsp4(positions[pair.particleA], prevPositions[pair.particleA]) + float4x4.identity * math.pow(principalRadii[pair.particleA].x, 2) * 0.001f) / positions[pair.particleA].w;
                 }
             }
         }
@@ -247,7 +261,7 @@ namespace Obi
         {
             [ReadOnly] public NativeArray<float4> positions;
             [ReadOnly] public NativeArray<float4> prevPositions;
-            [ReadOnly] public NativeArray<quaternion> orientations;
+            [ReadOnly] public NativeArray<quaternion> matchingRotations;
             [ReadOnly] public NativeArray<float4> fluidParams;
             [ReadOnly] public NativeArray<FluidInteraction> pairs;
 
@@ -268,17 +282,13 @@ namespace Obi
                 {
                     var pair = pairs[i];
 
-                    // viscosity:
-                    float4 goalA = new float4(massCenters[pair.particleB].xyz + math.rotate(orientations[pair.particleB], (prevPositions[pair.particleA] - prevMassCenters[pair.particleB]).xyz), 0);
-                    float4 goalB = new float4(massCenters[pair.particleA].xyz + math.rotate(orientations[pair.particleA], (prevPositions[pair.particleB] - prevMassCenters[pair.particleA]).xyz), 0);
-                    deltas[pair.particleA] += (goalA - positions[pair.particleA]) * fluidParams[pair.particleB].z;
-                    deltas[pair.particleB] += (goalB - positions[pair.particleB]) * fluidParams[pair.particleA].z;
+                    float visc = math.min(fluidParams[pair.particleA].z, fluidParams[pair.particleB].z);
 
-                    // vorticity:
-                    goalA = new float4(massCenters[pair.particleB].xyz + math.rotate(orientations[pair.particleB], (positions[pair.particleA] - massCenters[pair.particleB]).xyz), 0);
-                    goalB = new float4(massCenters[pair.particleA].xyz + math.rotate(orientations[pair.particleA], (positions[pair.particleB] - massCenters[pair.particleA]).xyz), 0);
-                    deltas[pair.particleA] += (goalA - positions[pair.particleA]) * fluidParams[pair.particleB].w * 0.1f;
-                    deltas[pair.particleB] += (goalB - positions[pair.particleB]) * fluidParams[pair.particleA].w * 0.1f;
+                    // viscosity:
+                    float4 goalA = new float4(massCenters[pair.particleB].xyz + math.rotate(matchingRotations[pair.particleB], (prevPositions[pair.particleA] - prevMassCenters[pair.particleB]).xyz), 0);
+                    float4 goalB = new float4(massCenters[pair.particleA].xyz + math.rotate(matchingRotations[pair.particleA], (prevPositions[pair.particleB] - prevMassCenters[pair.particleA]).xyz), 0);
+                    deltas[pair.particleA] += (goalA - positions[pair.particleA]) * visc;
+                    deltas[pair.particleB] += (goalB - positions[pair.particleB]) * visc;
 
                     counts[pair.particleA]++;
                     counts[pair.particleB]++;
@@ -290,15 +300,29 @@ namespace Obi
         public struct NormalsJob : IJobParallelFor
         {
             [ReadOnly] public NativeArray<float> invMasses;
+            [ReadOnly] public NativeArray<float4> velocities;
+            [ReadOnly] public NativeArray<float4> angularVelocities;
+            [ReadOnly] public NativeArray<float4> positions;
+            [ReadOnly] public NativeArray<float4> vorticity;
+
             [ReadOnly] public NativeArray<float4> principalRadii;
             [ReadOnly] public NativeArray<float4> fluidMaterials;
+            [ReadOnly] public NativeArray<float4> fluidMaterials2;
             [ReadOnly] public NativeArray<float4> fluidInterface;
-            [ReadOnly] public NativeArray<float4> fluidData;
             [ReadOnly] public NativeArray<FluidInteraction> pairs;
 
-            [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<float4> userData;
+            [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<float4> fluidData;
+            [NativeDisableContainerSafetyRestriction][NativeDisableParallelForRestriction] public NativeArray<float4> userData;
             [NativeDisableContainerSafetyRestriction][NativeDisableParallelForRestriction] public NativeArray<float4> normals;
 
+            [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<float4> linearAccelerations;
+            [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<float4> vorticityAccelerations;
+
+            [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<float4> linearFromAngular;
+            [NativeDisableContainerSafetyRestriction] [NativeDisableParallelForRestriction] public NativeArray<float4x4> angularDiffusion;
+
+            [ReadOnly] public Poly6Kernel densityKernel;
+            [ReadOnly] public SpikyKernel gradKernel;
             [ReadOnly] public BatchData batchData;
             [ReadOnly] public Oni.SolverParameters solverParams;
             [ReadOnly] public float dt;
@@ -315,17 +339,67 @@ namespace Obi
                     float restVolumeA = math.pow(principalRadii[pair.particleA].x * 2, 3 - (int)solverParams.mode);
                     float restVolumeB = math.pow(principalRadii[pair.particleB].x * 2, 3 - (int)solverParams.mode);
 
+                    float invDensityA = invMasses[pair.particleA] / fluidData[pair.particleA].x;
+                    float invDensityB = invMasses[pair.particleB] / fluidData[pair.particleB].x;
+
+                    float3 relVel = velocities[pair.particleA].xyz - velocities[pair.particleB].xyz;
+                    float3 relAng = angularVelocities[pair.particleA].xyz - angularVelocities[pair.particleB].xyz;
+                    float3 relVort = vorticity[pair.particleA].xyz - vorticity[pair.particleB].xyz;
+                    float4 d = new float4((positions[pair.particleA] - positions[pair.particleB]).xyz,0);
+                    float dist = math.length(d);
+
+                    float avgGrad = (gradKernel.W(dist, fluidMaterials[pair.particleA].x) +
+                                      gradKernel.W(dist, fluidMaterials[pair.particleB].x)) * 0.5f;
+                    float avgKern = (densityKernel.W(dist, fluidMaterials[pair.particleA].x) +
+                                  densityKernel.W(dist, fluidMaterials[pair.particleB].x)) * 0.5f;
+                    float avgNorm = (densityKernel.W(0, fluidMaterials[pair.particleA].x) +
+                                      densityKernel.W(0, fluidMaterials[pair.particleB].x)) * 0.5f;
+
                     // property diffusion:
-                    float diffusionSpeed = (fluidInterface[pair.particleA].w + fluidInterface[pair.particleB].w) * pair.avgKernel * dt;
-                    float4 userDelta = (userData[pair.particleB] - userData[pair.particleA]) * diffusionSpeed;
+                    float diffusionSpeed = (fluidInterface[pair.particleA].w + fluidInterface[pair.particleB].w) * avgKern * dt;
+                    float4 userDelta = (userData[pair.particleB] - userData[pair.particleA]) * solverParams.diffusionMask * diffusionSpeed;
                     userData[pair.particleA] += restVolumeB / restVolumeA * userDelta;
                     userData[pair.particleB] -= restVolumeA / restVolumeB * userDelta;
 
                     // calculate color field  normal:
-                    float4 vgrad = pair.gradient * pair.avgGradient;
+                    float4 normGrad = d / (dist + BurstMath.epsilon);
+                    float4 vgrad = normGrad * avgGrad;
                     float radius = (fluidMaterials[pair.particleA].x + fluidMaterials[pair.particleB].x) * 0.5f;
                     normals[pair.particleA] += vgrad * radius * restVolumeB;
                     normals[pair.particleB] -= vgrad * radius * restVolumeA;
+
+                    // measure relative velocity for foam generation:
+                    float4 dataA = fluidData[pair.particleA];
+                    float4 dataB = fluidData[pair.particleB];
+                    float relVelMag = math.length(relVel) + BurstMath.epsilon;
+                    float avgVelDiffKernel = 1 - math.min(1, dist / (radius + BurstMath.epsilon));
+                    float rv = relVelMag * (1 - math.dot(relVel / relVelMag, normGrad.xyz)) * avgVelDiffKernel;
+                    dataA.z += rv;
+                    dataB.z += rv;
+                    fluidData[pair.particleA] = dataA;
+                    fluidData[pair.particleB] = dataB;
+
+                    // micropolar: curl of linear/angular velocity:
+                    float3 velCross = math.cross(relVel, vgrad.xyz);
+                    float3 vortCross = math.cross(relVort, vgrad.xyz);
+                    linearAccelerations[pair.particleA] += new float4(vortCross / invMasses[pair.particleB] * invDensityA, 0);
+                    linearAccelerations[pair.particleB] += new float4(vortCross / invMasses[pair.particleA] * invDensityB, 0);
+                    vorticityAccelerations[pair.particleA] += new float4(velCross / invMasses[pair.particleB] * invDensityA, 0);
+                    vorticityAccelerations[pair.particleB] += new float4(velCross / invMasses[pair.particleA] * invDensityB, 0);
+
+                    // angular diffusion:
+                    float4x4 diffA = angularDiffusion[pair.particleA];
+                    float4x4 diffB = angularDiffusion[pair.particleB];
+                    diffA.c0 += new float4(relAng * avgKern / invMasses[pair.particleB] * invDensityA, 0);
+                    diffB.c0 -= new float4(relAng * avgKern / invMasses[pair.particleA] * invDensityB, 0);
+                    diffA.c1 += new float4(relVort * avgKern / invMasses[pair.particleB] * invDensityA, 0);
+                    diffB.c1 -= new float4(relVort * avgKern / invMasses[pair.particleA] * invDensityB, 0);
+                    angularDiffusion[pair.particleA] = diffA;
+                    angularDiffusion[pair.particleB] = diffB;
+
+                    // linear velocity due to baroclinity:
+                    linearFromAngular[pair.particleA] += new float4(math.cross(angularVelocities[pair.particleB].xyz, d.xyz) * avgKern / avgNorm, 0);
+                    linearFromAngular[pair.particleB] -= new float4(math.cross(angularVelocities[pair.particleA].xyz, d.xyz) * avgKern / avgNorm, 0);
                 }
             }
         }

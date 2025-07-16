@@ -28,7 +28,7 @@ namespace Obi
             m_ConstraintCount = count;
         }
 
-        public override void Initialize(float substepTime)
+        public override void Initialize(float stepTime, float substepTime, int steps, float timeLeft)
         {
             if (m_ConstraintCount > 0)
             {
@@ -52,7 +52,7 @@ namespace Obi
             }
 
             // clear lambdas:
-            base.Initialize(substepTime);
+            base.Initialize(stepTime, substepTime, steps, timeLeft);
         }
 
         public override void Evaluate(float stepTime, float substepTime, int steps, float timeLeft)
@@ -123,6 +123,33 @@ namespace Obi
 
                 int threadGroups = ComputeMath.ThreadGroupCount(m_ConstraintCount, 128);
                 shader.Dispatch(applyKernel, threadGroups, 1, 1);
+            }
+        }
+
+        public void ProjectRenderablePositions()
+        {
+            if (m_ConstraintCount > 0)
+            {
+                var shader = ((ComputePinConstraints)m_Constraints).constraintsShader;
+                int projectRenderableKernel = ((ComputePinConstraints)m_Constraints).projectRenderableKernel;
+
+                shader.SetBuffer(projectRenderableKernel, "particleIndices", particleIndices);
+                shader.SetBuffer(projectRenderableKernel, "colliderIndices", colliderIndices);
+                shader.SetBuffer(projectRenderableKernel, "offsets", offsets);
+                shader.SetBuffer(projectRenderableKernel, "restDarboux", restDarboux);
+                shader.SetBuffer(projectRenderableKernel, "stiffnesses", stiffnesses);
+
+                shader.SetBuffer(projectRenderableKernel, "transforms", this.solverImplementation.colliderGrid.transformsBuffer);
+
+                shader.SetBuffer(projectRenderableKernel, "RW_positions", solverImplementation.renderablePositionsBuffer);
+                shader.SetBuffer(projectRenderableKernel, "RW_orientations", solverImplementation.renderableOrientationsBuffer);
+
+                shader.SetBuffer(projectRenderableKernel, "inertialSolverFrame", solverImplementation.inertialFrameBuffer);
+
+                shader.SetInt("activeConstraintCount", m_ConstraintCount);
+
+                int threadGroups = ComputeMath.ThreadGroupCount(m_ConstraintCount, 128);
+                shader.Dispatch(projectRenderableKernel, threadGroups, 1, 1);
             }
         }
 

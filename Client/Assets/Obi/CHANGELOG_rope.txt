@@ -1,6 +1,33 @@
 # Change Log
 All notable changes to “Obi - Advanced ropes for Unity” will be documented in this file.
 
+## [7.1]
+
+### Added
+- ObiBone now exposes one particle group per bone in the hierarchy, allowing to easily use attachments.
+- New ObiBoneOverride component that allows to override curve-driven properties for a specific sub-hierarchy.
+- Solvers can now optionally enforce boundary limits, so that particles can't go outside those limits. This is often more convenient than manually placing invisible colliders for the same purpose.
+- Dynamic ObiParticleAttachments now have a "projection" boolean, when enabled it forces the rendered position/orientation of the attached particles to match that of the attachment location, even if the constraint doesn't fully converge. This is useful to avoid visual gaps under extreme conditions.
+- Actors now have a "mass scale" parameter, that multiplies the mass of all particles in the blueprinyt at the time of loading it into the solver. This is handy to create actors of different masses without the need to create a new blueprint.
+- ObiForceZones now have a "color" parameter, that can be used to change the color of particles entering the zone.
+
+### Changed
+- Improved performance for large amounts of static colliders: they're not processed at all during ObiSolver.Update().
+
+### Fixed
+- Null reference exception when using a ObiRopeExtrudedRenderer that doesn't reference a section asset.
+
+## [7.0.5]
+
+### Added
+- New pinhole constraint type and ObiPinhole component, that allows to constrain ropes to a point in space while allowing it to slide trough it. Supports two-way rigidbody coupling and can be motor driven.
+
+### Fixed
+- Erratic bend/twist constraint behavior when darboux vector is close to identity.
+- Crash when attempting to bake ObiRopeExtrudedRenderer paired with an ObiPathSmoother that uses a non-zero decimation factor.
+- IndexOutOfRangeError when having ropes using multiple different section assets and disabling all rope instances using one of them.
+- InvalidOperationException in Burst backend when having simulateWhenInvisible = false and solver not seen by any camera.
+
 ## [7.0.4]
 
 ### Fixed

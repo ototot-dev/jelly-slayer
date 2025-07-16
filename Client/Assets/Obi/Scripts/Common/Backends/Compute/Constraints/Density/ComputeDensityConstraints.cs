@@ -12,6 +12,7 @@ namespace Obi
         public int updateDensitiesKernel;
         public int applyKernel;
         public int applyPositionDeltaKernel;
+        public int calculateAtmosphereKernel;
         public int applyAtmosphereKernel;
 
         public int accumSmoothPositionsKernel;
@@ -27,6 +28,7 @@ namespace Obi
             updateDensitiesKernel = constraintsShader.FindKernel("UpdateDensities");
             applyKernel = constraintsShader.FindKernel("Apply");
             applyPositionDeltaKernel = constraintsShader.FindKernel("ApplyPositionDeltas");
+            calculateAtmosphereKernel = constraintsShader.FindKernel("CalculateAtmosphere");
             applyAtmosphereKernel = constraintsShader.FindKernel("ApplyAtmosphere");
 
             accumSmoothPositionsKernel = constraintsShader.FindKernel("AccumulateSmoothPositions");
@@ -74,31 +76,64 @@ namespace Obi
             sortParticlesShader.DispatchIndirect(sortDataKernel, m_Solver.fluidDispatchBuffer);
         }
 
+        public void CalculateVelocityCorrections(float deltaTime)
+        {
+            if (m_Solver.particleGrid.sortedFluidIndices != null && m_Solver.cellCoordsBuffer != null)
+            {
+                constraintsShader.SetFloat("deltaTime", deltaTime);
+
+                constraintsShader.SetBuffer(calculateAtmosphereKernel, "neighborCounts", m_Solver.particleGrid.neighborCounts);
+                constraintsShader.SetBuffer(calculateAtmosphereKernel, "neighbors", m_Solver.particleGrid.neighbors);
+                constraintsShader.SetBuffer(calculateAtmosphereKernel, "sortedToOriginal", m_Solver.particleGrid.sortedFluidIndices);
+
+                constraintsShader.SetBuffer(calculateAtmosphereKernel, "invMasses", m_Solver.invMassesBuffer);
+                constraintsShader.SetBuffer(calculateAtmosphereKernel, "velocities_RO", m_Solver.velocitiesBuffer);
+                constraintsShader.SetBuffer(calculateAtmosphereKernel, "angularVelocities_RO", m_Solver.angularVelocitiesBuffer);
+                constraintsShader.SetBuffer(calculateAtmosphereKernel, "vorticity_RO", m_Solver.restOrientationsBuffer); // restOrientations are unused for fluid particles, so we reuse them here.
+                constraintsShader.SetBuffer(calculateAtmosphereKernel, "vorticityAccelerations", m_Solver.orientationDeltasIntBuffer); // restPositions are unused for fluid particles, so we reuse them here.
+                constraintsShader.SetBuffer(calculateAtmosphereKernel, "linearAccelerations", m_Solver.positionDeltasIntBuffer);
+                constraintsShader.SetBuffer(calculateAtmosphereKernel, "angularDiffusion", m_Solver.anisotropiesBuffer);
+                constraintsShader.SetBuffer(calculateAtmosphereKernel, "linearFromAngular", m_Solver.restPositionsBuffer); 
+                constraintsShader.SetBuffer(calculateAtmosphereKernel, "normals", m_Solver.normalsBuffer);
+                constraintsShader.SetBuffer(calculateAtmosphereKernel, "userData", m_Solver.userDataBuffer);
+                constraintsShader.SetBuffer(calculateAtmosphereKernel, "sortedPositions", m_Solver.particleGrid.sortedPositions);
+                constraintsShader.SetBuffer(calculateAtmosphereKernel, "sortedFluidData_RO", m_Solver.particleGrid.sortedFluidData);
+                constraintsShader.SetBuffer(calculateAtmosphereKernel, "sortedPrincipalRadii", m_Solver.particleGrid.sortedPrincipalRadii);
+                constraintsShader.SetBuffer(calculateAtmosphereKernel, "sortedFluidMaterials", m_Solver.particleGrid.sortedFluidMaterials);
+                constraintsShader.SetBuffer(calculateAtmosphereKernel, "sortedFluidInterface", m_Solver.particleGrid.sortedFluidInterface);
+                constraintsShader.SetBuffer(calculateAtmosphereKernel, "sortedUserData", m_Solver.particleGrid.sortedUserDataColor);
+                constraintsShader.SetBuffer(calculateAtmosphereKernel, "fluidData", m_Solver.fluidDataBuffer);                         
+                constraintsShader.SetBuffer(calculateAtmosphereKernel, "dispatchBuffer", m_Solver.fluidDispatchBuffer);
+
+                constraintsShader.DispatchIndirect(calculateAtmosphereKernel, m_Solver.fluidDispatchBuffer);
+            }
+        }
+
         public void ApplyVelocityCorrections(float deltaTime)
         {
             if (m_Solver.particleGrid.sortedFluidIndices != null && m_Solver.cellCoordsBuffer != null)
             {
                 constraintsShader.SetFloat("deltaTime", deltaTime);
 
-                constraintsShader.SetBuffer(applyAtmosphereKernel, "neighborCounts", m_Solver.particleGrid.neighborCounts);
-                constraintsShader.SetBuffer(applyAtmosphereKernel, "neighbors", m_Solver.particleGrid.neighbors);
-                constraintsShader.SetBuffer(applyAtmosphereKernel, "sortedToOriginal", m_Solver.particleGrid.sortedFluidIndices);
-
-                constraintsShader.SetBuffer(applyAtmosphereKernel, "invMasses", m_Solver.invMassesBuffer);
-                constraintsShader.SetBuffer(applyAtmosphereKernel, "velocities", m_Solver.velocitiesBuffer);
+                constraintsShader.SetBuffer(applyAtmosphereKernel, "positions", m_Solver.positionsBuffer);
+                constraintsShader.SetBuffer(applyAtmosphereKernel, "prevPositions", m_Solver.prevPositionsBuffer);
                 constraintsShader.SetBuffer(applyAtmosphereKernel, "wind", m_Solver.windBuffer);
-                constraintsShader.SetBuffer(applyAtmosphereKernel, "normals", m_Solver.normalsBuffer);
-                constraintsShader.SetBuffer(applyAtmosphereKernel, "userData", m_Solver.userDataBuffer);
-                constraintsShader.SetBuffer(applyAtmosphereKernel, "sortedPositions", m_Solver.particleGrid.sortedPositions);
+                constraintsShader.SetBuffer(applyAtmosphereKernel, "normals_RO", m_Solver.normalsBuffer);
+                constraintsShader.SetBuffer(applyAtmosphereKernel, "fluidMaterials2", m_Solver.fluidMaterials2Buffer);
                 constraintsShader.SetBuffer(applyAtmosphereKernel, "sortedPrincipalRadii", m_Solver.particleGrid.sortedPrincipalRadii);
-                constraintsShader.SetBuffer(applyAtmosphereKernel, "sortedFluidMaterials", m_Solver.particleGrid.sortedFluidMaterials);
                 constraintsShader.SetBuffer(applyAtmosphereKernel, "sortedFluidInterface", m_Solver.particleGrid.sortedFluidInterface);
-                constraintsShader.SetBuffer(applyAtmosphereKernel, "sortedUserData", m_Solver.particleGrid.sortedUserDataColor);
-                constraintsShader.SetBuffer(applyAtmosphereKernel, "fluidData", m_Solver.fluidDataBuffer);
+                constraintsShader.SetBuffer(applyAtmosphereKernel, "fluidData_RO", m_Solver.fluidDataBuffer);
+                constraintsShader.SetBuffer(applyAtmosphereKernel, "linearAccelerations", m_Solver.positionDeltasIntBuffer);
+                constraintsShader.SetBuffer(applyAtmosphereKernel, "angularDiffusion", m_Solver.anisotropiesBuffer);
+                constraintsShader.SetBuffer(applyAtmosphereKernel, "vorticity", m_Solver.restOrientationsBuffer);
+                constraintsShader.SetBuffer(applyAtmosphereKernel, "vorticityAccelerations", m_Solver.orientationDeltasIntBuffer);
+                constraintsShader.SetBuffer(applyAtmosphereKernel, "linearFromAngular_RO", m_Solver.restPositionsBuffer);
+                constraintsShader.SetBuffer(applyAtmosphereKernel, "velocities", m_Solver.velocitiesBuffer);
+                constraintsShader.SetBuffer(applyAtmosphereKernel, "angularVelocities", m_Solver.angularVelocitiesBuffer);
+                constraintsShader.SetBuffer(applyAtmosphereKernel, "sortedToOriginal", m_Solver.particleGrid.sortedFluidIndices);
                 constraintsShader.SetBuffer(applyAtmosphereKernel, "dispatchBuffer", m_Solver.fluidDispatchBuffer);
 
                 constraintsShader.DispatchIndirect(applyAtmosphereKernel, m_Solver.fluidDispatchBuffer);
-
             }
         }
 
@@ -143,6 +178,7 @@ namespace Obi
                 constraintsShader.SetBuffer(averageAnisotropyKernel, "sortedPrincipalRadii", m_Solver.particleGrid.sortedPrincipalRadii);
                 constraintsShader.SetBuffer(averageAnisotropyKernel, "fluidData", m_Solver.fluidDataBuffer);
                 constraintsShader.SetBuffer(averageAnisotropyKernel, "dispatchBuffer", m_Solver.fluidDispatchBuffer);
+                constraintsShader.SetBuffer(averageAnisotropyKernel, "life", m_Solver.lifeBuffer);
                 constraintsShader.DispatchIndirect(averageAnisotropyKernel, m_Solver.fluidDispatchBuffer);
             }
 

@@ -69,7 +69,7 @@ namespace Obi
                 Aqq.Dispose();
         }
 
-        public override JobHandle Initialize(JobHandle inputDeps, float substepTime)
+        public override JobHandle Initialize(JobHandle inputDeps, float stepTime, float substepTime, int steps, float timeLeft)
         {
             return inputDeps;
         }

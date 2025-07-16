@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEngine;
+using UnityEditor.IMGUI.Controls;
 using UnityEditorInternal;
 using System;
 using System.Collections;
@@ -49,10 +50,20 @@ namespace Obi
         SerializedProperty gravitySpace;
         SerializedProperty ambientWind;
         SerializedProperty windSpace;
+        SerializedProperty useLimits;
+        SerializedProperty boundaryLimits;
+        SerializedProperty killOffLimitsParticles;
         SerializedProperty worldLinearInertiaScale;
         SerializedProperty worldAngularInertiaScale;
 
         SerializedProperty foamSubsteps;
+        SerializedProperty foamMinNeighbors;
+        SerializedProperty foamCollisions;
+        SerializedProperty foamRadiusScale;
+        SerializedProperty foamVolumeDensity;
+        SerializedProperty foamAmbientDensity;
+        SerializedProperty foamScatterColor;
+        SerializedProperty foamAmbientColor;
         SerializedProperty maxFoamVelocityStretch;
         SerializedProperty foamFade;
         SerializedProperty foamAccelAgingRange;
@@ -69,6 +80,7 @@ namespace Obi
         SerializedProperty shapeMatchingConstraintParameters;
         SerializedProperty tetherConstraintParameters;
         SerializedProperty pinConstraintParameters;
+        SerializedProperty pinholeConstraintParameters;
         SerializedProperty stitchConstraintParameters;
         SerializedProperty densityConstraintParameters;
         SerializedProperty stretchShearConstraintParameters;
@@ -90,10 +102,13 @@ namespace Obi
 
         GUIContent constraintLabelContent;
 
+        BoxBoundsHandle limitsBoxHandle;
+
         public void OnEnable()
         {
             solver = (ObiSolver)target;
             constraintLabelContent = new GUIContent();
+            limitsBoxHandle = new BoxBoundsHandle();
 
             solverFoldout = new BooleanPreference($"{target.GetType()}.solverFoldout", true);
             simulationFoldout = new BooleanPreference($"{target.GetType()}.simulationFoldout", false);
@@ -112,10 +127,20 @@ namespace Obi
             gravitySpace = serializedObject.FindProperty("gravitySpace");
             ambientWind = serializedObject.FindProperty("ambientWind");
             windSpace = serializedObject.FindProperty("windSpace");
+            useLimits = serializedObject.FindProperty("useLimits");
+            boundaryLimits = serializedObject.FindProperty("boundaryLimits");
+            killOffLimitsParticles = serializedObject.FindProperty("killOffLimitsParticles");
             worldLinearInertiaScale = serializedObject.FindProperty("worldLinearInertiaScale");
             worldAngularInertiaScale = serializedObject.FindProperty("worldAngularInertiaScale");
 
             foamSubsteps = serializedObject.FindProperty("foamSubsteps");
+            foamMinNeighbors = serializedObject.FindProperty("foamMinNeighbors");
+            foamCollisions = serializedObject.FindProperty("foamCollisions");
+            foamRadiusScale = serializedObject.FindProperty("foamRadiusScale");
+            foamVolumeDensity = serializedObject.FindProperty("foamVolumeDensity");
+            foamAmbientDensity = serializedObject.FindProperty("foamAmbientDensity");
+            foamScatterColor = serializedObject.FindProperty("foamScatterColor");
+            foamAmbientColor = serializedObject.FindProperty("foamAmbientColor");
             maxFoamVelocityStretch = serializedObject.FindProperty("maxFoamVelocityStretch");
             foamFade = serializedObject.FindProperty("foamFade");
             foamAccelAgingRange = serializedObject.FindProperty("foamAccelAgingRange");
@@ -132,6 +157,7 @@ namespace Obi
             shapeMatchingConstraintParameters = serializedObject.FindProperty("shapeMatchingConstraintParameters");
             tetherConstraintParameters = serializedObject.FindProperty("tetherConstraintParameters");
             pinConstraintParameters = serializedObject.FindProperty("pinConstraintParameters");
+            pinholeConstraintParameters = serializedObject.FindProperty("pinholeConstraintParameters");
             stitchConstraintParameters = serializedObject.FindProperty("stitchConstraintParameters");
             densityConstraintParameters = serializedObject.FindProperty("densityConstraintParameters");
             stretchShearConstraintParameters = serializedObject.FindProperty("stretchShearConstraintParameters");
@@ -143,6 +169,26 @@ namespace Obi
             maxFoamParticles = serializedObject.FindProperty("maxFoamParticles");
             maxParticleNeighbors = serializedObject.FindProperty("maxParticleNeighbors");
             maxParticleContacts = serializedObject.FindProperty("maxParticleContacts");
+        }
+
+        public void OnSceneGUI()
+        {
+            if (solver.useLimits)
+            {
+                using (new Handles.DrawingScope(Color.red, solver.transform.localToWorldMatrix))
+                {
+                    limitsBoxHandle.center = solver.boundaryLimits.center;
+                    limitsBoxHandle.size = solver.boundaryLimits.size;
+
+                    EditorGUI.BeginChangeCheck();
+                    limitsBoxHandle.DrawHandle();
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        solver.boundaryLimits = new Bounds(limitsBoxHandle.center, limitsBoxHandle.size);
+                        EditorUtility.SetDirty(target);
+                    }
+                }
+            }
         }
 
         public override void OnInspectorGUI()
@@ -199,6 +245,14 @@ namespace Obi
                 EditorGUILayout.PropertyField(worldAngularInertiaScale);
                 EditorGUILayout.PropertyField(parameters.FindPropertyRelative("maxAnisotropy"));
                 EditorGUILayout.PropertyField(simulateWhenInvisible);
+                EditorGUILayout.PropertyField(useLimits);
+                if (useLimits.boolValue)
+                {
+                    EditorGUI.indentLevel++;
+                    EditorGUILayout.PropertyField(killOffLimitsParticles);
+                    EditorGUILayout.PropertyField(boundaryLimits);
+                    EditorGUI.indentLevel--;
+                }
             }
             EditorGUILayout.EndFoldoutHeaderGroup();
 
@@ -206,6 +260,13 @@ namespace Obi
             if (advectionFoldout)
             {
                 EditorGUILayout.PropertyField(foamSubsteps);
+                EditorGUILayout.PropertyField(foamMinNeighbors);
+                EditorGUILayout.PropertyField(foamCollisions, new GUIContent("Foam Collisions (Compute only)"));
+                EditorGUILayout.PropertyField(foamRadiusScale);
+                EditorGUILayout.PropertyField(foamVolumeDensity);
+                EditorGUILayout.PropertyField(foamAmbientDensity);
+                EditorGUILayout.PropertyField(foamScatterColor);
+                EditorGUILayout.PropertyField(foamAmbientColor);
                 EditorGUILayout.PropertyField(maxFoamVelocityStretch);
                 EditorGUILayout.PropertyField(parameters.FindPropertyRelative("foamGravityScale"));
                 EditorGUILayout.PropertyField(foamFade);
@@ -224,6 +285,7 @@ namespace Obi
                 EditorGUILayout.PropertyField(parameters.FindPropertyRelative("shockPropagation"));
                 EditorGUILayout.PropertyField(parameters.FindPropertyRelative("surfaceCollisionIterations"));
                 EditorGUILayout.PropertyField(parameters.FindPropertyRelative("surfaceCollisionTolerance"));
+                EditorGUILayout.PropertyField(parameters.FindPropertyRelative("diffusionMask"));
             }
             EditorGUILayout.EndFoldoutHeaderGroup();
 
@@ -262,6 +324,9 @@ namespace Obi
 
                 constraintLabelContent.text = "Pin";
                 EditorGUILayout.PropertyField(pinConstraintParameters, constraintLabelContent);
+
+                constraintLabelContent.text = "Pinhole";
+                EditorGUILayout.PropertyField(pinholeConstraintParameters, constraintLabelContent);
 
                 constraintLabelContent.text = "Stitch";
                 EditorGUILayout.PropertyField(stitchConstraintParameters, constraintLabelContent);
@@ -327,15 +392,12 @@ namespace Obi
         [DrawGizmo(GizmoType.InSelectionHierarchy | GizmoType.Selected)]
         static void DrawGizmoForSolver(ObiSolver solver, GizmoType gizmoType)
         {
-
             if ((gizmoType & GizmoType.InSelectionHierarchy) != 0)
             {
-
                 Gizmos.color = new Color(1, 1, 1, 0.5f);
                 var bounds = solver.bounds;
                 Gizmos.DrawWireCube(bounds.center, bounds.size);
             }
-
         }
 
     }

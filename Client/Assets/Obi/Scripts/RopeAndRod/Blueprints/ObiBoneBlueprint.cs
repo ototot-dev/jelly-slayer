@@ -40,6 +40,24 @@ namespace Obi
             return null;
         }
 
+        public ObiBoneOverride GetOverride(int particleIndex, out float normalizedLength)
+        {
+            int overrideIndex = particleIndex;
+            normalizedLength = normalizedLengths[overrideIndex];
+
+            while (overrideIndex >= 0)
+            {
+                if (transforms[overrideIndex].TryGetComponent(out ObiBoneOverride over))
+                {
+                    normalizedLength = 1 - (1 - normalizedLengths[particleIndex]) / Mathf.Max(ObiUtils.epsilon,1 - normalizedLengths[overrideIndex]);
+                    return over;
+                }
+
+                overrideIndex = parentIndices[overrideIndex];
+            }
+            return null;
+        }
+
         protected override IEnumerator Initialize()
         {
             ClearParticleGroups();
@@ -165,6 +183,12 @@ namespace Obi
                 principalRadii[i] = Vector3.one * (radius != null ? radius.Evaluate(normalizedLengths[i]) : DEFAULT_PARTICLE_RADIUS);
                 filters[i] = ObiUtils.MakeFilter(ObiUtils.CollideWithEverything, 0);
                 colors[i] = Color.white;
+
+                var group = ScriptableObject.CreateInstance<ObiParticleGroup>();
+                group.SetSourceBlueprint(this);
+                group.name = transforms[i].name;
+                group.particleIndices.Add(i);
+                groups.Add(group);
 
                 if (i % 100 == 0)
                     yield return new CoroutineJob.ProgressInfo("ObiRod: generating particles...", i / (float)m_ActiveParticleCount);

@@ -149,7 +149,7 @@ void Project (uint3 id : SV_DispatchThreadID)
     float frameEnd = stepTime * steps;
     float substepsToEnd = timeLeft / substepTime;
 
-     // Combine collision materials (use material from first particle in simplex)
+    // Combine collision materials (use material from first particle in simplex)
     collisionMaterial material = CombineCollisionMaterials(collisionMaterialIndices[simplices[simplexStart]], shapes[colliderIndex].materialIndex);
 
     // Get relative velocity at contact point.

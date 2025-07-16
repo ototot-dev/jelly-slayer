@@ -15,7 +15,7 @@ namespace Obi
         /// The ObiCollider this ObiForceZone should affect.
         /// </summary>
         /// This is automatically set when you first create the ObiForceZone component, but you can override it afterwards.
-        public ObiCollider sourceCollider
+        public ObiCollider SourceCollider
         {
             set
             {
@@ -33,11 +33,14 @@ namespace Obi
             get { return m_SourceCollider; }
         }
 
-        public ObiForceZoneHandle handle
+        public ObiForceZoneHandle Handle
         {
             get
             {
-                if (forcezoneHandle == null || !forcezoneHandle.isValid)
+                // don't check forcezoneHandle.isValid:
+                // CreateForceZone may defer creation, so we get a non-null, but invalid handle.
+                // If calling handle again right away before it becomes valid, it will call CreateForceZone again and create a second handle to the same zone.
+                if (forcezoneHandle == null)
                 {
                     var world = ObiColliderWorld.GetInstance();
 
@@ -63,6 +66,9 @@ namespace Obi
         [Min(0)]
         public float falloffPower = 1;
 
+        [Header("Tint")]
+        public Color color = Color.clear;
+
         [Header("Pulse")]
         public float pulseIntensity;
         public float pulseFrequency;
@@ -72,22 +78,21 @@ namespace Obi
 
         public void OnEnable()
         {
+            forcezoneHandle = ObiColliderWorld.GetInstance().CreateForceZone();
+            forcezoneHandle.owner = this;
             FindSourceCollider();
-
-            //handle = ObiColliderWorld.GetInstance().CreateForceZone();
-            //handle.owner = this;
         }
 
         public void OnDisable()
         {
             RemoveCollider();
-            ObiColliderWorld.GetInstance().DestroyForceZone(handle);
+            ObiColliderWorld.GetInstance().DestroyForceZone(forcezoneHandle);
         }
 
         private void FindSourceCollider()
         {
-            if (sourceCollider == null)
-                sourceCollider = GetComponent<ObiCollider>();
+            if (SourceCollider == null)
+                SourceCollider = GetComponent<ObiCollider>();
             else
                 AddCollider();
         }
@@ -106,7 +111,10 @@ namespace Obi
 
         public virtual void UpdateIfNeeded()
         {
-            var fc = ObiColliderWorld.GetInstance().forceZones[handle.index];
+            if (!Handle.isValid)
+                return;
+
+            var fc = ObiColliderWorld.GetInstance().forceZones[Handle.index];
             fc.type = type;
             fc.mode = mode;
             fc.intensity = intensity + intensityVariation;
@@ -115,7 +123,8 @@ namespace Obi
             fc.falloffPower = falloffPower;
             fc.damping = damping;
             fc.dampingDir = dampingDir;
-            ObiColliderWorld.GetInstance().forceZones[handle.index] = fc;
+            fc.color = color;
+            ObiColliderWorld.GetInstance().forceZones[Handle.index] = fc;
         }
 
         public void Update()

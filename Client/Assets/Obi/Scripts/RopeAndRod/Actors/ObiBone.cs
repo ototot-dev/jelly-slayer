@@ -295,6 +295,7 @@ namespace Obi
 
         protected override void Awake()
         {
+            // TODO: guard against having another ObiBone above it in hierarchy.
             m_BoneBlueprint = ScriptableObject.CreateInstance<ObiBoneBlueprint>();
             UpdateBlueprint();
             base.Awake();
@@ -330,9 +331,9 @@ namespace Obi
             }
         }
 
-        public override void LoadBlueprint(ObiSolver solver)
+        internal override void LoadBlueprint()
         {
-            base.LoadBlueprint(solver);
+            base.LoadBlueprint();
 
             // synchronously read required data from GPU:
             solver.renderablePositions.Readback(false);
@@ -344,11 +345,11 @@ namespace Obi
             ResetToCurrentShape();
         }
 
-        public override void UnloadBlueprint(ObiSolver solver)
+        internal override void UnloadBlueprint()
         {
             ResetParticles();
             CopyParticleDataToTransforms();
-            base.UnloadBlueprint(solver);
+            base.UnloadBlueprint();
         }
 
         public override void RequestReadback()
@@ -429,8 +430,8 @@ namespace Obi
         {
             for (int i = 0; i < particleCount; ++i)
             {
-                var normalizedCoord = boneBlueprint.normalizedLengths[i];
-                var radii = Vector3.one * radius.Evaluate(normalizedCoord);
+                var boneOverride = boneBlueprint.GetOverride(i, out float normalizedCoord);
+                var radii = Vector3.one * (boneOverride != null ? boneOverride.radius.Evaluate(normalizedCoord) : radius.Evaluate(normalizedCoord));
                 boneBlueprint.principalRadii[i] = radii;
 
                 if (isLoaded)
@@ -442,9 +443,9 @@ namespace Obi
         {
             for (int i = 0; i < particleCount; ++i)
             {
-                var normalizedCoord = boneBlueprint.normalizedLengths[i];
-                var invMass = ObiUtils.MassToInvMass(mass.Evaluate(normalizedCoord));
-                var invRotMass = ObiUtils.MassToInvMass(rotationalMass.Evaluate(normalizedCoord));
+                var boneOverride = boneBlueprint.GetOverride(i, out float normalizedCoord);
+                var invMass = ObiUtils.MassToInvMass(boneOverride != null ? boneOverride .mass.Evaluate(normalizedCoord) : mass.Evaluate(normalizedCoord));
+                var invRotMass = ObiUtils.MassToInvMass(boneOverride != null ? boneOverride.rotationalMass.Evaluate(normalizedCoord) : rotationalMass.Evaluate(normalizedCoord));
 
                 boneBlueprint.invMasses[i] = invMass;
                 boneBlueprint.invRotationalMasses[i] = invRotMass;
@@ -459,20 +460,24 @@ namespace Obi
 
         public Vector3 GetSkinRadiiBackstop(ObiSkinConstraintsBatch batch, int constraintIndex)
         {
-            float normalizedCoord = boneBlueprint.normalizedLengths[batch.particleIndices[constraintIndex]];
-            return new Vector3(skinRadius.Evaluate(normalizedCoord), 0, 0);
+            var boneOverride = boneBlueprint.GetOverride(batch.particleIndices[constraintIndex], out float normalizedCoord);
+            return new Vector3(boneOverride != null ? boneOverride.skinRadius.Evaluate(normalizedCoord) : skinRadius.Evaluate(normalizedCoord), 0, 0);
         }
 
         public float GetSkinCompliance(ObiSkinConstraintsBatch batch, int constraintIndex)
         {
-            float normalizedCoord = boneBlueprint.normalizedLengths[batch.particleIndices[constraintIndex]];
-            return skinCompliance.Evaluate(normalizedCoord);
+            var boneOverride = boneBlueprint.GetOverride(batch.particleIndices[constraintIndex], out float normalizedCoord);
+            return boneOverride != null ? boneOverride.skinCompliance.Evaluate(normalizedCoord) : skinCompliance.Evaluate(normalizedCoord);
         }
-
 
         public Vector3 GetBendTwistCompliance(ObiBendTwistConstraintsBatch batch, int constraintIndex)
         {
-            float normalizedCoord = boneBlueprint.normalizedLengths[batch.particleIndices[constraintIndex * 2]];
+            var boneOverride = boneBlueprint.GetOverride(batch.particleIndices[constraintIndex * 2], out float normalizedCoord);
+
+            if (boneOverride != null)
+            return new Vector3(boneOverride.bend1Compliance.Evaluate(normalizedCoord),
+                               boneOverride.bend2Compliance.Evaluate(normalizedCoord),
+                               boneOverride.torsionCompliance.Evaluate(normalizedCoord));
             return new Vector3(bend1Compliance.Evaluate(normalizedCoord),
                                bend2Compliance.Evaluate(normalizedCoord),
                                torsionCompliance.Evaluate(normalizedCoord));
@@ -480,14 +485,24 @@ namespace Obi
 
         public Vector2 GetBendTwistPlasticity(ObiBendTwistConstraintsBatch batch, int constraintIndex)
         {
-            float normalizedCoord = boneBlueprint.normalizedLengths[batch.particleIndices[constraintIndex * 2]];
+            var boneOverride = boneBlueprint.GetOverride(batch.particleIndices[constraintIndex * 2], out float normalizedCoord);
+
+            if (boneOverride != null)
+            return new Vector2(boneOverride.plasticYield.Evaluate(normalizedCoord),
+                               boneOverride.plasticCreep.Evaluate(normalizedCoord));
             return new Vector2(plasticYield.Evaluate(normalizedCoord),
                                plasticCreep.Evaluate(normalizedCoord));
+
         }
 
         public Vector3 GetStretchShearCompliance(ObiStretchShearConstraintsBatch batch, int constraintIndex)
         {
-            float normalizedCoord = boneBlueprint.normalizedLengths[batch.particleIndices[constraintIndex * 2]];
+            var boneOverride = boneBlueprint.GetOverride(batch.particleIndices[constraintIndex * 2], out float normalizedCoord);
+
+            if (boneOverride != null)
+            return new Vector3(boneOverride.shear1Compliance.Evaluate(normalizedCoord),
+                               boneOverride.shear2Compliance.Evaluate(normalizedCoord),
+                               boneOverride.stretchCompliance.Evaluate(normalizedCoord));
             return new Vector3(shear1Compliance.Evaluate(normalizedCoord),
                                shear2Compliance.Evaluate(normalizedCoord),
                                stretchCompliance.Evaluate(normalizedCoord));
@@ -495,14 +510,14 @@ namespace Obi
 
         public float GetDrag(ObiAerodynamicConstraintsBatch batch, int constraintIndex)
         {
-            float normalizedCoord = boneBlueprint.normalizedLengths[batch.particleIndices[constraintIndex]];
-            return drag.Evaluate(normalizedCoord);
+            var boneOverride = boneBlueprint.GetOverride(batch.particleIndices[constraintIndex], out float normalizedCoord);
+            return boneOverride != null ? boneOverride.drag.Evaluate(normalizedCoord) : drag.Evaluate(normalizedCoord);
         }
 
         public float GetLift(ObiAerodynamicConstraintsBatch batch, int constraintIndex)
         {
-            float normalizedCoord = boneBlueprint.normalizedLengths[batch.particleIndices[constraintIndex]];
-            return lift.Evaluate(normalizedCoord);
+            var boneOverride = boneBlueprint.GetOverride(batch.particleIndices[constraintIndex], out float normalizedCoord);
+            return boneOverride != null ? boneOverride.lift.Evaluate(normalizedCoord) : lift.Evaluate(normalizedCoord);
         }
 
         public void FixedUpdate()

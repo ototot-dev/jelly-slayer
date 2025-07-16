@@ -2,8 +2,8 @@
 #define GRIDUTILS_INCLUDE
 
 #define INVALID 0xFFFFFFFF
-#define MIN_GRID_LEVEL -6 // minimum cell size is 0.01 meters, enough for very small colliders / particles (log(0.01) / log(2))
-#define MAX_GRID_LEVEL 17 // maximum cell size is 131072 meters, enough for gargantuan objects.
+#define MIN_GRID_LEVEL -8 //-6 // minimum cell size is 0.004 meters, enough for very small colliders / particles (log(0.004) / log(2))
+#define MAX_GRID_LEVEL 15 // maximum cell size is 32768 meters, enough for gargantuan objects.
 #define GRID_LEVELS (MAX_GRID_LEVEL - MIN_GRID_LEVEL + 1)
 
 RWStructuredBuffer<uint> levelPopulation; 

@@ -138,16 +138,16 @@ namespace AmplifyShaderEditor
 							System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 
 							Shader shader = mat.shader;
-							int propertyCount = UnityEditor.ShaderUtil.GetPropertyCount( shader );
+							int propertyCount = shader.GetPropertyCount();
 							string allProperties = string.Empty;
 							for( int i = 0; i < propertyCount; i++ )
 							{
-								UnityEditor.ShaderUtil.ShaderPropertyType type = UnityEditor.ShaderUtil.GetPropertyType( shader, i );
-								string name = UnityEditor.ShaderUtil.GetPropertyName( shader, i );
+								UnityEngine.Rendering.ShaderPropertyType type = shader.GetPropertyType( i );
+								string name = shader.GetPropertyName( i );
 								string valueStr = string.Empty;
 								switch( type )
 								{
-									case UnityEditor.ShaderUtil.ShaderPropertyType.Color:
+									case UnityEngine.Rendering.ShaderPropertyType.Color:
 									{
 										Color value = mat.GetColor( name );
 										valueStr = value.r.ToString() + IOUtils.VECTOR_SEPARATOR +
@@ -156,7 +156,7 @@ namespace AmplifyShaderEditor
 													value.a.ToString();
 									}
 									break;
-									case UnityEditor.ShaderUtil.ShaderPropertyType.Vector:
+									case UnityEngine.Rendering.ShaderPropertyType.Vector:
 									{
 										Vector4 value = mat.GetVector( name );
 										valueStr = value.x.ToString() + IOUtils.VECTOR_SEPARATOR +
@@ -165,19 +165,19 @@ namespace AmplifyShaderEditor
 													value.w.ToString();
 									}
 									break;
-									case UnityEditor.ShaderUtil.ShaderPropertyType.Float:
+									case UnityEngine.Rendering.ShaderPropertyType.Float:
 									{
 										float value = mat.GetFloat( name );
 										valueStr = value.ToString();
 									}
 									break;
-									case UnityEditor.ShaderUtil.ShaderPropertyType.Range:
+									case UnityEngine.Rendering.ShaderPropertyType.Range:
 									{
 										float value = mat.GetFloat( name );
 										valueStr = value.ToString();
 									}
 									break;
-									case UnityEditor.ShaderUtil.ShaderPropertyType.TexEnv:
+									case UnityEngine.Rendering.ShaderPropertyType.Texture:
 									{
 										Texture value = mat.GetTexture( name );
 										valueStr = AssetDatabase.GetAssetPath( value );
@@ -223,10 +223,10 @@ namespace AmplifyShaderEditor
 										}
 										else if( mat.HasProperty( valuesArr[ 0 ] ) )
 										{
-											UnityEditor.ShaderUtil.ShaderPropertyType type = (UnityEditor.ShaderUtil.ShaderPropertyType)Enum.Parse( typeof( UnityEditor.ShaderUtil.ShaderPropertyType ), valuesArr[ 1 ] );
+											UnityEngine.Rendering.ShaderPropertyType type = (UnityEngine.Rendering.ShaderPropertyType)Enum.Parse( typeof( UnityEngine.Rendering.ShaderPropertyType ), valuesArr[ 1 ] );
 											switch( type )
 											{
-												case UnityEditor.ShaderUtil.ShaderPropertyType.Color:
+												case UnityEngine.Rendering.ShaderPropertyType.Color:
 												{
 													string[] colorVals = valuesArr[ 2 ].Split( IOUtils.VECTOR_SEPARATOR );
 													if( colorVals.Length != 4 )
@@ -244,7 +244,7 @@ namespace AmplifyShaderEditor
 													}
 												}
 												break;
-												case UnityEditor.ShaderUtil.ShaderPropertyType.Vector:
+												case UnityEngine.Rendering.ShaderPropertyType.Vector:
 												{
 													string[] vectorVals = valuesArr[ 2 ].Split( IOUtils.VECTOR_SEPARATOR );
 													if( vectorVals.Length != 4 )
@@ -262,17 +262,17 @@ namespace AmplifyShaderEditor
 													}
 												}
 												break;
-												case UnityEditor.ShaderUtil.ShaderPropertyType.Float:
+												case UnityEngine.Rendering.ShaderPropertyType.Float:
 												{
 													mat.SetFloat( valuesArr[ 0 ], Convert.ToSingle( valuesArr[ 2 ] ) );
 												}
 												break;
-												case UnityEditor.ShaderUtil.ShaderPropertyType.Range:
+												case UnityEngine.Rendering.ShaderPropertyType.Range:
 												{
 													mat.SetFloat( valuesArr[ 0 ], Convert.ToSingle( valuesArr[ 2 ] ) );
 												}
 												break;
-												case UnityEditor.ShaderUtil.ShaderPropertyType.TexEnv:
+												case UnityEngine.Rendering.ShaderPropertyType.Texture:
 												{
 													string[] texVals = valuesArr[ 2 ].Split( IOUtils.VECTOR_SEPARATOR );
 													if( texVals.Length != 5 )
@@ -341,7 +341,13 @@ namespace AmplifyShaderEditor
 
 			for( int i = 0; i < properties.Length; i++ )
 			{
-				if( ( properties[ i ].flags & ( MaterialProperty.PropFlags.HideInInspector | MaterialProperty.PropFlags.PerRendererData ) ) == MaterialProperty.PropFlags.None )
+			#if UNITY_6000_2_OR_NEWER
+				int propertyFlags = ( int )properties[ i ].propertyFlags;
+			#else
+				int propertyFlags = ( int )properties[ i ].flags;
+			#endif
+
+				if ( ( propertyFlags & ( ( int )UnityEngine.Rendering.ShaderPropertyFlags.HideInInspector | ( int )UnityEngine.Rendering.ShaderPropertyFlags.PerRendererData ) ) == ( int )UnityEngine.Rendering.ShaderPropertyFlags.None )
 				{
 					// Removed no scale offset one line texture property for consistency :( sad face
 					//if( ( properties[ i ].flags & MaterialProperty.PropFlags.NoScaleOffset ) == MaterialProperty.PropFlags.NoScaleOffset )

@@ -310,7 +310,7 @@ namespace AmplifyShaderEditor
 			if( m_outputPorts == null )
 				return;
 
-			if( !PreviewIsDirty && !m_continuousPreviewRefresh )
+			if( !PreviewIsDirty && !ContinuousPreviewRefresh )
 				return;
 
 			// this is in the wrong place??
@@ -472,10 +472,11 @@ namespace AmplifyShaderEditor
 					port.CreatePortRestrictions( WirePortDataType.FLOAT, WirePortDataType.FLOAT2, WirePortDataType.FLOAT3, WirePortDataType.FLOAT4, WirePortDataType.COLOR, WirePortDataType.INT, WirePortDataType.OBJECT );
 				}
 				break;
+				case WirePortDataType.FLOAT2x2:
 				case WirePortDataType.FLOAT3x3:
 				case WirePortDataType.FLOAT4x4:
 				{
-					port.CreatePortRestrictions( WirePortDataType.FLOAT3x3, WirePortDataType.FLOAT4x4, WirePortDataType.OBJECT );
+					port.CreatePortRestrictions( WirePortDataType.FLOAT2x2, WirePortDataType.FLOAT3x3, WirePortDataType.FLOAT4x4, WirePortDataType.OBJECT );
 				}
 				break;
 				case WirePortDataType.SAMPLER1D:
@@ -509,6 +510,7 @@ namespace AmplifyShaderEditor
 				case WirePortDataType.FLOAT4:
 				case WirePortDataType.COLOR:
 				case WirePortDataType.INT:
+				case WirePortDataType.FLOAT2x2:
 				case WirePortDataType.FLOAT3x3:
 				case WirePortDataType.FLOAT4x4:
 				{

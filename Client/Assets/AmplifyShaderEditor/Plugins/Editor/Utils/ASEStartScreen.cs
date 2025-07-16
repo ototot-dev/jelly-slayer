@@ -39,7 +39,7 @@ namespace AmplifyShaderEditor
 		private static readonly string FunctionsURL = "https://wiki.amplify.pt/index.php?title=Unity_Products:Amplify_Shader_Editor/Manual#Shader_Functions";
 		private static readonly string TemplatesURL = "https://wiki.amplify.pt/index.php?title=Unity_Products:Amplify_Shader_Editor/Templates";
 		private static readonly string APIURL = "https://wiki.amplify.pt/index.php?title=Unity_Products:Amplify_Shader_Editor/API";
-		private static readonly string SGtoASEURL = "https://wiki.amplify.pt/index.php?title=Unity_Products:Amplify_Shader_Editor/Shader_Graph_to_ASE";	
+		private static readonly string SGtoASEURL = "https://wiki.amplify.pt/index.php?title=Unity_Products:Amplify_Shader_Editor/Shader_Graph_to_ASE";
 
 		private static readonly string DiscordURL = "https://discordapp.com/invite/EdrVAP5";
 		private static readonly string ForumURL = "https://forum.unity.com/threads/best-tool-asset-store-award-amplify-shader-editor-node-based-shader-creation-tool.430959/";
@@ -104,14 +104,16 @@ namespace AmplifyShaderEditor
 
 		private static Dictionary<int, ASESRPPackageDesc> m_srpSamplePackages = new Dictionary<int, ASESRPPackageDesc>()
 		{
-			{ ( int )ASESRPBaseline.ASE_SRP_10, new ASESRPPackageDesc( ASESRPBaseline.ASE_SRP_10, "2edbf4a9b9544774bbef617e92429664", "9da5530d5ebfab24c8ecad68795e720f" ) },
-			{ ( int )ASESRPBaseline.ASE_SRP_11, new ASESRPPackageDesc( ASESRPBaseline.ASE_SRP_11, "2edbf4a9b9544774bbef617e92429664", "9da5530d5ebfab24c8ecad68795e720f" ) },
-			{ ( int )ASESRPBaseline.ASE_SRP_12, new ASESRPPackageDesc( ASESRPBaseline.ASE_SRP_12, "13ab599a7bda4e54fba3e92a13c9580a", "aa102d640b98b5d4781710a3a3dd6983" ) },
-			{ ( int )ASESRPBaseline.ASE_SRP_13, new ASESRPPackageDesc( ASESRPBaseline.ASE_SRP_13, "13ab599a7bda4e54fba3e92a13c9580a", "aa102d640b98b5d4781710a3a3dd6983" ) },
-			{ ( int )ASESRPBaseline.ASE_SRP_14, new ASESRPPackageDesc( ASESRPBaseline.ASE_SRP_14, "f6f268949ccf3f34fa4d18e92501ed82", "7a0bb33169d95ec499136d59cb25918b" ) },
-			{ ( int )ASESRPBaseline.ASE_SRP_15, new ASESRPPackageDesc( ASESRPBaseline.ASE_SRP_15, "69bc3229216b1504ea3e28b5820bbb0d", "641c955d37d2fac4f87e00ac5c9d9bd8" ) },
-			{ ( int )ASESRPBaseline.ASE_SRP_16, new ASESRPPackageDesc( ASESRPBaseline.ASE_SRP_16, "4f665a06c5a2aa5499fa1c79ac058999", "2690f45490c175045bbdc63395bf6278" ) },
-			{ ( int )ASESRPBaseline.ASE_SRP_17, new ASESRPPackageDesc( ASESRPBaseline.ASE_SRP_17, "47fc5ccecd261894994c1e9e827cf553", "f42c2bc4dab4723429b0d30b635c3035" ) },
+			{ ( int )ASESRPBaseline.ASE_SRP_10_0, new ASESRPPackageDesc( ASESRPBaseline.ASE_SRP_10_0, "2edbf4a9b9544774bbef617e92429664", "9da5530d5ebfab24c8ecad68795e720f" ) },
+			{ ( int )ASESRPBaseline.ASE_SRP_11_0, new ASESRPPackageDesc( ASESRPBaseline.ASE_SRP_11_0, "2edbf4a9b9544774bbef617e92429664", "9da5530d5ebfab24c8ecad68795e720f" ) },
+			{ ( int )ASESRPBaseline.ASE_SRP_12_0, new ASESRPPackageDesc( ASESRPBaseline.ASE_SRP_12_0, "13ab599a7bda4e54fba3e92a13c9580a", "aa102d640b98b5d4781710a3a3dd6983" ) },
+			{ ( int )ASESRPBaseline.ASE_SRP_13_0, new ASESRPPackageDesc( ASESRPBaseline.ASE_SRP_13_0, "13ab599a7bda4e54fba3e92a13c9580a", "aa102d640b98b5d4781710a3a3dd6983" ) },
+			{ ( int )ASESRPBaseline.ASE_SRP_14_0, new ASESRPPackageDesc( ASESRPBaseline.ASE_SRP_14_0, "f6f268949ccf3f34fa4d18e92501ed82", "7a0bb33169d95ec499136d59cb25918b" ) },
+			{ ( int )ASESRPBaseline.ASE_SRP_15_0, new ASESRPPackageDesc( ASESRPBaseline.ASE_SRP_15_0, "69bc3229216b1504ea3e28b5820bbb0d", "641c955d37d2fac4f87e00ac5c9d9bd8" ) },
+			{ ( int )ASESRPBaseline.ASE_SRP_16_0, new ASESRPPackageDesc( ASESRPBaseline.ASE_SRP_16_0, "4f665a06c5a2aa5499fa1c79ac058999", "2690f45490c175045bbdc63395bf6278" ) },
+			{ ( int )ASESRPBaseline.ASE_SRP_17_0, new ASESRPPackageDesc( ASESRPBaseline.ASE_SRP_17_0, "47fc5ccecd261894994c1e9e827cf553", "f42c2bc4dab4723429b0d30b635c3035" ) },
+			{ ( int )ASESRPBaseline.ASE_SRP_17_1, new ASESRPPackageDesc( ASESRPBaseline.ASE_SRP_17_1, "47fc5ccecd261894994c1e9e827cf553", "f42c2bc4dab4723429b0d30b635c3035" ) },
+			{ ( int )ASESRPBaseline.ASE_SRP_17_2, new ASESRPPackageDesc( ASESRPBaseline.ASE_SRP_17_2, "47fc5ccecd261894994c1e9e827cf553", "f42c2bc4dab4723429b0d30b635c3035" ) },
 		};
 
 		private void OnEnable()

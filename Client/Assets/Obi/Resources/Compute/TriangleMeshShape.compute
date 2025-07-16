@@ -1,42 +1,12 @@
 ﻿#include "ColliderDefinitions.cginc"
 #include "ContactHandling.cginc"
-#include "Transform.cginc"
+#include "DistanceFunctions.cginc"
 #include "Simplex.cginc"
 #include "Bounds.cginc"
 #include "SolverParameters.cginc"
 #include "Optimization.cginc"
 
 #pragma kernel GenerateContacts
-
-struct BIHNode
-{
-    int firstChild;     /**< index of the first child node. The second one is right after the first.*/
-    int start;          /**< index of the first element in this node.*/
-    int count;          /**< amount of elements in this node.*/
-
-    int axis;           /**< axis of the split plane (0,1,2 = x,y,z)*/
-    float min_;         /**< minimum split plane*/
-    float max_;         /**< maximum split plane*/
-};
-
-struct TriangleMeshHeader 
-{
-    int firstNode;
-    int nodeCount;
-    int firstTriangle;
-    int triangleCount;
-    int firstVertex;
-    int vertexCount;
-};
-
-struct Triangle
-{
-    int i1;
-    int i2;
-    int i3;
-    aabb b;
-};
-
 
 StructuredBuffer<float4> positions;
 StructuredBuffer<quaternion> orientations;
@@ -66,30 +36,6 @@ StructuredBuffer<transform> worldToSolver;
 uint maxContacts; 
 float deltaTime;
 
-struct TriangleMesh : IDistanceFunction
-{
-    shape s;
-    transform colliderToSolver;
-
-    CachedTri tri;
-    
-    void Evaluate(in float4 pos, in float4 radii, in quaternion orientation, inout SurfacePoint projectedPoint)
-    {
-       float4 pnt = colliderToSolver.InverseTransformPointUnscaled(pos);
-
-        if (s.is2D())
-            pnt[2] = 0;
-
-        float4 bary = FLOAT4_ZERO;
-        float4 nearestPoint = NearestPointOnTri(tri, pnt, bary);
-        float4 normal = normalizesafe(pnt - nearestPoint);
-
-        projectedPoint.pos = colliderToSolver.TransformPointUnscaled(nearestPoint + normal * s.contactOffset);
-        projectedPoint.normal = colliderToSolver.TransformDirection(normal);
-        projectedPoint.bary = float4(1,0,0,0);
-    }
-
-};
 
 [numthreads(128, 1, 1)]
 void GenerateContacts (uint3 id : SV_DispatchThreadID) 

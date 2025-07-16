@@ -25,6 +25,7 @@ namespace Obi
         SerializedProperty collisionMaterial;
         SerializedProperty selfCollisions;
         SerializedProperty surfaceCollisions;
+        SerializedProperty massScale;
 
         SerializedProperty distanceConstraintsEnabled;
         SerializedProperty stretchingScale;
@@ -56,6 +57,7 @@ namespace Obi
             collisionMaterial = serializedObject.FindProperty("m_CollisionMaterial");
             selfCollisions = serializedObject.FindProperty("m_SelfCollisions");
             surfaceCollisions = serializedObject.FindProperty("m_SurfaceCollisions");
+            massScale = serializedObject.FindProperty("m_MassScale");
 
             distanceConstraintsEnabled = serializedObject.FindProperty("_distanceConstraintsEnabled");
             stretchingScale = serializedObject.FindProperty("_stretchingScale");
@@ -154,6 +156,10 @@ namespace Obi
 
                 GUILayout.EndHorizontal();
             }
+
+            GUI.enabled = !Application.isPlaying;
+            EditorGUILayout.PropertyField(massScale, new GUIContent("Mass scale"));
+            GUI.enabled = true;
 
             DoEditButton();
 

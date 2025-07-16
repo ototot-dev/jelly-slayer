@@ -21,6 +21,14 @@ namespace Game
         PawnColliderHelper IPawnTargetable.CurrTarget() => bodyHitColliderHelper;
         void IPawnTargetable.StopTargeting() { }
         #endregion
+        public override void StartJump(float jumpHeight)
+        {
+            Movement.StartJump(BB.body.jumpHeight);
+        }
+        public override void FinishJump()
+        {
+            Movement.StartFalling();
+        }
 
         public override Vector3 GetInteractionKeyAttachPoint() => BB.children.specialKeyAttachPoint.transform.position;
         public override float GetInteractionVisibleRadius() => 2f;
@@ -159,17 +167,6 @@ namespace Game
                 }
             };
 
-            AnimCtrler.FindStateMachineTriggerObservable("OnGroggy (Wait)").OnStateEnterAsObservable().Subscribe(_ =>
-            {
-                new InteractionKeyController("E", "Chainsaw", 2f, this).Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
-                bodyHitColliderHelper.gameObject.layer = LayerMask.NameToLayer("HitBox");
-            }).AddTo(this);
-
-            AnimCtrler.FindStateMachineTriggerObservable("OnGroggy (Wait)").OnStateExitAsObservable().Subscribe(_ =>
-            {
-                bodyHitColliderHelper.gameObject.layer = LayerMask.NameToLayer("HitBoxBlocking");
-            }).AddTo(this);
-
             BB.common.isDown.Skip(1).Subscribe(v =>
             {
                 if (v)
@@ -285,30 +282,14 @@ namespace Game
         {
             base.DamageReceiverHandler(ref damageContext);
 
-            if (damageContext.actionResult == ActionResults.Damaged)
+            if (damageContext.actionResult == ActionResults.Blocked && ActionDataSelector.CurrSequence() == null && ActionDataSelector.EvaluateSequence(ActionPatterns.CounterA, 1f))
             {
-                CreateDamageText(ref damageContext);
-            }
-            else if (damageContext.actionResult == ActionResults.Blocked)
-            {
-                if (ActionDataSelector.CurrSequence() == null && ActionDataSelector.EvaluateSequence(ActionPatterns.CounterA, 1f))
-                {
-                    var counterPick = UnityEngine.Random.Range(0, 2) > 0 ? ActionPatterns.CounterA : ActionPatterns.CounterB;
-                    ActionDataSelector.EnqueueSequence(UnityEngine.Random.Range(0, 2) > 0 ? ActionPatterns.CounterA : ActionPatterns.CounterB);
-                    ActionDataSelector.BeginCoolTime(ActionPatterns.CounterA, BB.action.counterCoolTime);
-                    ActionDataSelector.BeginCoolTime(ActionPatterns.CounterA, BB.action.counterCoolTime);
-                }
-            }
-        }
+                var counterPick = UnityEngine.Random.Range(0, 2) > 0 ? ActionPatterns.CounterA : ActionPatterns.CounterB;
 
-        protected override void StartJumpInternal(float jumpHeight)
-        {
-            Movement.StartJump(BB.body.jumpHeight);
-        }
-
-        protected override void FinishJumpInternal()
-        {
-            Movement.StartFalling();
+                ActionDataSelector.EnqueueSequence(UnityEngine.Random.Range(0, 2) > 0 ? ActionPatterns.CounterA : ActionPatterns.CounterB);
+                ActionDataSelector.BeginCoolTime(ActionPatterns.CounterA, BB.action.counterCoolTime);
+                ActionDataSelector.BeginCoolTime(ActionPatterns.CounterA, BB.action.counterCoolTime);
+            }
         }
     }
 }

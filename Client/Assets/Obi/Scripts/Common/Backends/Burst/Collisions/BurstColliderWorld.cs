@@ -423,6 +423,7 @@ namespace Obi
             [NativeDisableParallelForRestriction] public NativeArray<float4> externalForces;
             [NativeDisableParallelForRestriction] public NativeArray<float4> wind;
             [NativeDisableParallelForRestriction] public NativeArray<float4> velocities;
+            [NativeDisableParallelForRestriction] public NativeArray<float4> colors;
             [NativeDisableParallelForRestriction] public NativeArray<float> life;
             [ReadOnly] public NativeArray<float4> positions;
             [ReadOnly] public NativeArray<float> invMasses;
@@ -455,70 +456,75 @@ namespace Obi
                     {
                         int particleIndex = simplices[simplexStart + j];
 
+                        float distance = -math.dot(positions[particleIndex] - contact.pointB, contact.normal);
+                        if (distance < 0) continue;
+
+                        float4 axis = (worldToSolver * transforms[contact.bodyB]).TransformDirection(new float4(0, 0, 1, 0));
+
+                        // calculate falloff region based on min/max distances:
+                        float falloff = 1;
+                        float range = forceZones[forceZoneIndex].maxDistance - forceZones[forceZoneIndex].minDistance;
+                        if (math.abs(range) > BurstMath.epsilon)
+                            falloff = math.pow(math.saturate((distance - forceZones[forceZoneIndex].minDistance) / range), forceZones[forceZoneIndex].falloffPower);
+
+                        float forceIntensity = forceZones[forceZoneIndex].intensity * falloff;
+                        float dampIntensity  = forceZones[forceZoneIndex].damping * falloff;
+
+                        // tint particles:
+                        float mix = math.pow(1 - math.saturate(forceZones[forceZoneIndex].color.a * falloff), deltaTime);
+                        colors[particleIndex] = math.lerp((Vector4)forceZones[forceZoneIndex].color, colors[particleIndex], mix);
+
+                        // calculate force direction, depending on the type of the force field:
+                        float4 result = float4.zero;
+                        switch (forceZones[forceZoneIndex].type)
+                        {
+                            case ForceZone.ZoneType.Radial:
+                                    result = contact.normal * forceIntensity;
+                                break;
+                            case ForceZone.ZoneType.Vortex:
+                                    result = new float4(math.cross(axis.xyz * forceIntensity, contact.normal.xyz).xyz, 0);
+                                break;
+                            case ForceZone.ZoneType.Directional:
+                                    result = axis * forceIntensity;
+                                break;
+                            default:
+                                BurstMath.AtomicAdd(life, particleIndex, -forceIntensity * deltaTime);
+                                continue;
+                        }
+
+                        // apply damping:
+                        switch (forceZones[forceZoneIndex].dampingDir)
+                        {
+                            case ForceZone.DampingDirection.ForceDirection:
+                                {
+                                    float4 forceDir = math.normalizesafe(result);
+                                    result -= forceDir * math.dot(velocities[particleIndex], forceDir) * dampIntensity;
+                                }
+                                break;
+                            case ForceZone.DampingDirection.SurfaceDirection:
+                                result -= contact.normal * math.dot(velocities[particleIndex], contact.normal) * dampIntensity;
+                                break;
+                            default:
+                                result -= velocities[particleIndex] * dampIntensity;
+                                break;
+                        }
+
                         if (invMasses[particleIndex] > 0)
                         {
-                            float distance = -math.dot(positions[particleIndex] - contact.pointB, contact.normal);
-                            if (distance < 0) continue;
-
-                            float4 axis = (worldToSolver * transforms[contact.bodyB]).TransformDirection(new float4(0, 0, 1, 0));
-
-                            // calculate falloff region based on min/max distances:
-                            float falloff = 1;
-                            float range = forceZones[forceZoneIndex].maxDistance - forceZones[forceZoneIndex].minDistance;
-                            if (math.abs(range) > BurstMath.epsilon)
-                                falloff = math.pow(math.saturate((distance - forceZones[forceZoneIndex].minDistance) / range), forceZones[forceZoneIndex].falloffPower);
-
-                            float forceIntensity = forceZones[forceZoneIndex].intensity * falloff;
-                            float dampIntensity  = forceZones[forceZoneIndex].damping * falloff;
-
-                            // calculate force direction, depending on the type of the force field:
-                            float4 result = float4.zero;
-                            switch (forceZones[forceZoneIndex].type)
-                            {
-                                case ForceZone.ZoneType.Radial:
-                                        result = contact.normal * forceIntensity;
-                                    break;
-                                case ForceZone.ZoneType.Vortex:
-                                        result = new float4(math.cross(axis.xyz * forceIntensity, contact.normal.xyz).xyz, 0);
-                                    break;
-                                case ForceZone.ZoneType.Directional:
-                                        result = axis * forceIntensity;
-                                    break;
-                                default:
-                                    BurstMath.AtomicAdd(life, particleIndex, -forceIntensity * deltaTime);
-                                    continue;
-                            }
-
-                            // apply damping:
-                            switch (forceZones[forceZoneIndex].dampingDir)
-                            {
-                                case ForceZone.DampingDirection.ForceDirection:
-                                    {
-                                        float4 forceDir = math.normalizesafe(result);
-                                        result -= forceDir * math.dot(velocities[particleIndex], forceDir) * dampIntensity;
-                                    }
-                                    break;
-                                case ForceZone.DampingDirection.SurfaceDirection:
-                                    result -= contact.normal * math.dot(velocities[particleIndex], contact.normal) * dampIntensity;
-                                    break;
-                                default:
-                                    result -= velocities[particleIndex] * dampIntensity;
-                                    break;
-                            }
-
                             switch (forceZones[forceZoneIndex].mode)
                             {
                                 case ForceZone.ForceMode.Acceleration:
                                     BurstMath.AtomicAdd(externalForces, particleIndex, result / simplexSize / invMasses[particleIndex]);
-                                break;
+                                    break;
                                 case ForceZone.ForceMode.Force:
                                     BurstMath.AtomicAdd(externalForces, particleIndex, result / simplexSize);
-                                break;
+                                    break;
                                 case ForceZone.ForceMode.Wind:
                                     BurstMath.AtomicAdd(wind, particleIndex, result / simplexSize);
-                                break;
+                                    break;
                             }
                         }
+                        
                     }
                 }
             }
@@ -538,6 +544,7 @@ namespace Obi
                 wind = solver.wind,
                 invMasses = solver.invMasses,
                 life = solver.life,
+                colors = solver.colors,
 
                 simplices = solver.simplices,
                 simplexCounts = solver.simplexCounts,

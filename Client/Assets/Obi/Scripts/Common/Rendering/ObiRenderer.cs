@@ -51,9 +51,11 @@ namespace Obi
                 // register in the renderer:
                 if (system != null)
                 {
-                    system.AddRenderer((T)this);
-                    solver.dirtyRendering |= (int)system.typeEnum;
-                    return true;
+                    if (system.AddRenderer((T)this))
+                    {
+                        solver.dirtyRendering |= (int)system.typeEnum;
+                        return true;
+                    }
                 }
             }
 

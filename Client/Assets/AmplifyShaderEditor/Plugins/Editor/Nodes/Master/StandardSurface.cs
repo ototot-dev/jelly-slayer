@@ -1609,12 +1609,12 @@ namespace AmplifyShaderEditor
 							if( hasTranslucency )
 							{
 								m_currentDataCollector.AddToProperties( UniqueId, "[Header(Translucency)]", m_translucencyReorder.OrderIndex );
-								m_currentDataCollector.AddToProperties( UniqueId, "_Translucency(\"Strength\", Range( 0 , 50)) = 1", m_translucencyReorder.OrderIndex + 1 );
-								m_currentDataCollector.AddToProperties( UniqueId, "_TransNormalDistortion(\"Normal Distortion\", Range( 0 , 1)) = 0.1", m_translucencyReorder.OrderIndex + 2 );
-								m_currentDataCollector.AddToProperties( UniqueId, "_TransScattering(\"Scaterring Falloff\", Range( 1 , 50)) = 2", m_translucencyReorder.OrderIndex + 3 );
-								m_currentDataCollector.AddToProperties( UniqueId, "_TransDirect(\"Direct\", Range( 0 , 1)) = 1", m_translucencyReorder.OrderIndex + 4 );
-								m_currentDataCollector.AddToProperties( UniqueId, "_TransAmbient(\"Ambient\", Range( 0 , 1)) = 0.2", m_translucencyReorder.OrderIndex + 5 );
-								m_currentDataCollector.AddToProperties( UniqueId, "_TransShadow(\"Shadow\", Range( 0 , 1)) = 0.9", m_translucencyReorder.OrderIndex + 6 );
+								m_currentDataCollector.AddToProperties( UniqueId, "_Translucency( \"Strength\", Range( 0, 50 ) ) = 1", m_translucencyReorder.OrderIndex + 1 );
+								m_currentDataCollector.AddToProperties( UniqueId, "_TransNormalDistortion( \"Normal Distortion\", Range( 0, 1 ) ) = 0.1", m_translucencyReorder.OrderIndex + 2 );
+								m_currentDataCollector.AddToProperties( UniqueId, "_TransScattering( \"Scaterring Falloff\", Range( 1, 50 ) ) = 2", m_translucencyReorder.OrderIndex + 3 );
+								m_currentDataCollector.AddToProperties( UniqueId, "_TransDirect( \"Direct\", Range( 0, 1 ) ) = 1", m_translucencyReorder.OrderIndex + 4 );
+								m_currentDataCollector.AddToProperties( UniqueId, "_TransAmbient( \"Ambient\", Range( 0, 1 ) ) = 0.2", m_translucencyReorder.OrderIndex + 5 );
+								m_currentDataCollector.AddToProperties( UniqueId, "_TransShadow( \"Shadow\", Range( 0, 1 ) ) = 0.9", m_translucencyReorder.OrderIndex + 6 );
 
 								m_currentDataCollector.AddToUniforms( UniqueId, "uniform half _Translucency;" );
 								m_currentDataCollector.AddToUniforms( UniqueId, "uniform half _TransNormalDistortion;" );
@@ -2248,7 +2248,7 @@ namespace AmplifyShaderEditor
 						//Add custom lighting function
 						if( hasTranslucency || hasTransmission )
 						{
-							ShaderBody += "\t\tinline half4 Lighting" + m_currentLightModel.ToString() + Constants.CustomLightStructStr + "(" + outputStruct + " " + Constants.CustomLightOutputVarStr + ", half3 viewDir, UnityGI gi )\n\t\t{\n";
+							ShaderBody += "\t\tinline half4 Lighting" + m_currentLightModel.ToString() + Constants.CustomLightStructStr + "( " + outputStruct + " " + Constants.CustomLightOutputVarStr + ", half3 viewDir, UnityGI gi )\n\t\t{\n";
 							if( hasTranslucency )
 							{
 								//ShaderBody += "\t\t\t#if !DIRECTIONAL\n";

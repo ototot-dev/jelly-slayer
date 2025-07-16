@@ -89,8 +89,8 @@ namespace Obi
             deformableEdges = new int[numSegments * 2];
             for (int i = 0; i < numSegments; ++i)
             {
-                deformableEdges[i * 2] = i % totalParticles;
-                deformableEdges[i * 2 + 1] = (i + 1) % totalParticles;
+                deformableEdges[i * 2] = i % activeParticleCount;
+                deformableEdges[i * 2 + 1] = (i + 1) % activeParticleCount;
             }
         }
 
@@ -99,8 +99,8 @@ namespace Obi
             edges = new int[numSegments * 2];
             for (int i = 0; i < numSegments; ++i)
             {
-                edges[i * 2] = i % totalParticles;
-                edges[i * 2 + 1] = (i + 1) % totalParticles;
+                edges[i * 2] = i % activeParticleCount;
+                edges[i * 2 + 1] = (i + 1) % activeParticleCount;
             }
         }
 

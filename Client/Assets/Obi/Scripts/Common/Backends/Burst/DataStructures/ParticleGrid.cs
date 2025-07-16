@@ -4,6 +4,7 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Burst;
+using UnityEngine;
 
 namespace Obi
 {
@@ -241,7 +242,7 @@ namespace Obi
                     // Calculate particle center distance:
                     float d2 = math.lengthsq(positions[particleA].xyz - positions[particleB].xyz);
 
-                    float fluidDistance = math.max(fluidMaterials[particleA].x, fluidMaterials[particleB].x);
+                    float fluidDistance = math.max(fluidMaterials[particleA].x, fluidMaterials[particleB].x) + collisionMargin;
                     if (d2 <= fluidDistance * fluidDistance)
                     {
                         fluidInteractionsQueue.Enqueue(new FluidInteraction { particleA = particleA, particleB = particleB });
@@ -294,13 +295,16 @@ namespace Obi
                                         simplices, simplexStartA, simplexSizeA, ref simplexBary, out simplexPoint, optimizationIterations, optimizationTolerance);
 
                     simplexRadiusA = 0; simplexRadiusB = 0;
-                    float4 velocityA = float4.zero, velocityB = float4.zero, normalB = float4.zero;
+                    float4 velocityA = float4.zero, velocityB = float4.zero, normalA = float4.zero, normalB = float4.zero;
+                    float invMassA = 0, invMassB = 0; 
 
                     for (int j = 0; j < simplexSizeA; ++j)
                     {
                         int particleIndex = simplices[simplexStartA + j];
                         simplexRadiusA += radii[particleIndex].x * simplexBary[j];
                         velocityA += velocities[particleIndex] * simplexBary[j];
+                        normalA += (normals[particleIndex].w < 0 ? new float4(math.rotate(orientations[particleIndex],normals[particleIndex].xyz), normals[particleIndex].w) : normals[particleIndex]) * simplexBary[j];
+                        invMassA += invMasses[particleIndex] * simplexBary[j];
                     }
 
                     for (int j = 0; j < simplexSizeB; ++j)
@@ -308,8 +312,13 @@ namespace Obi
                         int particleIndex = simplices[simplexStartB + j];
                         simplexRadiusB += radii[particleIndex].x * surfacePoint.bary[j];
                         velocityB += velocities[particleIndex] * surfacePoint.bary[j];
-                        normalB += normals[particleIndex] * surfacePoint.bary[j];
+                        normalB += (normals[particleIndex].w < 0 ? new float4(math.rotate(orientations[particleIndex], normals[particleIndex].xyz), normals[particleIndex].w) : normals[particleIndex]) * surfacePoint.bary[j];
+                        invMassB += invMasses[particleIndex] * simplexBary[j];
                     }
+
+                    // no contact between fixed simplices:
+                    //if (!(invMassA > 0 || invMassB > 0)) 
+                      //  return;
 
                     float dAB = math.dot(simplexPoint - surfacePoint.point, surfacePoint.normal);
                     float vel = math.dot(velocityA - velocityB, surfacePoint.normal);
@@ -319,16 +328,32 @@ namespace Obi
                     {
                         // adapt collision normal for one-sided simplices:
                         if ((flagsB & ObiUtils.ParticleFlags.OneSided) != 0 && categoryA < categoryB)
-                            BurstMath.OneSidedNormal(normalB, ref surfacePoint.normal);
+                            BurstMath.OneSidedNormal(normalB, ref surfacePoint.normal); 
 
-                        contactsQueue.Enqueue(new BurstContact()
+                        // during inter-collision, if either particle contains SDF data and they overlap:
+                        if (groupA != groupB && (normalB.w < 0 || normalA.w < 0) && dAB * 1.05f <= simplexRadiusA + simplexRadiusB)
+                        {
+                            // as normal, pick SDF gradient belonging to least penetration distance:
+                            float4 nij = normalB;
+                            if (normalB.w >= 0 || (normalA.w < 0 && normalB.w < normalA.w))
+                                nij = new float4(-normalA.xyz, normalA.w);
+
+                            // for boundary particles, use one sided sphere normal:
+                            if (math.abs(nij.w) <= math.max(simplexRadiusA, simplexRadiusB) * 1.5f)
+                                BurstMath.OneSidedNormal(nij, ref surfacePoint.normal);
+                            else
+                                surfacePoint.normal = nij;
+                        }
+
+                        surfacePoint.normal.w = 0;
+                        contactsQueue.Enqueue(new BurstContact
                         {
                             bodyA = A,
                             bodyB = B,
                             pointA = simplexBary,
                             pointB = surfacePoint.bary,
                             normal = surfacePoint.normal
-                        });
+                        }); 
                     }
                 }
             }

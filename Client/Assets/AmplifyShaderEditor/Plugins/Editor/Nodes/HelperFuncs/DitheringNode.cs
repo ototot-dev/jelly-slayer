@@ -164,7 +164,8 @@ namespace AmplifyShaderEditor
 
 					IOUtils.AddFunctionHeader( ref m_functionBody, "inline float Dither" + PatternsFuncStr[ m_selectedPatternInt ] + "( float4 screenPos, " + GeneratorUtils.GetPropertyDeclaraction( "noiseTexture", TextureType.Texture2D, ", " ) + GeneratorUtils.GetSamplerDeclaraction( "samplernoiseTexture", TextureType.Texture2D, ", " ) + "float4 noiseTexelSize )" );
 
-					string samplingCall = GeneratorUtils.GenerateSamplingCall( ref dataCollector, WirePortDataType.SAMPLER2D, "noiseTexture", "samplernoiseTexture", "screenPos.xy * _ScreenParams.xy * noiseTexelSize.xy", MipType.MipLevel, "0" );
+					string screenParams = dataCollector.IsURP ? "_ScaledScreenParams" : "_ScreenParams";
+					string samplingCall = GeneratorUtils.GenerateSamplingCall( ref dataCollector, WirePortDataType.SAMPLER2D, "noiseTexture", "samplernoiseTexture", "screenPos.xy * " + screenParams + ".xy * noiseTexelSize.xy", MipType.MipLevel, "0" );
 					IOUtils.AddFunctionLine( ref m_functionBody, "float dither = "+ samplingCall + ".g;" );
 					IOUtils.AddFunctionLine( ref m_functionBody, "float ditherRate = noiseTexelSize.x * noiseTexelSize.y;" );
 					IOUtils.AddFunctionLine( ref m_functionBody, "dither = ( 1 - ditherRate ) * dither + ditherRate;" );
@@ -215,7 +216,7 @@ namespace AmplifyShaderEditor
 					}
 				}
 			}
-			
+
 			//string surfInstruction = string.Format( "abs( {0}.xy ) * _ScreenParams.xy", varName );
 			m_showErrorMessage = false;
 			string functionResult = "";

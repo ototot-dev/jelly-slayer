@@ -17,6 +17,7 @@ namespace Obi
 
         public int sameLevelNeighborsKernel;
         public int upperLevelsNeighborsKernel;
+        public int buildFluidIndexBufferKernel;
         public int contactsKernel;
 
         public ComputePrefixSum cellsPrefixSum;
@@ -43,7 +44,10 @@ namespace Obi
         public GraphicsBuffer sortedPrincipalRadii;         // Used by Density constraints: needs to be sorted once per step (not changed by constraints)
         public GraphicsBuffer sortedFluidMaterials;         // Used by Density constraints: needs to be sorted once per step (not changed by constraints)
         public GraphicsBuffer sortedFluidInterface;         // Used by Density constraints: needs to be sorted once per step (not changed by constraints)
-        public GraphicsBuffer sortedFluidDataVel;           // Used by Density constraints: no need to be sorted (constraints output). Reuse for velocities (foam advection and mesher).
+        public GraphicsBuffer sortedFluidData;              // Used by Density constraints: no need to be sorted (constraints output).
+
+        public GraphicsBuffer sortedLinearVel;              // Not used by density constraints: used for foam advection and mesher.
+        public GraphicsBuffer sortedAngularVel;             // Not used by density constraints: used for foam advection.
 
         public GraphicsBuffer sortedPositions;              // Used by Density constraints: needs to be sorted once per iteration.
         public GraphicsBuffer sortedPrevPosOrientations;    // Used by Density constraints: needs to be sorted once per iteration. Reuse for orientations (foam advection and mesher).
@@ -72,6 +76,7 @@ namespace Obi
             sortFluidSimplicesKernel = gridShader.FindKernel("SortFluidSimplices");
             sameLevelNeighborsKernel = gridShader.FindKernel("FindFluidNeighborsInSameLevel");
             upperLevelsNeighborsKernel = gridShader.FindKernel("FindFluidNeighborsInUpperLevels");
+            buildFluidIndexBufferKernel = gridShader.FindKernel("BuildFluidParticleIndexBuffer");
             contactsKernel = gridShader.FindKernel("BuildContactList");
 
             levelPopulation = new GraphicsBuffer(GraphicsBuffer.Target.Structured, maxGridLevels + 1, 4);
@@ -121,8 +126,13 @@ namespace Obi
                 sortedFluidInterface.Dispose();
             if (sortedUserDataColor != null)
                 sortedUserDataColor.Dispose();
-            if (sortedFluidDataVel != null)
-                sortedFluidDataVel.Dispose();
+            if (sortedFluidData != null)
+                sortedFluidData.Dispose();
+
+            if (sortedLinearVel != null)
+                sortedLinearVel.Dispose();
+            if (sortedAngularVel != null)
+                sortedAngularVel.Dispose();
 
             cellsPrefixSum = null;
             fluidPrefixSum = null;
@@ -142,7 +152,9 @@ namespace Obi
             sortedFluidMaterials = null;
             sortedFluidInterface = null;
             sortedUserDataColor = null;
-            sortedFluidDataVel = null;
+            sortedFluidData = null;
+            sortedLinearVel = null;
+            sortedAngularVel = null;
         }
 
         public void Dispose()
@@ -200,7 +212,9 @@ namespace Obi
                 sortedPositions = new GraphicsBuffer(GraphicsBuffer.Target.Structured, capacity, 16);
                 sortedPrevPosOrientations = new GraphicsBuffer(GraphicsBuffer.Target.Structured, capacity, 16);
                 sortedUserDataColor = new GraphicsBuffer(GraphicsBuffer.Target.Structured, capacity, 16);
-                sortedFluidDataVel = new GraphicsBuffer(GraphicsBuffer.Target.Structured, capacity, 16);
+                sortedFluidData = new GraphicsBuffer(GraphicsBuffer.Target.Structured, capacity, 16);
+                sortedLinearVel = new GraphicsBuffer(GraphicsBuffer.Target.Structured, capacity, 16);
+                sortedAngularVel = new GraphicsBuffer(GraphicsBuffer.Target.Structured, capacity, 16);
 
                 return true;
             }
@@ -347,7 +361,7 @@ namespace Obi
                 gridShader.SetBuffer(contactsKernel, "phases", solver.phasesBuffer);
                 gridShader.SetBuffer(contactsKernel, "filters", solver.filtersBuffer);
                 gridShader.SetBuffer(contactsKernel, "principalRadii", solver.principalRadiiBuffer);
-                gridShader.SetBuffer(contactsKernel, "normals", solver.normalsIntBuffer);
+                gridShader.SetBuffer(contactsKernel, "normals", solver.normalsBuffer);
                 gridShader.SetBuffer(contactsKernel, "R_cellCoords", solver.cellCoordsBuffer);
                 gridShader.SetBuffer(contactsKernel, "R_cellOffsets", cellOffsets);
                 gridShader.SetBuffer(contactsKernel, "R_cellCounts", cellCounts);
@@ -399,6 +413,11 @@ namespace Obi
                 gridShader.SetBuffer(upperLevelsNeighborsKernel, "neighborCounts", neighborCounts);
                 gridShader.SetBuffer(upperLevelsNeighborsKernel, "dispatchBuffer", solver.fluidDispatchBuffer);
                 gridShader.DispatchIndirect(upperLevelsNeighborsKernel, solver.fluidDispatchBuffer);
+
+                gridShader.SetBuffer(buildFluidIndexBufferKernel, "sortedFluidIndices", sortedFluidIndices);
+                gridShader.SetBuffer(buildFluidIndexBufferKernel, "simplices", solver.simplices);
+                gridShader.SetBuffer(buildFluidIndexBufferKernel, "dispatchBuffer", solver.fluidDispatchBuffer);
+                gridShader.DispatchIndirect(buildFluidIndexBufferKernel, solver.fluidDispatchBuffer);
             }
         }
     }

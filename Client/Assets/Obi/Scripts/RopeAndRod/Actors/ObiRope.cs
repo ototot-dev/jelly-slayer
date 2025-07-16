@@ -178,20 +178,20 @@ namespace Obi
             SetupRuntimeConstraints();
         }
 
-        public override void LoadBlueprint(ObiSolver solver)
+        internal override void LoadBlueprint()
         {
             // create a copy of the blueprint for this cloth:
             if (Application.isPlaying)
                 m_RopeBlueprintInstance = this.blueprint as ObiRopeBlueprint;
 
-            base.LoadBlueprint(solver);
+            base.LoadBlueprint();
             RebuildElementsFromConstraints();
             SetupRuntimeConstraints();
         }
 
-        public override void UnloadBlueprint(ObiSolver solver)
+        internal override void UnloadBlueprint()
         {
-            base.UnloadBlueprint(solver);
+            base.UnloadBlueprint();
 
             // delete the blueprint instance:
             if (m_RopeBlueprintInstance != null)
@@ -204,6 +204,7 @@ namespace Obi
             SetConstraintsDirty(Oni.ConstraintType.Bending);
             SetConstraintsDirty(Oni.ConstraintType.Aerodynamics);
             SetSelfCollisions(selfCollisions);
+            SetMassScale(m_MassScale);
             RecalculateRestLength();
             SetSimplicesDirty();
         }
@@ -312,8 +313,7 @@ namespace Obi
 
             element.particle1 = SplitParticle(element.particle1);
 
-            if (OnRopeTorn != null)
-                OnRopeTorn(this, new ObiRopeTornEventArgs(element, element.particle1));
+            OnRopeTorn?.Invoke(this, new ObiRopeTornEventArgs(element, element.particle1));
 
             return true;
         }

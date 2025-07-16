@@ -492,6 +492,7 @@ namespace AmplifyShaderEditor
 		public readonly static string SubTitleVarNameFormatStr = "Var( {0} )";
 		public readonly static string SubTitleRefNameFormatStr = "Ref( {0} )";
 		public readonly static string SubTitleCurrentFormatStr = "Current( {0} )";
+		public readonly static string SubTitleUVChannelFormatStr = "Channel( {0}, vec{1} )";
 
 		public readonly static string CodeWrapper = "( {0} )";
 		public readonly static string InlineCodeWrapper = "{{\n{0}\n}}";

@@ -70,8 +70,8 @@ namespace Obi
         public GraphicsBuffer vertices;
 
         public const int maxContacts = 512 * 512;
-        private const int maxCells = 512 * 512;
-        private const int cellsPerCollider = 8;
+        public const int maxCells = 512 * 512;
+        public const int cellsPerCollider = 8;
         private const int maxGridLevels = 24;
         private uint[] colliderCountClear = new uint[Oni.ColliderShapeTypeCount];
         private uint[] dispatchClear = { 0, 1, 1, 0, // contacts
@@ -126,7 +126,7 @@ namespace Obi
             gridShader.SetInt("maxContacts", maxContacts);
             gridShader.SetInt("colliderCount", colliderCount);
             gridShader.SetInt("cellsPerCollider", cellsPerCollider);
-            gridShader.SetInt("maxCells", (int)maxCells);
+            gridShader.SetInt("maxCells", maxCells);
 
             cellOffsetsBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, maxCells, 4);
             cellCountsBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, maxCells, 4);
@@ -190,13 +190,19 @@ namespace Obi
         public void SetColliders(ObiNativeColliderShapeList shapes, ObiNativeAabbList bounds, ObiNativeAffineTransformList transforms)
         {
             if (colliderCount != shapes.count || aabbsBuffer == null || !aabbsBuffer.IsValid())
-                aabbsBuffer = ObiColliderWorld.GetInstance().colliderAabbs.AsComputeBuffer<Aabb>();
+                aabbsBuffer = bounds.AsComputeBuffer<Aabb>();
+            else
+                bounds.Upload();
 
             if (colliderCount != shapes.count || shapesBuffer == null || !shapesBuffer.IsValid())
-                shapesBuffer = ObiColliderWorld.GetInstance().colliderShapes.AsComputeBuffer<ColliderShape>();
+                shapesBuffer = shapes.AsComputeBuffer<ColliderShape>();
+            else
+                shapes.Upload();
 
             if (colliderCount != shapes.count || transformsBuffer == null || !transformsBuffer.IsValid())
-                transformsBuffer = ObiColliderWorld.GetInstance().colliderTransforms.AsComputeBuffer<AffineTransform>();
+                transformsBuffer = transforms.AsComputeBuffer<AffineTransform>();
+            else
+                transforms.Upload();
 
             // Only update in case the amount of colliders has changed:
             if (colliderCount != shapes.count)
@@ -238,6 +244,8 @@ namespace Obi
                 forceZoneCount = forceZones.count;
                 forceZonesBuffer = forceZones.SafeAsComputeBuffer<ForceZone>();
             }
+            else
+                forceZones.Upload();
         }
 
         public void SetRigidbodies(ObiNativeRigidbodyList rigidbody)
@@ -247,6 +255,8 @@ namespace Obi
                 rigidbodyCount = rigidbody.count;
                 rigidbodiesBuffer = rigidbody.SafeAsComputeBuffer<ColliderRigidbody>();
             }
+            else
+                rigidbody.Upload();
         }
 
         public void SetCollisionMaterials(ObiNativeCollisionMaterialList materials)
@@ -256,6 +266,8 @@ namespace Obi
                 materialCount = materials.count;
                 materialsBuffer = materials.SafeAsComputeBuffer<CollisionMaterial>();
             }
+            else
+                materials.Upload();
         }
 
         public void SetTriangleMeshData(ObiNativeTriangleMeshHeaderList headers, ObiNativeBIHNodeList nodes, ObiNativeTriangleList triangles, ObiNativeVector3List vertices)
@@ -263,10 +275,10 @@ namespace Obi
             if (triangleMeshCount != headers.count || triangleMeshHeaders == null || !triangleMeshHeaders.IsValid())
             {
                 triangleMeshCount = headers.count;
-                triangleMeshHeaders = headers.AsComputeBuffer<TriangleMeshHeader>();
-                bihNodes = nodes.AsComputeBuffer<BIHNode>();
-                this.triangles = triangles.AsComputeBuffer<Triangle>();
-                this.vertices = vertices.AsComputeBuffer<Vector3>();
+                triangleMeshHeaders = headers.SafeAsComputeBuffer<TriangleMeshHeader>();
+                bihNodes = nodes.SafeAsComputeBuffer<BIHNode>();
+                this.triangles = triangles.SafeAsComputeBuffer<Triangle>();
+                this.vertices = vertices.SafeAsComputeBuffer<Vector3>();
             }
         }
 
@@ -275,10 +287,10 @@ namespace Obi
             if (edgeMeshCount != headers.count || edgeMeshHeaders == null || !edgeMeshHeaders.IsValid())
             {
                 edgeMeshCount = headers.count;
-                edgeMeshHeaders = headers.AsComputeBuffer<EdgeMeshHeader>();
-                edgeBihNodes = nodes.AsComputeBuffer<BIHNode>();
-                this.edges = edges.AsComputeBuffer<Edge>();
-                edgeVertices = vertices.AsComputeBuffer<Vector2>();
+                edgeMeshHeaders = headers.SafeAsComputeBuffer<EdgeMeshHeader>();
+                edgeBihNodes = nodes.SafeAsComputeBuffer<BIHNode>();
+                this.edges = edges.SafeAsComputeBuffer<Edge>();
+                edgeVertices = vertices.SafeAsComputeBuffer<Vector2>();
             }
         }
 
@@ -287,8 +299,8 @@ namespace Obi
             if (distanceFieldCount != headers.count || distanceFieldHeaders == null || !distanceFieldHeaders.IsValid())
             {
                 distanceFieldCount = headers.count;
-                distanceFieldHeaders = headers.AsComputeBuffer<DistanceFieldHeader>();
-                dfNodes = nodes.AsComputeBuffer<DFNode>();
+                distanceFieldHeaders = headers.SafeAsComputeBuffer<DistanceFieldHeader>();
+                dfNodes = nodes.SafeAsComputeBuffer<DFNode>();
             }
         }
 
@@ -297,8 +309,8 @@ namespace Obi
             if (heightFieldCount != headers.count || heightFieldHeaders == null || !heightFieldHeaders.IsValid())
             {
                 heightFieldCount = headers.count;
-                heightFieldHeaders = headers.AsComputeBuffer<HeightFieldHeader>();
-                heightFieldSamples = samples.AsComputeBuffer<float>();
+                heightFieldHeaders = headers.SafeAsComputeBuffer<HeightFieldHeader>();
+                heightFieldSamples = samples.SafeAsComputeBuffer<float>();
             }
         }
 
@@ -306,12 +318,6 @@ namespace Obi
         {
             if (colliderCount > 0)
             {
-                // Send data from the CPU to the GPU:
-                ObiColliderWorld.GetInstance().colliderShapes.Upload();
-                ObiColliderWorld.GetInstance().colliderTransforms.Upload();
-                ObiColliderWorld.GetInstance().colliderAabbs.Upload();
-                ObiColliderWorld.GetInstance().rigidbodies.Upload();
-                ObiColliderWorld.GetInstance().forceZones.Upload();
 
                 int colliderThreadGroups = ComputeMath.ThreadGroupCount(colliderCount, 128);
                 int capacityThreadGroups = ComputeMath.ThreadGroupCount(colliderCount * 8, 128);
@@ -368,6 +374,7 @@ namespace Obi
                     gridShader.SetBuffer(applyForceZonesKernel, "simplices", solver.simplices);
                     gridShader.SetBuffer(applyForceZonesKernel, "positions", solver.positionsBuffer);
                     gridShader.SetBuffer(applyForceZonesKernel, "velocities", solver.velocitiesBuffer);
+                    gridShader.SetBuffer(applyForceZonesKernel, "colors", solver.colorsBuffer);
                     gridShader.SetBuffer(applyForceZonesKernel, "invMasses", solver.invMassesBuffer);
 
                     gridShader.SetBuffer(applyForceZonesKernel, "transforms", transformsBuffer);

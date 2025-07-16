@@ -41,9 +41,9 @@ namespace Obi{
             shape.filter = source.Filter;
             shape.SetSign(source.Inverted);
             shape.isTrigger = edgeCollider.isTrigger;
-            shape.rigidbodyIndex = source.Rigidbody != null ? source.Rigidbody.handle.index : -1;
+            shape.rigidbodyIndex = source.Rigidbody != null ? source.Rigidbody.Handle.index : -1;
             shape.materialIndex = source.CollisionMaterial != null ? source.CollisionMaterial.handle.index : -1;
-            shape.forceZoneIndex = source.ForceZone != null ? source.ForceZone.handle.index : -1;
+            shape.forceZoneIndex = source.ForceZone != null ? source.ForceZone.Handle.index : -1;
             shape.center = edgeCollider.offset;
             shape.contactOffset = source.Thickness + edgeCollider.edgeRadius;
             shape.dataIndex = handle.index;

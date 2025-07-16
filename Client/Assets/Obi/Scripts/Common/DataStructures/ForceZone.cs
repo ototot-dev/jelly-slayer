@@ -28,6 +28,7 @@ namespace Obi
             SurfaceDirection // damps motion toward/away from the surface of the zone.
         }
 
+        public Color color;
         public ZoneType type;
         public ForceMode mode;
         public DampingDirection dampingDir;

@@ -25,18 +25,19 @@ namespace Obi
                 shader.SetInt("maxNeighbors", solverImplementation.particleGrid.maxParticleNeighbors);
                 shader.SetInt("mode", (int)solverImplementation.abstraction.parameters.mode);
                 shader.SetFloat("deltaTime", substepTime);
+                shader.SetVector("diffusionMask", solverAbstraction.parameters.diffusionMask);
 
                 // calculate densities:
                 shader.SetBuffer(densitiesKernel, "neighborCounts", this.solverImplementation.particleGrid.neighborCounts);
                 shader.SetBuffer(densitiesKernel, "neighbors", this.solverImplementation.particleGrid.neighbors);
 
                 shader.SetBuffer(densitiesKernel, "invMasses", solverImplementation.invMassesBuffer);
-                shader.SetBuffer(densitiesKernel, "sortedFluidData", solverImplementation.particleGrid.sortedFluidDataVel);
+                shader.SetBuffer(densitiesKernel, "sortedFluidData", solverImplementation.particleGrid.sortedFluidData);
                 shader.SetBuffer(densitiesKernel, "sortedPositions", solverImplementation.particleGrid.sortedPositions);
                 shader.SetBuffer(densitiesKernel, "sortedPrevPositions", solverImplementation.particleGrid.sortedPrevPosOrientations);
                 shader.SetBuffer(densitiesKernel, "sortedFluidMaterials", solverImplementation.particleGrid.sortedFluidMaterials);
                 shader.SetBuffer(densitiesKernel, "sortedPrincipalRadii", solverImplementation.particleGrid.sortedPrincipalRadii);
-                shader.SetBuffer(densitiesKernel, "renderableOrientations", solverImplementation.anisotropiesBuffer);//solverImplementation.renderableOrientationsBuffer); 
+                shader.SetBuffer(densitiesKernel, "renderableOrientations", solverImplementation.orientationDeltasIntBuffer);
                 shader.SetBuffer(densitiesKernel, "prevPositions", solverImplementation.prevPositionsBuffer);
                 shader.SetBuffer(densitiesKernel, "massCenters", solverImplementation.normalsBuffer);
                 shader.SetBuffer(densitiesKernel, "prevMassCenters", solverImplementation.renderablePositionsBuffer);
@@ -63,11 +64,11 @@ namespace Obi
                 shader.SetBuffer(applyKernel, "sortedPrevPositions", solverImplementation.particleGrid.sortedPrevPosOrientations);
                 shader.SetBuffer(applyKernel, "sortedFluidMaterials", solverImplementation.particleGrid.sortedFluidMaterials);
                 shader.SetBuffer(applyKernel, "sortedPrincipalRadii", solverImplementation.particleGrid.sortedPrincipalRadii);
-                shader.SetBuffer(applyKernel, "renderableOrientations", solverImplementation.anisotropiesBuffer);//solverImplementation.renderableOrientationsBuffer);
+                shader.SetBuffer(applyKernel, "renderableOrientations", solverImplementation.orientationDeltasIntBuffer);
                 shader.SetBuffer(applyKernel, "prevPositions", solverImplementation.prevPositionsBuffer);
                 shader.SetBuffer(applyKernel, "massCenters", solverImplementation.normalsBuffer);
                 shader.SetBuffer(applyKernel, "prevMassCenters", solverImplementation.renderablePositionsBuffer);
-                shader.SetBuffer(applyKernel, "sortedFluidData", solverImplementation.particleGrid.sortedFluidDataVel);
+                shader.SetBuffer(applyKernel, "sortedFluidData", solverImplementation.particleGrid.sortedFluidData);
                 shader.SetBuffer(applyKernel, "deltasAsInt", solverImplementation.positionDeltasIntBuffer);
                 shader.SetBuffer(applyKernel, "positionConstraintCounts", solverImplementation.positionConstraintCountBuffer);
                 shader.SetBuffer(applyKernel, "sortedToOriginal", solverImplementation.particleGrid.sortedFluidIndices);
@@ -77,11 +78,9 @@ namespace Obi
 
                 // apply position deltas
                 shader.SetBuffer(applyPositionDeltaKernel, "positions", solverImplementation.positionsBuffer);
-                shader.SetBuffer(applyPositionDeltaKernel, "renderableOrientations", solverImplementation.anisotropiesBuffer);//solverImplementation.renderableOrientationsBuffer);
-                shader.SetBuffer(applyPositionDeltaKernel, "orientations", solverImplementation.orientationsBuffer);
                 shader.SetBuffer(applyPositionDeltaKernel, "fluidData", solverImplementation.fluidDataBuffer);
-                shader.SetBuffer(applyPositionDeltaKernel, "sortedFluidData", solverImplementation.particleGrid.sortedFluidDataVel);
-                shader.SetBuffer(applyPositionDeltaKernel, "prevOrientations", solverImplementation.prevOrientationsBuffer);
+                shader.SetBuffer(applyPositionDeltaKernel, "sortedFluidData", solverImplementation.particleGrid.sortedFluidData);
+                shader.SetBuffer(applyPositionDeltaKernel, "renderableOrientations", solverImplementation.orientationDeltasIntBuffer);
                 shader.SetBuffer(applyPositionDeltaKernel, "deltasAsInt", solverImplementation.positionDeltasIntBuffer);
                 shader.SetBuffer(applyPositionDeltaKernel, "positionConstraintCounts", solverImplementation.positionConstraintCountBuffer);
                 shader.SetBuffer(applyPositionDeltaKernel, "sortedToOriginal", solverImplementation.particleGrid.sortedFluidIndices);

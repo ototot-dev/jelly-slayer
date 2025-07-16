@@ -176,8 +176,14 @@ namespace AmplifyShaderEditor
 		protected bool m_useSquareNodeTitle = false;
 
 		[SerializeField]
-		protected bool m_continuousPreviewRefresh = false;
+		private bool m_continuousPreviewRefresh = false;
 		private bool m_previewIsDirty = true;
+
+		protected bool ContinuousPreviewRefresh
+		{
+			get { return m_continuousPreviewRefresh && !Preferences.User.DisablePreviews; }
+			set { m_continuousPreviewRefresh = value; }
+		}
 
 		// Error Box Messages
 		private Rect m_errorBox;
@@ -3266,7 +3272,7 @@ namespace AmplifyShaderEditor
 		public virtual void WriteToString( ref string nodeInfo, ref string connectionsInfo )
 		{
 			IOUtils.AddTypeToString( ref nodeInfo, IOUtils.NodeParam );
-			IOUtils.AddFieldValueToString( ref nodeInfo, GetType() );
+			IOUtils.AddFieldValueToString( ref nodeInfo, GetType().AssemblyQualifiedName );
 			IOUtils.AddFieldValueToString( ref nodeInfo, m_uniqueId );
 			IOUtils.AddFieldValueToString( ref nodeInfo, ( m_position.x.ToString() + IOUtils.VECTOR_SEPARATOR + m_position.y.ToString() ) );
 			IOUtils.AddFieldValueToString( ref nodeInfo, m_currentPrecisionType );
@@ -3570,7 +3576,7 @@ namespace AmplifyShaderEditor
 				return;
 			}
 
-			if( !PreviewIsDirty && !m_continuousPreviewRefresh )
+			if( !PreviewIsDirty && !ContinuousPreviewRefresh )
 				return;
 
 			//Debug.Log( "PREVIEW " + this );
@@ -3628,7 +3634,7 @@ namespace AmplifyShaderEditor
 							break;
 						}
 
-						if( m_outputPorts[ i ].DataType == WirePortDataType.FLOAT3x3 || m_outputPorts[ i ].DataType == WirePortDataType.FLOAT4x4 )
+						if( m_outputPorts[ i ].DataTypeIsMatrix )
 						{
 							m_outputPorts[ i ].MaskingMaterial.SetTexture( m_cachedMainTexId, EditorGUIUtility.whiteTexture );
 						}
@@ -3655,7 +3661,7 @@ namespace AmplifyShaderEditor
 				RenderTexture.active = temp;
 			}
 
-			PreviewIsDirty = m_continuousPreviewRefresh;
+			PreviewIsDirty = ContinuousPreviewRefresh;
 
 			FinishPreviewRender = true;
 		}

@@ -1,4 +1,5 @@
 using System.Linq;
+using UGUI.Rx;
 using UniRx;
 using Unity.Linq;
 using UnityEngine;
@@ -7,7 +8,7 @@ using ZLinq;
 namespace Game
 {
     public class NpcHumanoidBrain : NpcBrain
-    {    
+    {
         public override void OnWatchSomethingOrDamagedHandler(PawnBrainController otherBrain, float reservedDecisionCoolTime)
         {
             JellyBB.target.targetPawnHP.Value = otherBrain.PawnHP;
@@ -74,7 +75,7 @@ namespace Game
             {
                 if ((actionContext.actionData?.staminaCost ?? 0) > 0)
                     JellyBB.stat.ReduceStamina(actionContext.actionData.staminaCost);
-                
+
                 //* 액션 수행 중에 현재 이동 제어를 끔
                 if (damageContext.receiverPenalty != null)
                     InvalidateDecision(damageContext.receiverPenalty.Item1 != PawnStatus.None ? damageContext.receiverPenalty.Item2 : 0.1f);
@@ -85,6 +86,8 @@ namespace Game
 
         protected override void DamageReceiverHandler(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
+            base.DamageReceiverHandler(ref damageContext);
+
             if (damageContext.receiverBrain.PawnBB.IsDead)
                 return;
             
@@ -113,6 +116,8 @@ namespace Game
 
         protected override void DamageSenderHandler(ref PawnHeartPointDispatcher.DamageContext damageContext)
         {
+            base.DamageSenderHandler(ref damageContext);
+
             if (damageContext.senderBrain.PawnBB.IsDead)
                 return;
 

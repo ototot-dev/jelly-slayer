@@ -1,41 +1,12 @@
 ﻿#include "ColliderDefinitions.cginc"
 #include "ContactHandling.cginc"
-#include "Transform.cginc"
+#include "DistanceFunctions.cginc"
 #include "Simplex.cginc"
 #include "Bounds.cginc"
 #include "SolverParameters.cginc"
 #include "Optimization.cginc"
 
 #pragma kernel GenerateContacts
-
-struct BIHNode
-{
-    int firstChild;     /**< index of the first child node. The second one is right after the first.*/
-    int start;          /**< index of the first element in this node.*/
-    int count;          /**< amount of elements in this node.*/
-
-    int axis;           /**< axis of the split plane (0,1,2 = x,y,z)*/
-    float min_;         /**< minimum split plane*/
-    float max_;         /**< maximum split plane*/
-};
-
-struct EdgeMeshHeader 
-{
-    int firstNode;
-    int nodeCount;
-    int firstEdge;
-    int edgeCount;
-    int firstVertex;
-    int vertexCount;
-};
-
-struct Edge
-{
-    int i1;
-    int i2;
-    aabb b;
-};
-
 
 StructuredBuffer<float4> positions;
 StructuredBuffer<quaternion> orientations;
@@ -48,7 +19,7 @@ StructuredBuffer<aabb> simplexBounds; // bounding box of each simplex.
 StructuredBuffer<transform> transforms;
 StructuredBuffer<shape> shapes;
 
-// triangle mesh data:
+// edge mesh data:
 StructuredBuffer<EdgeMeshHeader> edgeMeshHeaders;
 StructuredBuffer<BIHNode> edgeBihNodes;
 StructuredBuffer<Edge> edges;
@@ -64,36 +35,6 @@ StructuredBuffer<transform> worldToSolver;
 
 uint maxContacts; 
 float deltaTime;
-
-struct EdgeMesh : IDistanceFunction
-{
-    shape s;
-    transform colliderToSolver;
-    int dataOffset;
-
-    EdgeMeshHeader header;
-    
-    void Evaluate(in float4 pos, in float4 radii, in quaternion orientation, inout SurfacePoint projectedPoint)
-    {
-       float4 pnt = colliderToSolver.InverseTransformPointUnscaled(pos);
-
-        if (s.is2D())
-            pnt[2] = 0;
-
-        Edge t = edges[header.firstEdge + dataOffset];
-        float4 v1 = (float4(edgeVertices[header.firstVertex + t.i1],0,0) + s.center) * colliderToSolver.scale;
-        float4 v2 = (float4(edgeVertices[header.firstVertex + t.i2],0,0) + s.center) * colliderToSolver.scale;
-
-        float mu = 0;
-        float4 nearestPoint = NearestPointOnEdge(v1, v2, pnt, mu);
-        float4 normal = normalizesafe(pnt - nearestPoint);
-        
-        projectedPoint.pos = colliderToSolver.TransformPointUnscaled(nearestPoint + normal * s.contactOffset);
-        projectedPoint.normal = colliderToSolver.TransformDirection(normal);
-        projectedPoint.bary = float4(1,0,0,0);
-    }
-
-};
 
 [numthreads(128, 1, 1)]
 void GenerateContacts (uint3 id : SV_DispatchThreadID) 
@@ -115,7 +56,6 @@ void GenerateContacts (uint3 id : SV_DispatchThreadID)
     EdgeMesh meshShape;
     meshShape.colliderToSolver = worldToSolver[0].Multiply(transforms[colliderIndex]);
     meshShape.s = s;
-    meshShape.header = header;
 
     // invert a full matrix here to accurately represent collider bounds scale.
     float4x4 solverToCollider = Inverse(TRS(meshShape.colliderToSolver.translation.xyz, meshShape.colliderToSolver.rotation, meshShape.colliderToSolver.scale.xyz));
@@ -135,7 +75,6 @@ void GenerateContacts (uint3 id : SV_DispatchThreadID)
     {
         // pop node index from the stack:
         int nodeIndex = stack[--stackTop];
-
         BIHNode node = edgeBihNodes[header.firstNode + nodeIndex];
 
         // leaf node:
@@ -155,7 +94,7 @@ void GenerateContacts (uint3 id : SV_DispatchThreadID)
                     float4 simplexBary = BarycenterForSimplexOfSize(simplexSize);
                     float4 simplexPoint;
                    
-                    meshShape.dataOffset = dataOffset;
+                    meshShape.edge.Cache(v1 * meshShape.colliderToSolver.scale, v2 * meshShape.colliderToSolver.scale);
 
                     SurfacePoint surfacePoint = Optimize(meshShape, positions, orientations, principalRadii,
                                                          simplices, simplexStart, simplexSize, simplexBary, simplexPoint, surfaceCollisionIterations, surfaceCollisionTolerance);

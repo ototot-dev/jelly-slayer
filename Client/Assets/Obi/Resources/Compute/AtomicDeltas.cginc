@@ -72,4 +72,19 @@ void ApplyOrientationDelta(RWStructuredBuffer<quaternion> orientations, in int i
     }
 }
 
+void ApplyUserDataDelta(RWStructuredBuffer<float4> userData, in int index)
+{
+    int count = orientationConstraintCounts[index];
+    if (count > 0)
+    {
+        userData[index] += float4(asfloat(orientationDeltasAsInt[index].x),
+                                  asfloat(orientationDeltasAsInt[index].y),
+                                  asfloat(orientationDeltasAsInt[index].z),
+                                  asfloat(orientationDeltasAsInt[index].w));
+
+        orientationDeltasAsInt[index] = uint4(0, 0, 0, 0);
+        orientationConstraintCounts[index] = 0;
+    }
+}
+
 #endif

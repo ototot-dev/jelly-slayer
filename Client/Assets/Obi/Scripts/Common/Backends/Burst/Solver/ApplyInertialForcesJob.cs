@@ -24,8 +24,12 @@ namespace Obi
 		[ReadOnly] public float worldAngularInertiaScale;
 
         [NativeDisableParallelForRestriction] public NativeArray<float4> velocities;
+        [NativeDisableParallelForRestriction] public NativeArray<float4> wind;
 
         [ReadOnly] public float deltaTime;
+        [ReadOnly] public float4 ambientWind;
+        [ReadOnly] public BurstInertialFrame inertialFrame;
+        [ReadOnly] public bool inertialWind;
 
         public void Execute(int index)
         {
@@ -40,6 +44,14 @@ namespace Obi
 
 				velocities[i] -= (inertialAccel * worldLinearInertiaScale + angularAccel * worldAngularInertiaScale) * deltaTime;
 			}
+
+            wind[i] = ambientWind;
+
+            if (inertialWind)
+            {
+                float4 wsPos = inertialFrame.frame.TransformPoint(positions[i]);
+                wind[i] -= inertialFrame.frame.InverseTransformVector(inertialFrame.VelocityAtPoint(wsPos));
+            }
         }
     }
 }

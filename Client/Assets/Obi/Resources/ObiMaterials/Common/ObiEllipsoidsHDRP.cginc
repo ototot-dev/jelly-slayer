@@ -41,6 +41,8 @@ void IntersectEllipsoid_float(float3 v, float4 mapping, float3 a2, float3 a3, ou
 
     // return gaussian-falloff thickness.
     thickness = 2 * sqrtiq * exp(-r2*2.0f);
+
+    clipThreshold = (1 - clipThreshold > 0) ? 0 : 1.01;
 }
 
 void BuildVelocityStretchedBasis_float(float3 velocity, float stretchIntensity, float radius, out float4 t0, out float4 t1, out float4 t2)

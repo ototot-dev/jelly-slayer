@@ -3279,13 +3279,21 @@ namespace AmplifyShaderEditor
 				return;
 
 			UIUtils.ClearUndoHelper();
-			ParentNode[] selectedNodes = new ParentNode[ m_mainGraphInstance.SelectedNodes.Count ];
-			for( int i = 0; i < selectedNodes.Length; i++ )
+			List<ParentNode> selectedNodeList = new List<ParentNode>( m_mainGraphInstance.SelectedNodes.Count );
+			foreach( var node in m_mainGraphInstance.SelectedNodes )
 			{
-				selectedNodes[ i ] = m_mainGraphInstance.SelectedNodes[ i ];
-				selectedNodes[ i ].Rewire();
-				UIUtils.CheckUndoNode( selectedNodes[ i ] );
+				if ( node.GetType() == typeof( WireNode ) )
+				{
+					// @diogo: these seem to be marked for deletion and processed on a late-stage sweep via ParentGraph.UndoableDeleteSelectedNodes()
+					continue;
+				}
+
+				node.Rewire();
+				UIUtils.CheckUndoNode( node );
+				selectedNodeList.Add( node );
 			}
+
+			var selectedNodes = selectedNodeList.ToArray();
 
 			//Check nodes connected to deleted nodes to preserve connections on undo
 			List<ParentNode> extraNodes = new List<ParentNode>();
@@ -3653,9 +3661,9 @@ namespace AmplifyShaderEditor
 				return null;
 
 			ParentNode newNode = (ParentNode)ScriptableObject.CreateInstance( nodeType );
-			newNode.IsNodeBeingCopied = true;
 			if( newNode != null )
 			{
+				newNode.IsNodeBeingCopied = true;
 				newNode.ContainerGraph = m_mainGraphInstance;
 				newNode.ClipboardFullReadFromString( ref parameters );
 				m_mainGraphInstance.AddNode( newNode, true, true, true, false );
@@ -5524,6 +5532,8 @@ namespace AmplifyShaderEditor
 			return node;
 		}
 
+		private double m_previewUpdateLimiterTime = 0;
+
 		public void UpdateNodePreviewListAndTime()
 		{
 			if( UIUtils.CurrentWindow != this )
@@ -5532,7 +5542,15 @@ namespace AmplifyShaderEditor
 			double deltaTime = Time.realtimeSinceStartup - m_time;
 			m_time = Time.realtimeSinceStartup;
 
-			if( DebugConsoleWindow.DeveloperMode )
+			// @diogo: limit preview update frequency to keep the CPU usage under control
+			m_previewUpdateLimiterTime += deltaTime;
+			if ( m_previewUpdateLimiterTime < 1.0 / Preferences.User.PreviewUpdateFrequency )
+			{
+				return;
+			}
+			m_previewUpdateLimiterTime = 0;
+
+			if ( DebugConsoleWindow.DeveloperMode )
 			{
 				m_frameCounter++;
 				if( m_frameCounter >= 60 )

@@ -99,7 +99,7 @@ namespace Obi
                 {
                     inputPositions = solver.abstraction.foamPositions.AsNativeArray<float4>(),
                     sortHandles = sortHandles,
-                    sortAxis = camera.transform.forward
+                    sortAxis = solver.abstraction.transform.InverseTransformDirection(camera.transform.forward)
                 };
 
                 inputDeps = projectJob.Schedule(m_Solver.foamCount[3], 256, inputDeps);
@@ -142,8 +142,13 @@ namespace Obi
 
                 matProps.SetFloat("_FadeDepth", 0);
                 matProps.SetFloat("_VelocityStretching", m_Solver.maxFoamVelocityStretch);
+                matProps.SetFloat("_RadiusScale", m_Solver.foamRadiusScale);
                 matProps.SetFloat("_FadeIn", m_Solver.foamFade.x);
                 matProps.SetFloat("_FadeOut", m_Solver.foamFade.y);
+                matProps.SetFloat("_ScatterDensity", m_Solver.foamVolumeDensity);
+                matProps.SetFloat("_AmbientDensity", m_Solver.foamAmbientDensity);
+                matProps.SetColor("_ScatterColor", m_Solver.foamScatterColor);
+                matProps.SetColor("_AmbientColor", m_Solver.foamAmbientColor);
 
                 var rp = renderBatch.renderParams;
                 rp.worldBounds = m_Solver.bounds;

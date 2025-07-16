@@ -7,7 +7,7 @@ using Obi;
 
 public static class  Oni
 {
-    public const int ConstraintTypeCount = 17;
+    public const int ConstraintTypeCount = 18;
     public const int ColliderShapeTypeCount = 7;
     public const int QueryTypeCount = 3;
 
@@ -16,20 +16,21 @@ public static class  Oni
         Tether = 0,
         Volume = 1,
         Chain = 2,
-        Bending = 3,
-        Distance = 4,
-        ShapeMatching = 5,
-        BendTwist = 6,
-        StretchShear = 7,
-        Pin = 8,
-        ParticleCollision = 9,
-        Density = 10,
-        Collision = 11,
-        Skin = 12,
-        Aerodynamics = 13,
-        Stitch = 14,
-        ParticleFriction = 15,
-        Friction = 16
+        Pinhole = 3,
+        Bending = 4,
+        Distance = 5,
+        ShapeMatching = 6,
+        BendTwist = 7,
+        StretchShear = 8,
+        Pin = 9,
+        ParticleCollision = 10,
+        Density = 11,
+        Collision = 12,
+        Skin = 13,
+        Aerodynamics = 14,
+        Stitch = 15,
+        ParticleFriction = 16,
+        Friction = 17,
     };
 
     [Flags]
@@ -161,6 +162,8 @@ public static class  Oni
         [Tooltip("Error threshold at which to stop convex optimization for surface collisions.")]
         public float surfaceCollisionTolerance;
 
+        [Tooltip("Scales user data diffusion speed between nearby particles, for each of the 4 user data channels.")]
+        public Vector4 diffusionMask;
 
         public SolverParameters(Interpolation interpolation, Vector4 gravity)
         {
@@ -181,6 +184,7 @@ public static class  Oni
             collisionMargin = 0.02f;
             colliderCCD = 1;
             particleCCD = 0;
+            diffusionMask = Vector4.one;
         }
 
     }

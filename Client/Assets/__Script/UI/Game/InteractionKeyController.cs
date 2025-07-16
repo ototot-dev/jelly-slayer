@@ -8,6 +8,8 @@ namespace Game
     {
         bool PreprocessKeyDown() => true;
         Vector3 GetInteractionKeyAttachPoint() => Vector3.zero;
+        void OnInteractionKeyAttached() { }
+        void OnInteractionKeyDetached() { }
     }
 
     [Template(path: "UI/template/interaction-key")]
@@ -56,8 +58,10 @@ namespace Game
         {
             base.OnPreShow();
 
-            //* PlayerController에 직접 등록함
-            GameContext.Instance.playerCtrler.interactionKeyCtrlers.Add(this);
+            //* GameContext.interactionKeyCtrlers에 등록
+            GameContext.Instance.interactionKeyCtrlers.Add(this);
+
+            __attachable.OnInteractionKeyAttached();
 
             if (__templateRect == null)
                 __templateRect = template.transform as RectTransform;
@@ -118,8 +122,10 @@ namespace Game
             query.activeStates.Add("hide");
             query.Execute();
 
-            //* PlayerController에서 해제도 직접 함
-            GameContext.Instance.playerCtrler.interactionKeyCtrlers.Remove(this);
+            __attachable.OnInteractionKeyDetached();
+
+            //* GameContext.interactionKeyCtrlers에 등록 해제
+            GameContext.Instance.interactionKeyCtrlers.Remove(this);
         }
     }
 }

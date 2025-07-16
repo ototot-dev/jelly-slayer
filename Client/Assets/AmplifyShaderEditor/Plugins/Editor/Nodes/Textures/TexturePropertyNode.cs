@@ -340,7 +340,7 @@ namespace AmplifyShaderEditor
 		// Texture1D
 		public string GetTexture1DPropertyValue()
 		{
-			return PropertyName + "(\"" + m_propertyInspectorName + "\", 2D) = \"" + m_defaultTextureValue + "\" {}";
+			return PropertyName + "( \"" + m_propertyInspectorName + "\", 2D ) = \"" + m_defaultTextureValue + "\" {}";
 		}
 
 		public string GetTexture1DUniformValue()
@@ -351,7 +351,7 @@ namespace AmplifyShaderEditor
 		// Texture2D
 		public string GetTexture2DPropertyValue()
 		{
-			return PropertyName + "(\"" + m_propertyInspectorName + "\", 2D) = \"" + m_defaultTextureValue + "\" {}";
+			return PropertyName + "( \"" + m_propertyInspectorName + "\", 2D ) = \"" + m_defaultTextureValue + "\" {}";
 		}
 
 		public string GetTexture2DUniformValue()
@@ -365,7 +365,7 @@ namespace AmplifyShaderEditor
 		//Texture3D
 		public string GetTexture3DPropertyValue()
 		{
-			return PropertyName + "(\"" + m_propertyInspectorName + "\", 3D) = \"" + m_defaultTextureValue + "\" {}";
+			return PropertyName + "( \"" + m_propertyInspectorName + "\", 3D ) = \"" + m_defaultTextureValue + "\" {}";
 		}
 
 		public string GetTexture3DUniformValue()
@@ -376,7 +376,7 @@ namespace AmplifyShaderEditor
 		// Cube
 		public string GetCubePropertyValue()
 		{
-			return PropertyName + "(\"" + m_propertyInspectorName + "\", CUBE) = \"" + m_defaultTextureValue + "\" {}";
+			return PropertyName + "( \"" + m_propertyInspectorName + "\", CUBE ) = \"" + m_defaultTextureValue + "\" {}";
 		}
 
 		public string GetCubeUniformValue()
@@ -387,7 +387,7 @@ namespace AmplifyShaderEditor
 		// Texture2DArray
 		public string GetTexture2DArrayPropertyValue()
 		{
-			return PropertyName + "(\"" + m_propertyInspectorName + "\", 2DArray) = \"" + m_defaultTextureValue + "\" {}";
+			return PropertyName + "( \"" + m_propertyInspectorName + "\", 2DArray ) = \"" + m_defaultTextureValue + "\" {}";
 		}
 
 		public string GetTexture2DArrayUniformValue()
@@ -935,24 +935,24 @@ namespace AmplifyShaderEditor
 			{
 				case TextureType.Texture1D:
 				{
-					return PropertyAttributes + GetTexture1DPropertyValue();
+					return PropertyAttributes + PropertyAttributesSeparator + GetTexture1DPropertyValue();
 				}
 				case TextureType.ProceduralTexture:
 				case TextureType.Texture2D:
 				{
-					return PropertyAttributes + GetTexture2DPropertyValue();
+					return PropertyAttributes + PropertyAttributesSeparator + GetTexture2DPropertyValue();
 				}
 				case TextureType.Texture3D:
 				{
-					return PropertyAttributes + GetTexture3DPropertyValue();
+					return PropertyAttributes + PropertyAttributesSeparator + GetTexture3DPropertyValue();
 				}
 				case TextureType.Cube:
 				{
-					return PropertyAttributes + GetCubePropertyValue();
+					return PropertyAttributes + PropertyAttributesSeparator + GetCubePropertyValue();
 				}
 				case TextureType.Texture2DArray:
 				{
-					return PropertyAttributes + GetTexture2DArrayPropertyValue();
+					return PropertyAttributes + PropertyAttributesSeparator + GetTexture2DArrayPropertyValue();
 				}
 			}
 			return string.Empty;

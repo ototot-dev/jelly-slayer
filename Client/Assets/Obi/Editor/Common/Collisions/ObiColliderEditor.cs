@@ -1,11 +1,12 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace Obi{
-	
-	[CustomEditor(typeof(ObiColliderBase), true), CanEditMultipleObjects] 
-	public class ObiColliderEditor : Editor
-	{
+namespace Obi
+{
+
+    [CustomEditor(typeof(ObiColliderBase), true), CanEditMultipleObjects]
+    public class ObiColliderEditor : Editor
+    {
 
         ObiColliderBase collider;
         SerializedProperty collisionFilter;
@@ -89,6 +90,11 @@ namespace Obi{
 
             DrawPropertiesExcluding(serializedObject, "m_Script", "CollisionMaterial", "filter", "Thickness", "Inverted");
 
+            foreach (ObiColliderBase t in targets)
+            {
+                if (!t.gameObject.isStatic)
+                    t.ForceUpdate();
+            }
 
             // Apply changes to the serializedProperty
             if (GUI.changed)

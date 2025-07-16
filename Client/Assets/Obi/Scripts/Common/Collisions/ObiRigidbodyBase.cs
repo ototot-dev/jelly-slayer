@@ -16,11 +16,14 @@ namespace Obi{
         public bool kinematicForParticles = false;
 
         protected ObiRigidbodyHandle rigidbodyHandle;
-        public ObiRigidbodyHandle handle
+        public ObiRigidbodyHandle Handle
         {
             get
             {
-                if (rigidbodyHandle == null || !rigidbodyHandle.isValid)
+                // don't check rigidbodyHandle.isValid:
+                // CreateRigidbody may defer creation, so we get a non-null, but invalid handle.
+                // If calling handle again right away before it becomes valid, it will call CreateRigidbody() again and create a second handle to the same body.
+                if (rigidbodyHandle == null) 
                 {
                     var world = ObiColliderWorld.GetInstance();
 
@@ -34,13 +37,13 @@ namespace Obi{
 
         protected virtual void OnEnable()
         {
-            //handle = ObiColliderWorld.GetInstance().CreateRigidbody();
-            //handle.owner = this;
+            rigidbodyHandle = ObiColliderWorld.GetInstance().CreateRigidbody();
+            rigidbodyHandle.owner = this;
         }
 
 		public void OnDisable()
         {
-            ObiColliderWorld.GetInstance().DestroyRigidbody(handle);
+            ObiColliderWorld.GetInstance().DestroyRigidbody(rigidbodyHandle);
         }
 
 		public abstract void UpdateIfNeeded(float stepTime);

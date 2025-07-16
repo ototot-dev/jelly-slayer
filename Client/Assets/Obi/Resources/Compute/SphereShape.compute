@@ -1,6 +1,6 @@
 #include "ColliderDefinitions.cginc"
 #include "ContactHandling.cginc"
-#include "Transform.cginc"
+#include "DistanceFunctions.cginc"
 #include "Simplex.cginc"
 #include "Bounds.cginc"
 #include "SolverParameters.cginc"
@@ -27,30 +27,6 @@ RWStructuredBuffer<uint> dispatchBuffer;
 StructuredBuffer<transform> worldToSolver;
 
 uint maxContacts;  
-
-struct Sphere : IDistanceFunction
-{
-    shape s;
-    transform colliderToSolver;
-    
-    void Evaluate(in float4 pos, in float4 radii, in quaternion orientation, inout SurfacePoint projectedPoint)
-    {
-        float4 center = s.center * colliderToSolver.scale;
-        float4 pnt = colliderToSolver.InverseTransformPointUnscaled(pos) - center;
-
-        if (s.is2D())
-           pnt[2] = 0;
-
-        float radius = s.size.x * cmax(colliderToSolver.scale.xyz);
-        float distanceToCenter = length(pnt);
-
-        float4 normal = pnt / (distanceToCenter + EPSILON);
-
-        projectedPoint.pos = colliderToSolver.TransformPointUnscaled(center + normal * (radius + s.contactOffset));
-        projectedPoint.normal = colliderToSolver.TransformDirection(normal);
-        projectedPoint.bary = float4(1,0,0,0);
-    }
-};
 
 [numthreads(128, 1, 1)]
 void GenerateContacts (uint3 id : SV_DispatchThreadID) 

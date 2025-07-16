@@ -1,17 +1,17 @@
-using Packets;
+using UGUI.Rx;
 using UnityEngine;
 
 namespace Game
 {
     public class NpcBrain : PawnBrainController, IPawnSpawnable, IPawnMovable
     {
-#region IPawnSpawnable / IPawnMovable 구현
+        #region IPawnSpawnable / IPawnMovable 구현
         Vector3 IPawnSpawnable.GetSpawnPosition() => transform.position;
         public virtual void OnStartSpawnHandler()
-        { 
+        {
             PawnEventManager.Instance.SendPawnSpawningEvent(this, PawnSpawnStates.SpawnStart);
         }
-        public virtual void OnFinishSpawnHandler() 
+        public virtual void OnFinishSpawnHandler()
         {
             PawnEventManager.Instance.SendPawnSpawningEvent(this, PawnSpawnStates.SpawnFinished);
 
@@ -22,7 +22,7 @@ namespace Game
         {
             PawnEventManager.Instance.SendPawnSpawningEvent(this, PawnSpawnStates.DespawnFinished);
         }
-        public virtual void OnDeadHandler() 
+        public virtual void OnDeadHandler()
         {
             PawnEventManager.Instance.SendPawnSpawningEvent(this, PawnSpawnStates.DespawningStart);
 
@@ -48,13 +48,25 @@ namespace Game
         void IPawnMovable.FreezeMovement(bool newValue) { __pawnMovement.freezeMovement = newValue; }
         void IPawnMovable.FreezeRotation(bool newValue) { __pawnMovement.freezeRotation = newValue; }
         void IPawnMovable.AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation, float deltaTime) { __pawnMovement.AddRootMotion(deltaPosition, deltaRotation, deltaTime); }
-        void IPawnMovable.StartJump(float jumpHeight) { StartJumpInternal(jumpHeight); }
-        void IPawnMovable.FinishJump() { FinishJumpInternal(); }
+        public virtual void StartJump(float jumpHeight) { }
+        public virtual void FinishJump() { }
         void IPawnMovable.Teleport(Vector3 destination, Quaternion rot) { __pawnMovement.Teleport(destination, rot); }
         void IPawnMovable.MoveTo(Vector3 destination) { __pawnMovement.destination = destination; }
         void IPawnMovable.FaceTo(Vector3 direction) { __pawnMovement.FaceTo(direction); }
         void IPawnMovable.Stop() { __pawnMovement.Stop(); }
-#endregion
+        #endregion
+
+        public override void OnInteractionKeyAttached()
+        {
+            //* Chainsaw / Assault 액션 연출을 위해 Overlapped 가능하도록 layer를 수정
+            bodyHitColliderHelper.gameObject.layer = LayerMask.NameToLayer("HitBox");
+        }
+
+        public override void OnInteractionKeyDetached()
+        {
+            //* layer를 원래값으로 복구
+            bodyHitColliderHelper.gameObject.layer = LayerMask.NameToLayer("HitBoxBlocking");
+        }
 
         [Header("Component")]
         public JellyMeshController jellyMeshCtrler;
@@ -76,11 +88,11 @@ namespace Game
         protected PawnMovementEx __pawnMovement;
         protected PawnAnimController __pawnAnimCtrler;
         protected PawnActionController __pawnActionCtrler;
-        
+
         protected override void AwakeInternal()
         {
             base.AwakeInternal();
-            
+
             JellyBB = GetComponent<NpcBlackboard>();
             StatusCtrler = GetComponent<PawnStatusController>();
             SensorCtrler = GetComponent<PawnSensorController>();
@@ -93,7 +105,7 @@ namespace Game
         protected override void StartInternal()
         {
             base.StartInternal();
-            
+
             PawnHP.onDamaged += (damageContext) =>
             {
                 //! Sender와 Recevier가 동일할 수 있기 때문에 반드시 'receiverBrain'을 먼저 체크해야 함
@@ -113,9 +125,28 @@ namespace Game
             };
         }
 
-        protected virtual void DamageReceiverHandler(ref PawnHeartPointDispatcher.DamageContext damageContext) {}
-        protected virtual void DamageSenderHandler(ref PawnHeartPointDispatcher.DamageContext damageContext) {}
-        protected virtual void StartJumpInternal(float jumpHeight) {}
-        protected virtual void FinishJumpInternal() {}
+        protected virtual void DamageReceiverHandler(ref PawnHeartPointDispatcher.DamageContext damageContext)
+        {
+            //* 그로기 진입 시에 InteractionKeyController 생성
+            if (damageContext.receiverPenalty.Item1 == PawnStatus.Groggy)
+            {
+                if (damageContext.projectile != null)
+                    new InteractionKeyController("E", "Assault", -1, this).Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
+                else
+                    new InteractionKeyController("E", "Chainsaw", 2f, this).Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
+            }
+            else if (damageContext.actionResult == ActionResults.Damaged && damageContext.senderActionData.actionName == "Assault")
+            {
+                new InteractionKeyController("E", "Chainsaw", 2f, this).Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
+            }
+
+            //* 데미지 텍스트 출력
+                if (GameContext.Instance.damageTextManager != null)
+                    GameContext.Instance.damageTextManager.Create(damageContext.finalDamage.ToString("0"), damageContext.hitPoint, 1, PawnBB.IsGroggy ? Color.yellow : Color.white);
+        }
+
+        protected virtual void DamageSenderHandler(ref PawnHeartPointDispatcher.DamageContext damageContext) { }
+        protected virtual void StartJumpInternal(float jumpHeight) { }
+        protected virtual void FinishJumpInternal() { }
     }
 }

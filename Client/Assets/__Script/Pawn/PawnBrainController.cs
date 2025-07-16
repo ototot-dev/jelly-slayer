@@ -28,6 +28,8 @@ namespace Game
         public virtual bool GetInteractionEnanbled() => true;
         public virtual float GetInteractionVisibleRadius() => -1f;
         public virtual Vector3 GetInteractionKeyAttachPoint() => coreColliderHelper != null ? coreColliderHelper.transform.position + coreColliderHelper.GetCapsuleHeight() * Vector3.up : transform.position;
+        public virtual void OnInteractionKeyAttached() { }
+        public virtual void OnInteractionKeyDetached() { }
 #endregion
 
         [Header("Component")]
@@ -204,12 +206,6 @@ namespace Game
                 if ((PawnBB.common.lifeTime.Value = Mathf.Max(0, PawnBB.common.lifeTime.Value - interval)) <= 0)
                     (this as IPawnSpawnable)?.OnLifeTimeOutHandler();
             }
-        }
-
-        protected void CreateDamageText(ref PawnHeartPointDispatcher.DamageContext damageContext) 
-        {
-            Color color = (PawnBB.IsGroggy == true) ? Color.yellow : Color.white;
-            GameContext.Instance.damageTextManager?.Create(damageContext.finalDamage.ToString("0"), damageContext.hitPoint, 1, color);
         }
     }
 }

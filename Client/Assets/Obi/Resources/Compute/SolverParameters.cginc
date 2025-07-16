@@ -18,5 +18,6 @@ float particleCCD;
 float shockPropagation;
 int surfaceCollisionIterations;
 float surfaceCollisionTolerance;
+float4 diffusionMask;
 
 #endif
