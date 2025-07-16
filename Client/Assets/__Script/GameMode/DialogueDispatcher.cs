@@ -7,6 +7,7 @@ using UGUI.Rx;
 using UniRx;
 using UnityEngine;
 using Yarn.Unity;
+using Game.UI;
 
 namespace Game
 {
@@ -118,6 +119,7 @@ namespace Game
             __runner.AddCommandHandler<string, string>("sendMsgToGameModeParam", SendMessageToGameModeParam);
             __runner.AddCommandHandler<string, string>("spawnPawn", SpawnPawn);
             __runner.AddCommandHandler<string, float, float, float>("spawnPawnByVector", SpawnPawnByVector);
+            __runner.AddCommandHandler<string>("setBossStatusController", SetBossStatusController);
             __runner.AddCommandHandler<string>("setCameraTarget", SetCameraTarget);
             __runner.AddCommandHandler("setCameraSlayer", SetCameraSlayer);
             __runner.AddCommandHandler<string>("setConfinerVolume", SetConfinerVolume);
@@ -269,11 +271,26 @@ namespace Game
                     }
                     else
                         Debug.Log("SpawnPawn SpawnTag Error: " + spawnTag);
+
+
                 }
             }
             // Spawn Message
             var mode = GameContext.Instance.launcher.currGameMode;
             mode?.SendMessage("PawnSpawned", pawnObj, SendMessageOptions.DontRequireReceiver);
+        }
+
+        public void SetBossStatusController(string pawnTag) 
+        {
+            GameObject tagObj = TaggerSystem.FindGameObjectWithTag(pawnTag);
+            if (tagObj == null)
+                return;
+
+            var brain = tagObj.GetComponent<PawnBrainController>();
+            if (brain == null)
+                return;
+
+            new BossStatusBarController(brain).Load(GameObject.FindFirstObjectByType<BossStatusBarTemplate>()).Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
         }
 
         public void SetActive(string tag, bool isActive) 

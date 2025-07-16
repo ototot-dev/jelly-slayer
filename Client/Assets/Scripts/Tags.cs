@@ -11,6 +11,7 @@ public static class Tags
         "CameraPoint",
         "ConfinerBoundingBox2",
         "Slayer",
+        "Therionide",
         "SunLight",
         "Col1",
         "Prop1",
@@ -50,8 +51,10 @@ public static class Tags
         public static readonly string[] All = new string[]
         {
             "Slayer",
+            "Therionide",
         };
         public const string Slayer = "Slayer";
+        public const string Therionide = "Therionide";
     }
     public static class Prop
     {

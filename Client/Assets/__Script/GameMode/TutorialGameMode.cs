@@ -426,6 +426,18 @@ namespace Game
 
             switch (pawn.PawnBB.common.pawnId) 
             {
+                case PawnId.Therionide:
+                    {
+                        pawn.PawnHP.onDead += ((damageContext) =>
+                        {
+                            if (_curScene == TutorialScene.Tutorial_6)
+                            {
+                                EndMode();
+                                InitBubbleDialogue("Tutorial-Therionide-2");
+                            }
+                        });
+                    }
+                    break;
                 case PawnId.RoboSoldier:
                     {
                         _roboBrain = (TutorialRoboSoldierBrain)pawn;

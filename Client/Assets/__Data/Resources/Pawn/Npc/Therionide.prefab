@@ -7210,6 +7210,7 @@ GameObject:
   - component: {fileID: 3903175942044197506}
   - component: {fileID: 8593737910688562853}
   - component: {fileID: 937156682906900337}
+  - component: {fileID: 2730394038530260180}
   m_Layer: 0
   m_Name: Therionide
   m_TagString: Untagged
@@ -7613,6 +7614,19 @@ MonoBehaviour:
   _updateMode: 0
   _graph: {fileID: 0}
   _blackboard: {fileID: 8593737910688562853}
+--- !u!114 &2730394038530260180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8861700421523015734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 352d56696aba6374fa7fdf47e19af82f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _tagId: 33
 --- !u!1 &8992681286519874298
 GameObject:
   m_ObjectHideFlags: 0
