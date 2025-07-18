@@ -234,16 +234,10 @@ namespace Game
         float __jumpExecutedTimeStamp = -1f;
         float __jumpReleasedTimeStamp = -1f;
 
-        public void OnJump(InputValue value)
+        public void OnJump()
         {
             if (!CanProcessInput())
                 return;
-
-            if (!value.isPressed)
-            {
-                __jumpReleasedTimeStamp = Time.time;
-                return;
-            }
 
             if (CheckPossessedPawnBusy() || !CanExecuteAction())
                 return;
@@ -251,15 +245,14 @@ namespace Game
             if (possessedBrain.ActionCtrler.CheckActionRunning())
                 possessedBrain.ActionCtrler.CancelAction(false);
 
-            __jumpHangingDisposable ??= Observable.EveryUpdate().Where(_ => __jumpExecutedTimeStamp > __jumpReleasedTimeStamp).Subscribe(_ =>
+            if (possessedBrain.BB.IsJumping && !possessedBrain.Movement.IsHangingReserved())
             {
                 //* Catch 판정은 0.1초로 셋팅
                 var droneBot = possessedBrain.droneBotFormationCtrler.PickDroneBot();
                 if (!possessedBrain.BB.IsHanging && droneBot != null && droneBot.BB.CurrDecision != DroneBotBrain.Decisions.Catch && Time.time - __jumpExecutedTimeStamp > 0.1f)
                     possessedBrain.Movement.PrepareHanging(droneBot, 0.2f);
-            }).AddTo(this);
-
-            if (possessedBrain.BB.IsHanging)
+            }
+            else if (possessedBrain.BB.IsHanging)
             {
                 //* 점프 방향을 셋팅해줌
                 possessedBrain.Movement.GetCharacterMovement().velocity = possessedBrain.BB.body.hangingBrain.Value.Movement.CurrVelocity;
@@ -268,17 +261,12 @@ namespace Game
             }
             else
             {
-                //* 재귀적으로 Haning이 일어나지 않도록 'IsHanging'이 falsed인 경우에만 __jumpExecutedTimeStamp 값을 갱신해서 __jumpHangingDisposable이 동작하도록 한다
-                __jumpExecutedTimeStamp = Time.time;
-
                 //! 점프 코스트 하드코딩
                 float jumpStaminaCost = 10;
 
                 possessedBrain.Movement.StartJump(possessedBrain.BB.body.jumpHeight);
                 possessedBrain.BB.stat.ReduceStamina(jumpStaminaCost);
             }
-
-            PawnEventManager.Instance.SendPawnActionEvent(possessedBrain, "OnJump");
         }
 
         public void OnNextTarget()

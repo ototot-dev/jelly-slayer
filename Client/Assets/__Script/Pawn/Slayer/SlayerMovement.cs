@@ -74,6 +74,7 @@ namespace Game
             PawnEventManager.Instance.SendPawnActionEvent(__brain, "OnHanging");
         }
 
+        public bool IsHangingReserved() => ReservedHangingBrain != null;
         public DroneBotBrain ReservedHangingBrain { get; private set; }
         IDisposable __hangingLerpDisposable;
         float __startHangingTimeStamp;
