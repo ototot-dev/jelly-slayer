@@ -43,6 +43,8 @@ namespace Game.UI
 
             __hostBrain.PawnBB.stat.heartPoint.Subscribe(_ => OnHeartPointChanged()).AddToHide(this);
             __hostBrain.PawnBB.stat.stance.Subscribe(_ => OnStanceChangedHandler()).AddToHide(this);
+
+            __hostBrain.PawnBB.common.isDead.Subscribe(v => { if (v == true) { this.Hide(); } });
         }
 
         public override void OnPostShow()
