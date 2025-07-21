@@ -124,7 +124,10 @@ namespace Game
             __runner.AddCommandHandler("setCameraSlayer", SetCameraSlayer);
             __runner.AddCommandHandler<string>("setConfinerVolume", SetConfinerVolume);
             __runner.AddCommandHandler<string, string, float>("showMessagePopup", ShowMessagePopup);
+            __runner.AddCommandHandler<string, string>("showGuidePopup", ShowGuidePopup);
             __runner.AddCommandHandler<string, float>("setLightIntensity", SetLightIntensity);
+
+            // Timeline
             __runner.AddCommandHandler<string>("playTimeline", PlayTimeline);
             __runner.AddCommandHandler<string>("loadTimeline", LoadTimeline);
             __runner.AddCommandHandler("playLoadedTimeline", PlayLoadedTimeline);
@@ -151,6 +154,7 @@ namespace Game
                         var alpha = Mathf.Clamp01((Time.time - startTimeStamp) / blendTime);
                         GameContext.Instance.cameraCtrler.vignetteIntensity = Mathf.Lerp(startIntensity, intensity, alpha);
                         GameContext.Instance.cameraCtrler.vignetteSmoothness = Mathf.Lerp(startSmoothness, smoothness, alpha);
+
                     }).AddTo(this);
             }
             else
@@ -192,7 +196,6 @@ namespace Game
         public IEnumerator WaitCheck() 
         {
             _isWaitCheck = false;
-
             yield return new WaitUntil(() => { return _isWaitCheck; });
         }
 
@@ -373,6 +376,16 @@ namespace Game
         {
             Debug.Log("showMessagePopup" + title + text);
             new MessagePopupController(title, text, showDuration).Load().ShowDimmed(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
+        }
+        public IEnumerator ShowGuidePopup(string title, string text)
+        {
+            Debug.Log("showGuidePopup" + title + text);
+            Time.timeScale = 0.1f;
+            _isWaitCheck = false;
+
+            new GuidePopupController(title, text, this).Load().ShowDimmed(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
+
+            yield return new WaitUntil(() => { return _isWaitCheck; });
         }
 
         public void PlayTimeline(string timelineName)
