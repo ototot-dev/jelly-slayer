@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 using Unity.Linq;
+using ZLinq;
 
 namespace UGUI.Rx
 {
@@ -12,29 +13,12 @@ namespace UGUI.Rx
     /// </summary>
     public static class ControllerExtension
     {
-
-        /// <summary>
-        /// Load a Controller object.
-        /// </summary>
-        /// <param name="ctrler"></param>
-        /// <param name="overrideTemplate"></param>
-        /// <param name="overrideStyleSheets"></param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
         public static T Load<T>(this T ctrler, Template overrideTemplate = null, StyleSheet[] overrideStyleSheets = null) where T : Controller
         {
             Loader.Instance.Load(ctrler, overrideTemplate, overrideStyleSheets);
             return ctrler;
         }
 
-        /// <summary>
-        /// Load a Controller object in async.
-        /// </summary>
-        /// <param name="ctrler"></param>
-        /// <param name="overrideTemplate"></param>
-        /// <param name="overrideStyleSheets"></param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
         public static IObservable<T> LoadAsObservable<T>(this T ctrler, Template overrideTemplate = null, StyleSheet[] overrideStyleSheets = null) where T : Controller
         {
             return Loader.Instance.LoadAsObservable<T>(ctrler, overrideTemplate, overrideStyleSheets, null);
@@ -126,6 +110,22 @@ namespace UGUI.Rx
 
         public static T Hide<T>(this T ctrler) where T : Controller
         {
+            //* ShowDimmed() / HideDimmed() 페어링 체크
+            Debug.Assert(!ctrler.isDimmed);
+
+            return ctrler.HideInternal();
+        }
+
+        public static IObservable<T> HideAsObservable<T>(this T ctrler) where T : Controller
+        {
+            //* ShowDimmed() / HideDimmed() 페어링 체크
+            Debug.Assert(!ctrler.isDimmed);
+
+            return ctrler.HideAsObservableInternal();
+        }
+
+        static T HideInternal<T>(this T ctrler) where T : Controller
+        {
             if (ctrler.template == null)
             {
                 Debug.LogWarning($"ControllerExtension => ctrler.Template is null!! (Maybe ctrler in not loaded yet??)");
@@ -157,7 +157,7 @@ namespace UGUI.Rx
             return ctrler;
         }
 
-        public static IObservable<T> HideAsObservable<T>(this T ctrler) where T : Controller
+        public static IObservable<T> HideAsObservableInternal<T>(this T ctrler) where T : Controller
         {
             if (!ctrler.isLoaded)
             {
@@ -167,7 +167,6 @@ namespace UGUI.Rx
 
             var preHideObservable = Observable.Create<T>(observer =>
             {
-                // Ensure that OnPostShow() to be called
                 if (ctrler.showCount > 0 && ctrler.postShowCount == 0)
                     ctrler.OnPostShow();
 
@@ -219,7 +218,7 @@ namespace UGUI.Rx
 
             var dimmed = ctrler.template.transform.parent;
 
-            HideAsObservable<T>(ctrler).Subscribe(_ =>
+            ctrler.HideAsObservableInternal().Subscribe(_ =>
             {
                 if (dimmed.childCount == 0 || dimmed.gameObject.Children().All(c => !c.activeSelf))
                     dimmed.gameObject.SetActive(false);
@@ -235,7 +234,7 @@ namespace UGUI.Rx
 
             var dimmed = ctrler.template.transform.parent;
 
-            return HideAsObservable<T>(ctrler).Do(_ =>
+            return ctrler.HideAsObservableInternal().Do(_ =>
             {
                 if (dimmed.childCount == 0 || dimmed.gameObject.Children().All(c => !c.activeSelf))
                     dimmed.gameObject.SetActive(false);
