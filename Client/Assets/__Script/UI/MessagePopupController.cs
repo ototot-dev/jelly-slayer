@@ -1,12 +1,6 @@
 using UniRx;
 using UGUI.Rx;
-using System.Linq;
-using System.Collections;
-using UnityEngine;
-using System.Collections.Generic;
-using UnityEngine.SceneManagement;
 using System;
-using Unity.VisualScripting;
 
 namespace Game
 {

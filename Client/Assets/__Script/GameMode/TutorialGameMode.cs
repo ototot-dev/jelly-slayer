@@ -556,6 +556,7 @@ namespace Game
                         lineView.UserRequestedViewAdvancement();
                 }
             }
+            /*
             if (Input.GetKeyDown(KeyCode.F11) == true) 
             {
                 if (_roboBrain != null) {
@@ -564,6 +565,7 @@ namespace Game
                         heart.Die("cheat");
                 }
             }
+            //*/
         }
 
         #region TUTORIAL
