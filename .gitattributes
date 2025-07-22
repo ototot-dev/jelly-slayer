@@ -53,3 +53,6 @@
 *.rns filter=lfs diff=lfs merge=lfs -text
 *.reason filter=lfs diff=lfs merge=lfs -text
 *.lxo filter=lfs diff=lfs merge=lfs -text
+
+# 라인 엔딩 통일    
+* text=auto eol=lf
