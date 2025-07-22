@@ -205,9 +205,9 @@ namespace Game
 
                 switch (damageContext.receiverPenalty.Item1)
                 {
-                    case Game.PawnStatus.Groggy: ActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty, string.Empty); break;
-                    case Game.PawnStatus.Staggered: ActionCtrler.StartAction(damageContext, "!OnHit", string.Empty, string.Empty); break;
-                    case Game.PawnStatus.KnockDown: ActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty, string.Empty); break;
+                    case Game.PawnStatus.Groggy: ActionCtrler.StartAction(damageContext, "!OnGroggy"); break;
+                    case Game.PawnStatus.Staggered: ActionCtrler.StartAction(damageContext, "!OnHit"); break;
+                    case Game.PawnStatus.KnockDown: ActionCtrler.StartAction(damageContext, "!OnKnockDown"); break;
                 }
             }
             else if (damageContext.finalDamage > 0)
@@ -256,7 +256,7 @@ namespace Game
                         BB.currDecision.Value = Decisions.Approach;
                     
                     //* 공격 시작
-                    if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && !BB.IsJumping && !ActionCtrler.CheckActionRunning() && !BuffCtrler.CheckStatus(Game.PawnStatus.Staggered) && CheckTargetVisibility())
+                    if (string.IsNullOrEmpty(ActionCtrler.GetPendingActionData().ActionName) && !BB.IsJumping && !ActionCtrler.CheckActionRunning() && !BuffCtrler.CheckStatus(Game.PawnStatus.Staggered) && CheckTargetVisibility())
                     {
                         // var selection = ActionDataSelector.RandomPick(0f, BB.stat.stamina.Value);
                         // if (selection != null)

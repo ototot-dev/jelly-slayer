@@ -59,8 +59,11 @@ namespace Game
 
         protected override void OnFixedUpdateHandler()
         {
-            if (__brain.BB.CurrDecision != DroneBotBrain.Decisions.Catch)
-                base.OnFixedUpdateHandler();
+            //* Catch 상태에선 HostBrain의 이동을 따라가는 Attach 모드로 동작함
+            if (__brain.BB.CurrDecision == DroneBotBrain.Decisions.Catch)
+                return;
+
+            base.OnFixedUpdateHandler();
         }
 
         public float testHeight = 2f;
@@ -94,25 +97,36 @@ namespace Game
             }
             else
             {
-                if (__brain.BB.CurrDecision == DroneBotBrain.Decisions.Spacing || __brain.BB.CurrDecision == DroneBotBrain.Decisions.Approach)
+                if (__brain.BB.CurrDecision == DroneBotBrain.Decisions.Spacing || __brain.BB.CurrDecision == DroneBotBrain.Decisions.Approach || __brain.BB.CurrDecision == DroneBotBrain.Decisions.Heal)
                 {
-                    var speedAlpha = Mathf.Clamp01(((__brain.BB.HostBrain.GetWorldPosition() - capsule.transform.position).Vector2D().magnitude - __brain.BB.MinSpacingDistance) / __brain.BB.MaxSpacingDistance);
-                    moveSpeed = Mathf.Lerp(__brain.BB.body.normalSpeed, __brain.BB.body.boostSpeed, speedAlpha);
+                    if (__brain.BB.CurrDecision == DroneBotBrain.Decisions.Heal)
+                    {
+                        moveSpeed = __brain.BB.body.boostSpeed;
+                    }
+                    else
+                    {
+                        var speedAlpha = Mathf.Clamp01(((__brain.BB.HostBrain.GetWorldPosition() - capsule.transform.position).Vector2D().magnitude - __brain.BB.MinSpacingDistance) / __brain.BB.MaxSpacingDistance);
+                        moveSpeed = Mathf.Lerp(__brain.BB.body.normalSpeed, __brain.BB.body.boostSpeed, speedAlpha);
+                    }
+                    
                     moveAccel = __moveAccelCached;
                     moveBrake = __moveBrakeCached;
 
                     //* 회전 방향 갱신
                     if (__brain.BB.HostBrain.BB.TargetBrain != null)
                         faceVec = (__brain.BB.HostBrain.BB.TargetBrain.GetWorldPosition() - __brain.GetWorldPosition()).Vector2D().normalized;
-                    else if (__brain.BB.CurrDecision == DroneBotBrain.Decisions.Approach)
+                    else if (__brain.BB.CurrDecision == DroneBotBrain.Decisions.Approach || __brain.BB.CurrDecision == DroneBotBrain.Decisions.Heal)
                         faceVec = (__brain.BB.HostBrain.GetWorldPosition() - __brain.GetWorldPosition()).Vector2D().normalized;
                     else
                         faceVec = __brain.BB.HostBrain.coreColliderHelper.transform.forward.Vector2D().normalized;
                 }
 
-                //* 고도 유지
-                var newHeight = capsule.transform.position.y.LerpSpeed(TerrainManager.GetTerrainPoint(capsule.transform.position).y + __brain.BB.body.flyHeight, __brain.BB.body.flyHeightAdjustSpeed, Time.deltaTime);
-                __ecmMovement.SetPosition(capsule.transform.position.AdjustY(newHeight));
+                //* 고도 유지                
+                var newPositionY = __brain.BB.CurrDecision == DroneBotBrain.Decisions.Heal ?
+                    capsule.transform.position.y.LerpSpeed(TerrainManager.GetTerrainPoint(capsule.transform.position).y + __brain.BB.action.healFlyHeight, __brain.BB.action.healFlyHeightAdjustSpeed, Time.deltaTime) :
+                    capsule.transform.position.y.LerpSpeed(TerrainManager.GetTerrainPoint(capsule.transform.position).y + __brain.BB.body.flyHeight, __brain.BB.body.flyHeightAdjustSpeed, Time.deltaTime);
+                    
+                __ecmMovement.SetPosition(capsule.transform.position.AdjustY(newPositionY));
 
                 base.OnUpdateHandler();
             }

@@ -12,10 +12,10 @@ namespace Game
         public virtual float GetDefaultMinApproachDistance() => __pawnBrain != null ? Mathf.Max(0.1f, __pawnBrain.coreColliderHelper.GetCapsuleRadius() * 0.5f) : 0.1f;
         public virtual bool CanMove()
         {
-                var canMove1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsGroggy && !__pawnBrain.PawnBB.IsDown && !CheckReachToDestination();
-                var canMove2 = canMove1 && (__pawnActionCtrler == null || (!__pawnActionCtrler.CheckKnockBackRunning() && (!__pawnActionCtrler.CheckActionRunning() || __pawnActionCtrler.currActionContext.movementEnabled)));
-                var canMove3 = canMove2 && (__pawnStatusCtrler == null || (!__pawnStatusCtrler.CheckStatus(PawnStatus.Staggered) && !__pawnStatusCtrler.CheckStatus(PawnStatus.CanNotMove)));
-                return canMove3;
+            var canMove1 = __pawnBrain.PawnBB.IsSpawnFinished && !__pawnBrain.PawnBB.IsDead && !__pawnBrain.PawnBB.IsGroggy && !__pawnBrain.PawnBB.IsDown && !CheckReachToDestination();
+            var canMove2 = canMove1 && (__pawnActionCtrler == null || (!__pawnActionCtrler.CheckKnockBackRunning() && (!__pawnActionCtrler.CheckActionRunning() || __pawnActionCtrler.currActionContext.movementEnabled)));
+            var canMove3 = canMove2 && (__pawnStatusCtrler == null || (!__pawnStatusCtrler.CheckStatus(PawnStatus.Staggered) && !__pawnStatusCtrler.CheckStatus(PawnStatus.CanNotMove)));
+            return canMove3;
         }
         public virtual bool CanRotate()
         {
@@ -83,7 +83,7 @@ namespace Game
             return (destination - capsule.position).Magnitude2D();
         }
 
-        public void Stop()
+        public override void Stop()
         {
             minApproachDistance = GetDefaultMinApproachDistance();
             moveVec = Vector3.zero;

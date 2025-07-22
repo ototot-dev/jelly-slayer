@@ -259,7 +259,7 @@ namespace Game
                         var actionData = DatasheetManager.Instance.GetActionData(PawnId.Soldier, "Laser");
                         Debug.Assert(actionData != null);
 
-                        __brain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__brain, hitColliderHelper.pawnBrain, actionData, currActionContext.specialTag, hitColliderHelper.pawnCollider, false));
+                        __brain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__brain, hitColliderHelper.pawnBrain, actionData, hitColliderHelper.pawnCollider, false));
                         sendDamageTimeStamp = Time.time;
                     }
 

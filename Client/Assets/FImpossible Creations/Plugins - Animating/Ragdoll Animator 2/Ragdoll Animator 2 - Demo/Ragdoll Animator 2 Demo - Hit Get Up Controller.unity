@@ -4432,7 +4432,7 @@ MonoBehaviour:
   Interia: 1
   GroundMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 8
   ExtraRaycastDistance: 0.02
   RaycastRadius: 0
   Mecanim: {fileID: 1539137672}

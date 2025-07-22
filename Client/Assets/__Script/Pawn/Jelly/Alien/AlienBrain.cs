@@ -124,7 +124,7 @@ namespace Game
         {
             base.DamageReceiverHandler(ref damageContext);
             
-            if (damageContext.actionResult == ActionResults.Blocked && string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && CheckTargetVisibility())
+            if (damageContext.actionResult == ActionResults.Blocked && string.IsNullOrEmpty(ActionCtrler.GetPendingActionData().ActionName) && CheckTargetVisibility())
             {
                 __counterActionData ??= ActionDataSelector.GetActionData("Counter");
                 ActionCtrler.SetPendingAction(__counterActionData.actionName);

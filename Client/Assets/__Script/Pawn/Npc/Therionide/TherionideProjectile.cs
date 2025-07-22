@@ -49,12 +49,12 @@ namespace Game
                         if (helper.pawnBrain != emitterBrain.Value)
                             return;
 
-                        reflectiveBrain.Value.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, reflectiveBrain.Value, emitterBrain.Value, actionData, string.Empty, emitterBrain.Value.bodyHitColliderHelper.pawnCollider, false));
+                        reflectiveBrain.Value.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, reflectiveBrain.Value, emitterBrain.Value, actionData, emitterBrain.Value.bodyHitColliderHelper.pawnCollider, false));
                         Explode();
                     }
                     else if (helper.pawnBrain.PawnBB.common.pawnId == PawnId.Hero)
                     {
-                        emitterBrain.Value.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, emitterBrain.Value, helper.pawnBrain, actionData, string.Empty, helper.pawnBrain.bodyHitColliderHelper.pawnCollider, false));
+                        emitterBrain.Value.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, emitterBrain.Value, helper.pawnBrain, actionData, helper.pawnBrain.bodyHitColliderHelper.pawnCollider, false));
 
                         if (reflectiveBrain.Value == null)
                             Explode();
@@ -99,7 +99,7 @@ namespace Game
                         continue;
 
                     if (colliderHelper.pawnBrain != emitterBrain.Value && colliderHelper.pawnBrain.PawnBB.common.pawnName != "Slayer")
-                        emitterBrain.Value.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, emitterBrain.Value, colliderHelper.pawnBrain, actionData, string.Empty, __traceCollidersNonAlloc[i], false));
+                        emitterBrain.Value.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, emitterBrain.Value, colliderHelper.pawnBrain, actionData, __traceCollidersNonAlloc[i], false));
                 }
             }
 

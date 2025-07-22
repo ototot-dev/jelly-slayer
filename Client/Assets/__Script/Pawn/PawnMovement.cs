@@ -17,7 +17,6 @@ namespace Game
         [Header("Movement")]
         public bool freezeMovement = false;
         public bool freezeRotation = false;
-        public bool rootMotionEnabled = true;
         public float moveSpeed = 1f;
         public float moveAccel = 1f;
         public float moveBrake = 0f;
@@ -122,7 +121,7 @@ namespace Game
             FaceTo(rot.Forward());
         }
 
-        public void Stop() 
+        public virtual void Stop() 
         {
             __ecmMovement.velocity = Vector3.zero;
             __ecmMovement.ClearAccumulatedForces();
@@ -151,16 +150,19 @@ namespace Game
         public void AddRootMotion(Vector3 deltaPosition, Quaternion deltaRotation, float deltaTime)
         {
             var preserveVelocityY = __ecmMovement.velocity.y;
+
             __ecmMovement.Move(deltaPosition / deltaTime, deltaTime);
             __ecmMovement.velocity = Vector3.zero.AdjustY(preserveVelocityY);
             __ecmMovement.rotation *= deltaRotation;
             __rootMotionPosition += deltaPosition;
+
             // __Logger.LogF(gameObject, nameof(AddRootMotion), "-", "position", position, "__rootMotionPosition", __rootMotionPosition);
         }
 
         public void DampenRootMotion(float dampingFactor = 0.5f)
         {
             __rootMotionPosition = Vector3.Lerp(Vector3.zero, __rootMotionPosition, dampingFactor);
+            
             if (__rootMotionPosition.sqrMagnitude < MathExtension.EPSILON_LENGTH)
                 __rootMotionPosition = Vector3.zero;
         }

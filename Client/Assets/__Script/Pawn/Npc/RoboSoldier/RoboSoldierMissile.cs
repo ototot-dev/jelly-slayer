@@ -61,12 +61,12 @@ namespace Game
                     if (reflectiveBrain.Value != null)
                     {
                         if (helper.pawnBrain != emitterBrain.Value) return;
-                        emitterBrain.Value.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, reflectiveBrain.Value, emitterBrain.Value, __actionData, string.Empty, __homingTargetBrain.bodyHitColliderHelper.pawnCollider, false));
+                        emitterBrain.Value.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, reflectiveBrain.Value, emitterBrain.Value, __actionData, __homingTargetBrain.bodyHitColliderHelper.pawnCollider, false));
                     }
                     else
                     {
                         if (helper.pawnBrain != __homingTargetBrain) return;
-                        emitterBrain.Value.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, emitterBrain.Value, __homingTargetBrain, __actionData, string.Empty, __homingTargetBrain.bodyHitColliderHelper.pawnCollider, false));
+                        emitterBrain.Value.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, emitterBrain.Value, __homingTargetBrain, __actionData, __homingTargetBrain.bodyHitColliderHelper.pawnCollider, false));
 
                         //* 가드 패링에 의해 반사된 경우엔 파괴
                         if (reflectiveBrain.Value != null) 

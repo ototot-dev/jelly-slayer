@@ -57,19 +57,19 @@ namespace Game
 
                 if (Mathf.Abs(hitVec.x) > Mathf.Abs(hitVec.z))
                 {
-                    __pawnAnimCtrler.mainAnimator.SetFloat("HitX", hitVec.x > 0f ? 1f : -1f);
+                    __pawnAnimCtrler.mainAnimator.SetFloat("HitX", hitVec.x > 0f ? -1f : 1f);
                     __pawnAnimCtrler.mainAnimator.SetFloat("HitY", 0f);
                 }
                 else
                 {
                     __pawnAnimCtrler.mainAnimator.SetFloat("HitX", 0f);
-                    __pawnAnimCtrler.mainAnimator.SetFloat("HitY", hitVec.z > 0f ? 1f : -1f);
+                    __pawnAnimCtrler.mainAnimator.SetFloat("HitY", hitVec.z > 0f ? -1f : 1f);
                 }
 
                 //* 구르기 불가 상태 부여
                 var cannotRollDuration = Mathf.Max(0.1f, damageContext.receiverPenalty.Item2 - DatasheetManager.Instance.GetPlayerData().earlyRollOffsetOnStarggerd);
                 __brain.StatusCtrler.AddStatus(PawnStatus.CanNotRoll, 1f, cannotRollDuration);
-                __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0);
+                __brain.AnimCtrler.mainAnimator.SetFloat("HitType", Rand.Dice(3) - 1);
                 __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
 
                 //* 경직 지속 시간과 맞춰주기 위해서 'AnimSpeed' 값을 조정함
@@ -106,8 +106,8 @@ namespace Game
             else if (damageContext.actionResult == ActionResults.GuardBreak)
             {
                 __brain.StatusCtrler.AddStatus(PawnStatus.CanNotRoll, 1f, damageContext.receiverPenalty.Item2);
-                __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 2);
-                __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
+                __brain.AnimCtrler.mainAnimator.SetTrigger("OnBigHit");
+                __brain.AnimCtrler.mainAnimator.SetFloat("HitType", Rand.Dice(4) - 1);
 
                 //* 경직 지속 시간과 맞춰주기 위해서 'AnimSpeed' 값을 조정함
                 __brain.AnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1f / damageContext.receiverPenalty.Item2);
@@ -128,8 +128,7 @@ namespace Game
             {
                 if (damageContext.actionResult == ActionResults.Blocked)
                 {
-                    __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 1);
-                    __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
+                    __brain.AnimCtrler.mainAnimator.SetTrigger("OnGuard");
 
                     //* 경직 지속 시간과 맞춰주기 위해서 'AnimSpeed' 값을 조정함
                     __brain.AnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1f / damageContext.receiverPenalty.Item2);
@@ -203,8 +202,8 @@ namespace Game
             Debug.Assert(damageContext.receiverActionData != null);
             Debug.Assert(!isAddictiveAction);
 
-            __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
-            __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 3);
+            __brain.AnimCtrler.mainAnimator.SetTrigger("OnBigHit");
+            __brain.AnimCtrler.mainAnimator.SetFloat("HitType", Rand.Dice(4) - 1);
 
             //* 경직 지속 시간과 맞춰주기 위해서 'AnimSpeed' 값을 조정함
             __brain.AnimCtrler.mainAnimator.SetFloat("AnimSpeed", 1f / damageContext.senderPenalty.Item2);
@@ -236,10 +235,19 @@ namespace Game
             {
                 __brain.PawnStatusCtrler.AddStatus(PawnStatus.KnockDown, 1f, __brain.BB.pawnData.knockDownDuration);
 
+                __brain.AnimCtrler.mainAnimator.SetTrigger("OnDown");
+                __brain.AnimCtrler.ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Standing;
+
+                Observable.Timer(TimeSpan.FromSeconds(__brain.BB.body.knockDownRagdollDelay)).Subscribe(_ =>
+                {
+                    __brain.AnimCtrler.legAnimator.User_FadeToDisabled(0f);
+                    __brain.AnimCtrler.ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Falling;
+                }).AddTo(this);
+
                 var __knockDownTimeStamp = Time.time;
                 // var __knockBackVec = -__brain.BB.pawnData_Movement.knockBackSpeed * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
-                var __knockBackVec = -2f * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
-                Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.4f))).Subscribe(_ =>
+                var __knockBackVec = -10f * __brain.coreColliderHelper.transform.forward.Vector2D().normalized;
+                Observable.EveryFixedUpdate().TakeUntil(Observable.Timer(TimeSpan.FromSeconds(0.1f))).Subscribe(_ =>
                 {
                     __brain.Movement.AddRootMotion(Time.fixedDeltaTime * __knockBackVec, Quaternion.identity, Time.fixedDeltaTime);
                 }).AddTo(this);
@@ -263,8 +271,16 @@ namespace Game
                 __brain.AnimCtrler.mainAnimator.SetFloat("HitX", 0f);
                 __brain.AnimCtrler.mainAnimator.SetFloat("HitY", hitVec.z > 0f ? 1f : -1f);
             }
-            __brain.AnimCtrler.mainAnimator.SetInteger("HitType", 0);
             __brain.AnimCtrler.mainAnimator.SetTrigger("OnHit");
+            __brain.AnimCtrler.mainAnimator.SetInteger("HitType", Rand.Dice(3) - 1);
+
+            // __brain.AnimCtrler.mainAnimator.SetTrigger("OnDown");
+            // __brain.AnimCtrler.ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Standing;
+
+            // Observable.Timer(TimeSpan.FromSeconds(__brain.BB.body.knockDownRagdollDelay)).Subscribe(_ =>
+            // {
+            //     __brain.AnimCtrler.ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Falling;
+            // }).AddTo(this);
 
             var knockDownTimeStamp = Time.time;
             var knockBakVec = __brain.BB.pawnData_Movement.knockBackSpeed * (damageContext.receiverBrain.GetWorldPosition() - damageContext.senderBrain.GetWorldPosition()).Vector2D().normalized;

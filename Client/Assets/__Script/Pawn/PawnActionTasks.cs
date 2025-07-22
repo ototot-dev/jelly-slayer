@@ -38,17 +38,7 @@ namespace Game.NodeCanvasExtension
         {
             return agent.GetComponent<PawnActionController>().CanStartPendingAction();
         }
-    }
-
-    [Category("Pawn")]
-    public class CheckActionHasPreMotion : ConditionTask
-    {
-        protected override string info => "CheckActionHasPreMotion() == " + (invert ? "False" : "True");
-        protected override bool OnCheck() 
-        {
-            return agent.GetComponent<PawnActionController>().CheckPendingActionHasPreMotion();
-        }
-    }
+    }   
 
     [Category("Pawn")]
     public class FreePosition : ActionTask
@@ -254,7 +244,8 @@ namespace Game.NodeCanvasExtension
             base.OnUpdate();
 
             __pawnMovable.SetMinApproachDistance(approachDistance.value + (ignoreTargetRadius ? 0f : __targetCapsuleRadius));
-            if (__pawnActionCtrler == null || !__pawnActionCtrler.CheckActionRunning())
+
+            if (__pawnActionCtrler == null || !__pawnActionCtrler.CheckActionRunning() || __pawnActionCtrler.currActionContext.movementEnabled)
                 __pawnMovable.SetDestination(__targetBrain != null ? __targetBrain.coreColliderHelper.transform.position : target.value.position);
 
             if (duration.value > 0f && (Time.time - __executeTimeStamp) > duration.value)
@@ -292,6 +283,7 @@ namespace Game.NodeCanvasExtension
         public bool notifyDecisionFinished = false;
         PawnBrainController __targetBrain;
         PawnBrainController __pawnBrain;
+        PawnActionController __pawnActionCtrler;
         IPawnMovable __pawnMovable;
         IDisposable __moveStrafeDisposable;
         Vector3 __strafeMoveVec;
@@ -310,6 +302,8 @@ namespace Game.NodeCanvasExtension
              
             __pawnMovable = __pawnBrain as IPawnMovable;
             Debug.Assert(__pawnMovable != null);
+
+            __pawnActionCtrler = agent.GetComponent<PawnActionController>();
             
             __strafeMoveVec = Vector3.zero;
             __pawnCapsuleRadius = __pawnBrain.coreColliderHelper.GetCapsuleRadius();
@@ -321,6 +315,7 @@ namespace Game.NodeCanvasExtension
         protected override void OnUpdate()
         {
             var isDurationExpired = duration.value > 0f && (Time.time - __executeTimeStamp) > duration.value;
+
             if (__moveStrafeDisposable == null && !isDurationExpired)
                 __moveStrafeDisposable = MoveStrafe();
 
@@ -330,7 +325,6 @@ namespace Game.NodeCanvasExtension
                 EndAction(true);
             else if ((__targetBrain != null ? __pawnBrain.coreColliderHelper.GetDistanceBetween(__targetBrain.coreColliderHelper) : __pawnBrain.GetWorldPosition().Distance2D(target.value.position))  > outDistance.value)
                 EndAction(true);
-                
         }
 
         IDisposable MoveStrafe()
@@ -364,6 +358,10 @@ namespace Game.NodeCanvasExtension
                 })
                 .Subscribe(_ =>
                 {
+                    //* 액션 수행 중에 이동 가능 여부 체크
+                    if (__pawnActionCtrler != null && __pawnActionCtrler.CheckActionRunning() && !__pawnActionCtrler.currActionContext.movementEnabled)
+                        return;
+
                     if (__strafeMoveVec != Vector3.zero)
                     {
                         var newDestination = __pawnBrain.GetWorldPosition() + 2f * __pawnCapsuleRadius * (__pawnBrain.GetWorldRotation() * __strafeMoveVec).Vector2D().normalized;
@@ -532,7 +530,7 @@ namespace Game.NodeCanvasExtension
             var actionCtrler = agent.GetComponent<PawnActionController>();
             Debug.Assert(actionCtrler != null);
 
-            if (actionCtrler.PendingActionData.Item1 == actionName.value)
+            if (actionCtrler.GetPendingActionData().ActionName == actionName.value)
             {
                 var rootMotionConstrainSum = 0;
                 if (!rootMotionConstraints.isNoneOrNull && rootMotionConstraints.value.Length > 0)
@@ -541,13 +539,13 @@ namespace Game.NodeCanvasExtension
                         rootMotionConstrainSum |= (int)c;
                 }
 
-                EndAction(actionCtrler.StartAction(actionName.value, actionCtrler.PendingActionData.Item2, string.Empty, animBlendSpeed.value, animBlendOffset.value, animSpeedMultiplier.value, rootMotionMultiplier.value, rootMotionConstrainSum, rootMotionCurve.value, manualAdvanceEnabled.value));
+                EndAction(actionCtrler.StartAction(actionName.value, animBlendSpeed.value, animBlendOffset.value, animSpeedMultiplier.value, rootMotionMultiplier.value, rootMotionConstrainSum, rootMotionCurve.value, manualAdvanceEnabled.value));
                 actionCtrler.ClearPendingAction();
 
                 if (animClipLength.value > 0f)
                     actionCtrler.currActionContext.animClipLength = animClipLength.value;
                 if (animClipFps.value > 0)
-                    actionCtrler.currActionContext.animClipFps = animClipFps.value;
+                    actionCtrler.currActionContext.animClipFramePerSecond = animClipFps.value;
             }
             else
             {
@@ -716,7 +714,7 @@ namespace Game.NodeCanvasExtension
             if (__pawnActionCtrler.currActionContext.manualAdvanceEnabled)
             {
                 var baseTimeStamp = Time.time - __pawnActionCtrler.currActionContext.manualAdvanceTime;
-                var waitTime = waitFrame.value > 0 ? 1f / __pawnActionCtrler.currActionContext.animClipFps * Mathf.Max(0, waitFrame.value - 1) : __pawnActionCtrler.currActionContext.animClipLength;
+                var waitTime = waitFrame.value > 0 ? 1f / __pawnActionCtrler.currActionContext.animClipFramePerSecond * Mathf.Max(0, waitFrame.value - 1) : __pawnActionCtrler.currActionContext.animClipLength;
 
                 if (!__pawnActionCtrler.CheckWaitAction(waitTime, baseTimeStamp))
                     EndAction(true);
@@ -725,7 +723,7 @@ namespace Game.NodeCanvasExtension
             {
                 //* 'preMotionTimeStamp'값이 있으면. 실제 액션 시작 시간은 preMotionTimeStamp으로 간주함
                 var baseTimeStamp = __pawnActionCtrler.currActionContext.preMotionTimeStamp > 0f ? __pawnActionCtrler.currActionContext.preMotionTimeStamp : (__pawnActionCtrler.currActionContext.startTimeStamp - Mathf.Max(0f, __pawnActionCtrler.currActionContext.animClipLength) * __pawnActionCtrler.currActionContext.animBlendOffset);
-                var waitTime = waitFrame.value > 0 ? 1f / __pawnActionCtrler.currActionContext.animClipFps * Mathf.Max(0, waitFrame.value - 1) : __pawnActionCtrler.currActionContext.animClipLength;
+                var waitTime = waitFrame.value > 0 ? 1f / __pawnActionCtrler.currActionContext.animClipFramePerSecond * Mathf.Max(0, waitFrame.value - 1) : __pawnActionCtrler.currActionContext.animClipLength;
 
                 waitTime /= __pawnActionCtrler.currActionContext.actionSpeed;
 
@@ -1303,7 +1301,6 @@ namespace Game.NodeCanvasExtension
         protected override string info => traceSampleNum.value == 1 ? "Trace <b>One-Frame</b>" : (traceDuration.value > 0 ? $"Trace for <b>{traceDuration.value}</b> secs" : $"Trace for <b>{traceFrames.value}</b> frames");
         
         public BBParameter<string> actionName;
-        public BBParameter<string> specialTag;
         public BBParameter<Vector3> offset;
         public BBParameter<Vector3> pitchYawRoll;
         public BBParameter<float> fanAngle = 180f;
@@ -1369,7 +1366,7 @@ namespace Game.NodeCanvasExtension
 
             if (traceSampleNum.value > 1)
             {
-                __traceDuration = traceDuration.value > 0f ? traceDuration.value : 1f / __pawnActionCtrler.currActionContext.animClipFps * traceFrames.value;
+                __traceDuration = traceDuration.value > 0f ? traceDuration.value : 1f / __pawnActionCtrler.currActionContext.animClipFramePerSecond * traceFrames.value;
                 __traceDuration /= __pawnActionCtrler.currActionContext.actionSpeed;
                 Debug.Assert(__traceDuration > 0f);
 
@@ -1439,7 +1436,7 @@ namespace Game.NodeCanvasExtension
             if (__sampleNum == 1)
             {
                 foreach (var r in traceResults)
-                    __pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__pawnBrain, r.pawnBrain, __actionData, specialTag.value, r.pawnCollider, __pawnActionCtrler.currActionContext.insufficientStamina));
+                    __pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__pawnBrain, r.pawnBrain, __actionData, r.pawnCollider, __pawnActionCtrler.currActionContext.insufficientStamina));
 
                 return 1;
             }
@@ -1452,7 +1449,7 @@ namespace Game.NodeCanvasExtension
                     if (__sentDamageBrains.Contains(r.pawnBrain)) continue;
                     
                     __sentDamageBrains.Add(r.pawnBrain);
-                    __pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__pawnBrain, r.pawnBrain, __actionData, specialTag.value, r.pawnCollider, __pawnActionCtrler.currActionContext.insufficientStamina));
+                    __pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__pawnBrain, r.pawnBrain, __actionData, r.pawnCollider, __pawnActionCtrler.currActionContext.insufficientStamina));
 
                     //* Debuff 할당
                     if (!debuffParams.isNoneOrNull && debuffParams.value.Length > 0)
@@ -1490,7 +1487,7 @@ namespace Game.NodeCanvasExtension
             Debug.Assert(actionData != null);
             Debug.Assert(!targetBrain.isNoneOrNull);
 
-            pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(pawnBrain, targetBrain.value, actionData, string.Empty, targetColliderHelper.value.pawnCollider, false));
+            pawnBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(pawnBrain, targetBrain.value, actionData, targetColliderHelper.value.pawnCollider, false));
             
             EndAction(true);
         }

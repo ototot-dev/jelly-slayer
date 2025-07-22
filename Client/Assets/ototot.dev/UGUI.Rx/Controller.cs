@@ -30,6 +30,7 @@ namespace UGUI.Rx
         }
 
         public bool IsHidden => template == null || template.SetHidden;
+        public bool isDimmed;
         public bool isLoaded;
         public int loadTryCount;
         public int showCount;

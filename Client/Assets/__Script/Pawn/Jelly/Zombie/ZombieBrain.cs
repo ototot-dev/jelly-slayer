@@ -55,7 +55,7 @@ namespace Game
                 else
                 {
                     //* 공격 시작
-                    // if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && !StatusCtrler.CheckStatus(Game.PawnStatus.CanNotAction) && !StatusCtrler.CheckStatus(Game.PawnStatus.Staggered) && base.CheckTargetVisibility())
+                    // if (string.IsNullOrEmpty(ActionCtrler.GetPendingActionData().ActionName) && !StatusCtrler.CheckStatus(Game.PawnStatus.CanNotAction) && !StatusCtrler.CheckStatus(Game.PawnStatus.Staggered) && base.CheckTargetVisibility())
                     // {
                     //     var selection = ActionDataSelector.RandomSelection(BB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position), BB.stat.stamina.Value, true);
                     //     if (selection != null)

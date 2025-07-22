@@ -26,7 +26,10 @@ namespace Game
         [Header("Parameter")]
         public float actionLayerBlendInSpeed = 1f;
         public float actionLayerBlendOutSpeed = 1f;
-        public float legAnimGlueBlendSpeed = 1f;
+        public float legAnimatorBlendInSpeed = 1f;
+        public float legAnimatorBlendOutSpeed = 1f;
+        public float ragdollAnimatorBlendInSpeed = 1f;
+        public float ragdollAnimatorBlendOutSpeed = 1f;
         public float guardParryRootMotionMultiplier = 1f;
 
         //* Animator 레이어 인덱스 값 
@@ -52,6 +55,25 @@ namespace Game
         ActionData __chainsawActionData;
         Vector3[] __8waysBlendTreePosXY;
 
+        protected override float GetLegAnimatorBlendSpeed()
+        {
+            // if (ragdollAnimator.Handler.AnimatingMode == FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Falling)
+            if (CheckAnimStateTriggered("Fall (Pose)"))
+                return -legAnimatorBlendOutSpeed;
+            else if (__brain.BB.IsRolling || __brain.BB.IsHanging)
+                return -legAnimatorBlendOutSpeed;
+
+            return legAnimatorBlendInSpeed;
+        }
+
+        protected override float GetRagdollAnimatorBlendSpeed()
+        {
+            if (__brain.BB.IsDown || __brain.BB.IsDead)
+                return ragdollAnimatorBlendInSpeed;
+
+            return -ragdollAnimatorBlendOutSpeed;
+        }
+
         public override void OnAnimatorMoveHandler()
         {
             if (IsRootMotionForced())
@@ -72,67 +94,43 @@ namespace Game
         {
             mainAnimator.SetLayerWeight((int)LayerIndices.Interaction, 0f);
 
-            if (ragdollAnimator.Handler.AnimatingMode == FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Falling)
-            {
-                rigSetup.weight = 0f;
-                spineOverrideTransform.weight = 0f;
-                headMultiAim.weight = 0f;
-                leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
-                leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
+            legAnimator.LegsAnimatorBlend = Mathf.Clamp01(legAnimator.LegsAnimatorBlend + GetLegAnimatorBlendSpeed() * Time.deltaTime);
 
-                if (legAnimator.enabled) legAnimator.enabled = false;
+            if (legAnimator.enabled && legAnimator.LegsAnimatorBlend <= 0f)
+                legAnimator.enabled = false;
+            else if (!legAnimator.enabled && legAnimator.LegsAnimatorBlend > 0f)
+                legAnimator.enabled = true;
 
-                legAnimator.User_SetIsMoving(false);
-                legAnimator.User_SetIsGrounded(false);
-                legAnimator.LegsAnimatorBlend = 0f;
-                legAnimator.MainGlueBlend = 0f;
-                ragdollAnimator.RagdollBlend = 1f;
-
-                return;
-            }
+            ragdollAnimator.RagdollBlend = Mathf.Clamp(ragdollAnimator.RagdollBlend + GetRagdollAnimatorBlendSpeed() * Time.deltaTime, 0.01f, 1f);
 
             //* Down, Dead 상태에선 Animation 처리를 모두 끈다.
-            if (CheckAnimStateTriggered("OnDown") || CheckAnimStateTriggered("OnDead"))
+            if (__brain.BB.IsDown || __brain.BB.IsDead)
             {
                 rigSetup.weight = 0f;
-                spineOverrideTransform.weight = 0f;
                 headMultiAim.weight = 0f;
+                spineOverrideTransform.weight = 0f;
                 leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
                 leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
-
-                if (legAnimator.enabled) legAnimator.enabled = false;
-
-                legAnimator.User_SetIsMoving(false);
-                legAnimator.User_SetIsGrounded(false);
-                legAnimator.LegsAnimatorBlend = 0f;
-                legAnimator.MainGlueBlend = 0f;
-                ragdollAnimator.RagdollBlend = 1f;
 
                 mainAnimator.SetLayerWeight((int)LayerIndices.LeftArm, 0f);
                 mainAnimator.SetLayerWeight((int)LayerIndices.RightArm, 0f);
                 mainAnimator.SetLayerWeight((int)LayerIndices.Action, __brain.ActionCtrler.GetAdvancedActionLayerWeight(mainAnimator.GetLayerWeight((int)LayerIndices.Action), actionLayerBlendInSpeed, actionLayerBlendOutSpeed, Time.deltaTime));
+
                 mainAnimator.SetBool("IsGuarding", false);
                 mainAnimator.SetBool("IsMoving", false);
             }
             else if (__brain.BB.IsRolling)
             {
                 rigSetup.weight = 0f;
-                spineOverrideTransform.weight = 0f;
                 headMultiAim.weight = 0f;
+                spineOverrideTransform.weight = 0f;
                 leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
                 leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
-
-                if (legAnimator.enabled) legAnimator.enabled = false;
-
-                legAnimator.User_SetIsMoving(false);
-                legAnimator.User_SetIsGrounded(false);
-                legAnimator.LegsAnimatorBlend = 0f;
-                legAnimator.MainGlueBlend = 0f;
-                ragdollAnimator.RagdollBlend = 0.01f;
 
                 mainAnimator.SetLayerWeight((int)LayerIndices.LeftArm, 0f);
                 mainAnimator.SetLayerWeight((int)LayerIndices.RightArm, 0f);
                 mainAnimator.SetLayerWeight((int)LayerIndices.Action, 1f);
+
                 mainAnimator.SetBool("IsMoving", false);
                 mainAnimator.SetFloat("MoveSpeed", 0f);
                 mainAnimator.SetFloat("MoveAnimSpeed", 1f);
@@ -147,17 +145,10 @@ namespace Game
                 leftLegBoneSimulator.StimulatorAmount = leftLegBoneSimulator.StimulatorAmount.LerpSpeed(0.4f, 1f, Time.deltaTime);
                 rightLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount.LerpSpeed(0.5f, 1f, Time.deltaTime);
 
-                if (legAnimator.enabled) legAnimator.enabled = false;
-
-                legAnimator.User_SetIsMoving(false);
-                legAnimator.User_SetIsGrounded(false);
-                legAnimator.LegsAnimatorBlend = 0f;
-                legAnimator.MainGlueBlend = 0f;
-                ragdollAnimator.RagdollBlend = 0.01f;
-
                 mainAnimator.SetLayerWeight((int)LayerIndices.LeftArm, 0f);
                 mainAnimator.SetLayerWeight((int)LayerIndices.RightArm, 0f);
                 mainAnimator.SetLayerWeight((int)LayerIndices.Action, __brain.ActionCtrler.GetAdvancedActionLayerWeight(mainAnimator.GetLayerWeight((int)LayerIndices.Action), actionLayerBlendInSpeed, actionLayerBlendOutSpeed, Time.deltaTime));
+
                 mainAnimator.SetBool("IsMoving", false);
                 mainAnimator.SetFloat("MoveSpeed", 0f);
                 mainAnimator.SetFloat("MoveAnimSpeed", 1f);
@@ -196,8 +187,8 @@ namespace Game
                 }
                 else
                 {
-                    spineOverrideTransform.weight = (mainAnimator.GetBool("IsGuarding") || CheckAnimStateTriggered("GuardParry")) ? 1f : 0f;
                     headMultiAim.weight = 1f;
+                    spineOverrideTransform.weight = (mainAnimator.GetBool("IsGuarding") || CheckAnimStateTriggered("GuardParry")) ? 1f : 0f;
                     leftArmTwoBoneIK.weight = Mathf.Clamp01(leftArmTwoBoneIK.weight.LerpSpeed(0f, 4f, Time.deltaTime));
                     rightArmTwoBoneIK.weight = Mathf.Clamp01(leftArmTwoBoneIK.weight.LerpSpeed(0f, 4f, Time.deltaTime));
                     leftLegBoneSimulator.StimulatorAmount = Mathf.Clamp01(leftLegBoneSimulator.StimulatorAmount.LerpSpeed(0f, 1f, Time.deltaTime));
@@ -207,34 +198,16 @@ namespace Game
                     mainAnimator.SetLayerWeight((int)LayerIndices.RightArm, __brain.BB.IsGuarding || CheckAnimStateTriggered("DrinkPotion") ? 1f : 0f);
                 }
 
-                if (!legAnimator.enabled) legAnimator.enabled = true;
-
-                legAnimator.LegsAnimatorBlend = 1f;
                 legAnimator.MainGlueBlend = 1f - Mathf.Clamp01(__brain.Movement.CurrVelocity.magnitude / __brain.Movement.moveSpeed);
                 legAnimator.User_SetIsMoving(__brain.Movement.CurrVelocity.sqrMagnitude > 0f);
                 legAnimator.User_SetIsGrounded(__brain.Movement.IsOnGround && !__brain.BB.IsJumping && (!__brain.ActionCtrler.CheckActionRunning() || __brain.ActionCtrler.currActionContext.legAnimGlueEnabled));
-                ragdollAnimator.RagdollBlend = 0.01f;
 
                 if (__brain.StatusCtrler.CheckStatus(PawnStatus.Staggered) || __brain.StatusCtrler.CheckStatus(PawnStatus.CanNotGuard))
                     mainAnimator.SetBool("IsGuarding", false);
                 else if (__brain.BB.IsGuarding && __brain.BB.action.punchChargingLevel.Value < 0)
                     mainAnimator.SetBool("IsGuarding", true);
 
-                // TODO: healingPotion Show/Hide 임시 코드
-                if (CheckAnimStateTriggered("DrinkPotion"))
-                {
-                    if (!__brain.BB.children.healingPotion.activeSelf)
-                        __brain.BB.children.healingPotion.SetActive(true);
-                }
-                else
-                {
-                    if (__brain.BB.children.healingPotion.activeSelf)
-                        __brain.BB.children.healingPotion.SetActive(false);
-                }
-
-                if (CheckAnimStateTriggered("DrinkPotion"))
-                    mainAnimator.SetLayerWeight((int)LayerIndices.Action, 0f);
-                else if (CheckAnimStateTriggered("GuardParry"))
+                if (CheckAnimStateTriggered("GuardParry"))
                     mainAnimator.SetLayerWeight((int)LayerIndices.Action, 1f);
                 else
                     mainAnimator.SetLayerWeight((int)LayerIndices.Action, __brain.ActionCtrler.GetAdvancedActionLayerWeight(mainAnimator.GetLayerWeight((int)LayerIndices.Action), actionLayerBlendInSpeed, actionLayerBlendOutSpeed, Time.deltaTime));
@@ -340,25 +313,6 @@ namespace Game
 
             FindStateMachineTriggerObservable("Idle (LArm)").OnStateEnterAsObservable().Subscribe(_ => mainAnimator.SetLayerWeight(1, 0f)).AddTo(this);
             FindStateMachineTriggerObservable("Idle (LArm)").OnStateExitAsObservable().Subscribe(_ => mainAnimator.SetLayerWeight(1, 1f)).AddTo(this);
-
-            FindStateMachineTriggerObservable("OnDown (Start)").OnStateEnterAsObservable().Subscribe(s =>
-            {
-                legAnimator.User_FadeToDisabled(0.1f);
-                ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Standing;
-                Observable.Timer(TimeSpan.FromSeconds(0.4f)).Subscribe(_ => ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Falling).AddTo(this);
-            }).AddTo(this);
-
-            FindStateMachineTriggerObservable("OnDown (End)").OnStateEnterAsObservable().Subscribe(s =>
-            {
-                __brain.Movement.GetCharacterMovement().SetPosition(__brain.AnimCtrler.ragdollAnimator.Handler.DummyReference.transform.GetChild(0).position);
-                ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Standing;
-            }).AddTo(this);
-
-            FindStateMachineTriggerObservable("OnDown (End)").OnStateExitAsObservable().Subscribe(s =>
-            {
-                legAnimator.User_FadeEnabled(0.1f);
-                ragdollAnimator.Handler.AnimatingMode = FIMSpace.FProceduralAnimation.RagdollHandler.EAnimatingMode.Off;
-            }).AddTo(this);
 
             FindStateMachineTriggerObservable("PunchParry (Charge)").OnStateEnterAsObservable().Subscribe(_ =>
             {

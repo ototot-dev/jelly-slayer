@@ -225,7 +225,7 @@ namespace Game
                     if (nextActionData != null)
                     {
                         if (ActionCtrler.CheckActionRunning()) ActionCtrler.CancelAction(false);
-                        ActionCtrler.SetPendingAction(nextActionData.actionName, string.Empty, string.Empty, ActionDataSelector.CurrSequence().GetPaddingTime());
+                        ActionCtrler.SetPendingAction(nextActionData.actionName, -1f, ActionDataSelector.CurrSequence().GetPaddingTime());
                     }
                 }
             };

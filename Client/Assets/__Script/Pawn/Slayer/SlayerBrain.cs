@@ -175,6 +175,7 @@ namespace Game
             {
                 if (Time.time - Mathf.Max(ActionCtrler.LastActionTimeStamp, PawnHP.LastDamageTimeStamp, Movement.LastJumpTimeStamp) > BB.stat.staminaRecoverTimeThreshold)
                     BB.stat.RecoverStamina(Mathf.Max(ActionCtrler.LastActionTimeStamp, PawnHP.LastDamageTimeStamp, Movement.LastJumpTimeStamp), Time.deltaTime);
+
                 BB.stat.ReduceStance(PawnHP.LastDamageTimeStamp, Time.deltaTime);
             };
 
@@ -251,9 +252,9 @@ namespace Game
 
                 switch (damageContext.receiverPenalty.Item1)
                 {
-                    case Game.PawnStatus.Staggered: ActionCtrler.StartAction(damageContext, "!OnHit", string.Empty, string.Empty); break;
-                    case Game.PawnStatus.KnockDown: ActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty, string.Empty); break;
-                    case Game.PawnStatus.Groggy: ActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty, string.Empty); break;
+                    case Game.PawnStatus.Staggered: ActionCtrler.StartAction(damageContext, "!OnHit"); break;
+                    case Game.PawnStatus.KnockDown: ActionCtrler.StartAction(damageContext, "!OnKnockDown"); break;
+                    case Game.PawnStatus.Groggy: ActionCtrler.StartAction(damageContext, "!OnGroggy"); break;
                 }
             }
 
@@ -271,11 +272,11 @@ namespace Game
             switch (damageContext.actionResult)
             {
                 case ActionResults.Blocked: 
-                    ActionCtrler.StartAction(damageContext, "!OnBlocked", string.Empty, string.Empty); break;
+                    ActionCtrler.StartAction(damageContext, "!OnBlocked"); break;
                     
                 case ActionResults.PunchParrying:
                 case ActionResults.GuardParrying:
-                    ActionCtrler.StartAction(damageContext, damageContext.senderPenalty.Item1 == Game.PawnStatus.Groggy ? "!OnGroggy" : "!OnParried", string.Empty, string.Empty); break;
+                    ActionCtrler.StartAction(damageContext, damageContext.senderPenalty.Item1 == Game.PawnStatus.Groggy ? "!OnGroggy" : "!OnParried"); break;
             }
         }
         public void AddRagePoint(float rage)

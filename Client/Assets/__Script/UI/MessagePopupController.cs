@@ -40,7 +40,7 @@ namespace Game
 
             Observable.Timer(TimeSpan.FromSeconds(_showDuration)).Subscribe(_ =>
             {
-                this.Hide().Unload();
+                this.HideDimmed().Unload();
             });
         }
     }

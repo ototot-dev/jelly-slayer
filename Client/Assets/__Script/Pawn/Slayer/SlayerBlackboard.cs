@@ -18,7 +18,7 @@ namespace Game
 
         [Serializable]
         public class Body
-        {   
+        {
             public ReactiveProperty<DroneBotBrain> hangingBrain = new();
             public BoolReactiveProperty isJumping = new();
             public BoolReactiveProperty isRolling = new();
@@ -32,7 +32,7 @@ namespace Game
             public float rollingDistance = 2f;
             public float rollingDuration = 0.2f;
             public float jumpHeight = 1f;
-            public float smashingHeight = 1f;
+            public float knockDownRagdollDelay = 1f;
         }
 
         public Body body = new();

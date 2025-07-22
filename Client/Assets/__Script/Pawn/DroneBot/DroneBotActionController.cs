@@ -1,4 +1,5 @@
 using System;
+using NodeCanvas.Framework.Internal;
 using UniRx;
 using UnityEngine;
 
@@ -23,6 +24,9 @@ namespace Game
 
             if (!base.CanRootMotion(rootMotionVec))
                 return false;
+
+            //* RootMotion이 켜져 있다면 movementEnabled은 반드시 꺼져 있어야 함 (RootMotion 벡터값이 이동 벡터값에 영향을 줌)
+            Debug.Assert(!currActionContext.movementEnabled);
 
             if (__brain.BB.TargetBrain != null && __brain.SensorCtrler.TouchingColliders.Contains(__brain.BB.TargetBrain.coreColliderHelper.pawnCollider))
             {
@@ -201,7 +205,13 @@ namespace Game
                         })
                         .ContinueWith(AssaultActionObservable(startPosition, Time.time + 0.1f, 0.2f)).Subscribe().AddTo(this);
                 }
+            }
+            else if (actionName == "Heal")
+            {
+                __brain.InvalidateDecision();
+                __brain.BB.decision.currDecision.Value = DroneBotBrain.Decisions.Heal;
 
+                return HealActionObservable().Subscribe().AddTo(this);
             }
 
             return base.StartCustomAction(ref damageContext, actionName);
@@ -233,7 +243,7 @@ namespace Game
                     var assaultActionData = DatasheetManager.Instance.GetActionData(__brain.BB.HostBrain.BB.common.pawnId, "Assault");
                     Debug.Assert(assaultActionData != null);
 
-                    __brain.BB.HostBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__brain.BB.HostBrain, __assaultActionTargetBrain, assaultActionData, currActionContext.specialTag, __assaultActionTargetBrain.bodyHitColliderHelper.pawnCollider, false));
+                    __brain.BB.HostBrain.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(__brain.BB.HostBrain, __assaultActionTargetBrain, assaultActionData, __assaultActionTargetBrain.bodyHitColliderHelper.pawnCollider, false));
                     __brain.BB.HostBrain.Movement.FinishHanging();
                     __brain.BB.HostBrain.Movement.StartJump(1f);
                     __brain.BB.HostBrain.BB.body.isJumping.Take(2).Skip(1).Subscribe(v =>
@@ -257,6 +267,34 @@ namespace Game
                         __brain.Movement.GetCharacterMovement().SetPosition(Vector3.Lerp(startPosition, targetPosition, alpha));
                         __brain.Movement.GetCharacterMovement().SetRotation(Quaternion.LookRotation((targetPosition - __brain.GetWorldPosition()).Vector2D().normalized));
                     }
+                });
+        }
+
+        IObservable<long> HealActionObservable()
+        {
+            __brain.InvalidateDecision();
+            __brain.BB.decision.currDecision.Value = DroneBotBrain.Decisions.Heal;
+
+            //* 최초 1번은 즉시 회복시켜줌
+            __brain.BB.HostBrain.PawnHP.Recover(__brain.BB.action.healAmount, string.Empty);
+
+            //* RootMotion은 꺼줌
+            currActionContext.rootMotionEnabled = false;
+
+            return Observable.Interval(TimeSpan.FromSeconds(__brain.BB.action.healInterval)).Take(__brain.BB.action.healCount)
+                .DoOnCompleted(() =>
+                {
+                    //* FSM 액션이 종료될 수 있도록, actionDisposable은 null로 셋팅 (WaitActionDisposable 태스크에서 액션이 종료됨) 
+                    currActionContext.actionDisposable = null;
+                    __brain.InvalidateDecision(0.1f);
+                })
+                .DoOnCancel(() =>
+                {
+                    __brain.InvalidateDecision(0.1f);
+                })
+                .Do(_ =>
+                {
+                    __brain.BB.HostBrain.PawnHP.Recover(__brain.BB.action.healAmount, string.Empty);
                 });
         }
 

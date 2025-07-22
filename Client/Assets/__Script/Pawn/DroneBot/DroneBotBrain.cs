@@ -58,6 +58,7 @@ namespace Game
             Catch,
             Strike,
             Hooking,
+            Heal,
             Spacing,
             Approach,
             Max
@@ -160,22 +161,24 @@ namespace Game
                 {   
                     ;
                 }
+                else if (BB.CurrDecision == Decisions.Heal)
+                {   
+                    ;
+                }
+                else if (BB.CurrDecision == Decisions.Spacing || BB.CurrDecision == Decisions.Approach)
+                {
+                    var distance = (BB.FormationSpot.transform.position - coreColliderHelper.transform.position).Magnitude2D();
+                    
+                    if (BB.CurrDecision == Decisions.Spacing && distance > BB.SpacingOutDistance)
+                        InvalidateDecision();
+                    else if (BB.CurrDecision == Decisions.Approach && distance <= BB.SpacingInDistance)
+                        InvalidateDecision();
+                }
                 else
                 {
-                    if (BB.CurrDecision == Decisions.None)
-                    {
-                        //* 액션 수행 중에는 Decision 갱신은 하지 않음
-                        if (__decisionCoolTime <= 0f && !ActionCtrler.CheckActionRunning())
-                            BB.decision.currDecision.Value = MakeDecision();
-                    }
-                    else if (BB.CurrDecision == Decisions.Spacing || BB.CurrDecision == Decisions.Approach)
-                    {
-                        var distance = (BB.FormationSpot.transform.position - coreColliderHelper.transform.position).Magnitude2D();
-                        if (BB.CurrDecision == Decisions.Spacing && distance > BB.SpacingOutDistance)
-                            InvalidateDecision();
-                        else if (BB.CurrDecision == Decisions.Approach && distance <= BB.SpacingInDistance)
-                            InvalidateDecision();
-                    }
+                    //* 액션 수행 중에는 Decision 갱신은 하지 않음
+                    if (__decisionCoolTime <= 0f && !ActionCtrler.CheckActionRunning())
+                        BB.decision.currDecision.Value = MakeDecision();
                 }
             }
             else

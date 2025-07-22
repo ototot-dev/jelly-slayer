@@ -6,7 +6,7 @@ namespace Game
     public static class PawnBlackboardHelper
     {
         public static float ConsumeActionPoint(this PawnBlackboard.Stat stat, int delta)
-        {   
+        {
             stat.actionPoint.Value = Math.Max(0, stat.actionPoint.Value - delta);
             return stat.actionPoint.Value;
         }

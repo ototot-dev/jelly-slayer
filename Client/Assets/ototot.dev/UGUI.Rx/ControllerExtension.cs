@@ -200,18 +200,23 @@ namespace UGUI.Rx
 
         public static T ShowDimmed<T>(this T ctrler, RectTransform dimmed) where T : Controller
         {
+            ctrler.isDimmed = true;
             dimmed.gameObject.SetActive(true);
             return Show<T>(ctrler, dimmed.transform as RectTransform);
         }
 
         public static IObservable<T> ShowDimmedAsObservable<T>(this T ctrler, RectTransform dimmed) where T : Controller
         {
+            ctrler.isDimmed = true;
             dimmed.gameObject.SetActive(true);
             return ShowAsObservable<T>(ctrler, dimmed);
         }
 
         public static T HideDimmed<T>(this T ctrler) where T : Controller
         {
+            //* ShowDimmed() / HideDimmed() 페어링 체크
+            Debug.Assert(ctrler.isDimmed);
+
             var dimmed = ctrler.template.transform.parent;
 
             HideAsObservable<T>(ctrler).Subscribe(_ =>
@@ -225,6 +230,9 @@ namespace UGUI.Rx
 
         public static IObservable<T> HideDimmedAsObservable<T>(this T ctrler) where T : Controller
         {
+            //* ShowDimmed() / HideDimmed() 페어링 체크
+            Debug.Assert(ctrler.isDimmed);
+
             var dimmed = ctrler.template.transform.parent;
 
             return HideAsObservable<T>(ctrler).Do(_ =>

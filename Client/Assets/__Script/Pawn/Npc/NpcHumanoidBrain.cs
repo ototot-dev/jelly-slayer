@@ -76,11 +76,13 @@ namespace Game
                 if ((actionContext.actionData?.staminaCost ?? 0) > 0)
                     JellyBB.stat.ReduceStamina(actionContext.actionData.staminaCost);
 
+                var decisionCoolTime = 0.1f;
+                
+                if (damageContext.receiverPenalty != null && damageContext.receiverPenalty.Item1 != PawnStatus.None)
+                    decisionCoolTime += damageContext.receiverPenalty.Item2;
+
                 //* 액션 수행 중에 현재 이동 제어를 끔
-                if (damageContext.receiverPenalty != null)
-                    InvalidateDecision(damageContext.receiverPenalty.Item1 != PawnStatus.None ? damageContext.receiverPenalty.Item2 : 0.1f);
-                else
-                    InvalidateDecision();
+                InvalidateDecision(decisionCoolTime);
             };
         }
 
@@ -104,9 +106,9 @@ namespace Game
 
                 switch (damageContext.receiverPenalty.Item1)
                 {
-                    case Game.PawnStatus.Staggered: __pawnActionCtrler.StartAction(damageContext, "!OnHit", string.Empty, string.Empty); break;
-                    case Game.PawnStatus.KnockDown: __pawnActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty, string.Empty); break;
-                    case Game.PawnStatus.Groggy: __pawnActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty, string.Empty); break;
+                    case Game.PawnStatus.Staggered: __pawnActionCtrler.StartAction(damageContext, "!OnHit"); break;
+                    case Game.PawnStatus.KnockDown: __pawnActionCtrler.StartAction(damageContext, "!OnKnockDown"); break;
+                    case Game.PawnStatus.Groggy: __pawnActionCtrler.StartAction(damageContext, "!OnGroggy"); break;
                 }
             }
             
@@ -127,12 +129,12 @@ namespace Game
             switch (damageContext.actionResult)
             {
                 case ActionResults.Blocked: 
-                    __pawnActionCtrler.StartAction(damageContext, "!OnBlocked", string.Empty, string.Empty);
+                    __pawnActionCtrler.StartAction(damageContext, "!OnBlocked");
                     break;
 
                 case ActionResults.PunchParrying:
                 case ActionResults.GuardParrying:
-                    __pawnActionCtrler.StartAction(damageContext, damageContext.senderPenalty.Item1 == Game.PawnStatus.Groggy ? "!OnGroggy" : "!OnParried", string.Empty, string.Empty); 
+                    __pawnActionCtrler.StartAction(damageContext, damageContext.senderPenalty.Item1 == Game.PawnStatus.Groggy ? "!OnGroggy" : "!OnParried"); 
                     break;
             }
         }

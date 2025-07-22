@@ -71,20 +71,20 @@ namespace Game
         }
         void IPawnEventListener.OnReceivePawnDamageContext(PawnBrainController sender, PawnHeartPointDispatcher.DamageContext damageContext)
         {
-            if (damageContext.senderActionSpecialTag == "Encounter")
-            {
-                Debug.Assert(sender == possessedBrain);
-                possessedBrain.BB.action.encounterBrain.Value = damageContext.receiverBrain;
+            // if (damageContext.senderActionSpecialTag == "Encounter")
+            // {
+            //     Debug.Assert(sender == possessedBrain);
+            //     possessedBrain.BB.action.encounterBrain.Value = damageContext.receiverBrain;
 
-                __Logger.LogR2(gameObject, "OnReceivePawnDamageContext", "Groggy-Encounter", "encounterBrain", damageContext.receiverBrain);
-            }
-            else if (damageContext.groggyBreakHit)
-            {
-                Debug.Assert(sender == possessedBrain);
-                possessedBrain.BB.action.encounterBrain.Value = null;
+            //     __Logger.LogR2(gameObject, "OnReceivePawnDamageContext", "Groggy-Encounter", "encounterBrain", damageContext.receiverBrain);
+            // }
+            // else if (damageContext.groggyBreakHit)
+            // {
+            //     Debug.Assert(sender == possessedBrain);
+            //     possessedBrain.BB.action.encounterBrain.Value = null;
 
-                __Logger.LogR2(gameObject, "OnReceivePawnDamageContext", "Groggy-Break");
-            }
+            //     __Logger.LogR2(gameObject, "OnReceivePawnDamageContext", "Groggy-Break");
+            // }
         }
         void IPawnEventListener.OnReceivePawnSpawningStateChanged(PawnBrainController sender, PawnSpawnStates state)
         {
@@ -687,8 +687,12 @@ namespace Game
             if (_isEnable_Drink == false)
                 return;
 
-            Debug.Log("<color=red>OnDrink</color>");
-            possessedBrain.ActionCtrler.SetPendingAction("DrinkPotion");
+            Debug.Log("<color=red>Heal</color>");
+            // possessedBrain.ActionCtrler.SetPendingAction("DrinkPotion");
+
+            var droneBot = possessedBrain.droneBotFormationCtrler.PickDroneBot();
+            if (droneBot != null)
+                droneBot.ActionCtrler.SetPendingAction("Heal");
         }
 
         public void OnBurst(InputValue value)

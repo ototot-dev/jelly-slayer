@@ -25,6 +25,8 @@ namespace Game
         readonly Dictionary<int, PawnAnimStateMachineTrigger> __runningStateMachineTriggers = new();
         public bool CheckAnimStateTriggered(string stateName) => __runningStateMachineTriggers.ContainsKey(Animator.StringToHash(stateName));
         public bool CheckAnimStateTriggered(int stateNameHash) => __runningStateMachineTriggers.ContainsKey(stateNameHash);
+        protected virtual float GetLegAnimatorBlendSpeed() => 0f;
+        protected virtual float GetRagdollAnimatorBlendSpeed() => 0f;
 
         public PawnAnimStateMachineTrigger FindStateMachineTriggerObservable(string stateName)
         {

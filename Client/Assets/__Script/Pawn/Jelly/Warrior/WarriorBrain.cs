@@ -35,7 +35,7 @@ namespace Game
                     return;
                     
                 //* 공격
-                // if (!ActionCtrler.CheckActionRunning() && string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && !StatusCtrler.CheckStatus(Game.PawnStatus.Staggered) && base.CheckTargetVisibility())
+                // if (!ActionCtrler.CheckActionRunning() && string.IsNullOrEmpty(ActionCtrler.GetPendingActionData().ActionName) && !StatusCtrler.CheckStatus(Game.PawnStatus.Staggered) && base.CheckTargetVisibility())
                 // {
                 //     var selection = ActionDataSelector.RandomSelection(BB.TargetBrain.coreColliderHelper.GetApproachDistance(coreColliderHelper.transform.position), BB.stat.stamina.Value, true);
                 //     if (selection != null)
@@ -51,7 +51,7 @@ namespace Game
             if (damageContext.actionResult == ActionResults.Blocked)
             {   
                 //* 반격
-                // if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && CheckTargetVisibility())
+                // if (string.IsNullOrEmpty(ActionCtrler.GetPendingActionData().ActionName) && CheckTargetVisibility())
                 // {
                 //     var selection = ActionDataSelector.RandomSelection(0, 100, true);
                 //     if (selection != null)

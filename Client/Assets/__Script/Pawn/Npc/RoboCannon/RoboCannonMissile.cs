@@ -67,7 +67,7 @@ namespace Game
                     Debug.Assert(helper != null);
 
                     if (helper.pawnBrain != emitterBrain.Value && helper.pawnBrain.PawnBB.common.pawnName != "Slayer")
-                        emitterBrain.Value.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, emitterBrain.Value, helper.pawnBrain, actionData, string.Empty, __traceCollidersNonAlloc[i], false));
+                        emitterBrain.Value.PawnHP.Send(new PawnHeartPointDispatcher.DamageContext(this, emitterBrain.Value, helper.pawnBrain, actionData, __traceCollidersNonAlloc[i], false));
                 }
             }
 

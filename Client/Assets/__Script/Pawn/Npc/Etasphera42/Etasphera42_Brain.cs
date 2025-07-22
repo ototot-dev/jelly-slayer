@@ -156,7 +156,7 @@ namespace Game
             if (damageContext.actionResult == ActionResults.Blocked)
             {   
     
-                // if (string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && ActionDataSelector.EvaluateSelection(__counterActionData, -1f, 1f) && CheckTargetVisibility())
+                // if (string.IsNullOrEmpty(ActionCtrler.GetPendingActionData().ActionName) && ActionDataSelector.EvaluateSelection(__counterActionData, -1f, 1f) && CheckTargetVisibility())
                 // {
                 //     ActionDataSelector.ResetSelection(__counterActionData);
                 //     ActionCtrler.SetPendingAction("Counter");

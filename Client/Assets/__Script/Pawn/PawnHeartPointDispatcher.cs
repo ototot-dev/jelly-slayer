@@ -73,8 +73,6 @@ namespace Game
             public Collider hitCollider;
             public bool insufficientStamina;
             public ProjectileMovement projectile;
-            public string senderActionSpecialTag;
-            public string receiverActionSpecialTag;
             public MainTable.ActionData senderActionData;
             public MainTable.ActionData receiverActionData;
             public PawnBrainController senderBrain;
@@ -95,8 +93,6 @@ namespace Game
                 this.hitCollider = hitCollider;
                 insufficientStamina = false;
                 projectile = null;
-                senderActionSpecialTag = string.Empty;
-                receiverActionSpecialTag = string.Empty;
                 senderActionData = null;
                 receiverActionData = null;
                 senderBrain = null;
@@ -109,15 +105,13 @@ namespace Game
             }
 #endif
 
-            public DamageContext(PawnBrainController senderBrain, PawnBrainController receiverBrain, MainTable.ActionData actionData, string specialTag, Collider hitCollider, bool insufficientStamina)
+            public DamageContext(PawnBrainController senderBrain, PawnBrainController receiverBrain, MainTable.ActionData actionData, Collider hitCollider, bool insufficientStamina)
             {
                 timeStamp = Time.time;
                 hitPoint = hitCollider.TryGetComponent<PawnColliderHelper>(out var hitCollierHelper) ? hitCollierHelper.GetHitPoint(senderBrain.GetWorldPosition()) : receiverBrain.bodyHitColliderHelper.GetHitPoint(senderBrain.GetWorldPosition());
                 this.hitCollider = hitCollider;
                 this.insufficientStamina = insufficientStamina;
                 projectile = null;
-                senderActionSpecialTag = specialTag;
-                receiverActionSpecialTag = string.Empty;
                 senderActionData = actionData;
                 receiverActionData = null;
                 this.senderBrain = senderBrain;
@@ -129,15 +123,13 @@ namespace Game
                 finalDamage = -1;
             }
 
-            public DamageContext(PawnBrainController senderBrain, string specialTag, float finalDamage, PawnStatus penalty = PawnStatus.None, float penaltyDuration = -1)
+            public DamageContext(PawnBrainController senderBrain, float finalDamage, PawnStatus penalty = PawnStatus.None, float penaltyDuration = -1)
             {
                 timeStamp = Time.time;
                 hitPoint = senderBrain.bodyHitColliderHelper.GetWorldCenter();
                 hitCollider = null;
                 insufficientStamina = false;
                 projectile = null;
-                senderActionSpecialTag = specialTag;
-                receiverActionSpecialTag = string.Empty;
                 senderActionData = null;
                 receiverActionData = null;
                 this.senderBrain = senderBrain;
@@ -149,15 +141,13 @@ namespace Game
                 this.finalDamage = finalDamage;
             }
 
-            public DamageContext(ProjectileMovement projectile, PawnBrainController senderBrain, PawnBrainController receiverBrain, MainTable.ActionData actionData, string specialTag, Collider hitCollider, bool insufficientStamina)
+            public DamageContext(ProjectileMovement projectile, PawnBrainController senderBrain, PawnBrainController receiverBrain, MainTable.ActionData actionData, Collider hitCollider, bool insufficientStamina)
             {
                 timeStamp = Time.time;
                 hitPoint = projectile.transform.position;
                 this.hitCollider = hitCollider;
                 this.insufficientStamina = insufficientStamina;
                 this.projectile = projectile;
-                senderActionSpecialTag = specialTag;
-                receiverActionSpecialTag = string.Empty;
                 this.senderActionData = actionData;
                 receiverActionData = null;
                 this.senderBrain = senderBrain;
@@ -176,7 +166,6 @@ namespace Game
                 hitCollider = null;
                 insufficientStamina = false;
                 projectile = null;
-                senderActionSpecialTag = receiverActionSpecialTag = string.Empty;
                 senderActionData = receiverActionData = null;
                 senderBrain = receiverBrain = null;
                 senderPenalty = receiverPenalty = new(PawnStatus.None, -1);
@@ -187,14 +176,22 @@ namespace Game
         }
 
         public Action<DamageContext, string> onAvoided;
+        public Action<string> OnRecovered;
         public Action<DamageContext> onDamaged;
         public Action<DamageContext> onDead;
 
-        public void Die(string causeOfDeath)
+        public void Recover(float recoverAmount, string reason)
+        {
+            heartPoint.Value = Mathf.Min(PawnBrain.PawnBB.stat.maxHeartPoint.Value, heartPoint.Value + recoverAmount);
+            OnRecovered?.Invoke(reason);
+        }
+
+        public void Die(string reason)
         {
             heartPoint.Value = 0;
-            onDead?.Invoke(new DamageContext(PawnBrain, causeOfDeath, heartPoint.Value));
             PawnBrain.PawnBB.common.isDead.Value = true;
+
+            onDead?.Invoke(new DamageContext(PawnBrain, heartPoint.Value));
         }
 
         public void Send(DamageContext damageContext) { ProcessDamageContext(ref damageContext); }
@@ -281,10 +278,10 @@ namespace Game
                 damageContext.senderBrain.PawnHP.onDamaged?.Invoke(damageContext);
             }
 
-            if (!string.IsNullOrEmpty(damageContext.senderActionSpecialTag) || damageContext.groggyBreakHit)
-                PawnEventManager.Instance.SendPawnDamageEvent(damageContext.senderBrain, damageContext);
-            if (!string.IsNullOrEmpty(damageContext.receiverActionSpecialTag))
-                PawnEventManager.Instance.SendPawnDamageEvent(damageContext.receiverBrain, damageContext);
+            // if (!string.IsNullOrEmpty(damageContext.senderActionSpecialTag) || damageContext.groggyBreakHit)
+            //     PawnEventManager.Instance.SendPawnDamageEvent(damageContext.senderBrain, damageContext);
+            // if (!string.IsNullOrEmpty(damageContext.receiverActionSpecialTag))
+            //     PawnEventManager.Instance.SendPawnDamageEvent(damageContext.receiverBrain, damageContext);
 
             damageContext.receiverBrain.PawnHP.LastDamageTimeStamp = Time.time;
         }

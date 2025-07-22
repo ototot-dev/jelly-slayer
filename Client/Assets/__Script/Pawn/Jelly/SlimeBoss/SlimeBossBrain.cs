@@ -166,9 +166,9 @@ namespace Game
 
                 switch (damageContext.receiverPenalty.Item1)
                 {
-                    case Game.PawnStatus.Groggy: ActionCtrler.StartAction(damageContext, "!OnGroggy", string.Empty, string.Empty); break;
-                    case Game.PawnStatus.Staggered: ActionCtrler.StartAction(damageContext, "!OnHit", string.Empty, string.Empty); break;
-                    case Game.PawnStatus.KnockDown: ActionCtrler.StartAction(damageContext, "!OnKnockDown", string.Empty, string.Empty); break;
+                    case Game.PawnStatus.Groggy: ActionCtrler.StartAction(damageContext, "!OnGroggy"); break;
+                    case Game.PawnStatus.Staggered: ActionCtrler.StartAction(damageContext, "!OnHit"); break;
+                    case Game.PawnStatus.KnockDown: ActionCtrler.StartAction(damageContext, "!OnKnockDown"); break;
                 }
             }
             else if (damageContext.finalDamage > 0 || damageContext.actionResult == ActionResults.Blocked || damageContext.actionResult == ActionResults.GuardParrying)
@@ -187,8 +187,8 @@ namespace Game
 
             switch (damageContext.actionResult)
             {
-                case ActionResults.GuardParrying: ActionCtrler.StartAction(damageContext, "!OnParried", string.Empty, string.Empty); break;
-                case ActionResults.Blocked: ActionCtrler.StartAction(damageContext, "!OnBlocked", string.Empty, string.Empty); break;
+                case ActionResults.GuardParrying: ActionCtrler.StartAction(damageContext, "!OnParried"); break;
+                case ActionResults.Blocked: ActionCtrler.StartAction(damageContext, "!OnBlocked"); break;
             }
         }
 
@@ -232,7 +232,7 @@ namespace Game
                         BB.currDecision.Value = Decisions.Approach;
 
                     var canAction1 = !BB.IsGroggy && !BB.IsDown && !BB.IsJumping && !BB.IsBumping && !BB.IsSmashing;
-                    var canAction2 = canAction1 && string.IsNullOrEmpty(ActionCtrler.PendingActionData.Item1) && !ActionCtrler.CheckActionRunning();
+                    var canAction2 = canAction1 && string.IsNullOrEmpty(ActionCtrler.GetPendingActionData().ActionName) && !ActionCtrler.CheckActionRunning();
                     var canAction3 = canAction2 && !BuffCtrler.CheckStatus(Game.PawnStatus.Staggered) && CheckTargetVisibility();
 
                     //* 공격 시작

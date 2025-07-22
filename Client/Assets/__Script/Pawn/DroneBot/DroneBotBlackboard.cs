@@ -23,6 +23,7 @@ namespace Game
         public float MinApproachDistance => body.minApproachDistance;
         public float HoldPositionRate => body.holdPositionRate;
         public float MoveAroundRate => body.moveAroundRate;
+        public float HealApproachDistance => action.healApproachDistance;
 
         [Serializable]
         public class Body
@@ -53,6 +54,20 @@ namespace Game
         }
 
         public Decision decision = new();
+
+        [Serializable]
+        public class Action
+        {
+            [Header("Heal")]
+            public int healCount = 1;
+            public float healAmount = 1f;
+            public float healInterval = 0.1f;
+            public float healApproachDistance = 1f;
+            public float healFlyHeight = 1f;
+            public float healFlyHeightAdjustSpeed = 1f;
+        }
+
+        public Action action = new();
 
         [Serializable]
         public class Resource
