@@ -3,6 +3,7 @@ using UGUI.Rx;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using UniRx.Triggers;
 
 namespace Game
 {
@@ -30,8 +31,9 @@ namespace Game
             GetComponentById<TMPro.TMP_Text>("title").text = _title;
             GetComponentById<TMPro.TMP_Text>("desc").text = _text;
 
-            Button button = GetComponentById<Button>("ok");
-            button?.onClick.AddListener(OnClickOK);
+            var button = GetComponentById<Button>("ok");
+            button.OnPointerClickAsObservable().Where(_ => button.interactable).Subscribe(_ => OnClickOK()).AddToHide(this);
+            //button.onClick.AddListener(OnClickOK);
         }
         public override void OnPostShow()
         {
@@ -42,12 +44,13 @@ namespace Game
             base.OnPreHide();
 
             Time.timeScale = 1.0f;
-            __dialogueDispatcher._isWaitCheck = true;
+            if(__dialogueDispatcher != null)
+               __dialogueDispatcher._isWaitCheck = true;
         }
         void OnClickOK() 
         {
             Debug.Log("OnClickOK");
-            this.Hide().Unload();
+            this.HideDimmed().Unload();
         }
     }
 }

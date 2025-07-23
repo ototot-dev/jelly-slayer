@@ -10,7 +10,9 @@ using Game.UI;
 using UnityEditor.Experimental.GraphView;
 using NUnit.Framework;
 using System.Collections.Generic;
-
+using MissionTable;
+using MainTable;
+using System.Linq;
 
 namespace Game
 {
@@ -102,12 +104,12 @@ namespace Game
             _curScene = GameContext.Instance.launcher._tutorialStartScene;
             switch (_curScene) 
             {
-                case TutorialScene.Tutorial_1: InitStartRoom(); break;
-                case TutorialScene.Tutorial_2: InitTurorialRoom_2(); break;
-                case TutorialScene.Tutorial_3: InitTurorialRoom_3(); break;
-                case TutorialScene.Tutorial_4: InitTurorialRoom_4(); break;
-                case TutorialScene.Tutorial_5: InitTurorialRoom_5(); break;
-                case TutorialScene.Tutorial_6: InitTurorialRoom_6(); break;
+                case TutorialScene.Tutorial_1: InitRoom(100); break;// InitStartRoom(); break;
+                case TutorialScene.Tutorial_2: InitRoom(101); break;
+                case TutorialScene.Tutorial_3: InitRoom(102); break;// InitTurorialRoom_3(); break;
+                case TutorialScene.Tutorial_4: InitRoom(103); break;// InitTurorialRoom_4(); break;
+                case TutorialScene.Tutorial_5: InitRoom(104); break;// InitTurorialRoom_5(); break;
+                case TutorialScene.Tutorial_6: InitRoom(105); break;// InitTurorialRoom_6(); break;
             }
             //Observable.FromCoroutine(ChangeRoom_Coroutine);
 
@@ -179,10 +181,9 @@ namespace Game
 
             controller.Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
 
-            Observable.Timer(TimeSpan.FromSeconds(5f)).Subscribe(_ =>
-            {
-                new GuidePopupController("Test", "text", __dialogueDispatcher).Load().ShowDimmed(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
-            });
+            //Observable.Timer(TimeSpan.FromSeconds(5f)).Subscribe(_ => {
+                //new GuidePopupController("Test", "text", __dialogueDispatcher).Load().ShowDimmed(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
+            //});
         }
 
         void InitLoadingPageCtrler(string nodeName, Action action = null) 
@@ -211,39 +212,20 @@ namespace Game
                 GameContext.Instance.cameraCtrler.RefreshConfinerVolume(confinerBoundingBox, Quaternion.Euler(45f, 45f, 0f), 10f);
         }
 
-        void InitStartRoom() 
-        { 
-            GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
-
-            __currSceneName = "Tutorial-PhoneRoom";
-            _curScene = TutorialScene.Tutorial_1;
-
-            //* 로딩 시작
-            __loadingPageCtrler = new LoadingPageController(new string[] { "Pawn/Player/Slayer-K", "Pawn/Player/DrontBot" }, 
-                new string[] { __currSceneName });
-            __loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
-            __loadingPageCtrler.onLoadingCompleted += () =>
-            {
-                //* 슬레이어 초기 위치 
-                var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint").transform;
-                RefreshPlayerCharacter(spawnPoint);
-
-                InitCamera();
-
-                InitLoadingPageCtrler("Tutorial-PhoneRoom", () => { });
-            };
-        }
-
-        // 긴 복도 + 적 출현
-        void InitTurorialRoom_2() 
+        void InitRoom(int mission_id)
         {
             GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
 
-            __currSceneName = "Tutorial-ShortCorridor";
-            _curScene = TutorialScene.Tutorial_2;
+            MissionData data = MissionTable.MissionData.MissionDataList.First(d => d.id == mission_id);
+            if (data == null) 
+            {
+                Debug.Log("Mission 로드 Fail, " + mission_id);
+                return;
+            }
+            __currSceneName = data.sceneName;
 
             //* 로딩 시작
-            __loadingPageCtrler = new LoadingPageController(new string[] { "Pawn/Npc/Rapex" }, 
+            __loadingPageCtrler = new LoadingPageController(new string[] { data.resPath1, data.resPath2 },
                 new string[] { __currSceneName });
             __loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
             __loadingPageCtrler.onLoadingCompleted += () =>
@@ -253,105 +235,12 @@ namespace Game
                 RefreshPlayerCharacter(spawnPoint);
 
                 InitCamera();
-                // Tutorial1
-                InitLoadingPageCtrler("Tutorial-Rapex", () => { });
+
+                // Yarn Script
+                InitLoadingPageCtrler(data.startNode, () => { });
             };
         }
 
-        // 로보 솔저
-        void InitTurorialRoom_4()
-        {
-            GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
-
-            __currSceneName = "Tutorial-ShortCorridor";
-            _curScene = TutorialScene.Tutorial_3;
-
-            //* 로딩 시작
-            __loadingPageCtrler = new LoadingPageController(new string[] { "Pawn/Npc/Rapex", "Pawn/Npc/RoboSoldier-Tutorial" }, 
-                new string[] { __currSceneName });
-            __loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
-            __loadingPageCtrler.onLoadingCompleted += () =>
-            {
-                //* 슬레이어 초기 위치 
-                var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint").transform;
-                RefreshPlayerCharacter(spawnPoint);
-
-                InitCamera();
-                // Tutorial1
-                InitLoadingPageCtrler("Tutorial-RoboSoldier", () => { });
-            };
-        }
-
-        // 원거리 적
-        void InitTurorialRoom_3()
-        {
-            GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
-
-            __currSceneName = "Tutorial-ShortCorridor";
-            _curScene = TutorialScene.Tutorial_4;
-
-            //* 로딩 시작
-            __loadingPageCtrler = new LoadingPageController(new string[] { "Pawn/Npc/RoboCannon" }, 
-                new string[] { __currSceneName });
-            __loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
-            __loadingPageCtrler.onLoadingCompleted += () =>
-            {
-                //* 슬레이어 초기 위치 
-                var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint").transform;
-                RefreshPlayerCharacter(spawnPoint);
-
-                InitCamera();
-                // Tutorial1
-                InitLoadingPageCtrler("Tutorial-RoboCannon", () => { });
-            };
-        }
-
-        // M82
-        void InitTurorialRoom_5()
-        {
-            GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
-
-            __currSceneName = "Tutorial-BattleRoom";
-            _curScene = TutorialScene.Tutorial_5;
-
-            //* 로딩 시작
-            __loadingPageCtrler = new LoadingPageController(new string[] { "Pawn/Npc/Etasphera42" }, 
-                new string[] { __currSceneName });
-            __loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
-            __loadingPageCtrler.onLoadingCompleted += () =>
-            {
-                //* 슬레이어 초기 위치 
-                var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint").transform;
-                RefreshPlayerCharacter(spawnPoint);
-
-                InitCamera();
-                // Tutorial1
-                InitLoadingPageCtrler("Tutorial-M82", () => { });
-            };
-        }
-        // 몽둥이 보스
-        void InitTurorialRoom_6()
-        {
-            GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
-
-            __currSceneName = "Tutorial-BattleRoom";
-            _curScene = TutorialScene.Tutorial_6;
-
-            //* 로딩 시작
-            __loadingPageCtrler = new LoadingPageController(new string[] { "Pawn/Npc/Therionide" },
-                new string[] { __currSceneName });
-            __loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
-            __loadingPageCtrler.onLoadingCompleted += () =>
-            {
-                //* 슬레이어 초기 위치 
-                var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint").transform;
-                RefreshPlayerCharacter(spawnPoint);
-
-                InitCamera();
-                // Tutorial1
-                InitLoadingPageCtrler("Tutorial-Therionide", () => { });
-            };
-        }
         public void DoEventCollider(int mode) 
         {
             switch (mode) 
@@ -386,10 +275,10 @@ namespace Game
             // Next Room
             switch (_curScene) 
             {
-                case TutorialScene.Tutorial_1: InitTurorialRoom_2(); break;
-                case TutorialScene.Tutorial_2: InitTurorialRoom_6(); break;
-                case TutorialScene.Tutorial_3: InitTurorialRoom_4(); break;
-                case TutorialScene.Tutorial_4: InitTurorialRoom_5(); break;
+                case TutorialScene.Tutorial_1: InitRoom(101); _curScene = TutorialScene.Tutorial_2; break;
+                case TutorialScene.Tutorial_2: InitRoom(105); _curScene = TutorialScene.Tutorial_6; break;
+                case TutorialScene.Tutorial_3: InitRoom(103); _curScene = TutorialScene.Tutorial_4; break;
+                case TutorialScene.Tutorial_4: InitRoom(104); _curScene = TutorialScene.Tutorial_5; break;
             }
             yield return new WaitUntil(() => __loadingPageCtrler == null);
 
