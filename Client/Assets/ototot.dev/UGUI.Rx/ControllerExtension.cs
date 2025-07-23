@@ -201,6 +201,7 @@ namespace UGUI.Rx
         {
             ctrler.isDimmed = true;
             dimmed.gameObject.SetActive(true);
+
             return Show<T>(ctrler, dimmed.transform as RectTransform);
         }
 
@@ -208,6 +209,7 @@ namespace UGUI.Rx
         {
             ctrler.isDimmed = true;
             dimmed.gameObject.SetActive(true);
+
             return ShowAsObservable<T>(ctrler, dimmed);
         }
 
