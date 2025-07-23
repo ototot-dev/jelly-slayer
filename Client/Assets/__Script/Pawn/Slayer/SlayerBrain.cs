@@ -85,7 +85,6 @@ namespace Game
         [Header("Component")]
         public DroneBotFormationController droneBotFormationCtrler;
 
-
         //public Highlighters.HighlighterSettings _highlighters;
 
         public SlayerBlackboard BB { get; private set; }
@@ -111,6 +110,9 @@ namespace Game
             SensorCtrler = GetComponent<PawnSensorController>();
             StatusCtrler = GetComponent<PawnStatusController>();
         }
+
+        IDisposable __regenHeartPointDisposable;
+        EffectInstance __regenHeartPointFx;
 
         protected override void StartInternal()
         {
@@ -181,14 +183,45 @@ namespace Game
 
             StatusCtrler.onStatusActive += (status) =>
             {
-                if (status == PawnStatus.IncreasePoise)
+                if (status == PawnStatus.RegenHeartPoint)
+                {
+                    var healInterval = 0.5f;
+                    var healCount = StatusCtrler.GetDuration(PawnStatus.RegenHeartPoint) / healInterval;
+                    var healAmount = StatusCtrler.GetStrength(PawnStatus.RegenHeartPoint) / healCount;
+
+                    //* 최초 1번은 즉시 회복시켜줌
+                    PawnHP.Recover(healAmount, string.Empty);
+
+                    __regenHeartPointDisposable = Observable.Interval(TimeSpan.FromSeconds(healInterval)).Subscribe(_ =>
+                    {
+                        PawnHP.Recover(healAmount, string.Empty);
+                    }).AddTo(this);
+
+                    //* Regen 이펙트 출력
+                    __regenHeartPointFx = EffectManager.Instance.ShowLooping(BB.graphics.onHealFx, GetWorldPosition(), Quaternion.identity, Vector3.one);
+                    __regenHeartPointFx.transform.SetParent(coreColliderHelper.transform, false);
+                    __regenHeartPointFx.transform.localPosition = Vector3.zero;
+                }
+                else if (status == PawnStatus.IncreasePoise)
+                {
                     BB.stat.poise = BB.pawnData.poise + StatusCtrler.GetStrength(PawnStatus.IncreasePoise);
+                }
             };
-            
+
             StatusCtrler.onStatusDeactive += (status) =>
             {
-                if (status == PawnStatus.IncreasePoise)
+                if (status == PawnStatus.RegenHeartPoint)
+                {
+                    __regenHeartPointDisposable?.Dispose();
+                    __regenHeartPointDisposable = null;
+
+                    //* Regen 이펙트 정지
+                    __regenHeartPointFx.Stop();
+                }
+                else if (status == PawnStatus.IncreasePoise)
+                {
                     BB.stat.poise = BB.pawnData.poise;
+                }
             };
 
             BB.action.encounterBrain.Skip(1).Subscribe(v =>
@@ -196,7 +229,7 @@ namespace Game
                 // if (v != null)
             }).AddTo(this);
 
-            BB.action.punchChargingLevel.Skip(1).Subscribe(v => 
+            BB.action.punchChargingLevel.Skip(1).Subscribe(v =>
             {
                 if (v >= 0)
                 {
@@ -220,19 +253,19 @@ namespace Game
                     PawnSoundSourceGen.GenerateSoundSource(coreColliderHelper.pawnCollider, 1f, 1f);
 
                 // 1초마다 체력 재생
-                if (StatusCtrler.CheckStatus(PawnStatus.HPRegen))
-                {
-                    var rate = StatusCtrler.GetStrength(PawnStatus.HPRegen);
-                    if (timeDist >= 1f)
-                    {
-                        var hpAdd = rate * BB.stat.maxHeartPoint.Value;
-                        PawnHP.heartPoint.Value += hpAdd;
-                        Debug.Log("<color=green>HP Regen : " + (100 * rate) + "%, " + hpAdd + "</green>");
+                // if (StatusCtrler.CheckStatus(PawnStatus.RegenHeartPoint))
+                // {
+                //     var rate = StatusCtrler.GetStrength(PawnStatus.RegenHeartPoint);
+                //     if (timeDist >= 1f)
+                //     {
+                //         var hpAdd = rate * BB.stat.maxHeartPoint.Value;
+                //         PawnHP.heartPoint.Value += hpAdd;
+                //         Debug.Log("<color=green>HP Regen : " + (100 * rate) + "%, " + hpAdd + "</green>");
 
-                        var viewVec = GameContext.Instance.cameraCtrler.gameCamera.transform.forward;
-                        EffectManager.Instance.Show("FX/HealSingle", GetWorldPosition() + Vector3.up - viewVec, Quaternion.identity, Vector3.one, 1f);
-                    }
-                }
+                //         var viewVec = GameContext.Instance.cameraCtrler.gameCamera.transform.forward;
+                //         EffectManager.Instance.Show("FX/HealSingle", GetWorldPosition() + Vector3.up - viewVec, Quaternion.identity, Vector3.one, 1f);
+                //     }
+                // }
             };
         }
 

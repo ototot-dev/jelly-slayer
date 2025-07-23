@@ -63,6 +63,7 @@ namespace Game
         [Serializable]
         public class Graphics
         {
+            public GameObject onHealFx;
             public GameObject onHitFx;
             public GameObject onGuardParriedFx;
             public GameObject onGuardParriedFx2;

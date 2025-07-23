@@ -59,9 +59,8 @@ namespace Game
         public class Action
         {
             [Header("Heal")]
-            public int healCount = 1;
             public float healAmount = 1f;
-            public float healInterval = 0.1f;
+            public float healDuration = 1f;
             public float healApproachDistance = 1f;
             public float healFlyHeight = 1f;
             public float healFlyHeightAdjustSpeed = 1f;

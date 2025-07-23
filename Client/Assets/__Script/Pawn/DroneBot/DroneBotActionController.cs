@@ -274,14 +274,12 @@ namespace Game
         {
             __brain.InvalidateDecision();
             __brain.BB.decision.currDecision.Value = DroneBotBrain.Decisions.Heal;
-
-            //* 최초 1번은 즉시 회복시켜줌
-            __brain.BB.HostBrain.PawnHP.Recover(__brain.BB.action.healAmount, string.Empty);
+            __brain.BB.HostBrain.StatusCtrler.AddStatus(PawnStatus.RegenHeartPoint, __brain.BB.action.healAmount, __brain.BB.action.healDuration);
 
             //* RootMotion은 꺼줌
             currActionContext.rootMotionEnabled = false;
 
-            return Observable.Interval(TimeSpan.FromSeconds(__brain.BB.action.healInterval)).Take(__brain.BB.action.healCount)
+            return Observable.Timer(TimeSpan.FromSeconds(__brain.BB.action.healDuration))
                 .DoOnCompleted(() =>
                 {
                     //* FSM 액션이 종료될 수 있도록, actionDisposable은 null로 셋팅 (WaitActionDisposable 태스크에서 액션이 종료됨) 
@@ -291,10 +289,6 @@ namespace Game
                 .DoOnCancel(() =>
                 {
                     __brain.InvalidateDecision(0.1f);
-                })
-                .Do(_ =>
-                {
-                    __brain.BB.HostBrain.PawnHP.Recover(__brain.BB.action.healAmount, string.Empty);
                 });
         }
 

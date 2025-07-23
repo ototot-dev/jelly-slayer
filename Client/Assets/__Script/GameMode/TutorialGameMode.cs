@@ -138,7 +138,7 @@ namespace Game
                 });
                 GameContext.Instance.playerCtrler.possessedBrain.StatusCtrler.onStatusActive += ((pawnStatus) => {
 
-                    if (pawnStatus == PawnStatus.HPRegen && _tutorialMode == TutorialMode.Room3_Step2) {
+                    if (pawnStatus == PawnStatus.RegenHeartPoint && _tutorialMode == TutorialMode.Room3_Step2) {
 
                         EndMode();
                         InitBubbleDialogue("Tutorial3_step3");
@@ -159,7 +159,7 @@ namespace Game
             Observable.Timer(TimeSpan.FromSeconds(0.1f)).Subscribe(_ => GameContext.Instance.playerCtrler.possessedBrain.AnimCtrler.legAnimator.enabled = true);
         }
 
-        void InitBubbleDialogue(string nodeName) 
+        void InitBubbleDialogue(string nodeName)
         {
             if (__dialogueDispatcher != null)
             {
@@ -170,6 +170,7 @@ namespace Game
                 __dialogueDispatcher.StartDialogue(nodeName);
             }
             var obj = GameObject.Find("3d-bubble-dialogue");
+
             BubbleDialoqueController controller;
             if (obj != null)
                 controller = new BubbleDialoqueController().Load(obj.GetComponent<Template>());
@@ -177,6 +178,11 @@ namespace Game
                 controller = new BubbleDialoqueController().Load();
 
             controller.Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
+
+            Observable.Timer(TimeSpan.FromSeconds(5f)).Subscribe(_ =>
+            {
+                new GuidePopupController("Test", "text", __dialogueDispatcher).Load().ShowDimmed(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
+            });
         }
 
         void InitLoadingPageCtrler(string nodeName, Action action = null) 
@@ -410,7 +416,7 @@ namespace Game
             // 물약 처리
             slayerBrain.PawnStatusCtrler.onStatusActive += ((status) =>
             {
-                if (status == PawnStatus.HPRegen && _tutorialMode == TutorialMode.Heal)
+                if (status == PawnStatus.RegenHeartPoint && _tutorialMode == TutorialMode.Heal)
                 {
                     _attackCount = 0;
                     __dialogueDispatcher._isWaitCheck = true;

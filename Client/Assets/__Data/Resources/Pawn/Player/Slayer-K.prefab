@@ -874,7 +874,6 @@ MonoBehaviour:
   ignoredColliders: []
   freezeMovement: 0
   freezeRotation: 1
-  rootMotionEnabled: 1
   moveSpeed: 1
   moveAccel: 20
   moveBrake: 20
@@ -908,9 +907,12 @@ MonoBehaviour:
   weaponMeshSlot: {fileID: 0}
   HeadLookAt: {fileID: 3872346485875650652}
   hipBone: {fileID: 3244703593161533285}
-  actionLayerBlendInSpeed: 20
+  actionLayerBlendInSpeed: 10
   actionLayerBlendOutSpeed: 5
-  legAnimGlueBlendSpeed: 1
+  legAnimatorBlendInSpeed: 10
+  legAnimatorBlendOutSpeed: 10
+  ragdollAnimatorBlendInSpeed: 5
+  ragdollAnimatorBlendOutSpeed: 5
   guardParryRootMotionMultiplier: 1
 --- !u!114 &179919551335561179
 MonoBehaviour:
@@ -1056,7 +1058,7 @@ MonoBehaviour:
     rollingDistance: 2
     rollingDuration: 0.5
     jumpHeight: 1.6
-    smashingHeight: 1
+    knockDownRagdollDelay: 0.1
   action:
     encounterBrain:
       value: {fileID: 0}
@@ -1075,6 +1077,7 @@ MonoBehaviour:
     chainsawAnimAdvanceOffsetAmplitude: 0
     chainsawAnimAdvanceOffsetSinFrequency: 1
   graphics:
+    onHealFx: {fileID: 3090213294028349524, guid: bc4164a7841f5be4eb1a73e10c39b635, type: 3}
     onHitFx: {fileID: 4593068296535962373, guid: d78e099fc80c39441bcf0bb3c0b75c28, type: 3}
     onGuardParriedFx: {fileID: 8290359115699195188, guid: 2f1b6433dd8dc9741b28c0f50907705a, type: 3}
     onGuardParriedFx2: {fileID: 1429051815527586051, guid: 84c712e9ebb4cb347a49b7be91863125, type: 3}
@@ -1164,8 +1167,8 @@ MonoBehaviour:
     _version: 3.33
     _category: 
     _comments: 
-    _translation: {x: 809, y: 250}
-    _zoomFactor: 0.25002939
+    _translation: {x: 333, y: -280}
+    _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 0
   _disableAction: 0
@@ -8845,7 +8848,7 @@ MonoBehaviour:
       variables:
       - VariableName: 'Minimum Delay:'
         Tooltip: Minimum delay in seconds after falling to trigger get up action
-        _value: {x: 0.4, y: 0, z: 0, w: 0}
+        _value: {x: 2.5, y: 0, z: 0, w: 0}
         _string: 
         _curve:
           serializedVersion: 2
@@ -9101,7 +9104,7 @@ MonoBehaviour:
       - VariableName: 'Fall Animation:'
         Tooltip: Left empty to not use this part of the extra feature
         _value: {x: 0, y: 0, z: 0, w: 0}
-        _string: OnFall
+        _string: Fall (Pose)
         _curve:
           serializedVersion: 2
           m_Curve: []
@@ -9534,7 +9537,7 @@ MonoBehaviour:
     RagdollLogic: 0
     RagdollSizeMultiplier: 1
     RagdollThicknessMultiplier: 1
-    ReferenceMass: 50
+    ReferenceMass: 500
     RigidbodiesInterpolation: 1
     RigidbodiesDetectionMode: 0
     RigidbodyDragValue: 0

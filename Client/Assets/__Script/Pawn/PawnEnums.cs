@@ -35,7 +35,7 @@ namespace Game
         SuperArmor,         // 슈퍼 아머 (삭제 예정)
         MoveSpeedUp,        // 이동 속도 증가
         ActionSpeedUp,      // 액션 속도 증가
-        HPRegen,            // 체력 회복
+        RegenHeartPoint,    // 체력 회복
         IncreasePoise,      // 강인도 증가
         __DEBUFF__SEPERATOR__,
         Groggy,             //* 그로기

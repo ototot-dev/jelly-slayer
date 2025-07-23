@@ -96923,7 +96923,6 @@ MonoBehaviour:
   ignoredColliders: []
   freezeMovement: 0
   freezeRotation: 0
-  rootMotionEnabled: 1
   moveSpeed: 4
   moveAccel: 5
   moveBrake: 10
@@ -97084,7 +97083,6 @@ MonoBehaviour:
   target:
     targetPawnHP:
       value: {fileID: 0}
-    trail: []
   body:
     normalSpeed: 2
     boostSpeed: 4
@@ -97107,6 +97105,12 @@ MonoBehaviour:
       value: {fileID: 0}
     formationSpot:
       value: {fileID: 0}
+  action:
+    healAmount: 200
+    healDuration: 5
+    healApproachDistance: 1
+    healFlyHeight: 1
+    healFlyHeightAdjustSpeed: 5
   resource:
     protonExplosionFx: {fileID: 4086126213069182278, guid: 9c419106672632b4995bed7695c58ade, type: 3}
     jetBoostFx: {fileID: 2028202623014272037}
@@ -97136,11 +97140,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 94c0e193228b14bfcb2f9f37d0bed38c, type: 2}
   - {fileID: 11400000, guid: 99175741c81254e8fa13f1aa2839b6f0, type: 2}
   _boundGraphSource:
-    _version: 3.31
+    _version: 3.33
     _category: 
     _comments: 
-    _translation: {x: 52, y: -28}
-    _zoomFactor: 1
+    _translation: {x: 78.13589, y: -140.52357}
+    _zoomFactor: 0.9998593
   _firstActivation: 0
   _enableAction: 0
   _disableAction: 0
@@ -102431,20 +102435,33 @@ MonoBehaviour:
     shockPropagation: 0
     surfaceCollisionIterations: 8
     surfaceCollisionTolerance: 0.005
+    diffusionMask: {x: 1, y: 1, z: 1, w: 1}
   m_MaxSurfaceChunks: 32768
   maxQueryResults: 8192
   maxFoamParticles: 8192
   maxParticleNeighbors: 128
   maxParticleContacts: 6
+  useLimits: 0
+  killOffLimitsParticles: 0
+  boundaryLimits:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 5, y: 5, z: 5}
   gravity: {x: 0, y: -9.81, z: 0}
   gravitySpace: 1
   ambientWind: {x: 0, y: 0, z: 0}
   windSpace: 1
   foamSubsteps: 1
+  foamMinNeighbors: 3
+  foamCollisions: 0
   maxFoamVelocityStretch: 0.3
+  foamRadiusScale: 1
   foamFade: {x: 0.05, y: 0.8}
   foamAccelAgingRange: {x: 0.5, y: 0.8}
   foamAccelAging: 4
+  foamVolumeDensity: 0.1
+  foamAmbientDensity: 0.02
+  foamScatterColor: {r: 0.8, g: 0.75, b: 0.7, a: 1}
+  foamAmbientColor: {r: 0.4, g: 0.5, b: 0.6, a: 1}
   worldLinearInertiaScale: 0
   worldAngularInertiaScale: 0
   synchronousSpatialQueries: 0
@@ -102499,6 +102516,11 @@ MonoBehaviour:
     SORFactor: 1
     enabled: 0
   pinConstraintParameters:
+    evaluationOrder: 1
+    iterations: 1
+    SORFactor: 1
+    enabled: 1
+  pinholeConstraintParameters:
     evaluationOrder: 1
     iterations: 1
     SORFactor: 1
