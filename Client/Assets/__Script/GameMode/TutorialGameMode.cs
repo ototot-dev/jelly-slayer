@@ -46,15 +46,6 @@ namespace Game
 
         End,
     }
-    public enum TutorialScene 
-    {
-        Tutorial_1,     // 시작 씬, 전화
-        Tutorial_2,     // 적 조우, Rapex
-        Tutorial_3,     // RoboSoldier
-        Tutorial_4,     // 원거리 적
-        Tutorial_5,     // M82
-        Tutorial_6,     // Therionide
-    }
 
     public class TutorialGameMode : BaseGameMode, IPawnEventListener
     {
@@ -64,13 +55,28 @@ namespace Game
         LoadingPageController __loadingPageCtrler;
         string __currSceneName;
 
-        public TutorialScene _curScene = TutorialScene.Tutorial_1;
+        public int _curMissionID = 0;
+        private MissionData _curMissiondata;
 
         [Header("Tutorial")]
         public TutorialMode _tutorialMode = TutorialMode.None;
         [SerializeField] private bool _isInCombat = false;
         [SerializeField] private int _attackCount = 0;
-        [SerializeField] private int _deadCount = 0;
+        [SerializeField] private int _killCount = 0;
+        public int KillCount { 
+            get { return _killCount; }
+            set {
+                _killCount = value;
+
+                if (_curMissiondata != null && _curMissiondata.clearCondition == MissionClearCondition.KILLALL)
+                {
+                    if (_killCount >= _pawnList.Count)
+                    {
+                        EndMode();
+                    }
+                }
+            } 
+        }
 
         private TutorialRoboSoldierBrain _roboBrain;
 
@@ -100,17 +106,8 @@ namespace Game
         public override IObservable<Unit> EnterAsObservable()
         {
             InitPlayerCharacter(transform);
+            InitRoom(GameContext.Instance.launcher._tutorialStartMission);
 
-            _curScene = GameContext.Instance.launcher._tutorialStartScene;
-            switch (_curScene) 
-            {
-                case TutorialScene.Tutorial_1: InitRoom(100); break;// InitStartRoom(); break;
-                case TutorialScene.Tutorial_2: InitRoom(101); break;
-                case TutorialScene.Tutorial_3: InitRoom(102); break;// InitTurorialRoom_3(); break;
-                case TutorialScene.Tutorial_4: InitRoom(103); break;// InitTurorialRoom_4(); break;
-                case TutorialScene.Tutorial_5: InitRoom(104); break;// InitTurorialRoom_5(); break;
-                case TutorialScene.Tutorial_6: InitRoom(105); break;// InitTurorialRoom_6(); break;
-            }
             //Observable.FromCoroutine(ChangeRoom_Coroutine);
 
             return Observable.NextFrame();
@@ -180,10 +177,6 @@ namespace Game
                 controller = new BubbleDialoqueController().Load();
 
             controller.Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
-
-            //Observable.Timer(TimeSpan.FromSeconds(5f)).Subscribe(_ => {
-                //new GuidePopupController("Test", "text", __dialogueDispatcher).Load().ShowDimmed(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
-            //});
         }
 
         void InitLoadingPageCtrler(string nodeName, Action action = null) 
@@ -212,17 +205,27 @@ namespace Game
                 GameContext.Instance.cameraCtrler.RefreshConfinerVolume(confinerBoundingBox, Quaternion.Euler(45f, 45f, 0f), 10f);
         }
 
-        void InitRoom(int mission_id)
+        bool InitRoom(int mission_id)
         {
+            if (mission_id <= 0) 
+            {
+                Debug.Log("Invalid Mission, " + mission_id);
+                return false;
+            }
+            _curMissionID = mission_id;
+
             GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
 
             MissionData data = MissionTable.MissionData.MissionDataList.First(d => d.id == mission_id);
             if (data == null) 
             {
                 Debug.Log("Mission 로드 Fail, " + mission_id);
-                return;
+                return false;
             }
+            _curMissiondata = data;
             __currSceneName = data.sceneName;
+
+            _killCount = 0;
 
             //* 로딩 시작
             __loadingPageCtrler = new LoadingPageController(new string[] { data.resPath1, data.resPath2 },
@@ -239,16 +242,12 @@ namespace Game
                 // Yarn Script
                 InitLoadingPageCtrler(data.startNode, () => { });
             };
+            return true;
         }
 
         public void DoEventCollider(int mode) 
         {
-            switch (mode) 
-            {
-                case 0:
-                    InitBubbleDialogue("Tutorial2_step2_2");
-                    break;
-            }
+            //switch (mode) { case 0: InitBubbleDialogue("Tutorial2_step2_2"); break; }
         }
 
         public IEnumerator ChangeRoom_Coroutine()
@@ -271,14 +270,10 @@ namespace Game
             }
             _pawnList.Clear();
 
-
             // Next Room
-            switch (_curScene) 
+            if (_curMissiondata != null) 
             {
-                case TutorialScene.Tutorial_1: InitRoom(101); _curScene = TutorialScene.Tutorial_2; break;
-                case TutorialScene.Tutorial_2: InitRoom(105); _curScene = TutorialScene.Tutorial_6; break;
-                case TutorialScene.Tutorial_3: InitRoom(103); _curScene = TutorialScene.Tutorial_4; break;
-                case TutorialScene.Tutorial_4: InitRoom(104); _curScene = TutorialScene.Tutorial_5; break;
+                InitRoom(_curMissiondata.door1);
             }
             yield return new WaitUntil(() => __loadingPageCtrler == null);
 
@@ -319,33 +314,18 @@ namespace Game
             var pawn = obj.GetComponent<PawnBrainController>();
             _pawnList.Add(pawn);
 
+            pawn.PawnHP.onDead += ((damageContext) =>
+            {
+                KillCount++;
+            });
             switch (pawn.PawnBB.common.pawnId) 
             {
-                case PawnId.Therionide:
-                    {
-                        pawn.PawnHP.onDead += ((damageContext) =>
-                        {
-                            if (_curScene == TutorialScene.Tutorial_6)
-                            {
-                                EndMode();
-                                InitBubbleDialogue("Tutorial-Therionide-2");
-                            }
-                        });
-                    }
-                    break;
                 case PawnId.RoboSoldier:
                     {
                         _roboBrain = (TutorialRoboSoldierBrain)pawn;
                         pawn.PawnHP.onDamaged += ((damageContext) =>
                         {
                             CheckRoboSoldierDamage(damageContext);
-                        });
-                        pawn.PawnHP.onDead += ((damageContext) =>
-                        {
-                            if (_tutorialMode == TutorialMode.Room3_Step3)
-                            {
-                                EndMode();
-                            }
                         });
                     }
                     break;
@@ -356,8 +336,7 @@ namespace Game
                         {
                             case TutorialMode.Room2_Step1:
                                 {
-                                    _deadCount++;
-                                    if (_deadCount >= 2)
+                                    if (_killCount >= 2)
                                     {
                                         EndMode();
                                         InitBubbleDialogue("Tutorial2_step2_1");
@@ -371,8 +350,7 @@ namespace Game
                             // Room3 : RoboSoldier
                             case TutorialMode.Room3_Step1:
                                 {
-                                    _deadCount++;
-                                    if (_deadCount >= 3)
+                                    if (_killCount >= 3)
                                     {
                                         EndMode();
                                         InitBubbleDialogue("Tutorial3_step2");
@@ -381,42 +359,6 @@ namespace Game
                                 break;
                         }
                     });
-                    break;
-                case PawnId.RoboCannon:
-                    {
-                        pawn.PawnHP.onDead += ((damageContext) => {
-                            switch (_tutorialMode)
-                            {
-                                case TutorialMode.Room4_Step1:
-                                    {
-                                        _deadCount++;
-                                        if (_deadCount >= 2)
-                                        {
-                                            EndMode();
-                                        }
-                                    }
-                                    break;
-                            }
-                        });
-                    }
-                    break;
-                case PawnId.Etasphera42:
-                    {
-                        pawn.PawnHP.onDead += ((damageContext) => {
-                            switch (_tutorialMode)
-                            {
-                                case TutorialMode.Room5_Step1:
-                                    {
-                                        _deadCount++;
-                                        if (_deadCount >= 1)
-                                        {
-                                            EndMode();
-                                        }
-                                    }
-                                    break;
-                            }
-                        });
-                    }
                     break;
             }
         }
@@ -467,26 +409,14 @@ namespace Game
 
         void EndMode() 
         {
-            _deadCount = 0;
             _attackCount = 0;
             __dialogueDispatcher._isWaitCheck = true;
             _tutorialMode = TutorialMode.None;
-        }
 
-        public void StopAllRapax() 
-        {
-            /*
-            foreach (var pawn in _pawnList)
+            if (_curMissiondata != null && _curMissiondata.endNode.Length > 0) 
             {
-                if (pawn != null && pawn.PawnBB.IsDead == false) 
-                {
-                    var selector = pawn.GetComponent<PawnActionDataSelector>();
-                    if (selector != null) {
-                        selector.debugActionSelectDisabled = true;
-                    }
-                }
+                InitBubbleDialogue(_curMissiondata.endNode);
             }
-            */
         }
 
         void CheckRoboSoldierDamage(PawnHeartPointDispatcher.DamageContext damageContext) 

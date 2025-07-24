@@ -26,7 +26,8 @@ namespace Game
         public bool IsGameModeChanging() => __changeGameModeDisposable != null;
         IDisposable __changeGameModeDisposable;
 
-        public TutorialScene _tutorialStartScene;
+        //public TutorialScene _tutorialStartScene;
+        public int _tutorialStartMission;
 
         void Awake()
         {

@@ -12,6 +12,7 @@ using System.IO;
 using GoogleSheet.Type;
 using System.Reflection;
 using UnityEngine;
+using Game;
 
 
 namespace MissionTable
@@ -60,9 +61,12 @@ namespace MissionTable
 		public System.String name;
 		public System.String sceneName;
 		public System.String startNode;
+		public System.String endNode;
+		public System.String etc;
 		public System.String resPath1;
 		public System.String resPath2;
-		public System.String etc;
+		public System.Int32 door1;
+		public MissionClearCondition clearCondition;
   
 
 #region fuctions
