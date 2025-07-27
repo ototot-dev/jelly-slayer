@@ -7263,7 +7263,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51753b4002b0d48c299cb80bc4ef44cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debugActionSelectDisabled: 1
+  debugActionSelectDisabled: 0
 --- !u!114 &4331524929035653262
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7313,7 +7313,6 @@ MonoBehaviour:
   ignoredColliders: []
   freezeMovement: 0
   freezeRotation: 0
-  rootMotionEnabled: 1
   moveSpeed: 1
   moveAccel: 5
   moveBrake: 5

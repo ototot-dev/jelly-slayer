@@ -1,0 +1,20 @@
+title: Tutorial-Default
+tags:
+---
+<<fadeIn 0.1>>
+<<vignette 0.4 0.9 0>>
+<<hideMechArm>>
+<<hideSword>>
+<<wait 0.1>>
+<<fadeOut 1>>
+<<wait 0.1>>
+<<vignette 0.3 0.2 1>>
+<<setLightIntensity SunLight 1>>
+<<spawnPawn DroneBot DroneBotSpawnPoint>>
+<<sendMsgToGameMode SetCombat>>
+
+<<showAndWaitInteractionKey "Door2">>
+
+===
+
+
