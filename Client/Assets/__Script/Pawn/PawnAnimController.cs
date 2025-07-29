@@ -183,7 +183,10 @@ namespace Game
         public virtual void OnAnimatorStateEnterHandler(AnimatorStateInfo stateInfo, int layerIndex, PawnAnimStateMachineTrigger trigger)
         {
             __Logger.LogR1(gameObject, "OnAnimatorStateEnterHandler()", "stateName", trigger.stateName);
-            __runningStateMachineTriggers.Add(stateInfo.shortNameHash, trigger);
+            if (__runningStateMachineTriggers.ContainsKey(stateInfo.shortNameHash) == false)
+            {
+                __runningStateMachineTriggers.Add(stateInfo.shortNameHash, trigger);
+            }
         }
         public virtual void OnAniamtorStateExitHandler(AnimatorStateInfo stateInfo, int layerIndex, PawnAnimStateMachineTrigger trigger)
         {

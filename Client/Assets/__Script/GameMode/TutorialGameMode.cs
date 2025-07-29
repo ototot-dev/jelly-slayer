@@ -233,10 +233,11 @@ namespace Game
             __loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
             __loadingPageCtrler.onLoadingCompleted += () =>
             {
-                //* 슬레이어 초기 위치 
-                var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint").transform;
-                RefreshPlayerCharacter(spawnPoint);
-
+                //* 슬레이어 초기 위치
+                var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint");
+                if (spawnPoint != null) {
+                    RefreshPlayerCharacter(spawnPoint.transform);
+                }
                 InitCamera();
 
                 // Yarn Script

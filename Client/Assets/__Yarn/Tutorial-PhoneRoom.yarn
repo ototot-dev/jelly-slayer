@@ -50,6 +50,8 @@ tags:
 <<playSound PHONE_RING>> // 따르릉
 <<wait 1>>
 
+<<sendMsgToGameMode SetCombat>>
+
 <<showMessagePopup "" "방향키를 사용해서 이동하세요" 8>>
 
 //<<showAndWaitInteractionKey "Door">>

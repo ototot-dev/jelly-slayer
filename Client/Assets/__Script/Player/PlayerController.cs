@@ -629,7 +629,9 @@ namespace Game
 
         public void OnSpecialAttack(InputValue value)
         {
-            if (!CanProcessInput() || !GameContext.Instance.launcher.currGameMode.IsInCombat())
+            if (!CanProcessInput())
+                return;
+            if (!GameContext.Instance.launcher.currGameMode.IsInCombat())
                 return;
 
             if (value.isPressed)
