@@ -6557,7 +6557,6 @@ MonoBehaviour:
   ignoredColliders: []
   freezeMovement: 0
   freezeRotation: 0
-  rootMotionEnabled: 1
   moveSpeed: 1
   moveAccel: 5
   moveBrake: 5
@@ -6692,7 +6691,6 @@ MonoBehaviour:
   target:
     targetPawnHP:
       value: {fileID: 0}
-    trail: []
   decision:
     currDecision:
       value: -1
@@ -6711,7 +6709,7 @@ MonoBehaviour:
     minApproachDistance: 1
   action:
     comboAttackCoolTime: 5
-    comboAttackDistance: 3
+    comboAttackDistance: 1.5
     jumpAttackCoolTime: 10
     jumpAttackDistance: 5
   children:
@@ -6724,6 +6722,7 @@ MonoBehaviour:
     rightHandActionCollider: {fileID: 8942197246459928300}
   resource:
     hitColor: {fileID: 2100000, guid: a352a16cd87054b82af9135444ad0122, type: 2}
+    onSlashFx: {fileID: 0}
     onHitFx: {fileID: 3011233550371498735, guid: 24e37d54f259141abb7ebbc527b8bf4e, type: 3}
     onBleedingFx: {fileID: 3011233550371498735, guid: 8502543f66322458a81956cdd59fe959, type: 3}
     onMissedFx: {fileID: 8338894570034044190, guid: 727c6a11e51e81140a330e6639938e26, type: 3}
@@ -6847,8 +6846,8 @@ MonoBehaviour:
     _version: 3.33
     _category: 
     _comments: 
-    _translation: {x: -461, y: -191}
-    _zoomFactor: 0.8943569
+    _translation: {x: -595.28906, y: -122.31094}
+    _zoomFactor: 0.89735967
   _firstActivation: 0
   _enableAction: 0
   _disableAction: 0
