@@ -72,8 +72,7 @@ namespace Game
         public class Resource
         {
             public GameObject protonExplosionFx;
-            public ParticleSystem jetBoostFx;
-            public ParticleSystem orbBlueFx;
+            public GameObject orbSmallYellowFx;
         }
 
         public Resource resource = new();
@@ -82,6 +81,11 @@ namespace Game
         public class Children
         {
             public SphereCollider visibilityChecker;
+            public ParticleSystem jetBoostFx;
+            public ParticleSystem orbBlueFx;
+            public ParticleSystem plasmaExplosionFx;
+            public ParticleSystem smallExplisionFx;
+            public ParticleSystem smokeFx;
         }
 
         public Children children = new();

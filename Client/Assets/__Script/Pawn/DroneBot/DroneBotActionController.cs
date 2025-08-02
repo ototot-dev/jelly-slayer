@@ -10,13 +10,9 @@ namespace Game
         [Header("Component")]
         public PawnColliderHelper hitColliderHelper;
         public PawnColliderHelper assaultActionColliderHelper;
+        public RopeHookController ropeHookCtrler;
         public Transform emitPointL;
         public Transform emitPointR;
-        public ParticleSystem plasmaExplosionFx;
-        public ParticleSystem smallExplisionFx;
-        public ParticleSystem smokeFx;
-        public GameObject orbSmallYellowFx;
-        public RopeHookController ropeHookCtrler;
 
         public override bool CanRootMotion(Vector3 rootMotionVec)
         {
@@ -123,13 +119,14 @@ namespace Game
                 Debug.Assert(__brain.BB.HostBrain.BB.TargetBrain != null);
 
                 var targetColliderHelper = GameContext.Instance.playerCtrler.possessedBrain.BB.TargetBrain.GetHookingColliderHelper();
+                
                 if (ropeHookCtrler.LaunchHook(targetColliderHelper.pawnCollider))
                 {
                     __brain.BB.target.targetPawnHP.Value = targetColliderHelper.pawnBrain.PawnHP;
                     __brain.BB.decision.currDecision.Value = DroneBotBrain.Decisions.Hooking;
                 }
 
-                __hookingPointFx = EffectManager.Instance.ShowLooping(orbSmallYellowFx, ropeHookCtrler.obiTargetCollider.transform.position, Quaternion.identity, Vector3.one);
+                __hookingPointFx = EffectManager.Instance.ShowLooping(__brain.BB.resource.orbSmallYellowFx, ropeHookCtrler.obiTargetCollider.transform.position, Quaternion.identity, Vector3.one);
                 __hookingPointFxUpdateDisposable = Observable.EveryUpdate()
                     .DoOnCancel(() =>
                     {
@@ -175,8 +172,8 @@ namespace Game
                     __brain.BB.HostBrain.Movement.capsule.gameObject.layer = LayerMask.NameToLayer("Default");
                     __brain.BB.HostBrain.Movement.GetCharacterMovement().collisionLayers = LayerMask.GetMask("Floor", "Obstacle");
 
-                    __brain.BB.resource.jetBoostFx.Play(true);
-                    __brain.BB.resource.orbBlueFx.Play(true);
+                    __brain.BB.children.jetBoostFx.Play(true);
+                    __brain.BB.children.orbBlueFx.Play(true);
 
                     //* Hanging 상태라면 바로 Assault 액션을 수행함
                     AssaultActionObservable(__brain.GetWorldPosition(), Time.time, 0.2f).Subscribe().AddTo(this);
@@ -200,8 +197,8 @@ namespace Game
 
                     return Observable.Timer(TimeSpan.FromSeconds(0.1f)).Do(_ =>
                         {
-                            __brain.BB.resource.jetBoostFx.Play(true);
-                            __brain.BB.resource.orbBlueFx.Play(true);
+                            __brain.BB.children.jetBoostFx.Play(true);
+                            __brain.BB.children.orbBlueFx.Play(true);
                         })
                         .ContinueWith(AssaultActionObservable(startPosition, Time.time + 0.1f, 0.2f)).Subscribe().AddTo(this);
                 }
@@ -222,8 +219,8 @@ namespace Game
             return Observable.EveryLateUpdate().Select(_ => (Time.time - startTimeStamp) / duration).TakeWhile(v => v < 1.2f)
                 .DoOnCancel(() =>
                 {
-                    __brain.BB.resource.jetBoostFx.Stop(true);
-                    __brain.BB.resource.orbBlueFx.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                    __brain.BB.children.jetBoostFx.Stop(true);
+                    __brain.BB.children.orbBlueFx.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 
                     __brain.BB.HostBrain.Movement.FinishHanging();
                     __brain.BB.HostBrain.Movement.StartJump(1f);
@@ -237,8 +234,8 @@ namespace Game
                 })
                 .DoOnCompleted(() =>
                 {
-                    __brain.BB.resource.jetBoostFx.Stop(true);
-                    __brain.BB.resource.orbBlueFx.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                    __brain.BB.children.jetBoostFx.Stop(true);
+                    __brain.BB.children.orbBlueFx.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 
                     var assaultActionData = DatasheetManager.Instance.GetActionData(__brain.BB.HostBrain.BB.common.pawnId, "Assault");
                     Debug.Assert(assaultActionData != null);

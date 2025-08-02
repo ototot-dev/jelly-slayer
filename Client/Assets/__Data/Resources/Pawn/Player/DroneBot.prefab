@@ -56299,6 +56299,78 @@ Transform:
   - {fileID: 9102978291918967965}
   m_Father: {fileID: 5983554805952175288}
   m_LocalEulerAnglesHint: {x: 0.018000284, y: 0.059442934, z: 27.288172}
+--- !u!1 &4643075272566073125
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8377268373679349451}
+  - component: {fileID: 5294255947991522889}
+  - component: {fileID: 2134474279958171991}
+  m_Layer: 0
+  m_Name: HookTarget
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8377268373679349451
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4643075272566073125}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7282702003355187350}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &5294255947991522889
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4643075272566073125}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2134474279958171991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4643075272566073125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6757b231cedd544c583ef8aeaf773b2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thickness: 0
+  inverted: 0
+  material: {fileID: 0}
+  filter: -65535
+  m_SourceCollider: {fileID: 5294255947991522889}
+  m_DistanceField: {fileID: 0}
 --- !u!1 &4653351134074608435
 GameObject:
   m_ObjectHideFlags: 0
@@ -86612,8 +86684,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   obiSolver: {fileID: 3967674598846706180}
-  obiSourceCollider: {fileID: 0}
-  obiTargetCollider: {fileID: 0}
+  obiSourceCollider: {fileID: 8443836590798154438}
+  obiTargetCollider: {fileID: 2134474279958171991}
   obiRopeSection: {fileID: 11400000, guid: a0bc36a59515f413e90e10895929c938, type: 2}
   hookShootSpeed: 80
   ropeExtendRetractSpeed: 1
@@ -96975,13 +97047,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hitColliderHelper: {fileID: 0}
   assaultActionColliderHelper: {fileID: 0}
+  ropeHookCtrler: {fileID: 7601780043311725338}
   emitPointL: {fileID: 449322475394318657}
   emitPointR: {fileID: 1710675146248331780}
-  plasmaExplosionFx: {fileID: 1062159407247627481}
-  smallExplisionFx: {fileID: 8793297471356860281}
-  smokeFx: {fileID: 6626332068254995823}
-  orbSmallYellowFx: {fileID: 2256861881588827271, guid: dc2985400ba651d4c95a3009a484c272, type: 3}
-  ropeHookCtrler: {fileID: 7601780043311725338}
 --- !u!114 &908418010212902216
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -97113,10 +97181,14 @@ MonoBehaviour:
     healFlyHeightAdjustSpeed: 5
   resource:
     protonExplosionFx: {fileID: 4086126213069182278, guid: 9c419106672632b4995bed7695c58ade, type: 3}
-    jetBoostFx: {fileID: 2028202623014272037}
-    orbBlueFx: {fileID: 8888411162842883850}
+    orbSmallYellowFx: {fileID: 2256861881588827271, guid: dc2985400ba651d4c95a3009a484c272, type: 3}
   children:
     visibilityChecker: {fileID: 2072021573463574906}
+    jetBoostFx: {fileID: 2028202623014272037}
+    orbBlueFx: {fileID: 8888411162842883850}
+    plasmaExplosionFx: {fileID: 1062159407247627481}
+    smallExplisionFx: {fileID: 8793297471356860281}
+    smokeFx: {fileID: 6626332068254995823}
 --- !u!114 &6890239069593880897
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -97215,6 +97287,7 @@ Transform:
   m_Children:
   - {fileID: 1701649923591108027}
   - {fileID: 5909698432258438380}
+  - {fileID: 8377268373679349451}
   m_Father: {fileID: 5714658555218957785}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7540302853710397934
@@ -102208,7 +102281,7 @@ GameObject:
   - component: {fileID: 3967674598846706180}
   - component: {fileID: 8443836590798154438}
   - component: {fileID: 6973572286388308994}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}

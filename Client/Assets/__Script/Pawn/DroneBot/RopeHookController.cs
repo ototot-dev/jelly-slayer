@@ -36,7 +36,7 @@ namespace Game
 
         public Vector3 GetFirstParticlePosition()
         {
-            if ( __obiRope.elements == null || __obiRope.elements.Count <= 0 || __obiRope.solver.positions.count <= 0)
+            if (__obiRope.elements == null || __obiRope.elements.Count <= 0 || __obiRope.solver.positions.count <= 0)
                 return SourceCollider.transform.position;
 
             // first particle in the rope is the first particle of the first element:
@@ -46,17 +46,17 @@ namespace Game
 
         public Vector3 GetLastParticlePosition()
         {
-            if ( __obiRope.elements == null || __obiRope.elements.Count <= 0)
+            if (__obiRope.elements == null || __obiRope.elements.Count <= 0)
                 return SourceCollider.transform.position;
-            
+
             // last particle in the rope is the second particle of the last element:
             int index = __obiRope.elements[__obiRope.elements.Count - 1].particle2;
             if (index >= __obiRope.solver.positions.count)
                 return SourceCollider.transform.position;
-            
+
             return obiSolver.transform.localToWorldMatrix.MultiplyPoint(__obiRope.solver.positions[index]);
         }
-        
+
         Vector3 __hitPoint;
         ObiRope __obiRope;
         ObiRopeCursor __obiRopeCursor;
@@ -105,7 +105,7 @@ namespace Game
             Debug.Assert(!__obiRope.isLoaded);
 
             if (targetCollider != null)
-            {   
+            {
                 __hitPoint = targetCollider.transform.position;
                 this.targetCollider = targetCollider;
                 StartCoroutine(AttachHook_Coroutine());
@@ -189,7 +189,7 @@ namespace Game
                 direction.Normalize();
 
                 LayParticlesInStraightLine(origin, direction);
-                
+
                 // increase length:
                 distanceLeft = distance - __obiRopeCursor.ChangeLength(hookShootSpeed * Time.deltaTime);
 
@@ -229,10 +229,7 @@ namespace Game
 
         public void DetachHook()
         {
-            var hookColliderCached = obiTargetCollider;
-
             currRopeLength = -1f;
-            obiTargetCollider = null;
 
             // Set the rope blueprint to null (automatically removes the previous blueprint from the solver, if any).
             __obiRope.ropeBlueprint = null;
@@ -240,8 +237,6 @@ namespace Game
 
             onRopeReleased?.Invoke(targetCollider);
         }
-
-        float __needLength;
 
         void FixedUpdate()
         {
@@ -268,6 +263,12 @@ namespace Game
                 // else if (Input.GetKey(KeyCode.X))
                 //     __obiRopeCursor.ChangeLength(hookExtendRetractSpeed * Time.deltaTime);
             }
+        }
+
+        void LateUpdate()
+        {
+            if (__obiRope.isLoaded && currRopeLength > 0f && targetCollider != null)
+                obiTargetCollider.transform.position = targetCollider.transform.position;
         }
     }
 }

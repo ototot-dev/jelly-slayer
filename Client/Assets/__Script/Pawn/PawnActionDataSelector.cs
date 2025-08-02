@@ -240,7 +240,7 @@ namespace Game
         {
             if (debugActionSelectDisabled)
             {
-                __Logger.LogR2(gameObject, "EvaluateSequence()", "debugEnqueueDisabled", debugActionSelectDisabled);
+                __Logger.LogR1(gameObject, "EvaluateSequence()", "debugEnqueueDisabled", debugActionSelectDisabled);
                 return false;
             }
 
