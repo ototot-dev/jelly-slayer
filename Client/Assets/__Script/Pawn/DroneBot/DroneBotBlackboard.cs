@@ -24,6 +24,7 @@ namespace Game
         public float HoldPositionRate => body.holdPositionRate;
         public float MoveAroundRate => body.moveAroundRate;
         public float HealApproachDistance => action.healApproachDistance;
+        public float HookDuration => action.hookDuration;
 
         [Serializable]
         public class Body
@@ -64,6 +65,9 @@ namespace Game
             public float healApproachDistance = 1f;
             public float healFlyHeight = 1f;
             public float healFlyHeightAdjustSpeed = 1f;
+
+            [Header("Hook")]
+            public float hookDuration = 1f;
         }
 
         public Action action = new();
@@ -80,7 +84,6 @@ namespace Game
         [Serializable]
         public class Children
         {
-            public SphereCollider visibilityChecker;
             public ParticleSystem jetBoostFx;
             public ParticleSystem orbBlueFx;
             public ParticleSystem plasmaExplosionFx;

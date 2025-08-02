@@ -27,12 +27,15 @@ namespace Game
 
         [Header("Graphics")]
         public Material ropeMaterial;
+
         [RenderingLayerMask]
         public uint renderingLayerMask = 1;
 
         public Action<Collider> onRopeHooked;
         public Action<Collider> onRopeReleased;
         public Collider SourceCollider => obiSourceCollider.sourceCollider;
+
+        public bool IsRopeHooking() => __obiRope.ropeBlueprint != null;
 
         public Vector3 GetFirstParticlePosition()
         {
@@ -240,7 +243,7 @@ namespace Game
 
         void FixedUpdate()
         {
-            if (__obiRope.isLoaded && currRopeLength > 0f)
+            if (__obiRope.ropeBlueprint != null && __obiRope.isLoaded && currRopeLength > 0f)
             {
                 var currLength = __obiRope.CalculateLength();
                 var restLength = __obiRope.restLength;
@@ -257,7 +260,6 @@ namespace Game
                         __obiRopeCursor.ChangeLength(-ropeExtendRetractSpeed * Time.deltaTime);
                 }
 
-
                 // if (Input.GetKey(KeyCode.Z))
                 //     __obiRopeCursor.ChangeLength(-hookExtendRetractSpeed * Time.deltaTime);
                 // else if (Input.GetKey(KeyCode.X))
@@ -267,7 +269,7 @@ namespace Game
 
         void LateUpdate()
         {
-            if (__obiRope.isLoaded && currRopeLength > 0f && targetCollider != null)
+            if (__obiRope.ropeBlueprint != null && targetCollider != null && __obiRope.isLoaded && currRopeLength > 0f)
                 obiTargetCollider.transform.position = targetCollider.transform.position;
         }
     }

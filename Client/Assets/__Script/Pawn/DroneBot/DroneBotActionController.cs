@@ -119,7 +119,7 @@ namespace Game
                 Debug.Assert(__brain.BB.HostBrain.BB.TargetBrain != null);
 
                 var targetColliderHelper = GameContext.Instance.playerCtrler.possessedBrain.BB.TargetBrain.GetHookingColliderHelper();
-                
+
                 if (ropeHookCtrler.LaunchHook(targetColliderHelper.pawnCollider))
                 {
                     __brain.BB.target.targetPawnHP.Value = targetColliderHelper.pawnBrain.PawnHP;
@@ -127,28 +127,32 @@ namespace Game
                 }
 
                 __hookingPointFx = EffectManager.Instance.ShowLooping(__brain.BB.resource.orbSmallYellowFx, ropeHookCtrler.obiTargetCollider.transform.position, Quaternion.identity, Vector3.one);
-                __hookingPointFxUpdateDisposable = Observable.EveryUpdate()
+                
+                return Observable.EveryUpdate()
                     .DoOnCancel(() =>
                     {
                         __hookingPointFx.Stop();
                         __hookingPointFx = null;
+
+                        if (ropeHookCtrler.IsRopeHooking())
+                            ropeHookCtrler.DetachHook();
                     })
                     .DoOnCompleted(() =>
                     {
                         __hookingPointFx.Stop();
                         __hookingPointFx = null;
+
+                        if (ropeHookCtrler.IsRopeHooking())
+                            ropeHookCtrler.DetachHook();
                     })
                     .Subscribe(_ =>
                     {
                         Debug.Assert(ropeHookCtrler.obiTargetCollider != null);
 
-                        // __hookingPointFx.transform.position = ropeHookCtrler.hookingCollider.transform.position;
                         __hookingPointFx.transform.position = ropeHookCtrler.GetLastParticlePosition();
                         //* 카메라 쪽으로 위치를 당겨서 겹쳐서 안보이게 되는 경우를 완화함
                         __hookingPointFx.transform.position -= GameContext.Instance.cameraCtrler.gameCamera.transform.forward;
                     }).AddTo(this);
-
-                return null;
             }
             else if (actionName == "Unhook")
             {
@@ -297,7 +301,6 @@ namespace Game
 
         DroneBotBrain __brain;
         EffectInstance __hookingPointFx;
-        IDisposable __hookingPointFxUpdateDisposable;
         PawnBrainController __assaultActionTargetBrain;
         LayerMask __assaultActionLayerMaskCached;
 
@@ -309,15 +312,6 @@ namespace Game
             {
                 if (damageContext.senderBrain == this && CheckActionRunning() && CurrActionName == "Bumping")
                     currActionContext.rootMotionEnabled = false;
-            };
-
-            ropeHookCtrler.onRopeReleased += (_) =>
-            {
-                if (__hookingPointFxUpdateDisposable != null)
-                {
-                    __hookingPointFxUpdateDisposable.Dispose();
-                    __hookingPointFxUpdateDisposable = null;
-                }
             };
         }
 

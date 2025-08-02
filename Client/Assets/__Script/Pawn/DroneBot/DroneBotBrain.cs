@@ -89,7 +89,7 @@ namespace Game
         {
             base.StartInternal();
 
-            LevelVisibilityManager.Instance.RegisterChecker(BB.children.visibilityChecker);
+            LevelVisibilityManager.Instance.RegisterChecker(visibilityChecker);
             
             PawnStatusCtrler.onStatusActive += (status) =>
             {
@@ -104,6 +104,26 @@ namespace Game
 
                 //* 액션 수행 중에 현재 이동 제어를 끔
                 InvalidateDecision(0.2f);
+            };
+
+            ActionCtrler.onActionFinished += (actionContext) =>
+            {
+                if (actionContext.actionName == "Hook")
+                {
+                    ActionCtrler.ropeHookCtrler.DetachHook();
+                    BB.target.targetPawnHP.Value = null;
+                    InvalidateDecision(0.1f);
+                }
+            };
+
+            ActionCtrler.onActionCanceled += (actionContext, _) =>
+            {
+                if (actionContext.actionName == "Hook")
+                {
+                    ActionCtrler.ropeHookCtrler.DetachHook();
+                    BB.target.targetPawnHP.Value = null;
+                    InvalidateDecision(0.1f);
+                }
             };
 
             onUpdate += () => 

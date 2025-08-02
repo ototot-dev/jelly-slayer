@@ -1682,6 +1682,21 @@ namespace Game.NodeCanvasExtension
     }
 
     [Category("Pawn")]
+    public class SetRootMotionEnabled : ActionTask
+    {
+        protected override string info => rootMotionEnabled ? $"RootMotion <b>On</b>" : $"RootMotion <b>Off</b>";
+        public bool rootMotionEnabled;
+
+        protected override void OnExecute()
+        {
+            if (agent.TryGetComponent<PawnActionController>(out var actionCtrler))
+                actionCtrler.currActionContext.rootMotionEnabled = rootMotionEnabled;
+
+            EndAction(true);
+        }
+    }
+
+    [Category("Pawn")]
     public class SetRootMotionMultiplier : ActionTask
     {   
         protected override string info => $"Set RootMotion Multiplier <b>{newValue.value}</b>";
@@ -1690,6 +1705,7 @@ namespace Game.NodeCanvasExtension
         {
             if (agent.TryGetComponent<PawnActionController>(out var actionCtrler) && actionCtrler.currActionContext.actionData != null)
                 actionCtrler.currActionContext.rootMotionMultiplier = newValue.value;
+
             EndAction(true);
         }
     }
