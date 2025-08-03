@@ -5281,6 +5281,37 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!1 &610589834916828105
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5532778346210918533}
+  m_Layer: 0
+  m_Name: EmitPointCetner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5532778346210918533
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 610589834916828105}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2030112930514382977}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &699982949722121093
 GameObject:
   m_ObjectHideFlags: 0
@@ -29986,6 +30017,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7363935143626021191}
+  - {fileID: 5532778346210918533}
   m_Father: {fileID: 699982949544363495}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3213030503025237901
@@ -96988,6 +97020,7 @@ MonoBehaviour:
   ropeHookCtrler: {fileID: 7601780043311725338}
   emitPointL: {fileID: 449322475394318657}
   emitPointR: {fileID: 1710675146248331780}
+  emitPointC: {fileID: 5532778346210918533}
 --- !u!114 &908418010212902216
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -97178,11 +97211,13 @@ MonoBehaviour:
   _parentBlackboard: {fileID: 0}
   _serializedBlackboard: '{"_variables":{"bullet":{"_value":1,"_name":"bullet","_id":"0d4c4728-c551-48bc-8f6b-5c4bf7180b49","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"OrbSmallYellow":{"_value":2,"_name":"OrbSmallYellow","_id":"4136f91b-ff37-44c8-8924-d4050ca4065d","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"Grenade":{"_value":3,"_name":"Grenade","_id":"d255340b-b6ae-43c1-be26-7c0f4364c4b7","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
     UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}}}'
   _objectReferences:
   - {fileID: 0}
   - {fileID: 5195597221496436211, guid: 1cb37cbb2de5447a9b0965bcb5913526, type: 3}
   - {fileID: 2256861881588827271, guid: dc2985400ba651d4c95a3009a484c272, type: 3}
+  - {fileID: 3083626412401777055, guid: fb11e92fe77a44acab2df56b780c76ef, type: 3}
   _serializedVariables:
   - _json: '{"_value":1,"_name":"bullet","_id":"0d4c4728-c551-48bc-8f6b-5c4bf7180b49","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
       UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
@@ -97194,6 +97229,11 @@ MonoBehaviour:
     _references:
     - {fileID: 0}
     - {fileID: 2256861881588827271, guid: dc2985400ba651d4c95a3009a484c272, type: 3}
+  - _json: '{"_value":1,"_name":"Grenade","_id":"d255340b-b6ae-43c1-be26-7c0f4364c4b7","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
+    _references:
+    - {fileID: 0}
+    - {fileID: 3083626412401777055, guid: fb11e92fe77a44acab2df56b780c76ef, type: 3}
 --- !u!1 &7514970868611279530
 GameObject:
   m_ObjectHideFlags: 0

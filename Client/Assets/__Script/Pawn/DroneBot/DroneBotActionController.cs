@@ -13,6 +13,7 @@ namespace Game
         public RopeHookController ropeHookCtrler;
         public Transform emitPointL;
         public Transform emitPointR;
+        public Transform emitPointC;
 
         public override bool CanRootMotion(Vector3 rootMotionVec)
         {
@@ -315,8 +316,14 @@ namespace Game
             };
         }
 
-        public override void EmitActionHandler(GameObject emitSource, Transform emitPoint, int emitNum)
+        public override void EmitActionHandler(GameObject emitPrefab, Transform emitPoint, int emitNum)
         {
+            Observable.NextFrame(FrameCountType.EndOfFrame).Subscribe(_ =>
+            {
+                var launchVelocity = CalculateGrenadeTrajectory(emitPoint.position, __brain.BB.HostBrain.BB.TargetColliderHelper.GetWorldCenter(), __brain.BB.action.launchSpeed);
+                ObjectPoolingSystem.Instance.GetObject<DroneBotGrenade>(emitPrefab, emitPoint.position, emitPoint.rotation).Pop(__brain, launchVelocity, Vector3.one);
+            }).AddTo(this);
+            
             // if (Instantiate(emitSource, emitPoint.position, emitPoint.rotation).TryGetComponent<DroneBotBullet>(out var bullet))
             //     bullet.Go(__brain, 16f);
 
@@ -327,7 +334,49 @@ namespace Game
             // }).AddTo(this);
 
             //* onEmitProjectile 호출은 제일 나중에 함
-            base.EmitActionHandler(emitSource, emitPoint, emitNum);
+            base.EmitActionHandler(emitPrefab, emitPoint, emitNum);
+        }
+
+        /// <summary>
+        /// 목표 지점을 명중하도록 수류탄 발사 속도를 계산합니다.
+        /// </summary>
+        /// <param name="startPos">발사 시작 위치</param>
+        /// <param name="targetPos">목표 위치</param>
+        /// <param name="launchSpeed">발사 속력</param>
+        /// <returns>계산된 발사 속도 벡터</returns>
+        private Vector3 CalculateGrenadeTrajectory(Vector3 startPos, Vector3 targetPos, float launchSpeed)
+        {
+            const float gravity = 9.81f;
+            
+            Vector3 displacement = targetPos - startPos;
+            Vector3 horizontalDisplacement = new Vector3(displacement.x, 0, displacement.z);
+            float horizontalDistance = horizontalDisplacement.magnitude;
+            float verticalDistance = displacement.y;
+            
+            // 발사각도 계산 (낮은 각도와 높은 각도 두 가지 해가 있음)
+            float speedSquared = launchSpeed * launchSpeed;
+            float discriminant = speedSquared * speedSquared - gravity * (gravity * horizontalDistance * horizontalDistance + 2 * verticalDistance * speedSquared);
+            
+            if (discriminant < 0)
+            {
+                // 목표까지 도달할 수 없는 경우, 최대 거리 방향으로 발사
+                float maxRangeAngle = 45f * Mathf.Deg2Rad;
+                Vector3 direction = horizontalDisplacement.normalized;
+                return direction * launchSpeed * Mathf.Cos(maxRangeAngle) + Vector3.up * launchSpeed * Mathf.Sin(maxRangeAngle);
+            }
+            
+            // 낮은 각도 해를 선택 (더 직선적인 궤도)
+            float angle1 = Mathf.Atan((speedSquared - Mathf.Sqrt(discriminant)) / (gravity * horizontalDistance));
+            float angle2 = Mathf.Atan((speedSquared + Mathf.Sqrt(discriminant)) / (gravity * horizontalDistance));
+            
+            // 각도가 너무 높으면 (45도 이상) 낮은 각도를 선택, 그렇지 않으면 더 안정적인 각도 선택
+            float selectedAngle = (angle1 > 45f * Mathf.Deg2Rad) ? angle2 : angle1;
+            
+            // 발사 방향 계산
+            Vector3 horizontalDirection = horizontalDisplacement.normalized;
+            Vector3 velocity = horizontalDirection * launchSpeed * Mathf.Cos(selectedAngle) + Vector3.up * launchSpeed * Mathf.Sin(selectedAngle);
+            
+            return velocity;
         }
     }
 }

@@ -715,5 +715,11 @@ namespace Game
             if (possessedBrain.BB.TargetBrain != null)
                 possessedBrain.droneBotFormationCtrler.PickDroneBot().ActionCtrler.SetPendingAction("Hook");
         }
+
+        public void OnLaunch()
+        {
+            if (possessedBrain.BB.TargetBrain != null)
+                possessedBrain.droneBotFormationCtrler.PickDroneBot().ActionCtrler.SetPendingAction("Launch");
+        }
     }
 }

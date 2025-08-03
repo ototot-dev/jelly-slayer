@@ -36,7 +36,6 @@ namespace Game
         {
             Base = 0,
             Action,
-            Upper,
             LeftArm,
             RightArm,
             Addictive,
@@ -310,7 +309,7 @@ namespace Game
                     legAnimator.User_FadeEnabled(0f);
 
             }).AddTo(this);
-
+            
             FindStateMachineTriggerObservable("Idle (LArm)").OnStateEnterAsObservable().Subscribe(_ => mainAnimator.SetLayerWeight(1, 0f)).AddTo(this);
             FindStateMachineTriggerObservable("Idle (LArm)").OnStateExitAsObservable().Subscribe(_ => mainAnimator.SetLayerWeight(1, 1f)).AddTo(this);
 
@@ -342,31 +341,6 @@ namespace Game
                         else
                         {
                             animAdvance -= Time.deltaTime;
-                            mainAnimator.SetFloat("AnimAdvance", animAdvance);
-                        }
-                    }).AddTo(this);
-            }).AddTo(this);
-
-            //* Throw 홀딩 중에 애님이 특정 구간을 루핑하도록 강제로 animAdvance를 제어함
-            FindStateMachineTriggerObservable("Throw (Holding)").OnStateEnterAsObservable().Subscribe(_ =>
-            {
-                var animAdvance = 0f;
-                var animAdvanceOffset = 0f;
-                mainAnimator.SetFloat("AnimAdvance", animAdvance);
-
-                Observable.EveryUpdate().TakeWhile(_ => CheckAnimStateTriggered("Throw (Holding)"))
-                    .Subscribe(_ =>
-                    {
-                        animAdvance += __brain.BB.action.throwHoldingAnimAdvanceSpeed * Time.deltaTime;
-
-                        if (animAdvance > __brain.BB.action.throwHoldingAnimAdvanceEnd)
-                        {
-                            animAdvance = __brain.BB.action.throwHoldingAnimAdvanceEnd;
-                            animAdvanceOffset += __brain.BB.action.throwHoldingAnimAdvanceOffsetSinFrequency * 2f * Mathf.PI * Time.deltaTime;
-                            mainAnimator.SetFloat("AnimAdvance", animAdvance + __brain.BB.action.throwHoldingAnimAdvanceOffsetAmplitude * Mathf.Sin(animAdvanceOffset));
-                        }
-                        else
-                        {
                             mainAnimator.SetFloat("AnimAdvance", animAdvance);
                         }
                     }).AddTo(this);

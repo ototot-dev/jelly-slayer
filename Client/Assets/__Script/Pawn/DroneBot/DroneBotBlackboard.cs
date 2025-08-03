@@ -68,6 +68,9 @@ namespace Game
 
             [Header("Hook")]
             public float hookDuration = 1f;
+
+            [Header("Launch")]
+            public float launchSpeed = 1f;
         }
 
         public Action action = new();
