@@ -28131,7 +28131,7 @@ GameObject:
   - component: {fileID: 8819654574563920222}
   - component: {fileID: 7333061147978076615}
   m_Layer: 0
-  m_Name: Sprine-Override
+  m_Name: Hip-Override
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -13045,6 +13045,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6029872931248605079, guid: f76b34bbacdb7a844b30725620f05be2, type: 3}
   m_PrefabInstance: {fileID: 1861615276}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &676299024 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7333061147978076615, guid: 31be19a0e23ac441d906c3c6f7481852, type: 3}
+  m_PrefabInstance: {fileID: 990659328}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf219326d2292de48a0c671da18d402b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &677159966 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7210471230131241780, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
@@ -15328,43 +15339,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 85d273f05a6c60e439cbd3c255a7a3c2, type: 3}
---- !u!84 &809025442
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 640
-  m_Height: 360
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 94
-  m_ColorFormat: 4
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 1
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 0
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1001 &812044420
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23271,42 +23245,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Slayer-K
       objectReference: {fileID: 0}
-    - target: {fileID: 1508909516796287826, guid: 31be19a0e23ac441d906c3c6f7481852, type: 3}
-      propertyPath: handler.ReferenceMass
-      value: 500
-      objectReference: {fileID: 0}
-    - target: {fileID: 1508909516796287826, guid: 31be19a0e23ac441d906c3c6f7481852, type: 3}
-      propertyPath: handler._EditorCategory
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 1508909516796287826, guid: 31be19a0e23ac441d906c3c6f7481852, type: 3}
-      propertyPath: handler.ExtraFeatures.Array.data[3].variables.Array.data[3]._string
-      value: Fall (Pose)
-      objectReference: {fileID: 0}
-    - target: {fileID: 1508909516796287826, guid: 31be19a0e23ac441d906c3c6f7481852, type: 3}
-      propertyPath: handler.ExtraFeatures.Array.data[2].variables.Array.data[0]._value.x
-      value: 2.5
+    - target: {fileID: 2118029493424771570, guid: 31be19a0e23ac441d906c3c6f7481852, type: 3}
+      propertyPath: hipOverride
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2118029493424771570, guid: 31be19a0e23ac441d906c3c6f7481852, type: 3}
-      propertyPath: actionLayerBlendInSpeed
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 2118029493424771570, guid: 31be19a0e23ac441d906c3c6f7481852, type: 3}
-      propertyPath: legAnimatorBlendInSpeed
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 2118029493424771570, guid: 31be19a0e23ac441d906c3c6f7481852, type: 3}
-      propertyPath: legAnimatorBlendOutSpeed
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 2118029493424771570, guid: 31be19a0e23ac441d906c3c6f7481852, type: 3}
-      propertyPath: ragdollAnimatorBlendInSpeed
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2118029493424771570, guid: 31be19a0e23ac441d906c3c6f7481852, type: 3}
-      propertyPath: ragdollAnimatorBlendOutSpeed
-      value: 5
-      objectReference: {fileID: 0}
+      propertyPath: spineOverride
+      value: 
+      objectReference: {fileID: 676299024}
     - target: {fileID: 3758835991799220657, guid: 31be19a0e23ac441d906c3c6f7481852, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.46
@@ -23347,21 +23293,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4268522763273999486, guid: 31be19a0e23ac441d906c3c6f7481852, type: 3}
-      propertyPath: body.knockDownRagdollDelay
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4592272242371362991, guid: 31be19a0e23ac441d906c3c6f7481852, type: 3}
-      propertyPath: _boundGraphSource._zoomFactor
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4592272242371362991, guid: 31be19a0e23ac441d906c3c6f7481852, type: 3}
-      propertyPath: _boundGraphSource._translation.x
-      value: 333
-      objectReference: {fileID: 0}
-    - target: {fileID: 4592272242371362991, guid: 31be19a0e23ac441d906c3c6f7481852, type: 3}
-      propertyPath: _boundGraphSource._translation.y
-      value: -280
+    - target: {fileID: 8015736920700019374, guid: 31be19a0e23ac441d906c3c6f7481852, type: 3}
+      propertyPath: m_Name
+      value: Spine-Override
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -24873,10 +24807,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3882167974122995971, guid: 7b3f8ebd86ac24292bee224f67e7f312, type: 3}
-      propertyPath: action.hookDuration
-      value: 10
-      objectReference: {fileID: 0}
     - target: {fileID: 7503926518901721585, guid: 7b3f8ebd86ac24292bee224f67e7f312, type: 3}
       propertyPath: m_Name
       value: DroneBot
@@ -26029,6 +25959,43 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 141362250874574150, guid: e2aa7cd9c4d1d1746be56005e108cf88, type: 3}
   m_PrefabInstance: {fileID: 1252942529}
   m_PrefabAsset: {fileID: 0}
+--- !u!84 &1126858748
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 640
+  m_Height: 360
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 94
+  m_ColorFormat: 4
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 1
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 0
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!4 &1129046620 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3144642377553035816, guid: 3ab513323649773448332c82ae1c47cf, type: 3}
@@ -46639,7 +46606,7 @@ PrefabInstance:
     - target: {fileID: 5839498371252988597, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 809025442}
+      objectReference: {fileID: 1126858748}
     - target: {fileID: 6215147742582434749, guid: 2503a8eb43a5a44339c6d15db02de4de, type: 3}
       propertyPath: m_LocalScale.x
       value: 14.222222

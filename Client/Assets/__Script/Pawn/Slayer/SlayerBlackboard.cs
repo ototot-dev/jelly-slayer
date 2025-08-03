@@ -41,11 +41,21 @@ namespace Game
         public class Action
         {
             public ReactiveProperty<PawnBrainController> encounterBrain = new();
+
+            [Header("Throw")]
+            public float throwHoldingAnimAdvanceSpeed = 1f;
+            public float throwHoldingAnimAdvanceEnd = 1f;
+            public float throwHoldingAnimAdvanceOffsetAmplitude = 0f;
+            public float throwHoldingAnimAdvanceOffsetSinFrequency = 1f;
+
+            [Header("PunchParry")]
             public IntReactiveProperty punchChargingLevel = new(-1);
             public float punchChargingAnimAdvanceSpeed = 1f;
             public float punchChargingAnimAdvanceEnd = 1f;
             public float punchChargingAnimAdvanceOffsetAmplitude = 0f;
             public float punchChargingAnimAdvanceOffsetSinFrequency = 1f;
+
+            [Header("GuardParry")]
             public float guardParryDuration = 0.1f;
             public float guardParryRootMotionMultiplier = 1f;
 

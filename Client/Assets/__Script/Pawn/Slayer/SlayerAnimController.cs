@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using FIMSpace.BonesStimulation;
 using MainTable;
@@ -13,7 +12,7 @@ namespace Game
     public class SlayerAnimController : PawnAnimController
     {
         [Header("Component")]
-        public OverrideTransform spineOverrideTransform;
+        public OverrideTransform spineOverride;
         public MultiAimConstraint headMultiAim;
         public TwoBoneIKConstraint leftArmTwoBoneIK;
         public TwoBoneIKConstraint rightArmTwoBoneIK;
@@ -37,6 +36,7 @@ namespace Game
         {
             Base = 0,
             Action,
+            Upper,
             LeftArm,
             RightArm,
             Addictive,
@@ -107,8 +107,8 @@ namespace Game
             if (__brain.BB.IsDown || __brain.BB.IsDead)
             {
                 rigSetup.weight = 0f;
+                spineOverride.weight = 0f;
                 headMultiAim.weight = 0f;
-                spineOverrideTransform.weight = 0f;
                 leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
                 leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
 
@@ -122,8 +122,8 @@ namespace Game
             else if (__brain.BB.IsRolling)
             {
                 rigSetup.weight = 0f;
+                spineOverride.weight = 0f;
                 headMultiAim.weight = 0f;
-                spineOverrideTransform.weight = 0f;
                 leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
                 leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
 
@@ -138,7 +138,7 @@ namespace Game
             else if (__brain.BB.IsHanging)
             {
                 rigSetup.weight = 1f;
-                spineOverrideTransform.weight = 0f;
+                spineOverride.weight = 0f;
                 headMultiAim.weight = 1f;
                 leftArmTwoBoneIK.weight = leftArmTwoBoneIK.weight.LerpSpeed(1f, 4f, Time.deltaTime);
                 rightArmTwoBoneIK.weight = leftArmTwoBoneIK.weight.LerpSpeed(1f, 4f, Time.deltaTime);
@@ -160,8 +160,8 @@ namespace Game
 
                 if (__brain.ActionCtrler.CheckActionRunning())
                 {
-                    spineOverrideTransform.weight = 0f;
                     headMultiAim.weight = 0f;
+                    spineOverride.weight = 0f;
                     leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
                     leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
 
@@ -188,7 +188,7 @@ namespace Game
                 else
                 {
                     headMultiAim.weight = 1f;
-                    spineOverrideTransform.weight = (mainAnimator.GetBool("IsGuarding") || CheckAnimStateTriggered("GuardParry")) ? 1f : 0f;
+                    spineOverride.weight = (mainAnimator.GetBool("IsGuarding") || CheckAnimStateTriggered("GuardParry")) ? 1f : 0f;
                     leftArmTwoBoneIK.weight = Mathf.Clamp01(leftArmTwoBoneIK.weight.LerpSpeed(0f, 4f, Time.deltaTime));
                     rightArmTwoBoneIK.weight = Mathf.Clamp01(leftArmTwoBoneIK.weight.LerpSpeed(0f, 4f, Time.deltaTime));
                     leftLegBoneSimulator.StimulatorAmount = Mathf.Clamp01(leftLegBoneSimulator.StimulatorAmount.LerpSpeed(0f, 1f, Time.deltaTime));
@@ -250,7 +250,7 @@ namespace Game
             if (IsPlayableGraphRunning())
             {
                 rigSetup.weight = 0f;
-                spineOverrideTransform.weight = 0f;
+                spineOverride.weight = 0f;
                 leftArmTwoBoneIK.weight = rightArmTwoBoneIK.weight = 0f;
                 leftLegBoneSimulator.StimulatorAmount = rightLegBoneSimulator.StimulatorAmount = 0f;
 
@@ -314,6 +314,7 @@ namespace Game
             FindStateMachineTriggerObservable("Idle (LArm)").OnStateEnterAsObservable().Subscribe(_ => mainAnimator.SetLayerWeight(1, 0f)).AddTo(this);
             FindStateMachineTriggerObservable("Idle (LArm)").OnStateExitAsObservable().Subscribe(_ => mainAnimator.SetLayerWeight(1, 1f)).AddTo(this);
 
+            //* PunchParry 차징 중에 애님이 특정 구간을 루핑하도록 강제로 animAdvance를 제어함
             FindStateMachineTriggerObservable("PunchParry (Charge)").OnStateEnterAsObservable().Subscribe(_ =>
             {
                 var animAdvance = 0f;
@@ -346,7 +347,32 @@ namespace Game
                     }).AddTo(this);
             }).AddTo(this);
 
-            spineOverrideTransform.weight = 0f;
+            //* Throw 홀딩 중에 애님이 특정 구간을 루핑하도록 강제로 animAdvance를 제어함
+            FindStateMachineTriggerObservable("Throw (Holding)").OnStateEnterAsObservable().Subscribe(_ =>
+            {
+                var animAdvance = 0f;
+                var animAdvanceOffset = 0f;
+                mainAnimator.SetFloat("AnimAdvance", animAdvance);
+
+                Observable.EveryUpdate().TakeWhile(_ => CheckAnimStateTriggered("Throw (Holding)"))
+                    .Subscribe(_ =>
+                    {
+                        animAdvance += __brain.BB.action.throwHoldingAnimAdvanceSpeed * Time.deltaTime;
+
+                        if (animAdvance > __brain.BB.action.throwHoldingAnimAdvanceEnd)
+                        {
+                            animAdvance = __brain.BB.action.throwHoldingAnimAdvanceEnd;
+                            animAdvanceOffset += __brain.BB.action.throwHoldingAnimAdvanceOffsetSinFrequency * 2f * Mathf.PI * Time.deltaTime;
+                            mainAnimator.SetFloat("AnimAdvance", animAdvance + __brain.BB.action.throwHoldingAnimAdvanceOffsetAmplitude * Mathf.Sin(animAdvanceOffset));
+                        }
+                        else
+                        {
+                            mainAnimator.SetFloat("AnimAdvance", animAdvance);
+                        }
+                    }).AddTo(this);
+            }).AddTo(this);
+
+            spineOverride.weight = 0f;
 
             __brain.onUpdate += () =>
             {
