@@ -9,11 +9,11 @@ namespace Game
     public enum GameModeTypes
     {
         None = 0,
-        ActionTest,
-        BattleTest,
-        Tutorial,
-        Intro,
-        Game,
+        ActionTest, // (미구현)
+        BattleTest, // 전투 테스트 모드
+        Tutorial,   // 튜토리얼 모드
+        Intro,      // (미구현), 인트로 모드
+        Game,       // (미구현), 일반 게임 모드
     }
 
     /// <summary>
@@ -80,6 +80,7 @@ namespace Game
                 case GameModeTypes.Intro: return;
                 case GameModeTypes.BattleTest: ChangeGameMode<BattleTestGameMode>(); return;
                 case GameModeTypes.Tutorial: ChangeGameMode<TutorialGameMode>(); return;
+                case GameModeTypes.Game: ChangeGameMode<MissionGameMode>(); return;
             }
         }
     }

@@ -17,7 +17,7 @@ tags:
 
 <<wait 2>>
 
-<<spawnPawn Rapax SP1>>
+<<spawnPawn Rapax SP2>>
 <<spawnPawn Rapax SP2>>
 <<wait 1>>
 <<spawnPawn Rapax SP3>>
@@ -28,6 +28,10 @@ tags:
 <<showSword>>
 <<sendMsgToGameMode SetCombat>>
 <<sendMsgToGameModeParam SetTutorialMode Room3_Step1>>
+
+
+<<showGuidePopup "회복" "[color=green]회복[/color]키를 누르면 일정 시간동안 체력을 회복 할 수 있습니다.\n\n 회복은 횟수 제한이 있기 때문에 신중히 사용해야 합니다.">>
+
 <<showMessagePopup "회피" "회피는 가드보다 적은 스테미너를 소비합니다." 4>>
 
 <<wait 1>>
@@ -48,7 +52,8 @@ tags:
 
 케이: ...
 
-// 여기서 드링크 기능 추가
+<<showGuidePopup "회복" "[color=green]회복[/color]키를 누르면 일정 시간동안 체력을 회복 할 수 있습니다.\n\n 회복은 횟수 제한이 있기 때문에 신중히 사용해야 합니다.">>
+
 <<sendMsgToGameModeParam SetTutorialMode Room3_Step2>>
 
 <<showMessagePopup "물약" "체력이 떨어지면 물약으로 회복할 수 있습니다." 4>>

@@ -51,12 +51,7 @@ namespace Game
     {
         public override GameModeTypes GetGameModeType() => GameModeTypes.Tutorial;
         public override DialogueDispatcher GetDialogueDispatcher() => __dialogueDispatcher;
-        TutorialDialogueDispatcher __dialogueDispatcher;
-        LoadingPageController __loadingPageCtrler;
-        string __currSceneName;
-
-        public int _curMissionID = 0;
-        private MissionData _curMissiondata;
+        //TutorialDialogueDispatcher __dialogueDispatcher;
 
         [Header("Tutorial")]
         public TutorialMode _tutorialMode = TutorialMode.None;
@@ -123,126 +118,33 @@ namespace Game
             return Observable.FromCoroutine(ChangeRoom_Coroutine);
         }
 
-        void InitPlayerCharacter(Transform spawnPoint)
+        protected override void InitPlayerCharacter(Transform spawnPoint)
         {
-            if (GameContext.Instance.playerCtrler.possessedBrain == null)
-            {
-                //* 슬레이어 스폰
-                GameContext.Instance.playerCtrler.SpawnSlayerPawn(true);
-                GameContext.Instance.playerCtrler.possessedBrain.transform.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
-                GameContext.Instance.playerCtrler.possessedBrain.TryGetComponent<SlayerAnimController>(out var animCtrler);
+            base.InitPlayerCharacter(spawnPoint);
 
-                GameContext.Instance.playerCtrler.possessedBrain.PawnHP.onDamaged += ((damageContex) => {
-                    int kk = 0;
-                });
-                GameContext.Instance.playerCtrler.possessedBrain.StatusCtrler.onStatusActive += ((pawnStatus) => {
-
-                    if (pawnStatus == PawnStatus.RegenHeartPoint && _tutorialMode == TutorialMode.Room3_Step2) {
-
-                        EndMode();
-                        InitBubbleDialogue("Tutorial3_step3");
-                    }
-                });
-
-                InitSlayerBrainHandler();
-
-                new PlayerStatusBarController().Load(GameObject.FindFirstObjectByType<PlayerStatusBarTemplate>()).Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
-            }
-        }
-
-        void RefreshPlayerCharacter(Transform spawnPoint)
-        { 
-            (GameContext.Instance.playerCtrler.possessedBrain as IPawnMovable).Teleport(spawnPoint.position, spawnPoint.rotation);
-
-            //* LegAnimator 다시 활성화
-            Observable.Timer(TimeSpan.FromSeconds(0.1f)).Subscribe(_ => GameContext.Instance.playerCtrler.possessedBrain.AnimCtrler.legAnimator.enabled = true);
-        }
-
-        void InitBubbleDialogue(string nodeName)
-        {
-            if (__dialogueDispatcher != null)
-            {
-                __dialogueDispatcher.onRunLine = null;
-                __dialogueDispatcher.onDialoqueComplete = null;
-
-                __dialogueDispatcher.StopDialogue();
-                __dialogueDispatcher.StartDialogue(nodeName);
-            }
-            var obj = GameObject.Find("3d-bubble-dialogue");
-
-            BubbleDialoqueController controller;
-            if (obj != null)
-                controller = new BubbleDialoqueController().Load(obj.GetComponent<Template>());
-            else
-                controller = new BubbleDialoqueController().Load();
-
-            controller.Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
-        }
-
-        void InitLoadingPageCtrler(string nodeName, Action action = null) 
-        {
-            //* 로딩 화면 종료
-            __loadingPageCtrler.HideAsObservable().Subscribe(__ =>
-            {
-                __loadingPageCtrler.Unload();
-                __loadingPageCtrler = null;
-
-                InitBubbleDialogue(nodeName);
-
-                action?.Invoke();
+            GameContext.Instance.playerCtrler.possessedBrain.PawnHP.onDamaged += ((damageContex) => {
+                int kk = 0;
             });
+            GameContext.Instance.playerCtrler.possessedBrain.StatusCtrler.onStatusActive += ((pawnStatus) => {
+
+                if (pawnStatus == PawnStatus.RegenHeartPoint && _tutorialMode == TutorialMode.Room3_Step2) {
+
+                    EndMode();
+                    InitBubbleDialogue("Tutorial3_step3");
+                }
+            });
+            InitSlayerBrainHandler();
+
+            new PlayerStatusBarController().Load(GameObject.FindFirstObjectByType<PlayerStatusBarTemplate>()).Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
         }
 
-        void InitCamera()
+        protected override bool InitRoom(int mission_id)
         {
-            //* 카메라 타겟 셋팅
-            GameContext.Instance.cameraCtrler.virtualCamera.LookAt = GameContext.Instance.playerCtrler.possessedBrain.coreColliderHelper.transform;
-            GameContext.Instance.cameraCtrler.virtualCamera.Follow = GameContext.Instance.playerCtrler.possessedBrain.coreColliderHelper.transform;
-
-            //* 카메라 이동 영역 셋팅
-            var confinerBoundingBox = TaggerSystem.FindGameObjectWithTag("ConfinerBoundingBox").GetComponent<BoxCollider>();
-            if (confinerBoundingBox != null)
-                GameContext.Instance.cameraCtrler.RefreshConfinerVolume(confinerBoundingBox, Quaternion.Euler(45f, 45f, 0f), 10f);
-        }
-
-        bool InitRoom(int mission_id)
-        {
-            if (mission_id <= 0) 
-            {
-                Debug.Log("Invalid Mission, " + mission_id);
+            if (base.InitRoom(mission_id) == false)
                 return false;
-            }
-            _curMissionID = mission_id;
-
-            GameContext.Instance.canvasManager.FadeInImmediately(Color.black);
-
-            MissionData data = MissionTable.MissionData.MissionDataList.First(d => d.id == mission_id);
-            if (data == null) 
-            {
-                Debug.Log("Mission 로드 Fail, " + mission_id);
-                return false;
-            }
-            _curMissiondata = data;
-            __currSceneName = data.sceneName;
 
             _killCount = 0;
 
-            //* 로딩 시작
-            __loadingPageCtrler = new LoadingPageController(new string[] { data.resPath1, data.resPath2 },
-                new string[] { __currSceneName });
-            __loadingPageCtrler.Load().Show(GameContext.Instance.canvasManager.dimmed.transform as RectTransform);
-            __loadingPageCtrler.onLoadingCompleted += () =>
-            {
-                //* 슬레이어 초기 위치
-                var spawnPoint = TaggerSystem.FindGameObjectWithTag("PlayerSpawnPoint");
-                if (spawnPoint != null) {
-                    RefreshPlayerCharacter(spawnPoint.transform);
-                }
-                InitCamera();
-
-                // Yarn Script
-                InitLoadingPageCtrler(data.startNode, () => { });
-            };
             return true;
         }
 
@@ -251,18 +153,9 @@ namespace Game
             //switch (mode) { case 0: InitBubbleDialogue("Tutorial2_step2_2"); break; }
         }
 
-        public IEnumerator ChangeRoom_Coroutine()
+        public override IEnumerator ChangeRoom_Coroutine()
         {
-            __dialogueDispatcher.StopDialogue();
-
-            //* 현재 맵이 Unload되면 에러가 발생해서 강제 비활성화
-            GameContext.Instance.playerCtrler.possessedBrain.AnimCtrler.legAnimator.enabled = false;
-            GameContext.Instance.canvasManager.FadeIn(Color.black, 1f);
-
-            yield return new WaitForSeconds(1f);
-
-            //* 현재 Scene 제거
-            yield return SceneManager.UnloadSceneAsync(__currSceneName).AsObservable().ToYieldInstruction();
+            yield return base.ChangeRoom_Coroutine();
 
             foreach (var pawn in _pawnList)
             {
@@ -270,16 +163,6 @@ namespace Game
                     Destroy(pawn.gameObject);
             }
             _pawnList.Clear();
-
-            // Next Room
-            if (_curMissiondata != null) 
-            {
-                InitRoom(_curMissiondata.door1);
-            }
-            yield return new WaitUntil(() => __loadingPageCtrler == null);
-
-            GameContext.Instance.canvasManager.FadeOut(1f);
-            yield return new WaitForSeconds(1f);
         }
 
         void InitSlayerBrainHandler() 

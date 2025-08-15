@@ -21,6 +21,12 @@ EditorBuildSettings:
     path: Assets/__Scene/Tutorial/Tutorial-LongCorridor.unity
     guid: 2b35a2703378111438be03d9501a0e92
   - enabled: 1
+    path: Assets/__Scene/Mission/Mission-BattleRoom.unity
+    guid: c8b8f204e8c69cd42bc9676d0bd3df19
+  - enabled: 1
+    path: Assets/__Scene/Mission/Mission-ShortCorridor.unity
+    guid: 6091721ce54cbf64abeb7a590fd89bae
+  - enabled: 1
     path: Assets/__Scene/Tutorial/Tutorial-Corridor.unity
     guid: 6f0fcf9663f72114a8d15522c8350033
   - enabled: 1
