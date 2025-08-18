@@ -51,7 +51,6 @@ namespace Game
     {
         public override GameModeTypes GetGameModeType() => GameModeTypes.Tutorial;
         public override DialogueDispatcher GetDialogueDispatcher() => __dialogueDispatcher;
-        //TutorialDialogueDispatcher __dialogueDispatcher;
 
         [Header("Tutorial")]
         public TutorialMode _tutorialMode = TutorialMode.None;

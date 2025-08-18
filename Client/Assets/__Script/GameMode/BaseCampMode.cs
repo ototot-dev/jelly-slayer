@@ -13,17 +13,13 @@ using System.Linq;
 
 namespace Game
 {
-    public class MissionGameMode : BaseGameMode, IPawnEventListener
+    public class BaseCampMode : BaseGameMode, IPawnEventListener
     {
-        [SerializeField] private int _curMissionCount = 0;
-        [SerializeField] private int _maxMissionCount = 10;
-        private int _missionID = 300;
-
         void Awake()
         {
             __dialogueDispatcher = gameObject.AddComponent<TutorialDialogueDispatcher>();
         }
-        
+
         private void Start()
         {
             PawnEventManager.Instance.RegisterEventListener(this as IPawnEventListener);
@@ -32,22 +28,9 @@ namespace Game
         public override IObservable<Unit> EnterAsObservable()
         {
             InitPlayerCharacter(transform);
+            InitRoom(200);
 
-            int missionNum = GetRandomMissionNum();
-            if (InitRoom(missionNum) == true) 
-            {
-                _curMissionCount++;
-            }
             return Observable.NextFrame();
-        }
-
-        int GetRandomMissionNum() 
-        {
-            if (_curMissionCount >= _maxMissionCount) 
-            {
-                return 301;
-            }
-            return 300;
         }
 
         public void OnReceivePawnActionStart(PawnBrainController sender, string actionName)

@@ -2230,6 +2230,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: 1UP GIRL - HIROKO Warrior
       objectReference: {fileID: 0}
+    - target: {fileID: 4573976595750537442, guid: f69ebc410135e4a0da1f9deaf7552e55, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7120748475203242018, guid: f69ebc410135e4a0da1f9deaf7552e55, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

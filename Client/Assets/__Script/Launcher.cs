@@ -9,11 +9,15 @@ namespace Game
     public enum GameModeTypes
     {
         None = 0,
+
+        Intro,      // (미구현), 인트로 모드
+        BaseCamp,   // 베이스 캠프
+        Tutorial,   // 튜토리얼 모드
+        Game,       // 일반 게임 모드
+
+        // 테스트
         ActionTest, // (미구현)
         BattleTest, // 전투 테스트 모드
-        Tutorial,   // 튜토리얼 모드
-        Intro,      // (미구현), 인트로 모드
-        Game,       // (미구현), 일반 게임 모드
     }
 
     /// <summary>
@@ -21,12 +25,12 @@ namespace Game
     /// </summary>
     public class Launcher : MonoBehaviour
     {
-        public GameModeTypes startGameMode = GameModeTypes.None;
         public BaseGameMode currGameMode;
+
         public bool IsGameModeChanging() => __changeGameModeDisposable != null;
         IDisposable __changeGameModeDisposable;
 
-        //public TutorialScene _tutorialStartScene;
+        public GameModeTypes startGameMode = GameModeTypes.None;
         public int _tutorialStartMission;
 
         void Awake()
@@ -78,9 +82,13 @@ namespace Game
             switch (newGameMode)
             {
                 case GameModeTypes.Intro: return;
-                case GameModeTypes.BattleTest: ChangeGameMode<BattleTestGameMode>(); return;
+
+                case GameModeTypes.BaseCamp: ChangeGameMode<BaseCampMode>(); return;
                 case GameModeTypes.Tutorial: ChangeGameMode<TutorialGameMode>(); return;
                 case GameModeTypes.Game: ChangeGameMode<MissionGameMode>(); return;
+
+                // 테스트
+                case GameModeTypes.BattleTest: ChangeGameMode<BattleTestGameMode>(); return;
             }
         }
     }

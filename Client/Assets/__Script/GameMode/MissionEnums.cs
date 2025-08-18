@@ -9,4 +9,13 @@ namespace Game
         NONE,
         KILLALL,
     }
+
+    [UGS(typeof(MissionType))]
+    public enum MissionType
+    {
+        NONE,
+        TUTORIAL,
+        BASECAMP,
+        MISSION,
+    }
 }
