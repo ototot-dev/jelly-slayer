@@ -346,7 +346,8 @@ namespace Game
                     }).AddTo(this);
             }).AddTo(this);
 
-            spineOverride.weight = 0f;
+            if(spineOverride != null)
+                spineOverride.weight = 0f;
 
             __brain.onUpdate += () =>
             {
