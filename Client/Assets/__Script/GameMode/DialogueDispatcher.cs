@@ -179,18 +179,34 @@ namespace Game
             yield return new WaitForSeconds(seconds);
         }
 
+        public InteractionKeyController CreateInteractionKey(string tagName)
+        {
+            var obj = TaggerSystem.FindGameObjectWithTag(tagName);
+            if (obj == null)
+                return null;
+
+            var controller = new InteractionKeyController("E", "RunLine", -1f, obj.GetComponent<InteractableHandler>());
+            controller.Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
+
+            return controller;
+        }
+
         public void ShowInteractionKey(string tagName)
         {
-            new InteractionKeyController("E", "RunLine", -1f, TaggerSystem.FindGameObjectWithTag(tagName).GetComponent<InteractableHandler>()).Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
+            CreateInteractionKey(tagName);
         }
 
         public IEnumerator ShowAndWaitInteractionKey(string tagName)
         {
-            var targetInteractable = TaggerSystem.FindGameObjectWithTag(tagName).GetComponent<InteractableHandler>();
-            Debug.Assert(targetInteractable != null);
-
-            var interactableKeyCtrler = new InteractionKeyController("E", targetInteractable.GetCommand(), -1f, targetInteractable).Load().Show(GameContext.Instance.canvasManager.body.transform as RectTransform);
-            yield return new WaitUntil(() => interactableKeyCtrler.IsInteractionFinished);
+            var controller = CreateInteractionKey(tagName);
+            if (controller != null)
+            {
+                yield return new WaitUntil(() => controller.IsInteractionFinished);
+            }
+            else 
+            {
+                Debug.Log("ShowAndWaitInteractionKey Fail: " + tagName);
+            }
         }
 
         public IEnumerator WaitCheck() 

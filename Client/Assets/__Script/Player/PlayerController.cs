@@ -631,8 +631,8 @@ namespace Game
         {
             if (!CanProcessInput())
                 return;
-            if (!GameContext.Instance.launcher.currGameMode.IsInCombat())
-                return;
+            //if (!GameContext.Instance.launcher.currGameMode.IsInCombat())
+                //return;
 
             if (value.isPressed)
             {
@@ -641,6 +641,7 @@ namespace Game
                 if (pressedCtrler == null)
                     return;
 
+                // 체인소 특수공격 실행
                 if (pressedCtrler.commandName == "Chainsaw")
                 {
                     if (possessedBrain.ActionCtrler.CheckActionRunning())
@@ -649,6 +650,7 @@ namespace Game
                     possessedBrain.ActionCtrler.SetPendingAction("Chainsaw");
                     pressedCtrler.HideAsObservable().Subscribe(_ => pressedCtrler.Unload()).AddTo(this);
                 }
+                // 드론봇의 돌격 공격 실행
                 else if (pressedCtrler.commandName == "Assault")
                 {
                     if (possessedBrain.ActionCtrler.CheckActionRunning())
@@ -658,6 +660,7 @@ namespace Game
                     possessedBrain.droneBotFormationCtrler.PickDroneBot().ActionCtrler.SetPendingAction("Assault");
                     pressedCtrler.HideAsObservable().Subscribe(_ => pressedCtrler.Unload()).AddTo(this);
                 }
+                // 다이얼로그 라인 진행
                 else if (pressedCtrler.commandName == "RunLine")
                 {
                     pressedCtrler.PostProcessKeyDown(true);
@@ -673,11 +676,18 @@ namespace Game
                         }
                     }).AddTo(this);
                 }
+                // 다음 방으로 이동
                 else if (pressedCtrler.commandName == "NextRoom")
                 {
                     pressedCtrler.PostProcessKeyDown(true);
 
                     GameContext.Instance.launcher.currGameMode.ChangeScene("Tutorial-1");
+                }
+                // 명령어 창 열기
+                else if (pressedCtrler.commandName == "OpenCommand")
+                {
+                    pressedCtrler.PostProcessKeyDown(true);
+
                 }
             }
         }
